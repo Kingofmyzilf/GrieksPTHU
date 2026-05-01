@@ -5,6 +5,34 @@ import re
 import math
 import pandas as pd
 import matplotlib.pyplot as plt
+import os # Voeg deze helemaal bovenaan je script toe bij de andere imports
+
+# --- SIDEBAR: DATA BEHEER ---
+with st.sidebar:
+    st.header("📂 Jouw Voortgang")
+    uploaded_file = st.file_uploader("Upload jouw opgeslagen JSON", type=["json", "txt", ""])
+    
+    # 1. Als iemand een bestand uploadt:
+    if uploaded_file is not None:
+        st.session_state.data = json.load(uploaded_file)
+        st.success("Jouw voortgang is geladen!")
+
+    # 2. Als er GEEN bestand is, laad dan de schone basislijst van GitHub:
+    elif st.session_state.data is None:
+        if os.path.exists("basis_woorden.json"):
+            with open("basis_woorden.json", "r", encoding="utf-8") as f:
+                st.session_state.data = json.load(f)
+            st.info("Nieuwe sessie gestart met basiswoorden!")
+
+    # 3. De download knop (blijft hetzelfde)
+    if st.session_state.data:
+        json_data = json.dumps(st.session_state.data, indent=2)
+        st.download_button(
+            label="💾 Voortgang Opslaan (Download)",
+            data=json_data,
+            file_name="mijn_grieks_voortgang.json",
+            mime="application/json"
+        )
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Gemini Grieks Tutor", layout="wide")
