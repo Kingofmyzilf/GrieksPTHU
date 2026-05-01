@@ -1,12 +1,3 @@
-import streamlit as st
-import json
-import random
-import re
-import math
-import pandas as pd
-import matplotlib.pyplot as plt
-import os # Voeg deze helemaal bovenaan je script toe bij de andere imports
-
 # --- SIDEBAR: DATA BEHEER ---
 with st.sidebar:
     st.header("📂 Jouw Voortgang")
@@ -33,6 +24,14 @@ with st.sidebar:
             file_name="mijn_grieks_voortgang.json",
             mime="application/json"
         )
+import streamlit as st
+import json
+import random
+import re
+import math
+import pandas as pd
+import matplotlib.pyplot as plt
+import os # Voeg deze helemaal bovenaan je script toe bij de andere imports
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Gemini Grieks Tutor", layout="wide")
