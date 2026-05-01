@@ -1,29 +1,3 @@
-# --- SIDEBAR: DATA BEHEER ---
-with st.sidebar:
-    st.header("📂 Jouw Voortgang")
-    uploaded_file = st.file_uploader("Upload jouw opgeslagen JSON", type=["json", "txt", ""])
-    
-    # 1. Als iemand een bestand uploadt:
-    if uploaded_file is not None:
-        st.session_state.data = json.load(uploaded_file)
-        st.success("Jouw voortgang is geladen!")
-
-    # 2. Als er GEEN bestand is, laad dan de schone basislijst van GitHub:
-    elif st.session_state.data is None:
-        if os.path.exists("basis_woorden.json"):
-            with open("basis_woorden.json", "r", encoding="utf-8") as f:
-                st.session_state.data = json.load(f)
-            st.info("Nieuwe sessie gestart met basiswoorden!")
-
-    # 3. De download knop (blijft hetzelfde)
-    if st.session_state.data:
-        json_data = json.dumps(st.session_state.data, indent=2)
-        st.download_button(
-            label="💾 Voortgang Opslaan (Download)",
-            data=json_data,
-            file_name="mijn_grieks_voortgang.json",
-            mime="application/json"
-        )
 import streamlit as st
 import json
 import random
@@ -31,9 +5,10 @@ import re
 import math
 import pandas as pd
 import matplotlib.pyplot as plt
-import os # Voeg deze helemaal bovenaan je script toe bij de andere imports
+import os
 
 # --- CONFIGURATIE ---
+# Dit moet altijd het eerste Streamlit commando zijn!
 st.set_page_config(page_title="Gemini Grieks Tutor", layout="wide")
 
 # Custom CSS voor mobiele optimalisatie
@@ -57,7 +32,6 @@ def bereken_gewicht(item):
     gewicht = 1.0
     freq = item.get('frequentie_nt', 0)
     if freq > 0:
-        # NT-frequentiecijfers sturen de prioriteit
         gewicht += math.log10(freq + 1)
     gewicht += (item.get('score_fout', 0) * 1.5)
     if item.get('streak', 0) >= 5:
@@ -77,18 +51,28 @@ if 'feedback' not in st.session_state:
 # --- SIDEBAR: DATA BEHEER ---
 with st.sidebar:
     st.header("📂 Jouw Voortgang")
-    uploaded_file = st.file_uploader("Upload grieks_vocabulaire.json", type="json")
+    # Aangepast type voor betere mobiele ondersteuning
+    uploaded_file = st.file_uploader("Upload jouw opgeslagen JSON", type=["json", "txt", ""])
     
-    if uploaded_file is not None and st.session_state.data is None:
+    # 1. Als iemand een bestand uploadt:
+    if uploaded_file is not None:
         st.session_state.data = json.load(uploaded_file)
-        st.success("Voortgang geladen!")
+        st.success("Jouw voortgang is geladen!")
 
+    # 2. Als er GEEN bestand is, laad dan de schone basislijst van GitHub:
+    elif st.session_state.data is None:
+        if os.path.exists("basis_woorden.json"):
+            with open("basis_woorden.json", "r", encoding="utf-8") as f:
+                st.session_state.data = json.load(f)
+            st.info("Nieuwe sessie gestart met basiswoorden!")
+
+    # 3. De download knop
     if st.session_state.data:
         json_data = json.dumps(st.session_state.data, indent=2)
         st.download_button(
             label="💾 Voortgang Opslaan (Download)",
             data=json_data,
-            file_name="grieks_vocabulaire.json",
+            file_name="mijn_grieks_voortgang.json",
             mime="application/json"
         )
         
@@ -102,7 +86,7 @@ with st.sidebar:
 # --- HOOFDMENU ---
 if st.session_state.data is None:
     st.title("Welkom bij de Grieks Tutor")
-    st.info("Upload eerst het `grieks_vocabulaire.json` bestand in de zijbalk om te beginnen.")
+    st.warning("Kan het bestand 'basis_woorden.json' niet vinden. Zorg dat dit bestand in GitHub staat, of upload handmatig een bestand in de zijbalk.")
 else:
     menu = st.tabs(["🚀 Oefenen", "📖 Woordenlijst", "📊 Voortgang"])
 
@@ -128,7 +112,6 @@ else:
 
             if st.button("Start Sessie"):
                 doel.sort(key=bereken_gewicht, reverse=True)
-                # Dynamische Chunks
                 gem_streak = sum(i['streak'] for i in doel) / len(doel) if doel else 0
                 chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
                 st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
