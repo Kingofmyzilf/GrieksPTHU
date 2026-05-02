@@ -40,20 +40,18 @@ def bereken_gewicht(item):
         gewicht *= 0.1
     return max(0.1, gewicht)
 
-# --- DATABASE FUNCTIES ---
+# --- ROBUUSTE DATABASE FUNCTIES ---
 
 def laad_gebruiker_data(naam):
-    """Haalt data op uit de sheet of maakt een nieuw profiel aan via basis_woorden.json"""
-    df = conn.read()
+    """Haalt verse data op uit de sheet (geen cache) of maakt een nieuw profiel aan."""
+    df = conn.read(ttl=0) # ttl=0 dwingt de app om live in Google Sheets te kijken
     
-    # Zorg dat de kolom 'gebruikersnaam' bestaat, anders crasht pandas
     if 'gebruikersnaam' not in df.columns:
         df['gebruikersnaam'] = ""
         
     user_df = df[df['gebruikersnaam'] == naam]
     
     if user_df.empty:
-        # Nieuwe gebruiker: laad basis_woorden.json en voeg toe aan sheet
         if os.path.exists("basis_woorden.json"):
             with open("basis_woorden.json", "r", encoding="utf-8") as f:
                 basis = json.load(f)
@@ -62,7 +60,6 @@ def laad_gebruiker_data(naam):
                     b['gebruikersnaam'] = naam
                     new_data.append(b)
                 
-                # Voeg nieuwe rijen toe aan de spreadsheet
                 updated_df = pd.concat([df, pd.DataFrame(new_data)], ignore_index=True)
                 conn.update(data=updated_df)
                 return new_data
@@ -71,12 +68,33 @@ def laad_gebruiker_data(naam):
             return None
     return user_df.to_dict('records')
 
-def save_word_update(item):
-    """Slaat de specifieke gewijzigde rij op in Google Sheets"""
-    df = conn.read()
-    mask = (df['gebruikersnaam'] == item['gebruikersnaam']) & (df['grieks'] == item['grieks'])
-    df.loc[mask, ['streak', 'score_goed', 'score_fout']] = [item['streak'], item['score_goed'], item['score_fout']]
-    conn.update(data=df)
+def opslaan_naar_cloud(toon_melding=False):
+    """Slaat ALLES van de actieve gebruiker in één keer veilig op."""
+    if not st.session_state.get('last_user') or not st.session_state.get('data'):
+        return
+    
+    try:
+        # Haal actuele sheet op
+        df = conn.read(ttl=0)
+        if 'gebruikersnaam' not in df.columns:
+            df['gebruikersnaam'] = ""
+            
+        # Filter iedereen BEHALVE de huidige gebruiker eruit
+        df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
+        
+        # Maak een verse tabel van JOUW huidige sessie in het geheugen
+        df_jouw_data = pd.DataFrame(st.session_state.data)
+        
+        # Plak ze aan elkaar en update
+        nieuwe_df = pd.concat([df_andere_gebruikers, df_jouw_data], ignore_index=True)
+        conn.update(data=nieuwe_df)
+        
+        if toon_melding:
+            st.toast("☁️ Voortgang veilig opgeslagen in de cloud!", icon="✅")
+            
+    except Exception as e:
+        # Als de verbinding hapert, crasht de app niet, maar blijft data in RAM bewaard!
+        st.toast("Verbinding haperde: resultaat zit in werkgeheugen en wordt straks opgeslagen.", icon="⚠️")
 
 # --- SESSION STATE (GEHEUGEN VAN DE WEBSITE) ---
 if 'data' not in st.session_state: st.session_state.data = None
@@ -87,27 +105,32 @@ if 'fout_gemaakt' not in st.session_state: st.session_state.fout_gemaakt = False
 if 'huidige_opties' not in st.session_state: st.session_state.huidige_opties = []
 if 'last_user' not in st.session_state: st.session_state.last_user = None
 
-# --- FUNCTIE: VOLGENDE WOORD INLADEN ---
 def laad_volgend_woord():
     st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
     st.session_state.fout_gemaakt = False
     st.session_state.huidige_opties = [] 
 
-# --- SIDEBAR: LOGIN ---
+# --- SIDEBAR: LOGIN & OPSLAAN ---
 with st.sidebar:
     st.header("👤 Inloggen")
     user_input = st.text_input("Voer je voornaam in", key="user_login").strip()
     
     if user_input:
         if st.session_state.data is None or st.session_state.last_user != user_input:
-            with st.spinner("Voortgang synchroniseren met de cloud..."):
+            with st.spinner("Gegevens ophalen uit Google Sheets..."):
                 st.session_state.data = laad_gebruiker_data(user_input)
                 st.session_state.last_user = user_input
             st.success(f"Ingelogd als {user_input}.")
     
     if st.session_state.data:
         st.write("---")
-        if st.button("Uitloggen"):
+        if st.button("💾 Forceer Cloud Opslag"):
+            with st.spinner("Gegevens naar Google pushen..."):
+                opslaan_naar_cloud(toon_melding=True)
+                
+        if st.button("🚪 Uitloggen"):
+            with st.spinner("Laatste antwoorden veiligstellen..."):
+                opslaan_naar_cloud()
             st.session_state.data = None
             st.session_state.last_user = None
             st.session_state.sessie_lijst = []
@@ -118,17 +141,17 @@ with st.sidebar:
 if st.session_state.data is None:
     st.title("Adaptief Grieks Leren")
     st.info("""
-    **Welkom!** Bedenk een vaste gebruikersnaam en vul deze in het menu aan de linkerkant in. 
+    **Welkom!** Bedenk een vaste gebruikersnaam en vul deze linksboven in. 
     
-    Elke keer dat je met deze specifieke naam inlogt, haalt het systeem je persoonlijke voortgang op. De app slaat je resultaten na elk beantwoord woord automatisch op de achtergrond op. 
+    Elke keer dat je met deze specifieke naam inlogt, haalt het systeem je persoonlijke resultaten op. Je voortgang wordt na elke gemaakte vraag automatisch naar de cloud gestuurd. 
     
-    Ben je klaar met oefenen? Klik dan op 'Uitloggen' om je sessie netjes af te sluiten.
+    Klaar met leren? Klik altijd nog even op **Uitloggen** (of Forceer Opslag) in het linkermenu, zodat je zeker weet dat de laatste seconden ook in de database staan!
     """)
 else:
     menu = st.tabs(["🚀 Oefenen", "📖 Woordenlijst", "📊 Voortgang"])
 
     with menu[0]: # OEFENEN
-        st.caption(f"Ingelogd als: **{st.session_state.last_user}**")
+        st.caption(f"Actief profiel: **{st.session_state.last_user}**")
         col1, col2 = st.columns([1, 2])
         
         with col1:
@@ -179,7 +202,6 @@ else:
                 item = st.session_state.huidig_item
                 info_weergave = item.get('grieks_info', item['grieks'])
                 
-                # --- FEEDBACK TONEN ---
                 if st.session_state.feedback:
                     if st.session_state.feedback["type"] == "success":
                         st.success(st.session_state.feedback["msg"])
@@ -192,7 +214,6 @@ else:
                 if st.session_state.modus_actief == '1':
                     st.warning(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
-                # MEERKEUZE (Modus 1 & 2)
                 if st.session_state.modus_actief in ['1', '2']:
                     correct = maak_schoon(item['nederlands'])
                     
@@ -211,7 +232,7 @@ else:
                                 if not st.session_state.fout_gemaakt:
                                     item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                     item['streak'] = int(item.get('streak', 0)) + 1
-                                    save_word_update(item) # Opslaan in de cloud
+                                    opslaan_naar_cloud() # Sla live op
                                 
                                 st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{info_weergave}' betekent inderdaad '{correct}'."}
                                 laad_volgend_woord()
@@ -220,14 +241,13 @@ else:
                                 if not st.session_state.fout_gemaakt:
                                     item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                     item['streak'] = 0
-                                    save_word_update(item) # Opslaan in de cloud
+                                    opslaan_naar_cloud() # Sla live op
                                     st.session_state.sessie_lijst.append(item)
                                     st.session_state.fout_gemaakt = True
                                 
                                 st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{info_weergave}' = '{item['nederlands']}'. Selecteer het juiste antwoord om door te gaan."}
                                 st.rerun() 
 
-                # OVERHOOR (Modus 3)
                 else:
                     p = st.text_input("Betekenis:", key=f"input_{item['grieks']}").lower()
                     if st.button("Controleer", key=f"check_{item['grieks']}"):
@@ -236,7 +256,7 @@ else:
                             if not st.session_state.fout_gemaakt:
                                 item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                 item['streak'] = int(item.get('streak', 0)) + 1
-                                save_word_update(item) # Opslaan in de cloud
+                                opslaan_naar_cloud() # Sla live op
                                 
                             st.session_state.feedback = {"type": "success", "msg": f"✓ Correct. '{info_weergave}' = '{correct_schoon}'."}
                             laad_volgend_woord()
@@ -245,7 +265,7 @@ else:
                             if not st.session_state.fout_gemaakt:
                                 item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                 item['streak'] = 0
-                                save_word_update(item) # Opslaan in de cloud
+                                opslaan_naar_cloud() # Sla live op
                                 st.session_state.sessie_lijst.append(item)
                                 st.session_state.fout_gemaakt = True
                                 
