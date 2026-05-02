@@ -7,14 +7,12 @@ import math
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import ast
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
-
-# Verbinding maken met Google Sheets
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# Custom CSS voor weergave
 st.markdown("""
     <style>
     .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
@@ -24,9 +22,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- LOGICA ---
-
 def maak_schoon(tekst):
-    """Verwijdert haakjes voor een tolerante type-controle, maar raakt de originele string niet aan."""
     schoon = re.sub(r'\(.*?\)', '', str(tekst))
     schoon = re.sub(r'\[.*?\]', '', schoon)
     return schoon.replace(';', ',').split(',')[0].strip().lower()
@@ -44,8 +40,7 @@ def bereken_gewicht(item):
 def geldig(val):
     return pd.notna(val) and str(val).strip() not in ['', 'nan', 'None']
 
-# --- DATABASE FUNCTIES ---
-
+# --- DATABASE FUNCTIES MET JSON TRANSLATIE ---
 def laad_gebruiker_data(naam):
     df = conn.read(ttl=0) 
     
@@ -61,42 +56,69 @@ def laad_gebruiker_data(naam):
                 new_data = []
                 for b in basis:
                     b['gebruikersnaam'] = naam
+                    if 'vormen_data' in b and isinstance(b['vormen_data'], list):
+                        b['vormen_data'] = json.dumps(b['vormen_data'], ensure_ascii=False)
                     new_data.append(b)
                 
                 updated_df = pd.concat([df, pd.DataFrame(new_data)], ignore_index=True)
                 conn.update(data=updated_df)
+                
+                for b in new_data:
+                    if 'vormen_data' in b and isinstance(b['vormen_data'], str):
+                        try:
+                            b['vormen_data'] = json.loads(b['vormen_data'])
+                        except:
+                            b['vormen_data'] = []
                 return new_data
         else:
-            st.error("basis_woorden.json ontbreekt. Kan geen nieuw profiel aanmaken.")
+            st.error("basis_woorden.json ontbreekt.")
             return None
-    return user_df.to_dict('records')
+            
+    user_records = user_df.to_dict('records')
+    for r in user_records:
+        if 'vormen_data' in r and geldig(r['vormen_data']):
+            try:
+                r['vormen_data'] = json.loads(str(r['vormen_data']))
+            except:
+                try:
+                    r['vormen_data'] = ast.literal_eval(str(r['vormen_data']))
+                except:
+                    r['vormen_data'] = []
+        else:
+            r['vormen_data'] = []
+    return user_records
 
 def opslaan_naar_cloud(toon_melding=False):
     if not st.session_state.get('last_user') or not st.session_state.get('data'):
         return
-    
     try:
         df = conn.read(ttl=0)
         if 'gebruikersnaam' not in df.columns:
             df['gebruikersnaam'] = ""
             
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
-        df_jouw_data = pd.DataFrame(st.session_state.data)
+        
+        huidige_data_kopie = []
+        for item in st.session_state.data:
+            k = item.copy()
+            if 'vormen_data' in k and isinstance(k['vormen_data'], list):
+                k['vormen_data'] = json.dumps(k['vormen_data'], ensure_ascii=False)
+            huidige_data_kopie.append(k)
+            
+        df_jouw_data = pd.DataFrame(huidige_data_kopie)
         nieuwe_df = pd.concat([df_andere_gebruikers, df_jouw_data], ignore_index=True)
         
         conn.update(data=nieuwe_df)
-        
         if toon_melding:
-            st.toast("☁️ Voortgang veilig opgeslagen in de cloud!", icon="✅")
-            
+            st.toast("☁️ Voortgang opgeslagen in de cloud!", icon="✅")
     except Exception as e:
-        st.toast("Verbinding haperde: resultaat zit in werkgeheugen en wordt straks opgeslagen.", icon="⚠️")
+        st.toast("Verbinding haperde: resultaat wordt bewaard en straks opgeslagen.", icon="⚠️")
 
 # --- SESSION STATE ---
 if 'data' not in st.session_state: st.session_state.data = None
 if 'sessie_lijst' not in st.session_state: st.session_state.sessie_lijst = []
 if 'huidig_item' not in st.session_state: st.session_state.huidig_item = None
-if 'huidige_vorm' not in st.session_state: st.session_state.huidige_vorm = None
+if 'huidige_vorm_data' not in st.session_state: st.session_state.huidige_vorm_data = None
 if 'feedback' not in st.session_state: st.session_state.feedback = None
 if 'fout_gemaakt' not in st.session_state: st.session_state.fout_gemaakt = False
 if 'huidige_opties' not in st.session_state: st.session_state.huidige_opties = []
@@ -106,24 +128,9 @@ def laad_volgend_woord():
     st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
     st.session_state.fout_gemaakt = False
     st.session_state.huidige_opties = [] 
-    st.session_state.huidige_vorm = None
+    st.session_state.huidige_vorm_data = None
 
-    if st.session_state.huidig_item:
-        item = st.session_state.huidig_item
-        is_mastery = int(item.get('streak', 0)) >= 5
-        extra_vormen_str = str(item.get('extra_vormen', ''))
-        
-        vormen_lijst = [item['grieks']]
-        
-        # Voeg de extra vormen toe aan de loterij indien we in mastery zitten
-        if is_mastery and geldig(extra_vormen_str):
-            extra_lijst = [v.strip() for v in extra_vormen_str.split(',') if v.strip()]
-            if extra_lijst:
-                vormen_lijst.extend(extra_lijst)
-        
-        st.session_state.huidige_vorm = random.choice(vormen_lijst)
-
-# --- SIDEBAR: LOGIN & OPSLAAN ---
+# --- SIDEBAR: LOGIN ---
 with st.sidebar:
     st.header("👤 Inloggen")
     user_input = st.text_input("Voer je voornaam in", key="user_login").strip()
@@ -178,18 +185,16 @@ else:
                 
             elif keuze == "Declinatie":
                 beschikbare_declinaties = sorted(list(set(str(i.get('declinatie', '')) for i in st.session_state.data if geldig(i.get('declinatie')))))
-                
                 if beschikbare_declinaties:
                     d = st.selectbox("Kies declinatie (bijv. 1, 2 of 3)", beschikbare_declinaties)
                     doel = [i for i in st.session_state.data if str(i.get('declinatie', '')) == d]
                 else:
-                    st.warning("Geen declinatie-data gevonden. Voeg een kolom 'declinatie' toe in Google Sheets.")
+                    st.warning("Geen declinatie-data gevonden in de dataset.")
                     doel = []
                     
             elif keuze == "Les + Woordsoort":
                 les_nr = st.number_input("Les nummer", min_value=1, value=1)
                 beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) == les_nr)))
-                
                 if beschikbare_soorten:
                     s = st.selectbox("Kies woordsoort", beschikbare_soorten)
                     doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr and i.get('woordsoort') == s]
@@ -218,7 +223,18 @@ else:
             if st.session_state.huidig_item:
                 item = st.session_state.huidig_item
                 info_weergave = item.get('grieks_info', item['grieks'])
+                
                 is_mastery = int(item.get('streak', 0)) >= 5
+                heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
+                
+                if st.session_state.huidige_vorm_data is None:
+                    if is_mastery and heeft_vormen:
+                        st.session_state.huidige_vorm_data = random.choice(item['vormen_data'])
+                    else:
+                        st.session_state.huidige_vorm_data = {"vorm": item['grieks'], "parsing": "basis"}
+
+                huidige_vorm = st.session_state.huidige_vorm_data['vorm']
+                huidige_parsing = st.session_state.huidige_vorm_data['parsing']
                 
                 if st.session_state.feedback:
                     if st.session_state.feedback["type"] == "success":
@@ -227,38 +243,49 @@ else:
                         st.error(st.session_state.feedback["msg"])
                     st.session_state.feedback = None 
 
-                st.markdown(f"<div class='grieks-woord'>{st.session_state.huidige_vorm}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                 
-                if is_mastery and st.session_state.huidige_vorm != item['grieks']:
-                    st.caption(f"🏆 Mastery uitdaging. (Basisvorm: **{item['grieks']}**)")
+                if is_mastery and heeft_vormen and huidige_vorm != item['grieks']:
+                    st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item['grieks']}**)")
 
                 if st.session_state.modus_actief == '1':
                     st.warning(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
                 if st.session_state.modus_actief in ['1', '2']:
-                    # Gebruik de volledige originele betekenis (inclusief eventuele haakjes)
-                    correct = str(item['nederlands']).strip()
+                    correct_betekenis = maak_schoon(item['nederlands'])
+                    correct_optie = f"{correct_betekenis} ({huidige_parsing})" if is_mastery and heeft_vormen else correct_betekenis
                     
                     if not st.session_state.huidige_opties:
-                        afleiders = list(set([str(i['nederlands']).strip() for i in st.session_state.data if i.get('woordsoort') == item.get('woordsoort') and str(i['nederlands']).strip() != correct]))
-                        if len(afleiders) < 3: 
-                            afleiders += [str(i['nederlands']).strip() for i in st.session_state.data if i['grieks'] != item['grieks'] and str(i['nederlands']).strip() != correct]
+                        afleiders = []
+                        if is_mastery and heeft_vormen:
+                            andere_vormen = [v['parsing'] for v in item['vormen_data'] if v['parsing'] != huidige_parsing]
+                            if andere_vormen:
+                                afleiders.append(f"{correct_betekenis} ({random.choice(andere_vormen)})")
+                            
+                            andere_betekenissen = [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
+                            if andere_betekenissen:
+                                rb = random.choice(andere_betekenissen)
+                                afleiders.append(f"{rb} ({huidige_parsing})")
+                                if andere_vormen:
+                                    afleiders.append(f"{rb} ({random.choice(andere_vormen)})")
+                        else:
+                            afleiders = [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
                         
-                        aantal = min(3, len(afleiders))
-                        opties = random.sample(afleiders, aantal) + [correct]
+                        unieke_afleiders = list(set(afleiders))
+                        random.shuffle(unieke_afleiders)
+                        opties = unieke_afleiders[:3] + [correct_optie]
                         random.shuffle(opties)
-                        st.session_state.huidige_opties = opties
+                        st.session_state.huidige_opties = list(dict.fromkeys(opties))
                     
                     cols = st.columns(2)
                     for idx, optie in enumerate(st.session_state.huidige_opties):
                         if cols[idx % 2].button(optie, key=f"btn_{idx}_{item['grieks']}"):
-                            if optie == correct:
+                            if optie == correct_optie:
                                 if not st.session_state.fout_gemaakt:
                                     item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                     item['streak'] = int(item.get('streak', 0)) + 1
                                     opslaan_naar_cloud() 
-                                
-                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{info_weergave}' betekent inderdaad '{correct}'."}
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{huidige_vorm}' betekent inderdaad '{correct_optie}'."}
                                 laad_volgend_woord()
                                 st.rerun()
                             else:
@@ -268,25 +295,35 @@ else:
                                     opslaan_naar_cloud() 
                                     st.session_state.sessie_lijst.append(item)
                                     st.session_state.fout_gemaakt = True
-                                
-                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{info_weergave}' = '{correct}'. Selecteer het juiste antwoord om door te gaan."}
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{correct_optie}'. Selecteer het juiste antwoord om door te gaan."}
                                 st.rerun() 
 
                 else:
-                    p = st.text_input("Betekenis:", key=f"input_{item['grieks']}").lower().strip()
+                    p_betekenis = st.text_input("1. Betekenis:", key=f"inp_b_{item['grieks']}").lower().strip()
+                    
+                    if is_mastery and heeft_vormen:
+                        p_vorm = st.text_input("2. Vorm (bijv. nom ev m):", key=f"inp_v_{item['grieks']}").lower().strip()
+                    else:
+                        p_vorm = huidige_parsing.lower().strip()
+                        
                     if st.button("Controleer", key=f"check_{item['grieks']}"):
                         correct_volledig = str(item['nederlands']).strip().lower()
                         correct_schoon = maak_schoon(item['nederlands'])
                         correcte_delen = [d.strip() for d in correct_volledig.split(',')]
                         
-                        # Controleert of de invoer volledig klopt, opgeschoond klopt, of overeenkomt met een van de sub-betekenissen.
-                        if p == correct_volledig or p == correct_schoon or p in correcte_delen:
+                        betekenis_goed = (p_betekenis == correct_volledig or p_betekenis == correct_schoon or p_betekenis in correcte_delen)
+                        vorm_goed = (p_vorm == huidige_parsing.lower().strip())
+                        
+                        if betekenis_goed and vorm_goed:
                             if not st.session_state.fout_gemaakt:
                                 item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                 item['streak'] = int(item.get('streak', 0)) + 1
                                 opslaan_naar_cloud()
                                 
-                            st.session_state.feedback = {"type": "success", "msg": f"✓ Correct. '{info_weergave}' = '{correct_volledig}'."}
+                            feedback_msg = f"✓ Correct. '{huidige_vorm}' = '{correct_volledig}'"
+                            if is_mastery and heeft_vormen:
+                                feedback_msg += f" ({huidige_parsing})."
+                            st.session_state.feedback = {"type": "success", "msg": feedback_msg}
                             laad_volgend_woord()
                             st.rerun()
                         else:
@@ -297,7 +334,10 @@ else:
                                 st.session_state.sessie_lijst.append(item)
                                 st.session_state.fout_gemaakt = True
                                 
-                            st.session_state.feedback = {"type": "error", "msg": f"✗ Onjuist. Typ het volgende over: {correct_volledig} (Informatie: {info_weergave})"}
+                            fout_bericht = f"✗ Onjuist. Betekenis: '{correct_volledig}'"
+                            if is_mastery and heeft_vormen:
+                                fout_bericht += f" | Vorm: '{huidige_parsing}'"
+                            st.session_state.feedback = {"type": "error", "msg": fout_bericht}
                             st.rerun()
 
                 st.write(f"---")
