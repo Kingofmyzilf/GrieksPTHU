@@ -937,7 +937,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἡμέρα, -ας, ἡ"
+    "grieks_info": "ἡμέρα, -ας, ἡ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "ἡμέρα",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "ἡμέρας",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "ἡμέρᾳ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "ἡμέραν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "ἡμέραι",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "ἡμερῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "ἡμέραις",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "ἡμέρας",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 2,
@@ -952,7 +987,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πνεῦμα, -τος, τό"
+    "grieks_info": "πνεῦμα, -τος, τό",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "πνεῦμα",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "πνεύματος",
+        "parsing": "gen ev o"
+      },
+      {
+        "vorm": "πνεύματι",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "πνεῦμα",
+        "parsing": "acc ev o"
+      },
+      {
+        "vorm": "πνεύματα",
+        "parsing": "nom mv o"
+      },
+      {
+        "vorm": "πνευμάτων",
+        "parsing": "gen mv o"
+      },
+      {
+        "vorm": "πνεύμασι",
+        "parsing": "dat mv o"
+      },
+      {
+        "vorm": "πνεύματα",
+        "parsing": "acc mv o"
+      }
+    ]
   },
   {
     "les": 2,
@@ -967,7 +1037,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "υἱός, -οῦ, ὁ"
+    "grieks_info": "υἱός, -οῦ, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "υἱός",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "υἱοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "υἱῷ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "υἱόν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "υἱοί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "υἱῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "υἱοῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "υἱούς",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 2,
@@ -982,7 +1087,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀδελφός, -οῦ, ὁ"
+    "grieks_info": "ἀδελφός, -οῦ, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "ἀδελφός",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "ἀδελφοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "ἀδελφῷ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "ἀδελφόν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "ἀδελφοί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "ἀδελφῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "ἀδελφοῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "ἀδελφούς",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1045,30 +1185,54 @@
     "grieks_info": "περί"
   },
   {
- "les": 1,
-  "woordsoort": "znw",
-  "grieks": "λόγος",
-  "fonetisch": "logos",
-  "nederlands": "woord, (toe)spraak, rede(n), verslag",
-  "anker": "📖",
-  "beeld": "Een geopend boek met diepgaande redeneringen en rationele structuur (logica).",
-  "herhaal_nodig": false,
-  "frequentie_nt": 331,
-  "score_goed": 0,
-  "score_fout": 0,
-  "streak": 5,
-  "grieks_info": "λόγος, -ου, ὁ",
-  "declinatie": "2",
-  "vormen_data": [
-    { "vorm": "λόγος", "parsing": "nom ev m" },
-    { "vorm": "λόγου", "parsing": "gen ev m" },
-    { "vorm": "λόγῳ", "parsing": "dat ev m" },
-    { "vorm": "λόγον", "parsing": "acc ev m" },
-    { "vorm": "λόγοι", "parsing": "nom mv m" },
-    { "vorm": "λόγων", "parsing": "gen mv m" },
-    { "vorm": "λόγοις", "parsing": "dat mv m" },
-    { "vorm": "λόγους", "parsing": "acc mv m" }
-  ]
+    "les": 1,
+    "woordsoort": "znw",
+    "grieks": "λόγος",
+    "fonetisch": "logos",
+    "nederlands": "woord, (toe)spraak, rede(n), verslag",
+    "anker": "📖",
+    "beeld": "Een geopend boek met diepgaande redeneringen en rationele structuur (logica).",
+    "herhaal_nodig": false,
+    "frequentie_nt": 331,
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0,
+    "grieks_info": "λόγος, -ου, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "λόγος",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "λόγου",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "λόγῳ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "λόγον",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "λόγοι",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "λόγων",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "λόγοις",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "λόγους",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1128,7 +1292,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐρανός, -οῦ, ὁ"
+    "grieks_info": "οὐρανός, -οῦ, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "οὐρανός",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "οὐρανοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "οὐρανῷ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "οὐρανόν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "οὐρανοί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "οὐρανῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "οὐρανοῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "οὐρανούς",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1143,7 +1342,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μαθητής, -οῦ, ὁ"
+    "grieks_info": "μαθητής, -οῦ, ὁ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "μαθητής",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "μαθητοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "μαθητῇ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "μαθητήν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "μαθηταί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "μαθητῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "μαθηταῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "μαθητάς",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1173,7 +1407,26 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γῆ, γῆς, ἡ"
+    "grieks_info": "γῆ, γῆς, ἡ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "γῆ",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "γῆς",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "γῇ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "γῆν",
+        "parsing": "acc ev v"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1218,7 +1471,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πίστις, -εως, ἡ"
+    "grieks_info": "πίστις, -εως, ἡ",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "πίστις",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "πίστεως",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "πίστει",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "πίστιν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "πίστεις",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "πίστεων",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "πίστεσι",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "πίστεις",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1293,7 +1581,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὄνομα, -τος, τό"
+    "grieks_info": "ὄνομα, -τος, τό",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "ὄνομα",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "ὀνόματος",
+        "parsing": "gen ev o"
+      },
+      {
+        "vorm": "ὀνόματι",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "ὄνομα",
+        "parsing": "acc ev o"
+      },
+      {
+        "vorm": "ὀνόματα",
+        "parsing": "nom mv o"
+      },
+      {
+        "vorm": "ὀνομάτων",
+        "parsing": "gen mv o"
+      },
+      {
+        "vorm": "ὀνόμασι",
+        "parsing": "dat mv o"
+      },
+      {
+        "vorm": "ὀνόματα",
+        "parsing": "acc mv o"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1353,7 +1676,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνήρ, ἀνδρός, ὁ"
+    "grieks_info": "ἀνήρ, ἀνδρός, ὁ",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "ἀνήρ",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "ἀνδρός",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "ἀνδρί",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "ἄνδρα",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "ἄνδρες",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "ἀνδρῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "ἀνδράσι",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "ἄνδρας",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1368,7 +1726,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γυνή, -αικός, ἡ"
+    "grieks_info": "γυνή, -αικός, ἡ",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "γυνή",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "γυναικός",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "γυναικί",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "γυναῖκα",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "γυναῖκες",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "γυναικῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "γυναιξί",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "γυναῖκας",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1473,7 +1866,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νόμος, -ου, ὁ"
+    "grieks_info": "νόμος, -ου, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "νόμος",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "νόμου",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "νόμῳ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "νόμον",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "νόμοι",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "νόμων",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "νόμοις",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "νόμους",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 1,
@@ -1668,7 +2096,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δόξα, -ης, ἡ"
+    "grieks_info": "δόξα, -ης, ἡ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "δόξα",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "δόξης",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "δόξῃ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "δόξαν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "δόξαι",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "δοξῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "δόξαις",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "δόξας",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 2,
@@ -1788,7 +2251,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χάρις, -ιτος, ἡ"
+    "grieks_info": "χάρις, -ιτος, ἡ",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "χάρις",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "χάριτος",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "χάριτι",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "χάριν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "χάριτες",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "χαρίτων",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "χάρισι",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "χάριτας",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 3,
@@ -1908,7 +2406,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σάρξ, σαρκός, ἡ"
+    "grieks_info": "σάρξ, σαρκός, ἡ",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "σάρξ",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "σαρκός",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "σαρκί",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "σάρκα",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "σάρκες",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "σαρκῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "σαρξί",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "σάρκας",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 3,
@@ -2103,7 +2636,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ζωή, -ής, ἡ"
+    "grieks_info": "ζωή, -ής, ἡ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "ζωή",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "ζωῆς",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "ζωῇ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "ζωήν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "ζωαί",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "ζωῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "ζωαῖς",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "ζωάς",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 3,
@@ -2523,7 +3091,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀλήθεια, -ας, ἡ"
+    "grieks_info": "ἀλήθεια, -ας, ἡ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "ἀλήθεια",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "ἀληθείας",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "ἀληθείᾳ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "ἀλήθειαν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "ἀλήθειαι",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "ἀληθειῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "ἀληθείαις",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "ἀληθείας",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 3,
@@ -3663,7 +4266,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φῶς, φωτός, τό"
+    "grieks_info": "φῶς, φωτός, τό",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "φῶς",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "φωτός",
+        "parsing": "gen ev o"
+      },
+      {
+        "vorm": "φωτί",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "φῶς",
+        "parsing": "acc ev o"
+      },
+      {
+        "vorm": "φῶτα",
+        "parsing": "nom mv o"
+      },
+      {
+        "vorm": "φώτων",
+        "parsing": "gen mv o"
+      },
+      {
+        "vorm": "φωσί",
+        "parsing": "dat mv o"
+      },
+      {
+        "vorm": "φῶτα",
+        "parsing": "acc mv o"
+      }
+    ]
   },
   {
     "les": 5,
@@ -4353,7 +4991,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀρχή, -ῆς, ἡ"
+    "grieks_info": "ἀρχή, -ῆς, ἡ",
+    "declinatie": "1",
+    "vormen_data": [
+      {
+        "vorm": "ἀρχή",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "ἀρχῆς",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "ἀρχῇ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "ἀρχήν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "ἀρχαί",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "ἀρχῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "ἀρχαῖς",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "ἀρχάς",
+        "parsing": "acc mv v"
+      }
+    ]
   },
   {
     "les": 2,
