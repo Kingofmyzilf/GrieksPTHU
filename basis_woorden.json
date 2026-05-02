@@ -252,7 +252,42 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "θεός, -οῦ, ὁ"
+    "grieks_info": "θεός, -οῦ, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "θεός",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "θεοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "θεῷ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "θεόν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "θεοί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "θεῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "θεοῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "θεούς",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 1,
@@ -267,7 +302,98 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "πᾶς, πᾶσα, πᾶν"
+    "grieks_info": "πᾶς, πᾶσα, πᾶν",
+    "declinatie": "3/1",
+    "vormen_data": [
+      {
+        "vorm": "πᾶς",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "παντός",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "παντί",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "πάντα",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "πάντες",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "πάντων",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "πᾶσι",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "πάντας",
+        "parsing": "acc mv m"
+      },
+      {
+        "vorm": "πᾶσα",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "πάσης",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "πάσῃ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "πᾶσαν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "πᾶσαι",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "πασῶν",
+        "parsing": "gen mv v"
+      },
+      {
+        "vorm": "πάσαις",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "πάσας",
+        "parsing": "acc mv v"
+      },
+      {
+        "vorm": "πᾶν",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "παντός",
+        "parsing": "gen ev o"
+      },
+      {
+        "vorm": "παντί",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "πάντα",
+        "parsing": "nom mv o"
+      },
+      {
+        "vorm": "πάντων",
+        "parsing": "gen mv o"
+      },
+      {
+        "vorm": "πᾶσι",
+        "parsing": "dat mv o"
+      }
+    ]
   },
   {
     "les": 1,
@@ -312,7 +438,26 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "Ἰησοῦς, -οῦ, ὁ"
+    "grieks_info": "Ἰησοῦς, -οῦ, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "Ἰησοῦς",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "Ἰησοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "Ἰησοῦ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "Ἰησοῦν",
+        "parsing": "acc ev m"
+      }
+    ]
   },
   {
     "les": 1,
@@ -357,7 +502,42 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "κύριος, -ου, ὁ"
+    "grieks_info": "κύριος, -ου, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "κύριος",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "κυρίου",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "κυρίῳ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "κύριον",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "κύριοι",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "κυρίων",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "κυρίοις",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "κυρίους",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 1,
@@ -522,7 +702,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄνθρωπος, -ου, ὁ"
+    "grieks_info": "ἄνθρωπος, -ου, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "ἄνθρωπος",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "ἀνθρώπου",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "ἀνθρώπῳ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "ἄνθρωπον",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "ἄνθρωποι",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "ἀνθρώπων",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "ἀνθρώποις",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "ἀνθρώπους",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 1,
@@ -552,7 +767,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "Χριστός, -οῦ, ὁ"
+    "grieks_info": "Χριστός, -οῦ, ὁ",
+    "declinatie": "2",
+    "vormen_data": [
+      {
+        "vorm": "Χριστός",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "Χριστοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "Χριστῷ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "Χριστόν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "Χριστοί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "Χριστῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "Χριστοῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "Χριστούς",
+        "parsing": "acc mv m"
+      }
+    ]
   },
   {
     "les": 1,
