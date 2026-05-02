@@ -56,6 +56,7 @@ def laad_gebruiker_data(naam):
                 new_data = []
                 for b in basis:
                     b['gebruikersnaam'] = naam
+                    # Verpak complexe data veilig in string-formaat voor de spreadsheet
                     if 'vormen_data' in b and isinstance(b['vormen_data'], list):
                         b['vormen_data'] = json.dumps(b['vormen_data'], ensure_ascii=False)
                     new_data.append(b)
@@ -63,6 +64,7 @@ def laad_gebruiker_data(naam):
                 updated_df = pd.concat([df, pd.DataFrame(new_data)], ignore_index=True)
                 conn.update(data=updated_df)
                 
+                # Uitpakken voor direct gebruik
                 for b in new_data:
                     if 'vormen_data' in b and isinstance(b['vormen_data'], str):
                         try:
@@ -71,9 +73,10 @@ def laad_gebruiker_data(naam):
                             b['vormen_data'] = []
                 return new_data
         else:
-            st.error("basis_woorden.json ontbreekt.")
+            st.error("basis_woorden.json ontbreekt. Kan geen nieuw profiel aanmaken.")
             return None
             
+    # Data netjes uitpakken nadat het uit Google Sheets komt
     user_records = user_df.to_dict('records')
     for r in user_records:
         if 'vormen_data' in r and geldig(r['vormen_data']):
@@ -98,6 +101,7 @@ def opslaan_naar_cloud(toon_melding=False):
             
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
         
+        # Verpak de complexe data weer veilig in vóór we opslaan
         huidige_data_kopie = []
         for item in st.session_state.data:
             k = item.copy()
@@ -110,9 +114,9 @@ def opslaan_naar_cloud(toon_melding=False):
         
         conn.update(data=nieuwe_df)
         if toon_melding:
-            st.toast("☁️ Voortgang opgeslagen in de cloud!", icon="✅")
+            st.toast("☁️ Voortgang veilig opgeslagen in de cloud!", icon="✅")
     except Exception as e:
-        st.toast("Verbinding haperde: resultaat wordt bewaard en straks opgeslagen.", icon="⚠️")
+        st.toast("Verbinding haperde: resultaat zit in werkgeheugen en wordt straks opgeslagen.", icon="⚠️")
 
 # --- SESSION STATE ---
 if 'data' not in st.session_state: st.session_state.data = None
@@ -130,7 +134,7 @@ def laad_volgend_woord():
     st.session_state.huidige_opties = [] 
     st.session_state.huidige_vorm_data = None
 
-# --- SIDEBAR: LOGIN ---
+# --- SIDEBAR: LOGIN & OPSLAAN ---
 with st.sidebar:
     st.header("👤 Inloggen")
     user_input = st.text_input("Voer je voornaam in", key="user_login").strip()
@@ -189,7 +193,7 @@ else:
                     d = st.selectbox("Kies declinatie (bijv. 1, 2 of 3)", beschikbare_declinaties)
                     doel = [i for i in st.session_state.data if str(i.get('declinatie', '')) == d]
                 else:
-                    st.warning("Geen declinatie-data gevonden in de dataset.")
+                    st.warning("Geen declinatie-data gevonden.")
                     doel = []
                     
             elif keuze == "Les + Woordsoort":
@@ -233,8 +237,8 @@ else:
                     else:
                         st.session_state.huidige_vorm_data = {"vorm": item['grieks'], "parsing": "basis"}
 
-                huidige_vorm = st.session_state.huidige_vorm_data['vorm']
-                huidige_parsing = st.session_state.huidige_vorm_data['parsing']
+                huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item['grieks']))
+                huidige_parsing = str(st.session_state.huidige_vorm_data.get('parsing', 'basis'))
                 
                 if st.session_state.feedback:
                     if st.session_state.feedback["type"] == "success":
@@ -251,31 +255,43 @@ else:
                 if st.session_state.modus_actief == '1':
                     st.warning(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
+                # --- MEERKEUZE MODUS ---
                 if st.session_state.modus_actief in ['1', '2']:
-                    correct_betekenis = maak_schoon(item['nederlands'])
-                    correct_optie = f"{correct_betekenis} ({huidige_parsing})" if is_mastery and heeft_vormen else correct_betekenis
+                    correct_betekenis = str(maak_schoon(item['nederlands']))
+                    correct_optie = f"{correct_betekenis} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_betekenis
                     
                     if not st.session_state.huidige_opties:
                         afleiders = []
-                        if is_mastery and heeft_vormen:
-                            andere_vormen = [v['parsing'] for v in item['vormen_data'] if v['parsing'] != huidige_parsing]
-                            if andere_vormen:
-                                afleiders.append(f"{correct_betekenis} ({random.choice(andere_vormen)})")
-                            
-                            andere_betekenissen = [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
-                            if andere_betekenissen:
-                                rb = random.choice(andere_betekenissen)
-                                afleiders.append(f"{rb} ({huidige_parsing})")
-                                if andere_vormen:
-                                    afleiders.append(f"{rb} ({random.choice(andere_vormen)})")
-                        else:
-                            afleiders = [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
+                        alle_andere_betekenissen = [str(maak_schoon(i.get('nederlands', ''))) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
                         
-                        unieke_afleiders = list(set(afleiders))
+                        if is_mastery and heeft_vormen:
+                            andere_parsings = [str(v.get('parsing', '')) for v in item['vormen_data'] if str(v.get('parsing', '')) != str(huidige_parsing)]
+                            
+                            # Mix 1: Zelfde betekenis, foute vorm
+                            if andere_parsings:
+                                afleiders.append(f"{correct_betekenis} ({random.choice(andere_parsings)})")
+                            
+                            # Mix 2 & 3: Foute betekenis met huidige of foute vorm
+                            if alle_andere_betekenissen:
+                                rb1 = random.choice(alle_andere_betekenissen)
+                                afleiders.append(f"{rb1} ({huidige_parsing})")
+                                if andere_parsings:
+                                    rb2 = random.choice(alle_andere_betekenissen)
+                                    afleiders.append(f"{rb2} ({random.choice(andere_parsings)})")
+                        else:
+                            # Regulier woord, pak andere betekenissen
+                            afleiders = alle_andere_betekenissen
+                        
+                        # KOGELVRIJE CHECK: Zorg dat alles 100% string is en niet leeg is
+                        veilige_afleiders = [str(a) for a in afleiders if a]
+                        unieke_afleiders = list(set(veilige_afleiders))
+                        
                         random.shuffle(unieke_afleiders)
                         opties = unieke_afleiders[:3] + [correct_optie]
-                        random.shuffle(opties)
+                        
+                        # Zorg voor unieke knoppen met behoud van correcte antwoord
                         st.session_state.huidige_opties = list(dict.fromkeys(opties))
+                        random.shuffle(st.session_state.huidige_opties)
                     
                     cols = st.columns(2)
                     for idx, optie in enumerate(st.session_state.huidige_opties):
@@ -295,9 +311,10 @@ else:
                                     opslaan_naar_cloud() 
                                     st.session_state.sessie_lijst.append(item)
                                     st.session_state.fout_gemaakt = True
-                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{correct_optie}'. Selecteer het juiste antwoord om door te gaan."}
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{correct_optie}'."}
                                 st.rerun() 
 
+                # --- TYPEN MODUS ---
                 else:
                     p_betekenis = st.text_input("1. Betekenis:", key=f"inp_b_{item['grieks']}").lower().strip()
                     
