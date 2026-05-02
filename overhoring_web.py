@@ -267,24 +267,17 @@ else:
                     
                     if not st.session_state.huidige_opties:
                         afleiders = []
-                        alle_andere_betekenissen = [str(maak_schoon(i.get('nederlands', ''))) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
                         
                         if is_mastery and heeft_vormen:
+                            # VORMLEER ISOLATIE: Alleen de juiste betekenis, maar met foute parsings
                             andere_parsings = [str(v.get('parsing', '')) for v in item['vormen_data'] if str(v.get('parsing', '')) != str(huidige_parsing)]
-                            
-                            # Mix 1: Zelfde betekenis, foute vorm
                             if andere_parsings:
-                                afleiders.append(f"{correct_betekenis} ({random.choice(andere_parsings)})")
-                            
-                            # Mix 2 & 3: Foute betekenis met huidige of foute vorm
-                            if alle_andere_betekenissen:
-                                rb1 = random.choice(alle_andere_betekenissen)
-                                afleiders.append(f"{rb1} ({huidige_parsing})")
-                                if andere_parsings:
-                                    rb2 = random.choice(alle_andere_betekenissen)
-                                    afleiders.append(f"{rb2} ({random.choice(andere_parsings)})")
+                                gekozen_foute_parsings = random.sample(andere_parsings, min(3, len(andere_parsings)))
+                                for foute_parsing in gekozen_foute_parsings:
+                                    afleiders.append(f"{correct_betekenis} ({foute_parsing})")
                         else:
-                            # Regulier woord, pak andere betekenissen
+                            # Reguliere woordenschat: pak betekenissen van andere woorden
+                            alle_andere_betekenissen = [str(maak_schoon(i.get('nederlands', ''))) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
                             afleiders = alle_andere_betekenissen
                         
                         veilige_afleiders = [str(a) for a in afleiders if a]
@@ -304,7 +297,7 @@ else:
                                     item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                     item['streak'] = int(item.get('streak', 0)) + 1
                                     opslaan_naar_cloud() 
-                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{huidige_vorm}' betekent inderdaad '{correct_optie}'."}
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{huidige_vorm}' is inderdaad '{correct_optie}'."}
                                 laad_volgend_woord()
                                 st.rerun()
                             else:
