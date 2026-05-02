@@ -99,18 +99,34 @@ else:
         with col1:
             st.subheader("Instellingen")
             modus = st.radio("Kies Modus:", ["1. Leer (Hulp + MC)", "2. Leer (MC)", "3. Overhoor (Typen)"])
-            keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Mastery (<5 streak)"])
+            keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Les + Woordsoort", "Mastery (<5 streak)"])
             
             doel = st.session_state.data
             if keuze == "Lessen":
                 les_nr = st.number_input("Les nummer", min_value=1, value=1)
-                doel = [i for i in st.session_state.data if i['les'] == les_nr]
+                doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr]
+                
             elif keuze == "Woordsoort":
                 soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data)))
                 s = st.selectbox("Kies soort", soorten)
                 doel = [i for i in st.session_state.data if i.get('woordsoort') == s]
+                
+            elif keuze == "Les + Woordsoort":
+                # Stap 1: Kies de les
+                les_nr = st.number_input("Les nummer", min_value=1, value=1)
+                
+                # Stap 2: Bepaal welke woordsoorten er in deze specifieke les zitten
+                beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) == les_nr)))
+                
+                if beschikbare_soorten:
+                    s = st.selectbox("Kies woordsoort", beschikbare_soorten)
+                    doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr and i.get('woordsoort') == s]
+                else:
+                    st.warning("Geen woorden gevonden in deze les.")
+                    doel = []
+                    
             elif keuze == "Mastery (<5 streak)":
-                doel = [i for i in st.session_state.data if i['streak'] < 5]
+                doel = [i for i in st.session_state.data if i.get('streak', 0) < 5]
 
             if st.button("Start Sessie"):
                 doel.sort(key=bereken_gewicht, reverse=True)
