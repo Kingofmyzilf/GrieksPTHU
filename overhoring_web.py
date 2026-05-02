@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import os
 
 # --- CONFIGURATIE ---
-# Dit moet altijd het eerste Streamlit commando zijn!
 st.set_page_config(page_title="Gemini Grieks Tutor", layout="wide")
 
 # Custom CSS voor mobiele optimalisatie
@@ -28,7 +27,6 @@ def maak_schoon(tekst):
     return schoon.replace(';', ',').split(',')[0].strip().lower()
 
 def bereken_gewicht(item):
-    """Urgentie op basis van NT-frequentie en foutenlast."""
     gewicht = 1.0
     freq = item.get('frequentie_nt', 0)
     if freq > 0:
@@ -51,22 +49,17 @@ if 'feedback' not in st.session_state:
 # --- SIDEBAR: DATA BEHEER ---
 with st.sidebar:
     st.header("📂 Jouw Voortgang")
-    # Aangepast type voor betere mobiele ondersteuning
     uploaded_file = st.file_uploader("Upload jouw opgeslagen JSON", type=["json", "txt", ""])
     
-    # 1. Als iemand een bestand uploadt:
     if uploaded_file is not None:
         st.session_state.data = json.load(uploaded_file)
         st.success("Jouw voortgang is geladen!")
-
-    # 2. Als er GEEN bestand is, laad dan de schone basislijst van GitHub:
     elif st.session_state.data is None:
         if os.path.exists("basis_woorden.json"):
             with open("basis_woorden.json", "r", encoding="utf-8") as f:
                 st.session_state.data = json.load(f)
             st.info("Nieuwe sessie gestart met basiswoorden!")
 
-    # 3. De download knop
     if st.session_state.data:
         json_data = json.dumps(st.session_state.data, indent=2)
         st.download_button(
@@ -96,7 +89,6 @@ else:
         with col1:
             st.subheader("Instellingen")
             modus = st.radio("Kies Modus:", ["1. Leer (Hulp + MC)", "2. Leer (MC)", "3. Overhoor (Typen)"])
-            
             keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Mastery (<5 streak)"])
             
             doel = st.session_state.data
@@ -115,7 +107,7 @@ else:
                 gem_streak = sum(i['streak'] for i in doel) / len(doel) if doel else 0
                 chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
                 st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
-                st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0)
+                st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
                 st.session_state.feedback = None
                 st.session_state.modus_actief = modus[0]
                 st.rerun()
@@ -123,6 +115,16 @@ else:
         with col2:
             if st.session_state.huidig_item:
                 item = st.session_state.huidig_item
+                
+                # --- FEEDBACK VAN DE VORIGE VRAAG TONEN ---
+                if st.session_state.feedback:
+                    if st.session_state.feedback["type"] == "success":
+                        st.success(st.session_state.feedback["msg"])
+                    else:
+                        st.error(st.session_state.feedback["msg"])
+                    # Zorg dat het maar 1 keer getoond wordt
+                    st.session_state.feedback = None 
+
                 st.markdown(f"<div class='grieks-woord'>{item['grieks']}</div>", unsafe_allow_html=True)
                 
                 if st.session_state.modus_actief == '1':
@@ -138,35 +140,40 @@ else:
                     
                     cols = st.columns(2)
                     for idx, optie in enumerate(opties):
-                        if cols[idx % 2].button(optie, key=f"btn_{optie}"):
+                        # Unieke key toegevoegd om fouten te voorkomen
+                        if cols[idx % 2].button(optie, key=f"btn_{idx}_{item['grieks']}"):
                             if optie == correct:
                                 item['score_goed'] += 1
                                 item['streak'] += 1
-                                st.success("✓ Goed!")
-                                st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
-                                st.rerun()
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! '{item['grieks']}' betekent inderdaad '{correct}'"}
                             else:
                                 item['score_fout'] += 1
                                 item['streak'] = 0
-                                st.error(f"✗ Fout. Het was: {item['nederlands']}")
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. '{item['grieks']}' betekent: {item['nederlands']}"}
                                 st.session_state.sessie_lijst.append(item)
+                            
+                            # Laad volgende woord in en ververs scherm
+                            st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
+                            st.rerun()
 
                 # OVERHOOR (Modus 3)
                 else:
-                    p = st.text_input("Betekenis:", key="overhoor_input").lower()
-                    if st.button("Check"):
+                    # Unieke key zodat het veld leeg is bij een nieuw woord
+                    p = st.text_input("Betekenis:", key=f"input_{item['grieks']}").lower()
+                    if st.button("Check", key=f"check_{item['grieks']}"):
                         correct_schoon = maak_schoon(item['nederlands'])
                         if p == correct_schoon or p in item['nederlands'].lower():
                             item['score_goed'] += 1
                             item['streak'] += 1
-                            st.success("✓ Correct!")
-                            st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
-                            st.rerun()
+                            st.session_state.feedback = {"type": "success", "msg": f"✓ Correct! '{item['grieks']}' = '{correct_schoon}'"}
                         else:
                             item['score_fout'] += 1
                             item['streak'] = 0
-                            st.error(f"✗ Het was: {item['nederlands']}")
+                            st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. '{item['grieks']}' = {item['nederlands']}"}
                             st.session_state.sessie_lijst.append(item)
+                        
+                        st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
+                        st.rerun()
 
                 st.write(f"---")
                 st.caption(f"Stats: NT-freq: {item['frequentie_nt']} | Streak: {item['streak']} | G/F: {item['score_goed']}/{item['score_fout']}")
