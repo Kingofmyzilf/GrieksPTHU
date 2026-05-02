@@ -795,19 +795,30 @@
     "grieks_info": "περί"
   },
   {
-    "les": 1,
-    "woordsoort": "znw",
-    "grieks": "λόγος",
-    "fonetisch": "logos",
-    "nederlands": "woord, (toe)spraak, rede(n), verslag",
-    "anker": "📖",
-    "beeld": "Een geopend boek met diepgaande redeneringen en rationele structuur (logica).",
-    "herhaal_nodig": false,
-    "frequentie_nt": 331,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0,
-    "grieks_info": "λόγος, -ου, ὁ"
+ "les": 1,
+  "woordsoort": "znw",
+  "grieks": "λόγος",
+  "fonetisch": "logos",
+  "nederlands": "woord, (toe)spraak, rede(n), verslag",
+  "anker": "📖",
+  "beeld": "Een geopend boek met diepgaande redeneringen en rationele structuur (logica).",
+  "herhaal_nodig": false,
+  "frequentie_nt": 331,
+  "score_goed": 0,
+  "score_fout": 0,
+  "streak": 5,
+  "grieks_info": "λόγος, -ου, ὁ",
+  "declinatie": "2",
+  "vormen_data": [
+    { "vorm": "λόγος", "parsing": "nom ev m" },
+    { "vorm": "λόγου", "parsing": "gen ev m" },
+    { "vorm": "λόγῳ", "parsing": "dat ev m" },
+    { "vorm": "λόγον", "parsing": "acc ev m" },
+    { "vorm": "λόγοι", "parsing": "nom mv m" },
+    { "vorm": "λόγων", "parsing": "gen mv m" },
+    { "vorm": "λόγοις", "parsing": "dat mv m" },
+    { "vorm": "λόγους", "parsing": "acc mv m" }
+  ]
   },
   {
     "les": 2,
