@@ -157,7 +157,7 @@ else:
         with col1:
             st.subheader("Instellingen")
             modus = st.radio("Kies Modus:", ["1. Leer (Hulp + MC)", "2. Leer (MC)", "3. Overhoor (Typen)"])
-            kkeuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Declinatie", "Les + Woordsoort", "Mastery (<5 streak)"])
+            keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Declinatie", "Les + Woordsoort", "Mastery (<5 streak)"])
             
             doel = st.session_state.data
             if keuze == "Lessen":
@@ -170,7 +170,6 @@ else:
                 doel = [i for i in st.session_state.data if i.get('woordsoort') == s]
                 
             elif keuze == "Declinatie":
-                # Filter alleen de woorden die daadwerkelijk een declinatie-waarde hebben gekregen in de Sheet
                 beschikbare_declinaties = sorted(list(set(str(i.get('declinatie', '')) for i in st.session_state.data if str(i.get('declinatie', '')).strip() != '')))
                 
                 if beschikbare_declinaties:
@@ -181,7 +180,15 @@ else:
                     doel = []
                     
             elif keuze == "Les + Woordsoort":
-                # ... (De rest van de bestaande logica blijft hier staan)
+                les_nr = st.number_input("Les nummer", min_value=1, value=1)
+                beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) == les_nr)))
+                
+                if beschikbare_soorten:
+                    s = st.selectbox("Kies woordsoort", beschikbare_soorten)
+                    doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr and i.get('woordsoort') == s]
+                else:
+                    st.warning("Geen woorden gevonden in deze les.")
+                    doel = []
                     
             elif keuze == "Mastery (<5 streak)":
                 doel = [i for i in st.session_state.data if int(i.get('streak', 0)) < 5]
