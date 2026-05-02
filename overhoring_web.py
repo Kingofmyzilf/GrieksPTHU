@@ -127,6 +127,7 @@ if 'feedback' not in st.session_state: st.session_state.feedback = None
 if 'fout_gemaakt' not in st.session_state: st.session_state.fout_gemaakt = False
 if 'huidige_opties' not in st.session_state: st.session_state.huidige_opties = []
 if 'last_user' not in st.session_state: st.session_state.last_user = None
+if 'actieve_keuze' not in st.session_state: st.session_state.actieve_keuze = None
 
 def laad_volgend_woord():
     st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
@@ -159,6 +160,7 @@ with st.sidebar:
             st.session_state.last_user = None
             st.session_state.sessie_lijst = []
             st.session_state.huidig_item = None
+            st.session_state.actieve_keuze = None
             st.rerun()
 
 # --- HOOFDMENU ---
@@ -216,6 +218,8 @@ else:
                     chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
                     st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
                     
+                    st.session_state.actieve_keuze = keuze # Bewaar de gekozen oefenvorm
+                    
                     laad_volgend_woord() 
                     st.session_state.feedback = None
                     st.session_state.modus_actief = modus[0]
@@ -228,7 +232,8 @@ else:
                 item = st.session_state.huidig_item
                 info_weergave = item.get('grieks_info', item['grieks'])
                 
-                is_mastery = int(item.get('streak', 0)) >= 5
+                # Bepaal of we met de verbuigingen oefenen (Streak >= 5 óf expliciet gekozen)
+                is_mastery = int(item.get('streak', 0)) >= 5 or st.session_state.get('actieve_keuze') == "Declinatie"
                 heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                 
                 if st.session_state.huidige_vorm_data is None:
@@ -250,7 +255,7 @@ else:
                 st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                 
                 if is_mastery and heeft_vormen and huidige_vorm != item['grieks']:
-                    st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item['grieks']}**)")
+                    st.caption(f"🏆 Vormleer Modus. (Basiswoord: **{item['grieks']}**)")
 
                 if st.session_state.modus_actief == '1':
                     st.warning(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
@@ -282,14 +287,12 @@ else:
                             # Regulier woord, pak andere betekenissen
                             afleiders = alle_andere_betekenissen
                         
-                        # KOGELVRIJE CHECK: Zorg dat alles 100% string is en niet leeg is
                         veilige_afleiders = [str(a) for a in afleiders if a]
                         unieke_afleiders = list(set(veilige_afleiders))
                         
                         random.shuffle(unieke_afleiders)
                         opties = unieke_afleiders[:3] + [correct_optie]
                         
-                        # Zorg voor unieke knoppen met behoud van correcte antwoord
                         st.session_state.huidige_opties = list(dict.fromkeys(opties))
                         random.shuffle(st.session_state.huidige_opties)
                     
@@ -307,7 +310,11 @@ else:
                             else:
                                 if not st.session_state.fout_gemaakt:
                                     item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                    item['streak'] = 0
+                                    
+                                    # STREAK BESCHERMING: Verliest streak alléén als het basis-vocabulaire is
+                                    if not (is_mastery and heeft_vormen):
+                                        item['streak'] = 0
+                                        
                                     opslaan_naar_cloud() 
                                     st.session_state.sessie_lijst.append(item)
                                     st.session_state.fout_gemaakt = True
@@ -346,7 +353,11 @@ else:
                         else:
                             if not st.session_state.fout_gemaakt:
                                 item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                item['streak'] = 0
+                                
+                                # STREAK BESCHERMING: Verliest streak alléén als het basis-vocabulaire is
+                                if not (is_mastery and heeft_vormen):
+                                    item['streak'] = 0
+                                    
                                 opslaan_naar_cloud()
                                 st.session_state.sessie_lijst.append(item)
                                 st.session_state.fout_gemaakt = True
