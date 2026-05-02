@@ -45,6 +45,16 @@ if 'huidig_item' not in st.session_state:
     st.session_state.huidig_item = None
 if 'feedback' not in st.session_state:
     st.session_state.feedback = None
+if 'fout_gemaakt' not in st.session_state:
+    st.session_state.fout_gemaakt = False
+if 'huidige_opties' not in st.session_state:
+    st.session_state.huidige_opties = []
+
+# --- FUNCTIE: VOLGENDE WOORD INLADEN ---
+def laad_volgend_woord():
+    st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
+    st.session_state.fout_gemaakt = False
+    st.session_state.huidige_opties = [] # Reset de opties voor het nieuwe woord
 
 # --- SIDEBAR: DATA BEHEER ---
 with st.sidebar:
@@ -107,7 +117,8 @@ else:
                 gem_streak = sum(i['streak'] for i in doel) / len(doel) if doel else 0
                 chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
                 st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
-                st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
+                
+                laad_volgend_woord() # Laad het eerste woord netjes in
                 st.session_state.feedback = None
                 st.session_state.modus_actief = modus[0]
                 st.rerun()
@@ -116,14 +127,14 @@ else:
             if st.session_state.huidig_item:
                 item = st.session_state.huidig_item
                 
-                # --- FEEDBACK VAN DE VORIGE VRAAG TONEN ---
+                # --- FEEDBACK TONEN ---
                 if st.session_state.feedback:
                     if st.session_state.feedback["type"] == "success":
                         st.success(st.session_state.feedback["msg"])
+                        st.session_state.feedback = None 
                     else:
                         st.error(st.session_state.feedback["msg"])
-                    # Zorg dat het maar 1 keer getoond wordt
-                    st.session_state.feedback = None 
+                        st.session_state.feedback = None 
 
                 st.markdown(f"<div class='grieks-woord'>{item['grieks']}</div>", unsafe_allow_html=True)
                 
@@ -133,47 +144,58 @@ else:
                 # MEERKEUZE (Modus 1 & 2)
                 if st.session_state.modus_actief in ['1', '2']:
                     correct = maak_schoon(item['nederlands'])
-                    afleiders = list(set([maak_schoon(i['nederlands']) for i in st.session_state.data if i['woordsoort'] == item['woordsoort'] and maak_schoon(i['nederlands']) != correct]))
-                    if len(afleiders) < 3: afleiders += [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
-                    opties = random.sample(afleiders, 3) + [correct]
-                    random.shuffle(opties)
+                    
+                    # Alleen opties genereren als we ze nog niet hebben voor dit woord
+                    if not st.session_state.huidige_opties:
+                        afleiders = list(set([maak_schoon(i['nederlands']) for i in st.session_state.data if i['woordsoort'] == item['woordsoort'] and maak_schoon(i['nederlands']) != correct]))
+                        if len(afleiders) < 3: afleiders += [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
+                        opties = random.sample(afleiders, 3) + [correct]
+                        random.shuffle(opties)
+                        st.session_state.huidige_opties = opties
                     
                     cols = st.columns(2)
-                    for idx, optie in enumerate(opties):
-                        # Unieke key toegevoegd om fouten te voorkomen
+                    for idx, optie in enumerate(st.session_state.huidige_opties):
                         if cols[idx % 2].button(optie, key=f"btn_{idx}_{item['grieks']}"):
                             if optie == correct:
-                                item['score_goed'] += 1
-                                item['streak'] += 1
+                                # Alleen belonen als het de eerste poging was
+                                if not st.session_state.fout_gemaakt:
+                                    item['score_goed'] += 1
+                                    item['streak'] += 1
                                 st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! '{item['grieks']}' betekent inderdaad '{correct}'"}
+                                laad_volgend_woord()
+                                st.rerun()
                             else:
-                                item['score_fout'] += 1
-                                item['streak'] = 0
-                                st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. '{item['grieks']}' betekent: {item['nederlands']}"}
-                                st.session_state.sessie_lijst.append(item)
-                            
-                            # Laad volgende woord in en ververs scherm
-                            st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
-                            st.rerun()
+                                # Alleen afstraffen bij de eerste foute klik (voorkomt dubbele straf)
+                                if not st.session_state.fout_gemaakt:
+                                    item['score_fout'] += 1
+                                    item['streak'] = 0
+                                    st.session_state.sessie_lijst.append(item)
+                                    st.session_state.fout_gemaakt = True
+                                
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Probeer het juiste antwoord te selecteren. (Tip: het is '{item['nederlands']}')"}
+                                st.rerun() # Ververs scherm, maar we blijven bij hetzelfde woord!
 
                 # OVERHOOR (Modus 3)
                 else:
-                    # Unieke key zodat het veld leeg is bij een nieuw woord
                     p = st.text_input("Betekenis:", key=f"input_{item['grieks']}").lower()
                     if st.button("Check", key=f"check_{item['grieks']}"):
                         correct_schoon = maak_schoon(item['nederlands'])
                         if p == correct_schoon or p in item['nederlands'].lower():
-                            item['score_goed'] += 1
-                            item['streak'] += 1
+                            if not st.session_state.fout_gemaakt:
+                                item['score_goed'] += 1
+                                item['streak'] += 1
                             st.session_state.feedback = {"type": "success", "msg": f"✓ Correct! '{item['grieks']}' = '{correct_schoon}'"}
+                            laad_volgend_woord()
+                            st.rerun()
                         else:
-                            item['score_fout'] += 1
-                            item['streak'] = 0
-                            st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. '{item['grieks']}' = {item['nederlands']}"}
-                            st.session_state.sessie_lijst.append(item)
-                        
-                        st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
-                        st.rerun()
+                            if not st.session_state.fout_gemaakt:
+                                item['score_fout'] += 1
+                                item['streak'] = 0
+                                st.session_state.sessie_lijst.append(item)
+                                st.session_state.fout_gemaakt = True
+                                
+                            st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Typ het volgende exact over om door te gaan: {correct_schoon}"}
+                            st.rerun()
 
                 st.write(f"---")
                 st.caption(f"Stats: NT-freq: {item['frequentie_nt']} | Streak: {item['streak']} | G/F: {item['score_goed']}/{item['score_fout']}")
