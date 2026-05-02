@@ -10,7 +10,7 @@ import os
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Gemini Grieks Tutor", layout="wide")
 
-# Custom CSS voor mobiele optimalisatie
+# Custom CSS voor mobiele weergave
 st.markdown("""
     <style>
     .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
@@ -54,7 +54,7 @@ if 'huidige_opties' not in st.session_state:
 def laad_volgend_woord():
     st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
     st.session_state.fout_gemaakt = False
-    st.session_state.huidige_opties = [] # Reset de opties voor het nieuwe woord
+    st.session_state.huidige_opties = [] 
 
 # --- SIDEBAR: DATA BEHEER ---
 with st.sidebar:
@@ -63,12 +63,12 @@ with st.sidebar:
     
     if uploaded_file is not None:
         st.session_state.data = json.load(uploaded_file)
-        st.success("Jouw voortgang is geladen!")
+        st.success("Voortgang is ingeladen.")
     elif st.session_state.data is None:
         if os.path.exists("basis_woorden.json"):
             with open("basis_woorden.json", "r", encoding="utf-8") as f:
                 st.session_state.data = json.load(f)
-            st.info("Nieuwe sessie gestart met basiswoorden!")
+            st.info("Sessie gestart met de basiswoorden.")
 
     if st.session_state.data:
         json_data = json.dumps(st.session_state.data, indent=2)
@@ -88,8 +88,8 @@ with st.sidebar:
 
 # --- HOOFDMENU ---
 if st.session_state.data is None:
-    st.title("Welkom bij de Grieks Tutor")
-    st.warning("Kan het bestand 'basis_woorden.json' niet vinden. Zorg dat dit bestand in GitHub staat, of upload handmatig een bestand in de zijbalk.")
+    st.title("Adaptief Grieks Leren")
+    st.warning("Het bestand 'basis_woorden.json' is niet gevonden. Zorg dat dit in GitHub staat of upload handmatig een databestand in de zijbalk.")
 else:
     menu = st.tabs(["🚀 Oefenen", "📖 Woordenlijst", "📊 Voortgang"])
 
@@ -106,9 +106,9 @@ else:
                 les_nr = st.number_input("Les nummer", min_value=1, value=1)
                 doel = [i for i in st.session_state.data if i['les'] == les_nr]
             elif keuze == "Woordsoort":
-                soorten = sorted(list(set(i['woordsoort'] for i in st.session_state.data)))
+                soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data)))
                 s = st.selectbox("Kies soort", soorten)
-                doel = [i for i in st.session_state.data if i['woordsoort'] == s]
+                doel = [i for i in st.session_state.data if i.get('woordsoort') == s]
             elif keuze == "Mastery (<5 streak)":
                 doel = [i for i in st.session_state.data if i['streak'] < 5]
 
@@ -118,7 +118,7 @@ else:
                 chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
                 st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
                 
-                laad_volgend_woord() # Laad het eerste woord netjes in
+                laad_volgend_woord() 
                 st.session_state.feedback = None
                 st.session_state.modus_actief = modus[0]
                 st.rerun()
@@ -126,6 +126,7 @@ else:
         with col2:
             if st.session_state.huidig_item:
                 item = st.session_state.huidig_item
+                info_weergave = item.get('grieks_info', item['grieks'])
                 
                 # --- FEEDBACK TONEN ---
                 if st.session_state.feedback:
@@ -139,16 +140,16 @@ else:
                 st.markdown(f"<div class='grieks-woord'>{item['grieks']}</div>", unsafe_allow_html=True)
                 
                 if st.session_state.modus_actief == '1':
-                    st.warning(f"💡 {item['fonetisch']} | {item['anker']} {item['beeld']}")
+                    st.warning(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
                 # MEERKEUZE (Modus 1 & 2)
                 if st.session_state.modus_actief in ['1', '2']:
                     correct = maak_schoon(item['nederlands'])
                     
-                    # Alleen opties genereren als we ze nog niet hebben voor dit woord
                     if not st.session_state.huidige_opties:
-                        afleiders = list(set([maak_schoon(i['nederlands']) for i in st.session_state.data if i['woordsoort'] == item['woordsoort'] and maak_schoon(i['nederlands']) != correct]))
-                        if len(afleiders) < 3: afleiders += [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
+                        afleiders = list(set([maak_schoon(i['nederlands']) for i in st.session_state.data if i.get('woordsoort') == item.get('woordsoort') and maak_schoon(i['nederlands']) != correct]))
+                        if len(afleiders) < 3: 
+                            afleiders += [maak_schoon(i['nederlands']) for i in st.session_state.data if i['grieks'] != item['grieks']]
                         opties = random.sample(afleiders, 3) + [correct]
                         random.shuffle(opties)
                         st.session_state.huidige_opties = opties
@@ -157,34 +158,32 @@ else:
                     for idx, optie in enumerate(st.session_state.huidige_opties):
                         if cols[idx % 2].button(optie, key=f"btn_{idx}_{item['grieks']}"):
                             if optie == correct:
-                                # Alleen belonen als het de eerste poging was
                                 if not st.session_state.fout_gemaakt:
                                     item['score_goed'] += 1
                                     item['streak'] += 1
-                                st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! '{item['grieks']}' betekent inderdaad '{correct}'"}
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{info_weergave}' betekent inderdaad '{correct}'."}
                                 laad_volgend_woord()
                                 st.rerun()
                             else:
-                                # Alleen afstraffen bij de eerste foute klik (voorkomt dubbele straf)
                                 if not st.session_state.fout_gemaakt:
                                     item['score_fout'] += 1
                                     item['streak'] = 0
                                     st.session_state.sessie_lijst.append(item)
                                     st.session_state.fout_gemaakt = True
                                 
-                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Probeer het juiste antwoord te selecteren. (Tip: het is '{item['nederlands']}')"}
-                                st.rerun() # Ververs scherm, maar we blijven bij hetzelfde woord!
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{info_weergave}' = '{item['nederlands']}'. Selecteer het juiste antwoord om door te gaan."}
+                                st.rerun() 
 
                 # OVERHOOR (Modus 3)
                 else:
                     p = st.text_input("Betekenis:", key=f"input_{item['grieks']}").lower()
-                    if st.button("Check", key=f"check_{item['grieks']}"):
+                    if st.button("Controleer", key=f"check_{item['grieks']}"):
                         correct_schoon = maak_schoon(item['nederlands'])
                         if p == correct_schoon or p in item['nederlands'].lower():
                             if not st.session_state.fout_gemaakt:
                                 item['score_goed'] += 1
                                 item['streak'] += 1
-                            st.session_state.feedback = {"type": "success", "msg": f"✓ Correct! '{item['grieks']}' = '{correct_schoon}'"}
+                            st.session_state.feedback = {"type": "success", "msg": f"✓ Correct. '{info_weergave}' = '{correct_schoon}'."}
                             laad_volgend_woord()
                             st.rerun()
                         else:
@@ -194,26 +193,35 @@ else:
                                 st.session_state.sessie_lijst.append(item)
                                 st.session_state.fout_gemaakt = True
                                 
-                            st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Typ het volgende exact over om door te gaan: {correct_schoon}"}
+                            st.session_state.feedback = {"type": "error", "msg": f"✗ Onjuist. Typ het volgende over: {correct_schoon} (Informatie: {info_weergave})"}
                             st.rerun()
 
                 st.write(f"---")
-                st.caption(f"Stats: NT-freq: {item['frequentie_nt']} | Streak: {item['streak']} | G/F: {item['score_goed']}/{item['score_fout']}")
+                st.caption(f"Statistieken: NT-frequentie: {item.get('frequentie_nt', 0)} | Reeks: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)}")
 
     with menu[1]: # WOORDENLIJST
-        les_filter = st.selectbox("Filter op les", sorted(list(set(i['les'] for i in st.session_state.data))))
-        df = pd.DataFrame([i for i in st.session_state.data if i['les'] == les_filter])
-        st.dataframe(df[['grieks', 'nederlands', 'frequentie_nt', 'streak', 'woordsoort']], use_container_width=True)
+        les_filter = st.selectbox("Filter op les", sorted(list(set(i.get('les', 1) for i in st.session_state.data))))
+        df = pd.DataFrame([i for i in st.session_state.data if i.get('les', 1) == les_filter])
+        
+        # Voeg grieks_info toe aan de tabel als kolom, indien aanwezig in de dataset
+        weergave_kolommen = ['grieks', 'nederlands', 'frequentie_nt', 'streak', 'woordsoort']
+        if 'grieks_info' in df.columns:
+            weergave_kolommen.insert(1, 'grieks_info')
+            
+        st.dataframe(df[weergave_kolommen], use_container_width=True)
 
     with menu[2]: # VOORTGANG
-        lessen = sorted(list(set(i['les'] for i in st.session_state.data)))
+        lessen = sorted(list(set(i.get('les', 1) for i in st.session_state.data)))
         stats = []
         for l in lessen:
-            it = [i for i in st.session_state.data if i['les'] == l]
-            stats.append((len([i for i in it if i['streak'] >= 5]) / len(it)) * 100)
+            it = [i for i in st.session_state.data if i.get('les', 1) == l]
+            if len(it) > 0:
+                stats.append((len([i for i in it if i.get('streak', 0) >= 5]) / len(it)) * 100)
+            else:
+                stats.append(0)
         
         fig, ax = plt.subplots()
         ax.bar(lessen, stats, color='#33ccff')
-        ax.set_title("Beheersing per Les (%)")
+        ax.set_title("Beheersingspercentage per les")
         ax.set_ylim(0, 100)
         st.pyplot(fig)
