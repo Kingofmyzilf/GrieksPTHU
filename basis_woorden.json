@@ -9,9 +9,10 @@
     "beeld": "Een trechter die de elementen gestaag naar één centraal punt naar binnen leidt.",
     "herhaal_nodig": false,
     "frequentie_nt": 1766,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_goed": 2,
+    "score_fout": 1,
+    "streak": 2,
+    "grieks_info": "εἰς"
   },
   {
     "les": 1,
@@ -23,9 +24,10 @@
     "beeld": "Een punaise die doelbewust in één specifieke alinea van de tekst wordt geprikt.",
     "herhaal_nodig": false,
     "frequentie_nt": 1388,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_goed": 2,
+    "score_fout": 1,
+    "streak": 2,
+    "grieks_info": "οὗτος, αὕτη, τοῦτο"
   },
   {
     "les": 1,
@@ -37,9 +39,10 @@
     "beeld": "Een lampje van intellectueel inzicht dat aangaat, ómdat de causaliteit duidelijk is.",
     "herhaal_nodig": false,
     "frequentie_nt": 1293,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_goed": 1,
+    "score_fout": 2,
+    "streak": 0,
+    "grieks_info": "ὅτι"
   },
   {
     "les": 1,
@@ -51,9 +54,10 @@
     "beeld": "Een doos waaruit de inhoud met een duidelijke beweging naar buiten wordt gehaald.",
     "herhaal_nodig": false,
     "frequentie_nt": 913,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_goed": 1,
+    "score_fout": 1,
+    "streak": 1,
+    "grieks_info": "ἐκ"
   },
   {
     "les": 1,
@@ -66,8 +70,9 @@
     "herhaal_nodig": false,
     "frequentie_nt": 700,
     "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_fout": 2,
+    "streak": 0,
+    "grieks_info": "πρός"
   },
   {
     "les": 1,
@@ -79,9 +84,10 @@
     "beeld": "Een hand die heel specifiek naar dát ene detail in het betoog wijst.",
     "herhaal_nodig": false,
     "frequentie_nt": 19783,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "ὁ, ἡ, τό"
   },
   {
     "les": 1,
@@ -93,9 +99,10 @@
     "beeld": "Een plusteken dat twee complementaire zaken zorgvuldig samenvoegt.",
     "herhaal_nodig": false,
     "frequentie_nt": 8978,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "καί"
   },
   {
     "les": 1,
@@ -107,9 +114,10 @@
     "beeld": "Een autonoom persoon die in de spiegel kijkt en constateert: 'Ik doe het zelf'.",
     "herhaal_nodig": false,
     "frequentie_nt": 5550,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "αὐτός, -ή, -ό"
   },
   {
     "les": 1,
@@ -121,9 +129,10 @@
     "beeld": "Een gesprekspartner die je tijdens een dialoog direct en persoonlijk aanspreekt.",
     "herhaal_nodig": false,
     "frequentie_nt": 2892,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "σύ"
   },
   {
     "les": 1,
@@ -135,9 +144,10 @@
     "beeld": "Een richtingaanwijzer die het betoog soepel een iets andere kant op stuurt.",
     "herhaal_nodig": false,
     "frequentie_nt": 2787,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "δέ"
   },
   {
     "les": 1,
@@ -149,9 +159,10 @@
     "beeld": "Een gesloten archiefkist waar iets veilig in en bij de rest wordt bewaard.",
     "herhaal_nodig": false,
     "frequentie_nt": 2743,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἐν"
   },
   {
     "les": 1,
@@ -163,9 +174,10 @@
     "beeld": "Iemand die nadrukkelijk naar zijn eigen borst wijst en zijn ego laat spreken.",
     "herhaal_nodig": false,
     "frequentie_nt": 2567,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἐγώ"
   },
   {
     "les": 1,
@@ -177,9 +189,10 @@
     "beeld": "Een anker dat vast in de grond zit als het absolute bewijs van existentie.",
     "herhaal_nodig": false,
     "frequentie_nt": 2457,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "εἰμί"
   },
   {
     "les": 1,
@@ -191,9 +204,10 @@
     "beeld": "Een redenaar die weloverwogen woorden en opdrachten door de zaal laat klinken.",
     "herhaal_nodig": false,
     "frequentie_nt": 2255,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "λέγω"
   },
   {
     "les": 1,
@@ -205,9 +219,10 @@
     "beeld": "Een stellig merkteken dat een objectieve ontkenning van de feiten weergeeft.",
     "herhaal_nodig": false,
     "frequentie_nt": 1622,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "οὐ, οὐκ, οὐχ"
   },
   {
     "les": 1,
@@ -219,9 +234,10 @@
     "beeld": "Een betrekkelijk, klein schakeltje dat zorgvuldig verwijst naar het eerdere onderwerp.",
     "herhaal_nodig": false,
     "frequentie_nt": 1407,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ὅς, ἥ, ὅ"
   },
   {
     "les": 1,
@@ -233,9 +249,10 @@
     "beeld": "Een indrukwekkende bliksemschicht als theologische manifestatie van het hogere.",
     "herhaal_nodig": false,
     "frequentie_nt": 1311,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "θεός, -οῦ, ὁ"
   },
   {
     "les": 1,
@@ -247,9 +264,10 @@
     "beeld": "Een overzichtskaart die het gehele maatschappelijke spectrum in één blik vat.",
     "herhaal_nodig": false,
     "frequentie_nt": 1242,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "πᾶς, πᾶσα, πᾶν"
   },
   {
     "les": 1,
@@ -261,9 +279,10 @@
     "beeld": "Een subtiel maar helder waarschuwingsbord om aan te geven dat een grens niet gepasseerd mag worden.",
     "herhaal_nodig": false,
     "frequentie_nt": 1060,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "μή"
   },
   {
     "les": 1,
@@ -275,9 +294,10 @@
     "beeld": "Een ijzeren schakel die twee argumenten logisch aan elkaar verbindt ter verklaring.",
     "herhaal_nodig": false,
     "frequentie_nt": 1038,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "γάρ"
   },
   {
     "les": 1,
@@ -289,9 +309,10 @@
     "beeld": "Een historisch houten kruis dat centraal in de ruimte staat opgesteld.",
     "herhaal_nodig": false,
     "frequentie_nt": 913,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "Ἰησοῦς, -οῦ, ὁ"
   },
   {
     "les": 1,
@@ -303,9 +324,10 @@
     "beeld": "Een epicentrum, het precieze brandpunt op de kaart waar alles om draait.",
     "herhaal_nodig": false,
     "frequentie_nt": 886,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἐπί"
   },
   {
     "les": 7,
@@ -317,9 +339,10 @@
     "beeld": "Frank zit met Pijn aan tafel en zegt aaa omdat hij hongerig is.",
     "herhaal_nodig": false,
     "frequentie_nt": 23,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_goed": 1,
+    "score_fout": 1,
+    "streak": 1,
+    "grieks_info": "πεινάω"
   },
   {
     "les": 1,
@@ -331,9 +354,10 @@
     "beeld": "Een perkamenten rol waaruit de heer des huizes met autoriteit zijn beleid voorleest.",
     "herhaal_nodig": false,
     "frequentie_nt": 718,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "κύριος, -ου, ὁ"
   },
   {
     "les": 1,
@@ -345,9 +369,10 @@
     "beeld": "Twee handen die een waardevol object stevig en behoedzaam vasthouden.",
     "herhaal_nodig": false,
     "frequentie_nt": 709,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἔχω"
   },
   {
     "les": 1,
@@ -359,9 +384,10 @@
     "beeld": "Een waarnemer die naar de horizon tuurt om het panoramische uitzicht scherp in te zien.",
     "herhaal_nodig": false,
     "frequentie_nt": 682,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ὁράω"
   },
   {
     "les": 1,
@@ -375,7 +401,8 @@
     "frequentie_nt": 669,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἵνα"
   },
   {
     "les": 1,
@@ -387,9 +414,10 @@
     "beeld": "Een zaadje in de aarde waaruit langzaam iets nieuws ontstaat en vorm krijgt.",
     "herhaal_nodig": false,
     "frequentie_nt": 668,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "γίνομαι"
   },
   {
     "les": 1,
@@ -403,7 +431,8 @@
     "frequentie_nt": 667,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διά"
   },
   {
     "les": 1,
@@ -417,7 +446,8 @@
     "frequentie_nt": 647,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπό"
   },
   {
     "les": 1,
@@ -431,7 +461,8 @@
     "frequentie_nt": 638,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀλλά"
   },
   {
     "les": 1,
@@ -443,9 +474,10 @@
     "beeld": "Een reiziger die over het spoor aan komt lopen of juist besluit te vertrekken.",
     "herhaal_nodig": false,
     "frequentie_nt": 635,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἔρχομαι"
   },
   {
     "les": 1,
@@ -459,7 +491,8 @@
     "frequentie_nt": 566,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποιέω"
   },
   {
     "les": 1,
@@ -473,7 +506,8 @@
     "frequentie_nt": 562,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τίς, τί"
   },
   {
     "les": 1,
@@ -487,7 +521,8 @@
     "frequentie_nt": 548,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄνθρωπος, -ου, ὁ"
   },
   {
     "les": 1,
@@ -501,7 +536,8 @@
     "frequentie_nt": 529,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τις, τι"
   },
   {
     "les": 1,
@@ -515,7 +551,8 @@
     "frequentie_nt": 529,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "Χριστός, -οῦ, ὁ"
   },
   {
     "les": 1,
@@ -529,7 +566,8 @@
     "frequentie_nt": 502,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὡς"
   },
   {
     "les": 1,
@@ -543,7 +581,8 @@
     "frequentie_nt": 501,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἰ"
   },
   {
     "les": 1,
@@ -557,7 +596,8 @@
     "frequentie_nt": 496,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὖν"
   },
   {
     "les": 1,
@@ -571,7 +611,8 @@
     "frequentie_nt": 472,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κατά"
   },
   {
     "les": 1,
@@ -585,7 +626,8 @@
     "frequentie_nt": 470,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μετά"
   },
   {
     "les": 2,
@@ -599,7 +641,8 @@
     "frequentie_nt": 428,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀκούω"
   },
   {
     "les": 2,
@@ -613,7 +656,8 @@
     "frequentie_nt": 414,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δίδωμι"
   },
   {
     "les": 1,
@@ -627,7 +671,8 @@
     "frequentie_nt": 412,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πατήρ, πατρός, ὁ"
   },
   {
     "les": 2,
@@ -641,7 +686,8 @@
     "frequentie_nt": 389,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἡμέρα, -ας, ἡ"
   },
   {
     "les": 2,
@@ -655,7 +701,8 @@
     "frequentie_nt": 379,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πνεῦμα, -τος, τό"
   },
   {
     "les": 2,
@@ -669,7 +716,8 @@
     "frequentie_nt": 376,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "υἱός, -οῦ, ὁ"
   },
   {
     "les": 2,
@@ -683,7 +731,8 @@
     "frequentie_nt": 343,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀδελφός, -οῦ, ὁ"
   },
   {
     "les": 2,
@@ -697,7 +746,8 @@
     "frequentie_nt": 343,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἤ"
   },
   {
     "les": 2,
@@ -711,7 +761,8 @@
     "frequentie_nt": 337,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐάν"
   },
   {
     "les": 1,
@@ -725,7 +776,8 @@
     "frequentie_nt": 336,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἷς, μία, ἕν"
   },
   {
     "les": 2,
@@ -739,7 +791,8 @@
     "frequentie_nt": 333,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περί"
   },
   {
     "les": 1,
@@ -753,7 +806,8 @@
     "frequentie_nt": 331,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λόγος, -ου, ὁ"
   },
   {
     "les": 2,
@@ -767,7 +821,8 @@
     "frequentie_nt": 320,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἑαυτοῦ, -ῆς, -οῦ"
   },
   {
     "les": 2,
@@ -781,7 +836,8 @@
     "frequentie_nt": 320,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οἶδα"
   },
   {
     "les": 2,
@@ -795,7 +851,8 @@
     "frequentie_nt": 298,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λαλέω"
   },
   {
     "les": 2,
@@ -809,7 +866,8 @@
     "frequentie_nt": 273,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐρανός, -οῦ, ὁ"
   },
   {
     "les": 2,
@@ -823,7 +881,8 @@
     "frequentie_nt": 261,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μαθητής, -οῦ, ὁ"
   },
   {
     "les": 2,
@@ -837,7 +896,8 @@
     "frequentie_nt": 258,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λαμβάνω"
   },
   {
     "les": 2,
@@ -851,7 +911,8 @@
     "frequentie_nt": 250,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γῆ, γῆς, ἡ"
   },
   {
     "les": 2,
@@ -865,7 +926,8 @@
     "frequentie_nt": 244,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκεῖνος, -η, -ο"
   },
   {
     "les": 2,
@@ -879,7 +941,8 @@
     "frequentie_nt": 243,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέγας, μεγάλη, μέγα"
   },
   {
     "les": 2,
@@ -893,7 +956,8 @@
     "frequentie_nt": 243,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πίστις, -εως, ἡ"
   },
   {
     "les": 2,
@@ -907,7 +971,8 @@
     "frequentie_nt": 241,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πιστεύω"
   },
   {
     "les": 2,
@@ -921,7 +986,8 @@
     "frequentie_nt": 235,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐδείς, οὐδεμία, οὐδέν"
   },
   {
     "les": 2,
@@ -935,7 +1001,8 @@
     "frequentie_nt": 234,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἅγιος, -α, -ον"
   },
   {
     "les": 2,
@@ -949,7 +1016,8 @@
     "frequentie_nt": 231,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποκρίνομαι"
   },
   {
     "les": 2,
@@ -963,7 +1031,8 @@
     "frequentie_nt": 229,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὄνομα, -τος, τό"
   },
   {
     "les": 2,
@@ -977,7 +1046,8 @@
     "frequentie_nt": 221,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γινώσκω"
   },
   {
     "les": 2,
@@ -991,7 +1061,8 @@
     "frequentie_nt": 219,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπό"
   },
   {
     "les": 2,
@@ -1005,7 +1076,8 @@
     "frequentie_nt": 217,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐξέρχομαι"
   },
   {
     "les": 2,
@@ -1019,7 +1091,8 @@
     "frequentie_nt": 216,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνήρ, ἀνδρός, ὁ"
   },
   {
     "les": 2,
@@ -1033,7 +1106,8 @@
     "frequentie_nt": 214,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γυνή, -αικός, ἡ"
   },
   {
     "les": 2,
@@ -1047,7 +1121,8 @@
     "frequentie_nt": 209,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δύναμαι"
   },
   {
     "les": 2,
@@ -1061,7 +1136,8 @@
     "frequentie_nt": 209,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὕτω / οὔτως"
   },
   {
     "les": 2,
@@ -1075,7 +1151,8 @@
     "frequentie_nt": 209,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τέ"
   },
   {
     "les": 2,
@@ -1089,7 +1166,8 @@
     "frequentie_nt": 207,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θέλω"
   },
   {
     "les": 2,
@@ -1101,9 +1179,10 @@
     "beeld": "Een visuele aansporing in een tekst om de focus onmiddellijk op een bepaald punt te leggen.",
     "herhaal_nodig": false,
     "frequentie_nt": 200,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "ἰδού"
   },
   {
     "les": 2,
@@ -1117,7 +1196,8 @@
     "frequentie_nt": 194,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "Ἰουδαῖος, -α, -ον"
   },
   {
     "les": 2,
@@ -1131,7 +1211,8 @@
     "frequentie_nt": 194,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νόμος, -ου, ὁ"
   },
   {
     "les": 1,
@@ -1145,7 +1226,8 @@
     "frequentie_nt": 192,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρά"
   },
   {
     "les": 2,
@@ -1159,7 +1241,8 @@
     "frequentie_nt": 192,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γράφω"
   },
   {
     "les": 2,
@@ -1173,7 +1256,8 @@
     "frequentie_nt": 192,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἰσέρχομαι"
   },
   {
     "les": 2,
@@ -1187,7 +1271,8 @@
     "frequentie_nt": 185,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κόσμος, -ου, ὁ"
   },
   {
     "les": 2,
@@ -1199,9 +1284,10 @@
     "beeld": "Een weegschaal waarvan eerst de linkerzijde wordt belast, in afwachting van het tegengewicht.",
     "herhaal_nodig": true,
     "frequentie_nt": 180,
-    "score_goed": 0,
+    "score_goed": 3,
     "score_fout": 0,
-    "streak": 0
+    "streak": 3,
+    "grieks_info": "μέν"
   },
   {
     "les": 2,
@@ -1215,7 +1301,8 @@
     "frequentie_nt": 179,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθώς"
   },
   {
     "les": 2,
@@ -1229,7 +1316,8 @@
     "frequentie_nt": 176,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄγγελος, -ου, ὁ"
   },
   {
     "les": 2,
@@ -1243,7 +1331,8 @@
     "frequentie_nt": 176,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὑρίσκω"
   },
   {
     "les": 2,
@@ -1257,7 +1346,8 @@
     "frequentie_nt": 176,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χείρ, χειρός, ἡ"
   },
   {
     "les": 2,
@@ -1271,7 +1361,8 @@
     "frequentie_nt": 174,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὄχλος, -ου, ὁ"
   },
   {
     "les": 2,
@@ -1285,7 +1376,8 @@
     "frequentie_nt": 173,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἁμαρτία, -ας, ἡ"
   },
   {
     "les": 2,
@@ -1299,7 +1391,8 @@
     "frequentie_nt": 169,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔργον, -ου, τό"
   },
   {
     "les": 1,
@@ -1313,7 +1406,8 @@
     "frequentie_nt": 166,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δόξα, -ης, ἡ"
   },
   {
     "les": 2,
@@ -1325,9 +1419,10 @@
     "beeld": "Een dobbelsteen die nog over de tafel rolt, wat de hypothetische uitkomst symboliseert.",
     "herhaal_nodig": false,
     "frequentie_nt": 164,
-    "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_goed": 2,
+    "score_fout": 1,
+    "streak": 1,
+    "grieks_info": "ἄν"
   },
   {
     "les": 3,
@@ -1341,7 +1436,8 @@
     "frequentie_nt": 163,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πόλις, -εως, ἡ"
   },
   {
     "les": 3,
@@ -1355,7 +1451,8 @@
     "frequentie_nt": 162,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βασιλεία, -ας, ἡ"
   },
   {
     "les": 3,
@@ -1369,7 +1466,8 @@
     "frequentie_nt": 162,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔθνος, -ους, τό"
   },
   {
     "les": 3,
@@ -1383,7 +1481,8 @@
     "frequentie_nt": 159,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τότε"
   },
   {
     "les": 3,
@@ -1397,7 +1496,8 @@
     "frequentie_nt": 158,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐσθίω"
   },
   {
     "les": 3,
@@ -1411,7 +1511,8 @@
     "frequentie_nt": 156,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καρδία, -ας, ἡ"
   },
   {
     "les": 1,
@@ -1425,7 +1526,8 @@
     "frequentie_nt": 155,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χάρις, -ιτος, ἡ"
   },
   {
     "les": 3,
@@ -1439,7 +1541,8 @@
     "frequentie_nt": 155,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πρῶτος, -η, -ον"
   },
   {
     "les": 3,
@@ -1453,7 +1556,8 @@
     "frequentie_nt": 154,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄλλος, -η, -ο"
   },
   {
     "les": 3,
@@ -1467,7 +1571,8 @@
     "frequentie_nt": 153,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἵστημι"
   },
   {
     "les": 3,
@@ -1481,7 +1586,8 @@
     "frequentie_nt": 153,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πορεύομαι"
   },
   {
     "les": 3,
@@ -1495,7 +1601,8 @@
     "frequentie_nt": 150,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπέρ"
   },
   {
     "les": 2,
@@ -1509,7 +1616,8 @@
     "frequentie_nt": 148,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καλέω"
   },
   {
     "les": 3,
@@ -1523,7 +1631,8 @@
     "frequentie_nt": 148,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νῦν"
   },
   {
     "les": 1,
@@ -1537,7 +1646,8 @@
     "frequentie_nt": 147,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σάρξ, σαρκός, ἡ"
   },
   {
     "les": 3,
@@ -1551,7 +1661,8 @@
     "frequentie_nt": 147,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἕως"
   },
   {
     "les": 3,
@@ -1565,7 +1676,8 @@
     "frequentie_nt": 144,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προφήτης, -ου, ὁ"
   },
   {
     "les": 3,
@@ -1579,7 +1691,8 @@
     "frequentie_nt": 143,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγαπάω"
   },
   {
     "les": 3,
@@ -1593,7 +1706,8 @@
     "frequentie_nt": 143,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀφίημι"
   },
   {
     "les": 3,
@@ -1607,7 +1721,8 @@
     "frequentie_nt": 143,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐγείρω"
   },
   {
     "les": 3,
@@ -1621,7 +1736,8 @@
     "frequentie_nt": 142,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λαός, -οῦ, ὁ"
   },
   {
     "les": 3,
@@ -1635,7 +1751,8 @@
     "frequentie_nt": 142,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σῶμα, -τος, τό"
   },
   {
     "les": 3,
@@ -1649,7 +1766,8 @@
     "frequentie_nt": 141,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πάλιν"
   },
   {
     "les": 1,
@@ -1663,7 +1781,8 @@
     "frequentie_nt": 140,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐδέ"
   },
   {
     "les": 3,
@@ -1677,7 +1796,8 @@
     "frequentie_nt": 140,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ζάω"
   },
   {
     "les": 3,
@@ -1691,7 +1811,8 @@
     "frequentie_nt": 140,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅστις, ἥτις, ὅ τι"
   },
   {
     "les": 3,
@@ -1705,7 +1826,8 @@
     "frequentie_nt": 139,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φωνή, -ῆς, ἡ"
   },
   {
     "les": 1,
@@ -1719,7 +1841,8 @@
     "frequentie_nt": 135,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ζωή, -ής, ἡ"
   },
   {
     "les": 3,
@@ -1733,7 +1856,8 @@
     "frequentie_nt": 133,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βλέπω"
   },
   {
     "les": 3,
@@ -1747,7 +1871,8 @@
     "frequentie_nt": 133,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δύο"
   },
   {
     "les": 3,
@@ -1761,7 +1886,8 @@
     "frequentie_nt": 132,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποστέλλω"
   },
   {
     "les": 3,
@@ -1775,7 +1901,8 @@
     "frequentie_nt": 128,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νεκρός, -ά, -όν"
   },
   {
     "les": 3,
@@ -1789,7 +1916,8 @@
     "frequentie_nt": 128,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σύν"
   },
   {
     "les": 3,
@@ -1801,9 +1929,10 @@
     "beeld": "Een zwaar lakzegel op een document dat de volstrekte instemming bevestigt.",
     "herhaal_nodig": false,
     "frequentie_nt": 126,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "ἀμήν"
   },
   {
     "les": 3,
@@ -1817,7 +1946,8 @@
     "frequentie_nt": 126,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δοῦλος, ου, ὁ"
   },
   {
     "les": 3,
@@ -1831,7 +1961,8 @@
     "frequentie_nt": 124,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἰών, -ῶνος, ὁ"
   },
   {
     "les": 3,
@@ -1845,7 +1976,8 @@
     "frequentie_nt": 123,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅταν"
   },
   {
     "les": 3,
@@ -1859,7 +1991,8 @@
     "frequentie_nt": 122,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀρχιερεύς, -έως, ὁ"
   },
   {
     "les": 3,
@@ -1873,7 +2006,8 @@
     "frequentie_nt": 122,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βάλλω"
   },
   {
     "les": 3,
@@ -1887,7 +2021,8 @@
     "frequentie_nt": 120,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θάνατος, -ου, ὁ"
   },
   {
     "les": 3,
@@ -1901,7 +2036,8 @@
     "frequentie_nt": 119,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δύναμις, -εως, ἡ"
   },
   {
     "les": 3,
@@ -1915,7 +2051,8 @@
     "frequentie_nt": 119,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παραδίδωμι"
   },
   {
     "les": 3,
@@ -1929,7 +2066,8 @@
     "frequentie_nt": 118,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μένω"
   },
   {
     "les": 4,
@@ -1943,7 +2081,8 @@
     "frequentie_nt": 118,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πῶς"
   },
   {
     "les": 3,
@@ -1957,7 +2096,8 @@
     "frequentie_nt": 117,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπέρχομαι"
   },
   {
     "les": 3,
@@ -1971,7 +2111,8 @@
     "frequentie_nt": 117,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ζητέω"
   },
   {
     "les": 3,
@@ -1985,7 +2126,8 @@
     "frequentie_nt": 116,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγάπη, -ης, ἡ"
   },
   {
     "les": 3,
@@ -1999,7 +2141,8 @@
     "frequentie_nt": 115,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βασιλεύς, -έως, ὁ"
   },
   {
     "les": 3,
@@ -2013,7 +2156,8 @@
     "frequentie_nt": 114,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκκλησία, -ας, ἡ"
   },
   {
     "les": 3,
@@ -2027,7 +2171,8 @@
     "frequentie_nt": 114,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κρίνω"
   },
   {
     "les": 3,
@@ -2041,7 +2186,8 @@
     "frequentie_nt": 114,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μόνος, -η, -ον"
   },
   {
     "les": 3,
@@ -2055,7 +2201,8 @@
     "frequentie_nt": 114,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οἶκος, -ου, ὁ"
   },
   {
     "les": 3,
@@ -2069,7 +2216,8 @@
     "frequentie_nt": 113,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἴδιος, -α, -ον"
   },
   {
     "les": 3,
@@ -2083,7 +2231,8 @@
     "frequentie_nt": 112,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποθνῄσκω"
   },
   {
     "les": 3,
@@ -2097,7 +2246,8 @@
     "frequentie_nt": 110,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέλλω"
   },
   {
     "les": 1,
@@ -2111,7 +2261,8 @@
     "frequentie_nt": 109,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀλήθεια, -ας, ἡ"
   },
   {
     "les": 3,
@@ -2125,7 +2276,8 @@
     "frequentie_nt": 109,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρακαλέω"
   },
   {
     "les": 3,
@@ -2139,7 +2291,8 @@
     "frequentie_nt": 108,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνίστημι"
   },
   {
     "les": 3,
@@ -2153,7 +2306,8 @@
     "frequentie_nt": 108,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅλος, -η, -ον"
   },
   {
     "les": 2,
@@ -2167,7 +2321,8 @@
     "frequentie_nt": 106,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὥρα, -ας, ἡ"
   },
   {
     "les": 3,
@@ -2181,7 +2336,8 @@
     "frequentie_nt": 106,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σῴζω"
   },
   {
     "les": 3,
@@ -2195,7 +2351,8 @@
     "frequentie_nt": 102,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγαθός, -ή, -όν"
   },
   {
     "les": 4,
@@ -2208,8 +2365,9 @@
     "herhaal_nodig": false,
     "frequentie_nt": 102,
     "score_goed": 0,
-    "score_fout": 0,
-    "streak": 0
+    "score_fout": 1,
+    "streak": 0,
+    "grieks_info": "δεῖ"
   },
   {
     "les": 4,
@@ -2223,7 +2381,8 @@
     "frequentie_nt": 102,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐξουσία, -ας, ἡ"
   },
   {
     "les": 4,
@@ -2237,7 +2396,8 @@
     "frequentie_nt": 102,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ψυχή, -ῆς, ἡ"
   },
   {
     "les": 3,
@@ -2251,7 +2411,8 @@
     "frequentie_nt": 101,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅτε"
   },
   {
     "les": 4,
@@ -2265,7 +2426,8 @@
     "frequentie_nt": 101,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἴρω"
   },
   {
     "les": 4,
@@ -2277,9 +2439,10 @@
     "beeld": "Een kwalitatief hoogstaand manuscript, opgesteld in verfijnde kalligrafie.",
     "herhaal_nodig": false,
     "frequentie_nt": 101,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "καλός, -ή, -όν"
   },
   {
     "les": 4,
@@ -2293,7 +2456,8 @@
     "frequentie_nt": 101,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὁδός, -οῦ, ἡ"
   },
   {
     "les": 4,
@@ -2307,7 +2471,8 @@
     "frequentie_nt": 100,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀλλήλων, -οις, -ους"
   },
   {
     "les": 4,
@@ -2321,7 +2486,8 @@
     "frequentie_nt": 100,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὀφθαλμός, -οῦ, ὁ"
   },
   {
     "les": 4,
@@ -2335,7 +2501,8 @@
     "frequentie_nt": 99,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τέκνον, -ου, τό"
   },
   {
     "les": 4,
@@ -2349,7 +2516,8 @@
     "frequentie_nt": 99,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τίθημι"
   },
   {
     "les": 3,
@@ -2363,7 +2531,8 @@
     "frequentie_nt": 98,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "Φαρισαῖος, -ου, ὁ"
   },
   {
     "les": 4,
@@ -2377,7 +2546,8 @@
     "frequentie_nt": 97,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἷμα, -τος, τό"
   },
   {
     "les": 4,
@@ -2391,7 +2561,8 @@
     "frequentie_nt": 97,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄρτος, -ου, ὁ"
   },
   {
     "les": 4,
@@ -2405,7 +2576,8 @@
     "frequentie_nt": 97,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γεννάω"
   },
   {
     "les": 4,
@@ -2419,7 +2591,8 @@
     "frequentie_nt": 97,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διδάσκω"
   },
   {
     "les": 4,
@@ -2433,7 +2606,8 @@
     "frequentie_nt": 97,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἕτερος, -α, -ον"
   },
   {
     "les": 2,
@@ -2447,7 +2621,8 @@
     "frequentie_nt": 95,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκεῖ"
   },
   {
     "les": 4,
@@ -2461,7 +2636,8 @@
     "frequentie_nt": 95,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περιπατέω"
   },
   {
     "les": 4,
@@ -2475,7 +2651,8 @@
     "frequentie_nt": 95,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τόπος, -ου, ὁ"
   },
   {
     "les": 4,
@@ -2489,7 +2666,8 @@
     "frequentie_nt": 95,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φοβέω"
   },
   {
     "les": 4,
@@ -2503,7 +2681,8 @@
     "frequentie_nt": 94,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐνώπιον"
   },
   {
     "les": 4,
@@ -2517,7 +2696,8 @@
     "frequentie_nt": 94,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οἰκία, -ας, ἡ"
   },
   {
     "les": 4,
@@ -2531,7 +2711,8 @@
     "frequentie_nt": 93,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔτι"
   },
   {
     "les": 4,
@@ -2545,7 +2726,8 @@
     "frequentie_nt": 93,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πούς, ποδός, ὁ"
   },
   {
     "les": 4,
@@ -2559,7 +2741,8 @@
     "frequentie_nt": 92,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἰρήνη, -ης, ἡ"
   },
   {
     "les": 4,
@@ -2573,7 +2756,8 @@
     "frequentie_nt": 91,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δικαιοσύνη, -ης, ἡ"
   },
   {
     "les": 4,
@@ -2587,7 +2771,8 @@
     "frequentie_nt": 91,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θάλασσα, -ης, ἡ"
   },
   {
     "les": 4,
@@ -2601,7 +2786,8 @@
     "frequentie_nt": 91,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κάθημαι"
   },
   {
     "les": 4,
@@ -2615,7 +2801,8 @@
     "frequentie_nt": 91,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὔτε"
   },
   {
     "les": 3,
@@ -2629,7 +2816,8 @@
     "frequentie_nt": 90,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπόλλυμι"
   },
   {
     "les": 4,
@@ -2643,7 +2831,8 @@
     "frequentie_nt": 90,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀκολουθέω"
   },
   {
     "les": 4,
@@ -2657,7 +2846,8 @@
     "frequentie_nt": 90,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μηδείς, μηδεμία, μηδέν"
   },
   {
     "les": 4,
@@ -2671,7 +2861,8 @@
     "frequentie_nt": 90,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πίπτω"
   },
   {
     "les": 4,
@@ -2685,7 +2876,8 @@
     "frequentie_nt": 88,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἑπτά"
   },
   {
     "les": 4,
@@ -2699,7 +2891,8 @@
     "frequentie_nt": 87,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσέρχομαι"
   },
   {
     "les": 5,
@@ -2713,7 +2906,8 @@
     "frequentie_nt": 87,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐθέως"
   },
   {
     "les": 4,
@@ -2727,7 +2921,8 @@
     "frequentie_nt": 86,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καιρός, -οῦ, ὁ"
   },
   {
     "les": 4,
@@ -2741,7 +2936,8 @@
     "frequentie_nt": 86,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πληρόω"
   },
   {
     "les": 4,
@@ -2755,7 +2951,8 @@
     "frequentie_nt": 86,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσεύχομαι"
   },
   {
     "les": 2,
@@ -2769,7 +2966,8 @@
     "frequentie_nt": 84,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μήτηρ, -τρος, ἡ"
   },
   {
     "les": 4,
@@ -2783,7 +2981,8 @@
     "frequentie_nt": 84,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄρχω"
   },
   {
     "les": 4,
@@ -2797,7 +2996,8 @@
     "frequentie_nt": 84,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κἀγώ"
   },
   {
     "les": 4,
@@ -2811,7 +3011,8 @@
     "frequentie_nt": 84,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὥστε"
   },
   {
     "les": 4,
@@ -2825,7 +3026,8 @@
     "frequentie_nt": 82,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἕκαστος, -η, -ον"
   },
   {
     "les": 4,
@@ -2839,7 +3041,8 @@
     "frequentie_nt": 82,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταβαίνω"
   },
   {
     "les": 4,
@@ -2853,7 +3056,8 @@
     "frequentie_nt": 82,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅπου"
   },
   {
     "les": 4,
@@ -2867,7 +3071,8 @@
     "frequentie_nt": 81,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀναβαίνω"
   },
   {
     "les": 4,
@@ -2881,7 +3086,8 @@
     "frequentie_nt": 81,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκβάλλω"
   },
   {
     "les": 4,
@@ -2895,7 +3101,8 @@
     "frequentie_nt": 81,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μᾶλλον"
   },
   {
     "les": 4,
@@ -2909,7 +3116,8 @@
     "frequentie_nt": 79,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπόστολος, -ου, ὁ"
   },
   {
     "les": 4,
@@ -2923,7 +3131,8 @@
     "frequentie_nt": 79,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δίκαιος, -α, -ον"
   },
   {
     "les": 4,
@@ -2937,7 +3146,8 @@
     "frequentie_nt": 79,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πέμπω"
   },
   {
     "les": 4,
@@ -2951,7 +3161,8 @@
     "frequentie_nt": 79,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπάγω"
   },
   {
     "les": 5,
@@ -2965,7 +3176,8 @@
     "frequentie_nt": 79,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὕδωρ, ὕδατος, τό"
   },
   {
     "les": 2,
@@ -2979,7 +3191,8 @@
     "frequentie_nt": 78,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πονηρός, -ά, -όν"
   },
   {
     "les": 5,
@@ -2993,7 +3206,8 @@
     "frequentie_nt": 78,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνοίγω"
   },
   {
     "les": 5,
@@ -3007,7 +3221,8 @@
     "frequentie_nt": 78,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "στόμα, -τος, τό"
   },
   {
     "les": 5,
@@ -3021,7 +3236,8 @@
     "frequentie_nt": 77,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐμός, -ή, -όν"
   },
   {
     "les": 5,
@@ -3035,7 +3251,8 @@
     "frequentie_nt": 77,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σημεῖον, -ου, τό"
   },
   {
     "les": 4,
@@ -3049,7 +3266,8 @@
     "frequentie_nt": 76,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μαρτυρέω"
   },
   {
     "les": 5,
@@ -3063,7 +3281,8 @@
     "frequentie_nt": 76,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βαπτίζω"
   },
   {
     "les": 5,
@@ -3077,7 +3296,8 @@
     "frequentie_nt": 76,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐαγγέλιον, -ου, -ν"
   },
   {
     "les": 5,
@@ -3091,7 +3311,8 @@
     "frequentie_nt": 76,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πρόσωπον, -ου, τό"
   },
   {
     "les": 5,
@@ -3105,7 +3326,8 @@
     "frequentie_nt": 75,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δώδεκα"
   },
   {
     "les": 5,
@@ -3119,7 +3341,8 @@
     "frequentie_nt": 75,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κεφαλή, -ῆς, ἡ"
   },
   {
     "les": 5,
@@ -3133,7 +3356,8 @@
     "frequentie_nt": 74,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποκτείνω"
   },
   {
     "les": 5,
@@ -3147,7 +3371,8 @@
     "frequentie_nt": 74,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χαίρω"
   },
   {
     "les": 5,
@@ -3161,7 +3386,8 @@
     "frequentie_nt": 73,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πίνω"
   },
   {
     "les": 1,
@@ -3175,7 +3401,8 @@
     "frequentie_nt": 72,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φῶς, φωτός, τό"
   },
   {
     "les": 5,
@@ -3189,7 +3416,8 @@
     "frequentie_nt": 71,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἰώνιος, -ον"
   },
   {
     "les": 5,
@@ -3203,7 +3431,8 @@
     "frequentie_nt": 71,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἱερός, -ον; ἱερόν, -οῦ, τό"
   },
   {
     "les": 5,
@@ -3217,7 +3446,8 @@
     "frequentie_nt": 71,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πῦρ, -ός, τό"
   },
   {
     "les": 5,
@@ -3231,7 +3461,8 @@
     "frequentie_nt": 71,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τηρέω"
   },
   {
     "les": 5,
@@ -3245,7 +3476,8 @@
     "frequentie_nt": 70,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἰτέω"
   },
   {
     "les": 5,
@@ -3259,7 +3491,8 @@
     "frequentie_nt": 69,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄγω"
   },
   {
     "les": 5,
@@ -3273,7 +3506,8 @@
     "frequentie_nt": 68,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σάββατον, -ου, τό"
   },
   {
     "les": 5,
@@ -3287,7 +3521,8 @@
     "frequentie_nt": 68,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φέρω"
   },
   {
     "les": 5,
@@ -3301,7 +3536,8 @@
     "frequentie_nt": 67,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐντολή, -ῆς, ἡ"
   },
   {
     "les": 5,
@@ -3315,7 +3551,8 @@
     "frequentie_nt": 67,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πιστός, -ή, -όν"
   },
   {
     "les": 5,
@@ -3329,7 +3566,8 @@
     "frequentie_nt": 67,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλοῖον, -ου, τό"
   },
   {
     "les": 5,
@@ -3343,7 +3581,8 @@
     "frequentie_nt": 67,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ῥῆμα, -τος, τό"
   },
   {
     "les": 5,
@@ -3357,7 +3596,8 @@
     "frequentie_nt": 67,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τρεῖς, τρία"
   },
   {
     "les": 5,
@@ -3371,7 +3611,8 @@
     "frequentie_nt": 66,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπολύω"
   },
   {
     "les": 5,
@@ -3385,7 +3626,8 @@
     "frequentie_nt": 66,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καρπός, -οῦ, ὁ"
   },
   {
     "les": 5,
@@ -3399,7 +3641,8 @@
     "frequentie_nt": 66,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πρεσβύτερος, -α, -ον"
   },
   {
     "les": 5,
@@ -3413,7 +3656,8 @@
     "frequentie_nt": 66,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φημί"
   },
   {
     "les": 5,
@@ -3427,7 +3671,8 @@
     "frequentie_nt": 65,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἴτε"
   },
   {
     "les": 5,
@@ -3441,7 +3686,8 @@
     "frequentie_nt": 63,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γραμματεύς, -έως, ὁ"
   },
   {
     "les": 5,
@@ -3455,7 +3701,8 @@
     "frequentie_nt": 63,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δαιμόνιον, -ου, τό"
   },
   {
     "les": 5,
@@ -3469,7 +3716,8 @@
     "frequentie_nt": 63,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐρωτάω"
   },
   {
     "les": 5,
@@ -3483,7 +3731,8 @@
     "frequentie_nt": 63,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὄρος, -ους, τό"
   },
   {
     "les": 4,
@@ -3497,7 +3746,8 @@
     "frequentie_nt": 62,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θέλημα, -ατος, τό"
   },
   {
     "les": 5,
@@ -3511,7 +3761,8 @@
     "frequentie_nt": 62,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δοκέω"
   },
   {
     "les": 5,
@@ -3525,7 +3776,8 @@
     "frequentie_nt": 62,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔξω"
   },
   {
     "les": 5,
@@ -3539,7 +3791,8 @@
     "frequentie_nt": 62,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θρόνος, -ου, ὁ"
   },
   {
     "les": 5,
@@ -3553,7 +3806,8 @@
     "frequentie_nt": 61,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγαπητός, -ή, -όν"
   },
   {
     "les": 5,
@@ -3567,7 +3821,8 @@
     "frequentie_nt": 61,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δοξάζω"
   },
   {
     "les": 5,
@@ -3581,7 +3836,8 @@
     "frequentie_nt": 61,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κηρύσσω"
   },
   {
     "les": 5,
@@ -3595,7 +3851,8 @@
     "frequentie_nt": 61,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νύξ, νυκτός, ἡ"
   },
   {
     "les": 5,
@@ -3609,7 +3866,8 @@
     "frequentie_nt": 60,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἤδη"
   },
   {
     "les": 5,
@@ -3623,7 +3881,8 @@
     "frequentie_nt": 60,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἱμάτιον, -ου, τό"
   },
   {
     "les": 5,
@@ -3637,7 +3896,8 @@
     "frequentie_nt": 60,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσκυνέω"
   },
   {
     "les": 5,
@@ -3651,7 +3911,8 @@
     "frequentie_nt": 60,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπάρχω"
   },
   {
     "les": 5,
@@ -3665,7 +3926,8 @@
     "frequentie_nt": 60,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὧδε"
   },
   {
     "les": 5,
@@ -3679,7 +3941,8 @@
     "frequentie_nt": 59,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀσπάζομαι"
   },
   {
     "les": 5,
@@ -3693,7 +3956,8 @@
     "frequentie_nt": 59,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συνάγω"
   },
   {
     "les": 6,
@@ -3707,7 +3971,8 @@
     "frequentie_nt": 59,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διδάσκαλος, -ου, ὁ"
   },
   {
     "les": 6,
@@ -3721,7 +3986,8 @@
     "frequentie_nt": 59,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐθύς, -εῖα, -ύ"
   },
   {
     "les": 6,
@@ -3735,7 +4001,8 @@
     "frequentie_nt": 59,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λίθος, -ου, ὁ"
   },
   {
     "les": 6,
@@ -3749,7 +4016,8 @@
     "frequentie_nt": 59,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χαρά, -ᾶς, ἡ"
   },
   {
     "les": 6,
@@ -3763,7 +4031,8 @@
     "frequentie_nt": 58,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέσος, -η, -ον"
   },
   {
     "les": 6,
@@ -3777,7 +4046,8 @@
     "frequentie_nt": 57,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θεωρέω"
   },
   {
     "les": 6,
@@ -3791,7 +4061,8 @@
     "frequentie_nt": 57,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μηδέ"
   },
   {
     "les": 6,
@@ -3805,7 +4076,8 @@
     "frequentie_nt": 57,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τοιοῦτος, -αύτη, -οῦτον"
   },
   {
     "les": 1,
@@ -3819,7 +4091,8 @@
     "frequentie_nt": 56,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀρχή, -ῆς, ἡ"
   },
   {
     "les": 2,
@@ -3833,7 +4106,8 @@
     "frequentie_nt": 56,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τρίτος, -η, -ον"
   },
   {
     "les": 5,
@@ -3847,7 +4121,8 @@
     "frequentie_nt": 56,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπερωτάω"
   },
   {
     "les": 6,
@@ -3861,7 +4136,8 @@
     "frequentie_nt": 56,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δέχομαι"
   },
   {
     "les": 6,
@@ -3875,7 +4151,8 @@
     "frequentie_nt": 56,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συναγωγή, -ῆς, ἡ"
   },
   {
     "les": 2,
@@ -3889,7 +4166,8 @@
     "frequentie_nt": 55,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πολύς"
   },
   {
     "les": 6,
@@ -3903,7 +4181,8 @@
     "frequentie_nt": 55,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κράζω"
   },
   {
     "les": 3,
@@ -3917,7 +4196,8 @@
     "frequentie_nt": 54,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χρόνος, -ου, ὁ"
   },
   {
     "les": 6,
@@ -3931,7 +4211,8 @@
     "frequentie_nt": 54,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δεξιός, -ά, -όν"
   },
   {
     "les": 6,
@@ -3945,7 +4226,8 @@
     "frequentie_nt": 54,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐαγγελίζω"
   },
   {
     "les": 6,
@@ -3959,7 +4241,8 @@
     "frequentie_nt": 53,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διό"
   },
   {
     "les": 6,
@@ -3973,7 +4256,8 @@
     "frequentie_nt": 53,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐλπίς, -ίδος, ἡ"
   },
   {
     "les": 6,
@@ -3987,7 +4271,8 @@
     "frequentie_nt": 53,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔσχατος, -η, -ον"
   },
   {
     "les": 6,
@@ -4001,7 +4286,8 @@
     "frequentie_nt": 53,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λοιπός, -ή, -όν"
   },
   {
     "les": 6,
@@ -4015,7 +4301,8 @@
     "frequentie_nt": 53,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅπως"
   },
   {
     "les": 6,
@@ -4029,7 +4316,8 @@
     "frequentie_nt": 53,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐχί"
   },
   {
     "les": 6,
@@ -4043,7 +4331,8 @@
     "frequentie_nt": 52,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπαγγελία, -ας, ἡ"
   },
   {
     "les": 6,
@@ -4057,7 +4346,8 @@
     "frequentie_nt": 52,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παιδίον, -ου, τό"
   },
   {
     "les": 6,
@@ -4071,7 +4361,8 @@
     "frequentie_nt": 52,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πείθω"
   },
   {
     "les": 6,
@@ -4085,7 +4376,8 @@
     "frequentie_nt": 52,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σπείρω"
   },
   {
     "les": 6,
@@ -4099,7 +4391,8 @@
     "frequentie_nt": 51,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σοφία, -ας, ἡ"
   },
   {
     "les": 5,
@@ -4113,7 +4406,8 @@
     "frequentie_nt": 50,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κακός, -ή, -όν"
   },
   {
     "les": 6,
@@ -4127,7 +4421,8 @@
     "frequentie_nt": 50,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γλῶσσα, -ης, ἡ"
   },
   {
     "les": 6,
@@ -4141,7 +4436,8 @@
     "frequentie_nt": 50,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γραφή, -ῆς, ἡ"
   },
   {
     "les": 6,
@@ -4155,7 +4451,8 @@
     "frequentie_nt": 50,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μακάριος, -α, -ον"
   },
   {
     "les": 6,
@@ -4169,7 +4466,8 @@
     "frequentie_nt": 50,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παραβολή, -ῆς, ἡ"
   },
   {
     "les": 6,
@@ -4183,7 +4481,8 @@
     "frequentie_nt": 50,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τυφλός, -ή, -όν"
   },
   {
     "les": 4,
@@ -4197,7 +4496,8 @@
     "frequentie_nt": 49,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φανερόω"
   },
   {
     "les": 6,
@@ -4211,7 +4511,8 @@
     "frequentie_nt": 49,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄχρι"
   },
   {
     "les": 6,
@@ -4225,7 +4526,8 @@
     "frequentie_nt": 49,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔτος, -ους, τό"
   },
   {
     "les": 6,
@@ -4239,7 +4541,8 @@
     "frequentie_nt": 49,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παραλαμβάνω"
   },
   {
     "les": 6,
@@ -4253,7 +4556,8 @@
     "frequentie_nt": 49,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χρεία, -ας, ἡ"
   },
   {
     "les": 6,
@@ -4267,7 +4571,8 @@
     "frequentie_nt": 48,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποδίδωμι"
   },
   {
     "les": 6,
@@ -4281,7 +4586,8 @@
     "frequentie_nt": 48,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔμπροσθεν"
   },
   {
     "les": 6,
@@ -4295,7 +4601,8 @@
     "frequentie_nt": 48,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐκέτι"
   },
   {
     "les": 1,
@@ -4309,7 +4616,8 @@
     "frequentie_nt": 47,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πρό"
   },
   {
     "les": 5,
@@ -4323,7 +4631,8 @@
     "frequentie_nt": 47,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κρατέω"
   },
   {
     "les": 6,
@@ -4337,7 +4646,8 @@
     "frequentie_nt": 47,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἁμαρτωλός, -ον"
   },
   {
     "les": 6,
@@ -4351,7 +4661,8 @@
     "frequentie_nt": 47,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔρημος, -ον"
   },
   {
     "les": 6,
@@ -4365,7 +4676,8 @@
     "frequentie_nt": 47,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κρίσις, -εως, ἡ"
   },
   {
     "les": 6,
@@ -4379,7 +4691,8 @@
     "frequentie_nt": 47,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φόβος, -ου, ὁ"
   },
   {
     "les": 6,
@@ -4393,7 +4706,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπαγγέλλω"
   },
   {
     "les": 6,
@@ -4407,7 +4721,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθίζω"
   },
   {
     "les": 6,
@@ -4421,7 +4736,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μικρός, -ά, -όν"
   },
   {
     "les": 6,
@@ -4435,7 +4751,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐαί"
   },
   {
     "les": 6,
@@ -4449,7 +4766,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσφέρω"
   },
   {
     "les": 6,
@@ -4463,7 +4781,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σταυρόω"
   },
   {
     "les": 6,
@@ -4477,7 +4796,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σωτηρία, -ας, ἡ"
   },
   {
     "les": 6,
@@ -4491,7 +4811,8 @@
     "frequentie_nt": 46,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φυλακή, -ῆς, ἡ"
   },
   {
     "les": 7,
@@ -4505,7 +4826,8 @@
     "frequentie_nt": 45,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διώκω"
   },
   {
     "les": 7,
@@ -4519,7 +4841,8 @@
     "frequentie_nt": 45,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θηρίον, -ου, τό"
   },
   {
     "les": 7,
@@ -4533,7 +4856,8 @@
     "frequentie_nt": 45,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θλῖψις, -εως, ἡ"
   },
   {
     "les": 7,
@@ -4547,7 +4871,8 @@
     "frequentie_nt": 45,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ναός, -οῦ, ὁ"
   },
   {
     "les": 7,
@@ -4561,7 +4886,8 @@
     "frequentie_nt": 45,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅμοιος, -οία, -οιον"
   },
   {
     "les": 7,
@@ -4575,7 +4901,8 @@
     "frequentie_nt": 45,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποῦ"
   },
   {
     "les": 7,
@@ -4589,7 +4916,8 @@
     "frequentie_nt": 44,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δεύτερος, -α, -ον"
   },
   {
     "les": 7,
@@ -4603,7 +4931,8 @@
     "frequentie_nt": 44,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιγινώσκω"
   },
   {
     "les": 7,
@@ -4617,7 +4946,8 @@
     "frequentie_nt": 44,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κατοικέω"
   },
   {
     "les": 7,
@@ -4629,9 +4959,10 @@
     "beeld": "Er groeit een plant uit het zaad uit het bed.",
     "herhaal_nodig": false,
     "frequentie_nt": 44,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "σπέρμα, -ατος, τό"
   },
   {
     "les": 7,
@@ -4645,7 +4976,8 @@
     "frequentie_nt": 43,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἁμαρτάνω"
   },
   {
     "les": 7,
@@ -4659,7 +4991,8 @@
     "frequentie_nt": 43,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γενεά, -ᾶς, ἡ"
   },
   {
     "les": 7,
@@ -4673,7 +5006,8 @@
     "frequentie_nt": 43,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δέω"
   },
   {
     "les": 7,
@@ -4687,7 +5021,8 @@
     "frequentie_nt": 43,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θαυμάζω"
   },
   {
     "les": 7,
@@ -4701,7 +5036,8 @@
     "frequentie_nt": 43,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θεραπεύω"
   },
   {
     "les": 3,
@@ -4715,7 +5051,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καινός, -ή, -όν"
   },
   {
     "les": 7,
@@ -4729,7 +5066,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνάστασις, -εως, ἡ"
   },
   {
     "les": 7,
@@ -4743,7 +5081,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐγγίζω"
   },
   {
     "les": 7,
@@ -4757,7 +5096,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λύω"
   },
   {
     "les": 7,
@@ -4771,7 +5111,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πότε"
   },
   {
     "les": 7,
@@ -4785,7 +5126,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σεαυτοῦ, -ῆς, -οῦ"
   },
   {
     "les": 7,
@@ -4799,7 +5141,8 @@
     "frequentie_nt": 42,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φωνέω"
   },
   {
     "les": 1,
@@ -4813,7 +5156,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χωρίς"
   },
   {
     "les": 3,
@@ -4827,7 +5171,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διέρχομαι"
   },
   {
     "les": 4,
@@ -4841,7 +5186,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρίστημι"
   },
   {
     "les": 6,
@@ -4855,7 +5201,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐλογέω"
   },
   {
     "les": 7,
@@ -4869,7 +5216,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄξιος, -ία, -ιον"
   },
   {
     "les": 7,
@@ -4883,7 +5231,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐργάζομαι"
   },
   {
     "les": 7,
@@ -4897,7 +5246,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἑτοιμάζω"
   },
   {
     "les": 7,
@@ -4911,7 +5261,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὀλίγος, -η, -ον"
   },
   {
     "les": 7,
@@ -4925,7 +5276,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πάντοτε"
   },
   {
     "les": 7,
@@ -4939,7 +5291,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σήμερον"
   },
   {
     "les": 7,
@@ -4953,7 +5306,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τέλος, -ους, τό"
   },
   {
     "les": 7,
@@ -4967,7 +5321,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τέσσαρες"
   },
   {
     "les": 7,
@@ -4981,7 +5336,8 @@
     "frequentie_nt": 41,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τιμή, -ῆς, ἡ"
   },
   {
     "les": 5,
@@ -4995,7 +5351,8 @@
     "frequentie_nt": 40,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οἰκοδομέω"
   },
   {
     "les": 7,
@@ -5009,7 +5366,8 @@
     "frequentie_nt": 40,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιτίθημι"
   },
   {
     "les": 7,
@@ -5021,9 +5379,10 @@
     "beeld": "Ik sta met een wijnkan waardig voor het avondmaal klaar aan de eettafel.",
     "herhaal_nodig": false,
     "frequentie_nt": 40,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἱκανός, -ή, -όν"
   },
   {
     "les": 7,
@@ -5037,7 +5396,8 @@
     "frequentie_nt": 40,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κλαίω"
   },
   {
     "les": 7,
@@ -5051,7 +5411,8 @@
     "frequentie_nt": 40,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λογίζομαι"
   },
   {
     "les": 7,
@@ -5065,7 +5426,8 @@
     "frequentie_nt": 40,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μισέω"
   },
   {
     "les": 7,
@@ -5079,7 +5441,8 @@
     "frequentie_nt": 40,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πάσχω"
   },
   {
     "les": 7,
@@ -5093,7 +5456,8 @@
     "frequentie_nt": 39,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δικαιόω"
   },
   {
     "les": 7,
@@ -5107,7 +5471,8 @@
     "frequentie_nt": 39,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θύρα, -ας, ἡ"
   },
   {
     "les": 7,
@@ -5121,7 +5486,8 @@
     "frequentie_nt": 39,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πειράζω"
   },
   {
     "les": 7,
@@ -5135,7 +5501,8 @@
     "frequentie_nt": 39,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περισσεύω"
   },
   {
     "les": 7,
@@ -5149,7 +5516,8 @@
     "frequentie_nt": 39,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλανάω"
   },
   {
     "les": 7,
@@ -5163,7 +5531,8 @@
     "frequentie_nt": 39,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πράσσω"
   },
   {
     "les": 7,
@@ -5177,7 +5546,8 @@
     "frequentie_nt": 38,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιθυμία, -ας, ἡ"
   },
   {
     "les": 8,
@@ -5191,7 +5561,8 @@
     "frequentie_nt": 38,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐχαριστέω"
   },
   {
     "les": 8,
@@ -5205,7 +5576,8 @@
     "frequentie_nt": 38,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μνημεῖον, -ου, τό"
   },
   {
     "les": 8,
@@ -5219,7 +5591,8 @@
     "frequentie_nt": 38,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πέντε"
   },
   {
     "les": 8,
@@ -5233,7 +5606,8 @@
     "frequentie_nt": 38,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑποτάσσω"
   },
   {
     "les": 8,
@@ -5247,7 +5621,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄρχων, -οντος, ὁ"
   },
   {
     "les": 8,
@@ -5261,7 +5636,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βούλομαι"
   },
   {
     "les": 8,
@@ -5275,7 +5651,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διάβολος"
   },
   {
     "les": 8,
@@ -5289,7 +5666,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διακονέω"
   },
   {
     "les": 8,
@@ -5303,7 +5681,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐμαυτοῦ"
   },
   {
     "les": 8,
@@ -5317,7 +5696,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μαρτυρία, -ας, ἡ"
   },
   {
     "les": 8,
@@ -5331,7 +5711,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παραγίνομαι"
   },
   {
     "les": 8,
@@ -5345,7 +5726,8 @@
     "frequentie_nt": 37,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πρόβατον, -ου, τό"
   },
   {
     "les": 5,
@@ -5359,7 +5741,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καλῶς"
   },
   {
     "les": 8,
@@ -5373,7 +5756,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγρός, -οῦ, ὁ"
   },
   {
     "les": 8,
@@ -5387,7 +5771,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιστρέφω"
   },
   {
     "les": 8,
@@ -5401,7 +5786,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καυχάομαι"
   },
   {
     "les": 8,
@@ -5415,7 +5801,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὀργή, -ῆς, ἡ"
   },
   {
     "les": 8,
@@ -5429,7 +5816,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὖς, ὠτός, τό"
   },
   {
     "les": 8,
@@ -5443,7 +5831,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περιτομή, -ῆς, ἡ"
   },
   {
     "les": 8,
@@ -5457,7 +5846,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσευχή, -ῆς, ἡ"
   },
   {
     "les": 8,
@@ -5471,7 +5861,8 @@
     "frequentie_nt": 36,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὥσπερ"
   },
   {
     "les": 8,
@@ -5485,7 +5876,8 @@
     "frequentie_nt": 35,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἅπτω"
   },
   {
     "les": 8,
@@ -5499,7 +5891,8 @@
     "frequentie_nt": 35,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄρτι"
   },
   {
     "les": 8,
@@ -5513,7 +5906,8 @@
     "frequentie_nt": 35,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μάρτυς, -υρος, ὁ"
   },
   {
     "les": 8,
@@ -5527,7 +5921,8 @@
     "frequentie_nt": 35,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὀπίσω"
   },
   {
     "les": 8,
@@ -5541,7 +5936,8 @@
     "frequentie_nt": 35,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὀφείλω"
   },
   {
     "les": 8,
@@ -5555,7 +5951,8 @@
     "frequentie_nt": 35,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑποστρέφω"
   },
   {
     "les": 2,
@@ -5569,7 +5966,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οἶνος, -ου, ὁ"
   },
   {
     "les": 8,
@@ -5581,9 +5979,10 @@
     "beeld": "De ara (papegaai) die zegt op de schouder van m'n schoonmoeder in de woonkamer: \"Wat gaan we dan doen?\"",
     "herhaal_nodig": false,
     "frequentie_nt": 34,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "ἄρα"
   },
   {
     "les": 8,
@@ -5597,7 +5996,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βιβλίον, -ου, τό"
   },
   {
     "les": 8,
@@ -5611,7 +6011,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βλασφημέω"
   },
   {
     "les": 8,
@@ -5625,7 +6026,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διακονία, -ας, ἡ"
   },
   {
     "les": 8,
@@ -5639,7 +6041,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέλος, -ους, τό"
   },
   {
     "les": 8,
@@ -5653,7 +6056,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μετανοέω"
   },
   {
     "les": 8,
@@ -5667,7 +6071,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μήτε"
   },
   {
     "les": 8,
@@ -5679,9 +6084,10 @@
     "beeld": "Een stellig en instemmend vinkje dat zonder voorbehoud wordt toegekend aan een premisse.",
     "herhaal_nodig": false,
     "frequentie_nt": 34,
-    "score_goed": 0,
+    "score_goed": 3,
     "score_fout": 0,
-    "streak": 0
+    "streak": 3,
+    "grieks_info": "ναί"
   },
   {
     "les": 8,
@@ -5695,7 +6101,8 @@
     "frequentie_nt": 34,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πτωχός, -ή, -όν"
   },
   {
     "les": 8,
@@ -5709,7 +6116,8 @@
     "frequentie_nt": 33,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀρνέομαι"
   },
   {
     "les": 8,
@@ -5723,7 +6131,8 @@
     "frequentie_nt": 33,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀσθενέω"
   },
   {
     "les": 8,
@@ -5737,7 +6146,8 @@
     "frequentie_nt": 33,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δείκνυμι"
   },
   {
     "les": 8,
@@ -5751,7 +6161,8 @@
     "frequentie_nt": 33,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διαθήκη, -ης, ἡ"
   },
   {
     "les": 8,
@@ -5765,7 +6176,8 @@
     "frequentie_nt": 33,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποῖος"
   },
   {
     "les": 7,
@@ -5779,7 +6191,8 @@
     "frequentie_nt": 32,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀναγινώσκω"
   },
   {
     "les": 9,
@@ -5793,7 +6206,8 @@
     "frequentie_nt": 32,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἅπας, -ασα, -αν"
   },
   {
     "les": 9,
@@ -5807,7 +6221,8 @@
     "frequentie_nt": 32,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δυνατός, -ή, -όν"
   },
   {
     "les": 9,
@@ -5821,7 +6236,8 @@
     "frequentie_nt": 32,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐχθρός, -ά, -όν"
   },
   {
     "les": 9,
@@ -5835,7 +6251,8 @@
     "frequentie_nt": 32,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἥλιος, -ου, ὁ"
   },
   {
     "les": 9,
@@ -5849,7 +6266,8 @@
     "frequentie_nt": 32,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπομονή, -ῆς, ἡ"
   },
   {
     "les": 1,
@@ -5863,7 +6281,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φαίνω"
   },
   {
     "les": 6,
@@ -5877,7 +6296,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔξεστι(ν)"
   },
   {
     "les": 6,
@@ -5891,7 +6311,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποτήριον, ου, τό"
   },
   {
     "les": 7,
@@ -5905,7 +6326,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἱερεύς, -έως, ὁ"
   },
   {
     "les": 8,
@@ -5919,7 +6341,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀκάθαρτος, -ον"
   },
   {
     "les": 8,
@@ -5933,7 +6356,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθαρίζω"
   },
   {
     "les": 9,
@@ -5947,7 +6371,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄνεμος, -ου, ὁ"
   },
   {
     "les": 9,
@@ -5961,7 +6386,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐλπίζω"
   },
   {
     "les": 9,
@@ -5975,7 +6401,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὁμοίως"
   },
   {
     "les": 9,
@@ -5989,7 +6416,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παραγγέλλω"
   },
   {
     "les": 9,
@@ -6003,7 +6431,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρρησία, -ας, ἡ"
   },
   {
     "les": 9,
@@ -6017,7 +6446,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλῆθος, -ους, τό"
   },
   {
     "les": 9,
@@ -6031,7 +6461,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλήν"
   },
   {
     "les": 9,
@@ -6045,7 +6476,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποτέ"
   },
   {
     "les": 9,
@@ -6059,7 +6491,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συνείδησις, -εως, ἡ"
   },
   {
     "les": 9,
@@ -6073,7 +6506,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φυλάσσω"
   },
   {
     "les": 9,
@@ -6087,7 +6521,8 @@
     "frequentie_nt": 31,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φυλή, -ῆς, ἡ"
   },
   {
     "les": 2,
@@ -6101,7 +6536,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διάκονος, -οῦ, ὁ/ἡ"
   },
   {
     "les": 9,
@@ -6115,7 +6551,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγοράζω"
   },
   {
     "les": 9,
@@ -6129,7 +6566,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀρνίον, -ου, τό"
   },
   {
     "les": 9,
@@ -6143,7 +6581,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διδαχή, -ῆς, ἡ"
   },
   {
     "les": 9,
@@ -6157,7 +6596,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐγγύς"
   },
   {
     "les": 9,
@@ -6171,7 +6611,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπικαλέω"
   },
   {
     "les": 9,
@@ -6185,7 +6626,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιτιμάω"
   },
   {
     "les": 9,
@@ -6199,7 +6641,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σκότος, -ους, τό"
   },
   {
     "les": 9,
@@ -6213,7 +6656,8 @@
     "frequentie_nt": 30,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συνέρχομαι"
   },
   {
     "les": 9,
@@ -6227,7 +6671,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γνῶσις, -εως, ἡ"
   },
   {
     "les": 9,
@@ -6241,7 +6686,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐλεέω"
   },
   {
     "les": 9,
@@ -6255,7 +6701,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "Καῖσαρ, -αρος, ὁ"
   },
   {
     "les": 9,
@@ -6269,7 +6716,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μάχαιρα, -ας, ἡ"
   },
   {
     "les": 9,
@@ -6283,7 +6731,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μισθός, -οῦ, ὁ"
   },
   {
     "les": 9,
@@ -6297,7 +6746,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παράκλησις, -εως, ἡ"
   },
   {
     "les": 9,
@@ -6311,7 +6761,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πάσχα, τό (indecl.)"
   },
   {
     "les": 9,
@@ -6325,7 +6776,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πόθεν"
   },
   {
     "les": 9,
@@ -6339,7 +6791,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσκαλέω"
   },
   {
     "les": 9,
@@ -6353,7 +6806,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σκανδαλίζω"
   },
   {
     "les": 9,
@@ -6367,7 +6821,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φεύγω"
   },
   {
     "les": 9,
@@ -6381,7 +6836,8 @@
     "frequentie_nt": 29,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φίλος, -η, -ον"
   },
   {
     "les": 3,
@@ -6395,7 +6851,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλούσιος, -α, -ον"
   },
   {
     "les": 4,
@@ -6409,7 +6866,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θυσία, -ας, ἡ"
   },
   {
     "les": 5,
@@ -6423,7 +6881,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προφητεύω"
   },
   {
     "les": 6,
@@ -6437,7 +6896,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἰσχυρός, -ά, -όν"
   },
   {
     "les": 7,
@@ -6449,9 +6909,10 @@
     "beeld": "De heg in de vorm van de denker buiten voor de deur.",
     "herhaal_nodig": false,
     "frequentie_nt": 28,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ἡγέομαι"
   },
   {
     "les": 9,
@@ -6465,7 +6926,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἁγιάζω"
   },
   {
     "les": 9,
@@ -6479,7 +6941,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀδικέω"
   },
   {
     "les": 9,
@@ -6493,7 +6956,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀληθινός, -ή, -όν"
   },
   {
     "les": 9,
@@ -6507,7 +6971,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γαμέω"
   },
   {
     "les": 9,
@@ -6521,7 +6986,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐνδύω"
   },
   {
     "les": 9,
@@ -6535,7 +7001,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θυγάτηρ, -τρός, ἡ"
   },
   {
     "les": 9,
@@ -6549,7 +7016,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἰσχύω"
   },
   {
     "les": 9,
@@ -6563,7 +7031,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νικάω"
   },
   {
     "les": 9,
@@ -6577,7 +7046,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τελέω"
   },
   {
     "les": 9,
@@ -6591,7 +7061,8 @@
     "frequentie_nt": 28,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χώρα, -ας, ἡ"
   },
   {
     "les": 2,
@@ -6605,7 +7076,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὔπω"
   },
   {
     "les": 3,
@@ -6619,7 +7091,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σός, σή, σόν"
   },
   {
     "les": 6,
@@ -6633,7 +7106,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σταυρός, -οῦ, ὁ"
   },
   {
     "les": 7,
@@ -6647,7 +7121,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔλεος, -ους, τό"
   },
   {
     "les": 10,
@@ -6661,7 +7136,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βαστάζω"
   },
   {
     "les": 10,
@@ -6675,7 +7151,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δέκα"
   },
   {
     "les": 10,
@@ -6689,7 +7166,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκεῖθεν"
   },
   {
     "les": 10,
@@ -6703,7 +7181,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκχέω"
   },
   {
     "les": 10,
@@ -6717,7 +7196,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταργέω"
   },
   {
     "les": 10,
@@ -6731,7 +7211,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κρίμα, -ατος, τό"
   },
   {
     "les": 10,
@@ -6745,7 +7226,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κώμη, -ης, ἡ"
   },
   {
     "les": 10,
@@ -6759,7 +7241,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μυστήριον, -ου, τό"
   },
   {
     "les": 10,
@@ -6773,7 +7256,8 @@
     "frequentie_nt": 27,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πόσος, , -η, -ον"
   },
   {
     "les": 4,
@@ -6787,7 +7271,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φρονέω"
   },
   {
     "les": 7,
@@ -6801,7 +7286,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπεί"
   },
   {
     "les": 9,
@@ -6815,7 +7301,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀληθής, -ές"
   },
   {
     "les": 10,
@@ -6829,7 +7316,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀδελφή, -ῆς, ἡ"
   },
   {
     "les": 10,
@@ -6843,7 +7331,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποκαλύπτω"
   },
   {
     "les": 10,
@@ -6857,7 +7346,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γνωρίζω"
   },
   {
     "les": 10,
@@ -6871,7 +7361,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "Ἕλλην, -ηνος, ὁ"
   },
   {
     "les": 10,
@@ -6885,7 +7376,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἕνεκα"
   },
   {
     "les": 10,
@@ -6899,7 +7391,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἰάομαι"
   },
   {
     "les": 10,
@@ -6913,7 +7406,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθαρός, -ά, -όν"
   },
   {
     "les": 10,
@@ -6927,7 +7421,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λυπέω"
   },
   {
     "les": 10,
@@ -6941,7 +7436,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὀμνύω"
   },
   {
     "les": 10,
@@ -6955,7 +7451,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὁμολογέω"
   },
   {
     "les": 10,
@@ -6969,7 +7466,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πνευματικός, -ή, -όν"
   },
   {
     "les": 10,
@@ -6983,7 +7481,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "στρατιώτης, -ου, ὁ"
   },
   {
     "les": 10,
@@ -6997,7 +7496,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συνίημι"
   },
   {
     "les": 10,
@@ -7011,7 +7511,8 @@
     "frequentie_nt": 26,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χῆρος, -α, -ον"
   },
   {
     "les": 2,
@@ -7025,7 +7526,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἥκω"
   },
   {
     "les": 10,
@@ -7039,7 +7541,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀδικία, -ας, ἡ"
   },
   {
     "les": 10,
@@ -7053,7 +7556,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀναβλέπω"
   },
   {
     "les": 10,
@@ -7067,7 +7571,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀσθενής, -ές"
   },
   {
     "les": 10,
@@ -7081,7 +7586,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δένδρον, -ου, τό"
   },
   {
     "les": 10,
@@ -7095,7 +7601,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δουλεύω"
   },
   {
     "les": 10,
@@ -7109,7 +7616,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἑορτή, -ῆς, ἡ"
   },
   {
     "les": 10,
@@ -7123,7 +7631,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κελεύω"
   },
   {
     "les": 10,
@@ -7137,7 +7646,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λευκός, -ή, -όν"
   },
   {
     "les": 10,
@@ -7151,7 +7661,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μανθάνω"
   },
   {
     "les": 10,
@@ -7165,7 +7676,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νεφέλη, -ης, ἡ"
   },
   {
     "les": 10,
@@ -7179,7 +7691,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πορνεία, -ας, ἡ"
   },
   {
     "les": 10,
@@ -7193,7 +7706,8 @@
     "frequentie_nt": 25,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φιλέω"
   },
   {
     "les": 3,
@@ -7207,7 +7721,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νέος, -α, -ον"
   },
   {
     "les": 4,
@@ -7221,7 +7736,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νοῦς, νοός, ὁ"
   },
   {
     "les": 10,
@@ -7235,7 +7751,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀκοή, -ῆς, ἡ"
   },
   {
     "les": 10,
@@ -7249,7 +7766,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀναιρέω"
   },
   {
     "les": 11,
@@ -7263,7 +7781,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀσθένεια, -ας, ἡ"
   },
   {
     "les": 11,
@@ -7277,7 +7796,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀστήρ, -έρος, ὁ"
   },
   {
     "les": 11,
@@ -7291,7 +7811,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διότι"
   },
   {
     "les": 11,
@@ -7305,7 +7826,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιστολή, -ῆς, ἡ"
   },
   {
     "les": 11,
@@ -7319,7 +7841,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταλείπω"
   },
   {
     "les": 11,
@@ -7333,7 +7856,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κεῖμαι"
   },
   {
     "les": 11,
@@ -7347,7 +7871,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὗ"
   },
   {
     "les": 11,
@@ -7361,7 +7886,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παῖς, παιδός, ὁ/ἡ"
   },
   {
     "les": 11,
@@ -7375,7 +7901,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πάρειμι"
   },
   {
     "les": 11,
@@ -7389,7 +7916,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρουσία, -ας, ἡ"
   },
   {
     "les": 11,
@@ -7403,7 +7931,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πίμπλημι"
   },
   {
     "les": 11,
@@ -7417,7 +7946,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσέχω"
   },
   {
     "les": 11,
@@ -7431,7 +7961,8 @@
     "frequentie_nt": 24,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σωτήρ, -ῆρος, ὁ"
   },
   {
     "les": 1,
@@ -7445,7 +7976,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θεάομαι"
   },
   {
     "les": 6,
@@ -7459,7 +7991,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θυσιαστήριον, -ου, τό"
   },
   {
     "les": 8,
@@ -7473,7 +8006,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐλεύθερος, -έρα, -ερον"
   },
   {
     "les": 8,
@@ -7487,7 +8021,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σκεῦος, -ους, τό"
   },
   {
     "les": 10,
@@ -7501,7 +8036,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χαρίζομαι"
   },
   {
     "les": 11,
@@ -7515,7 +8051,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀμπελών, -ῶνος, ὁ"
   },
   {
     "les": 11,
@@ -7529,7 +8066,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνάγω"
   },
   {
     "les": 11,
@@ -7543,7 +8081,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄπιστος, -ον"
   },
   {
     "les": 11,
@@ -7557,7 +8096,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἰκών, -όνος, ἡ"
   },
   {
     "les": 11,
@@ -7571,7 +8111,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ζῷον, -ου, τό"
   },
   {
     "les": 11,
@@ -7585,7 +8126,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κατηγορέω"
   },
   {
     "les": 11,
@@ -7599,7 +8141,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοιλία, -ας, ἡ"
   },
   {
     "les": 11,
@@ -7613,7 +8156,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κωλύω"
   },
   {
     "les": 11,
@@ -7627,7 +8171,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μιμνῄσκω"
   },
   {
     "les": 11,
@@ -7641,7 +8186,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πέραν"
   },
   {
     "les": 11,
@@ -7655,7 +8201,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περιβάλλω"
   },
   {
     "les": 11,
@@ -7669,7 +8216,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τελειόω"
   },
   {
     "les": 11,
@@ -7683,7 +8231,8 @@
     "frequentie_nt": 23,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χιλιάς, -άδος, ἡ"
   },
   {
     "les": 4,
@@ -7697,7 +8246,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δοκιμάζω"
   },
   {
     "les": 11,
@@ -7711,7 +8261,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀγνοέω"
   },
   {
     "les": 11,
@@ -7725,7 +8276,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀντί"
   },
   {
     "les": 11,
@@ -7739,7 +8291,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αὐξάνω"
   },
   {
     "les": 11,
@@ -7753,7 +8306,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γρηγορέω"
   },
   {
     "les": 11,
@@ -7767,7 +8321,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δέομαι"
   },
   {
     "les": 11,
@@ -7781,7 +8336,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκλέγω"
   },
   {
     "les": 11,
@@ -7795,7 +8351,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκλεκτός, -ή, -όν"
   },
   {
     "les": 11,
@@ -7809,7 +8366,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθεύδω"
   },
   {
     "les": 11,
@@ -7823,7 +8381,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κἀκεῖνος, -η, -ο"
   },
   {
     "les": 11,
@@ -7837,7 +8396,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κατεργάζομαι"
   },
   {
     "les": 11,
@@ -7851,7 +8411,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοπιάω"
   },
   {
     "les": 11,
@@ -7865,7 +8426,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μετάνοια, -ας, ἡ"
   },
   {
     "les": 11,
@@ -7879,7 +8441,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μηκέτι"
   },
   {
     "les": 11,
@@ -7893,7 +8456,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πληγή, -ῆς, ἡ"
   },
   {
     "les": 11,
@@ -7907,7 +8471,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλοῦτος, -ου, ὁ"
   },
   {
     "les": 11,
@@ -7921,7 +8486,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πωλέω"
   },
   {
     "les": 11,
@@ -7935,7 +8501,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συνέδριον, -ου, τό"
   },
   {
     "les": 11,
@@ -7949,7 +8516,8 @@
     "frequentie_nt": 22,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τεσσεράκοντα"
   },
   {
     "les": 2,
@@ -7963,7 +8531,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πειρασμός, -οῦ, ὁ"
   },
   {
     "les": 5,
@@ -7977,7 +8546,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τιμάω"
   },
   {
     "les": 10,
@@ -7991,7 +8561,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "στρέφω"
   },
   {
     "les": 11,
@@ -8005,7 +8576,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀργύριον, -ου, τό"
   },
   {
     "les": 11,
@@ -8019,7 +8591,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βασιλεύω"
   },
   {
     "les": 12,
@@ -8033,7 +8606,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διδασκαλία, -ας, ἡ"
   },
   {
     "les": 12,
@@ -8047,7 +8621,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐνεργέω"
   },
   {
     "les": 12,
@@ -8061,7 +8636,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐδοκέω"
   },
   {
     "les": 12,
@@ -8075,7 +8651,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θερίζω"
   },
   {
     "les": 12,
@@ -8089,7 +8666,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθίστημι"
   },
   {
     "les": 12,
@@ -8103,7 +8681,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λατρεύω"
   },
   {
     "les": 12,
@@ -8117,7 +8696,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μνημονεύω"
   },
   {
     "les": 12,
@@ -8131,7 +8711,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περισσός, -ή, -όν"
   },
   {
     "les": 12,
@@ -8145,7 +8726,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τελώνης, -ου, ὁ"
   },
   {
     "les": 12,
@@ -8159,7 +8741,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπακούω"
   },
   {
     "les": 12,
@@ -8173,7 +8756,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χιλίαρχος, -ου, ὁ"
   },
   {
     "les": 12,
@@ -8187,7 +8771,8 @@
     "frequentie_nt": 21,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὡσεί"
   },
   {
     "les": 3,
@@ -8201,7 +8786,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νηστεύω"
   },
   {
     "les": 12,
@@ -8215,7 +8801,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἰτία, -ας, ἡ"
   },
   {
     "les": 12,
@@ -8229,7 +8816,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀκροβυστία, -ας, ἡ"
   },
   {
     "les": 12,
@@ -8243,7 +8831,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βάπτισμα, -ατος, τό"
   },
   {
     "les": 12,
@@ -8257,7 +8846,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γένος, -ους, τό"
   },
   {
     "les": 12,
@@ -8271,7 +8861,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γονεύς, -έως, ὁ"
   },
   {
     "les": 12,
@@ -8285,7 +8876,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἑκατοντάρχης, -ου, ὁ"
   },
   {
     "les": 12,
@@ -8299,7 +8891,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπίγνωσις, -εως, ἡ"
   },
   {
     "les": 12,
@@ -8313,7 +8906,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐφίστημι"
   },
   {
     "les": 12,
@@ -8327,7 +8921,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἡγεμών, -όνος, ὁ"
   },
   {
     "les": 12,
@@ -8341,7 +8936,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἰχθύς, -ύος, ὁ"
   },
   {
     "les": 12,
@@ -8355,7 +8951,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μαρτύριον, - ου, τό"
   },
   {
     "les": 12,
@@ -8369,7 +8966,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ξύλον, -ου, τό"
   },
   {
     "les": 12,
@@ -8383,7 +8981,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προάγω"
   },
   {
     "les": 12,
@@ -8397,7 +8996,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σκηνή, -ῆς, ἡ"
   },
   {
     "les": 12,
@@ -8411,7 +9011,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σοφός, -ή, -όν"
   },
   {
     "les": 12,
@@ -8425,7 +9026,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τοσοῦτος, τοσαύτη, τοσοῦτο"
   },
   {
     "les": 12,
@@ -8439,7 +9041,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τρέχω"
   },
   {
     "les": 12,
@@ -8453,7 +9056,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπηρέτης, -ου, ὁ"
   },
   {
     "les": 12,
@@ -8467,7 +9071,8 @@
     "frequentie_nt": 20,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑψόω"
   },
   {
     "les": 3,
@@ -8481,7 +9086,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παλαιός, -ά, -όν"
   },
   {
     "les": 4,
@@ -8495,7 +9101,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τέλειος, -α, -ον"
   },
   {
     "les": 5,
@@ -8509,7 +9116,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπέχω"
   },
   {
     "les": 6,
@@ -8523,7 +9131,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοινωνία, -ας, ἡ"
   },
   {
     "les": 12,
@@ -8537,7 +9146,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γεωργός, -οῦ, ὁ"
   },
   {
     "les": 12,
@@ -8551,7 +9161,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διακρίνω"
   },
   {
     "les": 12,
@@ -8565,7 +9176,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δῶρον, -ου, τό"
   },
   {
     "les": 12,
@@ -8579,7 +9191,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπαίρω"
   },
   {
     "les": 12,
@@ -8593,7 +9206,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπάνω"
   },
   {
     "les": 12,
@@ -8607,7 +9221,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιλαμβάνομαι"
   },
   {
     "les": 12,
@@ -8621,7 +9236,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπουράνιος, -ον"
   },
   {
     "les": 12,
@@ -8635,7 +9251,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κριτής, -ου, ὁ"
   },
   {
     "les": 12,
@@ -8649,7 +9266,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κρύπτω"
   },
   {
     "les": 12,
@@ -8663,7 +9281,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κτίσις, -εως, ἡ"
   },
   {
     "les": 13,
@@ -8677,7 +9296,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μεριμνάω"
   },
   {
     "les": 13,
@@ -8691,7 +9311,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παράπτωμα, -ατος, τό"
   },
   {
     "les": 13,
@@ -8705,7 +9326,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρατίθημι"
   },
   {
     "les": 13,
@@ -8719,7 +9341,8 @@
     "frequentie_nt": 19,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προφητεία, -ας, ἡ"
   },
   {
     "les": 4,
@@ -8733,7 +9356,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νυνί"
   },
   {
     "les": 6,
@@ -8747,7 +9371,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέχρι"
   },
   {
     "les": 10,
@@ -8761,7 +9386,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δεσμός, -οῦ, ὁ"
   },
   {
     "les": 10,
@@ -8775,7 +9401,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κατέχω"
   },
   {
     "les": 12,
@@ -8789,7 +9416,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιτρέπω"
   },
   {
     "les": 13,
@@ -8803,7 +9431,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀληθῶς"
   },
   {
     "les": 13,
@@ -8817,7 +9446,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀποκάλυψις, -εως, ἡ"
   },
   {
     "les": 13,
@@ -8831,7 +9461,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπώλεια, -ας, ἡ"
   },
   {
     "les": 13,
@@ -8843,9 +9474,10 @@
     "beeld": "Een retorische vraagstelling die methodisch anticipeert op een ontkennende conclusie.",
     "herhaal_nodig": false,
     "frequentie_nt": 18,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "ἆρα"
   },
   {
     "les": 13,
@@ -8859,7 +9491,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀριθμός, -οῦ, ὁ"
   },
   {
     "les": 13,
@@ -8873,7 +9506,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βλασφημία, -ας, ἡ"
   },
   {
     "les": 13,
@@ -8887,7 +9521,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δέησις, -εως, ἡ"
   },
   {
     "les": 13,
@@ -8901,7 +9536,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εἰσπορεύομαι"
   },
   {
     "les": 13,
@@ -8915,7 +9551,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐλέγχω"
   },
   {
     "les": 13,
@@ -8929,7 +9566,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐμβαίνω"
   },
   {
     "les": 13,
@@ -8943,7 +9581,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιβάλλω"
   },
   {
     "les": 13,
@@ -8957,7 +9596,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θυμός, -οῦ, ὁ"
   },
   {
     "les": 13,
@@ -8971,7 +9611,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταγγέλλω"
   },
   {
     "les": 13,
@@ -8985,7 +9626,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κατακρίνω"
   },
   {
     "les": 13,
@@ -8999,7 +9641,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κενός, -ή, -όν"
   },
   {
     "les": 13,
@@ -9013,7 +9656,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κληρονομέω"
   },
   {
     "les": 13,
@@ -9027,7 +9671,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοιμάομαι"
   },
   {
     "les": 13,
@@ -9041,7 +9686,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κόπος, -ου, ὁ"
   },
   {
     "les": 13,
@@ -9055,7 +9701,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μήν, μηνός, ὁ"
   },
   {
     "les": 13,
@@ -9069,7 +9716,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οἰκοδομή, -ῆς, ἡ"
   },
   {
     "les": 13,
@@ -9083,7 +9731,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παραχρῆμα"
   },
   {
     "les": 13,
@@ -9097,7 +9746,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποιμήν, -ένος, ὁ"
   },
   {
     "les": 13,
@@ -9111,7 +9761,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πόλεμος, -ου, ὁ"
   },
   {
     "les": 13,
@@ -9125,7 +9776,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πολλάκις"
   },
   {
     "les": 13,
@@ -9139,7 +9791,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προστίθημι"
   },
   {
     "les": 13,
@@ -9153,7 +9806,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πυλών, -ῶνος, ὁ"
   },
   {
     "les": 13,
@@ -9167,7 +9821,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "στέφανος, -ου, ὁ"
   },
   {
     "les": 13,
@@ -9181,7 +9836,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ταράσσω"
   },
   {
     "les": 13,
@@ -9195,7 +9851,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τίκτω"
   },
   {
     "les": 13,
@@ -9209,7 +9866,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "φανερός, -ά, -όν"
   },
   {
     "les": 13,
@@ -9223,7 +9881,8 @@
     "frequentie_nt": 18,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χρυσοῦς, -ῆ, -οῦν"
   },
   {
     "les": 1,
@@ -9237,7 +9896,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σκοτία, -ας, ἡ"
   },
   {
     "les": 2,
@@ -9251,7 +9911,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ῥύομαι"
   },
   {
     "les": 5,
@@ -9265,7 +9926,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑποκριτής, -οῦ, ὁ"
   },
   {
     "les": 8,
@@ -9279,7 +9941,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπαύριον"
   },
   {
     "les": 10,
@@ -9293,7 +9956,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνάγκη, -ης, ἡ"
   },
   {
     "les": 11,
@@ -9305,9 +9969,10 @@
     "beeld": "Een retorisch partikel dat expliciet een ontkennend antwoord anticipeert.",
     "herhaal_nodig": false,
     "frequentie_nt": 17,
-    "score_goed": 0,
+    "score_goed": 2,
     "score_fout": 0,
-    "streak": 0
+    "streak": 2,
+    "grieks_info": "μήτι"
   },
   {
     "les": 13,
@@ -9321,7 +9986,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀρέσκω"
   },
   {
     "les": 13,
@@ -9335,7 +10001,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄφεσις, -εως, ἡ"
   },
   {
     "les": 13,
@@ -9349,7 +10016,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὡσαύτως"
   },
   {
     "les": 14,
@@ -9363,7 +10031,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "βρῶμα, -ατος, τό"
   },
   {
     "les": 14,
@@ -9377,7 +10046,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἑκατόν"
   },
   {
     "les": 14,
@@ -9391,7 +10061,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐξίστημι"
   },
   {
     "les": 14,
@@ -9405,7 +10076,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἕτοιμος, ἕτοιμον"
   },
   {
     "les": 14,
@@ -9419,7 +10091,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θησαυρός, -οῦ, ὁ"
   },
   {
     "les": 14,
@@ -9433,7 +10106,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἵππος, -ου, ὁ"
   },
   {
     "les": 14,
@@ -9447,7 +10121,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καθάπερ"
   },
   {
     "les": 14,
@@ -9461,7 +10136,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταλύω"
   },
   {
     "les": 14,
@@ -9475,7 +10151,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κερδαίνω"
   },
   {
     "les": 14,
@@ -9489,7 +10166,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κρυπτός"
   },
   {
     "les": 14,
@@ -9503,7 +10181,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νίπτω"
   },
   {
     "les": 14,
@@ -9517,7 +10196,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περιτέμνω"
   },
   {
     "les": 14,
@@ -9531,7 +10211,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλήρωμα, -ατος, τό"
   },
   {
     "les": 14,
@@ -9545,7 +10226,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλησίον, ὁ (indecl.)"
   },
   {
     "les": 14,
@@ -9559,7 +10241,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ποταμός, -οῦ, ὁ"
   },
   {
     "les": 14,
@@ -9573,7 +10256,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ῥίζα, -ης, ἡ"
   },
   {
     "les": 14,
@@ -9587,7 +10271,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπομένω"
   },
   {
     "les": 14,
@@ -9601,7 +10286,8 @@
     "frequentie_nt": 17,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χάρισμα, -ατος, τό"
   },
   {
     "les": 14,
@@ -9613,9 +10299,10 @@
     "beeld": "Een vocale markering van een intense emotionele uitbarsting.",
     "herhaal_nodig": false,
     "frequentie_nt": 17,
-    "score_goed": 0,
+    "score_goed": 1,
     "score_fout": 0,
-    "streak": 0
+    "streak": 1,
+    "grieks_info": "ὦ"
   },
   {
     "les": 1,
@@ -9629,7 +10316,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πλήρης, -ες"
   },
   {
     "les": 2,
@@ -9643,7 +10331,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑστερέω"
   },
   {
     "les": 3,
@@ -9657,7 +10346,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "νυμφίος, -ου, ὁ"
   },
   {
     "les": 6,
@@ -9671,7 +10361,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐλογία, -ας, ἡ"
   },
   {
     "les": 8,
@@ -9685,7 +10376,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "οὐδέποτε"
   },
   {
     "les": 9,
@@ -9699,7 +10391,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κλέπτης, -ου, ὁ"
   },
   {
     "les": 10,
@@ -9713,7 +10406,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δέσμιος, -ου, ὁ"
   },
   {
     "les": 13,
@@ -9727,7 +10421,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δεῖπνον, -ου, τό"
   },
   {
     "les": 13,
@@ -9741,7 +10436,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διατάσσω"
   },
   {
     "les": 14,
@@ -9755,7 +10451,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀθετέω"
   },
   {
     "les": 14,
@@ -9769,7 +10466,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνακρίνω"
   },
   {
     "les": 14,
@@ -9783,7 +10481,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διαλογίζομαι"
   },
   {
     "les": 14,
@@ -9797,7 +10496,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διψάω"
   },
   {
     "les": 14,
@@ -9811,7 +10511,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκτείνω"
   },
   {
     "les": 14,
@@ -9825,7 +10526,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔπειτα"
   },
   {
     "les": 14,
@@ -9839,7 +10541,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιθυμέω"
   },
   {
     "les": 14,
@@ -9853,7 +10556,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιμένω"
   },
   {
     "les": 14,
@@ -9867,7 +10571,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐργάτης, -ου, ὁ"
   },
   {
     "les": 14,
@@ -9881,7 +10586,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ζῆλος, -ου, ὁ"
   },
   {
     "les": 14,
@@ -9895,7 +10601,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θεμέλιος, - ου, ὁ"
   },
   {
     "les": 14,
@@ -9909,7 +10616,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κακῶς"
   },
   {
     "les": 14,
@@ -9923,7 +10631,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κἄν"
   },
   {
     "les": 14,
@@ -9937,7 +10646,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κλείω"
   },
   {
     "les": 14,
@@ -9951,7 +10661,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "λύπη, - ης, ἡ"
   },
   {
     "les": 14,
@@ -9965,7 +10676,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πάθημα, -ατος, τό"
   },
   {
     "les": 14,
@@ -9979,7 +10691,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρέχω"
   },
   {
     "les": 14,
@@ -9993,7 +10706,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "περισσῶς"
   },
   {
     "les": 14,
@@ -10007,7 +10721,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συκῆ, -ῆς, ἡ"
   },
   {
     "les": 14,
@@ -10021,7 +10736,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συλλαμβάνω"
   },
   {
     "les": 14,
@@ -10035,7 +10751,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συνίστημι"
   },
   {
     "les": 14,
@@ -10049,7 +10766,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τέρας, -ατος, τό"
   },
   {
     "les": 14,
@@ -10063,7 +10781,8 @@
     "frequentie_nt": 16,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τροφή, -ῆς, ἡ"
   },
   {
     "les": 1,
@@ -10077,7 +10796,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταλαμβάνω"
   },
   {
     "les": 2,
@@ -10091,7 +10811,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γάμος, -ου, ὁ"
   },
   {
     "les": 5,
@@ -10105,7 +10826,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πέτρα, -ας, ἡ"
   },
   {
     "les": 6,
@@ -10119,7 +10841,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "συμφέρω"
   },
   {
     "les": 6,
@@ -10133,7 +10856,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "τράπεζα, -ης, ἡ"
   },
   {
     "les": 7,
@@ -10147,7 +10871,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπαγγέλλομαι"
   },
   {
     "les": 8,
@@ -10161,7 +10886,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "γεύομαι"
   },
   {
     "les": 9,
@@ -10175,7 +10901,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "εὐσέβεια, -ας, ἡ"
   },
   {
     "les": 10,
@@ -10189,7 +10916,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐντέλλομαι"
   },
   {
     "les": 10,
@@ -10203,7 +10931,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὑπακοή, -ῆς, ἡ"
   },
   {
     "les": 14,
@@ -10217,7 +10946,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπίσταμαι"
   },
   {
     "les": 14,
@@ -10231,7 +10961,8 @@
     "frequentie_nt": 15,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅθεν"
   },
   {
     "les": 4,
@@ -10245,7 +10976,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μερίζω"
   },
   {
     "les": 4,
@@ -10259,7 +10991,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέτρον, -ου, τό"
   },
   {
     "les": 5,
@@ -10273,7 +11006,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοινός, -ή, -όν"
   },
   {
     "les": 6,
@@ -10287,7 +11021,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "θύω"
   },
   {
     "les": 6,
@@ -10301,7 +11036,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κλάω"
   },
   {
     "les": 6,
@@ -10315,7 +11051,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ταπεινόω"
   },
   {
     "les": 8,
@@ -10329,7 +11066,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἕκτος, -η, -ον"
   },
   {
     "les": 8,
@@ -10343,7 +11081,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοινόω"
   },
   {
     "les": 8,
@@ -10357,7 +11096,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "πετεινός, -η, -όν"
   },
   {
     "les": 11,
@@ -10371,7 +11111,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀνάκειμαι"
   },
   {
     "les": 11,
@@ -10385,7 +11126,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὄψιος, -α, -ον"
   },
   {
     "les": 13,
@@ -10399,7 +11141,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀμφότεροι, -αι, -α"
   },
   {
     "les": 13,
@@ -10413,7 +11156,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἁρπάζω"
   },
   {
     "les": 14,
@@ -10427,7 +11171,8 @@
     "frequentie_nt": 14,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μακροθυμία, -ας, ἡ"
   },
   {
     "les": 9,
@@ -10441,7 +11186,8 @@
     "frequentie_nt": 13,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀναγγέλλω"
   },
   {
     "les": 10,
@@ -10455,7 +11201,8 @@
     "frequentie_nt": 13,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "χωρίζω"
   },
   {
     "les": 12,
@@ -10469,7 +11216,8 @@
     "frequentie_nt": 13,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταντάω"
   },
   {
     "les": 13,
@@ -10483,7 +11231,8 @@
     "frequentie_nt": 13,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταισχύνω"
   },
   {
     "les": 13,
@@ -10497,7 +11246,8 @@
     "frequentie_nt": 13,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παιδεύω"
   },
   {
     "les": 14,
@@ -10511,7 +11261,8 @@
     "frequentie_nt": 13,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἄνωθεν"
   },
   {
     "les": 10,
@@ -10525,7 +11276,8 @@
     "frequentie_nt": 12,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μάλιστα"
   },
   {
     "les": 10,
@@ -10539,7 +11291,8 @@
     "frequentie_nt": 12,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "προσλαμβάνω"
   },
   {
     "les": 11,
@@ -10553,7 +11306,8 @@
     "frequentie_nt": 12,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σπλαγχνίζομαι"
   },
   {
     "les": 12,
@@ -10567,7 +11321,8 @@
     "frequentie_nt": 12,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καίω"
   },
   {
     "les": 14,
@@ -10581,7 +11336,8 @@
     "frequentie_nt": 12,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔθος, -ους, τό"
   },
   {
     "les": 10,
@@ -10595,7 +11351,8 @@
     "frequentie_nt": 11,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σπλάγχνον, -ου, τό"
   },
   {
     "les": 14,
@@ -10609,7 +11366,8 @@
     "frequentie_nt": 11,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κλάδος, -ου, ὁ"
   },
   {
     "les": 14,
@@ -10623,7 +11381,8 @@
     "frequentie_nt": 11,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κλῆρος, -ου, ὁ"
   },
   {
     "les": 10,
@@ -10637,7 +11396,8 @@
     "frequentie_nt": 10,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἅμα"
   },
   {
     "les": 10,
@@ -10651,7 +11411,8 @@
     "frequentie_nt": 10,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "κοινωνός, -οῦ, ὁ"
   },
   {
     "les": 12,
@@ -10665,7 +11426,8 @@
     "frequentie_nt": 10,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὄντως"
   },
   {
     "les": 12,
@@ -10679,7 +11441,8 @@
     "frequentie_nt": 10,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σιγάω"
   },
   {
     "les": 13,
@@ -10693,7 +11456,8 @@
     "frequentie_nt": 10,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἔνοχος, -ον"
   },
   {
     "les": 14,
@@ -10707,7 +11471,8 @@
     "frequentie_nt": 10,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπολογέομαι"
   },
   {
     "les": 12,
@@ -10721,7 +11486,8 @@
     "frequentie_nt": 9,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπιδίδωμι"
   },
   {
     "les": 13,
@@ -10735,7 +11501,8 @@
     "frequentie_nt": 9,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "αἵρεσις, -εως, ἡ"
   },
   {
     "les": 13,
@@ -10749,7 +11516,8 @@
     "frequentie_nt": 9,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "καταφρονέω"
   },
   {
     "les": 12,
@@ -10763,7 +11531,8 @@
     "frequentie_nt": 8,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἀπιστέω"
   },
   {
     "les": 12,
@@ -10777,7 +11546,8 @@
     "frequentie_nt": 8,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "διανοίγω"
   },
   {
     "les": 12,
@@ -10791,7 +11561,8 @@
     "frequentie_nt": 8,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐνθάδε"
   },
   {
     "les": 13,
@@ -10805,7 +11576,8 @@
     "frequentie_nt": 8,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "σχίσμα, -ατος, το"
   },
   {
     "les": 13,
@@ -10819,7 +11591,8 @@
     "frequentie_nt": 7,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "δόκιμος, -ον"
   },
   {
     "les": 13,
@@ -10833,7 +11606,8 @@
     "frequentie_nt": 6,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐπαινέω"
   },
   {
     "les": 3,
@@ -10847,7 +11621,8 @@
     "frequentie_nt": 0,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ὅσος, -η, -ον"
   },
   {
     "les": 7,
@@ -10861,7 +11636,8 @@
     "frequentie_nt": 0,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "μέρος, -ους, τό"
   },
   {
     "les": 8,
@@ -10875,7 +11651,8 @@
     "frequentie_nt": 0,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "ἐκπορεύομαι"
   },
   {
     "les": 9,
@@ -10889,6 +11666,7 @@
     "frequentie_nt": 0,
     "score_goed": 0,
     "score_fout": 0,
-    "streak": 0
+    "streak": 0,
+    "grieks_info": "παρέρχομαι"
   }
 ]
