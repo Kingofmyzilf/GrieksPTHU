@@ -117,7 +117,13 @@ with st.sidebar:
 # --- HOOFDMENU ---
 if st.session_state.data is None:
     st.title("Adaptief Grieks Leren")
-    st.info("Log in via het menu aan de linkerkant om je persoonlijke voortgang te starten of te hervatten.")
+    st.info("""
+    **Welkom!** Bedenk een vaste gebruikersnaam en vul deze in het menu aan de linkerkant in. 
+    
+    Elke keer dat je met deze specifieke naam inlogt, haalt het systeem je persoonlijke voortgang op. De app slaat je resultaten na elk beantwoord woord automatisch op de achtergrond op. 
+    
+    Ben je klaar met oefenen? Klik dan op 'Uitloggen' om je sessie netjes af te sluiten.
+    """)
 else:
     menu = st.tabs(["🚀 Oefenen", "📖 Woordenlijst", "📊 Voortgang"])
 
