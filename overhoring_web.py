@@ -157,7 +157,7 @@ else:
         with col1:
             st.subheader("Instellingen")
             modus = st.radio("Kies Modus:", ["1. Leer (Hulp + MC)", "2. Leer (MC)", "3. Overhoor (Typen)"])
-            keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Les + Woordsoort", "Mastery (<5 streak)"])
+            kkeuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Declinatie", "Les + Woordsoort", "Mastery (<5 streak)"])
             
             doel = st.session_state.data
             if keuze == "Lessen":
@@ -169,16 +169,19 @@ else:
                 s = st.selectbox("Kies soort", soorten)
                 doel = [i for i in st.session_state.data if i.get('woordsoort') == s]
                 
-            elif keuze == "Les + Woordsoort":
-                les_nr = st.number_input("Les nummer", min_value=1, value=1)
-                beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) == les_nr)))
+            elif keuze == "Declinatie":
+                # Filter alleen de woorden die daadwerkelijk een declinatie-waarde hebben gekregen in de Sheet
+                beschikbare_declinaties = sorted(list(set(str(i.get('declinatie', '')) for i in st.session_state.data if str(i.get('declinatie', '')).strip() != '')))
                 
-                if beschikbare_soorten:
-                    s = st.selectbox("Kies woordsoort", beschikbare_soorten)
-                    doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr and i.get('woordsoort') == s]
+                if beschikbare_declinaties:
+                    d = st.selectbox("Kies declinatie (bijv. 1, 2 of 3)", beschikbare_declinaties)
+                    doel = [i for i in st.session_state.data if str(i.get('declinatie', '')) == d]
                 else:
-                    st.warning("Geen woorden gevonden in deze les.")
+                    st.warning("Geen declinatie-data gevonden. Voeg een kolom 'declinatie' toe aan je Google Sheet.")
                     doel = []
+                    
+            elif keuze == "Les + Woordsoort":
+                # ... (De rest van de bestaande logica blijft hier staan)
                     
             elif keuze == "Mastery (<5 streak)":
                 doel = [i for i in st.session_state.data if int(i.get('streak', 0)) < 5]
