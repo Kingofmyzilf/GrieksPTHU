@@ -99,6 +99,8 @@ else:
         with col1:
             st.subheader("Instellingen")
             modus = st.radio("Kies Modus:", ["1. Leer (Hulp + MC)", "2. Leer (MC)", "3. Overhoor (Typen)"])
+            
+            # Geïntegreerde logica voor gecombineerde filter
             keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Les + Woordsoort", "Mastery (<5 streak)"])
             
             doel = st.session_state.data
@@ -112,10 +114,7 @@ else:
                 doel = [i for i in st.session_state.data if i.get('woordsoort') == s]
                 
             elif keuze == "Les + Woordsoort":
-                # Stap 1: Kies de les
                 les_nr = st.number_input("Les nummer", min_value=1, value=1)
-                
-                # Stap 2: Bepaal welke woordsoorten er in deze specifieke les zitten
                 beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) == les_nr)))
                 
                 if beschikbare_soorten:
@@ -129,15 +128,18 @@ else:
                 doel = [i for i in st.session_state.data if i.get('streak', 0) < 5]
 
             if st.button("Start Sessie"):
-                doel.sort(key=bereken_gewicht, reverse=True)
-                gem_streak = sum(i['streak'] for i in doel) / len(doel) if doel else 0
-                chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
-                st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
-                
-                laad_volgend_woord() 
-                st.session_state.feedback = None
-                st.session_state.modus_actief = modus[0]
-                st.rerun()
+                if doel:
+                    doel.sort(key=bereken_gewicht, reverse=True)
+                    gem_streak = sum(i['streak'] for i in doel) / len(doel)
+                    chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
+                    st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
+                    
+                    laad_volgend_woord() 
+                    st.session_state.feedback = None
+                    st.session_state.modus_actief = modus[0]
+                    st.rerun()
+                else:
+                    st.error("De geselecteerde combinatie bevat geen woorden. Pas de filter aan.")
 
         with col2:
             if st.session_state.huidig_item:
@@ -148,10 +150,9 @@ else:
                 if st.session_state.feedback:
                     if st.session_state.feedback["type"] == "success":
                         st.success(st.session_state.feedback["msg"])
-                        st.session_state.feedback = None 
                     else:
                         st.error(st.session_state.feedback["msg"])
-                        st.session_state.feedback = None 
+                    st.session_state.feedback = None 
 
                 st.markdown(f"<div class='grieks-woord'>{item['grieks']}</div>", unsafe_allow_html=True)
                 
@@ -219,7 +220,6 @@ else:
         les_filter = st.selectbox("Filter op les", sorted(list(set(i.get('les', 1) for i in st.session_state.data))))
         df = pd.DataFrame([i for i in st.session_state.data if i.get('les', 1) == les_filter])
         
-        # Voeg grieks_info toe aan de tabel als kolom, indien aanwezig in de dataset
         weergave_kolommen = ['grieks', 'nederlands', 'frequentie_nt', 'streak', 'woordsoort']
         if 'grieks_info' in df.columns:
             weergave_kolommen.insert(1, 'grieks_info')
