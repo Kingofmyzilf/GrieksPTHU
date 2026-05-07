@@ -80,6 +80,18 @@ def bereken_gewicht(item):
 def geldig(val):
     return pd.notna(val) and str(val).strip() not in ['', 'nan', 'None']
 
+def kies_adaptieve_gram_vorm(vlak, prefix):
+    """Kiest een nieuwe vorm gebaseerd op in het verleden behaalde scores."""
+    if not vlak: return None
+    weights = []
+    for v in vlak:
+        vorm_id = f"{prefix}_{v['naam']}"
+        stats = st.session_state.gram_stats.get(vorm_id, {'goed': 0, 'fout': 0, 'streak': 0})
+        # Basisgewicht 1.0. Meer fouten = hoger gewicht. Hogere streak = exponentieel lager gewicht.
+        w = max(0.1, 1.0 + (stats['fout'] * 1.5) - (stats['streak'] * 0.4))
+        weights.append(w)
+    return random.choices(vlak, weights=weights, k=1)[0]
+
 # --- DATABASE FUNCTIES ---
 
 @st.cache_data
@@ -114,12 +126,19 @@ def laad_gebruiker_data(naam):
                         b['streak_m1'] = 0; b['streak_m2'] = 0; b['streak_m3'] = 0
                         if 'vormen_data' in b and isinstance(b['vormen_data'], list):
                             b['vormen_data'] = json.dumps(b['vormen_data'], ensure_ascii=False)
+                        b['gram_stats'] = "{}"
                         new_data.append(b)
                     conn.update(data=pd.concat([df, pd.DataFrame(new_data)], ignore_index=True))
                     return laad_gebruiker_data(naam)
             return None
                 
         user_records = user_df.to_dict('records')
+        
+        # Laad grammatica voortgang uit de eerste regel
+        if len(user_records) > 0 and 'gram_stats' in user_records[0] and pd.notna(user_records[0]['gram_stats']):
+            try: st.session_state.gram_stats = json.loads(str(user_records[0]['gram_stats']))
+            except: st.session_state.gram_stats = {}
+            
         for r in user_records:
             r['streak_m1'] = int(r.get('streak_m1', 0))
             r['streak_m2'] = int(r.get('streak_m2', 0))
@@ -139,11 +158,16 @@ def opslaan_naar_cloud():
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
         huidige_data_kopie = []
+        
+        gram_stats_json = json.dumps(st.session_state.get('gram_stats', {}), ensure_ascii=False)
+        
         for item in st.session_state.data:
             k = item.copy()
             if 'vormen_data' in k and isinstance(k['vormen_data'], list):
                 k['vormen_data'] = json.dumps(k['vormen_data'], ensure_ascii=False)
+            k['gram_stats'] = gram_stats_json
             huidige_data_kopie.append(k)
+            
         conn.update(data=pd.concat([df_andere_gebruikers, pd.DataFrame(huidige_data_kopie)], ignore_index=True))
     except Exception: pass
 
@@ -151,9 +175,10 @@ def opslaan_naar_cloud():
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user', 'actieve_keuze',
             'gram_oefening', 'gram_fouten', 'laatste_filter',
-            'decl_oefening', 'laatste_filter_decl']:
+            'decl_oefening', 'laatste_filter_decl', 'gram_feedback']:
     if key not in st.session_state: st.session_state[key] = None
 
+if 'gram_stats' not in st.session_state: st.session_state.gram_stats = {}
 if st.session_state.fouten_huidig_woord is None: st.session_state.fouten_huidig_woord = 0
 if st.session_state.gram_fouten is None: st.session_state.gram_fouten = 0
 
@@ -331,6 +356,11 @@ if st.session_state.data:
 
             st.write("---")
 
+            if st.session_state.gram_feedback:
+                if st.session_state.gram_feedback['type'] == 'success': st.success(st.session_state.gram_feedback['msg'])
+                else: st.error(st.session_state.gram_feedback['msg'])
+                st.session_state.gram_feedback = None
+
             if gram_keuze == "Visueel Leren (Tabel)":
                 st.info(f"**Overzicht: {gekozen_tijd} | {gekozen_wijs_input}**")
                 df_vis = pd.DataFrame(list(gefilterd_rijtje.items()), columns=["Vorm/Persoon", "Griekse Vorm"])
@@ -338,14 +368,20 @@ if st.session_state.data:
 
             elif gram_keuze == "Vormen Analyseren":
                 huidig_filter = f"{gekozen_tijd}_{gekozen_wijs_input}"
+                prefix = f"ww_{gekozen_tijd}"
+                vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
+                
                 if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening or st.session_state.get('laatste_filter') != huidig_filter:
-                    vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
-                    st.session_state.gram_oefening = random.choice(vlak) if vlak else None
+                    st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak, prefix)
                     st.session_state.laatste_filter = huidig_filter
                 
                 oef = st.session_state.gram_oefening
                 if oef:
                     st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
+                    vorm_id = f"{prefix}_{oef['naam']}"
+                    if vorm_id not in st.session_state.gram_stats:
+                        st.session_state.gram_stats[vorm_id] = {'goed': 0, 'fout': 0, 'streak': 0}
+
                     if gekozen_wijs == "Participium":
                         ca1, ca2, ca3 = st.columns(3)
                         with ca1: nv = st.selectbox("Naamval:", ["", "Nom.", "Gen.", "Dat.", "Acc."])
@@ -357,10 +393,16 @@ if st.session_state.data:
                     
                     if st.button("Controleer"):
                         if normaliseer_accent(poging) == normaliseer_accent(oef['naam']):
-                            st.success(f"✓ Correct! Dit is inderdaad de {oef['naam']}")
-                            st.session_state.gram_oefening = None
+                            st.session_state.gram_stats[vorm_id]['goed'] += 1
+                            st.session_state.gram_stats[vorm_id]['streak'] += 1
+                            st.session_state.gram_feedback = {'type': 'success', 'msg': f"✓ Correct! Dat was de {oef['naam']}. Hier is direct de volgende:"}
+                            st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak, prefix)
+                            st.rerun()
                         else:
-                            st.error(f"✗ Niet juist. Het is de: {oef['naam']}")
+                            st.session_state.gram_stats[vorm_id]['fout'] += 1
+                            st.session_state.gram_stats[vorm_id]['streak'] = max(0, st.session_state.gram_stats[vorm_id]['streak'] - 2)
+                            st.session_state.gram_feedback = {'type': 'error', 'msg': f"✗ Niet juist. Het is de: {oef['naam']}"}
+                            st.rerun()
 
             else: # RIJTJES PRODUCEREN
                 st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd.")
@@ -396,16 +438,17 @@ if st.session_state.data:
             
             dc1, dc2, dc3 = st.columns(3)
             with dc1: decl_keuze = st.radio("Oefenvorm:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"], key="decl_radio")
-            
-            groepen = list(decl_db["Declinaties"].keys())
-            with dc2: gekozen_groep = st.selectbox("1. Declinatie Groep:", groepen)
-            
-            paradigma_opties = list(decl_db["Declinaties"][gekozen_groep].keys())
-            with dc3: gekozen_paradigma = st.selectbox("2. Paradigma:", paradigma_opties)
+            with dc2: gekozen_groep = st.selectbox("1. Declinatie Groep:", list(decl_db["Declinaties"].keys()))
+            with dc3: gekozen_paradigma = st.selectbox("2. Paradigma:", list(decl_db["Declinaties"][gekozen_groep].keys()))
             
             gefilterd_rijtje = decl_db["Declinaties"][gekozen_groep][gekozen_paradigma]
 
             st.write("---")
+
+            if st.session_state.gram_feedback:
+                if st.session_state.gram_feedback['type'] == 'success': st.success(st.session_state.gram_feedback['msg'])
+                else: st.error(st.session_state.gram_feedback['msg'])
+                st.session_state.gram_feedback = None
 
             if decl_keuze == "Visueel Leren (Tabel)":
                 st.info(f"**Overzicht: {gekozen_groep} | {gekozen_paradigma}**")
@@ -414,22 +457,34 @@ if st.session_state.data:
 
             elif decl_keuze == "Vormen Analyseren":
                 huidig_filter = f"{gekozen_groep}_{gekozen_paradigma}"
+                prefix = f"nw_{gekozen_groep}_{gekozen_paradigma}"
+                vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
+                
                 if st.button("Nieuwe Vorm", key="btn_nw_decl") or not st.session_state.get('decl_oefening') or st.session_state.get('laatste_filter_decl') != huidig_filter:
-                    vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
-                    st.session_state.decl_oefening = random.choice(vlak) if vlak else None
+                    st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak, prefix)
                     st.session_state.laatste_filter_decl = huidig_filter
                 
                 oef = st.session_state.decl_oefening
                 if oef:
                     st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
+                    vorm_id = f"{prefix}_{oef['naam']}"
+                    if vorm_id not in st.session_state.gram_stats:
+                        st.session_state.gram_stats[vorm_id] = {'goed': 0, 'fout': 0, 'streak': 0}
+
                     poging = st.selectbox("Welke naamval/getal is dit?", [""] + list(gefilterd_rijtje.keys()), key="sel_decl_analyse")
                     
                     if st.button("Controleer Analyse", key="btn_chk_decl"):
                         if normaliseer_accent(poging) == normaliseer_accent(oef['naam']):
-                            st.success(f"✓ Correct! Dit is inderdaad de {oef['naam']}")
-                            st.session_state.decl_oefening = None
+                            st.session_state.gram_stats[vorm_id]['goed'] += 1
+                            st.session_state.gram_stats[vorm_id]['streak'] += 1
+                            st.session_state.gram_feedback = {'type': 'success', 'msg': f"✓ Correct! Dat was de {oef['naam']}. Hier is direct de volgende:"}
+                            st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak, prefix)
+                            st.rerun()
                         else:
-                            st.error(f"✗ Niet juist. Het is de: {oef['naam']}")
+                            st.session_state.gram_stats[vorm_id]['fout'] += 1
+                            st.session_state.gram_stats[vorm_id]['streak'] = max(0, st.session_state.gram_stats[vorm_id]['streak'] - 2)
+                            st.session_state.gram_feedback = {'type': 'error', 'msg': f"✗ Niet juist. Het is de: {oef['naam']}"}
+                            st.rerun()
 
             else: # Rijtjes Produceren
                 st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd.")
