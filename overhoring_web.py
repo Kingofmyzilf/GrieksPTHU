@@ -22,6 +22,12 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- LOGICA ---
+def normaliseer_accent(woord):
+    """Maakt vergelijking eerlijk door grave naar acute accenten om te zetten."""
+    if pd.notna(woord) and str(woord).strip() != "":
+        return str(woord).replace("ὸ", "ό").replace("ὰ", "ά").replace("ὴ", "ή").replace("ὼ", "ώ").replace("ὶ", "ί").replace("ὺ", "ύ").strip().lower()
+    return ""
+
 def maak_schoon(tekst):
     schoon = re.sub(r'\(.*?\)', '', str(tekst))
     schoon = re.sub(r'\[.*?\]', '', schoon)
@@ -34,7 +40,6 @@ def bereken_gewicht(item):
         gewicht += math.log10(freq + 1)
     gewicht += (int(item.get('score_fout', 0)) * 1.5)
     
-    # Gebruik het gemiddelde van de drie modi voor de weging
     gem_streak = (int(item.get('streak_m1', 0)) + int(item.get('streak_m2', 0)) + int(item.get('streak_m3', 0))) / 3
     if gem_streak >= 20 or int(item.get('streak_m3', 0)) >= 20:
         gewicht *= 0.1
@@ -43,7 +48,14 @@ def bereken_gewicht(item):
 def geldig(val):
     return pd.notna(val) and str(val).strip() not in ['', 'nan', 'None']
 
-# --- DATABASE FUNCTIES MET JSON TRANSLATIE ---
+# --- DATABASE FUNCTIES ---
+@st.cache_data
+def laad_grammatica_db():
+    if os.path.exists("grammatica.json"):
+        with open("grammatica.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
 def laad_gebruiker_data(naam):
     df = conn.read(ttl=0) 
     
@@ -135,6 +147,10 @@ if 'huidige_opties' not in st.session_state: st.session_state.huidige_opties = [
 if 'last_user' not in st.session_state: st.session_state.last_user = None
 if 'actieve_keuze' not in st.session_state: st.session_state.actieve_keuze = None
 
+# Grammatica Session States
+if 'gram_oefening' not in st.session_state: st.session_state.gram_oefening = None
+if 'gram_feedback' not in st.session_state: st.session_state.gram_feedback = None
+
 def laad_volgend_woord():
     st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
     st.session_state.fouten_huidig_woord = 0
@@ -174,7 +190,7 @@ if st.session_state.data is None:
     st.title("Adaptief Grieks Leren")
     st.info("**Welkom!** Bedenk een vaste gebruikersnaam en vul deze linksboven in.")
 else:
-    menu = st.tabs(["🚀 Oefenen", "📖 Woordenlijst", "📊 Voortgang"])
+    menu = st.tabs(["🚀 Oefenen", "📖 Woordenlijst", "📊 Voortgang", "🏛️ Grammatica"])
 
     with menu[0]: # OEFENEN
         st.caption(f"Actief profiel: **{st.session_state.last_user}**")
@@ -240,7 +256,6 @@ else:
                 info_weergave = item.get('grieks_info', item['grieks'])
                 actieve_streak_sleutel = f"streak_m{st.session_state.modus_actief}"
                 
-                # Bepaal mastery: Gemiddelde >= 20 OF Specifieke Typen streak >= 20
                 gemiddelde_streak = (int(item.get('streak_m1', 0)) + int(item.get('streak_m2', 0)) + int(item.get('streak_m3', 0))) / 3
                 is_mastery = (gemiddelde_streak >= 20) or (int(item.get('streak_m3', 0)) >= 20) or st.session_state.get('actieve_keuze') == "Declinatie"
                 heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
@@ -268,10 +283,9 @@ else:
                 if is_mastery and heeft_vormen and huidige_vorm != item['grieks']:
                     st.caption(f"🏆 Vormleer Modus. (Basiswoord: **{item['grieks']}**)")
 
-                # Basis hulpweergave voor Modus 1 of indien we in foutstap 1 zitten
                 toon_hulp = (st.session_state.modus_actief == '1' or st.session_state.fouten_huidig_woord == 1)
                 if toon_hulp:
-                    st.info(f"💡 Hint: {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                    st.info(f"💡 {item['grieks']} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
                 # --- MEERKEUZE MODUS ---
                 if st.session_state.modus_actief in ['1', '2']:
@@ -397,7 +411,6 @@ else:
         for l in lessen:
             it = [i for i in st.session_state.data if i.get('les', 1) == l]
             if len(it) > 0:
-                # Beheersingspercentage op basis van de nieuwe mastery regels
                 beheerst = len([i for i in it if ((int(i.get('streak_m1',0)) + int(i.get('streak_m2',0)) + int(i.get('streak_m3',0))) / 3) >= 20 or int(i.get('streak_m3', 0)) >= 20])
                 stats.append((beheerst / len(it)) * 100)
             else:
@@ -408,3 +421,76 @@ else:
         ax.set_title("Volledige beheersing per les (Vormleer geactiveerd)")
         ax.set_ylim(0, 100)
         st.pyplot(fig)
+
+    with menu[3]: # GRAMMATICA
+        st.subheader("Werkwoorden Paradigma's (λύω)")
+        gram_db = laad_grammatica_db()
+        
+        if not gram_db:
+            st.warning("grammatica.json is nog niet gevonden! Upload deze via GitHub om deze modus te activeren.")
+        else:
+            gram_modus = st.radio("Kies oefenvorm:", ["1. Rijtjes produceren (Grid)", "2. Vormen analyseren (Raden)"])
+            luo_data = gram_db["werkwoorden"]["λύω"]
+
+            if "1" in gram_modus:
+                gekozen_tijd = st.selectbox("Kies het paradigma:", list(luo_data.keys()))
+                st.write(f"Vul de juiste vormen in voor: **{gekozen_tijd}**")
+
+                rijtje = luo_data[gekozen_tijd]
+
+                # We maken een spreadsheet in de browser
+                df_grid = pd.DataFrame({
+                    "Vorm / Persoon": list(rijtje.keys()),
+                    "Jouw Antwoord": [""] * len(rijtje),
+                    "Correct": list(rijtje.values())
+                })
+
+                edited_df = st.data_editor(
+                    df_grid[["Vorm / Persoon", "Jouw Antwoord"]],
+                    use_container_width=True,
+                    disabled=["Vorm / Persoon"], # Ze mogen de vraag niet aanpassen, alleen antwoord
+                    hide_index=True
+                )
+
+                if st.button("Kijk Rijtje Na"):
+                    fouten = 0
+                    for i, row in edited_df.iterrows():
+                        ingevuld = normaliseer_accent(row["Jouw Antwoord"])
+                        correct = normaliseer_accent(df_grid.loc[i, "Correct"])
+
+                        if ingevuld != correct:
+                            fouten += 1
+                            st.error(f"Fout bij {row['Vorm / Persoon']}: Je vulde in '{row['Jouw Antwoord']}', maar het is '{df_grid.loc[i, 'Correct']}'")
+                    
+                    if fouten == 0:
+                        st.success("🎉 Perfect! Je hebt het hele rijtje foutloos ingevuld.")
+                    else:
+                        st.warning(f"Je had {fouten} foutje(s). Verbeter ze in de tabel en klik nog eens op nakijken!")
+
+            else:
+                # Modus Analyseren
+                vlakke_lijst = []
+                for tijd, vormen in luo_data.items():
+                    for pers, vorm in vormen.items():
+                        vlakke_lijst.append({"tijd": tijd, "persoon": pers, "vorm": vorm})
+
+                if st.button("Geef me een willekeurige vorm"):
+                    st.session_state.gram_oefening = random.choice(vlakke_lijst)
+                    st.session_state.gram_feedback = None
+
+                if st.session_state.gram_oefening:
+                    oef = st.session_state.gram_oefening
+                    st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
+
+                    colA, colB = st.columns(2)
+                    with colA:
+                        p_tijd = st.selectbox("Welke tijd/diathese is dit?", [""] + list(luo_data.keys()))
+                    with colB:
+                        alle_personen = sorted(list(set(item['persoon'] for item in vlakke_lijst)))
+                        p_pers = st.selectbox("Welke persoon/wijs is dit?", [""] + alle_personen)
+
+                    if st.button("Controleer Analyse"):
+                        if p_tijd == oef['tijd'] and p_pers == oef['persoon']:
+                            st.success("✓ Helemaal goed! Klik op de knop hierboven voor de volgende.")
+                        else:
+                            st.error(f"✗ Helaas. Het juiste antwoord was: **{oef['tijd']}** - **{oef['persoon']}**")
