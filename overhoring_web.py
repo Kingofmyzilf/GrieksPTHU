@@ -33,7 +33,10 @@ def bereken_gewicht(item):
     if freq > 0:
         gewicht += math.log10(freq + 1)
     gewicht += (int(item.get('score_fout', 0)) * 1.5)
-    if int(item.get('streak', 0)) >= 5:
+    
+    # Gebruik het gemiddelde van de drie modi voor de weging
+    gem_streak = (int(item.get('streak_m1', 0)) + int(item.get('streak_m2', 0)) + int(item.get('streak_m3', 0))) / 3
+    if gem_streak >= 20 or int(item.get('streak_m3', 0)) >= 20:
         gewicht *= 0.1
     return max(0.1, gewicht)
 
@@ -56,7 +59,9 @@ def laad_gebruiker_data(naam):
                 new_data = []
                 for b in basis:
                     b['gebruikersnaam'] = naam
-                    # Verpak complexe data veilig in string-formaat voor de spreadsheet
+                    b['streak_m1'] = 0
+                    b['streak_m2'] = 0
+                    b['streak_m3'] = 0
                     if 'vormen_data' in b and isinstance(b['vormen_data'], list):
                         b['vormen_data'] = json.dumps(b['vormen_data'], ensure_ascii=False)
                     new_data.append(b)
@@ -64,7 +69,6 @@ def laad_gebruiker_data(naam):
                 updated_df = pd.concat([df, pd.DataFrame(new_data)], ignore_index=True)
                 conn.update(data=updated_df)
                 
-                # Uitpakken voor direct gebruik
                 for b in new_data:
                     if 'vormen_data' in b and isinstance(b['vormen_data'], str):
                         try:
@@ -73,12 +77,15 @@ def laad_gebruiker_data(naam):
                             b['vormen_data'] = []
                 return new_data
         else:
-            st.error("basis_woorden.json ontbreekt. Kan geen nieuw profiel aanmaken.")
+            st.error("basis_woorden.json ontbreekt. Kan geen profiel aanmaken.")
             return None
             
-    # Data netjes uitpakken nadat het uit Google Sheets komt
     user_records = user_df.to_dict('records')
     for r in user_records:
+        r['streak_m1'] = int(r.get('streak_m1', 0))
+        r['streak_m2'] = int(r.get('streak_m2', 0))
+        r['streak_m3'] = int(r.get('streak_m3', 0))
+        
         if 'vormen_data' in r and geldig(r['vormen_data']):
             try:
                 r['vormen_data'] = json.loads(str(r['vormen_data']))
@@ -101,7 +108,6 @@ def opslaan_naar_cloud(toon_melding=False):
             
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
         
-        # Verpak de complexe data weer veilig in vóór we opslaan
         huidige_data_kopie = []
         for item in st.session_state.data:
             k = item.copy()
@@ -124,14 +130,14 @@ if 'sessie_lijst' not in st.session_state: st.session_state.sessie_lijst = []
 if 'huidig_item' not in st.session_state: st.session_state.huidig_item = None
 if 'huidige_vorm_data' not in st.session_state: st.session_state.huidige_vorm_data = None
 if 'feedback' not in st.session_state: st.session_state.feedback = None
-if 'fout_gemaakt' not in st.session_state: st.session_state.fout_gemaakt = False
+if 'fouten_huidig_woord' not in st.session_state: st.session_state.fouten_huidig_woord = 0
 if 'huidige_opties' not in st.session_state: st.session_state.huidige_opties = []
 if 'last_user' not in st.session_state: st.session_state.last_user = None
 if 'actieve_keuze' not in st.session_state: st.session_state.actieve_keuze = None
 
 def laad_volgend_woord():
     st.session_state.huidig_item = st.session_state.sessie_lijst.pop(0) if st.session_state.sessie_lijst else None
-    st.session_state.fout_gemaakt = False
+    st.session_state.fouten_huidig_woord = 0
     st.session_state.huidige_opties = [] 
     st.session_state.huidige_vorm_data = None
 
@@ -177,12 +183,14 @@ else:
         with col1:
             st.subheader("Instellingen")
             modus = st.radio("Kies Modus:", ["1. Leer (Hulp + MC)", "2. Leer (MC)", "3. Overhoor (Typen)"])
-            keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Declinatie", "Les + Woordsoort", "Mastery (<5 streak)"])
+            keuze = st.selectbox("Wat wil je oefenen?", ["Alles", "Lessen", "Woordsoort", "Declinatie", "Les + Woordsoort", "Nog niet beheerst (Gemiddelde < 20)"])
             
             doel = st.session_state.data
+            alle_lessen = sorted(list(set(i.get('les', 1) for i in st.session_state.data)))
+            
             if keuze == "Lessen":
-                les_nr = st.number_input("Les nummer", min_value=1, value=1)
-                doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr]
+                gekozen_lessen = st.multiselect("Kies les(sen)", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
+                doel = [i for i in st.session_state.data if i.get('les', 1) in gekozen_lessen]
                 
             elif keuze == "Woordsoort":
                 soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data)))
@@ -199,30 +207,29 @@ else:
                     doel = []
                     
             elif keuze == "Les + Woordsoort":
-                les_nr = st.number_input("Les nummer", min_value=1, value=1)
-                beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) == les_nr)))
+                gekozen_lessen = st.multiselect("Kies les(sen)", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
+                beschikbare_soorten = sorted(list(set(i.get('woordsoort', 'onbekend') for i in st.session_state.data if i.get('les', 1) in gekozen_lessen)))
                 if beschikbare_soorten:
                     s = st.selectbox("Kies woordsoort", beschikbare_soorten)
-                    doel = [i for i in st.session_state.data if i.get('les', 1) == les_nr and i.get('woordsoort') == s]
+                    doel = [i for i in st.session_state.data if i.get('les', 1) in gekozen_lessen and i.get('woordsoort') == s]
                 else:
-                    st.warning("Geen woorden gevonden in deze les.")
+                    st.warning("Geen woorden gevonden voor deze combinatie.")
                     doel = []
                     
-            elif keuze == "Mastery (<5 streak)":
-                doel = [i for i in st.session_state.data if int(i.get('streak', 0)) < 5]
+            elif keuze == "Nog niet beheerst (Gemiddelde < 20)":
+                doel = [i for i in st.session_state.data if ((int(i.get('streak_m1', 0)) + int(i.get('streak_m2', 0)) + int(i.get('streak_m3', 0))) / 3) < 20]
 
             if st.button("Start Sessie"):
                 if doel:
                     doel.sort(key=bereken_gewicht, reverse=True)
-                    gem_streak = sum(int(i.get('streak', 0)) for i in doel) / len(doel)
+                    gem_streak = sum(((int(i.get('streak_m1', 0)) + int(i.get('streak_m2', 0)) + int(i.get('streak_m3', 0))) / 3) for i in doel) / len(doel)
                     chunk_size = max(5, min(20, 7 + int(gem_streak * 2.5)))
                     st.session_state.sessie_lijst = random.sample(doel[:chunk_size*2], min(len(doel), chunk_size))
                     
-                    st.session_state.actieve_keuze = keuze # Bewaar de gekozen oefenvorm
-                    
+                    st.session_state.actieve_keuze = keuze
                     laad_volgend_woord() 
                     st.session_state.feedback = None
-                    st.session_state.modus_actief = modus[0]
+                    st.session_state.modus_actief = str(modus[0])
                     st.rerun()
                 else:
                     st.error("De geselecteerde combinatie bevat geen woorden.")
@@ -231,9 +238,11 @@ else:
             if st.session_state.huidig_item:
                 item = st.session_state.huidig_item
                 info_weergave = item.get('grieks_info', item['grieks'])
+                actieve_streak_sleutel = f"streak_m{st.session_state.modus_actief}"
                 
-                # Bepaal of we met de verbuigingen oefenen (Streak >= 5 óf expliciet gekozen)
-                is_mastery = int(item.get('streak', 0)) >= 5 or st.session_state.get('actieve_keuze') == "Declinatie"
+                # Bepaal mastery: Gemiddelde >= 20 OF Specifieke Typen streak >= 20
+                gemiddelde_streak = (int(item.get('streak_m1', 0)) + int(item.get('streak_m2', 0)) + int(item.get('streak_m3', 0))) / 3
+                is_mastery = (gemiddelde_streak >= 20) or (int(item.get('streak_m3', 0)) >= 20) or st.session_state.get('actieve_keuze') == "Declinatie"
                 heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                 
                 if st.session_state.huidige_vorm_data is None:
@@ -248,6 +257,8 @@ else:
                 if st.session_state.feedback:
                     if st.session_state.feedback["type"] == "success":
                         st.success(st.session_state.feedback["msg"])
+                    elif st.session_state.feedback["type"] == "warning":
+                        st.warning(st.session_state.feedback["msg"])
                     else:
                         st.error(st.session_state.feedback["msg"])
                     st.session_state.feedback = None 
@@ -257,8 +268,10 @@ else:
                 if is_mastery and heeft_vormen and huidige_vorm != item['grieks']:
                     st.caption(f"🏆 Vormleer Modus. (Basiswoord: **{item['grieks']}**)")
 
-                if st.session_state.modus_actief == '1':
-                    st.warning(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                # Basis hulpweergave voor Modus 1 of indien we in foutstap 1 zitten
+                toon_hulp = (st.session_state.modus_actief == '1' or st.session_state.fouten_huidig_woord == 1)
+                if toon_hulp:
+                    st.info(f"💡 Hint: {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
                 # --- MEERKEUZE MODUS ---
                 if st.session_state.modus_actief in ['1', '2']:
@@ -267,22 +280,18 @@ else:
                     
                     if not st.session_state.huidige_opties:
                         afleiders = []
-                        
                         if is_mastery and heeft_vormen:
-                            # VORMLEER ISOLATIE: Alleen de juiste betekenis, maar met foute parsings
                             andere_parsings = [str(v.get('parsing', '')) for v in item['vormen_data'] if str(v.get('parsing', '')) != str(huidige_parsing)]
                             if andere_parsings:
                                 gekozen_foute_parsings = random.sample(andere_parsings, min(3, len(andere_parsings)))
                                 for foute_parsing in gekozen_foute_parsings:
                                     afleiders.append(f"{correct_betekenis} ({foute_parsing})")
                         else:
-                            # Reguliere woordenschat: pak betekenissen van andere woorden
                             alle_andere_betekenissen = [str(maak_schoon(i.get('nederlands', ''))) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
                             afleiders = alle_andere_betekenissen
                         
                         veilige_afleiders = [str(a) for a in afleiders if a]
                         unieke_afleiders = list(set(veilige_afleiders))
-                        
                         random.shuffle(unieke_afleiders)
                         opties = unieke_afleiders[:3] + [correct_optie]
                         
@@ -293,25 +302,27 @@ else:
                     for idx, optie in enumerate(st.session_state.huidige_opties):
                         if cols[idx % 2].button(optie, key=f"btn_{idx}_{item['grieks']}"):
                             if optie == correct_optie:
-                                if not st.session_state.fout_gemaakt:
+                                if st.session_state.fouten_huidig_woord == 0:
                                     item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                    item['streak'] = int(item.get('streak', 0)) + 1
-                                    opslaan_naar_cloud() 
-                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist. '{huidige_vorm}' is inderdaad '{correct_optie}'."}
+                                    item[actieve_streak_sleutel] = int(item.get(actieve_streak_sleutel, 0)) + 1
+                                opslaan_naar_cloud() 
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist!"}
                                 laad_volgend_woord()
                                 st.rerun()
                             else:
-                                if not st.session_state.fout_gemaakt:
+                                st.session_state.fouten_huidig_woord += 1
+                                
+                                if st.session_state.fouten_huidig_woord == 1:
+                                    st.session_state.feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint en probeer het nog een keer!"}
+                                elif st.session_state.fouten_huidig_woord == 2:
                                     item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                    
-                                    # STREAK BESCHERMING: Verliest streak alléén als het basis-vocabulaire is
                                     if not (is_mastery and heeft_vormen):
-                                        item['streak'] = 0
-                                        
+                                        item[actieve_streak_sleutel] = max(0, int(item.get(actieve_streak_sleutel, 0)) - 2)
                                     opslaan_naar_cloud() 
                                     st.session_state.sessie_lijst.append(item)
-                                    st.session_state.fout_gemaakt = True
-                                st.session_state.feedback = {"type": "error", "msg": f"✗ Niet correct. Het is '{correct_optie}'."}
+                                    st.session_state.feedback = {"type": "error", "msg": f"✗ Helaas. Het juiste antwoord is: '{correct_optie}'. Klik hierop om door te gaan."}
+                                else:
+                                    st.session_state.feedback = {"type": "error", "msg": f"Kies het juiste antwoord: '{correct_optie}'."}
                                 st.rerun() 
 
                 # --- TYPEN MODUS ---
@@ -332,11 +343,11 @@ else:
                         vorm_goed = (p_vorm == huidige_parsing.lower().strip())
                         
                         if betekenis_goed and vorm_goed:
-                            if not st.session_state.fout_gemaakt:
+                            if st.session_state.fouten_huidig_woord == 0:
                                 item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                item['streak'] = int(item.get('streak', 0)) + 1
-                                opslaan_naar_cloud()
-                                
+                                item[actieve_streak_sleutel] = int(item.get(actieve_streak_sleutel, 0)) + 1
+                            opslaan_naar_cloud()
+                            
                             feedback_msg = f"✓ Correct. '{huidige_vorm}' = '{correct_volledig}'"
                             if is_mastery and heeft_vormen:
                                 feedback_msg += f" ({huidige_parsing})."
@@ -344,31 +355,37 @@ else:
                             laad_volgend_woord()
                             st.rerun()
                         else:
-                            if not st.session_state.fout_gemaakt:
+                            st.session_state.fouten_huidig_woord += 1
+                            
+                            if st.session_state.fouten_huidig_woord == 1:
+                                st.session_state.feedback = {"type": "warning", "msg": "Onjuist. Bekijk de hint en probeer het nog een keer!"}
+                            elif st.session_state.fouten_huidig_woord == 2:
                                 item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                
-                                # STREAK BESCHERMING: Verliest streak alléén als het basis-vocabulaire is
                                 if not (is_mastery and heeft_vormen):
-                                    item['streak'] = 0
-                                    
+                                    item[actieve_streak_sleutel] = max(0, int(item.get(actieve_streak_sleutel, 0)) - 2)
                                 opslaan_naar_cloud()
                                 st.session_state.sessie_lijst.append(item)
-                                st.session_state.fout_gemaakt = True
                                 
-                            fout_bericht = f"✗ Onjuist. Betekenis: '{correct_volledig}'"
-                            if is_mastery and heeft_vormen:
-                                fout_bericht += f" | Vorm: '{huidige_parsing}'"
-                            st.session_state.feedback = {"type": "error", "msg": fout_bericht}
+                                fout_bericht = f"✗ Helaas. Betekenis: '{correct_volledig}'"
+                                if is_mastery and heeft_vormen:
+                                    fout_bericht += f" | Vorm: '{huidige_parsing}'"
+                                fout_bericht += ". Typ dit exact over om door te gaan."
+                                st.session_state.feedback = {"type": "error", "msg": fout_bericht}
+                            else:
+                                herinnering = f"Typ over: '{correct_volledig}'"
+                                if is_mastery and heeft_vormen:
+                                    herinnering += f" | '{huidige_parsing}'"
+                                st.session_state.feedback = {"type": "error", "msg": herinnering}
                             st.rerun()
 
                 st.write(f"---")
-                st.caption(f"Statistieken: NT-freq: {item.get('frequentie_nt', 0)} | Reeks: {item.get('streak', 0)} | G/F: {item.get('score_goed', 0)}/{item.get('score_fout', 0)}")
+                st.caption(f"Statistieken: NT-freq: {item.get('frequentie_nt', 0)} | Reeksen (M1/M2/M3): {item.get('streak_m1', 0)} / {item.get('streak_m2', 0)} / {item.get('streak_m3', 0)} | G/F: {item.get('score_goed', 0)}/{item.get('score_fout', 0)}")
 
     with menu[1]: # WOORDENLIJST
         les_filter = st.selectbox("Filter op les", sorted(list(set(i.get('les', 1) for i in st.session_state.data))))
         df = pd.DataFrame([i for i in st.session_state.data if i.get('les', 1) == les_filter])
         
-        weergave_kolommen = ['grieks', 'nederlands', 'frequentie_nt', 'streak', 'woordsoort']
+        weergave_kolommen = ['grieks', 'nederlands', 'frequentie_nt', 'streak_m1', 'streak_m2', 'streak_m3', 'woordsoort']
         if 'grieks_info' in df.columns:
             weergave_kolommen.insert(1, 'grieks_info')
             
@@ -380,12 +397,14 @@ else:
         for l in lessen:
             it = [i for i in st.session_state.data if i.get('les', 1) == l]
             if len(it) > 0:
-                stats.append((len([i for i in it if int(i.get('streak', 0)) >= 5]) / len(it)) * 100)
+                # Beheersingspercentage op basis van de nieuwe mastery regels
+                beheerst = len([i for i in it if ((int(i.get('streak_m1',0)) + int(i.get('streak_m2',0)) + int(i.get('streak_m3',0))) / 3) >= 20 or int(i.get('streak_m3', 0)) >= 20])
+                stats.append((beheerst / len(it)) * 100)
             else:
                 stats.append(0)
         
         fig, ax = plt.subplots()
         ax.bar(lessen, stats, color='#33ccff')
-        ax.set_title("Beheersingspercentage per les")
+        ax.set_title("Volledige beheersing per les (Vormleer geactiveerd)")
         ax.set_ylim(0, 100)
         st.pyplot(fig)
