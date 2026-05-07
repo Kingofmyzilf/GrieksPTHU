@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import ast
+import unicodedata
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
@@ -40,8 +41,13 @@ def naar_grieks_transliteratie(tekst):
     return res
 
 def normaliseer_accent(woord):
+    """Verwijdert alle accenten en spiritus zodat typen zonder accenten altijd wordt goedgekeurd."""
     if pd.notna(woord) and str(woord).strip() != "":
-        w = str(woord).replace("ὸ", "ό").replace("ὰ", "ά").replace("ὴ", "ή").replace("ὼ", "ώ").replace("ὶ", "ί").replace("ὺ", "ύ").strip().lower()
+        w = str(woord).strip().lower()
+        # Verwijder alle diakritische tekens (accenten) via unicodedata
+        w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
+        # Soms staat er per ongeluk een Latijnse letter in een Excel-cel (zoals de á in λυσáμενος)
+        w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
         return w
     return ""
 
@@ -322,4 +328,4 @@ if st.session_state.data:
 
     with menu[2]: # VOORTGANG
         st.write("Voortgang per les op basis van mastery (Gemiddelde streak 20)")
-        # ... Grafiek
+        # ... (Grafiek code indien gewenst)
