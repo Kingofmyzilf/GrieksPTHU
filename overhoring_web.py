@@ -46,11 +46,29 @@ def normaliseer_accent(woord):
     return ""
 
 def splits_sleutel(sleutel):
-    """Haalt 'Indicativus' en '1sg' uit de string 'Indicativus1sg'"""
-    match = re.match(r"([A-Za-z]+)(.*)", str(sleutel))
+    """Een veel slimmere knipper die Participia en Declinaties begrijpt."""
+    s = str(sleutel).strip()
+    
+    # Herken eerst de bekende wijzen
+    wijzen = ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium", "Part"]
+    
+    for w in wijzen:
+        if s.lower().startswith(w.lower()):
+            rest = s[len(w):].strip(" _-.")
+            return w.capitalize(), rest if rest else "Vorm"
+            
+    # Soms begint een rijtje in Excel direct met de naamval
+    naamvallen = ["nom", "gen", "dat", "acc", "voc"]
+    if any(s.lower().startswith(n) for n in naamvallen):
+        return "Declinatie", s
+        
+    # Oude fallback voor 'Indicativus1sg' etc.
+    match = re.match(r"([A-Za-z]+)(.*)", s)
     if match:
-        return match.group(1), match.group(2).strip()
-    return "Overig", str(sleutel)
+        rest = match.group(2).strip()
+        return match.group(1).capitalize(), rest if rest else "Vorm"
+        
+    return "Overig", s
 
 def maak_schoon(tekst):
     schoon = re.sub(r'\(.*?\)', '', str(tekst))
@@ -258,7 +276,6 @@ if st.session_state.data:
             st.write("---")
 
             if gram_keuze == "Vormen Analyseren":
-                # Check of de gebruiker van filter is gewisseld, zo ja: genereer een nieuwe vorm
                 huidig_filter = f"{gekozen_tijd}_{gekozen_wijs_input}"
                 if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening or st.session_state.get('laatste_filter') != huidig_filter:
                     vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
@@ -269,7 +286,14 @@ if st.session_state.data:
                 oef = st.session_state.gram_oefening
                 st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
                 
-                ans = st.selectbox("Welke persoon/vorm is dit?", [""] + list(gefilterd_rijtje.keys()))
+                # Dynamisch label op basis van de geselecteerde Wijs
+                if gekozen_wijs and ("part" in gekozen_wijs.lower() or "declinatie" in gekozen_wijs.lower()):
+                    vraag_label = "Welke naamval, getal en geslacht is dit?"
+                else:
+                    vraag_label = "Welke persoon / vorm is dit?"
+                
+                ans = st.selectbox(vraag_label, [""] + list(gefilterd_rijtje.keys()))
+                
                 if st.button("Controleer Analyse"):
                     if ans == oef['naam']:
                         st.success("✓ Correct! Maak hierboven een nieuwe vorm aan.")
@@ -298,4 +322,4 @@ if st.session_state.data:
 
     with menu[2]: # VOORTGANG
         st.write("Voortgang per les op basis van mastery (Gemiddelde streak 20)")
-        # De grafiek functionaliteit kan hier behouden blijven zoals in vorige iteraties
+        # ... Grafiek
