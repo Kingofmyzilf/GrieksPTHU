@@ -44,9 +44,7 @@ def normaliseer_accent(woord):
     """Verwijdert alle accenten en spiritus zodat typen zonder accenten altijd wordt goedgekeurd."""
     if pd.notna(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
-        # Verwijder alle diakritische tekens (accenten) via unicodedata
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
-        # Soms staat er per ongeluk een Latijnse letter in een Excel-cel (zoals de á in λυσáμενος)
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
         return w
     return ""
@@ -55,20 +53,16 @@ def splits_sleutel(sleutel):
     """Een veel slimmere knipper die Participia en Declinaties begrijpt."""
     s = str(sleutel).strip()
     
-    # Herken eerst de bekende wijzen
     wijzen = ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium", "Part"]
-    
     for w in wijzen:
         if s.lower().startswith(w.lower()):
             rest = s[len(w):].strip(" _-.")
             return w.capitalize(), rest if rest else "Vorm"
             
-    # Soms begint een rijtje in Excel direct met de naamval
     naamvallen = ["nom", "gen", "dat", "acc", "voc"]
     if any(s.lower().startswith(n) for n in naamvallen):
         return "Declinatie", s
         
-    # Oude fallback voor 'Indicativus1sg' etc.
     match = re.match(r"([A-Za-z]+)(.*)", s)
     if match:
         rest = match.group(2).strip()
@@ -211,39 +205,168 @@ if st.session_state.data:
                 
                 gem_streak = (sm1 + sm2 + sm3) / 3
                 is_mastery = gem_streak >= 20 or sm3 >= 20
+                heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                 
                 if st.session_state.huidige_vorm_data is None:
-                    if is_mastery and item.get('vormen_data'):
+                    if is_mastery and heeft_vormen:
                         st.session_state.huidige_vorm_data = random.choice(item['vormen_data'])
                     else:
                         st.session_state.huidige_vorm_data = {"vorm": item['grieks'], "parsing": "basis"}
 
-                st.markdown(f"<div class='grieks-woord'>{st.session_state.huidige_vorm_data['vorm']}</div>", unsafe_allow_html=True)
+                huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item['grieks']))
+                huidige_parsing = str(st.session_state.huidige_vorm_data.get('parsing', 'basis'))
+
+                if st.session_state.feedback:
+                    if st.session_state.feedback["type"] == "success":
+                        st.success(st.session_state.feedback["msg"])
+                    elif st.session_state.feedback["type"] == "warning":
+                        st.warning(st.session_state.feedback["msg"])
+                    else:
+                        st.error(st.session_state.feedback["msg"])
+                    st.session_state.feedback = None 
+
+                st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                 
+                if is_mastery and heeft_vormen and huidige_vorm != item['grieks']:
+                    st.caption(f"🏆 Vormleer Modus. (Basiswoord: **{item['grieks']}**)")
+
                 if st.session_state.modus_actief == '1' or st.session_state.fouten_huidig_woord >= 1:
                     st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
-                # NAKIIK LOGICA
-                correct_antw = str(item['nederlands'])
-                if st.session_state.modus_actief == '3':
-                    inp = st.text_input("Betekenis:", key="vocab_inp").lower().strip()
-                    if st.button("Check"):
-                        if inp == maak_schoon(correct_antw) or inp in correct_antw.lower():
-                            item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
-                            st.success("✓ Goed!"); laad_volgend_woord(); st.rerun()
+                # --- MEERKEUZE MODUS ---
+                if st.session_state.modus_actief in ['1', '2']:
+                    correct_betekenis = str(maak_schoon(item['nederlands']))
+                    correct_optie = f"{correct_betekenis} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_betekenis
+                    
+                    if not st.session_state.huidige_opties:
+                        afleiders = []
+                        if is_mastery and heeft_vormen:
+                            andere_parsings = [str(v.get('parsing', '')) for v in item['vormen_data'] if str(v.get('parsing', '')) != str(huidige_parsing)]
+                            if andere_parsings:
+                                gekozen_foute_parsings = random.sample(andere_parsings, min(3, len(andere_parsings)))
+                                for foute_parsing in gekozen_foute_parsings:
+                                    afleiders.append(f"{correct_betekenis} ({foute_parsing})")
+                        else:
+                            alle_andere_betekenissen = [str(maak_schoon(i.get('nederlands', ''))) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
+                            afleiders = alle_andere_betekenissen
+                        
+                        veilige_afleiders = [str(a) for a in afleiders if a]
+                        unieke_afleiders = list(set(veilige_afleiders))
+                        random.shuffle(unieke_afleiders)
+                        opties = unieke_afleiders[:3] + [correct_optie]
+                        
+                        st.session_state.huidige_opties = list(dict.fromkeys(opties))
+                        random.shuffle(st.session_state.huidige_opties)
+                    
+                    cols = st.columns(2)
+                    for idx, optie in enumerate(st.session_state.huidige_opties):
+                        if cols[idx % 2].button(optie, key=f"btn_{idx}_{item['grieks']}"):
+                            if optie == correct_optie:
+                                if st.session_state.fouten_huidig_woord == 0:
+                                    item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                    item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
+                                opslaan_naar_cloud() 
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist!"}
+                                laad_volgend_woord()
+                                st.rerun()
+                            else:
+                                st.session_state.fouten_huidig_woord += 1
+                                
+                                if st.session_state.fouten_huidig_woord == 1:
+                                    st.session_state.feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint en probeer het nog een keer!"}
+                                elif st.session_state.fouten_huidig_woord == 2:
+                                    item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                    if not (is_mastery and heeft_vormen):
+                                        item[actieve_streak] = max(0, int(item.get(actieve_streak, 0)) - 2)
+                                    opslaan_naar_cloud() 
+                                    st.session_state.sessie_lijst.append(item)
+                                    st.session_state.feedback = {"type": "error", "msg": f"✗ Helaas. Het juiste antwoord is: '{correct_optie}'. Klik hierop om door te gaan."}
+                                else:
+                                    st.session_state.feedback = {"type": "error", "msg": f"Kies het juiste antwoord: '{correct_optie}'."}
+                                st.rerun() 
+
+                # --- TYPEN MODUS ---
+                else:
+                    p_betekenis = st.text_input("1. Betekenis:", key=f"inp_b_{item['grieks']}").lower().strip()
+                    
+                    if is_mastery and heeft_vormen:
+                        p_vorm = st.text_input("2. Vorm (bijv. nom ev m):", key=f"inp_v_{item['grieks']}").lower().strip()
+                    else:
+                        p_vorm = huidige_parsing.lower().strip()
+                        
+                    if st.button("Controleer", key=f"check_{item['grieks']}"):
+                        correct_volledig = str(item['nederlands']).strip().lower()
+                        correct_schoon = maak_schoon(item['nederlands'])
+                        correcte_delen = [d.strip() for d in correct_volledig.split(',')]
+                        
+                        betekenis_goed = (p_betekenis == correct_volledig or p_betekenis == correct_schoon or p_betekenis in correcte_delen)
+                        vorm_goed = (p_vorm == huidige_parsing.lower().strip())
+                        
+                        if betekenis_goed and vorm_goed:
+                            if st.session_state.fouten_huidig_woord == 0:
+                                item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
+                            opslaan_naar_cloud()
+                            
+                            feedback_msg = f"✓ Correct. '{huidige_vorm}' = '{correct_volledig}'"
+                            if is_mastery and heeft_vormen:
+                                feedback_msg += f" ({huidige_parsing})."
+                            st.session_state.feedback = {"type": "success", "msg": feedback_msg}
+                            laad_volgend_woord()
+                            st.rerun()
                         else:
                             st.session_state.fouten_huidig_woord += 1
-                            if st.session_state.fouten_huidig_woord >= 2:
-                                item[actieve_streak] = max(0, int(item.get(actieve_streak, 0)) - 2)
-                                st.error(f"✗ Fout. Het was: {correct_antw}")
+                            
+                            if st.session_state.fouten_huidig_woord == 1:
+                                st.session_state.feedback = {"type": "warning", "msg": "Onjuist. Bekijk de hint en probeer het nog een keer!"}
+                            elif st.session_state.fouten_huidig_woord == 2:
+                                item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                if not (is_mastery and heeft_vormen):
+                                    item[actieve_streak] = max(0, int(item.get(actieve_streak, 0)) - 2)
+                                opslaan_naar_cloud()
                                 st.session_state.sessie_lijst.append(item)
+                                
+                                fout_bericht = f"✗ Helaas. Betekenis: '{correct_volledig}'"
+                                if is_mastery and heeft_vormen:
+                                    fout_bericht += f" | Vorm: '{huidige_parsing}'"
+                                fout_bericht += ". Typ dit exact over om door te gaan."
+                                st.session_state.feedback = {"type": "error", "msg": fout_bericht}
                             else:
-                                st.warning("Bijna! Gebruik de hint en probeer nog eens.")
-                else:
-                    st.write("Klik op het juiste antwoord:")
-                    if st.button(correct_antw):
-                        item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
-                        st.success("✓ Goed!"); laad_volgend_woord(); st.rerun()
+                                herinnering = f"Typ over: '{correct_volledig}'"
+                                if is_mastery and heeft_vormen:
+                                    herinnering += f" | '{huidige_parsing}'"
+                                st.session_state.feedback = {"type": "error", "msg": herinnering}
+                            st.rerun()
+
+                st.write(f"---")
+                st.caption(f"Statistieken: NT-freq: {item.get('frequentie_nt', 0)} | Reeksen (M1/M2/M3): {item.get('streak_m1', 0)} / {item.get('streak_m2', 0)} / {item.get('streak_m3', 0)} | G/F: {item.get('score_goed', 0)}/{item.get('score_fout', 0)}")
+
+    with menu[1]: # WOORDENLIJST
+        les_filter = st.selectbox("Filter op les", sorted(list(set(i.get('les', 1) for i in st.session_state.data))))
+        df = pd.DataFrame([i for i in st.session_state.data if i.get('les', 1) == les_filter])
+        
+        weergave_kolommen = ['grieks', 'nederlands', 'frequentie_nt', 'streak_m1', 'streak_m2', 'streak_m3', 'woordsoort']
+        if 'grieks_info' in df.columns:
+            weergave_kolommen.insert(1, 'grieks_info')
+            
+        st.dataframe(df[weergave_kolommen], use_container_width=True)
+
+    with menu[2]: # VOORTGANG
+        st.write("Voortgang per les op basis van mastery (Gemiddelde streak 20)")
+        lessen = sorted(list(set(i.get('les', 1) for i in st.session_state.data)))
+        stats = []
+        for l in lessen:
+            it = [i for i in st.session_state.data if i.get('les', 1) == l]
+            if len(it) > 0:
+                beheerst = len([i for i in it if ((int(i.get('streak_m1',0)) + int(i.get('streak_m2',0)) + int(i.get('streak_m3',0))) / 3) >= 20 or int(i.get('streak_m3', 0)) >= 20])
+                stats.append((beheerst / len(it)) * 100)
+            else:
+                stats.append(0)
+        
+        fig, ax = plt.subplots()
+        ax.bar(lessen, stats, color='#33ccff')
+        ax.set_ylim(0, 100)
+        st.pyplot(fig)
 
     with menu[3]: # GRAMMATICA
         gram_db = laad_grammatica_db()
@@ -258,7 +381,6 @@ if st.session_state.data:
                 beschikbare_tijden = list(luo.keys())
                 gekozen_tijd = st.selectbox("1. Selecteer Tijd/Diathese:", beschikbare_tijden)
             with c3:
-                # Bepaal dynamisch welke 'wijzen' in dit blok zitten
                 wijzen_set = set()
                 for k in luo[gekozen_tijd].keys():
                     wijs, _ = splits_sleutel(k)
@@ -269,7 +391,6 @@ if st.session_state.data:
             
             gekozen_wijs = None if "Alles" in gekozen_wijs_input else gekozen_wijs_input
             
-            # Filter de data zodat we alleen het gekozen stukje overhouden
             gefilterd_rijtje = {}
             for k, v in luo[gekozen_tijd].items():
                 wijs, rest = splits_sleutel(k)
@@ -292,7 +413,6 @@ if st.session_state.data:
                 oef = st.session_state.gram_oefening
                 st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
                 
-                # Dynamisch label op basis van de geselecteerde Wijs
                 if gekozen_wijs and ("part" in gekozen_wijs.lower() or "declinatie" in gekozen_wijs.lower()):
                     vraag_label = "Welke naamval, getal en geslacht is dit?"
                 else:
@@ -325,7 +445,3 @@ if st.session_state.data:
                 if st.button("Rijtje Opslaan"):
                     if fouten_teller == 0: st.success("Geweldig! Het hele rijtje is foutloos.")
                     else: st.warning(f"Je had nog {fouten_teller} fouten in dit rijtje.")
-
-    with menu[2]: # VOORTGANG
-        st.write("Voortgang per les op basis van mastery (Gemiddelde streak 20)")
-        # ... (Grafiek code indien gewenst)
