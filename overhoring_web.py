@@ -29,14 +29,10 @@ st.markdown("""
 # --- LOGICA & TRANSLITERATIE ---
 
 def veilig_les_nummer(item):
-    """Zorgt ervoor dat lesnummers áltijd cijfers zijn, voorkomt crashes."""
-    try:
-        return int(item.get('les', 1))
-    except:
-        return 1
+    try: return int(item.get('les', 1))
+    except: return 1
 
 def naar_grieks_transliteratie(tekst):
-    """Zet latijnse invoer om naar Griekse letters (Bèta-code stijl)"""
     mapping = {
         'a': 'α', 'b': 'β', 'g': 'γ', 'd': 'δ', 'e': 'ε', 'z': 'ζ', 'h': 'η', 'q': 'θ',
         'i': 'ι', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'c': 'ξ', 'o': 'ο', 'p': 'π',
@@ -44,16 +40,11 @@ def naar_grieks_transliteratie(tekst):
     }
     res = ""
     tekst = str(tekst).lower().strip()
-    for char in tekst:
-        res += mapping.get(char, char)
-    
-    # Eind-sigma correctie
-    if res.endswith('σ'):
-        res = res[:-1] + 'ς'
+    for char in tekst: res += mapping.get(char, char)
+    if res.endswith('σ'): res = res[:-1] + 'ς'
     return res
 
 def normaliseer_accent(woord):
-    """Verwijdert diakritische tekens en corrigeert Latijnse 'vervuiling' uit Excel."""
     if pd.notna(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
@@ -62,18 +53,14 @@ def normaliseer_accent(woord):
     return ""
 
 def splits_sleutel(sleutel):
-    """Ontleedt complexe Excel-sleutels naar herbruikbare grammaticale labels."""
     s = str(sleutel).strip()
     wijzen = ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium", "Part"]
-    
     for w in wijzen:
         if s.lower().startswith(w.lower()):
             rest = s[len(w):].strip(" _-.")
             return w.capitalize(), rest if rest else "Vorm"
-            
     naamvallen = ["nom", "gen", "dat", "acc", "voc"]
-    if any(s.lower().startswith(n) for n in naamvallen):
-        return "Declinatie", s
+    if any(s.lower().startswith(n) for n in naamvallen): return "Declinatie", s
     return "Overig", s
 
 def maak_schoon(tekst):
@@ -84,13 +71,10 @@ def maak_schoon(tekst):
 def bereken_gewicht(item):
     gewicht = 1.0
     freq = int(item.get('frequentie_nt', 0))
-    if freq > 0:
-        gewicht += math.log10(freq + 1)
+    if freq > 0: gewicht += math.log10(freq + 1)
     gewicht += (int(item.get('score_fout', 0)) * 1.5)
-    
     gem_streak = (int(item.get('streak_m1', 0)) + int(item.get('streak_m2', 0)) + int(item.get('streak_m3', 0))) / 3
-    if gem_streak >= 20 or int(item.get('streak_m3', 0)) >= 20:
-        gewicht *= 0.1
+    if gem_streak >= 20 or int(item.get('streak_m3', 0)) >= 20: gewicht *= 0.1
     return max(0.1, gewicht)
 
 def geldig(val):
@@ -102,17 +86,22 @@ def geldig(val):
 def laad_grammatica_db():
     if os.path.exists("grammatica.json"):
         try:
-            with open("grammatica.json", "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception as e:
-            st.error(f"Fout bij inladen grammatica.json: {e}")
+            with open("grammatica.json", "r", encoding="utf-8") as f: return json.load(f)
+        except Exception: pass
+    return None
+
+@st.cache_data
+def laad_declinaties_db():
+    if os.path.exists("declinaties.json"):
+        try:
+            with open("declinaties.json", "r", encoding="utf-8") as f: return json.load(f)
+        except Exception: pass
     return None
 
 def laad_gebruiker_data(naam):
     try:
         df = conn.read(ttl=0) 
-        if 'gebruikersnaam' not in df.columns:
-            df['gebruikersnaam'] = ""
+        if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
         user_df = df[df['gebruikersnaam'] == naam]
         
         if user_df.empty:
@@ -141,15 +130,13 @@ def laad_gebruiker_data(naam):
             else: r['vormen_data'] = []
         return user_records
     except Exception as e:
-        st.error(f"Fout bij ophalen van data: {e}")
         return None
 
 def opslaan_naar_cloud():
     if not st.session_state.get('last_user') or not st.session_state.get('data'): return
     try:
         df = conn.read(ttl=0)
-        if 'gebruikersnaam' not in df.columns:
-            df['gebruikersnaam'] = ""
+        if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
         huidige_data_kopie = []
         for item in st.session_state.data:
@@ -163,7 +150,8 @@ def opslaan_naar_cloud():
 # --- SESSION STATE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user', 'actieve_keuze',
-            'gram_oefening', 'gram_fouten', 'laatste_filter']:
+            'gram_oefening', 'gram_fouten', 'laatste_filter',
+            'decl_oefening', 'laatste_filter_decl']:
     if key not in st.session_state: st.session_state[key] = None
 
 if st.session_state.fouten_huidig_woord is None: st.session_state.fouten_huidig_woord = 0
@@ -190,9 +178,9 @@ with st.sidebar:
 
 # --- HOOFDMENU ---
 if st.session_state.data:
-    menu = st.tabs(["🚀 Oefenen", "📖 Lijst", "📊 Voortgang", "🏛️ Grammatica"])
+    menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🏛️ Werkwoorden", "🏷️ Naamwoorden"])
 
-    with menu[0]: # OEFENEN (VOCABULAIRE)
+    with menu[0]: # WOORDENSCHAT
         col1, col2 = st.columns([1, 2])
         with col1:
             modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Typen"])
@@ -205,13 +193,12 @@ if st.session_state.data:
             elif keuze == "Mastery":
                 doel = [i for i in st.session_state.data if ((int(i.get('streak_m1',0))+int(i.get('streak_m2',0))+int(i.get('streak_m3',0)))/3) >= 20]
             
-            if st.button("Start"):
+            if st.button("Start Sessie"):
                 if doel:
                     doel.sort(key=bereken_gewicht, reverse=True)
                     st.session_state.sessie_lijst = random.sample(doel, min(len(doel), 10))
                     st.session_state.modus_actief = str(modus[0])
-                    laad_volgend_woord()
-                    st.rerun()
+                    laad_volgend_woord(); st.rerun()
 
         with col2:
             if st.session_state.huidig_item:
@@ -248,7 +235,6 @@ if st.session_state.data:
 
                 correct_antw = str(item.get('nederlands', ''))
                 
-                # --- TYPEN MODUS ---
                 if st.session_state.modus_actief == '3':
                     inp = st.text_input("Betekenis:", key=f"vocab_inp_{item.get('grieks')}").lower().strip()
                     if is_mastery and heeft_vormen:
@@ -256,45 +242,32 @@ if st.session_state.data:
                     else:
                         p_vorm = huidige_parsing.lower().strip()
 
-                    if st.button("Check"):
+                    if st.button("Check Antwoord"):
                         betekenis_goed = inp == maak_schoon(correct_antw) or inp in correct_antw.lower()
                         vorm_goed = p_vorm == huidige_parsing.lower().strip()
 
                         if betekenis_goed and vorm_goed:
                             item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
-                            st.success("✓ Goed!")
-                            laad_volgend_woord()
-                            st.rerun()
+                            st.success("✓ Goed!"); laad_volgend_woord(); st.rerun()
                         else:
                             st.session_state.fouten_huidig_woord = int(st.session_state.fouten_huidig_woord) + 1
                             if st.session_state.fouten_huidig_woord >= 2:
                                 item[actieve_streak] = max(0, int(item.get(actieve_streak, 0)) - 2)
-                                fout_bericht = f"✗ Fout. Betekenis: {correct_antw}"
-                                if is_mastery and heeft_vormen: fout_bericht += f" | Vorm: {huidige_parsing}"
-                                st.error(fout_bericht)
+                                st.error(f"✗ Fout. Betekenis: {correct_antw}" + (f" | Vorm: {huidige_parsing}" if is_mastery and heeft_vormen else ""))
                                 st.session_state.sessie_lijst.append(item)
                             else:
                                 st.warning("Bijna! Gebruik de hint en probeer nog eens.")
-                # --- MEERKEUZE MODUS ---
                 else:
                     correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
-                    
                     if not st.session_state.huidige_opties:
                         afleiders = []
                         if is_mastery and heeft_vormen:
-                            andere_parsings = [str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]
-                            if andere_parsings:
-                                gekozen_foute = random.sample(andere_parsings, min(3, len(andere_parsings)))
-                                for foute_p in gekozen_foute:
-                                    afleiders.append(f"{correct_antw} ({foute_p})")
+                            andere = [str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]
+                            if andere: afleiders = [f"{correct_antw} ({f})" for f in random.sample(andere, min(3, len(andere)))]
                         else:
-                            alle_andere = [str(i.get('nederlands', '')) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
-                            afleiders = alle_andere
+                            afleiders = [str(i.get('nederlands', '')) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
                         
-                        unieke_afleiders = list(set([str(a) for a in afleiders if a]))
-                        random.shuffle(unieke_afleiders)
-                        opties = unieke_afleiders[:3] + [correct_optie]
-                        
+                        opties = list(set([str(a) for a in afleiders if a]))[:3] + [correct_optie]
                         st.session_state.huidige_opties = list(dict.fromkeys(opties))
                         random.shuffle(st.session_state.huidige_opties)
                     
@@ -303,9 +276,7 @@ if st.session_state.data:
                         if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
                             if optie == correct_optie:
                                 item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
-                                st.success("✓ Goed!")
-                                laad_volgend_woord()
-                                st.rerun()
+                                st.success("✓ Goed!"); laad_volgend_woord(); st.rerun()
                             else:
                                 st.session_state.fouten_huidig_woord = int(st.session_state.fouten_huidig_woord) + 1
                                 if st.session_state.fouten_huidig_woord >= 2:
@@ -324,10 +295,7 @@ if st.session_state.data:
             les_filter = st.selectbox("Bekijk les:", alle_lessen)
             df = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
             if not df.empty:
-                beschikbare_kolommen = [c for c in ['grieks', 'nederlands', 'streak_m1', 'streak_m2', 'streak_m3', 'woordsoort'] if c in df.columns]
-                st.dataframe(df[beschikbare_kolommen], use_container_width=True)
-            else:
-                st.info("Geen data gevonden voor deze les.")
+                st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak_m1', 'streak_m2', 'streak_m3', 'woordsoort'] if c in df.columns]], use_container_width=True)
 
     with menu[2]: # VOORTGANG
         if st.session_state.data:
@@ -343,20 +311,18 @@ if st.session_state.data:
             ax.set_ylim(0, 100)
             st.pyplot(fig)
 
-    with menu[3]: # GRAMMATICA
+    with menu[3]: # WERKWOORDEN
         gram_db = laad_grammatica_db()
         if gram_db and "λύω" in gram_db.get("werkwoorden", {}):
             luo = gram_db["werkwoorden"]["λύω"]
-            st.subheader("🏛️ Grammatica Masterclass (λύω)")
+            st.subheader("🏛️ Verbale Morfologie (λύω)")
             
             c1, c2, c3 = st.columns(3)
-            with c1: gram_keuze = st.radio("Oefenvorm:", ["Vormen Analyseren", "Rijtjes Produceren"])
+            with c1: gram_keuze = st.radio("Oefenvorm:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"])
             with c2: gekozen_tijd = st.selectbox("1. Tijd/Diathese:", list(luo.keys()))
             with c3:
                 wijzen_set = set()
-                for k in luo[gekozen_tijd].keys():
-                    wijs, _ = splits_sleutel(k)
-                    wijzen_set.add(wijs)
+                for k in luo[gekozen_tijd].keys(): wijzen_set.add(splits_sleutel(k)[0])
                 gekozen_wijs_input = st.selectbox("2. Modus/Wijs:", ["Alles"] + sorted(list(wijzen_set)))
             
             gekozen_wijs = None if gekozen_wijs_input == "Alles" else gekozen_wijs_input
@@ -365,7 +331,12 @@ if st.session_state.data:
 
             st.write("---")
 
-            if gram_keuze == "Vormen Analyseren":
+            if gram_keuze == "Visueel Leren (Tabel)":
+                st.info(f"**Overzicht: {gekozen_tijd} | {gekozen_wijs_input}**")
+                df_vis = pd.DataFrame(list(gefilterd_rijtje.items()), columns=["Vorm/Persoon", "Griekse Vorm"])
+                st.dataframe(df_vis, use_container_width=True, hide_index=True)
+
+            elif gram_keuze == "Vormen Analyseren":
                 huidig_filter = f"{gekozen_tijd}_{gekozen_wijs_input}"
                 if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening or st.session_state.get('laatste_filter') != huidig_filter:
                     vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
@@ -375,7 +346,6 @@ if st.session_state.data:
                 oef = st.session_state.gram_oefening
                 if oef:
                     st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
-                    
                     if gekozen_wijs == "Participium":
                         ca1, ca2, ca3 = st.columns(3)
                         with ca1: nv = st.selectbox("Naamval:", ["", "Nom.", "Gen.", "Dat.", "Acc."])
@@ -385,7 +355,7 @@ if st.session_state.data:
                     else:
                         poging = st.selectbox("Welke persoon/vorm is dit?", [""] + list(gefilterd_rijtje.keys()))
                     
-                    if st.button("Controleer Analyse"):
+                    if st.button("Controleer"):
                         if normaliseer_accent(poging) == normaliseer_accent(oef['naam']):
                             st.success(f"✓ Correct! Dit is inderdaad de {oef['naam']}")
                             st.session_state.gram_oefening = None
@@ -393,9 +363,8 @@ if st.session_state.data:
                             st.error(f"✗ Niet juist. Het is de: {oef['naam']}")
 
             else: # RIJTJES PRODUCEREN
-                st.info("ℹ️ Typ met normale letters. Voorbeeld: **luis** wordt **λύεις**, **luomen** wordt **λύομεν**.")
+                st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd.")
                 fouten_teller = 0
-                
                 if gekozen_wijs == "Participium":
                     for nv in ["Nom.", "Gen.", "Dat.", "Acc."]:
                         for gt in ["ev.", "mv."]:
@@ -407,22 +376,75 @@ if st.session_state.data:
                                 if correct:
                                     inp = cols[i].text_input(ges, key=f"ptc_{gekozen_tijd}_{label}")
                                     if inp:
-                                        if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(correct):
-                                            cols[i].caption(f"✅ {correct}")
-                                        else:
-                                            cols[i].caption(f"❌ {correct}")
-                                            fouten_teller += 1
+                                        if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(correct): cols[i].caption(f"✅ {correct}")
+                                        else: cols[i].caption(f"❌ {correct}"); fouten_teller += 1
                 else:
                     for label, correct in gefilterd_rijtje.items():
                         inp = st.text_input(label, key=f"std_{gekozen_tijd}_{label}")
                         if inp:
-                            if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(correct):
-                                st.success(f"✓ {correct}")
-                            else:
-                                st.error(f"✗ {correct}")
-                                fouten_teller += 1
+                            if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(correct): st.success(f"✓ {correct}")
+                            else: st.error(f"✗ {correct}"); fouten_teller += 1
                 
-                if st.button("Check Rijtje") and fouten_teller == 0:
+                if st.button("Check Rijtje") and fouten_teller == 0: st.balloons()
+        else:
+            st.warning("grammatica.json ontbreekt. Voer het luo-conversiescript in.")
+
+    with menu[4]: # NAAMWOORDEN
+        decl_db = laad_declinaties_db()
+        if decl_db and "Declinaties" in decl_db:
+            st.subheader("🏷️ Nominale Morfologie (Declinaties)")
+            
+            dc1, dc2, dc3 = st.columns(3)
+            with dc1: decl_keuze = st.radio("Oefenvorm:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"], key="decl_radio")
+            
+            groepen = list(decl_db["Declinaties"].keys())
+            with dc2: gekozen_groep = st.selectbox("1. Declinatie Groep:", groepen)
+            
+            paradigma_opties = list(decl_db["Declinaties"][gekozen_groep].keys())
+            with dc3: gekozen_paradigma = st.selectbox("2. Paradigma:", paradigma_opties)
+            
+            gefilterd_rijtje = decl_db["Declinaties"][gekozen_groep][gekozen_paradigma]
+
+            st.write("---")
+
+            if decl_keuze == "Visueel Leren (Tabel)":
+                st.info(f"**Overzicht: {gekozen_groep} | {gekozen_paradigma}**")
+                df_vis = pd.DataFrame(list(gefilterd_rijtje.items()), columns=["Naamval & Getal", "Griekse Vorm"])
+                st.dataframe(df_vis, use_container_width=True, hide_index=True)
+
+            elif decl_keuze == "Vormen Analyseren":
+                huidig_filter = f"{gekozen_groep}_{gekozen_paradigma}"
+                if st.button("Nieuwe Vorm", key="btn_nw_decl") or not st.session_state.get('decl_oefening') or st.session_state.get('laatste_filter_decl') != huidig_filter:
+                    vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
+                    st.session_state.decl_oefening = random.choice(vlak) if vlak else None
+                    st.session_state.laatste_filter_decl = huidig_filter
+                
+                oef = st.session_state.decl_oefening
+                if oef:
+                    st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
+                    poging = st.selectbox("Welke naamval/getal is dit?", [""] + list(gefilterd_rijtje.keys()), key="sel_decl_analyse")
+                    
+                    if st.button("Controleer Analyse", key="btn_chk_decl"):
+                        if normaliseer_accent(poging) == normaliseer_accent(oef['naam']):
+                            st.success(f"✓ Correct! Dit is inderdaad de {oef['naam']}")
+                            st.session_state.decl_oefening = None
+                        else:
+                            st.error(f"✗ Niet juist. Het is de: {oef['naam']}")
+
+            else: # Rijtjes Produceren
+                st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd.")
+                fouten_teller = 0
+                
+                for label, correct in gefilterd_rijtje.items():
+                    inp = st.text_input(label, key=f"decl_{gekozen_groep}_{gekozen_paradigma}_{label}")
+                    if inp:
+                        if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(correct):
+                            st.success(f"✓ {correct}")
+                        else:
+                            st.error(f"✗ {correct}")
+                            fouten_teller += 1
+                
+                if st.button("Check Rijtje", key="btn_chk_rijtje_decl") and fouten_teller == 0:
                     st.balloons()
         else:
-            st.warning("grammatica.json is niet goed geladen of bevat het werkwoord 'λύω' niet.")
+            st.warning("declinaties.json ontbreekt. Run het conversiescript voor de declinaties eerst.")
