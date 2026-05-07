@@ -35,7 +35,6 @@ def naar_grieks_transliteratie(tekst):
     for char in tekst:
         res += mapping.get(char, char)
     
-    # Eind-sigma correctie
     if res.endswith('σ'):
         res = res[:-1] + 'ς'
     return res
@@ -45,6 +44,13 @@ def normaliseer_accent(woord):
         w = str(woord).replace("ὸ", "ό").replace("ὰ", "ά").replace("ὴ", "ή").replace("ὼ", "ώ").replace("ὶ", "ί").replace("ὺ", "ύ").strip().lower()
         return w
     return ""
+
+def splits_sleutel(sleutel):
+    """Haalt 'Indicativus' en '1sg' uit de string 'Indicativus1sg'"""
+    match = re.match(r"([A-Za-z]+)(.*)", str(sleutel))
+    if match:
+        return match.group(1), match.group(2).strip()
+    return "Overig", str(sleutel)
 
 def maak_schoon(tekst):
     schoon = re.sub(r'\(.*?\)', '', str(tekst))
@@ -123,7 +129,7 @@ def opslaan_naar_cloud():
 # --- SESSION STATE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user', 'actieve_keuze',
-            'gram_oefening', 'gram_fouten']:
+            'gram_oefening', 'gram_fouten', 'laatste_filter']:
     if key not in st.session_state: st.session_state[key] = None
 
 if st.session_state.fouten_huidig_woord is None: st.session_state.fouten_huidig_woord = 0
@@ -175,7 +181,6 @@ if st.session_state.data:
                 item = st.session_state.huidig_item
                 actieve_streak = f"streak_m{st.session_state.modus_actief}"
                 
-                # VEILIGE Mastery check (voorkomt crashes als sleutel ontbreekt)
                 sm1 = int(item.get('streak_m1', 0))
                 sm2 = int(item.get('streak_m2', 0))
                 sm3 = int(item.get('streak_m3', 0))
@@ -194,7 +199,7 @@ if st.session_state.data:
                 if st.session_state.modus_actief == '1' or st.session_state.fouten_huidig_woord >= 1:
                     st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
-                # NAKIIK LOGICA (3 STAPPEN)
+                # NAKIIK LOGICA
                 correct_antw = str(item['nederlands'])
                 if st.session_state.modus_actief == '3':
                     inp = st.text_input("Betekenis:", key="vocab_inp").lower().strip()
@@ -211,7 +216,6 @@ if st.session_state.data:
                             else:
                                 st.warning("Bijna! Gebruik de hint en probeer nog eens.")
                 else:
-                    # MC Logica
                     st.write("Klik op het juiste antwoord:")
                     if st.button(correct_antw):
                         item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
@@ -223,37 +227,62 @@ if st.session_state.data:
             luo = gram_db["werkwoorden"]["λύω"]
             st.subheader("🏛️ Grammatica Paradigma's (λύω)")
             
-            c1, c2 = st.columns(2)
+            c1, c2, c3 = st.columns(3)
             with c1:
                 gram_keuze = st.radio("Oefenvorm:", ["Vormen Analyseren", "Rijtjes Produceren"])
             with c2:
                 beschikbare_tijden = list(luo.keys())
-                gekozen_tijd = st.selectbox("Selecteer rijtje:", beschikbare_tijden)
+                gekozen_tijd = st.selectbox("1. Selecteer Tijd/Diathese:", beschikbare_tijden)
+            with c3:
+                # Bepaal dynamisch welke 'wijzen' in dit blok zitten
+                wijzen_set = set()
+                for k in luo[gekozen_tijd].keys():
+                    wijs, _ = splits_sleutel(k)
+                    wijzen_set.add(wijs)
+                
+                opties_wijzen = ["Alles (Compleet blok)"] + sorted(list(wijzen_set))
+                gekozen_wijs_input = st.selectbox("2. Selecteer Modus/Wijs:", opties_wijzen)
+            
+            gekozen_wijs = None if "Alles" in gekozen_wijs_input else gekozen_wijs_input
+            
+            # Filter de data zodat we alleen het gekozen stukje overhouden
+            gefilterd_rijtje = {}
+            for k, v in luo[gekozen_tijd].items():
+                wijs, rest = splits_sleutel(k)
+                if gekozen_wijs is None:
+                    gefilterd_rijtje[k] = v 
+                elif wijs == gekozen_wijs:
+                    weergave_naam = rest if rest != "" else wijs
+                    gefilterd_rijtje[weergave_naam] = v
+
+            st.write("---")
 
             if gram_keuze == "Vormen Analyseren":
-                if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening:
-                    vlak = [{"tijd": gekozen_tijd, "persoon": p, "vorm": v} for p, v in luo[gekozen_tijd].items()]
+                # Check of de gebruiker van filter is gewisseld, zo ja: genereer een nieuwe vorm
+                huidig_filter = f"{gekozen_tijd}_{gekozen_wijs_input}"
+                if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening or st.session_state.get('laatste_filter') != huidig_filter:
+                    vlak = [{"naam": k, "vorm": v} for k, v in gefilterd_rijtje.items()]
                     st.session_state.gram_oefening = random.choice(vlak)
                     st.session_state.gram_fouten = 0
+                    st.session_state.laatste_filter = huidig_filter
                 
                 oef = st.session_state.gram_oefening
                 st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
                 
-                ans = st.selectbox("Welke persoon is dit?", [""] + list(luo[gekozen_tijd].keys()))
+                ans = st.selectbox("Welke persoon/vorm is dit?", [""] + list(gefilterd_rijtje.keys()))
                 if st.button("Controleer Analyse"):
-                    if ans == oef['persoon']:
-                        st.success("✓ Correct!")
+                    if ans == oef['naam']:
+                        st.success("✓ Correct! Maak hierboven een nieuwe vorm aan.")
                         st.session_state.gram_oefening = None; st.rerun()
                     else:
-                        st.error(f"✗ Nee, dit is de {oef['persoon']}")
+                        st.error(f"✗ Nee, het was de {oef['naam']}")
 
-            else: # Rijtjes Produceren met Transliteratie
+            else: # Rijtjes Produceren
                 st.info("ℹ️ Typ met normale letters. Voorbeeld: **luis** wordt **λύεις**, **luomen** wordt **λύομεν**.")
-                rijtje = luo[gekozen_tijd]
                 fouten_teller = 0
                 
-                for pers, correcte_vorm in rijtje.items():
-                    user_inp = st.text_input(f"{pers}:", key=f"grid_{gekozen_tijd}_{pers}")
+                for weergave_naam, correcte_vorm in gefilterd_rijtje.items():
+                    user_inp = st.text_input(f"{weergave_naam}:", key=f"grid_{gekozen_tijd}_{gekozen_wijs_input}_{weergave_naam}")
                     vertaald = naar_grieks_transliteratie(user_inp)
                     
                     if user_inp:
@@ -269,3 +298,4 @@ if st.session_state.data:
 
     with menu[2]: # VOORTGANG
         st.write("Voortgang per les op basis van mastery (Gemiddelde streak 20)")
+        # De grafiek functionaliteit kan hier behouden blijven zoals in vorige iteraties
