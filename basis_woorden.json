@@ -117,7 +117,82 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "αὐτός, -ή, -ό"
+    "grieks_info": "αὐτός, -ή, -ό",
+    "declinatie": "pers_vnw",
+    "vormen_data": [
+      {
+        "vorm": "αὐτός",
+        "parsing": "nom ev m"
+      },
+      {
+        "vorm": "αὐτοῦ",
+        "parsing": "gen ev m"
+      },
+      {
+        "vorm": "αὐτῷ",
+        "parsing": "dat ev m"
+      },
+      {
+        "vorm": "αὐτόν",
+        "parsing": "acc ev m"
+      },
+      {
+        "vorm": "αὐτοί",
+        "parsing": "nom mv m"
+      },
+      {
+        "vorm": "αὐτῶν",
+        "parsing": "gen mv m"
+      },
+      {
+        "vorm": "αὐτοῖς",
+        "parsing": "dat mv m"
+      },
+      {
+        "vorm": "αὐτούς",
+        "parsing": "acc mv m"
+      },
+      {
+        "vorm": "αὐτή",
+        "parsing": "nom ev v"
+      },
+      {
+        "vorm": "αὐτῆς",
+        "parsing": "gen ev v"
+      },
+      {
+        "vorm": "αὐτῇ",
+        "parsing": "dat ev v"
+      },
+      {
+        "vorm": "αὐτήν",
+        "parsing": "acc ev v"
+      },
+      {
+        "vorm": "αὐταί",
+        "parsing": "nom mv v"
+      },
+      {
+        "vorm": "αὐταῖς",
+        "parsing": "dat mv v"
+      },
+      {
+        "vorm": "αὐτάς",
+        "parsing": "acc mv v"
+      },
+      {
+        "vorm": "αὐτό",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "αὐτῷ",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "αὐτά",
+        "parsing": "nom mv o"
+      }
+    ]
   },
   {
     "les": 1,
@@ -132,7 +207,42 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "σύ"
+    "grieks_info": "σύ",
+    "declinatie": "pers_vnw",
+    "vormen_data": [
+      {
+        "vorm": "σύ",
+        "parsing": "nom ev 2p"
+      },
+      {
+        "vorm": "σου / σοῦ",
+        "parsing": "gen ev 2p"
+      },
+      {
+        "vorm": "σοί / σοί",
+        "parsing": "dat ev 2p"
+      },
+      {
+        "vorm": "σε / σέ",
+        "parsing": "acc ev 2p"
+      },
+      {
+        "vorm": "ὑμεῖς",
+        "parsing": "nom mv 2p"
+      },
+      {
+        "vorm": "ὑμῶν",
+        "parsing": "gen mv 2p"
+      },
+      {
+        "vorm": "ὑμῖν",
+        "parsing": "dat mv 2p"
+      },
+      {
+        "vorm": "ὑμᾶς",
+        "parsing": "acc mv 2p"
+      }
+    ]
   },
   {
     "les": 1,
@@ -177,7 +287,42 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἐγώ"
+    "grieks_info": "ἐγώ",
+    "declinatie": "pers_vnw",
+    "vormen_data": [
+      {
+        "vorm": "ἐγώ",
+        "parsing": "nom ev 1p"
+      },
+      {
+        "vorm": "μου / ἐμοῦ",
+        "parsing": "gen ev 1p"
+      },
+      {
+        "vorm": "μοί / ἐμοί",
+        "parsing": "dat ev 1p"
+      },
+      {
+        "vorm": "με / ἐμέ",
+        "parsing": "acc ev 1p"
+      },
+      {
+        "vorm": "ἡμεῖς",
+        "parsing": "nom mv 1p"
+      },
+      {
+        "vorm": "ἡμῶν",
+        "parsing": "gen mv 1p"
+      },
+      {
+        "vorm": "ἡμῖν",
+        "parsing": "dat mv 1p"
+      },
+      {
+        "vorm": "ἡμᾶς",
+        "parsing": "acc mv 1p"
+      }
+    ]
   },
   {
     "les": 1,
@@ -192,7 +337,58 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "εἰμί"
+    "grieks_info": "εἰμί",
+    "declinatie": "ww_onr",
+    "vormen_data": [
+      {
+        "vorm": "εἰμί",
+        "parsing": "1 sg praes"
+      },
+      {
+        "vorm": "εἶ",
+        "parsing": "2 sg praes"
+      },
+      {
+        "vorm": "ἐστί(ν)",
+        "parsing": "3 sg praes"
+      },
+      {
+        "vorm": "ἐσμέν",
+        "parsing": "1 pl praes"
+      },
+      {
+        "vorm": "ἐστέ",
+        "parsing": "2 pl praes"
+      },
+      {
+        "vorm": "εἰσί(ν)",
+        "parsing": "3 pl praes"
+      },
+      {
+        "vorm": "ἤμην",
+        "parsing": "1 sg imperf"
+      },
+      {
+        "vorm": "ἦς",
+        "parsing": "2 sg imperf"
+      },
+      {
+        "vorm": "ἦν",
+        "parsing": "3 sg imperf"
+      },
+      {
+        "vorm": "ἦμεν",
+        "parsing": "1 pl imperf"
+      },
+      {
+        "vorm": "ἦτε",
+        "parsing": "2 pl imperf"
+      },
+      {
+        "vorm": "ἦσαν",
+        "parsing": "3 pl imperf"
+      }
+    ]
   },
   {
     "les": 1,
@@ -2546,7 +2742,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σῶμα, -τος, τό"
+    "grieks_info": "σῶμα, -τος, τό",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "σῶμα",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "σώματος",
+        "parsing": "gen ev o"
+      },
+      {
+        "vorm": "σώματι",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "σῶμα",
+        "parsing": "acc ev o"
+      },
+      {
+        "vorm": "σώματα",
+        "parsing": "nom mv o"
+      },
+      {
+        "vorm": "σωμάτων",
+        "parsing": "gen mv o"
+      },
+      {
+        "vorm": "σώμασι(ν)",
+        "parsing": "dat mv o"
+      },
+      {
+        "vorm": "σώματα",
+        "parsing": "acc mv o"
+      }
+    ]
   },
   {
     "les": 3,
@@ -9781,7 +10012,42 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γένος, -ους, τό"
+    "grieks_info": "γένος, -ους, τό",
+    "declinatie": "3",
+    "vormen_data": [
+      {
+        "vorm": "γένος",
+        "parsing": "nom ev o"
+      },
+      {
+        "vorm": "γένους",
+        "parsing": "gen ev o"
+      },
+      {
+        "vorm": "γένει",
+        "parsing": "dat ev o"
+      },
+      {
+        "vorm": "γένος",
+        "parsing": "acc ev o"
+      },
+      {
+        "vorm": "γένη",
+        "parsing": "nom mv o"
+      },
+      {
+        "vorm": "γενῶν",
+        "parsing": "gen mv o"
+      },
+      {
+        "vorm": "γένεσι(ν)",
+        "parsing": "dat mv o"
+      },
+      {
+        "vorm": "γένη",
+        "parsing": "acc mv o"
+      }
+    ]
   },
   {
     "les": 12,
