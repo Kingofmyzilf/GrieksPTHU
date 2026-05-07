@@ -43,7 +43,6 @@ def naar_grieks_transliteratie(tekst):
 def normaliseer_accent(woord):
     if pd.notna(woord) and str(woord).strip() != "":
         w = str(woord).replace("ὸ", "ό").replace("ὰ", "ά").replace("ὴ", "ή").replace("ὼ", "ώ").replace("ὶ", "ί").replace("ὺ", "ύ").strip().lower()
-        # Voor de controle negeren we ook de spiritus en overige accenten als we transliteratie gebruiken
         return w
     return ""
 
@@ -90,7 +89,7 @@ def laad_gebruiker_data(naam):
                     new_data.append(b)
                 updated_df = pd.concat([df, pd.DataFrame(new_data)], ignore_index=True)
                 conn.update(data=updated_df)
-                return laad_gebruiker_data(naam) # Herlaad na creatie
+                return laad_gebruiker_data(naam)
         return None
             
     user_records = user_df.to_dict('records')
@@ -108,6 +107,8 @@ def opslaan_naar_cloud():
     if not st.session_state.get('last_user') or not st.session_state.get('data'): return
     try:
         df = conn.read(ttl=0)
+        if 'gebruikersnaam' not in df.columns:
+            df['gebruikersnaam'] = ""
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
         huidige_data_kopie = []
         for item in st.session_state.data:
@@ -174,12 +175,16 @@ if st.session_state.data:
                 item = st.session_state.huidig_item
                 actieve_streak = f"streak_m{st.session_state.modus_actief}"
                 
-                # Mastery check (Gemiddelde 20 of M3 20)
-                gem_streak = (item['streak_m1'] + item['streak_m2'] + item['streak_m3']) / 3
-                is_mastery = gem_streak >= 20 or item['streak_m3'] >= 20
+                # VEILIGE Mastery check (voorkomt crashes als sleutel ontbreekt)
+                sm1 = int(item.get('streak_m1', 0))
+                sm2 = int(item.get('streak_m2', 0))
+                sm3 = int(item.get('streak_m3', 0))
+                
+                gem_streak = (sm1 + sm2 + sm3) / 3
+                is_mastery = gem_streak >= 20 or sm3 >= 20
                 
                 if st.session_state.huidige_vorm_data is None:
-                    if is_mastery and item['vormen_data']:
+                    if is_mastery and item.get('vormen_data'):
                         st.session_state.huidige_vorm_data = random.choice(item['vormen_data'])
                     else:
                         st.session_state.huidige_vorm_data = {"vorm": item['grieks'], "parsing": "basis"}
@@ -195,21 +200,21 @@ if st.session_state.data:
                     inp = st.text_input("Betekenis:", key="vocab_inp").lower().strip()
                     if st.button("Check"):
                         if inp == maak_schoon(correct_antw) or inp in correct_antw.lower():
-                            item[actieve_streak] += 1
+                            item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
                             st.success("✓ Goed!"); laad_volgend_woord(); st.rerun()
                         else:
                             st.session_state.fouten_huidig_woord += 1
                             if st.session_state.fouten_huidig_woord >= 2:
-                                item[actieve_streak] = max(0, item[actieve_streak] - 2)
+                                item[actieve_streak] = max(0, int(item.get(actieve_streak, 0)) - 2)
                                 st.error(f"✗ Fout. Het was: {correct_antw}")
                                 st.session_state.sessie_lijst.append(item)
                             else:
                                 st.warning("Bijna! Gebruik de hint en probeer nog eens.")
                 else:
-                    # MC Logica (vereenvoudigd voor deze update)
+                    # MC Logica
                     st.write("Klik op het juiste antwoord:")
                     if st.button(correct_antw):
-                        item[actieve_streak] += 1
+                        item[actieve_streak] = int(item.get(actieve_streak, 0)) + 1
                         st.success("✓ Goed!"); laad_volgend_woord(); st.rerun()
 
     with menu[3]: # GRAMMATICA
@@ -264,4 +269,3 @@ if st.session_state.data:
 
     with menu[2]: # VOORTGANG
         st.write("Voortgang per les op basis van mastery (Gemiddelde streak 20)")
-        # ... (bestaande grafiek code)
