@@ -12,7 +12,8 @@
     "score_goed": 2,
     "score_fout": 1,
     "streak": 2,
-    "grieks_info": "εἰς"
+    "grieks_info": "εἰς",
+    "strong": "1519"
   },
   {
     "les": 1,
@@ -27,7 +28,8 @@
     "score_goed": 2,
     "score_fout": 1,
     "streak": 2,
-    "grieks_info": "οὗτος, αὕτη, τοῦτο"
+    "grieks_info": "οὗτος, αὕτη, τοῦτο",
+    "strong": "3778"
   },
   {
     "les": 1,
@@ -42,7 +44,8 @@
     "score_goed": 1,
     "score_fout": 2,
     "streak": 0,
-    "grieks_info": "ὅτι"
+    "grieks_info": "ὅτι",
+    "strong": "3754"
   },
   {
     "les": 1,
@@ -57,7 +60,8 @@
     "score_goed": 1,
     "score_fout": 1,
     "streak": 1,
-    "grieks_info": "ἐκ"
+    "grieks_info": "ἐκ",
+    "strong": "1537"
   },
   {
     "les": 1,
@@ -72,7 +76,8 @@
     "score_goed": 0,
     "score_fout": 2,
     "streak": 0,
-    "grieks_info": "πρός"
+    "grieks_info": "πρός",
+    "strong": "4314"
   },
   {
     "les": 1,
@@ -87,7 +92,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "ὁ, ἡ, τό"
+    "grieks_info": "ὁ, ἡ, τό",
+    "strong": "3588"
   },
   {
     "les": 1,
@@ -102,7 +108,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "καί"
+    "grieks_info": "καί",
+    "strong": "2532"
   },
   {
     "les": 1,
@@ -192,7 +199,8 @@
         "vorm": "αὐτά",
         "parsing": "nom mv o"
       }
-    ]
+    ],
+    "strong": "846"
   },
   {
     "les": 1,
@@ -242,7 +250,8 @@
         "vorm": "ὑμᾶς",
         "parsing": "acc mv 2p"
       }
-    ]
+    ],
+    "strong": "4771"
   },
   {
     "les": 1,
@@ -257,7 +266,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "δέ"
+    "grieks_info": "δέ",
+    "strong": "1161"
   },
   {
     "les": 1,
@@ -272,7 +282,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἐν"
+    "grieks_info": "ἐν",
+    "strong": "1722"
   },
   {
     "les": 1,
@@ -322,7 +333,8 @@
         "vorm": "ἡμᾶς",
         "parsing": "acc mv 1p"
       }
-    ]
+    ],
+    "strong": "1473"
   },
   {
     "les": 1,
@@ -388,7 +400,8 @@
         "vorm": "ἦσαν",
         "parsing": "3 pl imperf"
       }
-    ]
+    ],
+    "strong": "1510"
   },
   {
     "les": 1,
@@ -403,7 +416,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "λέγω"
+    "grieks_info": "λέγω",
+    "strong": "3004"
   },
   {
     "les": 1,
@@ -418,7 +432,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "οὐ, οὐκ, οὐχ"
+    "grieks_info": "οὐ, οὐκ, οὐχ",
+    "strong": "3756"
   },
   {
     "les": 1,
@@ -433,7 +448,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ὅς, ἥ, ὅ"
+    "grieks_info": "ὅς, ἥ, ὅ",
+    "strong": "3739"
   },
   {
     "les": 1,
@@ -483,7 +499,8 @@
         "vorm": "θεούς",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "2316"
   },
   {
     "les": 1,
@@ -589,7 +606,8 @@
         "vorm": "πᾶσι",
         "parsing": "dat mv o"
       }
-    ]
+    ],
+    "strong": "3956"
   },
   {
     "les": 1,
@@ -604,7 +622,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "μή"
+    "grieks_info": "μή",
+    "strong": "3361"
   },
   {
     "les": 1,
@@ -619,7 +638,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "γάρ"
+    "grieks_info": "γάρ",
+    "strong": "1063"
   },
   {
     "les": 1,
@@ -653,7 +673,8 @@
         "vorm": "Ἰησοῦν",
         "parsing": "acc ev m"
       }
-    ]
+    ],
+    "strong": "2424"
   },
   {
     "les": 1,
@@ -668,7 +689,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἐπί"
+    "grieks_info": "ἐπί",
+    "strong": "1909"
   },
   {
     "les": 7,
@@ -683,7 +705,8 @@
     "score_goed": 1,
     "score_fout": 1,
     "streak": 1,
-    "grieks_info": "πεινάω"
+    "grieks_info": "πεινάω",
+    "strong": "3983"
   },
   {
     "les": 1,
@@ -733,7 +756,8 @@
         "vorm": "κυρίους",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "2962"
   },
   {
     "les": 1,
@@ -748,7 +772,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἔχω"
+    "grieks_info": "ἔχω",
+    "strong": "2192"
   },
   {
     "les": 1,
@@ -763,7 +788,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ὁράω"
+    "grieks_info": "ὁράω",
+    "strong": "3708"
   },
   {
     "les": 1,
@@ -778,7 +804,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἵνα"
+    "grieks_info": "ἵνα",
+    "strong": "2443"
   },
   {
     "les": 1,
@@ -793,7 +820,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "γίνομαι"
+    "grieks_info": "γίνομαι",
+    "strong": "1096"
   },
   {
     "les": 1,
@@ -808,7 +836,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διά"
+    "grieks_info": "διά",
+    "strong": "1223"
   },
   {
     "les": 1,
@@ -823,7 +852,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπό"
+    "grieks_info": "ἀπό",
+    "strong": "575"
   },
   {
     "les": 1,
@@ -838,7 +868,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀλλά"
+    "grieks_info": "ἀλλά",
+    "strong": "235"
   },
   {
     "les": 1,
@@ -853,7 +884,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἔρχομαι"
+    "grieks_info": "ἔρχομαι",
+    "strong": "2064"
   },
   {
     "les": 1,
@@ -868,7 +900,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποιέω"
+    "grieks_info": "ποιέω",
+    "strong": "4160"
   },
   {
     "les": 1,
@@ -883,7 +916,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τίς, τί"
+    "grieks_info": "τίς, τί",
+    "strong": "5100"
   },
   {
     "les": 1,
@@ -933,7 +967,8 @@
         "vorm": "ἀνθρώπους",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "444"
   },
   {
     "les": 1,
@@ -948,7 +983,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τις, τι"
+    "grieks_info": "τις, τι",
+    "strong": "5100"
   },
   {
     "les": 1,
@@ -998,7 +1034,8 @@
         "vorm": "Χριστούς",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "5547"
   },
   {
     "les": 1,
@@ -1013,7 +1050,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὡς"
+    "grieks_info": "ὡς",
+    "strong": "5613"
   },
   {
     "les": 1,
@@ -1028,7 +1066,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἰ"
+    "grieks_info": "εἰ",
+    "strong": "1487"
   },
   {
     "les": 1,
@@ -1043,7 +1082,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὖν"
+    "grieks_info": "οὖν",
+    "strong": "3767"
   },
   {
     "les": 1,
@@ -1058,7 +1098,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κατά"
+    "grieks_info": "κατά",
+    "strong": "2596"
   },
   {
     "les": 1,
@@ -1073,7 +1114,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μετά"
+    "grieks_info": "μετά",
+    "strong": "3326"
   },
   {
     "les": 2,
@@ -1088,7 +1130,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀκούω"
+    "grieks_info": "ἀκούω",
+    "strong": "191"
   },
   {
     "les": 2,
@@ -1103,7 +1146,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δίδωμι"
+    "grieks_info": "δίδωμι",
+    "strong": "1325"
   },
   {
     "les": 1,
@@ -1118,7 +1162,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πατήρ, πατρός, ὁ"
+    "grieks_info": "πατήρ, πατρός, ὁ",
+    "strong": "3962"
   },
   {
     "les": 2,
@@ -1168,7 +1213,8 @@
         "vorm": "ἡμέρας",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "2250"
   },
   {
     "les": 2,
@@ -1218,7 +1264,8 @@
         "vorm": "πνεύματα",
         "parsing": "acc mv o"
       }
-    ]
+    ],
+    "strong": "4151"
   },
   {
     "les": 2,
@@ -1268,7 +1315,8 @@
         "vorm": "υἱούς",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "5207"
   },
   {
     "les": 2,
@@ -1318,7 +1366,8 @@
         "vorm": "ἀδελφούς",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "80"
   },
   {
     "les": 2,
@@ -1333,7 +1382,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἤ"
+    "grieks_info": "ἤ",
+    "strong": "3588"
   },
   {
     "les": 2,
@@ -1348,7 +1398,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐάν"
+    "grieks_info": "ἐάν",
+    "strong": "1437"
   },
   {
     "les": 1,
@@ -1363,7 +1414,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἷς, μία, ἕν"
+    "grieks_info": "εἷς, μία, ἕν",
+    "strong": "1519"
   },
   {
     "les": 2,
@@ -1378,7 +1430,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περί"
+    "grieks_info": "περί",
+    "strong": "4012"
   },
   {
     "les": 1,
@@ -1428,7 +1481,8 @@
         "vorm": "λόγους",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "3056"
   },
   {
     "les": 2,
@@ -1443,7 +1497,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἑαυτοῦ, -ῆς, -οῦ"
+    "grieks_info": "ἑαυτοῦ, -ῆς, -οῦ",
+    "strong": "1438"
   },
   {
     "les": 2,
@@ -1458,7 +1513,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οἶδα"
+    "grieks_info": "οἶδα",
+    "strong": "1492"
   },
   {
     "les": 2,
@@ -1473,7 +1529,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λαλέω"
+    "grieks_info": "λαλέω",
+    "strong": "2980"
   },
   {
     "les": 2,
@@ -1523,7 +1580,8 @@
         "vorm": "οὐρανούς",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "3772"
   },
   {
     "les": 2,
@@ -1573,7 +1631,8 @@
         "vorm": "μαθητάς",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "3101"
   },
   {
     "les": 2,
@@ -1588,7 +1647,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λαμβάνω"
+    "grieks_info": "λαμβάνω",
+    "strong": "2983"
   },
   {
     "les": 2,
@@ -1622,7 +1682,8 @@
         "vorm": "γῆν",
         "parsing": "acc ev v"
       }
-    ]
+    ],
+    "strong": "1093"
   },
   {
     "les": 2,
@@ -1637,7 +1698,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκεῖνος, -η, -ο"
+    "grieks_info": "ἐκεῖνος, -η, -ο",
+    "strong": "1565"
   },
   {
     "les": 2,
@@ -1652,7 +1714,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέγας, μεγάλη, μέγα"
+    "grieks_info": "μέγας, μεγάλη, μέγα",
+    "strong": "3173"
   },
   {
     "les": 2,
@@ -1702,7 +1765,8 @@
         "vorm": "πίστεις",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "4102"
   },
   {
     "les": 2,
@@ -1717,7 +1781,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πιστεύω"
+    "grieks_info": "πιστεύω",
+    "strong": "4100"
   },
   {
     "les": 2,
@@ -1732,7 +1797,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐδείς, οὐδεμία, οὐδέν"
+    "grieks_info": "οὐδείς, οὐδεμία, οὐδέν",
+    "strong": "3762"
   },
   {
     "les": 2,
@@ -1747,7 +1813,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἅγιος, -α, -ον"
+    "grieks_info": "ἅγιος, -α, -ον",
+    "strong": "40"
   },
   {
     "les": 2,
@@ -1762,7 +1829,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποκρίνομαι"
+    "grieks_info": "ἀποκρίνομαι",
+    "strong": "611"
   },
   {
     "les": 2,
@@ -1812,7 +1880,8 @@
         "vorm": "ὀνόματα",
         "parsing": "acc mv o"
       }
-    ]
+    ],
+    "strong": "3686"
   },
   {
     "les": 2,
@@ -1827,7 +1896,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γινώσκω"
+    "grieks_info": "γινώσκω",
+    "strong": "1097"
   },
   {
     "les": 2,
@@ -1842,7 +1912,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπό"
+    "grieks_info": "ὑπό",
+    "strong": "5259"
   },
   {
     "les": 2,
@@ -1857,7 +1928,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐξέρχομαι"
+    "grieks_info": "ἐξέρχομαι",
+    "strong": "1831"
   },
   {
     "les": 2,
@@ -1907,7 +1979,8 @@
         "vorm": "ἄνδρας",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "435"
   },
   {
     "les": 2,
@@ -1957,7 +2030,8 @@
         "vorm": "γυναῖκας",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "1135"
   },
   {
     "les": 2,
@@ -1972,7 +2046,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δύναμαι"
+    "grieks_info": "δύναμαι",
+    "strong": "1410"
   },
   {
     "les": 2,
@@ -1987,7 +2062,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὕτω / οὔτως"
+    "grieks_info": "οὕτω / οὔτως",
+    "strong": "3779"
   },
   {
     "les": 2,
@@ -2002,7 +2078,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τέ"
+    "grieks_info": "τέ",
+    "strong": "5037"
   },
   {
     "les": 2,
@@ -2017,7 +2094,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θέλω"
+    "grieks_info": "θέλω",
+    "strong": "2309"
   },
   {
     "les": 2,
@@ -2032,7 +2110,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "ἰδού"
+    "grieks_info": "ἰδού",
+    "strong": "2400"
   },
   {
     "les": 2,
@@ -2047,7 +2126,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "Ἰουδαῖος, -α, -ον"
+    "grieks_info": "Ἰουδαῖος, -α, -ον",
+    "strong": "2453"
   },
   {
     "les": 2,
@@ -2097,7 +2177,8 @@
         "vorm": "νόμους",
         "parsing": "acc mv m"
       }
-    ]
+    ],
+    "strong": "3551"
   },
   {
     "les": 1,
@@ -2112,7 +2193,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρά"
+    "grieks_info": "παρά",
+    "strong": "3844"
   },
   {
     "les": 2,
@@ -2127,7 +2209,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γράφω"
+    "grieks_info": "γράφω",
+    "strong": "1125"
   },
   {
     "les": 2,
@@ -2142,7 +2225,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἰσέρχομαι"
+    "grieks_info": "εἰσέρχομαι",
+    "strong": "1525"
   },
   {
     "les": 2,
@@ -2157,7 +2241,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κόσμος, -ου, ὁ"
+    "grieks_info": "κόσμος, -ου, ὁ",
+    "strong": "2889"
   },
   {
     "les": 2,
@@ -2172,7 +2257,8 @@
     "score_goed": 3,
     "score_fout": 0,
     "streak": 3,
-    "grieks_info": "μέν"
+    "grieks_info": "μέν",
+    "strong": "3303"
   },
   {
     "les": 2,
@@ -2187,7 +2273,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθώς"
+    "grieks_info": "καθώς",
+    "strong": "2531"
   },
   {
     "les": 2,
@@ -2202,7 +2289,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄγγελος, -ου, ὁ"
+    "grieks_info": "ἄγγελος, -ου, ὁ",
+    "strong": "32"
   },
   {
     "les": 2,
@@ -2217,7 +2305,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὑρίσκω"
+    "grieks_info": "εὑρίσκω",
+    "strong": "2147"
   },
   {
     "les": 2,
@@ -2232,7 +2321,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χείρ, χειρός, ἡ"
+    "grieks_info": "χείρ, χειρός, ἡ",
+    "strong": "5495"
   },
   {
     "les": 2,
@@ -2247,7 +2337,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὄχλος, -ου, ὁ"
+    "grieks_info": "ὄχλος, -ου, ὁ",
+    "strong": "3793"
   },
   {
     "les": 2,
@@ -2262,7 +2353,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἁμαρτία, -ας, ἡ"
+    "grieks_info": "ἁμαρτία, -ας, ἡ",
+    "strong": "266"
   },
   {
     "les": 2,
@@ -2277,7 +2369,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔργον, -ου, τό"
+    "grieks_info": "ἔργον, -ου, τό",
+    "strong": "2041"
   },
   {
     "les": 1,
@@ -2327,7 +2420,8 @@
         "vorm": "δόξας",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "1391"
   },
   {
     "les": 2,
@@ -2342,7 +2436,8 @@
     "score_goed": 2,
     "score_fout": 1,
     "streak": 1,
-    "grieks_info": "ἄν"
+    "grieks_info": "ἄν",
+    "strong": "302"
   },
   {
     "les": 3,
@@ -2357,7 +2452,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πόλις, -εως, ἡ"
+    "grieks_info": "πόλις, -εως, ἡ",
+    "strong": "4172"
   },
   {
     "les": 3,
@@ -2372,7 +2468,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βασιλεία, -ας, ἡ"
+    "grieks_info": "βασιλεία, -ας, ἡ",
+    "strong": "932"
   },
   {
     "les": 3,
@@ -2387,7 +2484,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔθνος, -ους, τό"
+    "grieks_info": "ἔθνος, -ους, τό",
+    "strong": "1484"
   },
   {
     "les": 3,
@@ -2402,7 +2500,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τότε"
+    "grieks_info": "τότε",
+    "strong": "5119"
   },
   {
     "les": 3,
@@ -2417,7 +2516,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐσθίω"
+    "grieks_info": "ἐσθίω",
+    "strong": "2068"
   },
   {
     "les": 3,
@@ -2432,7 +2532,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καρδία, -ας, ἡ"
+    "grieks_info": "καρδία, -ας, ἡ",
+    "strong": "2588"
   },
   {
     "les": 1,
@@ -2482,7 +2583,8 @@
         "vorm": "χάριτας",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "5485"
   },
   {
     "les": 3,
@@ -2497,7 +2599,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πρῶτος, -η, -ον"
+    "grieks_info": "πρῶτος, -η, -ον",
+    "strong": "4413"
   },
   {
     "les": 3,
@@ -2512,7 +2615,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄλλος, -η, -ο"
+    "grieks_info": "ἄλλος, -η, -ο",
+    "strong": "243"
   },
   {
     "les": 3,
@@ -2527,7 +2631,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἵστημι"
+    "grieks_info": "ἵστημι",
+    "strong": "2476"
   },
   {
     "les": 3,
@@ -2542,7 +2647,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πορεύομαι"
+    "grieks_info": "πορεύομαι",
+    "strong": "4198"
   },
   {
     "les": 3,
@@ -2557,7 +2663,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπέρ"
+    "grieks_info": "ὑπέρ",
+    "strong": "5228"
   },
   {
     "les": 2,
@@ -2572,7 +2679,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καλέω"
+    "grieks_info": "καλέω",
+    "strong": "2564"
   },
   {
     "les": 3,
@@ -2587,7 +2695,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νῦν"
+    "grieks_info": "νῦν",
+    "strong": "3568"
   },
   {
     "les": 1,
@@ -2637,7 +2746,8 @@
         "vorm": "σάρκας",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "4561"
   },
   {
     "les": 3,
@@ -2652,7 +2762,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἕως"
+    "grieks_info": "ἕως",
+    "strong": "2193"
   },
   {
     "les": 3,
@@ -2667,7 +2778,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προφήτης, -ου, ὁ"
+    "grieks_info": "προφήτης, -ου, ὁ",
+    "strong": "4396"
   },
   {
     "les": 3,
@@ -2682,7 +2794,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγαπάω"
+    "grieks_info": "ἀγαπάω",
+    "strong": "25"
   },
   {
     "les": 3,
@@ -2697,7 +2810,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀφίημι"
+    "grieks_info": "ἀφίημι",
+    "strong": "863"
   },
   {
     "les": 3,
@@ -2712,7 +2826,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐγείρω"
+    "grieks_info": "ἐγείρω",
+    "strong": "1453"
   },
   {
     "les": 3,
@@ -2727,7 +2842,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λαός, -οῦ, ὁ"
+    "grieks_info": "λαός, -οῦ, ὁ",
+    "strong": "2992"
   },
   {
     "les": 3,
@@ -2777,7 +2893,8 @@
         "vorm": "σώματα",
         "parsing": "acc mv o"
       }
-    ]
+    ],
+    "strong": "4983"
   },
   {
     "les": 3,
@@ -2792,7 +2909,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πάλιν"
+    "grieks_info": "πάλιν",
+    "strong": "3825"
   },
   {
     "les": 1,
@@ -2807,7 +2925,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐδέ"
+    "grieks_info": "οὐδέ",
+    "strong": "3761"
   },
   {
     "les": 3,
@@ -2822,7 +2941,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ζάω"
+    "grieks_info": "ζάω",
+    "strong": "2198"
   },
   {
     "les": 3,
@@ -2837,7 +2957,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅστις, ἥτις, ὅ τι"
+    "grieks_info": "ὅστις, ἥτις, ὅ τι",
+    "strong": "3748"
   },
   {
     "les": 3,
@@ -2852,7 +2973,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φωνή, -ῆς, ἡ"
+    "grieks_info": "φωνή, -ῆς, ἡ",
+    "strong": "5456"
   },
   {
     "les": 1,
@@ -2902,7 +3024,8 @@
         "vorm": "ζωάς",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "2222"
   },
   {
     "les": 3,
@@ -2917,7 +3040,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βλέπω"
+    "grieks_info": "βλέπω",
+    "strong": "991"
   },
   {
     "les": 3,
@@ -2932,7 +3056,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δύο"
+    "grieks_info": "δύο",
+    "strong": "1417"
   },
   {
     "les": 3,
@@ -2947,7 +3072,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποστέλλω"
+    "grieks_info": "ἀποστέλλω",
+    "strong": "649"
   },
   {
     "les": 3,
@@ -2962,7 +3088,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νεκρός, -ά, -όν"
+    "grieks_info": "νεκρός, -ά, -όν",
+    "strong": "3498"
   },
   {
     "les": 3,
@@ -2977,7 +3104,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σύν"
+    "grieks_info": "σύν",
+    "strong": "4862"
   },
   {
     "les": 3,
@@ -2992,7 +3120,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "ἀμήν"
+    "grieks_info": "ἀμήν",
+    "strong": "281"
   },
   {
     "les": 3,
@@ -3007,7 +3136,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δοῦλος, ου, ὁ"
+    "grieks_info": "δοῦλος, ου, ὁ",
+    "strong": "1401"
   },
   {
     "les": 3,
@@ -3022,7 +3152,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἰών, -ῶνος, ὁ"
+    "grieks_info": "αἰών, -ῶνος, ὁ",
+    "strong": "165"
   },
   {
     "les": 3,
@@ -3037,7 +3168,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅταν"
+    "grieks_info": "ὅταν",
+    "strong": "3752"
   },
   {
     "les": 3,
@@ -3052,7 +3184,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀρχιερεύς, -έως, ὁ"
+    "grieks_info": "ἀρχιερεύς, -έως, ὁ",
+    "strong": "749"
   },
   {
     "les": 3,
@@ -3067,7 +3200,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βάλλω"
+    "grieks_info": "βάλλω",
+    "strong": "906"
   },
   {
     "les": 3,
@@ -3082,7 +3216,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θάνατος, -ου, ὁ"
+    "grieks_info": "θάνατος, -ου, ὁ",
+    "strong": "2288"
   },
   {
     "les": 3,
@@ -3097,7 +3232,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δύναμις, -εως, ἡ"
+    "grieks_info": "δύναμις, -εως, ἡ",
+    "strong": "1411"
   },
   {
     "les": 3,
@@ -3112,7 +3248,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παραδίδωμι"
+    "grieks_info": "παραδίδωμι",
+    "strong": "3860"
   },
   {
     "les": 3,
@@ -3127,7 +3264,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μένω"
+    "grieks_info": "μένω",
+    "strong": "3306"
   },
   {
     "les": 4,
@@ -3142,7 +3280,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πῶς"
+    "grieks_info": "πῶς",
+    "strong": "4459"
   },
   {
     "les": 3,
@@ -3157,7 +3296,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπέρχομαι"
+    "grieks_info": "ἀπέρχομαι",
+    "strong": "565"
   },
   {
     "les": 3,
@@ -3172,7 +3312,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ζητέω"
+    "grieks_info": "ζητέω",
+    "strong": "2212"
   },
   {
     "les": 3,
@@ -3187,7 +3328,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγάπη, -ης, ἡ"
+    "grieks_info": "ἀγάπη, -ης, ἡ",
+    "strong": "26"
   },
   {
     "les": 3,
@@ -3202,7 +3344,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βασιλεύς, -έως, ὁ"
+    "grieks_info": "βασιλεύς, -έως, ὁ",
+    "strong": "935"
   },
   {
     "les": 3,
@@ -3217,7 +3360,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκκλησία, -ας, ἡ"
+    "grieks_info": "ἐκκλησία, -ας, ἡ",
+    "strong": "1577"
   },
   {
     "les": 3,
@@ -3232,7 +3376,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κρίνω"
+    "grieks_info": "κρίνω",
+    "strong": "2919"
   },
   {
     "les": 3,
@@ -3247,7 +3392,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μόνος, -η, -ον"
+    "grieks_info": "μόνος, -η, -ον",
+    "strong": "3441"
   },
   {
     "les": 3,
@@ -3262,7 +3408,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οἶκος, -ου, ὁ"
+    "grieks_info": "οἶκος, -ου, ὁ",
+    "strong": "3624"
   },
   {
     "les": 3,
@@ -3277,7 +3424,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἴδιος, -α, -ον"
+    "grieks_info": "ἴδιος, -α, -ον",
+    "strong": "2398"
   },
   {
     "les": 3,
@@ -3292,7 +3440,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποθνῄσκω"
+    "grieks_info": "ἀποθνῄσκω",
+    "strong": "599"
   },
   {
     "les": 3,
@@ -3307,7 +3456,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέλλω"
+    "grieks_info": "μέλλω",
+    "strong": "3195"
   },
   {
     "les": 1,
@@ -3357,7 +3507,8 @@
         "vorm": "ἀληθείας",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "225"
   },
   {
     "les": 3,
@@ -3372,7 +3523,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρακαλέω"
+    "grieks_info": "παρακαλέω",
+    "strong": "3870"
   },
   {
     "les": 3,
@@ -3387,7 +3539,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνίστημι"
+    "grieks_info": "ἀνίστημι",
+    "strong": "450"
   },
   {
     "les": 3,
@@ -3402,7 +3555,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅλος, -η, -ον"
+    "grieks_info": "ὅλος, -η, -ον",
+    "strong": "3650"
   },
   {
     "les": 2,
@@ -3417,7 +3571,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὥρα, -ας, ἡ"
+    "grieks_info": "ὥρα, -ας, ἡ",
+    "strong": "5610"
   },
   {
     "les": 3,
@@ -3432,7 +3587,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σῴζω"
+    "grieks_info": "σῴζω",
+    "strong": "4982"
   },
   {
     "les": 3,
@@ -3447,7 +3603,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγαθός, -ή, -όν"
+    "grieks_info": "ἀγαθός, -ή, -όν",
+    "strong": "18"
   },
   {
     "les": 4,
@@ -3462,7 +3619,8 @@
     "score_goed": 0,
     "score_fout": 1,
     "streak": 0,
-    "grieks_info": "δεῖ"
+    "grieks_info": "δεῖ",
+    "strong": "1163"
   },
   {
     "les": 4,
@@ -3477,7 +3635,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐξουσία, -ας, ἡ"
+    "grieks_info": "ἐξουσία, -ας, ἡ",
+    "strong": "1849"
   },
   {
     "les": 4,
@@ -3492,7 +3651,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ψυχή, -ῆς, ἡ"
+    "grieks_info": "ψυχή, -ῆς, ἡ",
+    "strong": "5590"
   },
   {
     "les": 3,
@@ -3507,7 +3667,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅτε"
+    "grieks_info": "ὅτε",
+    "strong": "3753"
   },
   {
     "les": 4,
@@ -3522,7 +3683,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἴρω"
+    "grieks_info": "αἴρω",
+    "strong": "142"
   },
   {
     "les": 4,
@@ -3537,7 +3699,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "καλός, -ή, -όν"
+    "grieks_info": "καλός, -ή, -όν",
+    "strong": "2570"
   },
   {
     "les": 4,
@@ -3552,7 +3715,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὁδός, -οῦ, ἡ"
+    "grieks_info": "ὁδός, -οῦ, ἡ",
+    "strong": "3598"
   },
   {
     "les": 4,
@@ -3567,7 +3731,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀλλήλων, -οις, -ους"
+    "grieks_info": "ἀλλήλων, -οις, -ους",
+    "strong": "240"
   },
   {
     "les": 4,
@@ -3582,7 +3747,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὀφθαλμός, -οῦ, ὁ"
+    "grieks_info": "ὀφθαλμός, -οῦ, ὁ",
+    "strong": "3788"
   },
   {
     "les": 4,
@@ -3597,7 +3763,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τέκνον, -ου, τό"
+    "grieks_info": "τέκνον, -ου, τό",
+    "strong": "5043"
   },
   {
     "les": 4,
@@ -3612,7 +3779,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τίθημι"
+    "grieks_info": "τίθημι",
+    "strong": "5087"
   },
   {
     "les": 3,
@@ -3627,7 +3795,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "Φαρισαῖος, -ου, ὁ"
+    "grieks_info": "Φαρισαῖος, -ου, ὁ",
+    "strong": "5330"
   },
   {
     "les": 4,
@@ -3642,7 +3811,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἷμα, -τος, τό"
+    "grieks_info": "αἷμα, -τος, τό",
+    "strong": "129"
   },
   {
     "les": 4,
@@ -3657,7 +3827,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄρτος, -ου, ὁ"
+    "grieks_info": "ἄρτος, -ου, ὁ",
+    "strong": "740"
   },
   {
     "les": 4,
@@ -3672,7 +3843,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γεννάω"
+    "grieks_info": "γεννάω",
+    "strong": "1080"
   },
   {
     "les": 4,
@@ -3687,7 +3859,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διδάσκω"
+    "grieks_info": "διδάσκω",
+    "strong": "1321"
   },
   {
     "les": 4,
@@ -3702,7 +3875,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἕτερος, -α, -ον"
+    "grieks_info": "ἕτερος, -α, -ον",
+    "strong": "2087"
   },
   {
     "les": 2,
@@ -3717,7 +3891,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκεῖ"
+    "grieks_info": "ἐκεῖ",
+    "strong": "1563"
   },
   {
     "les": 4,
@@ -3732,7 +3907,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περιπατέω"
+    "grieks_info": "περιπατέω",
+    "strong": "4043"
   },
   {
     "les": 4,
@@ -3747,7 +3923,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τόπος, -ου, ὁ"
+    "grieks_info": "τόπος, -ου, ὁ",
+    "strong": "5117"
   },
   {
     "les": 4,
@@ -3762,7 +3939,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φοβέω"
+    "grieks_info": "φοβέω",
+    "strong": "5399"
   },
   {
     "les": 4,
@@ -3777,7 +3955,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐνώπιον"
+    "grieks_info": "ἐνώπιον",
+    "strong": "1799"
   },
   {
     "les": 4,
@@ -3792,7 +3971,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οἰκία, -ας, ἡ"
+    "grieks_info": "οἰκία, -ας, ἡ",
+    "strong": "3614"
   },
   {
     "les": 4,
@@ -3807,7 +3987,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔτι"
+    "grieks_info": "ἔτι",
+    "strong": "2089"
   },
   {
     "les": 4,
@@ -3822,7 +4003,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πούς, ποδός, ὁ"
+    "grieks_info": "πούς, ποδός, ὁ",
+    "strong": "4228"
   },
   {
     "les": 4,
@@ -3837,7 +4019,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἰρήνη, -ης, ἡ"
+    "grieks_info": "εἰρήνη, -ης, ἡ",
+    "strong": "1515"
   },
   {
     "les": 4,
@@ -3852,7 +4035,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δικαιοσύνη, -ης, ἡ"
+    "grieks_info": "δικαιοσύνη, -ης, ἡ",
+    "strong": "1343"
   },
   {
     "les": 4,
@@ -3867,7 +4051,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θάλασσα, -ης, ἡ"
+    "grieks_info": "θάλασσα, -ης, ἡ",
+    "strong": "2281"
   },
   {
     "les": 4,
@@ -3882,7 +4067,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κάθημαι"
+    "grieks_info": "κάθημαι",
+    "strong": "2521"
   },
   {
     "les": 4,
@@ -3897,7 +4083,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὔτε"
+    "grieks_info": "οὔτε",
+    "strong": "3777"
   },
   {
     "les": 3,
@@ -3912,7 +4099,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπόλλυμι"
+    "grieks_info": "ἀπόλλυμι",
+    "strong": "622"
   },
   {
     "les": 4,
@@ -3927,7 +4115,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀκολουθέω"
+    "grieks_info": "ἀκολουθέω",
+    "strong": "190"
   },
   {
     "les": 4,
@@ -3942,7 +4131,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μηδείς, μηδεμία, μηδέν"
+    "grieks_info": "μηδείς, μηδεμία, μηδέν",
+    "strong": "3367"
   },
   {
     "les": 4,
@@ -3957,7 +4147,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πίπτω"
+    "grieks_info": "πίπτω",
+    "strong": "4098"
   },
   {
     "les": 4,
@@ -3972,7 +4163,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἑπτά"
+    "grieks_info": "ἑπτά",
+    "strong": "2033"
   },
   {
     "les": 4,
@@ -3987,7 +4179,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσέρχομαι"
+    "grieks_info": "προσέρχομαι",
+    "strong": "4334"
   },
   {
     "les": 5,
@@ -4002,7 +4195,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐθέως"
+    "grieks_info": "εὐθέως",
+    "strong": "2112"
   },
   {
     "les": 4,
@@ -4017,7 +4211,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καιρός, -οῦ, ὁ"
+    "grieks_info": "καιρός, -οῦ, ὁ",
+    "strong": "2540"
   },
   {
     "les": 4,
@@ -4032,7 +4227,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πληρόω"
+    "grieks_info": "πληρόω",
+    "strong": "4137"
   },
   {
     "les": 4,
@@ -4047,7 +4243,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσεύχομαι"
+    "grieks_info": "προσεύχομαι",
+    "strong": "4336"
   },
   {
     "les": 2,
@@ -4062,7 +4259,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μήτηρ, -τρος, ἡ"
+    "grieks_info": "μήτηρ, -τρος, ἡ",
+    "strong": "3384"
   },
   {
     "les": 4,
@@ -4077,7 +4275,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄρχω"
+    "grieks_info": "ἄρχω",
+    "strong": "756"
   },
   {
     "les": 4,
@@ -4092,7 +4291,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κἀγώ"
+    "grieks_info": "κἀγώ",
+    "strong": "2504"
   },
   {
     "les": 4,
@@ -4107,7 +4307,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὥστε"
+    "grieks_info": "ὥστε",
+    "strong": "5620"
   },
   {
     "les": 4,
@@ -4122,7 +4323,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἕκαστος, -η, -ον"
+    "grieks_info": "ἕκαστος, -η, -ον",
+    "strong": "1538"
   },
   {
     "les": 4,
@@ -4137,7 +4339,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταβαίνω"
+    "grieks_info": "καταβαίνω",
+    "strong": "2597"
   },
   {
     "les": 4,
@@ -4152,7 +4355,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅπου"
+    "grieks_info": "ὅπου",
+    "strong": "3699"
   },
   {
     "les": 4,
@@ -4167,7 +4371,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀναβαίνω"
+    "grieks_info": "ἀναβαίνω",
+    "strong": "305"
   },
   {
     "les": 4,
@@ -4182,7 +4387,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκβάλλω"
+    "grieks_info": "ἐκβάλλω",
+    "strong": "1544"
   },
   {
     "les": 4,
@@ -4197,7 +4403,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μᾶλλον"
+    "grieks_info": "μᾶλλον",
+    "strong": "3123"
   },
   {
     "les": 4,
@@ -4212,7 +4419,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπόστολος, -ου, ὁ"
+    "grieks_info": "ἀπόστολος, -ου, ὁ",
+    "strong": "652"
   },
   {
     "les": 4,
@@ -4227,7 +4435,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δίκαιος, -α, -ον"
+    "grieks_info": "δίκαιος, -α, -ον",
+    "strong": "1342"
   },
   {
     "les": 4,
@@ -4242,7 +4451,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πέμπω"
+    "grieks_info": "πέμπω",
+    "strong": "3992"
   },
   {
     "les": 4,
@@ -4257,7 +4467,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπάγω"
+    "grieks_info": "ὑπάγω",
+    "strong": "5217"
   },
   {
     "les": 5,
@@ -4272,7 +4483,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὕδωρ, ὕδατος, τό"
+    "grieks_info": "ὕδωρ, ὕδατος, τό",
+    "strong": "5204"
   },
   {
     "les": 2,
@@ -4287,7 +4499,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πονηρός, -ά, -όν"
+    "grieks_info": "πονηρός, -ά, -όν",
+    "strong": "4190"
   },
   {
     "les": 5,
@@ -4302,7 +4515,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνοίγω"
+    "grieks_info": "ἀνοίγω",
+    "strong": "455"
   },
   {
     "les": 5,
@@ -4317,7 +4531,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "στόμα, -τος, τό"
+    "grieks_info": "στόμα, -τος, τό",
+    "strong": "4750"
   },
   {
     "les": 5,
@@ -4332,7 +4547,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐμός, -ή, -όν"
+    "grieks_info": "ἐμός, -ή, -όν",
+    "strong": "1699"
   },
   {
     "les": 5,
@@ -4347,7 +4563,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σημεῖον, -ου, τό"
+    "grieks_info": "σημεῖον, -ου, τό",
+    "strong": "4592"
   },
   {
     "les": 4,
@@ -4362,7 +4579,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μαρτυρέω"
+    "grieks_info": "μαρτυρέω",
+    "strong": "3140"
   },
   {
     "les": 5,
@@ -4377,7 +4595,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βαπτίζω"
+    "grieks_info": "βαπτίζω",
+    "strong": "907"
   },
   {
     "les": 5,
@@ -4392,7 +4611,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐαγγέλιον, -ου, -ν"
+    "grieks_info": "εὐαγγέλιον, -ου, -ν",
+    "strong": "2098"
   },
   {
     "les": 5,
@@ -4407,7 +4627,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πρόσωπον, -ου, τό"
+    "grieks_info": "πρόσωπον, -ου, τό",
+    "strong": "4383"
   },
   {
     "les": 5,
@@ -4422,7 +4643,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δώδεκα"
+    "grieks_info": "δώδεκα",
+    "strong": "1427"
   },
   {
     "les": 5,
@@ -4437,7 +4659,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κεφαλή, -ῆς, ἡ"
+    "grieks_info": "κεφαλή, -ῆς, ἡ",
+    "strong": "2776"
   },
   {
     "les": 5,
@@ -4452,7 +4675,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποκτείνω"
+    "grieks_info": "ἀποκτείνω",
+    "strong": "615"
   },
   {
     "les": 5,
@@ -4467,7 +4691,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χαίρω"
+    "grieks_info": "χαίρω",
+    "strong": "5463"
   },
   {
     "les": 5,
@@ -4482,7 +4707,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πίνω"
+    "grieks_info": "πίνω",
+    "strong": "4095"
   },
   {
     "les": 1,
@@ -4532,7 +4758,8 @@
         "vorm": "φῶτα",
         "parsing": "acc mv o"
       }
-    ]
+    ],
+    "strong": "5457"
   },
   {
     "les": 5,
@@ -4547,7 +4774,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἰώνιος, -ον"
+    "grieks_info": "αἰώνιος, -ον",
+    "strong": "166"
   },
   {
     "les": 5,
@@ -4562,7 +4790,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἱερός, -ον; ἱερόν, -οῦ, τό"
+    "grieks_info": "ἱερός, -ον; ἱερόν, -οῦ, τό",
+    "strong": "2413"
   },
   {
     "les": 5,
@@ -4577,7 +4806,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πῦρ, -ός, τό"
+    "grieks_info": "πῦρ, -ός, τό",
+    "strong": "4442"
   },
   {
     "les": 5,
@@ -4592,7 +4822,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τηρέω"
+    "grieks_info": "τηρέω",
+    "strong": "5083"
   },
   {
     "les": 5,
@@ -4607,7 +4838,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἰτέω"
+    "grieks_info": "αἰτέω",
+    "strong": "154"
   },
   {
     "les": 5,
@@ -4622,7 +4854,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄγω"
+    "grieks_info": "ἄγω",
+    "strong": "71"
   },
   {
     "les": 5,
@@ -4637,7 +4870,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σάββατον, -ου, τό"
+    "grieks_info": "σάββατον, -ου, τό",
+    "strong": "4521"
   },
   {
     "les": 5,
@@ -4652,7 +4886,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φέρω"
+    "grieks_info": "φέρω",
+    "strong": "5342"
   },
   {
     "les": 5,
@@ -4667,7 +4902,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐντολή, -ῆς, ἡ"
+    "grieks_info": "ἐντολή, -ῆς, ἡ",
+    "strong": "1785"
   },
   {
     "les": 5,
@@ -4682,7 +4918,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πιστός, -ή, -όν"
+    "grieks_info": "πιστός, -ή, -όν",
+    "strong": "4103"
   },
   {
     "les": 5,
@@ -4697,7 +4934,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλοῖον, -ου, τό"
+    "grieks_info": "πλοῖον, -ου, τό",
+    "strong": "4143"
   },
   {
     "les": 5,
@@ -4712,7 +4950,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ῥῆμα, -τος, τό"
+    "grieks_info": "ῥῆμα, -τος, τό",
+    "strong": "4487"
   },
   {
     "les": 5,
@@ -4727,7 +4966,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τρεῖς, τρία"
+    "grieks_info": "τρεῖς, τρία",
+    "strong": "5140"
   },
   {
     "les": 5,
@@ -4742,7 +4982,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπολύω"
+    "grieks_info": "ἀπολύω",
+    "strong": "630"
   },
   {
     "les": 5,
@@ -4757,7 +4998,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καρπός, -οῦ, ὁ"
+    "grieks_info": "καρπός, -οῦ, ὁ",
+    "strong": "2590"
   },
   {
     "les": 5,
@@ -4772,7 +5014,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πρεσβύτερος, -α, -ον"
+    "grieks_info": "πρεσβύτερος, -α, -ον",
+    "strong": "4245"
   },
   {
     "les": 5,
@@ -4787,7 +5030,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φημί"
+    "grieks_info": "φημί",
+    "strong": "5346"
   },
   {
     "les": 5,
@@ -4802,7 +5046,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἴτε"
+    "grieks_info": "εἴτε",
+    "strong": "1535"
   },
   {
     "les": 5,
@@ -4817,7 +5062,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γραμματεύς, -έως, ὁ"
+    "grieks_info": "γραμματεύς, -έως, ὁ",
+    "strong": "1122"
   },
   {
     "les": 5,
@@ -4832,7 +5078,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δαιμόνιον, -ου, τό"
+    "grieks_info": "δαιμόνιον, -ου, τό",
+    "strong": "1140"
   },
   {
     "les": 5,
@@ -4847,7 +5094,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐρωτάω"
+    "grieks_info": "ἐρωτάω",
+    "strong": "2065"
   },
   {
     "les": 5,
@@ -4862,7 +5110,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὄρος, -ους, τό"
+    "grieks_info": "ὄρος, -ους, τό",
+    "strong": "3735"
   },
   {
     "les": 4,
@@ -4877,7 +5126,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θέλημα, -ατος, τό"
+    "grieks_info": "θέλημα, -ατος, τό",
+    "strong": "2307"
   },
   {
     "les": 5,
@@ -4892,7 +5142,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δοκέω"
+    "grieks_info": "δοκέω",
+    "strong": "1380"
   },
   {
     "les": 5,
@@ -4907,7 +5158,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔξω"
+    "grieks_info": "ἔξω",
+    "strong": "1854"
   },
   {
     "les": 5,
@@ -4922,7 +5174,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θρόνος, -ου, ὁ"
+    "grieks_info": "θρόνος, -ου, ὁ",
+    "strong": "2362"
   },
   {
     "les": 5,
@@ -4937,7 +5190,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγαπητός, -ή, -όν"
+    "grieks_info": "ἀγαπητός, -ή, -όν",
+    "strong": "27"
   },
   {
     "les": 5,
@@ -4952,7 +5206,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δοξάζω"
+    "grieks_info": "δοξάζω",
+    "strong": "1392"
   },
   {
     "les": 5,
@@ -4967,7 +5222,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κηρύσσω"
+    "grieks_info": "κηρύσσω",
+    "strong": "2784"
   },
   {
     "les": 5,
@@ -4982,7 +5238,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νύξ, νυκτός, ἡ"
+    "grieks_info": "νύξ, νυκτός, ἡ",
+    "strong": "3571"
   },
   {
     "les": 5,
@@ -4997,7 +5254,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἤδη"
+    "grieks_info": "ἤδη",
+    "strong": "2235"
   },
   {
     "les": 5,
@@ -5012,7 +5270,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἱμάτιον, -ου, τό"
+    "grieks_info": "ἱμάτιον, -ου, τό",
+    "strong": "2440"
   },
   {
     "les": 5,
@@ -5027,7 +5286,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσκυνέω"
+    "grieks_info": "προσκυνέω",
+    "strong": "4352"
   },
   {
     "les": 5,
@@ -5042,7 +5302,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπάρχω"
+    "grieks_info": "ὑπάρχω",
+    "strong": "5225"
   },
   {
     "les": 5,
@@ -5057,7 +5318,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὧδε"
+    "grieks_info": "ὧδε",
+    "strong": "5602"
   },
   {
     "les": 5,
@@ -5072,7 +5334,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀσπάζομαι"
+    "grieks_info": "ἀσπάζομαι",
+    "strong": "782"
   },
   {
     "les": 5,
@@ -5087,7 +5350,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συνάγω"
+    "grieks_info": "συνάγω",
+    "strong": "4863"
   },
   {
     "les": 6,
@@ -5102,7 +5366,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διδάσκαλος, -ου, ὁ"
+    "grieks_info": "διδάσκαλος, -ου, ὁ",
+    "strong": "1320"
   },
   {
     "les": 6,
@@ -5117,7 +5382,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐθύς, -εῖα, -ύ"
+    "grieks_info": "εὐθύς, -εῖα, -ύ",
+    "strong": "2112"
   },
   {
     "les": 6,
@@ -5132,7 +5398,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λίθος, -ου, ὁ"
+    "grieks_info": "λίθος, -ου, ὁ",
+    "strong": "3037"
   },
   {
     "les": 6,
@@ -5147,7 +5414,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χαρά, -ᾶς, ἡ"
+    "grieks_info": "χαρά, -ᾶς, ἡ",
+    "strong": "5479"
   },
   {
     "les": 6,
@@ -5162,7 +5430,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέσος, -η, -ον"
+    "grieks_info": "μέσος, -η, -ον",
+    "strong": "3319"
   },
   {
     "les": 6,
@@ -5177,7 +5446,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θεωρέω"
+    "grieks_info": "θεωρέω",
+    "strong": "2334"
   },
   {
     "les": 6,
@@ -5192,7 +5462,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μηδέ"
+    "grieks_info": "μηδέ",
+    "strong": "3366"
   },
   {
     "les": 6,
@@ -5207,7 +5478,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τοιοῦτος, -αύτη, -οῦτον"
+    "grieks_info": "τοιοῦτος, -αύτη, -οῦτον",
+    "strong": "5108"
   },
   {
     "les": 1,
@@ -5257,7 +5529,8 @@
         "vorm": "ἀρχάς",
         "parsing": "acc mv v"
       }
-    ]
+    ],
+    "strong": "746"
   },
   {
     "les": 2,
@@ -5272,7 +5545,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τρίτος, -η, -ον"
+    "grieks_info": "τρίτος, -η, -ον",
+    "strong": "5154"
   },
   {
     "les": 5,
@@ -5287,7 +5561,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπερωτάω"
+    "grieks_info": "ἐπερωτάω",
+    "strong": "1905"
   },
   {
     "les": 6,
@@ -5302,7 +5577,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δέχομαι"
+    "grieks_info": "δέχομαι",
+    "strong": "1209"
   },
   {
     "les": 6,
@@ -5317,7 +5593,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συναγωγή, -ῆς, ἡ"
+    "grieks_info": "συναγωγή, -ῆς, ἡ",
+    "strong": "4864"
   },
   {
     "les": 2,
@@ -5332,7 +5609,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πολύς"
+    "grieks_info": "πολύς",
+    "strong": "4183"
   },
   {
     "les": 6,
@@ -5347,7 +5625,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κράζω"
+    "grieks_info": "κράζω",
+    "strong": "2896"
   },
   {
     "les": 3,
@@ -5362,7 +5641,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χρόνος, -ου, ὁ"
+    "grieks_info": "χρόνος, -ου, ὁ",
+    "strong": "5550"
   },
   {
     "les": 6,
@@ -5377,7 +5657,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δεξιός, -ά, -όν"
+    "grieks_info": "δεξιός, -ά, -όν",
+    "strong": "1188"
   },
   {
     "les": 6,
@@ -5392,7 +5673,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐαγγελίζω"
+    "grieks_info": "εὐαγγελίζω",
+    "strong": "2097"
   },
   {
     "les": 6,
@@ -5407,7 +5689,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διό"
+    "grieks_info": "διό",
+    "strong": "1352"
   },
   {
     "les": 6,
@@ -5422,7 +5705,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐλπίς, -ίδος, ἡ"
+    "grieks_info": "ἐλπίς, -ίδος, ἡ",
+    "strong": "1680"
   },
   {
     "les": 6,
@@ -5437,7 +5721,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔσχατος, -η, -ον"
+    "grieks_info": "ἔσχατος, -η, -ον",
+    "strong": "2078"
   },
   {
     "les": 6,
@@ -5452,7 +5737,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λοιπός, -ή, -όν"
+    "grieks_info": "λοιπός, -ή, -όν",
+    "strong": "3062"
   },
   {
     "les": 6,
@@ -5467,7 +5753,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅπως"
+    "grieks_info": "ὅπως",
+    "strong": "3704"
   },
   {
     "les": 6,
@@ -5482,7 +5769,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐχί"
+    "grieks_info": "οὐχί",
+    "strong": "3780"
   },
   {
     "les": 6,
@@ -5497,7 +5785,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπαγγελία, -ας, ἡ"
+    "grieks_info": "ἐπαγγελία, -ας, ἡ",
+    "strong": "1860"
   },
   {
     "les": 6,
@@ -5512,7 +5801,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παιδίον, -ου, τό"
+    "grieks_info": "παιδίον, -ου, τό",
+    "strong": "3813"
   },
   {
     "les": 6,
@@ -5527,7 +5817,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πείθω"
+    "grieks_info": "πείθω",
+    "strong": "3982"
   },
   {
     "les": 6,
@@ -5542,7 +5833,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σπείρω"
+    "grieks_info": "σπείρω",
+    "strong": "4687"
   },
   {
     "les": 6,
@@ -5557,7 +5849,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σοφία, -ας, ἡ"
+    "grieks_info": "σοφία, -ας, ἡ",
+    "strong": "4678"
   },
   {
     "les": 5,
@@ -5572,7 +5865,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κακός, -ή, -όν"
+    "grieks_info": "κακός, -ή, -όν",
+    "strong": "2556"
   },
   {
     "les": 6,
@@ -5587,7 +5881,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γλῶσσα, -ης, ἡ"
+    "grieks_info": "γλῶσσα, -ης, ἡ",
+    "strong": "1100"
   },
   {
     "les": 6,
@@ -5602,7 +5897,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γραφή, -ῆς, ἡ"
+    "grieks_info": "γραφή, -ῆς, ἡ",
+    "strong": "1124"
   },
   {
     "les": 6,
@@ -5617,7 +5913,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μακάριος, -α, -ον"
+    "grieks_info": "μακάριος, -α, -ον",
+    "strong": "3107"
   },
   {
     "les": 6,
@@ -5632,7 +5929,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παραβολή, -ῆς, ἡ"
+    "grieks_info": "παραβολή, -ῆς, ἡ",
+    "strong": "3850"
   },
   {
     "les": 6,
@@ -5647,7 +5945,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τυφλός, -ή, -όν"
+    "grieks_info": "τυφλός, -ή, -όν",
+    "strong": "5185"
   },
   {
     "les": 4,
@@ -5662,7 +5961,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φανερόω"
+    "grieks_info": "φανερόω",
+    "strong": "5319"
   },
   {
     "les": 6,
@@ -5677,7 +5977,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄχρι"
+    "grieks_info": "ἄχρι",
+    "strong": "891"
   },
   {
     "les": 6,
@@ -5692,7 +5993,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔτος, -ους, τό"
+    "grieks_info": "ἔτος, -ους, τό",
+    "strong": "2094"
   },
   {
     "les": 6,
@@ -5707,7 +6009,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παραλαμβάνω"
+    "grieks_info": "παραλαμβάνω",
+    "strong": "3880"
   },
   {
     "les": 6,
@@ -5722,7 +6025,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χρεία, -ας, ἡ"
+    "grieks_info": "χρεία, -ας, ἡ",
+    "strong": "5532"
   },
   {
     "les": 6,
@@ -5737,7 +6041,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποδίδωμι"
+    "grieks_info": "ἀποδίδωμι",
+    "strong": "591"
   },
   {
     "les": 6,
@@ -5752,7 +6057,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔμπροσθεν"
+    "grieks_info": "ἔμπροσθεν",
+    "strong": "1715"
   },
   {
     "les": 6,
@@ -5767,7 +6073,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐκέτι"
+    "grieks_info": "οὐκέτι",
+    "strong": "3765"
   },
   {
     "les": 1,
@@ -5782,7 +6089,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πρό"
+    "grieks_info": "πρό",
+    "strong": "4253"
   },
   {
     "les": 5,
@@ -5797,7 +6105,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κρατέω"
+    "grieks_info": "κρατέω",
+    "strong": "2902"
   },
   {
     "les": 6,
@@ -5812,7 +6121,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἁμαρτωλός, -ον"
+    "grieks_info": "ἁμαρτωλός, -ον",
+    "strong": "268"
   },
   {
     "les": 6,
@@ -5827,7 +6137,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔρημος, -ον"
+    "grieks_info": "ἔρημος, -ον",
+    "strong": "2048"
   },
   {
     "les": 6,
@@ -5842,7 +6153,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κρίσις, -εως, ἡ"
+    "grieks_info": "κρίσις, -εως, ἡ",
+    "strong": "2920"
   },
   {
     "les": 6,
@@ -5857,7 +6169,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φόβος, -ου, ὁ"
+    "grieks_info": "φόβος, -ου, ὁ",
+    "strong": "5401"
   },
   {
     "les": 6,
@@ -5872,7 +6185,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπαγγέλλω"
+    "grieks_info": "ἀπαγγέλλω",
+    "strong": "518"
   },
   {
     "les": 6,
@@ -5887,7 +6201,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθίζω"
+    "grieks_info": "καθίζω",
+    "strong": "2523"
   },
   {
     "les": 6,
@@ -5902,7 +6217,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μικρός, -ά, -όν"
+    "grieks_info": "μικρός, -ά, -όν",
+    "strong": "3398"
   },
   {
     "les": 6,
@@ -5917,7 +6233,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐαί"
+    "grieks_info": "οὐαί",
+    "strong": "3759"
   },
   {
     "les": 6,
@@ -5932,7 +6249,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσφέρω"
+    "grieks_info": "προσφέρω",
+    "strong": "4374"
   },
   {
     "les": 6,
@@ -5947,7 +6265,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σταυρόω"
+    "grieks_info": "σταυρόω",
+    "strong": "4717"
   },
   {
     "les": 6,
@@ -5962,7 +6281,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σωτηρία, -ας, ἡ"
+    "grieks_info": "σωτηρία, -ας, ἡ",
+    "strong": "4991"
   },
   {
     "les": 6,
@@ -5977,7 +6297,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φυλακή, -ῆς, ἡ"
+    "grieks_info": "φυλακή, -ῆς, ἡ",
+    "strong": "5438"
   },
   {
     "les": 7,
@@ -5992,7 +6313,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διώκω"
+    "grieks_info": "διώκω",
+    "strong": "1377"
   },
   {
     "les": 7,
@@ -6007,7 +6329,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θηρίον, -ου, τό"
+    "grieks_info": "θηρίον, -ου, τό",
+    "strong": "2342"
   },
   {
     "les": 7,
@@ -6022,7 +6345,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θλῖψις, -εως, ἡ"
+    "grieks_info": "θλῖψις, -εως, ἡ",
+    "strong": "2347"
   },
   {
     "les": 7,
@@ -6037,7 +6361,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ναός, -οῦ, ὁ"
+    "grieks_info": "ναός, -οῦ, ὁ",
+    "strong": "3485"
   },
   {
     "les": 7,
@@ -6052,7 +6377,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅμοιος, -οία, -οιον"
+    "grieks_info": "ὅμοιος, -οία, -οιον",
+    "strong": "3664"
   },
   {
     "les": 7,
@@ -6067,7 +6393,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποῦ"
+    "grieks_info": "ποῦ",
+    "strong": "4226"
   },
   {
     "les": 7,
@@ -6082,7 +6409,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δεύτερος, -α, -ον"
+    "grieks_info": "δεύτερος, -α, -ον",
+    "strong": "1208"
   },
   {
     "les": 7,
@@ -6097,7 +6425,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιγινώσκω"
+    "grieks_info": "ἐπιγινώσκω",
+    "strong": "1921"
   },
   {
     "les": 7,
@@ -6112,7 +6441,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κατοικέω"
+    "grieks_info": "κατοικέω",
+    "strong": "2730"
   },
   {
     "les": 7,
@@ -6127,7 +6457,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "σπέρμα, -ατος, τό"
+    "grieks_info": "σπέρμα, -ατος, τό",
+    "strong": "4690"
   },
   {
     "les": 7,
@@ -6142,7 +6473,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἁμαρτάνω"
+    "grieks_info": "ἁμαρτάνω",
+    "strong": "264"
   },
   {
     "les": 7,
@@ -6157,7 +6489,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γενεά, -ᾶς, ἡ"
+    "grieks_info": "γενεά, -ᾶς, ἡ",
+    "strong": "1074"
   },
   {
     "les": 7,
@@ -6172,7 +6505,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δέω"
+    "grieks_info": "δέω",
+    "strong": "1210"
   },
   {
     "les": 7,
@@ -6187,7 +6521,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θαυμάζω"
+    "grieks_info": "θαυμάζω",
+    "strong": "2296"
   },
   {
     "les": 7,
@@ -6202,7 +6537,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θεραπεύω"
+    "grieks_info": "θεραπεύω",
+    "strong": "2323"
   },
   {
     "les": 3,
@@ -6217,7 +6553,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καινός, -ή, -όν"
+    "grieks_info": "καινός, -ή, -όν",
+    "strong": "2537"
   },
   {
     "les": 7,
@@ -6232,7 +6569,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνάστασις, -εως, ἡ"
+    "grieks_info": "ἀνάστασις, -εως, ἡ",
+    "strong": "386"
   },
   {
     "les": 7,
@@ -6247,7 +6585,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐγγίζω"
+    "grieks_info": "ἐγγίζω",
+    "strong": "1448"
   },
   {
     "les": 7,
@@ -6262,7 +6601,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λύω"
+    "grieks_info": "λύω",
+    "strong": "3089"
   },
   {
     "les": 7,
@@ -6277,7 +6617,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πότε"
+    "grieks_info": "πότε",
+    "strong": "4219"
   },
   {
     "les": 7,
@@ -6292,7 +6633,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σεαυτοῦ, -ῆς, -οῦ"
+    "grieks_info": "σεαυτοῦ, -ῆς, -οῦ",
+    "strong": "4572"
   },
   {
     "les": 7,
@@ -6307,7 +6649,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φωνέω"
+    "grieks_info": "φωνέω",
+    "strong": "5455"
   },
   {
     "les": 1,
@@ -6322,7 +6665,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χωρίς"
+    "grieks_info": "χωρίς",
+    "strong": "5565"
   },
   {
     "les": 3,
@@ -6337,7 +6681,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διέρχομαι"
+    "grieks_info": "διέρχομαι",
+    "strong": "1330"
   },
   {
     "les": 4,
@@ -6352,7 +6697,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρίστημι"
+    "grieks_info": "παρίστημι",
+    "strong": "3936"
   },
   {
     "les": 6,
@@ -6367,7 +6713,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐλογέω"
+    "grieks_info": "εὐλογέω",
+    "strong": "2127"
   },
   {
     "les": 7,
@@ -6382,7 +6729,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄξιος, -ία, -ιον"
+    "grieks_info": "ἄξιος, -ία, -ιον",
+    "strong": "514"
   },
   {
     "les": 7,
@@ -6397,7 +6745,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐργάζομαι"
+    "grieks_info": "ἐργάζομαι",
+    "strong": "2038"
   },
   {
     "les": 7,
@@ -6412,7 +6761,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἑτοιμάζω"
+    "grieks_info": "ἑτοιμάζω",
+    "strong": "2090"
   },
   {
     "les": 7,
@@ -6427,7 +6777,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὀλίγος, -η, -ον"
+    "grieks_info": "ὀλίγος, -η, -ον",
+    "strong": "3641"
   },
   {
     "les": 7,
@@ -6442,7 +6793,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πάντοτε"
+    "grieks_info": "πάντοτε",
+    "strong": "3842"
   },
   {
     "les": 7,
@@ -6457,7 +6809,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σήμερον"
+    "grieks_info": "σήμερον",
+    "strong": "4594"
   },
   {
     "les": 7,
@@ -6472,7 +6825,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τέλος, -ους, τό"
+    "grieks_info": "τέλος, -ους, τό",
+    "strong": "5056"
   },
   {
     "les": 7,
@@ -6487,7 +6841,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τέσσαρες"
+    "grieks_info": "τέσσαρες",
+    "strong": "5064"
   },
   {
     "les": 7,
@@ -6502,7 +6857,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τιμή, -ῆς, ἡ"
+    "grieks_info": "τιμή, -ῆς, ἡ",
+    "strong": "5092"
   },
   {
     "les": 5,
@@ -6517,7 +6873,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οἰκοδομέω"
+    "grieks_info": "οἰκοδομέω",
+    "strong": "3618"
   },
   {
     "les": 7,
@@ -6532,7 +6889,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιτίθημι"
+    "grieks_info": "ἐπιτίθημι",
+    "strong": "2007"
   },
   {
     "les": 7,
@@ -6547,7 +6905,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἱκανός, -ή, -όν"
+    "grieks_info": "ἱκανός, -ή, -όν",
+    "strong": "2425"
   },
   {
     "les": 7,
@@ -6562,7 +6921,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κλαίω"
+    "grieks_info": "κλαίω",
+    "strong": "2799"
   },
   {
     "les": 7,
@@ -6577,7 +6937,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λογίζομαι"
+    "grieks_info": "λογίζομαι",
+    "strong": "3049"
   },
   {
     "les": 7,
@@ -6592,7 +6953,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μισέω"
+    "grieks_info": "μισέω",
+    "strong": "3404"
   },
   {
     "les": 7,
@@ -6607,7 +6969,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πάσχω"
+    "grieks_info": "πάσχω",
+    "strong": "3958"
   },
   {
     "les": 7,
@@ -6622,7 +6985,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δικαιόω"
+    "grieks_info": "δικαιόω",
+    "strong": "1344"
   },
   {
     "les": 7,
@@ -6637,7 +7001,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θύρα, -ας, ἡ"
+    "grieks_info": "θύρα, -ας, ἡ",
+    "strong": "2374"
   },
   {
     "les": 7,
@@ -6652,7 +7017,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πειράζω"
+    "grieks_info": "πειράζω",
+    "strong": "3985"
   },
   {
     "les": 7,
@@ -6667,7 +7033,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περισσεύω"
+    "grieks_info": "περισσεύω",
+    "strong": "4052"
   },
   {
     "les": 7,
@@ -6682,7 +7049,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλανάω"
+    "grieks_info": "πλανάω",
+    "strong": "4105"
   },
   {
     "les": 7,
@@ -6697,7 +7065,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πράσσω"
+    "grieks_info": "πράσσω",
+    "strong": "4238"
   },
   {
     "les": 7,
@@ -6712,7 +7081,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιθυμία, -ας, ἡ"
+    "grieks_info": "ἐπιθυμία, -ας, ἡ",
+    "strong": "1939"
   },
   {
     "les": 8,
@@ -6727,7 +7097,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐχαριστέω"
+    "grieks_info": "εὐχαριστέω",
+    "strong": "2168"
   },
   {
     "les": 8,
@@ -6742,7 +7113,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μνημεῖον, -ου, τό"
+    "grieks_info": "μνημεῖον, -ου, τό",
+    "strong": "3419"
   },
   {
     "les": 8,
@@ -6757,7 +7129,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πέντε"
+    "grieks_info": "πέντε",
+    "strong": "4002"
   },
   {
     "les": 8,
@@ -6772,7 +7145,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑποτάσσω"
+    "grieks_info": "ὑποτάσσω",
+    "strong": "5293"
   },
   {
     "les": 8,
@@ -6787,7 +7161,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄρχων, -οντος, ὁ"
+    "grieks_info": "ἄρχων, -οντος, ὁ",
+    "strong": "758"
   },
   {
     "les": 8,
@@ -6802,7 +7177,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βούλομαι"
+    "grieks_info": "βούλομαι",
+    "strong": "1014"
   },
   {
     "les": 8,
@@ -6817,7 +7193,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διάβολος"
+    "grieks_info": "διάβολος",
+    "strong": "1228"
   },
   {
     "les": 8,
@@ -6832,7 +7209,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διακονέω"
+    "grieks_info": "διακονέω",
+    "strong": "1247"
   },
   {
     "les": 8,
@@ -6847,7 +7225,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐμαυτοῦ"
+    "grieks_info": "ἐμαυτοῦ",
+    "strong": "1683"
   },
   {
     "les": 8,
@@ -6862,7 +7241,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μαρτυρία, -ας, ἡ"
+    "grieks_info": "μαρτυρία, -ας, ἡ",
+    "strong": "3141"
   },
   {
     "les": 8,
@@ -6877,7 +7257,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παραγίνομαι"
+    "grieks_info": "παραγίνομαι",
+    "strong": "3854"
   },
   {
     "les": 8,
@@ -6892,7 +7273,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πρόβατον, -ου, τό"
+    "grieks_info": "πρόβατον, -ου, τό",
+    "strong": "4263"
   },
   {
     "les": 5,
@@ -6907,7 +7289,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καλῶς"
+    "grieks_info": "καλῶς",
+    "strong": "2573"
   },
   {
     "les": 8,
@@ -6922,7 +7305,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγρός, -οῦ, ὁ"
+    "grieks_info": "ἀγρός, -οῦ, ὁ",
+    "strong": "68"
   },
   {
     "les": 8,
@@ -6937,7 +7321,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιστρέφω"
+    "grieks_info": "ἐπιστρέφω",
+    "strong": "1994"
   },
   {
     "les": 8,
@@ -6952,7 +7337,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καυχάομαι"
+    "grieks_info": "καυχάομαι",
+    "strong": "2744"
   },
   {
     "les": 8,
@@ -6967,7 +7353,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὀργή, -ῆς, ἡ"
+    "grieks_info": "ὀργή, -ῆς, ἡ",
+    "strong": "3709"
   },
   {
     "les": 8,
@@ -6982,7 +7369,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὖς, ὠτός, τό"
+    "grieks_info": "οὖς, ὠτός, τό",
+    "strong": "3775"
   },
   {
     "les": 8,
@@ -6997,7 +7385,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περιτομή, -ῆς, ἡ"
+    "grieks_info": "περιτομή, -ῆς, ἡ",
+    "strong": "4061"
   },
   {
     "les": 8,
@@ -7012,7 +7401,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσευχή, -ῆς, ἡ"
+    "grieks_info": "προσευχή, -ῆς, ἡ",
+    "strong": "4335"
   },
   {
     "les": 8,
@@ -7027,7 +7417,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὥσπερ"
+    "grieks_info": "ὥσπερ",
+    "strong": "5618"
   },
   {
     "les": 8,
@@ -7042,7 +7433,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἅπτω"
+    "grieks_info": "ἅπτω",
+    "strong": "681"
   },
   {
     "les": 8,
@@ -7057,7 +7449,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄρτι"
+    "grieks_info": "ἄρτι",
+    "strong": "737"
   },
   {
     "les": 8,
@@ -7072,7 +7465,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μάρτυς, -υρος, ὁ"
+    "grieks_info": "μάρτυς, -υρος, ὁ",
+    "strong": "3144"
   },
   {
     "les": 8,
@@ -7087,7 +7481,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὀπίσω"
+    "grieks_info": "ὀπίσω",
+    "strong": "3694"
   },
   {
     "les": 8,
@@ -7102,7 +7497,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὀφείλω"
+    "grieks_info": "ὀφείλω",
+    "strong": "3784"
   },
   {
     "les": 8,
@@ -7117,7 +7513,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑποστρέφω"
+    "grieks_info": "ὑποστρέφω",
+    "strong": "5290"
   },
   {
     "les": 2,
@@ -7132,7 +7529,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οἶνος, -ου, ὁ"
+    "grieks_info": "οἶνος, -ου, ὁ",
+    "strong": "3631"
   },
   {
     "les": 8,
@@ -7147,7 +7545,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "ἄρα"
+    "grieks_info": "ἄρα",
+    "strong": "686"
   },
   {
     "les": 8,
@@ -7162,7 +7561,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βιβλίον, -ου, τό"
+    "grieks_info": "βιβλίον, -ου, τό",
+    "strong": "975"
   },
   {
     "les": 8,
@@ -7177,7 +7577,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βλασφημέω"
+    "grieks_info": "βλασφημέω",
+    "strong": "987"
   },
   {
     "les": 8,
@@ -7192,7 +7593,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διακονία, -ας, ἡ"
+    "grieks_info": "διακονία, -ας, ἡ",
+    "strong": "1248"
   },
   {
     "les": 8,
@@ -7207,7 +7609,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέλος, -ους, τό"
+    "grieks_info": "μέλος, -ους, τό",
+    "strong": "3196"
   },
   {
     "les": 8,
@@ -7222,7 +7625,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μετανοέω"
+    "grieks_info": "μετανοέω",
+    "strong": "3340"
   },
   {
     "les": 8,
@@ -7237,7 +7641,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μήτε"
+    "grieks_info": "μήτε",
+    "strong": "3383"
   },
   {
     "les": 8,
@@ -7252,7 +7657,8 @@
     "score_goed": 3,
     "score_fout": 0,
     "streak": 3,
-    "grieks_info": "ναί"
+    "grieks_info": "ναί",
+    "strong": "3483"
   },
   {
     "les": 8,
@@ -7267,7 +7673,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πτωχός, -ή, -όν"
+    "grieks_info": "πτωχός, -ή, -όν",
+    "strong": "4434"
   },
   {
     "les": 8,
@@ -7282,7 +7689,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀρνέομαι"
+    "grieks_info": "ἀρνέομαι",
+    "strong": "720"
   },
   {
     "les": 8,
@@ -7297,7 +7705,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀσθενέω"
+    "grieks_info": "ἀσθενέω",
+    "strong": "770"
   },
   {
     "les": 8,
@@ -7312,7 +7721,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δείκνυμι"
+    "grieks_info": "δείκνυμι",
+    "strong": "1166"
   },
   {
     "les": 8,
@@ -7327,7 +7737,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διαθήκη, -ης, ἡ"
+    "grieks_info": "διαθήκη, -ης, ἡ",
+    "strong": "1242"
   },
   {
     "les": 8,
@@ -7342,7 +7753,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποῖος"
+    "grieks_info": "ποῖος",
+    "strong": "4169"
   },
   {
     "les": 7,
@@ -7357,7 +7769,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀναγινώσκω"
+    "grieks_info": "ἀναγινώσκω",
+    "strong": "314"
   },
   {
     "les": 9,
@@ -7372,7 +7785,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἅπας, -ασα, -αν"
+    "grieks_info": "ἅπας, -ασα, -αν",
+    "strong": "537"
   },
   {
     "les": 9,
@@ -7387,7 +7801,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δυνατός, -ή, -όν"
+    "grieks_info": "δυνατός, -ή, -όν",
+    "strong": "1415"
   },
   {
     "les": 9,
@@ -7402,7 +7817,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐχθρός, -ά, -όν"
+    "grieks_info": "ἐχθρός, -ά, -όν",
+    "strong": "2190"
   },
   {
     "les": 9,
@@ -7417,7 +7833,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἥλιος, -ου, ὁ"
+    "grieks_info": "ἥλιος, -ου, ὁ",
+    "strong": "2246"
   },
   {
     "les": 9,
@@ -7432,7 +7849,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπομονή, -ῆς, ἡ"
+    "grieks_info": "ὑπομονή, -ῆς, ἡ",
+    "strong": "5281"
   },
   {
     "les": 1,
@@ -7447,7 +7865,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φαίνω"
+    "grieks_info": "φαίνω",
+    "strong": "5316"
   },
   {
     "les": 6,
@@ -7462,7 +7881,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔξεστι(ν)"
+    "grieks_info": "ἔξεστι(ν)",
+    "strong": "1832"
   },
   {
     "les": 6,
@@ -7477,7 +7897,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποτήριον, ου, τό"
+    "grieks_info": "ποτήριον, ου, τό",
+    "strong": "4221"
   },
   {
     "les": 7,
@@ -7492,7 +7913,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἱερεύς, -έως, ὁ"
+    "grieks_info": "ἱερεύς, -έως, ὁ",
+    "strong": "2409"
   },
   {
     "les": 8,
@@ -7507,7 +7929,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀκάθαρτος, -ον"
+    "grieks_info": "ἀκάθαρτος, -ον",
+    "strong": "169"
   },
   {
     "les": 8,
@@ -7522,7 +7945,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθαρίζω"
+    "grieks_info": "καθαρίζω",
+    "strong": "2511"
   },
   {
     "les": 9,
@@ -7537,7 +7961,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄνεμος, -ου, ὁ"
+    "grieks_info": "ἄνεμος, -ου, ὁ",
+    "strong": "417"
   },
   {
     "les": 9,
@@ -7552,7 +7977,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐλπίζω"
+    "grieks_info": "ἐλπίζω",
+    "strong": "1679"
   },
   {
     "les": 9,
@@ -7567,7 +7993,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὁμοίως"
+    "grieks_info": "ὁμοίως",
+    "strong": "3668"
   },
   {
     "les": 9,
@@ -7582,7 +8009,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παραγγέλλω"
+    "grieks_info": "παραγγέλλω",
+    "strong": "3853"
   },
   {
     "les": 9,
@@ -7597,7 +8025,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρρησία, -ας, ἡ"
+    "grieks_info": "παρρησία, -ας, ἡ",
+    "strong": "3954"
   },
   {
     "les": 9,
@@ -7612,7 +8041,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλῆθος, -ους, τό"
+    "grieks_info": "πλῆθος, -ους, τό",
+    "strong": "4128"
   },
   {
     "les": 9,
@@ -7627,7 +8057,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλήν"
+    "grieks_info": "πλήν",
+    "strong": "4133"
   },
   {
     "les": 9,
@@ -7642,7 +8073,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποτέ"
+    "grieks_info": "ποτέ",
+    "strong": "4219"
   },
   {
     "les": 9,
@@ -7657,7 +8089,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συνείδησις, -εως, ἡ"
+    "grieks_info": "συνείδησις, -εως, ἡ",
+    "strong": "4893"
   },
   {
     "les": 9,
@@ -7672,7 +8105,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φυλάσσω"
+    "grieks_info": "φυλάσσω",
+    "strong": "5442"
   },
   {
     "les": 9,
@@ -7687,7 +8121,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φυλή, -ῆς, ἡ"
+    "grieks_info": "φυλή, -ῆς, ἡ",
+    "strong": "5443"
   },
   {
     "les": 2,
@@ -7702,7 +8137,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διάκονος, -οῦ, ὁ/ἡ"
+    "grieks_info": "διάκονος, -οῦ, ὁ/ἡ",
+    "strong": "1249"
   },
   {
     "les": 9,
@@ -7717,7 +8153,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγοράζω"
+    "grieks_info": "ἀγοράζω",
+    "strong": "59"
   },
   {
     "les": 9,
@@ -7732,7 +8169,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀρνίον, -ου, τό"
+    "grieks_info": "ἀρνίον, -ου, τό",
+    "strong": "721"
   },
   {
     "les": 9,
@@ -7747,7 +8185,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διδαχή, -ῆς, ἡ"
+    "grieks_info": "διδαχή, -ῆς, ἡ",
+    "strong": "1322"
   },
   {
     "les": 9,
@@ -7762,7 +8201,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐγγύς"
+    "grieks_info": "ἐγγύς",
+    "strong": "1451"
   },
   {
     "les": 9,
@@ -7777,7 +8217,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπικαλέω"
+    "grieks_info": "ἐπικαλέω",
+    "strong": "1941"
   },
   {
     "les": 9,
@@ -7792,7 +8233,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιτιμάω"
+    "grieks_info": "ἐπιτιμάω",
+    "strong": "2008"
   },
   {
     "les": 9,
@@ -7807,7 +8249,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σκότος, -ους, τό"
+    "grieks_info": "σκότος, -ους, τό",
+    "strong": "4655"
   },
   {
     "les": 9,
@@ -7822,7 +8265,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συνέρχομαι"
+    "grieks_info": "συνέρχομαι",
+    "strong": "4905"
   },
   {
     "les": 9,
@@ -7837,7 +8281,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γνῶσις, -εως, ἡ"
+    "grieks_info": "γνῶσις, -εως, ἡ",
+    "strong": "1108"
   },
   {
     "les": 9,
@@ -7852,7 +8297,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐλεέω"
+    "grieks_info": "ἐλεέω",
+    "strong": "1653"
   },
   {
     "les": 9,
@@ -7867,7 +8313,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "Καῖσαρ, -αρος, ὁ"
+    "grieks_info": "Καῖσαρ, -αρος, ὁ",
+    "strong": "2541"
   },
   {
     "les": 9,
@@ -7882,7 +8329,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μάχαιρα, -ας, ἡ"
+    "grieks_info": "μάχαιρα, -ας, ἡ",
+    "strong": "3162"
   },
   {
     "les": 9,
@@ -7897,7 +8345,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μισθός, -οῦ, ὁ"
+    "grieks_info": "μισθός, -οῦ, ὁ",
+    "strong": "3408"
   },
   {
     "les": 9,
@@ -7912,7 +8361,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παράκλησις, -εως, ἡ"
+    "grieks_info": "παράκλησις, -εως, ἡ",
+    "strong": "3874"
   },
   {
     "les": 9,
@@ -7927,7 +8377,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πάσχα, τό (indecl.)"
+    "grieks_info": "πάσχα, τό (indecl.)",
+    "strong": "3957"
   },
   {
     "les": 9,
@@ -7942,7 +8393,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πόθεν"
+    "grieks_info": "πόθεν",
+    "strong": "4159"
   },
   {
     "les": 9,
@@ -7957,7 +8409,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσκαλέω"
+    "grieks_info": "προσκαλέω",
+    "strong": "4341"
   },
   {
     "les": 9,
@@ -7972,7 +8425,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σκανδαλίζω"
+    "grieks_info": "σκανδαλίζω",
+    "strong": "4624"
   },
   {
     "les": 9,
@@ -7987,7 +8441,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φεύγω"
+    "grieks_info": "φεύγω",
+    "strong": "5343"
   },
   {
     "les": 9,
@@ -8002,7 +8457,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φίλος, -η, -ον"
+    "grieks_info": "φίλος, -η, -ον",
+    "strong": "5384"
   },
   {
     "les": 3,
@@ -8017,7 +8473,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλούσιος, -α, -ον"
+    "grieks_info": "πλούσιος, -α, -ον",
+    "strong": "4145"
   },
   {
     "les": 4,
@@ -8032,7 +8489,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θυσία, -ας, ἡ"
+    "grieks_info": "θυσία, -ας, ἡ",
+    "strong": "2378"
   },
   {
     "les": 5,
@@ -8047,7 +8505,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προφητεύω"
+    "grieks_info": "προφητεύω",
+    "strong": "4395"
   },
   {
     "les": 6,
@@ -8062,7 +8521,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἰσχυρός, -ά, -όν"
+    "grieks_info": "ἰσχυρός, -ά, -όν",
+    "strong": "2478"
   },
   {
     "les": 7,
@@ -8077,7 +8537,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ἡγέομαι"
+    "grieks_info": "ἡγέομαι",
+    "strong": "2233"
   },
   {
     "les": 9,
@@ -8092,7 +8553,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἁγιάζω"
+    "grieks_info": "ἁγιάζω",
+    "strong": "37"
   },
   {
     "les": 9,
@@ -8107,7 +8569,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀδικέω"
+    "grieks_info": "ἀδικέω",
+    "strong": "94"
   },
   {
     "les": 9,
@@ -8122,7 +8585,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀληθινός, -ή, -όν"
+    "grieks_info": "ἀληθινός, -ή, -όν",
+    "strong": "228"
   },
   {
     "les": 9,
@@ -8137,7 +8601,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γαμέω"
+    "grieks_info": "γαμέω",
+    "strong": "1060"
   },
   {
     "les": 9,
@@ -8152,7 +8617,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐνδύω"
+    "grieks_info": "ἐνδύω",
+    "strong": "1746"
   },
   {
     "les": 9,
@@ -8167,7 +8633,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θυγάτηρ, -τρός, ἡ"
+    "grieks_info": "θυγάτηρ, -τρός, ἡ",
+    "strong": "2364"
   },
   {
     "les": 9,
@@ -8182,7 +8649,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἰσχύω"
+    "grieks_info": "ἰσχύω",
+    "strong": "2480"
   },
   {
     "les": 9,
@@ -8197,7 +8665,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νικάω"
+    "grieks_info": "νικάω",
+    "strong": "3528"
   },
   {
     "les": 9,
@@ -8212,7 +8681,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τελέω"
+    "grieks_info": "τελέω",
+    "strong": "5055"
   },
   {
     "les": 9,
@@ -8227,7 +8697,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χώρα, -ας, ἡ"
+    "grieks_info": "χώρα, -ας, ἡ",
+    "strong": "5561"
   },
   {
     "les": 2,
@@ -8242,7 +8713,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὔπω"
+    "grieks_info": "οὔπω",
+    "strong": "3768"
   },
   {
     "les": 3,
@@ -8257,7 +8729,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σός, σή, σόν"
+    "grieks_info": "σός, σή, σόν",
+    "strong": "4674"
   },
   {
     "les": 6,
@@ -8272,7 +8745,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σταυρός, -οῦ, ὁ"
+    "grieks_info": "σταυρός, -οῦ, ὁ",
+    "strong": "4716"
   },
   {
     "les": 7,
@@ -8287,7 +8761,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔλεος, -ους, τό"
+    "grieks_info": "ἔλεος, -ους, τό",
+    "strong": "1656"
   },
   {
     "les": 10,
@@ -8302,7 +8777,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βαστάζω"
+    "grieks_info": "βαστάζω",
+    "strong": "941"
   },
   {
     "les": 10,
@@ -8317,7 +8793,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δέκα"
+    "grieks_info": "δέκα",
+    "strong": "1176"
   },
   {
     "les": 10,
@@ -8332,7 +8809,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκεῖθεν"
+    "grieks_info": "ἐκεῖθεν",
+    "strong": "1564"
   },
   {
     "les": 10,
@@ -8347,7 +8825,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκχέω"
+    "grieks_info": "ἐκχέω",
+    "strong": "1632"
   },
   {
     "les": 10,
@@ -8362,7 +8841,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταργέω"
+    "grieks_info": "καταργέω",
+    "strong": "2673"
   },
   {
     "les": 10,
@@ -8377,7 +8857,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κρίμα, -ατος, τό"
+    "grieks_info": "κρίμα, -ατος, τό",
+    "strong": "2917"
   },
   {
     "les": 10,
@@ -8392,7 +8873,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κώμη, -ης, ἡ"
+    "grieks_info": "κώμη, -ης, ἡ",
+    "strong": "2968"
   },
   {
     "les": 10,
@@ -8407,7 +8889,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μυστήριον, -ου, τό"
+    "grieks_info": "μυστήριον, -ου, τό",
+    "strong": "3466"
   },
   {
     "les": 10,
@@ -8422,7 +8905,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πόσος, , -η, -ον"
+    "grieks_info": "πόσος, , -η, -ον",
+    "strong": "4214"
   },
   {
     "les": 4,
@@ -8437,7 +8921,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φρονέω"
+    "grieks_info": "φρονέω",
+    "strong": "5426"
   },
   {
     "les": 7,
@@ -8452,7 +8937,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπεί"
+    "grieks_info": "ἐπεί",
+    "strong": "1893"
   },
   {
     "les": 9,
@@ -8467,7 +8953,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀληθής, -ές"
+    "grieks_info": "ἀληθής, -ές",
+    "strong": "227"
   },
   {
     "les": 10,
@@ -8482,7 +8969,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀδελφή, -ῆς, ἡ"
+    "grieks_info": "ἀδελφή, -ῆς, ἡ",
+    "strong": "79"
   },
   {
     "les": 10,
@@ -8497,7 +8985,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποκαλύπτω"
+    "grieks_info": "ἀποκαλύπτω",
+    "strong": "601"
   },
   {
     "les": 10,
@@ -8512,7 +9001,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γνωρίζω"
+    "grieks_info": "γνωρίζω",
+    "strong": "1107"
   },
   {
     "les": 10,
@@ -8527,7 +9017,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "Ἕλλην, -ηνος, ὁ"
+    "grieks_info": "Ἕλλην, -ηνος, ὁ",
+    "strong": "1672"
   },
   {
     "les": 10,
@@ -8542,7 +9033,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἕνεκα"
+    "grieks_info": "ἕνεκα",
+    "strong": "1752"
   },
   {
     "les": 10,
@@ -8557,7 +9049,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἰάομαι"
+    "grieks_info": "ἰάομαι",
+    "strong": "2390"
   },
   {
     "les": 10,
@@ -8572,7 +9065,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθαρός, -ά, -όν"
+    "grieks_info": "καθαρός, -ά, -όν",
+    "strong": "2513"
   },
   {
     "les": 10,
@@ -8587,7 +9081,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λυπέω"
+    "grieks_info": "λυπέω",
+    "strong": "3076"
   },
   {
     "les": 10,
@@ -8602,7 +9097,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὀμνύω"
+    "grieks_info": "ὀμνύω",
+    "strong": "3660"
   },
   {
     "les": 10,
@@ -8617,7 +9113,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὁμολογέω"
+    "grieks_info": "ὁμολογέω",
+    "strong": "3670"
   },
   {
     "les": 10,
@@ -8632,7 +9129,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πνευματικός, -ή, -όν"
+    "grieks_info": "πνευματικός, -ή, -όν",
+    "strong": "4152"
   },
   {
     "les": 10,
@@ -8647,7 +9145,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "στρατιώτης, -ου, ὁ"
+    "grieks_info": "στρατιώτης, -ου, ὁ",
+    "strong": "4757"
   },
   {
     "les": 10,
@@ -8662,7 +9161,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συνίημι"
+    "grieks_info": "συνίημι",
+    "strong": "4920"
   },
   {
     "les": 10,
@@ -8677,7 +9177,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χῆρος, -α, -ον"
+    "grieks_info": "χῆρος, -α, -ον",
+    "strong": "5503"
   },
   {
     "les": 2,
@@ -8692,7 +9193,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἥκω"
+    "grieks_info": "ἥκω",
+    "strong": "2240"
   },
   {
     "les": 10,
@@ -8707,7 +9209,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀδικία, -ας, ἡ"
+    "grieks_info": "ἀδικία, -ας, ἡ",
+    "strong": "93"
   },
   {
     "les": 10,
@@ -8722,7 +9225,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀναβλέπω"
+    "grieks_info": "ἀναβλέπω",
+    "strong": "309"
   },
   {
     "les": 10,
@@ -8737,7 +9241,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀσθενής, -ές"
+    "grieks_info": "ἀσθενής, -ές",
+    "strong": "772"
   },
   {
     "les": 10,
@@ -8752,7 +9257,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δένδρον, -ου, τό"
+    "grieks_info": "δένδρον, -ου, τό",
+    "strong": "1186"
   },
   {
     "les": 10,
@@ -8767,7 +9273,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δουλεύω"
+    "grieks_info": "δουλεύω",
+    "strong": "1398"
   },
   {
     "les": 10,
@@ -8782,7 +9289,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἑορτή, -ῆς, ἡ"
+    "grieks_info": "ἑορτή, -ῆς, ἡ",
+    "strong": "1859"
   },
   {
     "les": 10,
@@ -8797,7 +9305,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κελεύω"
+    "grieks_info": "κελεύω",
+    "strong": "2753"
   },
   {
     "les": 10,
@@ -8812,7 +9321,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λευκός, -ή, -όν"
+    "grieks_info": "λευκός, -ή, -όν",
+    "strong": "3022"
   },
   {
     "les": 10,
@@ -8827,7 +9337,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μανθάνω"
+    "grieks_info": "μανθάνω",
+    "strong": "3129"
   },
   {
     "les": 10,
@@ -8842,7 +9353,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νεφέλη, -ης, ἡ"
+    "grieks_info": "νεφέλη, -ης, ἡ",
+    "strong": "3507"
   },
   {
     "les": 10,
@@ -8857,7 +9369,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πορνεία, -ας, ἡ"
+    "grieks_info": "πορνεία, -ας, ἡ",
+    "strong": "4202"
   },
   {
     "les": 10,
@@ -8872,7 +9385,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φιλέω"
+    "grieks_info": "φιλέω",
+    "strong": "5368"
   },
   {
     "les": 3,
@@ -8887,7 +9401,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νέος, -α, -ον"
+    "grieks_info": "νέος, -α, -ον",
+    "strong": "3501"
   },
   {
     "les": 4,
@@ -8902,7 +9417,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νοῦς, νοός, ὁ"
+    "grieks_info": "νοῦς, νοός, ὁ",
+    "strong": "3563"
   },
   {
     "les": 10,
@@ -8917,7 +9433,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀκοή, -ῆς, ἡ"
+    "grieks_info": "ἀκοή, -ῆς, ἡ",
+    "strong": "189"
   },
   {
     "les": 10,
@@ -8932,7 +9449,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀναιρέω"
+    "grieks_info": "ἀναιρέω",
+    "strong": "337"
   },
   {
     "les": 11,
@@ -8947,7 +9465,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀσθένεια, -ας, ἡ"
+    "grieks_info": "ἀσθένεια, -ας, ἡ",
+    "strong": "769"
   },
   {
     "les": 11,
@@ -8962,7 +9481,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀστήρ, -έρος, ὁ"
+    "grieks_info": "ἀστήρ, -έρος, ὁ",
+    "strong": "792"
   },
   {
     "les": 11,
@@ -8977,7 +9497,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διότι"
+    "grieks_info": "διότι",
+    "strong": "1360"
   },
   {
     "les": 11,
@@ -8992,7 +9513,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιστολή, -ῆς, ἡ"
+    "grieks_info": "ἐπιστολή, -ῆς, ἡ",
+    "strong": "1992"
   },
   {
     "les": 11,
@@ -9007,7 +9529,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταλείπω"
+    "grieks_info": "καταλείπω",
+    "strong": "2641"
   },
   {
     "les": 11,
@@ -9022,7 +9545,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κεῖμαι"
+    "grieks_info": "κεῖμαι",
+    "strong": "2749"
   },
   {
     "les": 11,
@@ -9037,7 +9561,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὗ"
+    "grieks_info": "οὗ",
+    "strong": "3756"
   },
   {
     "les": 11,
@@ -9052,7 +9577,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παῖς, παιδός, ὁ/ἡ"
+    "grieks_info": "παῖς, παιδός, ὁ/ἡ",
+    "strong": "3816"
   },
   {
     "les": 11,
@@ -9067,7 +9593,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πάρειμι"
+    "grieks_info": "πάρειμι",
+    "strong": "3918"
   },
   {
     "les": 11,
@@ -9082,7 +9609,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρουσία, -ας, ἡ"
+    "grieks_info": "παρουσία, -ας, ἡ",
+    "strong": "3952"
   },
   {
     "les": 11,
@@ -9097,7 +9625,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πίμπλημι"
+    "grieks_info": "πίμπλημι",
+    "strong": "4092"
   },
   {
     "les": 11,
@@ -9112,7 +9641,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσέχω"
+    "grieks_info": "προσέχω",
+    "strong": "4337"
   },
   {
     "les": 11,
@@ -9127,7 +9657,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σωτήρ, -ῆρος, ὁ"
+    "grieks_info": "σωτήρ, -ῆρος, ὁ",
+    "strong": "4990"
   },
   {
     "les": 1,
@@ -9142,7 +9673,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θεάομαι"
+    "grieks_info": "θεάομαι",
+    "strong": "2300"
   },
   {
     "les": 6,
@@ -9157,7 +9689,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θυσιαστήριον, -ου, τό"
+    "grieks_info": "θυσιαστήριον, -ου, τό",
+    "strong": "2379"
   },
   {
     "les": 8,
@@ -9172,7 +9705,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐλεύθερος, -έρα, -ερον"
+    "grieks_info": "ἐλεύθερος, -έρα, -ερον",
+    "strong": "1658"
   },
   {
     "les": 8,
@@ -9187,7 +9721,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σκεῦος, -ους, τό"
+    "grieks_info": "σκεῦος, -ους, τό",
+    "strong": "4632"
   },
   {
     "les": 10,
@@ -9202,7 +9737,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χαρίζομαι"
+    "grieks_info": "χαρίζομαι",
+    "strong": "5483"
   },
   {
     "les": 11,
@@ -9217,7 +9753,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀμπελών, -ῶνος, ὁ"
+    "grieks_info": "ἀμπελών, -ῶνος, ὁ",
+    "strong": "290"
   },
   {
     "les": 11,
@@ -9232,7 +9769,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνάγω"
+    "grieks_info": "ἀνάγω",
+    "strong": "321"
   },
   {
     "les": 11,
@@ -9247,7 +9785,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄπιστος, -ον"
+    "grieks_info": "ἄπιστος, -ον",
+    "strong": "571"
   },
   {
     "les": 11,
@@ -9262,7 +9801,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἰκών, -όνος, ἡ"
+    "grieks_info": "εἰκών, -όνος, ἡ",
+    "strong": "1504"
   },
   {
     "les": 11,
@@ -9277,7 +9817,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ζῷον, -ου, τό"
+    "grieks_info": "ζῷον, -ου, τό",
+    "strong": "2226"
   },
   {
     "les": 11,
@@ -9292,7 +9833,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κατηγορέω"
+    "grieks_info": "κατηγορέω",
+    "strong": "2723"
   },
   {
     "les": 11,
@@ -9307,7 +9849,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοιλία, -ας, ἡ"
+    "grieks_info": "κοιλία, -ας, ἡ",
+    "strong": "2836"
   },
   {
     "les": 11,
@@ -9322,7 +9865,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κωλύω"
+    "grieks_info": "κωλύω",
+    "strong": "2967"
   },
   {
     "les": 11,
@@ -9337,7 +9881,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μιμνῄσκω"
+    "grieks_info": "μιμνῄσκω",
+    "strong": "3403"
   },
   {
     "les": 11,
@@ -9352,7 +9897,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πέραν"
+    "grieks_info": "πέραν",
+    "strong": "4008"
   },
   {
     "les": 11,
@@ -9367,7 +9913,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περιβάλλω"
+    "grieks_info": "περιβάλλω",
+    "strong": "4016"
   },
   {
     "les": 11,
@@ -9382,7 +9929,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τελειόω"
+    "grieks_info": "τελειόω",
+    "strong": "5048"
   },
   {
     "les": 11,
@@ -9397,7 +9945,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χιλιάς, -άδος, ἡ"
+    "grieks_info": "χιλιάς, -άδος, ἡ",
+    "strong": "5507"
   },
   {
     "les": 4,
@@ -9412,7 +9961,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δοκιμάζω"
+    "grieks_info": "δοκιμάζω",
+    "strong": "1381"
   },
   {
     "les": 11,
@@ -9427,7 +9977,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀγνοέω"
+    "grieks_info": "ἀγνοέω",
+    "strong": "50"
   },
   {
     "les": 11,
@@ -9442,7 +9993,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀντί"
+    "grieks_info": "ἀντί",
+    "strong": "473"
   },
   {
     "les": 11,
@@ -9457,7 +10009,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αὐξάνω"
+    "grieks_info": "αὐξάνω",
+    "strong": "837"
   },
   {
     "les": 11,
@@ -9472,7 +10025,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γρηγορέω"
+    "grieks_info": "γρηγορέω",
+    "strong": "1127"
   },
   {
     "les": 11,
@@ -9487,7 +10041,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δέομαι"
+    "grieks_info": "δέομαι",
+    "strong": "1189"
   },
   {
     "les": 11,
@@ -9502,7 +10057,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκλέγω"
+    "grieks_info": "ἐκλέγω",
+    "strong": "1586"
   },
   {
     "les": 11,
@@ -9517,7 +10073,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκλεκτός, -ή, -όν"
+    "grieks_info": "ἐκλεκτός, -ή, -όν",
+    "strong": "1588"
   },
   {
     "les": 11,
@@ -9532,7 +10089,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθεύδω"
+    "grieks_info": "καθεύδω",
+    "strong": "2518"
   },
   {
     "les": 11,
@@ -9547,7 +10105,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κἀκεῖνος, -η, -ο"
+    "grieks_info": "κἀκεῖνος, -η, -ο",
+    "strong": "2548"
   },
   {
     "les": 11,
@@ -9562,7 +10121,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κατεργάζομαι"
+    "grieks_info": "κατεργάζομαι",
+    "strong": "2716"
   },
   {
     "les": 11,
@@ -9577,7 +10137,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοπιάω"
+    "grieks_info": "κοπιάω",
+    "strong": "2872"
   },
   {
     "les": 11,
@@ -9592,7 +10153,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μετάνοια, -ας, ἡ"
+    "grieks_info": "μετάνοια, -ας, ἡ",
+    "strong": "3341"
   },
   {
     "les": 11,
@@ -9607,7 +10169,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μηκέτι"
+    "grieks_info": "μηκέτι",
+    "strong": "3371"
   },
   {
     "les": 11,
@@ -9622,7 +10185,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πληγή, -ῆς, ἡ"
+    "grieks_info": "πληγή, -ῆς, ἡ",
+    "strong": "4127"
   },
   {
     "les": 11,
@@ -9637,7 +10201,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλοῦτος, -ου, ὁ"
+    "grieks_info": "πλοῦτος, -ου, ὁ",
+    "strong": "4149"
   },
   {
     "les": 11,
@@ -9652,7 +10217,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πωλέω"
+    "grieks_info": "πωλέω",
+    "strong": "4453"
   },
   {
     "les": 11,
@@ -9667,7 +10233,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συνέδριον, -ου, τό"
+    "grieks_info": "συνέδριον, -ου, τό",
+    "strong": "4892"
   },
   {
     "les": 11,
@@ -9682,7 +10249,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τεσσεράκοντα"
+    "grieks_info": "τεσσεράκοντα",
+    "strong": "5062"
   },
   {
     "les": 2,
@@ -9697,7 +10265,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πειρασμός, -οῦ, ὁ"
+    "grieks_info": "πειρασμός, -οῦ, ὁ",
+    "strong": "3986"
   },
   {
     "les": 5,
@@ -9712,7 +10281,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τιμάω"
+    "grieks_info": "τιμάω",
+    "strong": "5091"
   },
   {
     "les": 10,
@@ -9727,7 +10297,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "στρέφω"
+    "grieks_info": "στρέφω",
+    "strong": "4762"
   },
   {
     "les": 11,
@@ -9742,7 +10313,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀργύριον, -ου, τό"
+    "grieks_info": "ἀργύριον, -ου, τό",
+    "strong": "694"
   },
   {
     "les": 11,
@@ -9757,7 +10329,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βασιλεύω"
+    "grieks_info": "βασιλεύω",
+    "strong": "936"
   },
   {
     "les": 12,
@@ -9772,7 +10345,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διδασκαλία, -ας, ἡ"
+    "grieks_info": "διδασκαλία, -ας, ἡ",
+    "strong": "1319"
   },
   {
     "les": 12,
@@ -9787,7 +10361,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐνεργέω"
+    "grieks_info": "ἐνεργέω",
+    "strong": "1754"
   },
   {
     "les": 12,
@@ -9802,7 +10377,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐδοκέω"
+    "grieks_info": "εὐδοκέω",
+    "strong": "2106"
   },
   {
     "les": 12,
@@ -9817,7 +10393,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θερίζω"
+    "grieks_info": "θερίζω",
+    "strong": "2325"
   },
   {
     "les": 12,
@@ -9832,7 +10409,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθίστημι"
+    "grieks_info": "καθίστημι",
+    "strong": "2525"
   },
   {
     "les": 12,
@@ -9847,7 +10425,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λατρεύω"
+    "grieks_info": "λατρεύω",
+    "strong": "3000"
   },
   {
     "les": 12,
@@ -9862,7 +10441,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μνημονεύω"
+    "grieks_info": "μνημονεύω",
+    "strong": "3421"
   },
   {
     "les": 12,
@@ -9877,7 +10457,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περισσός, -ή, -όν"
+    "grieks_info": "περισσός, -ή, -όν",
+    "strong": "4053"
   },
   {
     "les": 12,
@@ -9892,7 +10473,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τελώνης, -ου, ὁ"
+    "grieks_info": "τελώνης, -ου, ὁ",
+    "strong": "5057"
   },
   {
     "les": 12,
@@ -9907,7 +10489,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπακούω"
+    "grieks_info": "ὑπακούω",
+    "strong": "5219"
   },
   {
     "les": 12,
@@ -9922,7 +10505,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χιλίαρχος, -ου, ὁ"
+    "grieks_info": "χιλίαρχος, -ου, ὁ",
+    "strong": "5506"
   },
   {
     "les": 12,
@@ -9937,7 +10521,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὡσεί"
+    "grieks_info": "ὡσεί",
+    "strong": "5616"
   },
   {
     "les": 3,
@@ -9952,7 +10537,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νηστεύω"
+    "grieks_info": "νηστεύω",
+    "strong": "3522"
   },
   {
     "les": 12,
@@ -9967,7 +10553,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἰτία, -ας, ἡ"
+    "grieks_info": "αἰτία, -ας, ἡ",
+    "strong": "156"
   },
   {
     "les": 12,
@@ -9982,7 +10569,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀκροβυστία, -ας, ἡ"
+    "grieks_info": "ἀκροβυστία, -ας, ἡ",
+    "strong": "203"
   },
   {
     "les": 12,
@@ -9997,7 +10585,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βάπτισμα, -ατος, τό"
+    "grieks_info": "βάπτισμα, -ατος, τό",
+    "strong": "908"
   },
   {
     "les": 12,
@@ -10047,7 +10636,8 @@
         "vorm": "γένη",
         "parsing": "acc mv o"
       }
-    ]
+    ],
+    "strong": "1085"
   },
   {
     "les": 12,
@@ -10062,7 +10652,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γονεύς, -έως, ὁ"
+    "grieks_info": "γονεύς, -έως, ὁ",
+    "strong": "1118"
   },
   {
     "les": 12,
@@ -10077,7 +10668,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἑκατοντάρχης, -ου, ὁ"
+    "grieks_info": "ἑκατοντάρχης, -ου, ὁ",
+    "strong": "1543"
   },
   {
     "les": 12,
@@ -10092,7 +10684,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπίγνωσις, -εως, ἡ"
+    "grieks_info": "ἐπίγνωσις, -εως, ἡ",
+    "strong": "1922"
   },
   {
     "les": 12,
@@ -10107,7 +10700,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐφίστημι"
+    "grieks_info": "ἐφίστημι",
+    "strong": "2186"
   },
   {
     "les": 12,
@@ -10122,7 +10716,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἡγεμών, -όνος, ὁ"
+    "grieks_info": "ἡγεμών, -όνος, ὁ",
+    "strong": "2232"
   },
   {
     "les": 12,
@@ -10137,7 +10732,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἰχθύς, -ύος, ὁ"
+    "grieks_info": "ἰχθύς, -ύος, ὁ",
+    "strong": "2486"
   },
   {
     "les": 12,
@@ -10152,7 +10748,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μαρτύριον, - ου, τό"
+    "grieks_info": "μαρτύριον, - ου, τό",
+    "strong": "3142"
   },
   {
     "les": 12,
@@ -10167,7 +10764,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ξύλον, -ου, τό"
+    "grieks_info": "ξύλον, -ου, τό",
+    "strong": "3586"
   },
   {
     "les": 12,
@@ -10182,7 +10780,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προάγω"
+    "grieks_info": "προάγω",
+    "strong": "4254"
   },
   {
     "les": 12,
@@ -10197,7 +10796,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σκηνή, -ῆς, ἡ"
+    "grieks_info": "σκηνή, -ῆς, ἡ",
+    "strong": "4633"
   },
   {
     "les": 12,
@@ -10212,7 +10812,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σοφός, -ή, -όν"
+    "grieks_info": "σοφός, -ή, -όν",
+    "strong": "4680"
   },
   {
     "les": 12,
@@ -10227,7 +10828,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τοσοῦτος, τοσαύτη, τοσοῦτο"
+    "grieks_info": "τοσοῦτος, τοσαύτη, τοσοῦτο",
+    "strong": "5118"
   },
   {
     "les": 12,
@@ -10242,7 +10844,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τρέχω"
+    "grieks_info": "τρέχω",
+    "strong": "5143"
   },
   {
     "les": 12,
@@ -10257,7 +10860,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπηρέτης, -ου, ὁ"
+    "grieks_info": "ὑπηρέτης, -ου, ὁ",
+    "strong": "5257"
   },
   {
     "les": 12,
@@ -10272,7 +10876,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑψόω"
+    "grieks_info": "ὑψόω",
+    "strong": "5312"
   },
   {
     "les": 3,
@@ -10287,7 +10892,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παλαιός, -ά, -όν"
+    "grieks_info": "παλαιός, -ά, -όν",
+    "strong": "3820"
   },
   {
     "les": 4,
@@ -10302,7 +10908,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τέλειος, -α, -ον"
+    "grieks_info": "τέλειος, -α, -ον",
+    "strong": "5046"
   },
   {
     "les": 5,
@@ -10317,7 +10924,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπέχω"
+    "grieks_info": "ἀπέχω",
+    "strong": "568"
   },
   {
     "les": 6,
@@ -10332,7 +10940,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοινωνία, -ας, ἡ"
+    "grieks_info": "κοινωνία, -ας, ἡ",
+    "strong": "2842"
   },
   {
     "les": 12,
@@ -10347,7 +10956,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γεωργός, -οῦ, ὁ"
+    "grieks_info": "γεωργός, -οῦ, ὁ",
+    "strong": "1092"
   },
   {
     "les": 12,
@@ -10362,7 +10972,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διακρίνω"
+    "grieks_info": "διακρίνω",
+    "strong": "1252"
   },
   {
     "les": 12,
@@ -10377,7 +10988,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δῶρον, -ου, τό"
+    "grieks_info": "δῶρον, -ου, τό",
+    "strong": "1435"
   },
   {
     "les": 12,
@@ -10392,7 +11004,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπαίρω"
+    "grieks_info": "ἐπαίρω",
+    "strong": "1869"
   },
   {
     "les": 12,
@@ -10407,7 +11020,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπάνω"
+    "grieks_info": "ἐπάνω",
+    "strong": "1883"
   },
   {
     "les": 12,
@@ -10422,7 +11036,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιλαμβάνομαι"
+    "grieks_info": "ἐπιλαμβάνομαι",
+    "strong": "1949"
   },
   {
     "les": 12,
@@ -10437,7 +11052,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπουράνιος, -ον"
+    "grieks_info": "ἐπουράνιος, -ον",
+    "strong": "2032"
   },
   {
     "les": 12,
@@ -10452,7 +11068,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κριτής, -ου, ὁ"
+    "grieks_info": "κριτής, -ου, ὁ",
+    "strong": "2923"
   },
   {
     "les": 12,
@@ -10467,7 +11084,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κρύπτω"
+    "grieks_info": "κρύπτω",
+    "strong": "2927"
   },
   {
     "les": 12,
@@ -10482,7 +11100,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κτίσις, -εως, ἡ"
+    "grieks_info": "κτίσις, -εως, ἡ",
+    "strong": "2937"
   },
   {
     "les": 13,
@@ -10497,7 +11116,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μεριμνάω"
+    "grieks_info": "μεριμνάω",
+    "strong": "3309"
   },
   {
     "les": 13,
@@ -10512,7 +11132,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παράπτωμα, -ατος, τό"
+    "grieks_info": "παράπτωμα, -ατος, τό",
+    "strong": "3900"
   },
   {
     "les": 13,
@@ -10527,7 +11148,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρατίθημι"
+    "grieks_info": "παρατίθημι",
+    "strong": "3908"
   },
   {
     "les": 13,
@@ -10542,7 +11164,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προφητεία, -ας, ἡ"
+    "grieks_info": "προφητεία, -ας, ἡ",
+    "strong": "4394"
   },
   {
     "les": 4,
@@ -10557,7 +11180,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νυνί"
+    "grieks_info": "νυνί",
+    "strong": "3570"
   },
   {
     "les": 6,
@@ -10572,7 +11196,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέχρι"
+    "grieks_info": "μέχρι",
+    "strong": "3360"
   },
   {
     "les": 10,
@@ -10587,7 +11212,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δεσμός, -οῦ, ὁ"
+    "grieks_info": "δεσμός, -οῦ, ὁ",
+    "strong": "1199"
   },
   {
     "les": 10,
@@ -10602,7 +11228,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κατέχω"
+    "grieks_info": "κατέχω",
+    "strong": "2722"
   },
   {
     "les": 12,
@@ -10617,7 +11244,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιτρέπω"
+    "grieks_info": "ἐπιτρέπω",
+    "strong": "2010"
   },
   {
     "les": 13,
@@ -10632,7 +11260,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀληθῶς"
+    "grieks_info": "ἀληθῶς",
+    "strong": "230"
   },
   {
     "les": 13,
@@ -10647,7 +11276,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀποκάλυψις, -εως, ἡ"
+    "grieks_info": "ἀποκάλυψις, -εως, ἡ",
+    "strong": "602"
   },
   {
     "les": 13,
@@ -10662,7 +11292,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπώλεια, -ας, ἡ"
+    "grieks_info": "ἀπώλεια, -ας, ἡ",
+    "strong": "684"
   },
   {
     "les": 13,
@@ -10677,7 +11308,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "ἆρα"
+    "grieks_info": "ἆρα",
+    "strong": "686"
   },
   {
     "les": 13,
@@ -10692,7 +11324,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀριθμός, -οῦ, ὁ"
+    "grieks_info": "ἀριθμός, -οῦ, ὁ",
+    "strong": "706"
   },
   {
     "les": 13,
@@ -10707,7 +11340,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βλασφημία, -ας, ἡ"
+    "grieks_info": "βλασφημία, -ας, ἡ",
+    "strong": "988"
   },
   {
     "les": 13,
@@ -10722,7 +11356,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δέησις, -εως, ἡ"
+    "grieks_info": "δέησις, -εως, ἡ",
+    "strong": "1162"
   },
   {
     "les": 13,
@@ -10737,7 +11372,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εἰσπορεύομαι"
+    "grieks_info": "εἰσπορεύομαι",
+    "strong": "1531"
   },
   {
     "les": 13,
@@ -10752,7 +11388,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐλέγχω"
+    "grieks_info": "ἐλέγχω",
+    "strong": "1651"
   },
   {
     "les": 13,
@@ -10767,7 +11404,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐμβαίνω"
+    "grieks_info": "ἐμβαίνω",
+    "strong": "1684"
   },
   {
     "les": 13,
@@ -10782,7 +11420,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιβάλλω"
+    "grieks_info": "ἐπιβάλλω",
+    "strong": "1911"
   },
   {
     "les": 13,
@@ -10797,7 +11436,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θυμός, -οῦ, ὁ"
+    "grieks_info": "θυμός, -οῦ, ὁ",
+    "strong": "2372"
   },
   {
     "les": 13,
@@ -10812,7 +11452,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταγγέλλω"
+    "grieks_info": "καταγγέλλω",
+    "strong": "2605"
   },
   {
     "les": 13,
@@ -10827,7 +11468,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κατακρίνω"
+    "grieks_info": "κατακρίνω",
+    "strong": "2632"
   },
   {
     "les": 13,
@@ -10842,7 +11484,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κενός, -ή, -όν"
+    "grieks_info": "κενός, -ή, -όν",
+    "strong": "2756"
   },
   {
     "les": 13,
@@ -10857,7 +11500,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κληρονομέω"
+    "grieks_info": "κληρονομέω",
+    "strong": "2816"
   },
   {
     "les": 13,
@@ -10872,7 +11516,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοιμάομαι"
+    "grieks_info": "κοιμάομαι",
+    "strong": "2837"
   },
   {
     "les": 13,
@@ -10887,7 +11532,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κόπος, -ου, ὁ"
+    "grieks_info": "κόπος, -ου, ὁ",
+    "strong": "2873"
   },
   {
     "les": 13,
@@ -10902,7 +11548,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μήν, μηνός, ὁ"
+    "grieks_info": "μήν, μηνός, ὁ",
+    "strong": "3376"
   },
   {
     "les": 13,
@@ -10917,7 +11564,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οἰκοδομή, -ῆς, ἡ"
+    "grieks_info": "οἰκοδομή, -ῆς, ἡ",
+    "strong": "3619"
   },
   {
     "les": 13,
@@ -10932,7 +11580,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παραχρῆμα"
+    "grieks_info": "παραχρῆμα",
+    "strong": "3916"
   },
   {
     "les": 13,
@@ -10947,7 +11596,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποιμήν, -ένος, ὁ"
+    "grieks_info": "ποιμήν, -ένος, ὁ",
+    "strong": "4166"
   },
   {
     "les": 13,
@@ -10962,7 +11612,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πόλεμος, -ου, ὁ"
+    "grieks_info": "πόλεμος, -ου, ὁ",
+    "strong": "4171"
   },
   {
     "les": 13,
@@ -10977,7 +11628,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πολλάκις"
+    "grieks_info": "πολλάκις",
+    "strong": "4178"
   },
   {
     "les": 13,
@@ -10992,7 +11644,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προστίθημι"
+    "grieks_info": "προστίθημι",
+    "strong": "4369"
   },
   {
     "les": 13,
@@ -11007,7 +11660,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πυλών, -ῶνος, ὁ"
+    "grieks_info": "πυλών, -ῶνος, ὁ",
+    "strong": "4440"
   },
   {
     "les": 13,
@@ -11022,7 +11676,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "στέφανος, -ου, ὁ"
+    "grieks_info": "στέφανος, -ου, ὁ",
+    "strong": "4735"
   },
   {
     "les": 13,
@@ -11037,7 +11692,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ταράσσω"
+    "grieks_info": "ταράσσω",
+    "strong": "5015"
   },
   {
     "les": 13,
@@ -11052,7 +11708,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τίκτω"
+    "grieks_info": "τίκτω",
+    "strong": "5088"
   },
   {
     "les": 13,
@@ -11067,7 +11724,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "φανερός, -ά, -όν"
+    "grieks_info": "φανερός, -ά, -όν",
+    "strong": "5318"
   },
   {
     "les": 13,
@@ -11082,7 +11740,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χρυσοῦς, -ῆ, -οῦν"
+    "grieks_info": "χρυσοῦς, -ῆ, -οῦν",
+    "strong": "5552"
   },
   {
     "les": 1,
@@ -11097,7 +11756,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σκοτία, -ας, ἡ"
+    "grieks_info": "σκοτία, -ας, ἡ",
+    "strong": "4653"
   },
   {
     "les": 2,
@@ -11112,7 +11772,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ῥύομαι"
+    "grieks_info": "ῥύομαι",
+    "strong": "4506"
   },
   {
     "les": 5,
@@ -11127,7 +11788,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑποκριτής, -οῦ, ὁ"
+    "grieks_info": "ὑποκριτής, -οῦ, ὁ",
+    "strong": "5273"
   },
   {
     "les": 8,
@@ -11142,7 +11804,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπαύριον"
+    "grieks_info": "ἐπαύριον",
+    "strong": "1887"
   },
   {
     "les": 10,
@@ -11157,7 +11820,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνάγκη, -ης, ἡ"
+    "grieks_info": "ἀνάγκη, -ης, ἡ",
+    "strong": "318"
   },
   {
     "les": 11,
@@ -11172,7 +11836,8 @@
     "score_goed": 2,
     "score_fout": 0,
     "streak": 2,
-    "grieks_info": "μήτι"
+    "grieks_info": "μήτι",
+    "strong": "3385"
   },
   {
     "les": 13,
@@ -11187,7 +11852,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀρέσκω"
+    "grieks_info": "ἀρέσκω",
+    "strong": "700"
   },
   {
     "les": 13,
@@ -11202,7 +11868,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄφεσις, -εως, ἡ"
+    "grieks_info": "ἄφεσις, -εως, ἡ",
+    "strong": "859"
   },
   {
     "les": 13,
@@ -11217,7 +11884,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὡσαύτως"
+    "grieks_info": "ὡσαύτως",
+    "strong": "5615"
   },
   {
     "les": 14,
@@ -11232,7 +11900,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "βρῶμα, -ατος, τό"
+    "grieks_info": "βρῶμα, -ατος, τό",
+    "strong": "1033"
   },
   {
     "les": 14,
@@ -11247,7 +11916,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἑκατόν"
+    "grieks_info": "ἑκατόν",
+    "strong": "1540"
   },
   {
     "les": 14,
@@ -11262,7 +11932,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐξίστημι"
+    "grieks_info": "ἐξίστημι",
+    "strong": "1839"
   },
   {
     "les": 14,
@@ -11277,7 +11948,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἕτοιμος, ἕτοιμον"
+    "grieks_info": "ἕτοιμος, ἕτοιμον",
+    "strong": "2092"
   },
   {
     "les": 14,
@@ -11292,7 +11964,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θησαυρός, -οῦ, ὁ"
+    "grieks_info": "θησαυρός, -οῦ, ὁ",
+    "strong": "2344"
   },
   {
     "les": 14,
@@ -11307,7 +11980,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἵππος, -ου, ὁ"
+    "grieks_info": "ἵππος, -ου, ὁ",
+    "strong": "2462"
   },
   {
     "les": 14,
@@ -11322,7 +11996,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καθάπερ"
+    "grieks_info": "καθάπερ",
+    "strong": "2509"
   },
   {
     "les": 14,
@@ -11337,7 +12012,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταλύω"
+    "grieks_info": "καταλύω",
+    "strong": "2647"
   },
   {
     "les": 14,
@@ -11352,7 +12028,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κερδαίνω"
+    "grieks_info": "κερδαίνω",
+    "strong": "2770"
   },
   {
     "les": 14,
@@ -11367,7 +12044,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κρυπτός"
+    "grieks_info": "κρυπτός",
+    "strong": "2927"
   },
   {
     "les": 14,
@@ -11382,7 +12060,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νίπτω"
+    "grieks_info": "νίπτω",
+    "strong": "3538"
   },
   {
     "les": 14,
@@ -11397,7 +12076,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περιτέμνω"
+    "grieks_info": "περιτέμνω",
+    "strong": "4059"
   },
   {
     "les": 14,
@@ -11412,7 +12092,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλήρωμα, -ατος, τό"
+    "grieks_info": "πλήρωμα, -ατος, τό",
+    "strong": "4138"
   },
   {
     "les": 14,
@@ -11427,7 +12108,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλησίον, ὁ (indecl.)"
+    "grieks_info": "πλησίον, ὁ (indecl.)",
+    "strong": "4139"
   },
   {
     "les": 14,
@@ -11442,7 +12124,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ποταμός, -οῦ, ὁ"
+    "grieks_info": "ποταμός, -οῦ, ὁ",
+    "strong": "4215"
   },
   {
     "les": 14,
@@ -11457,7 +12140,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ῥίζα, -ης, ἡ"
+    "grieks_info": "ῥίζα, -ης, ἡ",
+    "strong": "4491"
   },
   {
     "les": 14,
@@ -11472,7 +12156,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπομένω"
+    "grieks_info": "ὑπομένω",
+    "strong": "5278"
   },
   {
     "les": 14,
@@ -11487,7 +12172,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χάρισμα, -ατος, τό"
+    "grieks_info": "χάρισμα, -ατος, τό",
+    "strong": "5486"
   },
   {
     "les": 14,
@@ -11502,7 +12188,8 @@
     "score_goed": 1,
     "score_fout": 0,
     "streak": 1,
-    "grieks_info": "ὦ"
+    "grieks_info": "ὦ",
+    "strong": "5598"
   },
   {
     "les": 1,
@@ -11517,7 +12204,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πλήρης, -ες"
+    "grieks_info": "πλήρης, -ες",
+    "strong": "4134"
   },
   {
     "les": 2,
@@ -11532,7 +12220,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑστερέω"
+    "grieks_info": "ὑστερέω",
+    "strong": "5302"
   },
   {
     "les": 3,
@@ -11547,7 +12236,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "νυμφίος, -ου, ὁ"
+    "grieks_info": "νυμφίος, -ου, ὁ",
+    "strong": "3566"
   },
   {
     "les": 6,
@@ -11562,7 +12252,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐλογία, -ας, ἡ"
+    "grieks_info": "εὐλογία, -ας, ἡ",
+    "strong": "2129"
   },
   {
     "les": 8,
@@ -11577,7 +12268,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "οὐδέποτε"
+    "grieks_info": "οὐδέποτε",
+    "strong": "3763"
   },
   {
     "les": 9,
@@ -11592,7 +12284,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κλέπτης, -ου, ὁ"
+    "grieks_info": "κλέπτης, -ου, ὁ",
+    "strong": "2812"
   },
   {
     "les": 10,
@@ -11607,7 +12300,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δέσμιος, -ου, ὁ"
+    "grieks_info": "δέσμιος, -ου, ὁ",
+    "strong": "1198"
   },
   {
     "les": 13,
@@ -11622,7 +12316,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δεῖπνον, -ου, τό"
+    "grieks_info": "δεῖπνον, -ου, τό",
+    "strong": "1173"
   },
   {
     "les": 13,
@@ -11637,7 +12332,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διατάσσω"
+    "grieks_info": "διατάσσω",
+    "strong": "1299"
   },
   {
     "les": 14,
@@ -11652,7 +12348,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀθετέω"
+    "grieks_info": "ἀθετέω",
+    "strong": "114"
   },
   {
     "les": 14,
@@ -11667,7 +12364,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνακρίνω"
+    "grieks_info": "ἀνακρίνω",
+    "strong": "350"
   },
   {
     "les": 14,
@@ -11682,7 +12380,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διαλογίζομαι"
+    "grieks_info": "διαλογίζομαι",
+    "strong": "1256"
   },
   {
     "les": 14,
@@ -11697,7 +12396,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διψάω"
+    "grieks_info": "διψάω",
+    "strong": "1372"
   },
   {
     "les": 14,
@@ -11712,7 +12412,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκτείνω"
+    "grieks_info": "ἐκτείνω",
+    "strong": "1614"
   },
   {
     "les": 14,
@@ -11727,7 +12428,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔπειτα"
+    "grieks_info": "ἔπειτα",
+    "strong": "1899"
   },
   {
     "les": 14,
@@ -11742,7 +12444,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιθυμέω"
+    "grieks_info": "ἐπιθυμέω",
+    "strong": "1937"
   },
   {
     "les": 14,
@@ -11757,7 +12460,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιμένω"
+    "grieks_info": "ἐπιμένω",
+    "strong": "1961"
   },
   {
     "les": 14,
@@ -11772,7 +12476,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐργάτης, -ου, ὁ"
+    "grieks_info": "ἐργάτης, -ου, ὁ",
+    "strong": "2040"
   },
   {
     "les": 14,
@@ -11787,7 +12492,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ζῆλος, -ου, ὁ"
+    "grieks_info": "ζῆλος, -ου, ὁ",
+    "strong": "2205"
   },
   {
     "les": 14,
@@ -11802,7 +12508,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θεμέλιος, - ου, ὁ"
+    "grieks_info": "θεμέλιος, - ου, ὁ",
+    "strong": "2310"
   },
   {
     "les": 14,
@@ -11817,7 +12524,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κακῶς"
+    "grieks_info": "κακῶς",
+    "strong": "2560"
   },
   {
     "les": 14,
@@ -11832,7 +12540,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κἄν"
+    "grieks_info": "κἄν",
+    "strong": "2579"
   },
   {
     "les": 14,
@@ -11847,7 +12556,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κλείω"
+    "grieks_info": "κλείω",
+    "strong": "2808"
   },
   {
     "les": 14,
@@ -11862,7 +12572,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "λύπη, - ης, ἡ"
+    "grieks_info": "λύπη, - ης, ἡ",
+    "strong": "3077"
   },
   {
     "les": 14,
@@ -11877,7 +12588,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πάθημα, -ατος, τό"
+    "grieks_info": "πάθημα, -ατος, τό",
+    "strong": "3804"
   },
   {
     "les": 14,
@@ -11892,7 +12604,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρέχω"
+    "grieks_info": "παρέχω",
+    "strong": "3930"
   },
   {
     "les": 14,
@@ -11907,7 +12620,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "περισσῶς"
+    "grieks_info": "περισσῶς",
+    "strong": "4057"
   },
   {
     "les": 14,
@@ -11922,7 +12636,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συκῆ, -ῆς, ἡ"
+    "grieks_info": "συκῆ, -ῆς, ἡ",
+    "strong": "4808"
   },
   {
     "les": 14,
@@ -11937,7 +12652,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συλλαμβάνω"
+    "grieks_info": "συλλαμβάνω",
+    "strong": "4815"
   },
   {
     "les": 14,
@@ -11952,7 +12668,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συνίστημι"
+    "grieks_info": "συνίστημι",
+    "strong": "4921"
   },
   {
     "les": 14,
@@ -11967,7 +12684,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τέρας, -ατος, τό"
+    "grieks_info": "τέρας, -ατος, τό",
+    "strong": "5059"
   },
   {
     "les": 14,
@@ -11982,7 +12700,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τροφή, -ῆς, ἡ"
+    "grieks_info": "τροφή, -ῆς, ἡ",
+    "strong": "5160"
   },
   {
     "les": 1,
@@ -11997,7 +12716,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταλαμβάνω"
+    "grieks_info": "καταλαμβάνω",
+    "strong": "2638"
   },
   {
     "les": 2,
@@ -12012,7 +12732,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γάμος, -ου, ὁ"
+    "grieks_info": "γάμος, -ου, ὁ",
+    "strong": "1062"
   },
   {
     "les": 5,
@@ -12027,7 +12748,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πέτρα, -ας, ἡ"
+    "grieks_info": "πέτρα, -ας, ἡ",
+    "strong": "4073"
   },
   {
     "les": 6,
@@ -12042,7 +12764,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "συμφέρω"
+    "grieks_info": "συμφέρω",
+    "strong": "4851"
   },
   {
     "les": 6,
@@ -12057,7 +12780,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "τράπεζα, -ης, ἡ"
+    "grieks_info": "τράπεζα, -ης, ἡ",
+    "strong": "5132"
   },
   {
     "les": 7,
@@ -12072,7 +12796,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπαγγέλλομαι"
+    "grieks_info": "ἐπαγγέλλομαι",
+    "strong": "1861"
   },
   {
     "les": 8,
@@ -12087,7 +12812,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "γεύομαι"
+    "grieks_info": "γεύομαι",
+    "strong": "1089"
   },
   {
     "les": 9,
@@ -12102,7 +12828,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "εὐσέβεια, -ας, ἡ"
+    "grieks_info": "εὐσέβεια, -ας, ἡ",
+    "strong": "2150"
   },
   {
     "les": 10,
@@ -12117,7 +12844,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐντέλλομαι"
+    "grieks_info": "ἐντέλλομαι",
+    "strong": "1781"
   },
   {
     "les": 10,
@@ -12132,7 +12860,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὑπακοή, -ῆς, ἡ"
+    "grieks_info": "ὑπακοή, -ῆς, ἡ",
+    "strong": "5218"
   },
   {
     "les": 14,
@@ -12147,7 +12876,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπίσταμαι"
+    "grieks_info": "ἐπίσταμαι",
+    "strong": "1987"
   },
   {
     "les": 14,
@@ -12162,7 +12892,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅθεν"
+    "grieks_info": "ὅθεν",
+    "strong": "3606"
   },
   {
     "les": 4,
@@ -12177,7 +12908,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μερίζω"
+    "grieks_info": "μερίζω",
+    "strong": "3307"
   },
   {
     "les": 4,
@@ -12192,7 +12924,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέτρον, -ου, τό"
+    "grieks_info": "μέτρον, -ου, τό",
+    "strong": "3358"
   },
   {
     "les": 5,
@@ -12207,7 +12940,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοινός, -ή, -όν"
+    "grieks_info": "κοινός, -ή, -όν",
+    "strong": "2839"
   },
   {
     "les": 6,
@@ -12222,7 +12956,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "θύω"
+    "grieks_info": "θύω",
+    "strong": "2380"
   },
   {
     "les": 6,
@@ -12237,7 +12972,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κλάω"
+    "grieks_info": "κλάω",
+    "strong": "2806"
   },
   {
     "les": 6,
@@ -12252,7 +12988,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ταπεινόω"
+    "grieks_info": "ταπεινόω",
+    "strong": "5013"
   },
   {
     "les": 8,
@@ -12267,7 +13004,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἕκτος, -η, -ον"
+    "grieks_info": "ἕκτος, -η, -ον",
+    "strong": "1623"
   },
   {
     "les": 8,
@@ -12282,7 +13020,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοινόω"
+    "grieks_info": "κοινόω",
+    "strong": "2840"
   },
   {
     "les": 8,
@@ -12297,7 +13036,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "πετεινός, -η, -όν"
+    "grieks_info": "πετεινός, -η, -όν",
+    "strong": "4071"
   },
   {
     "les": 11,
@@ -12312,7 +13052,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀνάκειμαι"
+    "grieks_info": "ἀνάκειμαι",
+    "strong": "345"
   },
   {
     "les": 11,
@@ -12327,7 +13068,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὄψιος, -α, -ον"
+    "grieks_info": "ὄψιος, -α, -ον",
+    "strong": "3798"
   },
   {
     "les": 13,
@@ -12342,7 +13084,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀμφότεροι, -αι, -α"
+    "grieks_info": "ἀμφότεροι, -αι, -α",
+    "strong": "297"
   },
   {
     "les": 13,
@@ -12357,7 +13100,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἁρπάζω"
+    "grieks_info": "ἁρπάζω",
+    "strong": "726"
   },
   {
     "les": 14,
@@ -12372,7 +13116,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μακροθυμία, -ας, ἡ"
+    "grieks_info": "μακροθυμία, -ας, ἡ",
+    "strong": "3115"
   },
   {
     "les": 9,
@@ -12387,7 +13132,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀναγγέλλω"
+    "grieks_info": "ἀναγγέλλω",
+    "strong": "312"
   },
   {
     "les": 10,
@@ -12402,7 +13148,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "χωρίζω"
+    "grieks_info": "χωρίζω",
+    "strong": "5562"
   },
   {
     "les": 12,
@@ -12417,7 +13164,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταντάω"
+    "grieks_info": "καταντάω",
+    "strong": "2658"
   },
   {
     "les": 13,
@@ -12432,7 +13180,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταισχύνω"
+    "grieks_info": "καταισχύνω",
+    "strong": "2617"
   },
   {
     "les": 13,
@@ -12447,7 +13196,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παιδεύω"
+    "grieks_info": "παιδεύω",
+    "strong": "3811"
   },
   {
     "les": 14,
@@ -12462,7 +13212,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἄνωθεν"
+    "grieks_info": "ἄνωθεν",
+    "strong": "509"
   },
   {
     "les": 10,
@@ -12477,7 +13228,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μάλιστα"
+    "grieks_info": "μάλιστα",
+    "strong": "3122"
   },
   {
     "les": 10,
@@ -12492,7 +13244,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "προσλαμβάνω"
+    "grieks_info": "προσλαμβάνω",
+    "strong": "4355"
   },
   {
     "les": 11,
@@ -12507,7 +13260,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σπλαγχνίζομαι"
+    "grieks_info": "σπλαγχνίζομαι",
+    "strong": "4697"
   },
   {
     "les": 12,
@@ -12522,7 +13276,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καίω"
+    "grieks_info": "καίω",
+    "strong": "2545"
   },
   {
     "les": 14,
@@ -12537,7 +13292,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔθος, -ους, τό"
+    "grieks_info": "ἔθος, -ους, τό",
+    "strong": "1485"
   },
   {
     "les": 10,
@@ -12552,7 +13308,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σπλάγχνον, -ου, τό"
+    "grieks_info": "σπλάγχνον, -ου, τό",
+    "strong": "4698"
   },
   {
     "les": 14,
@@ -12567,7 +13324,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κλάδος, -ου, ὁ"
+    "grieks_info": "κλάδος, -ου, ὁ",
+    "strong": "2798"
   },
   {
     "les": 14,
@@ -12582,7 +13340,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κλῆρος, -ου, ὁ"
+    "grieks_info": "κλῆρος, -ου, ὁ",
+    "strong": "2819"
   },
   {
     "les": 10,
@@ -12597,7 +13356,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἅμα"
+    "grieks_info": "ἅμα",
+    "strong": "260"
   },
   {
     "les": 10,
@@ -12612,7 +13372,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "κοινωνός, -οῦ, ὁ"
+    "grieks_info": "κοινωνός, -οῦ, ὁ",
+    "strong": "2844"
   },
   {
     "les": 12,
@@ -12627,7 +13388,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὄντως"
+    "grieks_info": "ὄντως",
+    "strong": "3689"
   },
   {
     "les": 12,
@@ -12642,7 +13404,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σιγάω"
+    "grieks_info": "σιγάω",
+    "strong": "4601"
   },
   {
     "les": 13,
@@ -12657,7 +13420,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἔνοχος, -ον"
+    "grieks_info": "ἔνοχος, -ον",
+    "strong": "1777"
   },
   {
     "les": 14,
@@ -12672,7 +13436,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπολογέομαι"
+    "grieks_info": "ἀπολογέομαι",
+    "strong": "626"
   },
   {
     "les": 12,
@@ -12687,7 +13452,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπιδίδωμι"
+    "grieks_info": "ἐπιδίδωμι",
+    "strong": "1929"
   },
   {
     "les": 13,
@@ -12702,7 +13468,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "αἵρεσις, -εως, ἡ"
+    "grieks_info": "αἵρεσις, -εως, ἡ",
+    "strong": "139"
   },
   {
     "les": 13,
@@ -12717,7 +13484,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "καταφρονέω"
+    "grieks_info": "καταφρονέω",
+    "strong": "2706"
   },
   {
     "les": 12,
@@ -12732,7 +13500,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἀπιστέω"
+    "grieks_info": "ἀπιστέω",
+    "strong": "569"
   },
   {
     "les": 12,
@@ -12747,7 +13516,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "διανοίγω"
+    "grieks_info": "διανοίγω",
+    "strong": "1272"
   },
   {
     "les": 12,
@@ -12762,7 +13532,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐνθάδε"
+    "grieks_info": "ἐνθάδε",
+    "strong": "1759"
   },
   {
     "les": 13,
@@ -12777,7 +13548,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "σχίσμα, -ατος, το"
+    "grieks_info": "σχίσμα, -ατος, το",
+    "strong": "4978"
   },
   {
     "les": 13,
@@ -12792,7 +13564,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "δόκιμος, -ον"
+    "grieks_info": "δόκιμος, -ον",
+    "strong": "1384"
   },
   {
     "les": 13,
@@ -12807,7 +13580,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐπαινέω"
+    "grieks_info": "ἐπαινέω",
+    "strong": "1867"
   },
   {
     "les": 3,
@@ -12822,7 +13596,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ὅσος, -η, -ον"
+    "grieks_info": "ὅσος, -η, -ον",
+    "strong": "3745"
   },
   {
     "les": 7,
@@ -12837,7 +13612,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "μέρος, -ους, τό"
+    "grieks_info": "μέρος, -ους, τό",
+    "strong": "3313"
   },
   {
     "les": 8,
@@ -12852,7 +13628,8 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "ἐκπορεύομαι"
+    "grieks_info": "ἐκπορεύομαι",
+    "strong": "1607"
   },
   {
     "les": 9,
@@ -12867,6 +13644,7 @@
     "score_goed": 0,
     "score_fout": 0,
     "streak": 0,
-    "grieks_info": "παρέρχομαι"
+    "grieks_info": "παρέρχομαι",
+    "strong": "3928"
   }
 ]
