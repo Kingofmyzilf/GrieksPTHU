@@ -1,0 +1,2564 @@
+{
+  "Grieks 1": {
+    "Pronomen Personale": {
+      "1e Persoon (ik/wij)": [
+        {
+          "label": "Nom ev",
+          "vorm": "ἐγώ",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "ἐμοῦ / μου",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "ἐμοί / μοι",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "ἐμέ / με",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "ἡμεῖς",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "ἡμῶν",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "ἡμῖν",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "ἡμᾶς",
+          "id": "grieks_1_pronomen_personale_1e_persoon_ik_wij_acc_mv"
+        }
+      ],
+      "2e Persoon (jij/jullie)": [
+        {
+          "label": "Nom ev",
+          "vorm": "σύ",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "σοῦ / σου",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "σοί / σοι",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "σέ / σε",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "ὑμεῖς",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "ὑμῶν",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "ὑμῖν",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "ὑμᾶς",
+          "id": "grieks_1_pronomen_personale_2e_persoon_jij_jullie_acc_mv"
+        }
+      ]
+    },
+    "Werkwoord (εἰμί)": {
+      "Indicativus Praesens": [
+        {
+          "label": "1e ev",
+          "vorm": "εἰμί",
+          "id": "grieks_1_werkwoord_indicativus_praesens_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "εἶ",
+          "id": "grieks_1_werkwoord_indicativus_praesens_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἐστί(ν)",
+          "id": "grieks_1_werkwoord_indicativus_praesens_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐσμέν",
+          "id": "grieks_1_werkwoord_indicativus_praesens_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐστέ",
+          "id": "grieks_1_werkwoord_indicativus_praesens_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "εἰσί(ν)",
+          "id": "grieks_1_werkwoord_indicativus_praesens_3e_mv"
+        }
+      ],
+      "Indicativus Imperfectum": [
+        {
+          "label": "1e ev",
+          "vorm": "ἦν / ἤμην",
+          "id": "grieks_1_werkwoord_indicativus_imperfectum_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἦσθα",
+          "id": "grieks_1_werkwoord_indicativus_imperfectum_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἦν",
+          "id": "grieks_1_werkwoord_indicativus_imperfectum_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἦμεν",
+          "id": "grieks_1_werkwoord_indicativus_imperfectum_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἦτε",
+          "id": "grieks_1_werkwoord_indicativus_imperfectum_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἦσαν",
+          "id": "grieks_1_werkwoord_indicativus_imperfectum_3e_mv"
+        }
+      ],
+      "Infinitivus": [
+        {
+          "label": "Praesens",
+          "vorm": "εἶναι",
+          "id": "grieks_1_werkwoord_infinitivus_praesens"
+        }
+      ]
+    },
+    "Werkwoord (λύω) - Actief": {
+      "Indicativus Praesens": [
+        {
+          "label": "1e ev",
+          "vorm": "λύω",
+          "id": "grieks_1_werkwoord_actief_indicativus_praesens_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύεις",
+          "id": "grieks_1_werkwoord_actief_indicativus_praesens_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύει",
+          "id": "grieks_1_werkwoord_actief_indicativus_praesens_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λύομεν",
+          "id": "grieks_1_werkwoord_actief_indicativus_praesens_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύετε",
+          "id": "grieks_1_werkwoord_actief_indicativus_praesens_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύουσι(ν)",
+          "id": "grieks_1_werkwoord_actief_indicativus_praesens_3e_mv"
+        }
+      ],
+      "Indicativus Imperfectum": [
+        {
+          "label": "1e ev",
+          "vorm": "ἔλυον",
+          "id": "grieks_1_werkwoord_actief_indicativus_imperfectum_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἔλυες",
+          "id": "grieks_1_werkwoord_actief_indicativus_imperfectum_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἔλυε(ν)",
+          "id": "grieks_1_werkwoord_actief_indicativus_imperfectum_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐλύομεν",
+          "id": "grieks_1_werkwoord_actief_indicativus_imperfectum_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐλύετε",
+          "id": "grieks_1_werkwoord_actief_indicativus_imperfectum_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἔλυον",
+          "id": "grieks_1_werkwoord_actief_indicativus_imperfectum_3e_mv"
+        }
+      ],
+      "Indicativus Futurum": [
+        {
+          "label": "1e ev",
+          "vorm": "λύσω",
+          "id": "grieks_1_werkwoord_actief_indicativus_futurum_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύσεις",
+          "id": "grieks_1_werkwoord_actief_indicativus_futurum_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύσει",
+          "id": "grieks_1_werkwoord_actief_indicativus_futurum_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λύσομεν",
+          "id": "grieks_1_werkwoord_actief_indicativus_futurum_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύσετε",
+          "id": "grieks_1_werkwoord_actief_indicativus_futurum_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύσουσι(ν)",
+          "id": "grieks_1_werkwoord_actief_indicativus_futurum_3e_mv"
+        }
+      ],
+      "Indicativus Aoristus": [
+        {
+          "label": "1e ev",
+          "vorm": "ἔλυσα",
+          "id": "grieks_1_werkwoord_actief_indicativus_aoristus_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἔλυσας",
+          "id": "grieks_1_werkwoord_actief_indicativus_aoristus_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἔλυσε(ν)",
+          "id": "grieks_1_werkwoord_actief_indicativus_aoristus_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐλύσαμεν",
+          "id": "grieks_1_werkwoord_actief_indicativus_aoristus_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐλύσατε",
+          "id": "grieks_1_werkwoord_actief_indicativus_aoristus_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἔλυσαν",
+          "id": "grieks_1_werkwoord_actief_indicativus_aoristus_3e_mv"
+        }
+      ],
+      "Imperativus": [
+        {
+          "label": "Praesens 2e ev",
+          "vorm": "λύε",
+          "id": "grieks_1_werkwoord_actief_imperativus_praesens_2e_ev"
+        },
+        {
+          "label": "Praesens 3e ev",
+          "vorm": "λυέτω",
+          "id": "grieks_1_werkwoord_actief_imperativus_praesens_3e_ev"
+        },
+        {
+          "label": "Praesens 2e mv",
+          "vorm": "λύετε",
+          "id": "grieks_1_werkwoord_actief_imperativus_praesens_2e_mv"
+        },
+        {
+          "label": "Praesens 3e mv",
+          "vorm": "λυέτωσαν",
+          "id": "grieks_1_werkwoord_actief_imperativus_praesens_3e_mv"
+        },
+        {
+          "label": "Aoristus 2e ev",
+          "vorm": "λῦσον",
+          "id": "grieks_1_werkwoord_actief_imperativus_aoristus_2e_ev"
+        },
+        {
+          "label": "Aoristus 3e ev",
+          "vorm": "λυσάτω",
+          "id": "grieks_1_werkwoord_actief_imperativus_aoristus_3e_ev"
+        },
+        {
+          "label": "Aoristus 2e mv",
+          "vorm": "λύσατε",
+          "id": "grieks_1_werkwoord_actief_imperativus_aoristus_2e_mv"
+        },
+        {
+          "label": "Aoristus 3e mv",
+          "vorm": "λυσάτωσαν",
+          "id": "grieks_1_werkwoord_actief_imperativus_aoristus_3e_mv"
+        }
+      ],
+      "Infinitivus": [
+        {
+          "label": "Praesens",
+          "vorm": "λύειν",
+          "id": "grieks_1_werkwoord_actief_infinitivus_praesens"
+        },
+        {
+          "label": "Futurum",
+          "vorm": "λύσειν",
+          "id": "grieks_1_werkwoord_actief_infinitivus_futurum"
+        },
+        {
+          "label": "Aoristus",
+          "vorm": "λῦσαι",
+          "id": "grieks_1_werkwoord_actief_infinitivus_aoristus"
+        }
+      ]
+    },
+    "Groep 1: Lidwoord": {
+      "M": [
+        {
+          "label": "nom. ev.",
+          "vorm": "ὁ",
+          "id": "grieks_1_groep_1_lidwoord_m_nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "τοῦ",
+          "id": "grieks_1_groep_1_lidwoord_m_gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "τῷ",
+          "id": "grieks_1_groep_1_lidwoord_m_dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "τόν",
+          "id": "grieks_1_groep_1_lidwoord_m_acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "οἱ",
+          "id": "grieks_1_groep_1_lidwoord_m_nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "τῶν",
+          "id": "grieks_1_groep_1_lidwoord_m_gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "τοῖς",
+          "id": "grieks_1_groep_1_lidwoord_m_dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "τούς",
+          "id": "grieks_1_groep_1_lidwoord_m_acc_mv"
+        }
+      ],
+      "V": [
+        {
+          "label": "nom. ev.",
+          "vorm": "ἡ",
+          "id": "grieks_1_groep_1_lidwoord_v_nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "τῆς",
+          "id": "grieks_1_groep_1_lidwoord_v_gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "τῇ",
+          "id": "grieks_1_groep_1_lidwoord_v_dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "τήν",
+          "id": "grieks_1_groep_1_lidwoord_v_acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "αἱ",
+          "id": "grieks_1_groep_1_lidwoord_v_nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "τῶν",
+          "id": "grieks_1_groep_1_lidwoord_v_gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "ταῖς",
+          "id": "grieks_1_groep_1_lidwoord_v_dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "τάς",
+          "id": "grieks_1_groep_1_lidwoord_v_acc_mv"
+        }
+      ],
+      "O": [
+        {
+          "label": "nom. ev.",
+          "vorm": "τό",
+          "id": "grieks_1_groep_1_lidwoord_o_nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "τοῦ",
+          "id": "grieks_1_groep_1_lidwoord_o_gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "τῷ",
+          "id": "grieks_1_groep_1_lidwoord_o_dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "τό",
+          "id": "grieks_1_groep_1_lidwoord_o_acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "τά",
+          "id": "grieks_1_groep_1_lidwoord_o_nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "τῶν",
+          "id": "grieks_1_groep_1_lidwoord_o_gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "τοῖς",
+          "id": "grieks_1_groep_1_lidwoord_o_dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "τά",
+          "id": "grieks_1_groep_1_lidwoord_o_acc_mv"
+        }
+      ]
+    },
+    "Groep 1: Vrouwelijk": {
+      "-η (κώμη)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "κώμη",
+          "id": "grieks_1_groep_1_vrouwelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "κώμης",
+          "id": "grieks_1_groep_1_vrouwelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "κώμῃ",
+          "id": "grieks_1_groep_1_vrouwelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "κώμην",
+          "id": "grieks_1_groep_1_vrouwelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "κῶμαι",
+          "id": "grieks_1_groep_1_vrouwelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "κωμῶν",
+          "id": "grieks_1_groep_1_vrouwelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "κώμαις",
+          "id": "grieks_1_groep_1_vrouwelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "κώμας",
+          "id": "grieks_1_groep_1_vrouwelijk__acc_mv"
+        }
+      ],
+      "-α (θύρα)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "θύρα",
+          "id": "grieks_1_groep_1_vrouwelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "θύρας",
+          "id": "grieks_1_groep_1_vrouwelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "θύρᾳ",
+          "id": "grieks_1_groep_1_vrouwelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "θύραν",
+          "id": "grieks_1_groep_1_vrouwelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "θύραι",
+          "id": "grieks_1_groep_1_vrouwelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "θυρῶν",
+          "id": "grieks_1_groep_1_vrouwelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "θύραις",
+          "id": "grieks_1_groep_1_vrouwelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "θύρας",
+          "id": "grieks_1_groep_1_vrouwelijk__acc_mv"
+        }
+      ],
+      "-α (ἄκανθα)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "ἄκανθα",
+          "id": "grieks_1_groep_1_vrouwelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "ἀκάνθης",
+          "id": "grieks_1_groep_1_vrouwelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "ἀκάνθῃ",
+          "id": "grieks_1_groep_1_vrouwelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "ἄκανθαν",
+          "id": "grieks_1_groep_1_vrouwelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "ἄκανθαι",
+          "id": "grieks_1_groep_1_vrouwelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "ἀκανθῶν",
+          "id": "grieks_1_groep_1_vrouwelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "ἀκάνθαις",
+          "id": "grieks_1_groep_1_vrouwelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "ἀκάνθας",
+          "id": "grieks_1_groep_1_vrouwelijk__acc_mv"
+        }
+      ]
+    },
+    "Groep 1: Mannelijk": {
+      "-ης (προφήτης)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "προφήτης",
+          "id": "grieks_1_groep_1_mannelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "προφήτου",
+          "id": "grieks_1_groep_1_mannelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "προφήτῃ",
+          "id": "grieks_1_groep_1_mannelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "προφήτην",
+          "id": "grieks_1_groep_1_mannelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "προφῆται",
+          "id": "grieks_1_groep_1_mannelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "προφητῶν",
+          "id": "grieks_1_groep_1_mannelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "προφήταις",
+          "id": "grieks_1_groep_1_mannelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "προφήτας",
+          "id": "grieks_1_groep_1_mannelijk__acc_mv"
+        }
+      ],
+      "-ας (νεανίας)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "νεανίας",
+          "id": "grieks_1_groep_1_mannelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "νεανίου",
+          "id": "grieks_1_groep_1_mannelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "νεανίᾳ",
+          "id": "grieks_1_groep_1_mannelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "νεανίαν",
+          "id": "grieks_1_groep_1_mannelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "νεανίαι",
+          "id": "grieks_1_groep_1_mannelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "νεανιῶν",
+          "id": "grieks_1_groep_1_mannelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "νεανίαις",
+          "id": "grieks_1_groep_1_mannelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "νεανίας",
+          "id": "grieks_1_groep_1_mannelijk__acc_mv"
+        }
+      ]
+    },
+    "Groep 2: Mannelijk & Vrouwelijk": {
+      "-ος (δοῦλος)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "δοῦλος",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "δούλου",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "δούλῳ",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "δοῦλον",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "δοῦλοι",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "δούλων",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "δούλοις",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "δούλους",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_mv"
+        }
+      ],
+      "-ος (βίβλος)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "βίβλος",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "βίβλου",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "βίβλῳ",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "βίβλον",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "βίβλοι",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "βίβλων",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "βίβλοις",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "βίβλους",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_mv"
+        }
+      ],
+      "-ους (νοῦς)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "νοῦς",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "νοῦ",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "νῷ",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "νοῦν",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "νοῖ",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "νῶν",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "νοῖς",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "νοῦς",
+          "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_mv"
+        }
+      ]
+    },
+    "Groep 2: Onzijdig": {
+      "-ον (ἔργον)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "ἔργον",
+          "id": "grieks_1_groep_2_onzijdig__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "ἔργου",
+          "id": "grieks_1_groep_2_onzijdig__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "ἔργῳ",
+          "id": "grieks_1_groep_2_onzijdig__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "ἔργον",
+          "id": "grieks_1_groep_2_onzijdig__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "ἔργα",
+          "id": "grieks_1_groep_2_onzijdig__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "ἔργων",
+          "id": "grieks_1_groep_2_onzijdig__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "ἔργοις",
+          "id": "grieks_1_groep_2_onzijdig__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "ἔργα",
+          "id": "grieks_1_groep_2_onzijdig__acc_mv"
+        }
+      ],
+      "-ουν (ὀστοῦν)": [
+        {
+          "label": "nom. ev.",
+          "vorm": "ὀστοῦν",
+          "id": "grieks_1_groep_2_onzijdig__nom_ev"
+        },
+        {
+          "label": "gen. ev.",
+          "vorm": "ὀστοῦ",
+          "id": "grieks_1_groep_2_onzijdig__gen_ev"
+        },
+        {
+          "label": "dat. ev.",
+          "vorm": "ὀστῷ",
+          "id": "grieks_1_groep_2_onzijdig__dat_ev"
+        },
+        {
+          "label": "acc. ev.",
+          "vorm": "ὀστοῦν",
+          "id": "grieks_1_groep_2_onzijdig__acc_ev"
+        },
+        {
+          "label": "nom. mv.",
+          "vorm": "ὀστᾶ",
+          "id": "grieks_1_groep_2_onzijdig__nom_mv"
+        },
+        {
+          "label": "gen. mv.",
+          "vorm": "ὀστῶν",
+          "id": "grieks_1_groep_2_onzijdig__gen_mv"
+        },
+        {
+          "label": "dat. mv.",
+          "vorm": "ὀστοῖς",
+          "id": "grieks_1_groep_2_onzijdig__dat_mv"
+        },
+        {
+          "label": "acc. mv.",
+          "vorm": "ὀστᾶ",
+          "id": "grieks_1_groep_2_onzijdig__acc_mv"
+        }
+      ]
+    },
+    "Adjectiva (καλός)": {
+      "Mannelijk": [
+        {
+          "label": "nom. sg.",
+          "vorm": "καλός",
+          "id": "grieks_1_adjectiva_mannelijk_nom_sg"
+        },
+        {
+          "label": "gen. sg.",
+          "vorm": "καλοῦ",
+          "id": "grieks_1_adjectiva_mannelijk_gen_sg"
+        },
+        {
+          "label": "dat. sg.",
+          "vorm": "καλῷ",
+          "id": "grieks_1_adjectiva_mannelijk_dat_sg"
+        },
+        {
+          "label": "acc. sg.",
+          "vorm": "καλόν",
+          "id": "grieks_1_adjectiva_mannelijk_acc_sg"
+        },
+        {
+          "label": "nom. pl.",
+          "vorm": "καλοί",
+          "id": "grieks_1_adjectiva_mannelijk_nom_pl"
+        },
+        {
+          "label": "gen. pl.",
+          "vorm": "καλῶν",
+          "id": "grieks_1_adjectiva_mannelijk_gen_pl"
+        },
+        {
+          "label": "dat. pl.",
+          "vorm": "καλοῖς",
+          "id": "grieks_1_adjectiva_mannelijk_dat_pl"
+        },
+        {
+          "label": "acc. pl.",
+          "vorm": "καλούς",
+          "id": "grieks_1_adjectiva_mannelijk_acc_pl"
+        }
+      ],
+      "Vrouwelijk": [
+        {
+          "label": "nom. sg.",
+          "vorm": "καλή",
+          "id": "grieks_1_adjectiva_vrouwelijk_nom_sg"
+        },
+        {
+          "label": "gen. sg.",
+          "vorm": "καλῆς",
+          "id": "grieks_1_adjectiva_vrouwelijk_gen_sg"
+        },
+        {
+          "label": "dat. sg.",
+          "vorm": "καλῇ",
+          "id": "grieks_1_adjectiva_vrouwelijk_dat_sg"
+        },
+        {
+          "label": "acc. sg.",
+          "vorm": "καλήν",
+          "id": "grieks_1_adjectiva_vrouwelijk_acc_sg"
+        },
+        {
+          "label": "nom. pl.",
+          "vorm": "καλαί",
+          "id": "grieks_1_adjectiva_vrouwelijk_nom_pl"
+        },
+        {
+          "label": "gen. pl.",
+          "vorm": "καλῶν",
+          "id": "grieks_1_adjectiva_vrouwelijk_gen_pl"
+        },
+        {
+          "label": "dat. pl.",
+          "vorm": "καλαῖς",
+          "id": "grieks_1_adjectiva_vrouwelijk_dat_pl"
+        },
+        {
+          "label": "acc. pl.",
+          "vorm": "καλάς",
+          "id": "grieks_1_adjectiva_vrouwelijk_acc_pl"
+        }
+      ],
+      "Onzijdig": [
+        {
+          "label": "nom. sg.",
+          "vorm": "καλόν",
+          "id": "grieks_1_adjectiva_onzijdig_nom_sg"
+        },
+        {
+          "label": "gen. sg.",
+          "vorm": "καλοῦ",
+          "id": "grieks_1_adjectiva_onzijdig_gen_sg"
+        },
+        {
+          "label": "dat. sg.",
+          "vorm": "καλῷ",
+          "id": "grieks_1_adjectiva_onzijdig_dat_sg"
+        },
+        {
+          "label": "acc. sg.",
+          "vorm": "καλόν",
+          "id": "grieks_1_adjectiva_onzijdig_acc_sg"
+        },
+        {
+          "label": "nom. pl.",
+          "vorm": "καλά",
+          "id": "grieks_1_adjectiva_onzijdig_nom_pl"
+        },
+        {
+          "label": "gen. pl.",
+          "vorm": "καλῶν",
+          "id": "grieks_1_adjectiva_onzijdig_gen_pl"
+        },
+        {
+          "label": "dat. pl.",
+          "vorm": "καλοῖς",
+          "id": "grieks_1_adjectiva_onzijdig_dat_pl"
+        },
+        {
+          "label": "acc. pl.",
+          "vorm": "καλά",
+          "id": "grieks_1_adjectiva_onzijdig_acc_pl"
+        }
+      ]
+    },
+    "Lidwoorden": {
+      "Mannelijk": [
+        {
+          "label": "Nom ev",
+          "vorm": "ὁ",
+          "id": "grieks_1_lidwoorden_mannelijk_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "τοῦ",
+          "id": "grieks_1_lidwoorden_mannelijk_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "τῷ",
+          "id": "grieks_1_lidwoorden_mannelijk_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "τόν",
+          "id": "grieks_1_lidwoorden_mannelijk_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "οἱ",
+          "id": "grieks_1_lidwoorden_mannelijk_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "τῶν",
+          "id": "grieks_1_lidwoorden_mannelijk_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "τοῖς",
+          "id": "grieks_1_lidwoorden_mannelijk_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "τούς",
+          "id": "grieks_1_lidwoorden_mannelijk_acc_mv"
+        }
+      ],
+      "Vrouwelijk": [
+        {
+          "label": "Nom ev",
+          "vorm": "ἡ",
+          "id": "grieks_1_lidwoorden_vrouwelijk_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "τῆς",
+          "id": "grieks_1_lidwoorden_vrouwelijk_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "τῇ",
+          "id": "grieks_1_lidwoorden_vrouwelijk_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "τήν",
+          "id": "grieks_1_lidwoorden_vrouwelijk_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "αἱ",
+          "id": "grieks_1_lidwoorden_vrouwelijk_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "τῶν",
+          "id": "grieks_1_lidwoorden_vrouwelijk_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "ταῖς",
+          "id": "grieks_1_lidwoorden_vrouwelijk_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "τάς",
+          "id": "grieks_1_lidwoorden_vrouwelijk_acc_mv"
+        }
+      ],
+      "Onzijdig": [
+        {
+          "label": "Nom ev",
+          "vorm": "τό",
+          "id": "grieks_1_lidwoorden_onzijdig_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "τοῦ",
+          "id": "grieks_1_lidwoorden_onzijdig_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "τῷ",
+          "id": "grieks_1_lidwoorden_onzijdig_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "τό",
+          "id": "grieks_1_lidwoorden_onzijdig_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "τά",
+          "id": "grieks_1_lidwoorden_onzijdig_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "τῶν",
+          "id": "grieks_1_lidwoorden_onzijdig_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "τοῖς",
+          "id": "grieks_1_lidwoorden_onzijdig_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "τά",
+          "id": "grieks_1_lidwoorden_onzijdig_acc_mv"
+        }
+      ]
+    }
+  },
+  "Grieks 2": {
+    "Zelfst. Nw. (Groep 3)": {
+      "ῥήτωρ (M/V)": [
+        {
+          "label": "Nom ev",
+          "vorm": "ῥήτωρ",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "ῥήτορος",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "ῥήτορι",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "ῥήτορα",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "ῥήτορες",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "ῥητόρων",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "ῥήτορσι(ν)",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "ῥήτορας",
+          "id": "grieks_2_zelfst_nw_groep_3_m_v_acc_mv"
+        }
+      ],
+      "σῶμα (O)": [
+        {
+          "label": "Nom ev",
+          "vorm": "σῶμα",
+          "id": "grieks_2_zelfst_nw_groep_3_o_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "σώματος",
+          "id": "grieks_2_zelfst_nw_groep_3_o_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "σώματι",
+          "id": "grieks_2_zelfst_nw_groep_3_o_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "σῶμα",
+          "id": "grieks_2_zelfst_nw_groep_3_o_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "σώματα",
+          "id": "grieks_2_zelfst_nw_groep_3_o_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "σωμάτων",
+          "id": "grieks_2_zelfst_nw_groep_3_o_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "σώμασι(ν)",
+          "id": "grieks_2_zelfst_nw_groep_3_o_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "σώματα",
+          "id": "grieks_2_zelfst_nw_groep_3_o_acc_mv"
+        }
+      ],
+      "γένος (O)": [
+        {
+          "label": "Nom ev",
+          "vorm": "γένος",
+          "id": "grieks_2_zelfst_nw_groep_3_o_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "γένους",
+          "id": "grieks_2_zelfst_nw_groep_3_o_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "γένει",
+          "id": "grieks_2_zelfst_nw_groep_3_o_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "γένος",
+          "id": "grieks_2_zelfst_nw_groep_3_o_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "γένη",
+          "id": "grieks_2_zelfst_nw_groep_3_o_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "γενῶν",
+          "id": "grieks_2_zelfst_nw_groep_3_o_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "γένεσι(ν)",
+          "id": "grieks_2_zelfst_nw_groep_3_o_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "γένη",
+          "id": "grieks_2_zelfst_nw_groep_3_o_acc_mv"
+        }
+      ],
+      "τάξις (V)": [
+        {
+          "label": "Nom ev",
+          "vorm": "τάξις",
+          "id": "grieks_2_zelfst_nw_groep_3_v_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "τάξεως",
+          "id": "grieks_2_zelfst_nw_groep_3_v_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "τάξει",
+          "id": "grieks_2_zelfst_nw_groep_3_v_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "τάξιν",
+          "id": "grieks_2_zelfst_nw_groep_3_v_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "τάξεις",
+          "id": "grieks_2_zelfst_nw_groep_3_v_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "τάξεων",
+          "id": "grieks_2_zelfst_nw_groep_3_v_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "τάξεσι(ν)",
+          "id": "grieks_2_zelfst_nw_groep_3_v_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "τάξεις",
+          "id": "grieks_2_zelfst_nw_groep_3_v_acc_mv"
+        }
+      ]
+    },
+    "Bijv. Nw. (Groep 3)": {
+      "μέλας (M)": [
+        {
+          "label": "Nom ev",
+          "vorm": "μέλας",
+          "id": "grieks_2_bijv_nw_groep_3_m_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "μέλανος",
+          "id": "grieks_2_bijv_nw_groep_3_m_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "μέλανι",
+          "id": "grieks_2_bijv_nw_groep_3_m_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "μέλανα",
+          "id": "grieks_2_bijv_nw_groep_3_m_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "μέλανες",
+          "id": "grieks_2_bijv_nw_groep_3_m_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "μελάνων",
+          "id": "grieks_2_bijv_nw_groep_3_m_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "μελᾶσι(ν)",
+          "id": "grieks_2_bijv_nw_groep_3_m_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "μέλανας",
+          "id": "grieks_2_bijv_nw_groep_3_m_acc_mv"
+        }
+      ],
+      "μέλαινα (V)": [
+        {
+          "label": "Nom ev",
+          "vorm": "μέλαινα",
+          "id": "grieks_2_bijv_nw_groep_3_v_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "μελαίνης",
+          "id": "grieks_2_bijv_nw_groep_3_v_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "μελαίνῃ",
+          "id": "grieks_2_bijv_nw_groep_3_v_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "μέλαιναν",
+          "id": "grieks_2_bijv_nw_groep_3_v_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "μέλαιναι",
+          "id": "grieks_2_bijv_nw_groep_3_v_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "μελαινῶν",
+          "id": "grieks_2_bijv_nw_groep_3_v_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "μελαίναις",
+          "id": "grieks_2_bijv_nw_groep_3_v_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "μελαίνας",
+          "id": "grieks_2_bijv_nw_groep_3_v_acc_mv"
+        }
+      ],
+      "μέλαν (O)": [
+        {
+          "label": "Nom ev",
+          "vorm": "μέλαν",
+          "id": "grieks_2_bijv_nw_groep_3_o_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "μέλανος",
+          "id": "grieks_2_bijv_nw_groep_3_o_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "μέλανι",
+          "id": "grieks_2_bijv_nw_groep_3_o_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "μέλαν",
+          "id": "grieks_2_bijv_nw_groep_3_o_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "μέλανα",
+          "id": "grieks_2_bijv_nw_groep_3_o_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "μελάνων",
+          "id": "grieks_2_bijv_nw_groep_3_o_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "μελᾶσι(ν)",
+          "id": "grieks_2_bijv_nw_groep_3_o_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "μέλανα",
+          "id": "grieks_2_bijv_nw_groep_3_o_acc_mv"
+        }
+      ],
+      "ἀληθής (M/V)": [
+        {
+          "label": "Nom ev",
+          "vorm": "ἀληθής",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "ἀληθοῦς",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "ἀληθεῖ",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "ἀληθῆ",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "ἀληθεῖς",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "ἀληθῶν",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "ἀληθέσι(ν)",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "ἀληθεῖς",
+          "id": "grieks_2_bijv_nw_groep_3_m_v_acc_mv"
+        }
+      ],
+      "ἀληθές (O)": [
+        {
+          "label": "Nom ev",
+          "vorm": "ἀληθές",
+          "id": "grieks_2_bijv_nw_groep_3_o_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "ἀληθοῦς",
+          "id": "grieks_2_bijv_nw_groep_3_o_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "ἀληθεῖ",
+          "id": "grieks_2_bijv_nw_groep_3_o_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "ἀληθές",
+          "id": "grieks_2_bijv_nw_groep_3_o_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "ἀληθῆ",
+          "id": "grieks_2_bijv_nw_groep_3_o_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "ἀληθῶν",
+          "id": "grieks_2_bijv_nw_groep_3_o_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "ἀληθέσι(ν)",
+          "id": "grieks_2_bijv_nw_groep_3_o_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "ἀληθῆ",
+          "id": "grieks_2_bijv_nw_groep_3_o_acc_mv"
+        }
+      ]
+    },
+    "Werkwoord: Speciale Aoristus": {
+      "Thematisch (ἔλαβον)": [
+        {
+          "label": "Ind 1e ev",
+          "vorm": "ἔλαβον",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_ind_1e_ev"
+        },
+        {
+          "label": "Ind 2e ev",
+          "vorm": "ἔλαβες",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_ind_2e_ev"
+        },
+        {
+          "label": "Ind 3e ev",
+          "vorm": "ἔλαβε(ν)",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_ind_3e_ev"
+        },
+        {
+          "label": "Ind 1e mv",
+          "vorm": "ἐλάβομεν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_ind_1e_mv"
+        },
+        {
+          "label": "Ind 2e mv",
+          "vorm": "ἐλάβετε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_ind_2e_mv"
+        },
+        {
+          "label": "Ind 3e mv",
+          "vorm": "ἔλαβον",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_ind_3e_mv"
+        },
+        {
+          "label": "Imp 2e ev",
+          "vorm": "λάβε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_imp_2e_ev"
+        },
+        {
+          "label": "Imp 3e ev",
+          "vorm": "λαβέτω",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_imp_3e_ev"
+        },
+        {
+          "label": "Imp 2e mv",
+          "vorm": "λάβετε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_imp_2e_mv"
+        },
+        {
+          "label": "Imp 3e mv",
+          "vorm": "λαβέτωσαν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_imp_3e_mv"
+        },
+        {
+          "label": "Infinitivus",
+          "vorm": "λαβεῖν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_thematisch_infinitivus"
+        }
+      ],
+      "Stam (ἔβην)": [
+        {
+          "label": "Ind 1e ev",
+          "vorm": "ἔβην",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_ev"
+        },
+        {
+          "label": "Ind 2e ev",
+          "vorm": "ἔβης",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_ev"
+        },
+        {
+          "label": "Ind 3e ev",
+          "vorm": "ἔβη",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_3e_ev"
+        },
+        {
+          "label": "Ind 1e mv",
+          "vorm": "ἔβημεν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_mv"
+        },
+        {
+          "label": "Ind 2e mv",
+          "vorm": "ἔβητε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_mv"
+        },
+        {
+          "label": "Ind 3e mv",
+          "vorm": "ἔβησαν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_3e_mv"
+        },
+        {
+          "label": "Imp 2e ev",
+          "vorm": "βῆθι",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_ev"
+        },
+        {
+          "label": "Imp 3e ev",
+          "vorm": "βήτω",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_ev"
+        },
+        {
+          "label": "Imp 2e mv",
+          "vorm": "βῆτε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_mv"
+        },
+        {
+          "label": "Imp 3e mv",
+          "vorm": "βήτωσαν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_mv"
+        },
+        {
+          "label": "Infinitivus",
+          "vorm": "βῆναι",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_infinitivus"
+        }
+      ],
+      "Stam (ἔγνων)": [
+        {
+          "label": "Ind 1e ev",
+          "vorm": "ἔγνων",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_ev"
+        },
+        {
+          "label": "Ind 2e ev",
+          "vorm": "ἔγνως",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_ev"
+        },
+        {
+          "label": "Ind 3e ev",
+          "vorm": "ἔγνω",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_3e_ev"
+        },
+        {
+          "label": "Ind 1e mv",
+          "vorm": "ἔγνωμεν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_mv"
+        },
+        {
+          "label": "Ind 2e mv",
+          "vorm": "ἔγνωτε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_mv"
+        },
+        {
+          "label": "Ind 3e mv",
+          "vorm": "ἔγνωσαν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_3e_mv"
+        },
+        {
+          "label": "Imp 2e ev",
+          "vorm": "γνῶθι",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_ev"
+        },
+        {
+          "label": "Imp 3e ev",
+          "vorm": "γνώτω",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_ev"
+        },
+        {
+          "label": "Imp 2e mv",
+          "vorm": "γνῶτε",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_mv"
+        },
+        {
+          "label": "Imp 3e mv",
+          "vorm": "γνώτωσαν",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_mv"
+        },
+        {
+          "label": "Infinitivus",
+          "vorm": "γνῶναι",
+          "id": "grieks_2_werkwoord_speciale_aoristus_stam_infinitivus"
+        }
+      ]
+    },
+    "Werkwoord (λύω) - Medium/Passief": {
+      "Indicativus Praesens (M/P)": [
+        {
+          "label": "1e ev",
+          "vorm": "λύομαι",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύῃ",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύεται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λυόμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύεσθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύονται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_3e_mv"
+        }
+      ],
+      "Indicativus Imperfectum (M/P)": [
+        {
+          "label": "1e ev",
+          "vorm": "ἐλυόμην",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἐλύου",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἐλύετο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐλυόμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐλύεσθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἐλύοντο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_3e_mv"
+        }
+      ],
+      "Indicativus Futurum (Med)": [
+        {
+          "label": "1e ev",
+          "vorm": "λύσομαι",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_med_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύσῃ",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_med_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύσεται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_med_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λυσόμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_med_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύσεσθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_med_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύσονται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_med_3e_mv"
+        }
+      ],
+      "Indicativus Futurum (Pas)": [
+        {
+          "label": "1e ev",
+          "vorm": "λυθήσομαι",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_pas_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λυθήσῃ",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_pas_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λυθήσεται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_pas_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λυθησόμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_pas_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λυθήσεσθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_pas_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λυθήσονται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_futurum_pas_3e_mv"
+        }
+      ],
+      "Indicativus Aoristus (Med)": [
+        {
+          "label": "1e ev",
+          "vorm": "ἐλυσάμην",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἐλύσω",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἐλύσατο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐλυσάμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐλύσασθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἐλύσαντο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_3e_mv"
+        }
+      ],
+      "Indicativus Aoristus (Pas)": [
+        {
+          "label": "1e ev",
+          "vorm": "ἐλύθην",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_pas_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἐλύθης",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_pas_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἐλύθη",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_pas_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐλύθημεν",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_pas_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐλύθητε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_pas_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἐλύθησαν",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_pas_3e_mv"
+        }
+      ],
+      "Indicativus Perfectum (M/P)": [
+        {
+          "label": "1e ev",
+          "vorm": "λέλυμαι",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λέλυσαι",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λέλυται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λελύμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λέλυσθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λέλυνται",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_3e_mv"
+        }
+      ],
+      "Indicativus Plusquamperf. (M/P)": [
+        {
+          "label": "1e ev",
+          "vorm": "ἐλελύμην",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἐλέλυσο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἐλέλυτο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐλελύμεθα",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐλέλυσθε",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἐλέλυντο",
+          "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_3e_mv"
+        }
+      ],
+      "Imperativus": [
+        {
+          "label": "Praes M/P 2e ev",
+          "vorm": "λύου",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_praes_m_p_2e_ev"
+        },
+        {
+          "label": "Praes M/P 3e ev",
+          "vorm": "λυέσθω",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_praes_m_p_3e_ev"
+        },
+        {
+          "label": "Praes M/P 2e mv",
+          "vorm": "λύεσθε",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_praes_m_p_2e_mv"
+        },
+        {
+          "label": "Praes M/P 3e mv",
+          "vorm": "λυέσθωσαν",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_praes_m_p_3e_mv"
+        },
+        {
+          "label": "Aor Med 2e ev",
+          "vorm": "λῦσαι",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_med_2e_ev"
+        },
+        {
+          "label": "Aor Med 3e ev",
+          "vorm": "λυσάσθω",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_med_3e_ev"
+        },
+        {
+          "label": "Aor Med 2e mv",
+          "vorm": "λύσασθε",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_med_2e_mv"
+        },
+        {
+          "label": "Aor Med 3e mv",
+          "vorm": "λυσάσθωσαν",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_med_3e_mv"
+        },
+        {
+          "label": "Aor Pas 2e ev",
+          "vorm": "λύθητι",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_pas_2e_ev"
+        },
+        {
+          "label": "Aor Pas 3e ev",
+          "vorm": "λυθήτω",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_pas_3e_ev"
+        },
+        {
+          "label": "Aor Pas 2e mv",
+          "vorm": "λύθητε",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_pas_2e_mv"
+        },
+        {
+          "label": "Aor Pas 3e mv",
+          "vorm": "λυθήτωσαν",
+          "id": "grieks_2_werkwoord_medium_passief_imperativus_aor_pas_3e_mv"
+        }
+      ],
+      "Infinitivus": [
+        {
+          "label": "Praesens M/P",
+          "vorm": "λύεσθαι",
+          "id": "grieks_2_werkwoord_medium_passief_infinitivus_praesens_m_p"
+        },
+        {
+          "label": "Futurum Med",
+          "vorm": "λύσεσθαι",
+          "id": "grieks_2_werkwoord_medium_passief_infinitivus_futurum_med"
+        },
+        {
+          "label": "Futurum Pas",
+          "vorm": "λυθήσεσθαι",
+          "id": "grieks_2_werkwoord_medium_passief_infinitivus_futurum_pas"
+        },
+        {
+          "label": "Aoristus Med",
+          "vorm": "λύσασθαι",
+          "id": "grieks_2_werkwoord_medium_passief_infinitivus_aoristus_med"
+        },
+        {
+          "label": "Aoristus Pas",
+          "vorm": "λυθῆναι",
+          "id": "grieks_2_werkwoord_medium_passief_infinitivus_aoristus_pas"
+        },
+        {
+          "label": "Perfectum M/P",
+          "vorm": "λελύσθαι",
+          "id": "grieks_2_werkwoord_medium_passief_infinitivus_perfectum_m_p"
+        }
+      ]
+    },
+    "Participium (λύω)": {
+      "Praesens Actief (λύων)": [
+        {
+          "label": "Participium Nom. ev. M",
+          "vorm": "λύων",
+          "id": "grieks_2_participium_praesens_actief_participium_nom_ev_m"
+        },
+        {
+          "label": "Participium Nom. ev. V",
+          "vorm": "λύουσα",
+          "id": "grieks_2_participium_praesens_actief_participium_nom_ev_v"
+        },
+        {
+          "label": "Participium Nom. ev. O",
+          "vorm": "λύον",
+          "id": "grieks_2_participium_praesens_actief_participium_nom_ev_o"
+        },
+        {
+          "label": "Participium Gen. ev. M",
+          "vorm": "λύοντος",
+          "id": "grieks_2_participium_praesens_actief_participium_gen_ev_m"
+        },
+        {
+          "label": "Participium Gen. ev. V",
+          "vorm": "λυούσης",
+          "id": "grieks_2_participium_praesens_actief_participium_gen_ev_v"
+        },
+        {
+          "label": "Participium Gen. ev. O",
+          "vorm": "λύοντος",
+          "id": "grieks_2_participium_praesens_actief_participium_gen_ev_o"
+        },
+        {
+          "label": "Participium Dat. ev. M",
+          "vorm": "λύοντι",
+          "id": "grieks_2_participium_praesens_actief_participium_dat_ev_m"
+        },
+        {
+          "label": "Participium Dat. ev. V",
+          "vorm": "λυούσῃ",
+          "id": "grieks_2_participium_praesens_actief_participium_dat_ev_v"
+        },
+        {
+          "label": "Participium Dat. ev. O",
+          "vorm": "λύοντι",
+          "id": "grieks_2_participium_praesens_actief_participium_dat_ev_o"
+        },
+        {
+          "label": "Participium Acc. ev. M",
+          "vorm": "λύοντα",
+          "id": "grieks_2_participium_praesens_actief_participium_acc_ev_m"
+        },
+        {
+          "label": "Participium Acc. ev. V",
+          "vorm": "λύουσαν",
+          "id": "grieks_2_participium_praesens_actief_participium_acc_ev_v"
+        },
+        {
+          "label": "Participium Acc. ev. O",
+          "vorm": "λύον",
+          "id": "grieks_2_participium_praesens_actief_participium_acc_ev_o"
+        },
+        {
+          "label": "Participium Nom. mv. M",
+          "vorm": "λύοντες",
+          "id": "grieks_2_participium_praesens_actief_participium_nom_mv_m"
+        },
+        {
+          "label": "Participium Nom. mv. V",
+          "vorm": "λύουσαι",
+          "id": "grieks_2_participium_praesens_actief_participium_nom_mv_v"
+        },
+        {
+          "label": "Participium Nom. mv. O",
+          "vorm": "λύοντα",
+          "id": "grieks_2_participium_praesens_actief_participium_nom_mv_o"
+        },
+        {
+          "label": "Participium Gen. mv. M",
+          "vorm": "λυόντων",
+          "id": "grieks_2_participium_praesens_actief_participium_gen_mv_m"
+        },
+        {
+          "label": "Participium Gen. mv. V",
+          "vorm": "λυουσῶν",
+          "id": "grieks_2_participium_praesens_actief_participium_gen_mv_v"
+        },
+        {
+          "label": "Participium Gen. mv. O",
+          "vorm": "λυόντων",
+          "id": "grieks_2_participium_praesens_actief_participium_gen_mv_o"
+        },
+        {
+          "label": "Participium Dat. mv. M",
+          "vorm": "λύουσι(ν)",
+          "id": "grieks_2_participium_praesens_actief_participium_dat_mv_m"
+        },
+        {
+          "label": "Participium Dat. mv. V",
+          "vorm": "λυούσαις",
+          "id": "grieks_2_participium_praesens_actief_participium_dat_mv_v"
+        },
+        {
+          "label": "Participium Dat. mv. O",
+          "vorm": "λύουσι(ν)",
+          "id": "grieks_2_participium_praesens_actief_participium_dat_mv_o"
+        },
+        {
+          "label": "Participium Acc. mv. M",
+          "vorm": "λύοντας",
+          "id": "grieks_2_participium_praesens_actief_participium_acc_mv_m"
+        },
+        {
+          "label": "Participium Acc. mv. V",
+          "vorm": "λυούσας",
+          "id": "grieks_2_participium_praesens_actief_participium_acc_mv_v"
+        },
+        {
+          "label": "Participium Acc. mv. O",
+          "vorm": "λύοντα",
+          "id": "grieks_2_participium_praesens_actief_participium_acc_mv_o"
+        }
+      ],
+      "Aoristus Actief (λύσας)": [
+        {
+          "label": "Participium Nom. ev. M",
+          "vorm": "λύσας",
+          "id": "grieks_2_participium_aoristus_actief_participium_nom_ev_m"
+        },
+        {
+          "label": "Participium Nom. ev. V",
+          "vorm": "λύσασα",
+          "id": "grieks_2_participium_aoristus_actief_participium_nom_ev_v"
+        },
+        {
+          "label": "Participium Nom. ev. O",
+          "vorm": "λῦσαν",
+          "id": "grieks_2_participium_aoristus_actief_participium_nom_ev_o"
+        },
+        {
+          "label": "Participium Gen. ev. M",
+          "vorm": "λύσαντος",
+          "id": "grieks_2_participium_aoristus_actief_participium_gen_ev_m"
+        },
+        {
+          "label": "Participium Gen. ev. V",
+          "vorm": "λυσáσης",
+          "id": "grieks_2_participium_aoristus_actief_participium_gen_ev_v"
+        },
+        {
+          "label": "Participium Gen. ev. O",
+          "vorm": "λύσαντος",
+          "id": "grieks_2_participium_aoristus_actief_participium_gen_ev_o"
+        },
+        {
+          "label": "Participium Dat. ev. M",
+          "vorm": "λύσαντι",
+          "id": "grieks_2_participium_aoristus_actief_participium_dat_ev_m"
+        },
+        {
+          "label": "Participium Dat. ev. V",
+          "vorm": "λυσάσῃ",
+          "id": "grieks_2_participium_aoristus_actief_participium_dat_ev_v"
+        },
+        {
+          "label": "Participium Dat. ev. O",
+          "vorm": "λύσαντι",
+          "id": "grieks_2_participium_aoristus_actief_participium_dat_ev_o"
+        },
+        {
+          "label": "Participium Acc. ev. M",
+          "vorm": "λύσαντα",
+          "id": "grieks_2_participium_aoristus_actief_participium_acc_ev_m"
+        },
+        {
+          "label": "Participium Acc. ev. V",
+          "vorm": "λύσασαν",
+          "id": "grieks_2_participium_aoristus_actief_participium_acc_ev_v"
+        },
+        {
+          "label": "Participium Acc. ev. O",
+          "vorm": "λῦσαν",
+          "id": "grieks_2_participium_aoristus_actief_participium_acc_ev_o"
+        },
+        {
+          "label": "Participium Nom. mv. M",
+          "vorm": "λύσαντες",
+          "id": "grieks_2_participium_aoristus_actief_participium_nom_mv_m"
+        },
+        {
+          "label": "Participium Nom. mv. V",
+          "vorm": "λύσασαι",
+          "id": "grieks_2_participium_aoristus_actief_participium_nom_mv_v"
+        },
+        {
+          "label": "Participium Nom. mv. O",
+          "vorm": "λύσαντα",
+          "id": "grieks_2_participium_aoristus_actief_participium_nom_mv_o"
+        },
+        {
+          "label": "Participium Gen. mv. M",
+          "vorm": "λυσάντων",
+          "id": "grieks_2_participium_aoristus_actief_participium_gen_mv_m"
+        },
+        {
+          "label": "Participium Gen. mv. V",
+          "vorm": "λυσασῶν",
+          "id": "grieks_2_participium_aoristus_actief_participium_gen_mv_v"
+        },
+        {
+          "label": "Participium Gen. mv. O",
+          "vorm": "λυσάντων",
+          "id": "grieks_2_participium_aoristus_actief_participium_gen_mv_o"
+        },
+        {
+          "label": "Participium Dat. mv. M",
+          "vorm": "λύσασι(ν)",
+          "id": "grieks_2_participium_aoristus_actief_participium_dat_mv_m"
+        },
+        {
+          "label": "Participium Dat. mv. V",
+          "vorm": "λυσάσαις",
+          "id": "grieks_2_participium_aoristus_actief_participium_dat_mv_v"
+        },
+        {
+          "label": "Participium Dat. mv. O",
+          "vorm": "λύσασι(ν)",
+          "id": "grieks_2_participium_aoristus_actief_participium_dat_mv_o"
+        },
+        {
+          "label": "Participium Acc. mv. M",
+          "vorm": "λύσαντας",
+          "id": "grieks_2_participium_aoristus_actief_participium_acc_mv_m"
+        },
+        {
+          "label": "Participium Acc. mv. V",
+          "vorm": "λυσάσας",
+          "id": "grieks_2_participium_aoristus_actief_participium_acc_mv_v"
+        },
+        {
+          "label": "Participium Acc. mv. O",
+          "vorm": "λύσαντα",
+          "id": "grieks_2_participium_aoristus_actief_participium_acc_mv_o"
+        }
+      ],
+      "Aoristus Medium (λυσάμενος)": [
+        {
+          "label": "Participium Nom. ev. M",
+          "vorm": "λυσáμενος",
+          "id": "grieks_2_participium_aoristus_medium_participium_nom_ev_m"
+        },
+        {
+          "label": "Participium Nom. ev. V",
+          "vorm": "λυσαμένη",
+          "id": "grieks_2_participium_aoristus_medium_participium_nom_ev_v"
+        },
+        {
+          "label": "Participium Nom. ev. O",
+          "vorm": "λυσáμενον",
+          "id": "grieks_2_participium_aoristus_medium_participium_nom_ev_o"
+        },
+        {
+          "label": "Participium Gen. ev. M",
+          "vorm": "λυσαμένου",
+          "id": "grieks_2_participium_aoristus_medium_participium_gen_ev_m"
+        },
+        {
+          "label": "Participium Gen. ev. V",
+          "vorm": "λυσαμένης",
+          "id": "grieks_2_participium_aoristus_medium_participium_gen_ev_v"
+        },
+        {
+          "label": "Participium Gen. ev. O",
+          "vorm": "λυσαμένου",
+          "id": "grieks_2_participium_aoristus_medium_participium_gen_ev_o"
+        },
+        {
+          "label": "Participium Dat. ev. M",
+          "vorm": "λυσαμένῳ",
+          "id": "grieks_2_participium_aoristus_medium_participium_dat_ev_m"
+        },
+        {
+          "label": "Participium Dat. ev. V",
+          "vorm": "λυσαμένῃ",
+          "id": "grieks_2_participium_aoristus_medium_participium_dat_ev_v"
+        },
+        {
+          "label": "Participium Dat. ev. O",
+          "vorm": "λυσαμένῳ",
+          "id": "grieks_2_participium_aoristus_medium_participium_dat_ev_o"
+        },
+        {
+          "label": "Participium Acc. ev. M",
+          "vorm": "λυσάμενον",
+          "id": "grieks_2_participium_aoristus_medium_participium_acc_ev_m"
+        },
+        {
+          "label": "Participium Acc. ev. V",
+          "vorm": "λυσαμένην",
+          "id": "grieks_2_participium_aoristus_medium_participium_acc_ev_v"
+        },
+        {
+          "label": "Participium Acc. ev. O",
+          "vorm": "λυσάμενον",
+          "id": "grieks_2_participium_aoristus_medium_participium_acc_ev_o"
+        },
+        {
+          "label": "Participium Nom. mv. M",
+          "vorm": "λυσάμενοι",
+          "id": "grieks_2_participium_aoristus_medium_participium_nom_mv_m"
+        },
+        {
+          "label": "Participium Nom. mv. V",
+          "vorm": "λυσάμεναι",
+          "id": "grieks_2_participium_aoristus_medium_participium_nom_mv_v"
+        },
+        {
+          "label": "Participium Nom. mv. O",
+          "vorm": "λυσάμενα",
+          "id": "grieks_2_participium_aoristus_medium_participium_nom_mv_o"
+        },
+        {
+          "label": "Participium Gen. mv. M",
+          "vorm": "λυσαμένων",
+          "id": "grieks_2_participium_aoristus_medium_participium_gen_mv_m"
+        },
+        {
+          "label": "Participium Gen. mv. V",
+          "vorm": "λυσαμένων",
+          "id": "grieks_2_participium_aoristus_medium_participium_gen_mv_v"
+        },
+        {
+          "label": "Participium Gen. mv. O",
+          "vorm": "λυσαμένων",
+          "id": "grieks_2_participium_aoristus_medium_participium_gen_mv_o"
+        },
+        {
+          "label": "Participium Dat. mv. M",
+          "vorm": "λυσαμένοις",
+          "id": "grieks_2_participium_aoristus_medium_participium_dat_mv_m"
+        },
+        {
+          "label": "Participium Dat. mv. V",
+          "vorm": "λυσαμέναις",
+          "id": "grieks_2_participium_aoristus_medium_participium_dat_mv_v"
+        },
+        {
+          "label": "Participium Dat. mv. O",
+          "vorm": "λυσαμένοις",
+          "id": "grieks_2_participium_aoristus_medium_participium_dat_mv_o"
+        },
+        {
+          "label": "Participium Acc. mv. M",
+          "vorm": "λυσαμένους",
+          "id": "grieks_2_participium_aoristus_medium_participium_acc_mv_m"
+        },
+        {
+          "label": "Participium Acc. mv. V",
+          "vorm": "λυσαμένας",
+          "id": "grieks_2_participium_aoristus_medium_participium_acc_mv_v"
+        },
+        {
+          "label": "Participium Acc. mv. O",
+          "vorm": "λυσάμενα",
+          "id": "grieks_2_participium_aoristus_medium_participium_acc_mv_o"
+        }
+      ],
+      "Aoristus Passief (λυθείς)": [
+        {
+          "label": "Participium Nom. ev. M",
+          "vorm": "λυθείς",
+          "id": "grieks_2_participium_aoristus_passief_participium_nom_ev_m"
+        },
+        {
+          "label": "Participium Nom. ev. V",
+          "vorm": "λυθεῖσα",
+          "id": "grieks_2_participium_aoristus_passief_participium_nom_ev_v"
+        },
+        {
+          "label": "Participium Nom. ev. O",
+          "vorm": "λυθέν",
+          "id": "grieks_2_participium_aoristus_passief_participium_nom_ev_o"
+        },
+        {
+          "label": "Participium Gen. ev. M",
+          "vorm": "λυθέντος",
+          "id": "grieks_2_participium_aoristus_passief_participium_gen_ev_m"
+        },
+        {
+          "label": "Participium Gen. ev. V",
+          "vorm": "λυθείσης",
+          "id": "grieks_2_participium_aoristus_passief_participium_gen_ev_v"
+        },
+        {
+          "label": "Participium Gen. ev. O",
+          "vorm": "λυθέντος",
+          "id": "grieks_2_participium_aoristus_passief_participium_gen_ev_o"
+        },
+        {
+          "label": "Participium Dat. ev. M",
+          "vorm": "λυθέντι",
+          "id": "grieks_2_participium_aoristus_passief_participium_dat_ev_m"
+        },
+        {
+          "label": "Participium Dat. ev. V",
+          "vorm": "λυθείσῃ",
+          "id": "grieks_2_participium_aoristus_passief_participium_dat_ev_v"
+        },
+        {
+          "label": "Participium Dat. ev. O",
+          "vorm": "λυθέντι",
+          "id": "grieks_2_participium_aoristus_passief_participium_dat_ev_o"
+        },
+        {
+          "label": "Participium Acc. ev. M",
+          "vorm": "λυθέντα",
+          "id": "grieks_2_participium_aoristus_passief_participium_acc_ev_m"
+        },
+        {
+          "label": "Participium Acc. ev. V",
+          "vorm": "λυθεῖσαν",
+          "id": "grieks_2_participium_aoristus_passief_participium_acc_ev_v"
+        },
+        {
+          "label": "Participium Acc. ev. O",
+          "vorm": "λυθέν",
+          "id": "grieks_2_participium_aoristus_passief_participium_acc_ev_o"
+        },
+        {
+          "label": "Participium Nom. mv. M",
+          "vorm": "λυθέντες",
+          "id": "grieks_2_participium_aoristus_passief_participium_nom_mv_m"
+        },
+        {
+          "label": "Participium Nom. mv. V",
+          "vorm": "λυθεῖσαι",
+          "id": "grieks_2_participium_aoristus_passief_participium_nom_mv_v"
+        },
+        {
+          "label": "Participium Nom. mv. O",
+          "vorm": "λυθέντα",
+          "id": "grieks_2_participium_aoristus_passief_participium_nom_mv_o"
+        },
+        {
+          "label": "Participium Gen. mv. M",
+          "vorm": "λυθέντων",
+          "id": "grieks_2_participium_aoristus_passief_participium_gen_mv_m"
+        },
+        {
+          "label": "Participium Gen. mv. V",
+          "vorm": "λυθεισῶν",
+          "id": "grieks_2_participium_aoristus_passief_participium_gen_mv_v"
+        },
+        {
+          "label": "Participium Gen. mv. O",
+          "vorm": "λυθέντων",
+          "id": "grieks_2_participium_aoristus_passief_participium_gen_mv_o"
+        },
+        {
+          "label": "Participium Dat. mv. M",
+          "vorm": "λυθείσι(ν)",
+          "id": "grieks_2_participium_aoristus_passief_participium_dat_mv_m"
+        },
+        {
+          "label": "Participium Dat. mv. V",
+          "vorm": "λυθείσαις",
+          "id": "grieks_2_participium_aoristus_passief_participium_dat_mv_v"
+        },
+        {
+          "label": "Participium Dat. mv. O",
+          "vorm": "λυθείσι(ν)",
+          "id": "grieks_2_participium_aoristus_passief_participium_dat_mv_o"
+        },
+        {
+          "label": "Participium Acc. mv. M",
+          "vorm": "λυθέντας",
+          "id": "grieks_2_participium_aoristus_passief_participium_acc_mv_m"
+        },
+        {
+          "label": "Participium Acc. mv. V",
+          "vorm": "λυθείσας",
+          "id": "grieks_2_participium_aoristus_passief_participium_acc_mv_v"
+        },
+        {
+          "label": "Participium Acc. mv. O",
+          "vorm": "λυθέντα",
+          "id": "grieks_2_participium_aoristus_passief_participium_acc_mv_o"
+        }
+      ]
+    }
+  },
+  "Grieks 3": {}
+}
