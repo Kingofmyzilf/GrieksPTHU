@@ -25,6 +25,7 @@ st.markdown("""
     .woord-bekend { color: #33ccff; font-weight: bold; border-bottom: 2px solid #33ccff; cursor: help; padding: 0 4px; }
     .woord-onbekend { color: #aaaaaa; cursor: help; padding: 0 2px; }
     .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
+    .rooster-input>div>div>input { font-size: 16px; padding: 5px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -51,7 +52,9 @@ def normaliseer_accent(woord):
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
-        return w
+        # Bepaalde eind-nuances voor nakijken gelijktrekken
+        w = w.replace('(ν)', '').replace('(ν', '').replace('ν)', '')
+        return w.strip()
     return ""
 
 def splits_sleutel(sleutel):
@@ -84,16 +87,6 @@ def bereken_gewicht(item):
     gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
     if sm4 >= 20 or gem_streak >= 20: gewicht *= 0.1
     return max(0.1, gewicht)
-
-def kies_adaptieve_gram_vorm(vlak, prefix):
-    if not vlak: return None
-    weights = []
-    for v in vlak:
-        vorm_id = f"{prefix}_{v['naam']}" if prefix else f"{v.get('prefix', '')}_{v['naam']}"
-        stats = st.session_state.gram_stats.get(vorm_id, {'goed': 0, 'fout': 0, 'streak': 0})
-        w = max(0.1, 1.0 + (stats['fout'] * 1.5) - (stats['streak'] * 0.4))
-        weights.append(w)
-    return random.choices(vlak, weights=weights, k=1)[0]
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
     info = bsb_info 
@@ -136,18 +129,10 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
 # --- DATABASE FUNCTIES ---
 
 @st.cache_data
-def laad_grammatica_db():
-    if os.path.exists("grammatica.json"):
+def laad_actief_beheersen_db():
+    if os.path.exists("actief_beheersen.json"):
         try:
-            with open("grammatica.json", "r", encoding="utf-8") as f: return json.load(f)
-        except Exception: pass
-    return None
-
-@st.cache_data
-def laad_declinaties_db():
-    if os.path.exists("declinaties.json"):
-        try:
-            with open("declinaties.json", "r", encoding="utf-8") as f: return json.load(f)
+            with open("actief_beheersen.json", "r", encoding="utf-8") as f: return json.load(f)
         except Exception: pass
     return None
 
@@ -235,9 +220,8 @@ def trigger_save():
 # --- SESSION STATE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user',
-            'gram_oefening', 'laatste_filter',
-            'decl_oefening', 'laatste_filter_decl', 'gram_feedback', 'decl_feedback',
-            'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen']:
+            'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen',
+            'actief_flashcard_huidig', 'actief_nakijk_resultaten']:
     if key not in st.session_state: st.session_state[key] = None
 
 if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
@@ -273,7 +257,7 @@ with st.sidebar:
 
 # --- HOOFDMENU ---
 if st.session_state.data:
-    menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🏛️ Werkwoorden", "🏷️ Naamwoorden", "📝 Leesteksten"])
+    menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "📝 Leesteksten"])
 
     with menu[0]: # WOORDENSCHAT
         col1, col2 = st.columns([1, 2])
@@ -447,195 +431,125 @@ if st.session_state.data:
             ax.set_ylim(0, 100)
             st.pyplot(fig)
 
-    with menu[3]: # WERKWOORDEN
-        gram_db = laad_grammatica_db()
-        if gram_db and "λύω" in gram_db.get("werkwoorden", {}):
-            luo = gram_db["werkwoorden"]["λύω"]
-            st.subheader("🏛️ Verbale Morfologie (λύω)")
+    with menu[3]: # ACTIEF BEHEERSEN
+        actief_db = laad_actief_beheersen_db()
+        if not actief_db:
+            st.warning("Kan actief_beheersen.json niet vinden. Controleer of het bestand is geüpload.")
+        else:
+            st.subheader("🎓 Actief Beheersen (Tentamentraining)")
             
             c1, c2, c3 = st.columns(3)
-            with c1: gram_keuze = st.radio("Modus:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"])
-            with c2: gekozen_tijden = st.multiselect("1. Tijd/Diathese:", list(luo.keys()), default=[list(luo.keys())[0]])
-            
+            with c1: 
+                niveau = st.selectbox("Niveau:", [n for n in actief_db.keys() if actief_db[n]])
+            with c2: 
+                if niveau:
+                    cat_opties = list(actief_db[niveau].keys())
+                    categorie = st.selectbox("Categorie:", cat_opties)
             with c3:
-                wijzen_set = set()
-                for t in gekozen_tijden:
-                    for k in luo[t].keys(): wijzen_set.add(splits_sleutel(k)[0])
-                gekozen_wijzen = st.multiselect("2. Modus/Wijs:", ["Alles"] + sorted(list(wijzen_set)), default=["Alles"])
-            
-            vlak = []
-            for t in gekozen_tijden:
-                for k, v in luo[t].items():
-                    wijs, rest = splits_sleutel(k)
-                    if "Alles" in gekozen_wijzen or wijs in gekozen_wijzen:
-                        vlak.append({"tijd": t, "naam": k, "vorm": v, "wijs": wijs, "rest": rest, "prefix": f"ww_{t}"})
+                if niveau and categorie:
+                    subcat_opties = list(actief_db[niveau][categorie].keys())
+                    subcat = st.selectbox("Rijtje/Paradigma:", subcat_opties)
 
-            if st.session_state.gram_feedback:
-                if st.session_state.gram_feedback['type'] == 'success': st.success(st.session_state.gram_feedback['msg'])
-                else: st.error(st.session_state.gram_feedback['msg'])
-                st.session_state.gram_feedback = None
-
-            st.write("---")
-
-            if gram_keuze == "Visueel Leren (Tabel)":
-                for t in gekozen_tijden:
-                    st.markdown(f"#### {t}")
-                    items = {v['rest'] if v['rest'] else v['wijs']: v['vorm'] for v in vlak if v['tijd'] == t}
-                    if items: st.dataframe(pd.DataFrame(list(items.items()), columns=["Vorm", "Griekse Vorm"]), use_container_width=True, hide_index=True)
-
-            elif gram_keuze == "Vormen Analyseren":
-                huidig_filter = str(gekozen_tijden) + str(gekozen_wijzen)
-                if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening or st.session_state.get('laatste_filter') != huidig_filter:
-                    st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None) 
-                    st.session_state.laatste_filter = huidig_filter
+            if niveau and categorie and subcat:
+                huidig_rijtje = actief_db[niveau][categorie][subcat]
                 
-                oef = st.session_state.gram_oefening
-                if oef:
-                    st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
-                    vorm_id = f"{oef['prefix']}_{oef['naam']}"
-                    if vorm_id not in st.session_state.gram_stats: st.session_state.gram_stats[vorm_id] = {'goed': 0, 'fout': 0, 'streak': 0}
-
-                    with st.form(key=f"form_analyse_ww_{oef['vorm']}"):
-                        if len(gekozen_tijden) > 1: p_tijd = st.selectbox("Welke Tijd/Diathese?", [""] + gekozen_tijden)
-                        else: p_tijd = oef['tijd']
-
-                        if oef['wijs'] == "Participium":
-                            ca1, ca2, ca3 = st.columns(3)
-                            with ca1: nv = st.selectbox("Naamval:", ["", "Nom.", "Gen.", "Dat.", "Acc."])
-                            with ca2: gt = st.selectbox("Getal:", ["", "ev.", "mv."])
-                            with ca3: gs = st.selectbox("Geslacht:", ["", "M", "V", "O"])
-                            poging_naam = f"Participium {nv} {gt} {gs}".strip()
-                        else:
-                            beschikbare_vormen = list(dict.fromkeys([v['naam'] for v in vlak]))
-                            poging_naam = st.selectbox("Welke Persoon/Vorm is dit?", [""] + beschikbare_vormen)
-                        
-                        if st.form_submit_button("Controleer"):
-                            if p_tijd == oef['tijd'] and normaliseer_accent(poging_naam) == normaliseer_accent(oef['naam']):
-                                st.session_state.gram_stats[vorm_id]['goed'] += 1
-                                st.session_state.gram_stats[vorm_id]['streak'] += 1
-                                st.session_state.gram_feedback = {'type': 'success', 'msg': f"✓ Correct! **{oef['vorm']}** was de {oef['naam']} van de {oef['tijd']}."}
-                                st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None)
-                                trigger_save(); st.rerun()
-                            else:
-                                st.session_state.gram_stats[vorm_id]['fout'] += 1
-                                st.session_state.gram_stats[vorm_id]['streak'] = 0
-                                st.session_state.gram_feedback = {'type': 'error', 'msg': f"✗ Onjuist. **{oef['vorm']}** is de {oef['naam']} van de {oef['tijd']}."}
-                                trigger_save(); st.rerun()
-
-            else: # Produceren
-                st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd.")
-                with st.form(key=f"form_prod_ww_{gekozen_tijden}_{gekozen_wijzen}"):
-                    fouten_teller = 0
-                    for t in gekozen_tijden:
-                        st.markdown(f"#### {t}")
-                        t_vlak = [v for v in vlak if v['tijd'] == t]
-                        
-                        if any(v['wijs'] == "Participium" for v in t_vlak):
-                            for nv in ["Nom.", "Gen.", "Dat.", "Acc."]:
-                                for gt in ["ev.", "mv."]:
-                                    st.markdown(f"<div class='grid-label'>{nv} {gt}</div>", unsafe_allow_html=True)
-                                    cols = st.columns(3)
-                                    for i, ges in enumerate(["M", "V", "O"]):
-                                        label = f"Participium {nv} {gt} {ges}"
-                                        correct_item = next((v for v in t_vlak if v['naam'] == label), None)
-                                        if correct_item:
-                                            inp = cols[i].text_input(ges, key=f"ptc_{t}_{label}")
-                                            if inp:
-                                                if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(correct_item['vorm']): cols[i].caption(f"✅ {correct_item['vorm']}")
-                                                else: cols[i].caption(f"❌ {correct_item['vorm']}"); fouten_teller += 1
-                        
-                        standaard_vormen = [v for v in t_vlak if v['wijs'] != "Participium"]
-                        for v in standaard_vormen:
-                            label = v['rest'] if v['rest'] else v['wijs']
-                            inp = st.text_input(label, key=f"std_{t}_{v['naam']}")
-                            if inp:
-                                if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(v['vorm']): st.success(f"✓ {v['vorm']}")
-                                else: st.error(f"✗ {v['vorm']}"); fouten_teller += 1
-                    
-                    if st.form_submit_button("Check Rijtjes") and fouten_teller == 0: st.balloons()
-
-    with menu[4]: # NAAMWOORDEN
-        decl_db = laad_declinaties_db()
-        if decl_db:
-            st.subheader("🏷️ Nominale Morfologie")
-            dc1, dc2, dc3 = st.columns(3)
-            with dc1: decl_keuze = st.radio("Modus:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"], key="decl_radio")
-            
-            with dc2: gekozen_groepen = st.multiselect("Groep:", list(decl_db["Declinaties"].keys()), default=[list(decl_db["Declinaties"].keys())[0]])
-            
-            paradigma_opties = []
-            for g in gekozen_groepen: paradigma_opties.extend([f"{g} | {p}" for p in decl_db["Declinaties"][g].keys()])
+                st.write("---")
+                oefen_modus = st.radio("Kies je Oefenmethode:", ["📝 Tentamen (Heel Rooster)", "🎯 Train Zwakke Plekken (Flashcards)"], horizontal=True)
+                st.write("---")
                 
-            with dc3: gekozen_paradigmas = st.multiselect("Paradigma:", paradigma_opties, default=[paradigma_opties[0]] if paradigma_opties else [])
-            
-            vlak = []
-            for gp in gekozen_paradigmas:
-                g, p = gp.split(" | ")
-                for k, v in decl_db["Declinaties"][g][p].items():
-                    vlak.append({"groep": g, "paradigma": p, "naam": k, "vorm": v, "prefix": f"nw_{g}_{p}"})
+                st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd bij het nakijken.")
 
-            st.write("---")
-
-            if st.session_state.decl_feedback:
-                if st.session_state.decl_feedback['type'] == 'success': st.success(st.session_state.decl_feedback['msg'])
-                else: st.error(st.session_state.decl_feedback['msg'])
-                st.session_state.decl_feedback = None
-
-            if decl_keuze == "Visueel Leren (Tabel)":
-                for gp in gekozen_paradigmas:
-                    g, p = gp.split(" | ")
-                    st.markdown(f"#### {p} ({g})")
-                    items = {v['naam']: v['vorm'] for v in vlak if v['paradigma'] == p}
-                    st.dataframe(pd.DataFrame(list(items.items()), columns=["Naamval", "Vorm"]), use_container_width=True, hide_index=True)
-                    
-            elif decl_keuze == "Vormen Analyseren":
-                huidig_filter = str(gekozen_paradigmas)
-                if st.button("Nieuwe Vorm", key="btn_nw_decl") or not st.session_state.get('decl_oefening') or st.session_state.get('laatste_filter_decl') != huidig_filter:
-                    st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None)
-                    st.session_state.laatste_filter_decl = huidig_filter
-                
-                oef = st.session_state.decl_oefening
-                if oef:
-                    st.markdown(f"<div class='grieks-woord'>{oef['vorm']}</div>", unsafe_allow_html=True)
-                    vorm_id = f"{oef['prefix']}_{oef['naam']}"
-                    if vorm_id not in st.session_state.gram_stats: st.session_state.gram_stats[vorm_id] = {'goed': 0, 'fout': 0, 'streak': 0}
-                    
-                    with st.form(key=f"form_analyse_nw_{oef['vorm']}"):
-                        if len(gekozen_paradigmas) > 1: p_para = st.selectbox("Welk Paradigma?", [""] + gekozen_paradigmas)
-                        else: p_para = f"{oef['groep']} | {oef['paradigma']}"
-
-                        beschikbare_naamvallen = list(dict.fromkeys([v['naam'] for v in vlak]))
-                        poging = st.selectbox("Naamval/Getal?", [""] + beschikbare_naamvallen, key="sel_decl_analyse")
+                if oefen_modus == "📝 Tentamen (Heel Rooster)":
+                    with st.form(key=f"form_tentamen_{niveau}_{categorie}_{subcat}"):
+                        st.markdown(f"### {categorie} - {subcat}")
                         
-                        if st.form_submit_button("Controleer Analyse"):
-                            if p_para == f"{oef['groep']} | {oef['paradigma']}" and normaliseer_accent(poging) == normaliseer_accent(oef['naam']):
-                                st.session_state.gram_stats[vorm_id]['goed'] += 1
-                                st.session_state.gram_stats[vorm_id]['streak'] += 1
-                                st.session_state.decl_feedback = {'type': 'success', 'msg': f"✓ Juist! **{oef['vorm']}** is de {oef['naam']} van {oef['paradigma']}."}
-                                st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None)
-                                trigger_save(); st.rerun()
-                            else:
-                                st.session_state.gram_stats[vorm_id]['fout'] += 1
-                                st.session_state.gram_stats[vorm_id]['streak'] = 0
-                                st.session_state.decl_feedback = {'type': 'error', 'msg': f"✗ Onjuist. **{oef['vorm']}** is de **{oef['naam']}** van paradigma **{oef['paradigma']}**."}
-                                trigger_save(); st.rerun()
+                        cols = st.columns(3)
+                        input_refs = {}
+                        
+                        for idx, item in enumerate(huidig_rijtje):
+                            with cols[idx % 3]:
+                                st.markdown(f"<div class='grid-label'>{item['label']}</div>", unsafe_allow_html=True)
+                                input_refs[item['id']] = st.text_input("", key=f"inp_{item['id']}", label_visibility="collapsed")
+                        
+                        if st.form_submit_button("Nakijken"):
+                            st.session_state.actief_nakijk_resultaten = {}
+                            alles_goed = True
                             
-            else: # Produceren
-                st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd.")
-                with st.form(key=f"form_prod_nw_{gekozen_paradigmas}"):
-                    fouten_teller = 0
-                    for gp in gekozen_paradigmas:
-                        g, p = gp.split(" | ")
-                        st.markdown(f"#### {p} ({g})")
-                        specifiek_vlak = [v for v in vlak if v['paradigma'] == p]
-                        for v in specifiek_vlak:
-                            inp = st.text_input(v['naam'], key=f"decl_{g}_{p}_{v['naam']}")
-                            if inp:
-                                if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(v['vorm']): st.success(f"✓ {v['vorm']}")
-                                else: st.error(f"✗ {v['vorm']}"); fouten_teller += 1
-                    if st.form_submit_button("Check Rijtjes", key="btn_chk_rijtje_decl") and fouten_teller == 0: st.balloons()
+                            for item in huidig_rijtje:
+                                ingevuld = naar_grieks_transliteratie(input_refs[item['id']])
+                                correct = normaliseer_accent(ingevuld) == normaliseer_accent(item['vorm'])
+                                
+                                # Score Opslaan
+                                if item['id'] not in st.session_state.gram_stats:
+                                    st.session_state.gram_stats[item['id']] = {'goed': 0, 'fout': 0, 'streak': 0}
+                                
+                                if correct:
+                                    st.session_state.gram_stats[item['id']]['goed'] += 1
+                                    st.session_state.gram_stats[item['id']]['streak'] += 1
+                                else:
+                                    st.session_state.gram_stats[item['id']]['fout'] += 1
+                                    st.session_state.gram_stats[item['id']]['streak'] = 0
+                                    alles_goed = False
+                                
+                                st.session_state.actief_nakijk_resultaten[item['id']] = {
+                                    "ingevuld": ingevuld,
+                                    "correct": correct,
+                                    "antwoord": item['vorm']
+                                }
+                                
+                            trigger_save()
+                            if alles_goed:
+                                st.balloons()
+                                st.success("Uitstekend! Je hebt het hele rooster foutloos ingevuld.")
+                            
+                    # Feedback Tonen buiten de form
+                    if st.session_state.actief_nakijk_resultaten:
+                        st.markdown("### Resultaten:")
+                        r_cols = st.columns(3)
+                        for idx, item in enumerate(huidig_rijtje):
+                            res = st.session_state.actief_nakijk_resultaten.get(item['id'])
+                            if res:
+                                with r_cols[idx % 3]:
+                                    if res['correct']:
+                                        st.success(f"**{item['label']}**: {res['ingevuld']} ✅")
+                                    else:
+                                        st.error(f"**{item['label']}**: ❌ Jouw antwoord: '{res['ingevuld']}'. Correct is: **{res['antwoord']}**")
 
-    with menu[5]: # LEESTEKSTEN
+                elif oefen_modus == "🎯 Train Zwakke Plekken (Flashcards)":
+                    st.write(f"Hier train je specifieke vormen uit **{subcat}** door elkaar.")
+                    
+                    if st.button("Nieuwe Vorm") or not st.session_state.actief_flashcard_huidig:
+                        weights = []
+                        for item in huidig_rijtje:
+                            stats = st.session_state.gram_stats.get(item['id'], {'goed': 0, 'fout': 0, 'streak': 0})
+                            w = max(0.1, 1.0 + (stats['fout'] * 1.5) - (stats['streak'] * 0.4))
+                            weights.append(w)
+                        st.session_state.actief_flashcard_huidig = random.choices(huidig_rijtje, weights=weights, k=1)[0]
+                    
+                    huidig = st.session_state.actief_flashcard_huidig
+                    if huidig:
+                        st.markdown(f"<div class='grieks-woord' style='font-size: 30px;'>Geef de vorm voor: <b>{huidig['label']}</b></div>", unsafe_allow_html=True)
+                        
+                        with st.form(key=f"form_flash_{huidig['id']}"):
+                            inp = st.text_input("Jouw antwoord (Bèta-code):")
+                            if st.form_submit_button("Controleer"):
+                                if huidig['id'] not in st.session_state.gram_stats:
+                                    st.session_state.gram_stats[huidig['id']] = {'goed': 0, 'fout': 0, 'streak': 0}
+                                
+                                ingevuld = naar_grieks_transliteratie(inp)
+                                if normaliseer_accent(ingevuld) == normaliseer_accent(huidig['vorm']):
+                                    st.session_state.gram_stats[huidig['id']]['goed'] += 1
+                                    st.session_state.gram_stats[huidig['id']]['streak'] += 1
+                                    st.success(f"✓ Correct! **{huidig['vorm']}**")
+                                    st.session_state.actief_flashcard_huidig = None
+                                    trigger_save()
+                                else:
+                                    st.session_state.gram_stats[huidig['id']]['fout'] += 1
+                                    st.session_state.gram_stats[huidig['id']]['streak'] = 0
+                                    st.error(f"✗ Onjuist. Het juiste antwoord is: **{huidig['vorm']}**")
+                                    trigger_save()
+
+    with menu[4]: # LEESTEKSTEN
         bijbel_db = laad_bijbel_db()
         if not bijbel_db:
             st.warning("De Bijbel-database ontbreekt.")
