@@ -237,9 +237,10 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
             'fouten_huidig_woord', 'huidige_opties', 'last_user',
             'gram_oefening', 'laatste_filter',
             'decl_oefening', 'laatste_filter_decl', 'gram_feedback', 'decl_feedback',
-            'huidig_vers', 'huidige_vers_referentie']:
+            'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen']:
     if key not in st.session_state: st.session_state[key] = None
 
+if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if 'vocab_stats' not in st.session_state: st.session_state.vocab_stats = {}
 if 'gram_stats' not in st.session_state: st.session_state.gram_stats = {}
 if st.session_state.fouten_huidig_woord is None: st.session_state.fouten_huidig_woord = 0
@@ -696,20 +697,35 @@ if st.session_state.data:
                     for vd in verzen_data:
                         if vd[1] in gekozen_verzen:
                             gecombineerd_vers.extend(bijbel_db[vd[2]])
+                            if vd[2] not in st.session_state.geziene_verzen:
+                                st.session_state.geziene_verzen.append(vd[2])
+                    
+                    st.session_state.geziene_verzen = st.session_state.geziene_verzen[-100:]
                     
                     if gecombineerd_vers:
                         st.session_state.huidig_vers = gecombineerd_vers
                         st.session_state.huidige_vers_referentie = f"{gekozen_boek} {gekozen_hoofdstuk}:{', '.join(gekozen_verzen)}"
             else:
-                if st.button("Vind passend vers (3+ bekende woorden)"):
-                    passende = [(ref, w, sum(1 for x in w if x['strong'] in actieve_strongs)) for ref, w in bijbel_db.items()]
-                    passende = [p for p in passende if p[2] >= 3]
-                    if passende:
-                        gekozen_vers = random.choice(sorted(passende, key=lambda x: x[2], reverse=True)[:20])
+                if st.button("Vind passend vers (Focus op zwakke woorden)"):
+                    passende = []
+                    for ref, w_list in bijbel_db.items():
+                        if ref in st.session_state.geziene_verzen: continue
+                        bekende_woorden = [w for w in w_list if w['strong'] in actieve_strongs]
+                        if len(bekende_woorden) >= 3:
+                            vers_gewicht = sum(bereken_gewicht(actieve_strongs[w['strong']]) for w in bekende_woorden)
+                            passende.append((ref, w_list, vers_gewicht))
+                    
+                    if not passende:
+                        st.session_state.geziene_verzen = [] 
+                        st.warning("Geschiedenis gereset. Geen nieuwe verzen gevonden, klik nogmaals om opnieuw te beginnen.")
+                    else:
+                        passende.sort(key=lambda x: x[2], reverse=True)
+                        top_picks = passende[:min(10, len(passende))]
+                        gekozen_vers = random.choice(top_picks)
                         st.session_state.huidig_vers = gekozen_vers[1]
                         st.session_state.huidige_vers_referentie = gekozen_vers[0]
-                    else:
-                        st.warning("Geen verzen gevonden met 3+ bekende woorden.")
+                        st.session_state.geziene_verzen.append(gekozen_vers[0])
+                        st.session_state.geziene_verzen = st.session_state.geziene_verzen[-100:]
 
             st.write("---")
 
@@ -740,7 +756,11 @@ if st.session_state.data:
                     st.write("### 📝 Oefen je woorden in context")
                     for idx, w in enumerate(oefen_woorden):
                         basis = actieve_strongs[w['strong']]
-                        st.markdown(f"**{w['grieks']}**") 
+                        
+                        if "4." in tekst_modus:
+                            st.markdown(f"**{w['grieks']}**")
+                        else:
+                            st.markdown(f"**{w['grieks']}** (Basis: {basis['grieks']})")
                         
                         if "2." in tekst_modus: 
                             if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
@@ -756,8 +776,14 @@ if st.session_state.data:
                             for c_idx, optie in enumerate(st.session_state[f"mc_opties_{idx}"]):
                                 if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}"):
                                     if optie == basis['nederlands']: 
+                                        basis['streak_m2'] = int(basis.get('streak_m2', 0)) + 1
+                                        basis['score_goed'] = int(basis.get('score_goed', 0)) + 1
+                                        trigger_save()
                                         st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
                                     else: 
+                                        basis['streak_m2'] = max(0, int(basis.get('streak_m2', 0)) - 2)
+                                        basis['score_fout'] = int(basis.get('score_fout', 0)) + 1
+                                        trigger_save()
                                         st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                             
                         elif "3." in tekst_modus: 
@@ -765,8 +791,14 @@ if st.session_state.data:
                                 inp = st.text_input("Woordenboekvertaling:")
                                 if st.form_submit_button("Check"):
                                     if inp.lower().strip() in basis['nederlands'].lower(): 
+                                        basis['streak_m4'] = int(basis.get('streak_m4', 0)) + 1
+                                        basis['score_goed'] = int(basis.get('score_goed', 0)) + 1
+                                        trigger_save()
                                         st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
                                     else: 
+                                        basis['streak_m4'] = max(0, int(basis.get('streak_m4', 0)) - 2)
+                                        basis['score_fout'] = int(basis.get('score_fout', 0)) + 1
+                                        trigger_save()
                                         st.error(f"✗ Fout. Het is: {basis['nederlands']}")
                                     
                         elif "4." in tekst_modus: 
@@ -803,8 +835,14 @@ if st.session_state.data:
                                 parsing_ok = check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info'])
                                 
                                 if betekenis_ok and parsing_ok:
+                                    basis['streak_m4'] = int(basis.get('streak_m4', 0)) + 1
+                                    basis['score_goed'] = int(basis.get('score_goed', 0)) + 1
+                                    trigger_save()
                                     st.success(f"✓ Volledig correct! ({w['parsing_info']})")
                                 else:
+                                    basis['streak_m4'] = max(0, int(basis.get('streak_m4', 0)) - 2)
+                                    basis['score_fout'] = int(basis.get('score_fout', 0)) + 1
+                                    trigger_save()
                                     st.error(f"✗ Onjuist. Officiële data: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
                                         
                 st.write("---")
