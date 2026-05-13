@@ -641,36 +641,75 @@ if st.session_state.data:
         else:
             st.subheader("📝 Bijbelse Leesteksten & Exegese")
             
-            c1, c2, c3 = st.columns(3)
-            with c1:
+            top_c1, top_c2 = st.columns(2)
+            with top_c1:
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
-                gekozen = st.multiselect("1. Oefen lessen:", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
+                gekozen = st.multiselect("1. Oefen lessen (voor blauwe woorden):", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
                 actieve_strongs = {str(w['strong']): w for w in st.session_state.data if veilig_les_nummer(w) in gekozen and w.get('strong')}
             
-            with c2:
-                lees_modus = st.radio("2. Kies een vers:", ["Scavenger Hunt (Willekeurig)", "Kies specifiek vers"])
-                if lees_modus == "Kies specifiek vers":
-                    boek = st.selectbox("Referentie (Bijv. John 1:1):", list(bijbel_db.keys()))
-                    if st.button("Laad dit vers"):
-                        st.session_state.huidig_vers = bijbel_db[boek]
-                        st.session_state.huidige_vers_referentie = boek
-                else:
-                    if st.button("Vind passend vers"):
-                        passende = [(ref, w, sum(1 for x in w if x['strong'] in actieve_strongs)) for ref, w in bijbel_db.items()]
-                        passende = [p for p in passende if p[2] >= 3]
-                        if passende:
-                            gekozen_vers = random.choice(sorted(passende, key=lambda x: x[2], reverse=True)[:20])
-                            st.session_state.huidig_vers = gekozen_vers[1]
-                            st.session_state.huidige_vers_referentie = gekozen_vers[0]
-                        else:
-                            st.warning("Geen verzen gevonden met 3+ bekende woorden.")
-            
-            with c3:
-                tekst_modus = st.radio("3. Oefenmethode:", 
+            with top_c2:
+                tekst_modus = st.radio("2. Oefenmethode:", 
                                        ["1. Lees & Spiek (Geen vragen)", 
                                         "2. Vertaal (Meerkeuze)", 
                                         "3. Vertaal (Typen)", 
                                         "4. Masterclass (Ontleden)"])
+
+            st.write("---")
+            st.markdown("### 3. Selecteer een Bijbeltekst")
+            lees_modus = st.radio("Hoe wil je de tekst kiezen?", ["Kies specifiek(e) vers(zen)", "Scavenger Hunt (Willekeurig)"], horizontal=True)
+            
+            if lees_modus == "Kies specifiek(e) vers(zen)":
+                parsed_db = {}
+                for ref in bijbel_db.keys():
+                    match = re.match(r"^(.+)\s+(\d+):(\d+[a-zA-Z]?)$", ref)
+                    if match:
+                        b, c, v = match.group(1), match.group(2), match.group(3)
+                    else:
+                        parts = ref.split(" ")
+                        if len(parts) >= 2 and ":" in parts[-1]:
+                            cv = parts[-1].split(":")
+                            b, c, v = " ".join(parts[:-1]), cv[0], cv[1]
+                        else:
+                            b, c, v = ref, "1", "1"
+                            
+                    if b not in parsed_db: parsed_db[b] = {}
+                    if c not in parsed_db[b]: parsed_db[b][c] = []
+                    
+                    v_sort = int(re.sub(r"\D", "", v)) if re.sub(r"\D", "", v).isdigit() else 0
+                    parsed_db[b][c].append((v_sort, v, ref))
+                
+                col_b, col_c, col_v = st.columns(3)
+                with col_b:
+                    gekozen_boek = st.selectbox("Boek:", list(parsed_db.keys()))
+                with col_c:
+                    hoofdstukken = list(parsed_db[gekozen_boek].keys())
+                    hoofdstukken.sort(key=lambda x: int(x) if str(x).isdigit() else 0)
+                    gekozen_hoofdstuk = st.selectbox("Hoofdstuk:", hoofdstukken)
+                with col_v:
+                    verzen_data = parsed_db[gekozen_boek][gekozen_hoofdstuk]
+                    verzen_data.sort(key=lambda x: x[0])
+                    vers_opties = [v[1] for v in verzen_data]
+                    gekozen_verzen = st.multiselect("Vers(zen):", vers_opties, default=[vers_opties[0]] if vers_opties else [])
+                
+                if st.button("Laad Tekst"):
+                    gecombineerd_vers = []
+                    for vd in verzen_data:
+                        if vd[1] in gekozen_verzen:
+                            gecombineerd_vers.extend(bijbel_db[vd[2]])
+                    
+                    if gecombineerd_vers:
+                        st.session_state.huidig_vers = gecombineerd_vers
+                        st.session_state.huidige_vers_referentie = f"{gekozen_boek} {gekozen_hoofdstuk}:{', '.join(gekozen_verzen)}"
+            else:
+                if st.button("Vind passend vers (3+ bekende woorden)"):
+                    passende = [(ref, w, sum(1 for x in w if x['strong'] in actieve_strongs)) for ref, w in bijbel_db.items()]
+                    passende = [p for p in passende if p[2] >= 3]
+                    if passende:
+                        gekozen_vers = random.choice(sorted(passende, key=lambda x: x[2], reverse=True)[:20])
+                        st.session_state.huidig_vers = gekozen_vers[1]
+                        st.session_state.huidige_vers_referentie = gekozen_vers[0]
+                    else:
+                        st.warning("Geen verzen gevonden met 3+ bekende woorden.")
 
             st.write("---")
 
@@ -684,7 +723,6 @@ if st.session_state.data:
                     if w['strong'] in actieve_strongs:
                         basis = actieve_strongs[w['strong']]
                         
-                        # Anti-spiek logica!
                         if "1." in tekst_modus:
                             hover_text = f"Les {basis.get('les', '?')}: {basis.get('nederlands', '')} | {tooltip}"
                         else:
@@ -702,9 +740,9 @@ if st.session_state.data:
                     st.write("### 📝 Oefen je woorden in context")
                     for idx, w in enumerate(oefen_woorden):
                         basis = actieve_strongs[w['strong']]
-                        st.markdown(f"**{w['grieks']}**") # De (Basis: X) hint is hier verwijderd!
+                        st.markdown(f"**{w['grieks']}**") 
                         
-                        if "2." in tekst_modus: # Meerkeuze
+                        if "2." in tekst_modus: 
                             if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
                                 random.seed(st.session_state.huidige_vers_referentie + str(idx))
                                 afleiders = list(set([i['nederlands'] for i in st.session_state.data if i['nederlands'] != basis['nederlands']]))
@@ -722,7 +760,7 @@ if st.session_state.data:
                                     else: 
                                         st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                             
-                        elif "3." in tekst_modus: # Typen
+                        elif "3." in tekst_modus: 
                             with st.form(key=f"form_typ_{idx}"):
                                 inp = st.text_input("Woordenboekvertaling:")
                                 if st.form_submit_button("Check"):
@@ -731,7 +769,7 @@ if st.session_state.data:
                                     else: 
                                         st.error(f"✗ Fout. Het is: {basis['nederlands']}")
                                     
-                        elif "4." in tekst_modus: # Masterclass (Ontleden)
+                        elif "4." in tekst_modus: 
                             p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"], key=f"soort_{idx}")
                             t_inp = st.text_input("Woordenboekvertaling:", key=f"bet_{idx}")
                             
@@ -757,7 +795,7 @@ if st.session_state.data:
                                     with c3: p_ges = st.selectbox("Geslacht", ["", "N.v.t.", "M", "V", "O"], key=f"gs_ptc_{idx}")
                                 else:
                                     c1, c2 = st.columns(2)
-                                    with c1: p_pers = st.selectbox("Persoon", ["", "N.v.t.", "1e", "2e", "3e"], key=f"ps_{idx}")
+                                    with c1: p_pers = st.selectbox("Persoon", ["", "N.v.t.", "1e pers.", "2e pers.", "3e pers."], key=f"ps_{idx}")
                                     with c2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_ww_{idx}")
                                     
                             if st.button("Controleer Analyse", key=f"chk_{idx}"):
