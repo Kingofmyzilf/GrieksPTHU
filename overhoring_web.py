@@ -95,22 +95,49 @@ def kies_adaptieve_gram_vorm(vlak, prefix):
         weights.append(w)
     return random.choices(vlak, weights=weights, k=1)[0]
 
-def check_bijbel_parsing(p_soort, p_naamval, p_getal, p_geslacht, bsb_info):
+def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
     info = bsb_info.lower()
     
     soort_map = {"Zelfst. nw.": "noun", "Werkwoord": "verb", "Bijv. nw.": "adjective", "Lidwoord": "article", "Voornaamwoord": "pronoun"}
     if p_soort in soort_map and soort_map[p_soort] not in info: return False
     
-    nv_map = {"Nom": "nominative", "Gen": "genitive", "Dat": "dative", "Acc": "accusative", "Voc": "vocative"}
-    if p_naamval in nv_map and nv_map[p_naamval] not in info: return False
-    if p_naamval == "N.v.t." and any(x in info for x in nv_map.values()): return False
-    
     gt_map = {"ev": "singular", "mv": "plural"}
-    if p_getal in gt_map and gt_map[p_getal] not in info: return False
     
-    gs_map = {"M": "masculine", "V": "feminine", "O": "neuter"}
-    if p_geslacht in gs_map and gs_map[p_geslacht] not in info: return False
-    
+    if p_soort in ["Zelfst. nw.", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]:
+        nv_map = {"Nom": "nominative", "Gen": "genitive", "Dat": "dative", "Acc": "accusative", "Voc": "vocative"}
+        if p_naam in nv_map and nv_map[p_naam] not in info: return False
+        
+        gs_map = {"M": "masculine", "V": "feminine", "O": "neuter"}
+        if p_ges in gs_map and gs_map[p_ges] not in info: return False
+        
+        if p_get in gt_map and gt_map[p_get] not in info: return False
+        
+    elif p_soort == "Werkwoord":
+        tijd_map = {"Praesens": "present", "Imperfectum": "imperfect", "Futurum": "future", "Aoristus": "aorist", "Perfectum": "perfect", "Plusquamperfectum": "pluperfect"}
+        if p_tijd in tijd_map and tijd_map[p_tijd] not in info: return False
+        
+        wijs_map = {"Indicativus": "indicative", "Conjunctivus": "subjunctive", "Optativus": "optative", "Imperativus": "imperative", "Infinitivus": "infinitive", "Participium": "participle"}
+        if p_wijs in wijs_map and wijs_map[p_wijs] not in info: return False
+        
+        if p_diat == "Actief" and "active" not in info: return False
+        if p_diat == "Medium" and "middle" not in info: return False
+        if p_diat == "Passief" and "passive" not in info: return False
+        if p_diat == "Medium/Passief" and ("middle" not in info and "passive" not in info): return False
+        
+        if p_wijs == "Participium":
+            nv_map = {"Nom": "nominative", "Gen": "genitive", "Dat": "dative", "Acc": "accusative", "Voc": "vocative"}
+            if p_naam in nv_map and nv_map[p_naam] not in info: return False
+            
+            gs_map = {"M": "masculine", "V": "feminine", "O": "neuter"}
+            if p_ges in gs_map and gs_map[p_ges] not in info: return False
+            
+            if p_get in gt_map and gt_map[p_get] not in info: return False
+        else:
+            pers_map = {"1e": "1st", "2e": "2nd", "3e": "3rd"}
+            if p_pers in pers_map and pers_map[p_pers] not in info: return False
+            
+            if p_get in gt_map and gt_map[p_get] not in info: return False
+            
     return True
 
 # --- DATABASE FUNCTIES ---
@@ -330,7 +357,7 @@ if st.session_state.data:
                 # --- TYPEN MODUS ---
                 if huidige_sub_modus in ['4', '3_typ']:
                     with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
-                        inp = st.text_input("Betekenis:").lower().strip()
+                        inp = st.text_input("Woordenboekvertaling:").lower().strip()
                         if is_mastery and heeft_vormen:
                             p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip()
                         else:
@@ -678,34 +705,65 @@ if st.session_state.data:
                         st.markdown(f"**{w['grieks']}** (Basis: {basis['grieks']})")
                         
                         if "2." in tekst_modus: # Meerkeuze
-                            opties = [basis['nederlands']] + [i['nederlands'] for i in random.sample(st.session_state.data, min(3, len(st.session_state.data)))]
-                            if st.button(basis['nederlands'], key=f"mc_{idx}_{w['grieks']}_correct"): st.success("✓ Goed!")
+                            if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
+                                random.seed(st.session_state.huidige_vers_referentie + str(idx))
+                                afleiders = list(set([i['nederlands'] for i in st.session_state.data if i['nederlands'] != basis['nederlands']]))
+                                opties = [basis['nederlands']] + random.sample(afleiders, min(3, len(afleiders)))
+                                random.shuffle(opties)
+                                random.seed()
+                                st.session_state[f"mc_opties_{idx}"] = opties
+                                st.session_state[f"mc_vers_{idx}"] = st.session_state.huidige_vers_referentie
+                                
+                            cols = st.columns(2)
+                            for c_idx, optie in enumerate(st.session_state[f"mc_opties_{idx}"]):
+                                if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}"):
+                                    if optie == basis['nederlands']: st.success("✓ Goed!")
+                                    else: st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                             
                         elif "3." in tekst_modus: # Typen
                             with st.form(key=f"form_typ_{idx}"):
-                                inp = st.text_input("Vertaling in deze context:")
+                                inp = st.text_input("Woordenboekvertaling:")
                                 if st.form_submit_button("Check"):
                                     if inp.lower().strip() in basis['nederlands'].lower(): st.success(f"✓ Goed! {basis['nederlands']}")
-                                    else: st.error(f"✗ Fout. Het betekent: {basis['nederlands']}")
+                                    else: st.error(f"✗ Fout. Het is: {basis['nederlands']}")
                                     
-                        elif "4." in tekst_modus: # Ontleden (Masterclass)
-                            with st.form(key=f"form_mc_{idx}"):
-                                st.write("Ontleed dit woord op basis van de Bijbeltekst:")
-                                t_inp = st.text_input("1. Betekenis:")
-                                mc1, mc2, mc3, mc4 = st.columns(4)
-                                with mc1: p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"])
-                                with mc2: p_naam = st.selectbox("Naamval", ["", "N.v.t.", "Nom", "Gen", "Dat", "Acc", "Voc"])
-                                with mc3: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"])
-                                with mc4: p_ges = st.selectbox("Geslacht", ["", "N.v.t.", "M", "V", "O"])
+                        elif "4." in tekst_modus: # Masterclass (Ontleden)
+                            p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"], key=f"soort_{idx}")
+                            t_inp = st.text_input("Woordenboekvertaling:", key=f"bet_{idx}")
+                            
+                            p_naam, p_get, p_ges = "", "", ""
+                            p_tijd, p_wijs, p_pers, p_diat = "", "", "", ""
+                            
+                            if p_soort in ["Zelfst. nw.", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]:
+                                mc1, mc2, mc3 = st.columns(3)
+                                with mc1: p_naam = st.selectbox("Naamval", ["", "Nom", "Gen", "Dat", "Acc", "Voc"], key=f"nv_{idx}")
+                                with mc2: p_get = st.selectbox("Getal", ["", "ev", "mv"], key=f"gt_{idx}")
+                                with mc3: p_ges = st.selectbox("Geslacht", ["", "M", "V", "O"], key=f"gs_{idx}")
+                            
+                            elif p_soort == "Werkwoord":
+                                mc1, mc2, mc3 = st.columns(3)
+                                with mc1: p_tijd = st.selectbox("Tijd", ["", "Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"], key=f"td_{idx}")
+                                with mc2: p_wijs = st.selectbox("Wijs", ["", "Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium"], key=f"wj_{idx}")
+                                with mc3: p_diat = st.selectbox("Diathese", ["", "Actief", "Medium", "Passief", "Medium/Passief"], key=f"di_{idx}")
                                 
-                                if st.form_submit_button("Controleer Analyse"):
-                                    betekenis_ok = t_inp.lower().strip() in basis['nederlands'].lower()
-                                    parsing_ok = check_bijbel_parsing(p_soort, p_naam, p_get, p_ges, w['parsing_info'])
+                                if p_wijs == "Participium":
+                                    c1, c2, c3 = st.columns(3)
+                                    with c1: p_naam = st.selectbox("Naamval", ["", "Nom", "Gen", "Dat", "Acc", "Voc"], key=f"nv_ptc_{idx}")
+                                    with c2: p_get = st.selectbox("Getal", ["", "ev", "mv"], key=f"gt_ptc_{idx}")
+                                    with c3: p_ges = st.selectbox("Geslacht", ["", "M", "V", "O"], key=f"gs_ptc_{idx}")
+                                else:
+                                    c1, c2 = st.columns(2)
+                                    with c1: p_pers = st.selectbox("Persoon", ["", "1e", "2e", "3e"], key=f"ps_{idx}")
+                                    with c2: p_get = st.selectbox("Getal", ["", "ev", "mv"], key=f"gt_ww_{idx}")
                                     
-                                    if betekenis_ok and parsing_ok:
-                                        st.success(f"✓ Volledig correct! ({w['parsing_info']})")
-                                    else:
-                                        st.error(f"✗ Onjuist. Officiële data: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
+                            if st.button("Controleer Analyse", key=f"chk_{idx}"):
+                                betekenis_ok = t_inp.lower().strip() in basis['nederlands'].lower() if t_inp else False
+                                parsing_ok = check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info'])
+                                
+                                if betekenis_ok and parsing_ok:
+                                    st.success(f"✓ Volledig correct! ({w['parsing_info']})")
+                                else:
+                                    st.error(f"✗ Onjuist. Officiële data: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
                                         
                 st.write("---")
                 st.write("### ✍️ Zinsvertaling")
