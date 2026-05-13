@@ -95,6 +95,24 @@ def kies_adaptieve_gram_vorm(vlak, prefix):
         weights.append(w)
     return random.choices(vlak, weights=weights, k=1)[0]
 
+def check_bijbel_parsing(p_soort, p_naamval, p_getal, p_geslacht, bsb_info):
+    info = bsb_info.lower()
+    
+    soort_map = {"Zelfst. nw.": "noun", "Werkwoord": "verb", "Bijv. nw.": "adjective", "Lidwoord": "article", "Voornaamwoord": "pronoun"}
+    if p_soort in soort_map and soort_map[p_soort] not in info: return False
+    
+    nv_map = {"Nom": "nominative", "Gen": "genitive", "Dat": "dative", "Acc": "accusative", "Voc": "vocative"}
+    if p_naamval in nv_map and nv_map[p_naamval] not in info: return False
+    if p_naamval == "N.v.t." and any(x in info for x in nv_map.values()): return False
+    
+    gt_map = {"ev": "singular", "mv": "plural"}
+    if p_getal in gt_map and gt_map[p_getal] not in info: return False
+    
+    gs_map = {"M": "masculine", "V": "feminine", "O": "neuter"}
+    if p_geslacht in gs_map and gs_map[p_geslacht] not in info: return False
+    
+    return True
+
 # --- DATABASE FUNCTIES ---
 
 @st.cache_data
@@ -199,7 +217,7 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
             'fouten_huidig_woord', 'huidige_opties', 'last_user',
             'gram_oefening', 'laatste_filter',
             'decl_oefening', 'laatste_filter_decl', 'gram_feedback', 'decl_feedback',
-            'huidig_vers', 'huidige_vers_referentie', 'huidige_verse_woorden']:
+            'huidig_vers', 'huidige_vers_referentie']:
     if key not in st.session_state: st.session_state[key] = None
 
 if 'vocab_stats' not in st.session_state: st.session_state.vocab_stats = {}
@@ -596,82 +614,102 @@ if st.session_state.data:
                                 else: st.error(f"✗ {v['vorm']}"); fouten_teller += 1
                     if st.form_submit_button("Check Rijtjes", key="btn_chk_rijtje_decl") and fouten_teller == 0: st.balloons()
 
-    with menu[5]: # LEESTEKSTEN (NIEUW!)
+    with menu[5]: # LEESTEKSTEN
         bijbel_db = laad_bijbel_db()
         if not bijbel_db:
-            st.warning("De Bijbel-database (bijbel_nt.json of deel1/deel2) ontbreekt. Voeg deze toe aan je bestanden.")
+            st.warning("De Bijbel-database ontbreekt.")
         else:
             st.subheader("📝 Bijbelse Leesteksten & Exegese")
             
-            c1, c2 = st.columns([1, 2])
+            c1, c2, c3 = st.columns(3)
             with c1:
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
-                gekozen = st.multiselect("1. Oefen woorden uit les(sen):", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
-                
-                actieve_strongs = {}
-                for w in st.session_state.data:
-                    if veilig_les_nummer(w) in gekozen and w.get('strong'):
-                        actieve_strongs[str(w['strong'])] = w
+                gekozen = st.multiselect("1. Oefen lessen:", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
+                actieve_strongs = {str(w['strong']): w for w in st.session_state.data if veilig_les_nummer(w) in gekozen and w.get('strong')}
             
             with c2:
-                lees_modus = st.radio("2. Kies een leesmethode:", ["Scavenger Hunt (Willekeurig passend vers)", "Kies specifiek vers"])
-                
+                lees_modus = st.radio("2. Kies een vers:", ["Scavenger Hunt (Willekeurig)", "Kies specifiek vers"])
                 if lees_modus == "Kies specifiek vers":
-                    boek = st.selectbox("Bijbelvers (Bijv. John 1:1):", list(bijbel_db.keys()), index=list(bijbel_db.keys()).index("John 1:1") if "John 1:1" in bijbel_db else 0)
+                    boek = st.selectbox("Referentie (Bijv. John 1:1):", list(bijbel_db.keys()))
                     if st.button("Laad dit vers"):
                         st.session_state.huidig_vers = bijbel_db[boek]
                         st.session_state.huidige_vers_referentie = boek
                 else:
-                    if st.button("Vind een passend vers"):
-                        # Zoek een vers dat minimaal 3 woorden bevat uit je actieve lessen
-                        passende_verzen = []
-                        for ref, woorden in bijbel_db.items():
-                            match_count = sum(1 for w in woorden if w['strong'] in actieve_strongs)
-                            if match_count >= 3:
-                                passende_verzen.append((ref, woorden, match_count))
-                        
-                        if passende_verzen:
-                            # Kies een vers met veel bekende woorden
-                            passende_verzen.sort(key=lambda x: x[2], reverse=True)
-                            top_picks = passende_verzen[:20]
-                            gekozen_vers = random.choice(top_picks)
+                    if st.button("Vind passend vers"):
+                        passende = [(ref, w, sum(1 for x in w if x['strong'] in actieve_strongs)) for ref, w in bijbel_db.items()]
+                        passende = [p for p in passende if p[2] >= 3]
+                        if passende:
+                            gekozen_vers = random.choice(sorted(passende, key=lambda x: x[2], reverse=True)[:20])
                             st.session_state.huidig_vers = gekozen_vers[1]
                             st.session_state.huidige_vers_referentie = gekozen_vers[0]
                         else:
-                            st.warning("Geen verzen gevonden met 3+ bekende woorden. Kies meer lessen of probeer een specifieke referentie.")
+                            st.warning("Geen verzen gevonden met 3+ bekende woorden.")
+            
+            with c3:
+                tekst_modus = st.radio("3. Hoe wil je de bekende woorden oefenen?", 
+                                       ["1. Lees & Spiek (Geen vragen)", 
+                                        "2. Vertaal (Meerkeuze)", 
+                                        "3. Vertaal (Typen)", 
+                                        "4. Masterclass (Ontleden)"])
 
             st.write("---")
 
             if st.session_state.huidig_vers:
                 st.markdown(f"### 📖 {st.session_state.huidige_vers_referentie}")
-                
                 html_zin = ""
                 oefen_woorden = []
                 
-                for idx, w in enumerate(st.session_state.huidig_vers):
+                for w in st.session_state.huidig_vers:
                     tooltip = f"{w['vertaling_bsb']} ({w['parsing_info']})"
                     if w['strong'] in actieve_strongs:
                         basis = actieve_strongs[w['strong']]
-                        html_zin += f"<span class='woord-bekend' title='Bekend woord (Les {basis.get('les', '?')}): {basis.get('nederlands', '')} | In tekst: {tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
+                        html_zin += f"<span class='woord-bekend' title='Les {basis.get('les', '?')}: {basis.get('nederlands', '')} | {tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
                         oefen_woorden.append(w)
                     else:
                         html_zin += f"<span class='woord-onbekend' title='{tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
                 
                 st.markdown(f"<div class='grieks-zin'>{html_zin}</div>", unsafe_allow_html=True)
-                st.caption("ℹ️ Hover over een woord om de vertaling en grammatica (parsing) te zien. Blauwe woorden komen uit je geselecteerde lessen.")
+                st.caption("ℹ️ Hover over een woord om de vertaling te zien. Blauwe woorden komen uit je actieve lessen.")
                 
-                if oefen_woorden:
-                    st.write("### 🔍 Ontleed je bekende woorden")
-                    for w in oefen_woorden:
+                if oefen_woorden and "1." not in tekst_modus:
+                    st.write("### 📝 Oefen je woorden in context")
+                    for idx, w in enumerate(oefen_woorden):
                         basis = actieve_strongs[w['strong']]
-                        with st.expander(f"Ontleed: {w['grieks']} (Basis: {basis['grieks']})"):
-                            col_a, col_b = st.columns(2)
-                            with col_a: st.write(f"**Jouw woordenlijst vertaling:** {basis['nederlands']}")
-                            with col_b: st.write(f"**Grammatica in de tekst:** {w['parsing_info']}")
-                            st.info(f"Context-vertaling (Engels): {w['vertaling_bsb']}")
-                
+                        st.markdown(f"**{w['grieks']}** (Basis: {basis['grieks']})")
+                        
+                        if "2." in tekst_modus: # Meerkeuze
+                            opties = [basis['nederlands']] + [i['nederlands'] for i in random.sample(st.session_state.data, min(3, len(st.session_state.data)))]
+                            if st.button(basis['nederlands'], key=f"mc_{idx}_{w['grieks']}_correct"): st.success("✓ Goed!")
+                            
+                        elif "3." in tekst_modus: # Typen
+                            with st.form(key=f"form_typ_{idx}"):
+                                inp = st.text_input("Vertaling in deze context:")
+                                if st.form_submit_button("Check"):
+                                    if inp.lower().strip() in basis['nederlands'].lower(): st.success(f"✓ Goed! {basis['nederlands']}")
+                                    else: st.error(f"✗ Fout. Het betekent: {basis['nederlands']}")
+                                    
+                        elif "4." in tekst_modus: # Ontleden (Masterclass)
+                            with st.form(key=f"form_mc_{idx}"):
+                                st.write("Ontleed dit woord op basis van de Bijbeltekst:")
+                                t_inp = st.text_input("1. Betekenis:")
+                                mc1, mc2, mc3, mc4 = st.columns(4)
+                                with mc1: p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"])
+                                with mc2: p_naam = st.selectbox("Naamval", ["", "N.v.t.", "Nom", "Gen", "Dat", "Acc", "Voc"])
+                                with mc3: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"])
+                                with mc4: p_ges = st.selectbox("Geslacht", ["", "N.v.t.", "M", "V", "O"])
+                                
+                                if st.form_submit_button("Controleer Analyse"):
+                                    betekenis_ok = t_inp.lower().strip() in basis['nederlands'].lower()
+                                    parsing_ok = check_bijbel_parsing(p_soort, p_naam, p_get, p_ges, w['parsing_info'])
+                                    
+                                    if betekenis_ok and parsing_ok:
+                                        st.success(f"✓ Volledig correct! ({w['parsing_info']})")
+                                    else:
+                                        st.error(f"✗ Onjuist. Officiële data: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
+                                        
+                st.write("---")
                 st.write("### ✍️ Zinsvertaling")
                 user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
                 if st.button("Toon officiële vertaling"):
                     officiële_zin = " ".join([w['vertaling_bsb'] for w in st.session_state.huidig_vers])
-                    st.success(f"**Originele ruwe vertaling:** {officiële_zin}")
+                    st.success(f"**Originele Engelse vertaling (BSB):** {officiële_zin}")
