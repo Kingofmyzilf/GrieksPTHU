@@ -96,47 +96,40 @@ def kies_adaptieve_gram_vorm(vlak, prefix):
     return random.choices(vlak, weights=weights, k=1)[0]
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
-    info = bsb_info.lower()
+    info = bsb_info # De string is nu volledig in het Nederlands!
     
-    soort_map = {"Zelfst. nw.": "noun", "Werkwoord": "verb", "Bijv. nw.": "adjective", "Lidwoord": "article", "Voornaamwoord": "pronoun"}
-    if p_soort in soort_map and soort_map[p_soort] not in info: return False
+    if p_soort:
+        if p_soort == "Overig":
+            if any(x in info for x in ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]): return False
+        elif p_soort not in info: 
+            return False
     
-    gt_map = {"ev": "singular", "mv": "plural"}
+    gt_map = {"ev": "ev", "mv": "mv"}
+    gs_map = {"M": "mannelijk", "V": "vrouwelijk", "O": "onzijdig"}
     
     if p_soort in ["Zelfst. nw.", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]:
-        nv_map = {"Nom": "nominative", "Gen": "genitive", "Dat": "dative", "Acc": "accusative", "Voc": "vocative"}
-        if p_naam in nv_map and nv_map[p_naam] not in info: return False
-        
-        gs_map = {"M": "masculine", "V": "feminine", "O": "neuter"}
-        if p_ges in gs_map and gs_map[p_ges] not in info: return False
-        
-        if p_get in gt_map and gt_map[p_get] not in info: return False
+        if p_naam and p_naam not in info and p_naam != "N.v.t.": return False
+        if p_ges and p_ges != "N.v.t." and gs_map.get(p_ges, "") not in info: return False
+        if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
         
     elif p_soort == "Werkwoord":
-        tijd_map = {"Praesens": "present", "Imperfectum": "imperfect", "Futurum": "future", "Aoristus": "aorist", "Perfectum": "perfect", "Plusquamperfectum": "pluperfect"}
-        if p_tijd in tijd_map and tijd_map[p_tijd] not in info: return False
+        if p_tijd and p_tijd not in info: return False
+        if p_wijs and p_wijs not in info: return False
         
-        wijs_map = {"Indicativus": "indicative", "Conjunctivus": "subjunctive", "Optativus": "optative", "Imperativus": "imperative", "Infinitivus": "infinitive", "Participium": "participle"}
-        if p_wijs in wijs_map and wijs_map[p_wijs] not in info: return False
-        
-        if p_diat == "Actief" and "active" not in info: return False
-        if p_diat == "Medium" and "middle" not in info: return False
-        if p_diat == "Passief" and "passive" not in info: return False
-        if p_diat == "Medium/Passief" and ("middle" not in info and "passive" not in info): return False
+        if p_diat:
+            if p_diat == "Medium/Passief":
+                if "Medium" not in info and "Passief" not in info: return False
+            elif p_diat not in info:
+                return False
         
         if p_wijs == "Participium":
-            nv_map = {"Nom": "nominative", "Gen": "genitive", "Dat": "dative", "Acc": "accusative", "Voc": "vocative"}
-            if p_naam in nv_map and nv_map[p_naam] not in info: return False
-            
-            gs_map = {"M": "masculine", "V": "feminine", "O": "neuter"}
-            if p_ges in gs_map and gs_map[p_ges] not in info: return False
-            
-            if p_get in gt_map and gt_map[p_get] not in info: return False
+            if p_naam and p_naam not in info and p_naam != "N.v.t.": return False
+            if p_ges and p_ges != "N.v.t." and gs_map.get(p_ges, "") not in info: return False
+            if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
         else:
-            pers_map = {"1e": "1st", "2e": "2nd", "3e": "3rd"}
-            if p_pers in pers_map and pers_map[p_pers] not in info: return False
-            
-            if p_get in gt_map and gt_map[p_get] not in info: return False
+            pers_map = {"1e": "1e pers.", "2e": "2e pers.", "3e": "3e pers."}
+            if p_pers and p_pers != "N.v.t." and pers_map.get(p_pers, "") not in info: return False
+            if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
             
     return True
 
@@ -673,7 +666,7 @@ if st.session_state.data:
                             st.warning("Geen verzen gevonden met 3+ bekende woorden.")
             
             with c3:
-                tekst_modus = st.radio("3. Hoe wil je de bekende woorden oefenen?", 
+                tekst_modus = st.radio("3. Oefenmethode:", 
                                        ["1. Lees & Spiek (Geen vragen)", 
                                         "2. Vertaal (Meerkeuze)", 
                                         "3. Vertaal (Typen)", 
@@ -736,9 +729,9 @@ if st.session_state.data:
                             
                             if p_soort in ["Zelfst. nw.", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]:
                                 mc1, mc2, mc3 = st.columns(3)
-                                with mc1: p_naam = st.selectbox("Naamval", ["", "Nom", "Gen", "Dat", "Acc", "Voc"], key=f"nv_{idx}")
-                                with mc2: p_get = st.selectbox("Getal", ["", "ev", "mv"], key=f"gt_{idx}")
-                                with mc3: p_ges = st.selectbox("Geslacht", ["", "M", "V", "O"], key=f"gs_{idx}")
+                                with mc1: p_naam = st.selectbox("Naamval", ["", "N.v.t.", "Nom", "Gen", "Dat", "Acc", "Voc"], key=f"nv_{idx}")
+                                with mc2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_{idx}")
+                                with mc3: p_ges = st.selectbox("Geslacht", ["", "N.v.t.", "M", "V", "O"], key=f"gs_{idx}")
                             
                             elif p_soort == "Werkwoord":
                                 mc1, mc2, mc3 = st.columns(3)
@@ -748,13 +741,13 @@ if st.session_state.data:
                                 
                                 if p_wijs == "Participium":
                                     c1, c2, c3 = st.columns(3)
-                                    with c1: p_naam = st.selectbox("Naamval", ["", "Nom", "Gen", "Dat", "Acc", "Voc"], key=f"nv_ptc_{idx}")
-                                    with c2: p_get = st.selectbox("Getal", ["", "ev", "mv"], key=f"gt_ptc_{idx}")
-                                    with c3: p_ges = st.selectbox("Geslacht", ["", "M", "V", "O"], key=f"gs_ptc_{idx}")
+                                    with c1: p_naam = st.selectbox("Naamval", ["", "N.v.t.", "Nom", "Gen", "Dat", "Acc", "Voc"], key=f"nv_ptc_{idx}")
+                                    with c2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_ptc_{idx}")
+                                    with c3: p_ges = st.selectbox("Geslacht", ["", "N.v.t.", "M", "V", "O"], key=f"gs_ptc_{idx}")
                                 else:
                                     c1, c2 = st.columns(2)
-                                    with c1: p_pers = st.selectbox("Persoon", ["", "1e", "2e", "3e"], key=f"ps_{idx}")
-                                    with c2: p_get = st.selectbox("Getal", ["", "ev", "mv"], key=f"gt_ww_{idx}")
+                                    with c1: p_pers = st.selectbox("Persoon", ["", "N.v.t.", "1e", "2e", "3e"], key=f"ps_{idx}")
+                                    with c2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_ww_{idx}")
                                     
                             if st.button("Controleer Analyse", key=f"chk_{idx}"):
                                 betekenis_ok = t_inp.lower().strip() in basis['nederlands'].lower() if t_inp else False
@@ -770,4 +763,4 @@ if st.session_state.data:
                 user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
                 if st.button("Toon officiële vertaling"):
                     officiële_zin = " ".join([w['vertaling_bsb'] for w in st.session_state.huidig_vers])
-                    st.success(f"**Originele Engelse vertaling (BSB):** {officiële_zin}")
+                    st.success(f"**Officiële Engelse zinsvertaling (BSB):** {officiële_zin}")
