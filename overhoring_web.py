@@ -710,15 +710,19 @@ if st.session_state.data:
                             cols = st.columns(2)
                             for c_idx, optie in enumerate(st.session_state[f"mc_opties_{idx}"]):
                                 if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}"):
-                                    if optie == basis['nederlands']: st.success("✓ Goed!")
-                                    else: st.error(f"✗ Fout. Het was: {basis['nederlands']}")
+                                    if optie == basis['nederlands']: 
+                                        st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
+                                    else: 
+                                        st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                             
                         elif "3." in tekst_modus: # Typen
                             with st.form(key=f"form_typ_{idx}"):
                                 inp = st.text_input("Woordenboekvertaling:")
                                 if st.form_submit_button("Check"):
-                                    if inp.lower().strip() in basis['nederlands'].lower(): st.success(f"✓ Goed! {basis['nederlands']}")
-                                    else: st.error(f"✗ Fout. Het is: {basis['nederlands']}")
+                                    if inp.lower().strip() in basis['nederlands'].lower(): 
+                                        st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
+                                    else: 
+                                        st.error(f"✗ Fout. Het is: {basis['nederlands']}")
                                     
                         elif "4." in tekst_modus: # Masterclass (Ontleden)
                             p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"], key=f"soort_{idx}")
