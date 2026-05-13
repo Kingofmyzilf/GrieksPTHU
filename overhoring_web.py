@@ -68,19 +68,45 @@ def maak_schoon(tekst):
     return schoon.replace(';', ',').split(',')[0].strip().lower()
 
 def bereken_gewicht(item):
+    """
+    Het nieuwe adaptieve algoritme.
+    - Fouten leveren zware pluspunten op (komt vaker terug).
+    - Goede antwoorden verlagen het gewicht licht.
+    - Streaks in hogere modi (Typen) drukken de kans veel sneller omlaag dan Leer/MC.
+    """
     gewicht = 1.0
+    
+    # NT Frequentie start-bonus
     freq = int(item.get('frequentie_nt', 0))
     if freq > 0: gewicht += math.log10(freq + 1)
-    gewicht += (int(item.get('score_fout', 0)) * 1.5)
-    gem_streak = (int(item.get('streak_m1', 0)) + int(item.get('streak_m2', 0)) + int(item.get('streak_m3', 0))) / 3
-    if gem_streak >= 20 or int(item.get('streak_m3', 0)) >= 20: gewicht *= 0.1
+    
+    # Goed/Fout weging
+    fout = int(item.get('score_fout', 0))
+    goed = int(item.get('score_goed', 0))
+    gewicht += (fout * 1.5)
+    gewicht -= (goed * 0.1)
+    
+    # Streak weging (M4 weegt zwaarder dan M1)
+    sm1 = int(item.get('streak_m1', 0))
+    sm2 = int(item.get('streak_m2', 0))
+    sm3 = int(item.get('streak_m3', 0))
+    sm4 = int(item.get('streak_m4', 0))
+    
+    mastery_score = (sm1 * 0.5) + (sm2 * 1.0) + (sm3 * 1.5) + (sm4 * 2.0)
+    gewicht -= (mastery_score * 0.2)
+    
+    # Absolute mastery override
+    gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
+    if sm4 >= 20 or gem_streak >= 20: 
+        gewicht *= 0.1
+        
     return max(0.1, gewicht)
 
-def kies_adaptieve_gram_vorm(vlak):
+def kies_adaptieve_gram_vorm(vlak, prefix):
     if not vlak: return None
     weights = []
     for v in vlak:
-        vorm_id = f"{v['prefix']}_{v['naam']}"
+        vorm_id = f"{prefix}_{v['naam']}"
         stats = st.session_state.gram_stats.get(vorm_id, {'goed': 0, 'fout': 0, 'streak': 0})
         w = max(0.1, 1.0 + (stats['fout'] * 1.5) - (stats['streak'] * 0.4))
         weights.append(w)
@@ -117,9 +143,11 @@ def laad_gebruiker_data(naam):
                     new_data = []
                     for b in basis:
                         b['gebruikersnaam'] = naam
-                        b['streak_m1'] = 0; b['streak_m2'] = 0; b['streak_m3'] = 0
+                        b['streak_m1'] = 0; b['streak_m2'] = 0; b['streak_m3'] = 0; b['streak_m4'] = 0
+                        b['score_goed'] = 0; b['score_fout'] = 0
                         if 'vormen_data' in b and isinstance(b['vormen_data'], list):
                             b['vormen_data'] = json.dumps(b['vormen_data'], ensure_ascii=False)
+                        b['vocab_stats'] = "{}"
                         b['gram_stats'] = "{}"
                         new_data.append(b)
                     conn.update(data=pd.concat([df, pd.DataFrame(new_data)], ignore_index=True))
@@ -128,14 +156,24 @@ def laad_gebruiker_data(naam):
                 
         user_records = user_df.to_dict('records')
         
-        if len(user_records) > 0 and 'gram_stats' in user_records[0] and pd.notna(user_records[0]['gram_stats']):
-            try: st.session_state.gram_stats = json.loads(str(user_records[0]['gram_stats']))
+        # Parsen van de JSON strings naar in-memory dictionaries
+        if len(user_records) > 0:
+            try: st.session_state.vocab_stats = json.loads(str(user_records[0].get('vocab_stats', '{}')))
+            except: st.session_state.vocab_stats = {}
+            
+            try: st.session_state.gram_stats = json.loads(str(user_records[0].get('gram_stats', '{}')))
             except: st.session_state.gram_stats = {}
             
+        # Data aan de ruwe lijst hangen voor makkelijk gebruik in de app
         for r in user_records:
-            r['streak_m1'] = int(r.get('streak_m1', 0))
-            r['streak_m2'] = int(r.get('streak_m2', 0))
-            r['streak_m3'] = int(r.get('streak_m3', 0))
+            stats = st.session_state.vocab_stats.get(r['grieks'], {'m1':0, 'm2':0, 'm3':0, 'm4':0, 'g':0, 'f':0})
+            r['streak_m1'] = stats.get('m1', 0)
+            r['streak_m2'] = stats.get('m2', 0)
+            r['streak_m3'] = stats.get('m3', 0)
+            r['streak_m4'] = stats.get('m4', 0)
+            r['score_goed'] = stats.get('g', 0)
+            r['score_fout'] = stats.get('f', 0)
+            
             if 'vormen_data' in r and pd.notna(r['vormen_data']):
                 try: r['vormen_data'] = json.loads(str(r['vormen_data']))
                 except: r['vormen_data'] = []
@@ -150,14 +188,17 @@ def opslaan_naar_cloud():
         df = conn.read(ttl=0)
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
         df_andere_gebruikers = df[df['gebruikersnaam'] != st.session_state.last_user]
-        huidige_data_kopie = []
         
+        # Converteer data terug naar strings
+        vocab_stats_json = json.dumps(st.session_state.get('vocab_stats', {}), ensure_ascii=False)
         gram_stats_json = json.dumps(st.session_state.get('gram_stats', {}), ensure_ascii=False)
         
+        huidige_data_kopie = []
         for item in st.session_state.data:
             k = item.copy()
             if 'vormen_data' in k and isinstance(k['vormen_data'], list):
                 k['vormen_data'] = json.dumps(k['vormen_data'], ensure_ascii=False)
+            k['vocab_stats'] = vocab_stats_json
             k['gram_stats'] = gram_stats_json
             huidige_data_kopie.append(k)
             
@@ -166,6 +207,16 @@ def opslaan_naar_cloud():
 
 def trigger_save():
     if not st.session_state.get('last_user'): return
+    # Sync in-memory items met vocab dictionary
+    for word in st.session_state.data:
+        st.session_state.vocab_stats[word['grieks']] = {
+            'm1': word.get('streak_m1', 0),
+            'm2': word.get('streak_m2', 0),
+            'm3': word.get('streak_m3', 0),
+            'm4': word.get('streak_m4', 0),
+            'g': word.get('score_goed', 0),
+            'f': word.get('score_fout', 0)
+        }
     opslaan_naar_cloud()
 
 # --- SESSION STATE ---
@@ -175,6 +226,7 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
             'decl_oefening', 'laatste_filter_decl', 'gram_feedback', 'decl_feedback']:
     if key not in st.session_state: st.session_state[key] = None
 
+if 'vocab_stats' not in st.session_state: st.session_state.vocab_stats = {}
 if 'gram_stats' not in st.session_state: st.session_state.gram_stats = {}
 if st.session_state.fouten_huidig_woord is None: st.session_state.fouten_huidig_woord = 0
 
@@ -211,7 +263,6 @@ if st.session_state.data:
     with menu[0]: # WOORDENSCHAT
         col1, col2 = st.columns([1, 2])
         with col1:
-            # Modus 3 is nu de slimme Mix-modus, modus 4 is direct Typen
             modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
             keuze = st.selectbox("Oefening:", ["Lessen", "Mastery"])
             doel = []
@@ -220,7 +271,7 @@ if st.session_state.data:
                 gekozen = st.multiselect("Kies lessen", alle_lessen)
                 doel = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
             elif keuze == "Mastery":
-                doel = [word for word in st.session_state.data if ((int(word.get('streak_m1',0))+int(word.get('streak_m2',0))+int(word.get('streak_m3',0)))/3) >= 20]
+                doel = [word for word in st.session_state.data if ((int(word.get('streak_m1',0))+int(word.get('streak_m2',0))+int(word.get('streak_m3',0))+int(word.get('streak_m4',0)))/4) >= 20]
             
             if st.button("Start Sessie"):
                 if doel:
@@ -228,10 +279,11 @@ if st.session_state.data:
                     sampled = random.sample(doel, min(len(doel), 10))
                     
                     modus_id = modus[0] # Pakt '1', '2', '3' of '4'
+                    st.session_state.modus_actief = modus_id
+                    
                     if modus_id == "3":
-                        # MIX-MODUS: Genereer éérst alle MC versies ("2"), en plak de TYPEN versies ("4") erachter
-                        mc_deel = [(w, "2") for w in sampled]
-                        typen_deel = [(w, "4") for w in sampled]
+                        mc_deel = [(w, "3_mc") for w in sampled]
+                        typen_deel = [(w, "3_typ") for w in sampled]
                         st.session_state.sessie_lijst = mc_deel + typen_deel
                     else:
                         st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
@@ -243,14 +295,11 @@ if st.session_state.data:
             if st.session_state.huidig_item:
                 item = st.session_state.huidig_item
                 huidige_sub_modus = st.session_state.huidige_sub_modus
+                act_streak_key = f"streak_m{st.session_state.modus_actief}"
                 
-                # Bepaal welke kolom in Sheets wordt geüpdatet. (Modus 4 update streak_m3)
-                opslag_modus = "3" if huidige_sub_modus == "4" else huidige_sub_modus
-                act_streak_key = f"streak_m{opslag_modus}"
-                
-                sm1, sm2, sm3 = int(item.get('streak_m1', 0)), int(item.get('streak_m2', 0)), int(item.get('streak_m3', 0))
-                gem_streak = (sm1 + sm2 + sm3) / 3
-                is_mastery = gem_streak >= 20 or sm3 >= 20
+                sm1, sm2, sm3, sm4 = int(item.get('streak_m1', 0)), int(item.get('streak_m2', 0)), int(item.get('streak_m3', 0)), int(item.get('streak_m4', 0))
+                gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
+                is_mastery = gem_streak >= 20 or sm4 >= 20
                 heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                 
                 if st.session_state.huidige_vorm_data is None:
@@ -280,12 +329,13 @@ if st.session_state.data:
                 correct_volledig = correct_antw.lower()
                 correct_schoon = maak_schoon(correct_antw)
                 correcte_delen = [d.strip() for d in correct_volledig.split(',')]
+                volledig_antwoord_str = f"**{huidige_vorm}** = {correct_antw}" + (f" ({huidige_parsing})" if is_mastery and heeft_vormen else "")
                 
-                # --- TYPEN MODUS (Nu actief bij modus 4) ---
-                if huidige_sub_modus == '4':
+                # --- TYPEN MODUS ---
+                if huidige_sub_modus in ['4', '3_typ']:
                     inp = st.text_input("Betekenis:", key=f"vocab_inp_{item.get('grieks')}").lower().strip()
                     if is_mastery and heeft_vormen:
-                        p_vorm = st.text_input("Vorm (bijv. nom ev m):", key=f"inp_v_{item.get('grieks')}").lower().strip()
+                        p_vorm = st.text_input("Vorm:", key=f"inp_v_{item.get('grieks')}").lower().strip()
                     else:
                         p_vorm = huidige_parsing.lower().strip()
 
@@ -297,26 +347,20 @@ if st.session_state.data:
                             if st.session_state.fouten_huidig_woord == 0:
                                 item[act_streak_key] = int(item.get(act_streak_key, 0)) + 1
                                 item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                            st.session_state.feedback = {"type": "success", "msg": "✓ Goed!"}
+                            st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! {volledig_antwoord_str}"}
                             trigger_save(); laad_volgend_woord(); st.rerun()
                         else:
                             st.session_state.fouten_huidig_woord = int(st.session_state.fouten_huidig_woord) + 1
-                            
                             if st.session_state.fouten_huidig_woord == 1:
                                 st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint en probeer nog eens."}
                             elif st.session_state.fouten_huidig_woord == 2:
                                 item[act_streak_key] = max(0, int(item.get(act_streak_key, 0)) - 2)
                                 item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                st.session_state.sessie_lijst.append((item, huidige_sub_modus)) # Plaats terug in de wachtrij
-                                fout_bericht = f"✗ Fout. Betekenis: '{correct_antw}'"
-                                if is_mastery and heeft_vormen: fout_bericht += f" | Vorm: '{huidige_parsing}'"
-                                fout_bericht += ". Typ dit exact over om door te gaan."
-                                st.session_state.feedback = {"type": "error", "msg": fout_bericht}
+                                st.session_state.sessie_lijst.append((item, huidige_sub_modus))
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Typ exact over om door te gaan: {volledig_antwoord_str}"}
                                 trigger_save()
                             else:
-                                herinnering = f"Typ exact over: '{correct_antw}'"
-                                if is_mastery and heeft_vormen: herinnering += f" | '{huidige_parsing}'"
-                                st.session_state.feedback = {"type": "error", "msg": herinnering}
+                                st.session_state.feedback = {"type": "error", "msg": f"✗ Typ exact over: {volledig_antwoord_str}"}
                             st.rerun()
                 
                 # --- MEERKEUZE MODUS ---
@@ -329,14 +373,9 @@ if st.session_state.data:
                             andere = [str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]
                             if andere: afleiders = [f"{correct_antw} ({f})" for f in random.sample(andere, min(3, len(andere)))]
                         else:
-                            # 🧠 Slimme Distractors: Zoek eerst naar dezelfde woordsoort
                             zelfde_soort = [str(i.get('nederlands', '')) for i in st.session_state.data if i.get('grieks') != item.get('grieks') and i.get('woordsoort') == huidige_woordsoort]
                             alle_andere = [str(i.get('nederlands', '')) for i in st.session_state.data if i.get('grieks') != item.get('grieks')]
-                            
-                            if len(set(zelfde_soort)) >= 3:
-                                afleiders = zelfde_soort
-                            else:
-                                afleiders = zelfde_soort + alle_andere # Fallback als er niet genoeg zijn
+                            afleiders = zelfde_soort if len(set(zelfde_soort)) >= 3 else (zelfde_soort + alle_andere)
                         
                         opties = list(dict.fromkeys([str(a) for a in afleiders if a]))[:3] + [correct_optie]
                         st.session_state.huidige_opties = opties
@@ -349,7 +388,7 @@ if st.session_state.data:
                                 if st.session_state.fouten_huidig_woord == 0:
                                     item[act_streak_key] = int(item.get(act_streak_key, 0)) + 1
                                     item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                st.session_state.feedback = {"type": "success", "msg": "✓ Juist!"}
+                                st.session_state.feedback = {"type": "success", "msg": f"✓ Juist! {volledig_antwoord_str}"}
                                 trigger_save(); laad_volgend_woord(); st.rerun()
                             else:
                                 st.session_state.fouten_huidig_woord = int(st.session_state.fouten_huidig_woord) + 1
@@ -366,7 +405,7 @@ if st.session_state.data:
                                 st.rerun()
 
                 st.write("---")
-                st.caption(f"Streaks: M1:{item.get('streak_m1', 0)} M2:{item.get('streak_m2', 0)} M3:{item.get('streak_m3', 0)}")
+                st.caption(f"Streaks: M1:{sm1} | M2:{sm2} | M3(Mix):{sm3} | M4:{sm4} — Totaal Goed/Fout: {item.get('score_goed', 0)} / {item.get('score_fout', 0)}")
 
     with menu[1]: # LIJST
         if st.session_state.data:
@@ -374,7 +413,7 @@ if st.session_state.data:
             les_filter = st.selectbox("Bekijk les:", alle_lessen)
             df = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
             if not df.empty:
-                st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak_m1', 'streak_m2', 'streak_m3', 'woordsoort'] if c in df.columns]], use_container_width=True)
+                st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak_m1', 'streak_m2', 'streak_m3', 'streak_m4', 'score_goed', 'score_fout', 'woordsoort'] if c in df.columns]], use_container_width=True)
 
     with menu[2]: # VOORTGANG
         if st.session_state.data:
@@ -383,7 +422,7 @@ if st.session_state.data:
             stats = []
             for l in lessen:
                 it = [i for i in st.session_state.data if veilig_les_nummer(i) == l]
-                beheerst = len([i for i in it if (int(i.get('streak_m1',0))+int(i.get('streak_m2',0))+int(i.get('streak_m3',0)))/3 >= 20])
+                beheerst = len([i for i in it if (int(i.get('streak_m1',0))+int(i.get('streak_m2',0))+int(i.get('streak_m3',0))+int(i.get('streak_m4',0)))/4 >= 20])
                 stats.append((beheerst/len(it))*100 if len(it) > 0 else 0)
             fig, ax = plt.subplots()
             ax.bar(lessen, stats, color='#33ccff')
@@ -398,26 +437,20 @@ if st.session_state.data:
             
             c1, c2, c3 = st.columns(3)
             with c1: gram_keuze = st.radio("Modus:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"])
-            
-            # MULTI-SELECT VOOR TIJDEN
             with c2: gekozen_tijden = st.multiselect("1. Tijd/Diathese:", list(luo.keys()), default=[list(luo.keys())[0]])
             
             with c3:
                 wijzen_set = set()
                 for t in gekozen_tijden:
                     for k in luo[t].keys(): wijzen_set.add(splits_sleutel(k)[0])
-                # MULTI-SELECT VOOR WIJZEN
                 gekozen_wijzen = st.multiselect("2. Modus/Wijs:", ["Alles"] + sorted(list(wijzen_set)), default=["Alles"])
             
-            # Bouw een platte, dynamische lijst (vlak) op basis van de Multi-selects
             vlak = []
             for t in gekozen_tijden:
                 for k, v in luo[t].items():
                     wijs, rest = splits_sleutel(k)
                     if "Alles" in gekozen_wijzen or wijs in gekozen_wijzen:
-                        vlak.append({
-                            "tijd": t, "naam": k, "vorm": v, "wijs": wijs, "rest": rest, "prefix": f"ww_{t}"
-                        })
+                        vlak.append({"tijd": t, "naam": k, "vorm": v, "wijs": wijs, "rest": rest, "prefix": f"ww_{t}"})
 
             if st.session_state.gram_feedback:
                 if st.session_state.gram_feedback['type'] == 'success': st.success(st.session_state.gram_feedback['msg'])
@@ -430,13 +463,13 @@ if st.session_state.data:
                 for t in gekozen_tijden:
                     st.markdown(f"#### {t}")
                     items = {v['rest'] if v['rest'] else v['wijs']: v['vorm'] for v in vlak if v['tijd'] == t}
-                    if items:
-                        st.dataframe(pd.DataFrame(list(items.items()), columns=["Vorm", "Griekse Vorm"]), use_container_width=True, hide_index=True)
+                    if items: st.dataframe(pd.DataFrame(list(items.items()), columns=["Vorm", "Griekse Vorm"]), use_container_width=True, hide_index=True)
 
             elif gram_keuze == "Vormen Analyseren":
                 huidig_filter = str(gekozen_tijden) + str(gekozen_wijzen)
                 if st.button("Nieuwe Vorm") or not st.session_state.gram_oefening or st.session_state.get('laatste_filter') != huidig_filter:
-                    st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak)
+                    st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None) 
+                    # Noot: de nieuwe kies_adaptieve_gram_vorm gebruikt de prefix uit de list comprehensie.
                     st.session_state.laatste_filter = huidig_filter
                 
                 oef = st.session_state.gram_oefening
@@ -445,11 +478,8 @@ if st.session_state.data:
                     vorm_id = f"{oef['prefix']}_{oef['naam']}"
                     if vorm_id not in st.session_state.gram_stats: st.session_state.gram_stats[vorm_id] = {'goed': 0, 'fout': 0, 'streak': 0}
 
-                    # Als de speler tijden door elkaar mixt, moeten ze ook de Tijd raden!
-                    if len(gekozen_tijden) > 1:
-                        p_tijd = st.selectbox("Welke Tijd/Diathese?", [""] + gekozen_tijden)
-                    else:
-                        p_tijd = oef['tijd'] # Auto-select als er maar eentje open staat
+                    if len(gekozen_tijden) > 1: p_tijd = st.selectbox("Welke Tijd/Diathese?", [""] + gekozen_tijden)
+                    else: p_tijd = oef['tijd']
 
                     if oef['wijs'] == "Participium":
                         ca1, ca2, ca3 = st.columns(3)
@@ -458,7 +488,6 @@ if st.session_state.data:
                         with ca3: gs = st.selectbox("Geslacht:", ["", "M", "V", "O"])
                         poging_naam = f"Participium {nv} {gt} {gs}".strip()
                     else:
-                        # Dynamische lijst van vormen die horen bij de (geselecteerde) tijd
                         beschikbare_vormen = [v['naam'] for v in vlak if v['tijd'] == p_tijd]
                         poging_naam = st.selectbox("Welke Persoon/Vorm is dit?", [""] + beschikbare_vormen)
                     
@@ -466,13 +495,13 @@ if st.session_state.data:
                         if p_tijd == oef['tijd'] and normaliseer_accent(poging_naam) == normaliseer_accent(oef['naam']):
                             st.session_state.gram_stats[vorm_id]['goed'] += 1
                             st.session_state.gram_stats[vorm_id]['streak'] += 1
-                            st.session_state.gram_feedback = {'type': 'success', 'msg': f"✓ Correct! Dat was de {oef['naam']} van de {oef['tijd']}."}
-                            st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak)
+                            st.session_state.gram_feedback = {'type': 'success', 'msg': f"✓ Correct! **{oef['vorm']}** was de {oef['naam']} van de {oef['tijd']}."}
+                            st.session_state.gram_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None)
                             trigger_save(); st.rerun()
                         else:
                             st.session_state.gram_stats[vorm_id]['fout'] += 1
                             st.session_state.gram_stats[vorm_id]['streak'] = 0
-                            st.session_state.gram_feedback = {'type': 'error', 'msg': f"✗ Onjuist. Het was de **{oef['naam']}** van de **{oef['tijd']}**."}
+                            st.session_state.gram_feedback = {'type': 'error', 'msg': f"✗ Onjuist. **{oef['vorm']}** is de {oef['naam']} van de {oef['tijd']}."}
                             trigger_save(); st.rerun()
 
             else: # Produceren
@@ -480,7 +509,6 @@ if st.session_state.data:
                 fouten_teller = 0
                 for t in gekozen_tijden:
                     st.markdown(f"#### {t}")
-                    # Filter items specifiek voor deze Tijd-loop
                     t_vlak = [v for v in vlak if v['tijd'] == t]
                     
                     if any(v['wijs'] == "Participium" for v in t_vlak):
@@ -514,16 +542,13 @@ if st.session_state.data:
             dc1, dc2, dc3 = st.columns(3)
             with dc1: decl_keuze = st.radio("Modus:", ["Visueel Leren (Tabel)", "Vormen Analyseren", "Rijtjes Produceren"], key="decl_radio")
             
-            # MULTI-SELECT VOOR GROEPEN & PARADIGMAS
             with dc2: gekozen_groepen = st.multiselect("Groep:", list(decl_db["Declinaties"].keys()), default=[list(decl_db["Declinaties"].keys())[0]])
             
             paradigma_opties = []
-            for g in gekozen_groepen:
-                paradigma_opties.extend([f"{g} | {p}" for p in decl_db["Declinaties"][g].keys()])
+            for g in gekozen_groepen: paradigma_opties.extend([f"{g} | {p}" for p in decl_db["Declinaties"][g].keys()])
                 
             with dc3: gekozen_paradigmas = st.multiselect("Paradigma:", paradigma_opties, default=[paradigma_opties[0]] if paradigma_opties else [])
             
-            # Bouw het vlak
             vlak = []
             for gp in gekozen_paradigmas:
                 g, p = gp.split(" | ")
@@ -547,7 +572,7 @@ if st.session_state.data:
             elif decl_keuze == "Vormen Analyseren":
                 huidig_filter = str(gekozen_paradigmas)
                 if st.button("Nieuwe Vorm", key="btn_nw_decl") or not st.session_state.get('decl_oefening') or st.session_state.get('laatste_filter_decl') != huidig_filter:
-                    st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak)
+                    st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None)
                     st.session_state.laatste_filter_decl = huidig_filter
                 
                 oef = st.session_state.decl_oefening
@@ -556,10 +581,8 @@ if st.session_state.data:
                     vorm_id = f"{oef['prefix']}_{oef['naam']}"
                     if vorm_id not in st.session_state.gram_stats: st.session_state.gram_stats[vorm_id] = {'goed': 0, 'fout': 0, 'streak': 0}
                     
-                    if len(gekozen_paradigmas) > 1:
-                        p_para = st.selectbox("Welk Paradigma?", [""] + gekozen_paradigmas)
-                    else:
-                        p_para = f"{oef['groep']} | {oef['paradigma']}"
+                    if len(gekozen_paradigmas) > 1: p_para = st.selectbox("Welk Paradigma?", [""] + gekozen_paradigmas)
+                    else: p_para = f"{oef['groep']} | {oef['paradigma']}"
 
                     beschikbare_naamvallen = [v['naam'] for v in vlak if f"{v['groep']} | {v['paradigma']}" == p_para]
                     poging = st.selectbox("Naamval/Getal?", [""] + beschikbare_naamvallen, key="sel_decl_analyse")
@@ -568,8 +591,8 @@ if st.session_state.data:
                         if p_para == f"{oef['groep']} | {oef['paradigma']}" and normaliseer_accent(poging) == normaliseer_accent(oef['naam']):
                             st.session_state.gram_stats[vorm_id]['goed'] += 1
                             st.session_state.gram_stats[vorm_id]['streak'] += 1
-                            st.session_state.decl_feedback = {'type': 'success', 'msg': f"✓ Juist! Dat was de {oef['naam']} van {oef['paradigma']}."}
-                            st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak)
+                            st.session_state.decl_feedback = {'type': 'success', 'msg': f"✓ Juist! **{oef['vorm']}** is de {oef['naam']} van {oef['paradigma']}."}
+                            st.session_state.decl_oefening = kies_adaptieve_gram_vorm(vlak, prefix=None)
                             trigger_save(); st.rerun()
                         else:
                             st.session_state.gram_stats[vorm_id]['fout'] += 1
