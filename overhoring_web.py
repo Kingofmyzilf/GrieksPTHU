@@ -96,7 +96,7 @@ def kies_adaptieve_gram_vorm(vlak, prefix):
     return random.choices(vlak, weights=weights, k=1)[0]
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
-    info = bsb_info # De string is nu volledig in het Nederlands!
+    info = bsb_info 
     
     if p_soort:
         if p_soort == "Overig":
@@ -683,7 +683,14 @@ if st.session_state.data:
                     tooltip = f"{w['vertaling_bsb']} ({w['parsing_info']})"
                     if w['strong'] in actieve_strongs:
                         basis = actieve_strongs[w['strong']]
-                        html_zin += f"<span class='woord-bekend' title='Les {basis.get('les', '?')}: {basis.get('nederlands', '')} | {tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
+                        
+                        # Anti-spiek logica!
+                        if "1." in tekst_modus:
+                            hover_text = f"Les {basis.get('les', '?')}: {basis.get('nederlands', '')} | {tooltip}"
+                        else:
+                            hover_text = "Oefenwoord! Vul de gegevens hieronder in."
+                            
+                        html_zin += f"<span class='woord-bekend' title='{hover_text}'>{w['grieks']}</span>{w['interpunctie']} "
                         oefen_woorden.append(w)
                     else:
                         html_zin += f"<span class='woord-onbekend' title='{tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
@@ -695,7 +702,7 @@ if st.session_state.data:
                     st.write("### 📝 Oefen je woorden in context")
                     for idx, w in enumerate(oefen_woorden):
                         basis = actieve_strongs[w['strong']]
-                        st.markdown(f"**{w['grieks']}** (Basis: {basis['grieks']})")
+                        st.markdown(f"**{w['grieks']}**") # De (Basis: X) hint is hier verwijderd!
                         
                         if "2." in tekst_modus: # Meerkeuze
                             if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
