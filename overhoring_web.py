@@ -21,6 +21,9 @@ st.markdown("""
     .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
     .stTextInput>div>div>input { font-size: 20px; text-align: center; }
     .grieks-woord { font-size: 50px; font-weight: bold; color: #33ccff; text-align: center; padding: 20px; }
+    .grieks-zin { font-size: 28px; line-height: 1.8; color: #ffffff; padding: 20px; background-color: #1e1e1e; border-radius: 10px; }
+    .woord-bekend { color: #33ccff; font-weight: bold; border-bottom: 2px solid #33ccff; cursor: help; padding: 0 4px; }
+    .woord-onbekend { color: #aaaaaa; cursor: help; padding: 0 2px; }
     .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
     </style>
     """, unsafe_allow_html=True)
@@ -110,6 +113,20 @@ def laad_declinaties_db():
         except Exception: pass
     return None
 
+@st.cache_data
+def laad_bijbel_db():
+    bijbel = {}
+    if os.path.exists("bijbel_nt.json"):
+        try:
+            with open("bijbel_nt.json", "r", encoding="utf-8") as f: bijbel = json.load(f)
+        except: pass
+    else:
+        if os.path.exists("bijbel_nt_deel1.json"):
+            with open("bijbel_nt_deel1.json", "r", encoding="utf-8") as f: bijbel.update(json.load(f))
+        if os.path.exists("bijbel_nt_deel2.json"):
+            with open("bijbel_nt_deel2.json", "r", encoding="utf-8") as f: bijbel.update(json.load(f))
+    return bijbel
+
 def laad_gebruiker_data(naam):
     try:
         df = conn.read(ttl=0) 
@@ -155,7 +172,6 @@ def opslaan_naar_cloud():
         v_json = json.dumps(st.session_state.get('vocab_stats', {}), ensure_ascii=False)
         g_json = json.dumps(st.session_state.get('gram_stats', {}), ensure_ascii=False)
         
-        # We maken nu gegarandeerd maar ÉÉN rij per gebruiker aan
         nieuwe_rij = pd.DataFrame([{
             'gebruikersnaam': st.session_state.last_user,
             'vocab_stats': v_json,
@@ -182,7 +198,8 @@ def trigger_save():
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user',
             'gram_oefening', 'laatste_filter',
-            'decl_oefening', 'laatste_filter_decl', 'gram_feedback', 'decl_feedback']:
+            'decl_oefening', 'laatste_filter_decl', 'gram_feedback', 'decl_feedback',
+            'huidig_vers', 'huidige_vers_referentie', 'huidige_verse_woorden']:
     if key not in st.session_state: st.session_state[key] = None
 
 if 'vocab_stats' not in st.session_state: st.session_state.vocab_stats = {}
@@ -217,7 +234,7 @@ with st.sidebar:
 
 # --- HOOFDMENU ---
 if st.session_state.data:
-    menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🏛️ Werkwoorden", "🏷️ Naamwoorden"])
+    menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🏛️ Werkwoorden", "🏷️ Naamwoorden", "📝 Leesteksten"])
 
     with menu[0]: # WOORDENSCHAT
         col1, col2 = st.columns([1, 2])
@@ -577,4 +594,84 @@ if st.session_state.data:
                             if inp:
                                 if normaliseer_accent(naar_grieks_transliteratie(inp)) == normaliseer_accent(v['vorm']): st.success(f"✓ {v['vorm']}")
                                 else: st.error(f"✗ {v['vorm']}"); fouten_teller += 1
-                    if st.form_submit_button("Check Rijtjes") and fouten_teller == 0: st.balloons()
+                    if st.form_submit_button("Check Rijtjes", key="btn_chk_rijtje_decl") and fouten_teller == 0: st.balloons()
+
+    with menu[5]: # LEESTEKSTEN (NIEUW!)
+        bijbel_db = laad_bijbel_db()
+        if not bijbel_db:
+            st.warning("De Bijbel-database (bijbel_nt.json of deel1/deel2) ontbreekt. Voeg deze toe aan je bestanden.")
+        else:
+            st.subheader("📝 Bijbelse Leesteksten & Exegese")
+            
+            c1, c2 = st.columns([1, 2])
+            with c1:
+                alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
+                gekozen = st.multiselect("1. Oefen woorden uit les(sen):", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
+                
+                actieve_strongs = {}
+                for w in st.session_state.data:
+                    if veilig_les_nummer(w) in gekozen and w.get('strong'):
+                        actieve_strongs[str(w['strong'])] = w
+            
+            with c2:
+                lees_modus = st.radio("2. Kies een leesmethode:", ["Scavenger Hunt (Willekeurig passend vers)", "Kies specifiek vers"])
+                
+                if lees_modus == "Kies specifiek vers":
+                    boek = st.selectbox("Bijbelvers (Bijv. John 1:1):", list(bijbel_db.keys()), index=list(bijbel_db.keys()).index("John 1:1") if "John 1:1" in bijbel_db else 0)
+                    if st.button("Laad dit vers"):
+                        st.session_state.huidig_vers = bijbel_db[boek]
+                        st.session_state.huidige_vers_referentie = boek
+                else:
+                    if st.button("Vind een passend vers"):
+                        # Zoek een vers dat minimaal 3 woorden bevat uit je actieve lessen
+                        passende_verzen = []
+                        for ref, woorden in bijbel_db.items():
+                            match_count = sum(1 for w in woorden if w['strong'] in actieve_strongs)
+                            if match_count >= 3:
+                                passende_verzen.append((ref, woorden, match_count))
+                        
+                        if passende_verzen:
+                            # Kies een vers met veel bekende woorden
+                            passende_verzen.sort(key=lambda x: x[2], reverse=True)
+                            top_picks = passende_verzen[:20]
+                            gekozen_vers = random.choice(top_picks)
+                            st.session_state.huidig_vers = gekozen_vers[1]
+                            st.session_state.huidige_vers_referentie = gekozen_vers[0]
+                        else:
+                            st.warning("Geen verzen gevonden met 3+ bekende woorden. Kies meer lessen of probeer een specifieke referentie.")
+
+            st.write("---")
+
+            if st.session_state.huidig_vers:
+                st.markdown(f"### 📖 {st.session_state.huidige_vers_referentie}")
+                
+                html_zin = ""
+                oefen_woorden = []
+                
+                for idx, w in enumerate(st.session_state.huidig_vers):
+                    tooltip = f"{w['vertaling_bsb']} ({w['parsing_info']})"
+                    if w['strong'] in actieve_strongs:
+                        basis = actieve_strongs[w['strong']]
+                        html_zin += f"<span class='woord-bekend' title='Bekend woord (Les {basis.get('les', '?')}): {basis.get('nederlands', '')} | In tekst: {tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
+                        oefen_woorden.append(w)
+                    else:
+                        html_zin += f"<span class='woord-onbekend' title='{tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
+                
+                st.markdown(f"<div class='grieks-zin'>{html_zin}</div>", unsafe_allow_html=True)
+                st.caption("ℹ️ Hover over een woord om de vertaling en grammatica (parsing) te zien. Blauwe woorden komen uit je geselecteerde lessen.")
+                
+                if oefen_woorden:
+                    st.write("### 🔍 Ontleed je bekende woorden")
+                    for w in oefen_woorden:
+                        basis = actieve_strongs[w['strong']]
+                        with st.expander(f"Ontleed: {w['grieks']} (Basis: {basis['grieks']})"):
+                            col_a, col_b = st.columns(2)
+                            with col_a: st.write(f"**Jouw woordenlijst vertaling:** {basis['nederlands']}")
+                            with col_b: st.write(f"**Grammatica in de tekst:** {w['parsing_info']}")
+                            st.info(f"Context-vertaling (Engels): {w['vertaling_bsb']}")
+                
+                st.write("### ✍️ Zinsvertaling")
+                user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
+                if st.button("Toon officiële vertaling"):
+                    officiële_zin = " ".join([w['vertaling_bsb'] for w in st.session_state.huidig_vers])
+                    st.success(f"**Originele ruwe vertaling:** {officiële_zin}")
