@@ -22,7 +22,7 @@ st.markdown("""
     .stTextInput>div>div>input { font-size: 20px; text-align: center; }
     .grieks-woord { font-size: 50px; font-weight: bold; color: #33ccff; text-align: center; padding: 20px; }
     .grieks-zin { font-size: 28px; line-height: 1.8; color: #ffffff; padding: 20px; background-color: #1e1e1e; border-radius: 10px; }
-    .woord-bekend { color: #00ffff; font-weight: bold; border-bottom: 2px solid #33ccff; cursor: help; padding: 0 4px; }
+    .woord-bekend { color: #00ffff; font-weight: bold; border-bottom: 2px solid #00ffff; cursor: help; padding: 0 4px; }
     .woord-stamtijd { color: #d63384; font-weight: bold; border-bottom: 2px solid #d63384; cursor: help; padding: 0 4px; }
     .woord-onbekend { color: #aaaaaa; cursor: help; padding: 0 2px; }
     .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
