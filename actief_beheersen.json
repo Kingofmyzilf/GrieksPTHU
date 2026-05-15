@@ -2560,5 +2560,391 @@
       ]
     }
   },
-  "Grieks 3": {}
+  "Grieks 3": {
+    "Werkwoord (λύω) - Conjunctivus": {
+      "Praesens Actief": [
+        {
+          "label": "1e ev",
+          "vorm": "λύω",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύῃς",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύῃ",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λύωμεν",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύητε",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύωσι(ν)",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_3e_mv"
+        }
+      ],
+      "Praesens Medium": [
+        {
+          "label": "1e ev",
+          "vorm": "λύωμαι",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύῃ",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύηται",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λυώμεθα",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύησθε",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύωνται",
+          "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_3e_mv"
+        }
+      ],
+      "Aoristus Actief": [
+        {
+          "label": "1e ev",
+          "vorm": "λύσω",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_actief_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύσῃς",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_actief_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύσῃ",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_actief_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λύσωμεν",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_actief_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύσητε",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_actief_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύσωσι(ν)",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_actief_3e_mv"
+        }
+      ],
+      "Aoristus Medium": [
+        {
+          "label": "1e ev",
+          "vorm": "λύσωμαι",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_medium_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λύσῃ",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_medium_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λύσηται",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_medium_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λυσώμεθα",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_medium_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λύσησθε",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_medium_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λύσωνται",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_medium_3e_mv"
+        }
+      ],
+      "Aoristus Passief": [
+        {
+          "label": "1e ev",
+          "vorm": "λυθῶ",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_passief_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "λυθῇς",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_passief_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "λυθῇ",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_passief_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "λυθῶμεν",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_passief_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "λυθῆτε",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_passief_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "λυθῶσι(ν)",
+          "id": "grieks_3_werkwoord_conjunctivus_aoristus_passief_3e_mv"
+        }
+      ]
+    },
+    "Werkwoord op -μι (δείκνυμι)": {
+      "Indicativus Praesens Actief": [
+        {
+          "label": "1e ev",
+          "vorm": "δείκνυμι",
+          "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "δείκνυς",
+          "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "δείκνυσι(ν)",
+          "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "δείκνυμεν",
+          "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "δείκνυτε",
+          "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "δεικνύασι(ν)",
+          "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_3e_mv"
+        }
+      ],
+      "Indicativus Imperfectum Actief": [
+        {
+          "label": "1e ev",
+          "vorm": "ἐδείκνυν",
+          "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_1e_ev"
+        },
+        {
+          "label": "2e ev",
+          "vorm": "ἐδείκνυς",
+          "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "ἐδείκνυ",
+          "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_3e_ev"
+        },
+        {
+          "label": "1e mv",
+          "vorm": "ἐδείκνυμεν",
+          "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_1e_mv"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "ἐδείκνυτε",
+          "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "ἐδείκνυσαν",
+          "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_3e_mv"
+        }
+      ],
+      "Imperativus Praesens Actief": [
+        {
+          "label": "2e ev",
+          "vorm": "δείκνυ",
+          "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_2e_ev"
+        },
+        {
+          "label": "3e ev",
+          "vorm": "δεικνύτω",
+          "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_3e_ev"
+        },
+        {
+          "label": "2e mv",
+          "vorm": "δείκνυτε",
+          "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_2e_mv"
+        },
+        {
+          "label": "3e mv",
+          "vorm": "δεικνύτωσαν",
+          "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_3e_mv"
+        }
+      ],
+      "Infinitivus Praesens Actief": [
+        {
+          "label": "Infinitivus",
+          "vorm": "δεικνύναι",
+          "id": "grieks_3_werkwoord_op_infinitivus_praesens_actief_infinitivus"
+        }
+      ]
+    },
+    "Participium op -μι (δείκνυμι)": {
+      "Praesens Actief (M)": [
+        {
+          "label": "Nom ev",
+          "vorm": "δεικνύς",
+          "id": "grieks_3_participium_op_praesens_actief_m_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "δεικνύντος",
+          "id": "grieks_3_participium_op_praesens_actief_m_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "δεικνύντι",
+          "id": "grieks_3_participium_op_praesens_actief_m_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "δεικνύντα",
+          "id": "grieks_3_participium_op_praesens_actief_m_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "δεικνύντες",
+          "id": "grieks_3_participium_op_praesens_actief_m_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "δεικνύντων",
+          "id": "grieks_3_participium_op_praesens_actief_m_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "δείκνυσι(ν)",
+          "id": "grieks_3_participium_op_praesens_actief_m_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "δεικνύντας",
+          "id": "grieks_3_participium_op_praesens_actief_m_acc_mv"
+        }
+      ],
+      "Praesens Actief (V)": [
+        {
+          "label": "Nom ev",
+          "vorm": "δεικνῦσα",
+          "id": "grieks_3_participium_op_praesens_actief_v_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "δεικνύσης",
+          "id": "grieks_3_participium_op_praesens_actief_v_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "δεικνύσῃ",
+          "id": "grieks_3_participium_op_praesens_actief_v_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "δεικνῦσαν",
+          "id": "grieks_3_participium_op_praesens_actief_v_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "δεικνῦσαι",
+          "id": "grieks_3_participium_op_praesens_actief_v_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "δεικνυσῶν",
+          "id": "grieks_3_participium_op_praesens_actief_v_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "δεικνύσαις",
+          "id": "grieks_3_participium_op_praesens_actief_v_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "δεικνύσας",
+          "id": "grieks_3_participium_op_praesens_actief_v_acc_mv"
+        }
+      ],
+      "Praesens Actief (O)": [
+        {
+          "label": "Nom ev",
+          "vorm": "δεικνύν",
+          "id": "grieks_3_participium_op_praesens_actief_o_nom_ev"
+        },
+        {
+          "label": "Gen ev",
+          "vorm": "δεικνύντος",
+          "id": "grieks_3_participium_op_praesens_actief_o_gen_ev"
+        },
+        {
+          "label": "Dat ev",
+          "vorm": "δεικνύντι",
+          "id": "grieks_3_participium_op_praesens_actief_o_dat_ev"
+        },
+        {
+          "label": "Acc ev",
+          "vorm": "δεικνύν",
+          "id": "grieks_3_participium_op_praesens_actief_o_acc_ev"
+        },
+        {
+          "label": "Nom mv",
+          "vorm": "δεικνύντα",
+          "id": "grieks_3_participium_op_praesens_actief_o_nom_mv"
+        },
+        {
+          "label": "Gen mv",
+          "vorm": "δεικνύντων",
+          "id": "grieks_3_participium_op_praesens_actief_o_gen_mv"
+        },
+        {
+          "label": "Dat mv",
+          "vorm": "δείκνυσι(ν)",
+          "id": "grieks_3_participium_op_praesens_actief_o_dat_mv"
+        },
+        {
+          "label": "Acc mv",
+          "vorm": "δεικνύντα",
+          "id": "grieks_3_participium_op_praesens_actief_o_acc_mv"
+        }
+      ]
+    }
+  }
 }
