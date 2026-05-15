@@ -25,6 +25,7 @@ st.markdown("""
     .woord-bekend { color: #33ccff; font-weight: bold; border-bottom: 2px solid #33ccff; cursor: help; padding: 0 4px; }
     .woord-onbekend { color: #aaaaaa; cursor: help; padding: 0 2px; }
     .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
+    .rooster-input>div>div>input { font-size: 16px; padding: 5px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -51,8 +52,20 @@ def normaliseer_accent(woord):
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
-        return w
+        w = w.replace('(ν)', '').replace('(ν', '').replace('ν)', '')
+        return w.strip()
     return ""
+
+def splits_sleutel(sleutel):
+    s = str(sleutel).strip()
+    wijzen = ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium", "Part"]
+    for w in wijzen:
+        if s.lower().startswith(w.lower()):
+            rest = s[len(w):].strip(" _-.")
+            return w.capitalize(), rest if rest else "Vorm"
+    naamvallen = ["nom", "gen", "dat", "acc", "voc"]
+    if any(s.lower().startswith(n) for n in naamvallen): return "Declinatie", s
+    return "Overig", s
 
 def maak_schoon(tekst):
     schoon = re.sub(r'\(.*?\)', '', str(tekst))
@@ -61,35 +74,37 @@ def maak_schoon(tekst):
 
 def bereken_gewicht(item):
     gewicht = 1.0
-    freq = int(item.get('frequentie', 0)) # Aangepast voor stamtijden json
-    if freq == 0: freq = int(item.get('frequentie_nt', 0))
+    freq = int(item.get('frequentie_nt', 0))
+    if freq > 0: gewicht += math.log10(freq + 1)
+    gewicht += (int(item.get('score_fout', 0)) * 1.5)
+    gewicht -= (int(item.get('score_goed', 0)) * 0.1)
+    
+    sm1, sm2, sm3, sm4 = int(item.get('streak_m1', 0)), int(item.get('streak_m2', 0)), int(item.get('streak_m3', 0)), int(item.get('streak_m4', 0))
+    mastery_score = (sm1 * 0.5) + (sm2 * 1.0) + (sm3 * 1.5) + (sm4 * 2.0)
+    gewicht -= (mastery_score * 0.2)
+    
+    gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
+    if sm4 >= 20 or gem_streak >= 20: gewicht *= 0.1
+    return max(0.1, gewicht)
+
+def bereken_gewicht_stam(item):
+    gewicht = 1.0
+    freq = int(item['basis'].get('frequentie', 0))
     if freq > 0: gewicht += math.log10(freq + 1)
     
-    # Extra weging voor foute antwoorden
     fouten = int(item.get('score_fout', 0))
     goed = int(item.get('score_goed', 0))
+    streak = int(item.get('streak', 0))
     
     gewicht += (fouten * 1.5)
     gewicht -= (goed * 0.1)
+    gewicht -= (streak * 2.0)
     
-    # Streaks voor vocab
-    sm1, sm2, sm3, sm4 = int(item.get('streak_m1', 0)), int(item.get('streak_m2', 0)), int(item.get('streak_m3', 0)), int(item.get('streak_m4', 0))
-    
-    # Als het een stamtijd object is (heeft 'stamtijd_streak')
-    if 'stamtijd_streak' in item:
-        mastery_score = item['stamtijd_streak'] * 2.0
-        if item['stamtijd_streak'] >= 10: gewicht *= 0.1
-    else:
-        mastery_score = (sm1 * 0.5) + (sm2 * 1.0) + (sm3 * 1.5) + (sm4 * 2.0)
-        gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
-        if sm4 >= 20 or gem_streak >= 20: gewicht *= 0.1
-        
-    gewicht -= (mastery_score * 0.2)
+    if streak >= 10: gewicht *= 0.1
     return max(0.1, gewicht)
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
     info = bsb_info 
-    
     if p_soort:
         if p_soort == "Overig":
             if any(x in info for x in ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]): return False
@@ -103,17 +118,14 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
         if p_naam and p_naam not in info and p_naam != "N.v.t.": return False
         if p_ges and p_ges != "N.v.t." and gs_map.get(p_ges, "") not in info: return False
         if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
-        
     elif p_soort == "Werkwoord":
         if p_tijd and p_tijd not in info: return False
         if p_wijs and p_wijs not in info: return False
-        
         if p_diat:
             if p_diat == "Medium/Passief":
                 if "Medium" not in info and "Passief" not in info: return False
             elif p_diat not in info:
                 return False
-        
         if p_wijs == "Participium":
             if p_naam and p_naam not in info and p_naam != "N.v.t.": return False
             if p_ges and p_ges != "N.v.t." and gs_map.get(p_ges, "") not in info: return False
@@ -122,7 +134,6 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             pers_map = {"1e": "1e pers.", "2e": "2e pers.", "3e": "3e pers."}
             if p_pers and p_pers != "N.v.t." and pers_map.get(p_pers, "") not in info: return False
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
-            
     return True
 
 # --- DATABASE FUNCTIES ---
@@ -234,14 +245,16 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
             'fouten_huidig_woord', 'huidige_opties', 'last_user',
             'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen',
             'actief_flashcard_huidig', 'actief_nakijk_resultaten',
-            'stam_huidig', 'stam_stap', 'stam_opties_gram', 'stam_opties_praesens', 'stam_fouten']:
+            'stam_sessie_lijst', 'stam_huidig', 'stam_sub_modus', 'stam_fouten', 'stam_feedback', 'stam_opties_gram', 'stam_opties_praesens']:
     if key not in st.session_state: st.session_state[key] = None
 
+if st.session_state.stam_sessie_lijst is None: st.session_state.stam_sessie_lijst = []
 if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if 'vocab_stats' not in st.session_state: st.session_state.vocab_stats = {}
 if 'gram_stats' not in st.session_state: st.session_state.gram_stats = {}
 if 'stam_stats' not in st.session_state: st.session_state.stam_stats = {}
 if st.session_state.fouten_huidig_woord is None: st.session_state.fouten_huidig_woord = 0
+if st.session_state.stam_fouten is None: st.session_state.stam_fouten = 0
 
 def laad_volgend_woord():
     if st.session_state.sessie_lijst:
@@ -251,10 +264,21 @@ def laad_volgend_woord():
     else:
         st.session_state.huidig_item = None
         st.session_state.huidige_sub_modus = None
-        
     st.session_state.fouten_huidig_woord = 0
     st.session_state.huidige_opties = [] 
     st.session_state.huidige_vorm_data = None
+
+def laad_volgend_stam_woord():
+    if st.session_state.stam_sessie_lijst:
+        volgend = st.session_state.stam_sessie_lijst.pop(0)
+        st.session_state.stam_huidig = volgend[0]
+        st.session_state.stam_sub_modus = volgend[1]
+    else:
+        st.session_state.stam_huidig = None
+        st.session_state.stam_sub_modus = None
+    st.session_state.stam_fouten = 0
+    st.session_state.stam_opties_gram = [] 
+    st.session_state.stam_opties_praesens = []
 
 # --- SIDEBAR & LOGIN ---
 with st.sidebar:
@@ -566,111 +590,144 @@ if st.session_state.data:
         if not stamtijden_db:
             st.warning("Bestand 'stamtijden.json' ontbreekt. Voer eerst het Python-script uit.")
         else:
-            st.subheader("⏳ Stamtijden Analyseren (Meerkeuze)")
+            st.subheader("⏳ Stamtijden Analyseren")
             
-            # Alle lessen verzamelen
-            alle_lessen = []
-            for w in stamtijden_db:
-                l = w.get('les', 0)
-                if l > 0 and l not in alle_lessen: alle_lessen.append(l)
-            alle_lessen.sort()
-            
-            gekozen = st.multiselect("Kies les(sen):", alle_lessen, default=alle_lessen)
-            
-            doel_woorden = [w for w in stamtijden_db if w.get('les', 0) in gekozen]
-            
-            if doel_woorden:
-                if st.button("Volgende Stamtijd") or st.session_state.stam_huidig is None:
-                    # Voeg lege stats toe in sessie indien nodig
-                    for w in doel_woorden:
-                        vid = w['praesens']
-                        if vid in st.session_state.stam_stats:
-                            w['score_goed'] = st.session_state.stam_stats[vid].get('g', 0)
-                            w['score_fout'] = st.session_state.stam_stats[vid].get('f', 0)
-                            w['stamtijd_streak'] = st.session_state.stam_stats[vid].get('streak', 0)
+            c1, c2 = st.columns([1, 2])
+            with c1:
+                stam_modus = st.radio("Modus:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="stam_modus_radio")
+                alle_lessen_stam = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
+                gekozen_stam = st.multiselect("Kies les(sen):", alle_lessen_stam, default=alle_lessen_stam)
+                
+                if st.button("Start Sessie", key="btn_start_stam"):
+                    doel_vormen = []
+                    for w in stamtijden_db:
+                        if w.get('les', 0) in gekozen_stam:
+                            for t_d, vorm in w['stamtijden'].items():
+                                form_obj = {
+                                    "basis": w,
+                                    "vraag_vorm": {"tijd_diathese": t_d, "vorm": vorm}
+                                }
+                                vid = f"{w['praesens']}_{vorm}"
+                                stats = st.session_state.stam_stats.get(vid, {'g': 0, 'f': 0, 'streak': 0})
+                                form_obj['score_goed'] = stats['g']
+                                form_obj['score_fout'] = stats['f']
+                                form_obj['streak'] = stats['streak']
+                                form_obj['vid'] = vid
+                                doel_vormen.append(form_obj)
+                    
+                    if doel_vormen:
+                        doel_vormen.sort(key=bereken_gewicht_stam, reverse=True)
+                        sampled = random.sample(doel_vormen, min(len(doel_vormen), 10))
+                        
+                        modus_id = str(stam_modus[0])
+                        if modus_id == "2":
+                            st.session_state.stam_sessie_lijst = [(v, random.choice(["MC", "Typen"])) for v in sampled]
+                        elif modus_id == "3":
+                            st.session_state.stam_sessie_lijst = [(v, "Typen") for v in sampled]
                         else:
-                            w['score_goed'], w['score_fout'], w['stamtijd_streak'] = 0, 0, 0
-                    
-                    # Kies adaptief een werkwoord
-                    weights = [bereken_gewicht(w) for w in doel_woorden]
-                    gekozen_ww = random.choices(doel_woorden, weights=weights, k=1)[0]
-                    
-                    # Kies een willekeurige verbogen stamtijd van dit werkwoord
-                    gekozen_stam = random.choice(list(gekozen_ww['stamtijden'].items()))
-                    
-                    st.session_state.stam_huidig = {
-                        "praesens": gekozen_ww['praesens'],
-                        "betekenis": gekozen_ww['betekenis'],
-                        "vraag_vorm": gekozen_stam[1],
-                        "correct_gram": gekozen_stam[0]
-                    }
-                    st.session_state.stam_stap = 1
-                    st.session_state.stam_fouten = 0
-                    
-                    # Genereer MC opties
-                    # Stap 1: Grammatica opties
-                    alle_gram_mogelijkheden = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
-                    opties_g = [st.session_state.stam_huidig["correct_gram"]]
-                    afleiders_g = [g for g in alle_gram_mogelijkheden if g != st.session_state.stam_huidig["correct_gram"]]
-                    opties_g.extend(random.sample(afleiders_g, 3))
-                    random.shuffle(opties_g)
-                    st.session_state.stam_opties_gram = opties_g
-                    
-                    # Stap 2: Praesens/Betekenis opties
-                    correct_p = f"{gekozen_ww['praesens']} ({gekozen_ww['betekenis']})"
-                    opties_p = [correct_p]
-                    afleiders_p = [f"{w['praesens']} ({w['betekenis']})" for w in stamtijden_db if w['praesens'] != gekozen_ww['praesens']]
-                    opties_p.extend(random.sample(afleiders_p, min(3, len(afleiders_p))))
-                    random.shuffle(opties_p)
-                    st.session_state.stam_opties_praesens = opties_p
+                            st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled]
+                            
+                        laad_volgend_stam_woord()
+                        st.rerun()
 
-                huidig = st.session_state.stam_huidig
-                vid = huidig['praesens']
-                if vid not in st.session_state.stam_stats: st.session_state.stam_stats[vid] = {'g': 0, 'f': 0, 'streak': 0}
-
-                st.write("---")
-                st.markdown(f"<div class='grieks-woord'>{huidig['vraag_vorm']}</div>", unsafe_allow_html=True)
-                
-                # --- STAP 1: Grammatica ---
-                if st.session_state.stam_stap == 1:
-                    st.write("### Stap 1: Wat is deze vorm?")
-                    cols = st.columns(2)
-                    for i, opt in enumerate(st.session_state.stam_opties_gram):
-                        if cols[i % 2].button(opt, key=f"stam_mc1_{i}"):
-                            if opt == huidig['correct_gram']:
-                                st.session_state.stam_stap = 2
-                                st.rerun()
-                            else:
-                                st.session_state.stam_fouten += 1
-                                st.error("❌ Onjuist, probeer opnieuw.")
-                
-                # --- STAP 2: Herleiding ---
-                elif st.session_state.stam_stap == 2:
-                    st.success(f"✓ Goed! Het is de **{huidig['correct_gram']}**.")
-                    st.write("### Stap 2: Bij welk praesens hoort dit?")
+            with c2:
+                if st.session_state.stam_huidig:
+                    huidig = st.session_state.stam_huidig
+                    sub_modus = st.session_state.stam_sub_modus
+                    vid = huidig['vid']
                     
-                    correct_p = f"{huidig['praesens']} ({huidig['betekenis']})"
-                    cols = st.columns(2)
-                    for i, opt in enumerate(st.session_state.stam_opties_praesens):
-                        if cols[i % 2].button(opt, key=f"stam_mc2_{i}"):
-                            if opt == correct_p:
-                                if st.session_state.stam_fouten == 0:
-                                    st.session_state.stam_stats[vid]['g'] += 1
-                                    st.session_state.stam_stats[vid]['streak'] += 1
-                                else:
-                                    st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 1)
-                                trigger_save()
-                                st.success("Volledig correct! Klik op 'Volgende Stamtijd' om door te gaan.")
-                                st.session_state.stam_stap = 3 # Klaar
-                            else:
-                                st.session_state.stam_fouten += 1
-                                st.session_state.stam_stats[vid]['f'] += 1
-                                st.session_state.stam_stats[vid]['streak'] = 0
-                                trigger_save()
-                                st.error("❌ Onjuist, probeer opnieuw.")
+                    if vid not in st.session_state.stam_stats:
+                        st.session_state.stam_stats[vid] = {'g': 0, 'f': 0, 'streak': 0}
+                    
+                    if st.session_state.stam_feedback:
+                        if st.session_state.stam_feedback["type"] == "success": st.success(st.session_state.stam_feedback["msg"])
+                        elif st.session_state.stam_feedback["type"] == "warning": st.warning(st.session_state.stam_feedback["msg"])
+                        else: st.error(st.session_state.stam_feedback["msg"])
+                        st.session_state.stam_feedback = None 
+
+                    st.markdown(f"<div class='grieks-woord'>{huidig['vraag_vorm']['vorm']}</div>", unsafe_allow_html=True)
+                    st.caption("Identificeer deze vorm en herleid hem naar het basiswoord.")
+                    
+                    correct_gram = huidig['vraag_vorm']['tijd_diathese']
+                    correct_praesens = huidig['basis']['praesens']
+                    correct_betekenis = huidig['basis']['betekenis']
+                    
+                    # TYPEN MODUS
+                    if sub_modus == "Typen":
+                        with st.form("form_stamtijd_typen", clear_on_submit=True):
+                            c_gram, c_bet = st.columns(2)
+                            with c_gram:
+                                p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
+                                p_praesens = st.text_input("Praesens:")
+                            with c_bet:
+                                p_betekenis = st.text_input("Betekenis:")
+                            
+                            if st.form_submit_button("Check Antwoord"):
+                                is_gram_correct = (p_gram == correct_gram)
+                                is_praesens_correct = (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(correct_praesens))
+                                is_bet_correct = (p_betekenis.lower().strip() in correct_betekenis.lower() and p_betekenis.strip() != "")
                                 
-                elif st.session_state.stam_stap == 3:
-                    st.success(f"Analyse voltooid! **{huidig['vraag_vorm']}** is de {huidig['correct_gram']} van {huidig['praesens']} ({huidig['betekenis']}).")
+                                if is_gram_correct and is_praesens_correct and is_bet_correct:
+                                    if st.session_state.stam_fouten == 0:
+                                        st.session_state.stam_stats[vid]['g'] += 1
+                                        st.session_state.stam_stats[vid]['streak'] += 1
+                                    st.session_state.stam_feedback = {"type": "success", "msg": f"✓ Goed! **{huidig['vraag_vorm']['vorm']}** is de {correct_gram} van {correct_praesens} (Betekenis: {correct_betekenis})."}
+                                    trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                else:
+                                    st.session_state.stam_fouten += 1
+                                    if st.session_state.stam_fouten == 1:
+                                        st.session_state.stam_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
+                                    elif st.session_state.stam_fouten == 2:
+                                        st.session_state.stam_stats[vid]['f'] += 1
+                                        st.session_state.stam_stats[vid]['streak'] = 0
+                                        st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
+                                        st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Helaas. Het was: **{correct_gram}** van **{correct_praesens}** (Betekenis: **{correct_betekenis}**). Hij komt later terug."}
+                                        trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                    st.rerun()
+                    
+                    # MEERKEUZE MODUS
+                    else:
+                        if not st.session_state.stam_opties_gram:
+                            alle_g = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
+                            afleiders_g = [g for g in alle_g if g != correct_gram]
+                            opties_g = [correct_gram] + random.sample(afleiders_g, 3)
+                            random.shuffle(opties_g)
+                            st.session_state.stam_opties_gram = opties_g
+                            
+                            correct_p = f"{correct_praesens} — {correct_betekenis}"
+                            afleiders_p = [f"{w['praesens']} — {w['betekenis']}" for w in stamtijden_db if w['praesens'] != correct_praesens]
+                            opties_p = [correct_p] + random.sample(afleiders_p, min(3, len(afleiders_p)))
+                            random.shuffle(opties_p)
+                            st.session_state.stam_opties_praesens = opties_p
+                            
+                        with st.form("form_stamtijd_mc", clear_on_submit=True):
+                            st.write("**1. Grammatica:**")
+                            keuze_gram = st.radio("Wat is deze vorm?", st.session_state.stam_opties_gram, index=None, label_visibility="collapsed")
+                            
+                            st.write("**2. Herleiding:**")
+                            keuze_praesens = st.radio("Bij welk werkwoord hoort dit?", st.session_state.stam_opties_praesens, index=None, label_visibility="collapsed")
+                            
+                            if st.form_submit_button("Check Antwoord"):
+                                if keuze_gram == correct_gram and keuze_praesens == f"{correct_praesens} — {correct_betekenis}":
+                                    if st.session_state.stam_fouten == 0:
+                                        st.session_state.stam_stats[vid]['g'] += 1
+                                        st.session_state.stam_stats[vid]['streak'] += 1
+                                    st.session_state.stam_feedback = {"type": "success", "msg": f"✓ Goed! **{huidig['vraag_vorm']['vorm']}** is de {correct_gram} van {correct_praesens} (Betekenis: {correct_betekenis})."}
+                                    trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                else:
+                                    st.session_state.stam_fouten += 1
+                                    if st.session_state.stam_fouten == 1:
+                                        st.session_state.stam_feedback = {"type": "warning", "msg": "Een van je keuzes is niet juist. Probeer het nog eens!"}
+                                    elif st.session_state.stam_fouten == 2:
+                                        st.session_state.stam_stats[vid]['f'] += 1
+                                        st.session_state.stam_stats[vid]['streak'] = 0
+                                        st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
+                                        st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Helaas. Het was: **{correct_gram}** van **{correct_praesens}** (Betekenis: **{correct_betekenis}**). Hij komt later terug."}
+                                        trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                    st.rerun()
+
+                    st.write("---")
+                    st.caption(f"Streak voor deze stamtijd: {st.session_state.stam_stats[vid].get('streak', 0)} | Totaal Goed/Fout: {st.session_state.stam_stats[vid].get('g', 0)} / {st.session_state.stam_stats[vid].get('f', 0)}")
 
     with menu[5]: # LEESTEKSTEN
         bijbel_db = laad_bijbel_db()
