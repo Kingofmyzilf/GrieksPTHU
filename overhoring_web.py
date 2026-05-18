@@ -57,10 +57,31 @@ def normaliseer_accent(woord):
         return w.strip()
     return ""
 
-def maak_schoon(tekst):
-    schoon = re.sub(r'\(.*?\)', '', str(tekst))
+def check_betekenis(ingevuld, correcte_zin):
+    """Zeer robuuste nakijk-functie die synoniemen, komma's, puntkomma's en haakjes snapt."""
+    ingevuld = str(ingevuld).lower().strip()
+    correcte_zin = str(correcte_zin).lower().strip()
+    
+    if not ingevuld: return False
+    if ingevuld == correcte_zin: return True
+    
+    # 1. Ruwe delen (komma's en puntkomma's gesplitst)
+    delen_ruw = [d.strip() for d in correcte_zin.replace(';', ',').split(',')]
+    if ingevuld in delen_ruw: return True
+    
+    # 2. Haakjes en speciale tekens negeren (verwijder alles IN haakjes)
+    schoon = re.sub(r'\(.*?\)', '', correcte_zin)
     schoon = re.sub(r'\[.*?\]', '', schoon)
-    return schoon.replace(';', ',').split(',')[0].strip().lower()
+    schoon = schoon.replace('=', '').replace('*', '').replace('+', '')
+    delen_schoon = [d.strip() for d in schoon.replace(';', ',').split(',')]
+    if ingevuld in [d for d in delen_schoon if d]: return True
+    
+    # 3. Haakjes negeren (maar inhoud BEHOUDEN) -> (weg)gaan wordt weggaan
+    zonder = re.sub(r'[()\[\]]', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
+    delen_zonder = [d.strip() for d in zonder.replace(';', ',').split(',')]
+    if ingevuld in [d for d in delen_zonder if d]: return True
+    
+    return False
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
     info = bsb_info 
@@ -115,19 +136,14 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, modus_id=None, max_items=10,
     random.shuffle(mastery)
     
     sessie = []
-    # Eerst 'In Training' vullen (laat ruimte over voor nieuwe items)
     ruimte_voor_training = max_items - min(len(nieuw), max_nieuw)
     sessie.extend(training[:ruimte_voor_training])
     
-    # Dan 'Nieuw' toevoegen (maximaal max_nieuw)
     ruimte_voor_nieuw = max_items - len(sessie)
     sessie.extend(nieuw[:min(ruimte_voor_nieuw, max_nieuw)])
     
-    # Vul de rest op met herhalingen ('Beheerst', dan 'Mastery')
-    if len(sessie) < max_items:
-        sessie.extend(beheerst[:max_items - len(sessie)])
-    if len(sessie) < max_items:
-        sessie.extend(mastery[:max_items - len(sessie)])
+    if len(sessie) < max_items: sessie.extend(beheerst[:max_items - len(sessie)])
+    if len(sessie) < max_items: sessie.extend(mastery[:max_items - len(sessie)])
         
     random.shuffle(sessie)
     return sessie
@@ -145,6 +161,22 @@ def bereken_gewicht(item):
     
     gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
     if sm4 >= 20 or gem_streak >= 20: gewicht *= 0.1
+    return max(0.1, gewicht)
+
+def bereken_gewicht_stam(item):
+    gewicht = 1.0
+    freq = int(item['basis'].get('frequentie', 0))
+    if freq > 0: gewicht += math.log10(freq + 1)
+    
+    fouten = int(item.get('score_fout', 0))
+    goed = int(item.get('score_goed', 0))
+    streak = int(item.get('streak', 0))
+    
+    gewicht += (fouten * 1.5)
+    gewicht -= (goed * 0.1)
+    gewicht -= (streak * 2.0)
+    
+    if streak >= 10: gewicht *= 0.1
     return max(0.1, gewicht)
 
 # --- DATABASE FUNCTIES ---
@@ -321,7 +353,7 @@ def laad_volgend_struct_woord():
 
 
 # ==========================================
-# MAIN APP FUNCTIE (Scope Beveiliging)
+# MAIN APP FUNCTIE
 # ==========================================
 def main():
     # --- SIDEBAR & LOGIN ---
@@ -408,9 +440,6 @@ def main():
                         st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
 
                     correct_antw = str(item.get('nederlands', ''))
-                    correct_volledig = correct_antw.lower()
-                    correct_schoon = maak_schoon(correct_antw)
-                    correcte_delen = [d.strip() for d in correct_volledig.split(',')]
                     volledig_antwoord_str = f"**{huidige_vorm}** = {correct_antw}" + (f" ({huidige_parsing})" if is_mastery and heeft_vormen else "")
                     
                     # TYPEN MODUS
@@ -423,7 +452,7 @@ def main():
                                 p_vorm = huidige_parsing.lower().strip()
 
                             if st.form_submit_button("Check Antwoord"):
-                                betekenis_goed = (inp == correct_volledig or inp == correct_schoon or inp in correcte_delen)
+                                betekenis_goed = check_betekenis(inp, correct_antw)
                                 vorm_goed = (p_vorm == huidige_parsing.lower().strip())
 
                                 if betekenis_goed and vorm_goed:
@@ -440,10 +469,9 @@ def main():
                                         item[act_streak_key] = max(0, int(item.get(act_streak_key, 0)) - 2)
                                         item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         st.session_state.sessie_lijst.append((item, huidige_sub_modus))
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Typ exact over om door te gaan: {volledig_antwoord_str}"}
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het juiste antwoord is: {volledig_antwoord_str}. Hij komt later terug."}
                                         trigger_save()
-                                    else:
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Typ exact over: {volledig_antwoord_str}"}
+                                        laad_volgend_woord()
                                     st.rerun()
                     
                     # MEERKEUZE MODUS
@@ -481,10 +509,9 @@ def main():
                                         item[act_streak_key] = max(0, int(item.get(act_streak_key, 0)) - 2)
                                         item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         st.session_state.sessie_lijst.append((item, huidige_sub_modus))
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het juiste antwoord is: '{correct_optie}'. Klik hierop om door te gaan."}
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het juiste antwoord is: '{correct_optie}'. Hij komt later terug."}
                                         trigger_save()
-                                    else:
-                                        st.session_state.feedback = {"type": "error", "msg": f"Kies het juiste antwoord: '{correct_optie}'."}
+                                        laad_volgend_woord()
                                     st.rerun()
 
                     st.write("---")
@@ -807,7 +834,7 @@ def main():
                                 if st.form_submit_button("Check Antwoord"):
                                     is_gram_correct = (p_gram == correct_gram)
                                     is_praesens_correct = (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(correct_praesens))
-                                    is_bet_correct = (p_betekenis.lower().strip() in correct_betekenis.lower() and p_betekenis.strip() != "")
+                                    is_bet_correct = check_betekenis(p_betekenis, correct_betekenis)
                                     
                                     if is_gram_correct and is_praesens_correct and is_bet_correct:
                                         if st.session_state.stam_fouten == 0:
@@ -952,7 +979,7 @@ def main():
                                 if st.form_submit_button("Check Antwoord"):
                                     is_cat_correct = (p_cat == correct_cat)
                                     is_eig_correct = (p_eig == correct_eig)
-                                    is_bet_correct = (p_bet.lower().strip() in correct_bet.lower() and p_bet.strip() != "")
+                                    is_bet_correct = check_betekenis(p_bet, correct_bet)
                                     
                                     if is_cat_correct and is_eig_correct and is_bet_correct:
                                         if st.session_state.struct_fouten == 0:
@@ -1048,7 +1075,6 @@ def main():
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                     gekozen = st.multiselect("1. Oefen lessen (voor blauwe/paarse woorden):", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
                     
-                    # Veilige dictionary constructie door str()
                     actieve_strongs = {str(w['strong']): w for w in st.session_state.data if veilig_les_nummer(w) in gekozen and w.get('strong')}
                     
                     actieve_stam_vormen = {}
@@ -1128,7 +1154,6 @@ def main():
                         for ref, w_list in bijbel_db.items():
                             if ref in st.session_state.geziene_verzen: continue
                             
-                            # Veilig uitlezen van de w['strong'] ID's
                             bekende_woorden = [w for w in w_list if w.get('strong') and str(w['strong']) in actieve_strongs]
                             
                             if len(bekende_woorden) >= 3:
@@ -1205,7 +1230,7 @@ def main():
                         st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
 
                     st.markdown(f"<div class='grieks-zin'>{html_zin}</div>", unsafe_allow_html=True)
-                    st.caption("ℹ️ Hover over een woord om de vertaling te zien. Blauwe/Paarse woorden komen uit je actieve lessen.")
+                    st.caption("ℹ️ Hover over een woord om de vertaling te zien. Cyaan/Paarse woorden komen uit je actieve lessen.")
                     
                     if oefen_woorden and "1." not in tekst_modus:
                         st.write("### 📝 Oefen je woorden in context")
@@ -1225,7 +1250,7 @@ def main():
                                     if st.form_submit_button("Check Stamtijd"):
                                         is_gram_correct = (p_gram == stam_data['tijd_diathese'])
                                         is_praesens_correct = (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(stam_data['praesens']))
-                                        is_bet_correct = (p_betekenis.lower().strip() in stam_data['betekenis'].lower() and p_betekenis.strip() != "")
+                                        is_bet_correct = check_betekenis(p_betekenis, stam_data['betekenis'])
                                         
                                         if is_gram_correct and is_praesens_correct and is_bet_correct:
                                             st.success(f"✓ Goed! **{w['grieks']}** is de {stam_data['tijd_diathese']} van {stam_data['praesens']}.")
@@ -1286,7 +1311,7 @@ def main():
                                     with st.form(key=f"form_typ_{idx}"):
                                         inp = st.text_input("Woordenboekvertaling:")
                                         if st.form_submit_button("Check"):
-                                            if inp.lower().strip() in basis['nederlands'].lower(): 
+                                            if check_betekenis(inp, basis['nederlands']): 
                                                 basis['streak_m4'] = int(basis.get('streak_m4', 0)) + 1
                                                 basis['score_goed'] = int(basis.get('score_goed', 0)) + 1
                                                 trigger_save()
@@ -1330,7 +1355,7 @@ def main():
                                                 with c2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_ww_{idx}")
                                                 
                                         if st.button("Controleer Analyse", key=f"chk_{idx}"):
-                                            betekenis_ok = t_inp.lower().strip() in basis['nederlands'].lower() if t_inp else False
+                                            betekenis_ok = check_betekenis(t_inp, basis['nederlands'])
                                             parsing_ok = check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info'])
                                             
                                             if betekenis_ok and parsing_ok:
