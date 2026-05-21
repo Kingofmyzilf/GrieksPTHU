@@ -6,11 +6,7 @@
     "betekenis": "in, op, bij (rust)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "σύν",
@@ -19,11 +15,7 @@
     "betekenis": "met, samen met",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἐπί (dat)",
@@ -32,11 +24,7 @@
     "betekenis": "op, bij, aan",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "παρά (dat)",
@@ -45,11 +33,7 @@
     "betekenis": "bij (persoon)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "πρός (dat)",
@@ -58,11 +42,7 @@
     "betekenis": "bij",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἀντί",
@@ -71,24 +51,16 @@
     "betekenis": "in plaats van, in ruil voor",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἀπό",
     "categorie": "Voorzetsel",
     "eigenschap": "Genitivus",
-    "betekenis": "van ... vandaan, weg van",
+    "betekenis": "van (vandaan), weg van",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἐκ / ἐξ",
@@ -97,11 +69,7 @@
     "betekenis": "uit",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "καί",
@@ -110,11 +78,7 @@
     "betekenis": "en, ook, zelfs",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἀλλά",
@@ -123,11 +87,7 @@
     "betekenis": "maar (sterke tegenstelling)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "δέ",
@@ -136,11 +96,7 @@
     "betekenis": "en, maar (zwakke tegenstelling)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "γάρ",
@@ -149,11 +105,7 @@
     "betekenis": "want, immers",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "οὖν",
@@ -162,11 +114,7 @@
     "betekenis": "dus, dan, nu",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τε",
@@ -175,24 +123,16 @@
     "betekenis": "en (zwakker dan καί)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἤ",
     "categorie": "Voegwoord / Partikel",
     "eigenschap": "Neutraal",
-    "betekenis": "of, (na comparativus:) dan",
+    "betekenis": "of, dan (na comparativus)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "μέν ... δέ",
@@ -201,11 +141,7 @@
     "betekenis": "weliswaar ... maar",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "οὗτος",
@@ -214,11 +150,7 @@
     "betekenis": "deze (m, ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτου",
@@ -227,11 +159,7 @@
     "betekenis": "van deze (m)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτῳ",
@@ -240,11 +168,7 @@
     "betekenis": "aan/voor deze (m)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τοῦτον",
@@ -253,11 +177,7 @@
     "betekenis": "deze (m, lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "οὗτοι",
@@ -266,11 +186,7 @@
     "betekenis": "deze (m.mv, ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτων",
@@ -279,11 +195,7 @@
     "betekenis": "van deze (m.mv)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτοις",
@@ -292,11 +204,7 @@
     "betekenis": "aan/voor deze (m.mv)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτους",
@@ -305,11 +213,7 @@
     "betekenis": "deze (m.mv, lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "αὕτη",
@@ -318,11 +222,7 @@
     "betekenis": "die (v, ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταύτης",
@@ -331,11 +231,7 @@
     "betekenis": "van die (v)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταύτῃ",
@@ -344,11 +240,7 @@
     "betekenis": "aan/voor die (v)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταύτην",
@@ -357,11 +249,7 @@
     "betekenis": "die (v, lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "αὗται",
@@ -370,11 +258,7 @@
     "betekenis": "die (v.mv, ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταύταις",
@@ -383,11 +267,7 @@
     "betekenis": "aan/voor die (v.mv)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταύτας",
@@ -396,11 +276,7 @@
     "betekenis": "die (v.mv, lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τοῦτο (nom)",
@@ -409,11 +285,7 @@
     "betekenis": "dit (o, ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτου (o)",
@@ -422,11 +294,7 @@
     "betekenis": "van dit (o)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τούτῳ (o)",
@@ -435,11 +303,7 @@
     "betekenis": "aan/voor dit (o)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "τοῦτο (acc)",
@@ -448,11 +312,7 @@
     "betekenis": "dit (o, lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταῦτα (nom)",
@@ -461,11 +321,7 @@
     "betekenis": "deze dingen (ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ταῦτα (acc)",
@@ -474,218 +330,348 @@
     "betekenis": "deze dingen (lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἐγώ",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Nom. ev.",
+    "eigenschap": "Nom. ev. (1e pers)",
     "betekenis": "ik",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "μου / ἐμοῦ",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Gen. ev.",
+    "eigenschap": "Gen. ev. (1e pers)",
     "betekenis": "van mij / mijn",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "μοί / ἐμοί",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Dat. ev.",
+    "eigenschap": "Dat. ev. (1e pers)",
     "betekenis": "aan/voor mij",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "με / ἐμέ",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Acc. ev.",
+    "eigenschap": "Acc. ev. (1e pers)",
     "betekenis": "mij (lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἡμεῖς",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Nom. mv.",
+    "eigenschap": "Nom. mv. (1e pers)",
     "betekenis": "wij",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἡμῶν",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Gen. mv.",
+    "eigenschap": "Gen. mv. (1e pers)",
     "betekenis": "van ons / onze",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἡμῖν",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Dat. mv.",
+    "eigenschap": "Dat. mv. (1e pers)",
     "betekenis": "aan/voor ons",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ἡμᾶς",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Acc. mv.",
+    "eigenschap": "Acc. mv. (1e pers)",
     "betekenis": "ons (lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "σύ",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Nom. ev.",
+    "eigenschap": "Nom. ev. (2e pers)",
     "betekenis": "jij",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "σου / σοῦ",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Gen. ev.",
+    "eigenschap": "Gen. ev. (2e pers)",
     "betekenis": "van jou / jouw",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "σοί / σοί",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Dat. ev.",
+    "eigenschap": "Dat. ev. (2e pers)",
     "betekenis": "aan/voor jou",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "σε / σέ",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Acc. ev.",
+    "eigenschap": "Acc. ev. (2e pers)",
     "betekenis": "jou (lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ὑμεῖς",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Nom. mv.",
+    "eigenschap": "Nom. mv. (2e pers)",
     "betekenis": "jullie (ond)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ὑμῶν",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Gen. mv.",
+    "eigenschap": "Gen. mv. (2e pers)",
     "betekenis": "van jullie / jullie (bez)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ὑμῖν",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Dat. mv.",
+    "eigenschap": "Dat. mv. (2e pers)",
     "betekenis": "aan/voor jullie",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
   },
   {
     "grieks": "ὑμᾶς",
     "categorie": "Persoonlijk Vnw",
-    "eigenschap": "Acc. mv.",
+    "eigenschap": "Acc. mv. (2e pers)",
     "betekenis": "jullie (lijd.vw)",
     "score_goed": 0,
     "score_fout": 0,
-    "streak_m1": 0,
-    "streak_m2": 0,
-    "streak_m3": 0,
-    "streak_m4": 0,
-    "frequentie_nt": 100
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτός",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Nom. ev. M",
+    "betekenis": "hij / zelf / dezelfde (m)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτοῦ (m)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Gen. ev. M",
+    "betekenis": "van hem / zijn",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτῷ (m)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Dat. ev. M",
+    "betekenis": "aan/voor hem",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτόν",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Acc. ev. M",
+    "betekenis": "hem (lijd.vw)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτοί",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Nom. mv. M",
+    "betekenis": "zij (m.mv, ond)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτῶν (m)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Gen. mv. M",
+    "betekenis": "van hen / hun (m)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτοῖς",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Dat. mv. M",
+    "betekenis": "aan/voor hen (m)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτούς",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Acc. mv. M",
+    "betekenis": "hen (m, lijd.vw)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτή",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Nom. ev. V",
+    "betekenis": "zij / zelf / dezelfde (v)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτῆς",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Gen. ev. V",
+    "betekenis": "van haar / haar (bez)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτῇ",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Dat. ev. V",
+    "betekenis": "aan/voor haar",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτήν",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Acc. ev. V",
+    "betekenis": "haar (lijd.vw)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐταί",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Nom. mv. V",
+    "betekenis": "zij (v.mv, ond)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτῶν (v)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Gen. mv. V",
+    "betekenis": "van hen / hun (v)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐταῖς",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Dat. mv. V",
+    "betekenis": "aan/voor hen (v)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτάς",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Acc. mv. V",
+    "betekenis": "hen (v, lijd.vw)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτό (nom)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Nom. ev. O",
+    "betekenis": "het (o, ond) / zelf / dezelfde",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτοῦ (o)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Gen. ev. O",
+    "betekenis": "ervan / zijn (o)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτῷ (o)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Dat. ev. O",
+    "betekenis": "eraan / ervoor (o)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτό (acc)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Acc. ev. O",
+    "betekenis": "het (o, lijd.vw)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτά (nom)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Nom. mv. O",
+    "betekenis": "zij (o.mv, ond) / die dingen",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
+  },
+  {
+    "grieks": "αὐτά (acc)",
+    "categorie": "Vnw (αὐτός)",
+    "eigenschap": "Acc. mv. O",
+    "betekenis": "hen (o.mv) / die dingen (lijd.vw)",
+    "score_goed": 0,
+    "score_fout": 0,
+    "streak": 0
   }
 ]
