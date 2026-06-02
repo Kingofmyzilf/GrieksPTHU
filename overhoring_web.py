@@ -14,7 +14,7 @@ st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
 try:
     conn = st.connection("gsheets", type=GSheetsConnection)
 except Exception as e:
-    st.error("Kan niet verbinden met Google Sheets. Controleer je internetverbinding.")
+    st.error("Kan niet verbinden met Google Sheets.")
 
 st.markdown("""
     <style>
@@ -25,12 +25,10 @@ st.markdown("""
     .woord-bekend { color: #00ffff; font-weight: bold; border-bottom: 2px solid #00ffff; cursor: help; padding: 0 4px; }
     .woord-stamtijd { color: #d63384; font-weight: bold; border-bottom: 2px solid #d63384; cursor: help; padding: 0 4px; }
     .woord-onbekend { color: #aaaaaa; cursor: help; padding: 0 2px; }
-    .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
-    .rooster-input>div>div>input { font-size: 16px; padding: 5px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- LOGICA & TRANSLITERATIE ---
+# --- HELPER FUNCTIES ---
 def veilig_les_nummer(item):
     try: return int(item.get('les', 1))
     except: return 1
@@ -55,19 +53,13 @@ def check_betekenis(ingevuld, correcte_zin):
     ingevuld = str(ingevuld).lower().strip()
     correcte_zin = str(correcte_zin).lower().strip()
     if not ingevuld: return False
-    if ingevuld == correcte_zin: return True
     
-    delen_ruw = [d.strip() for d in correcte_zin.replace(';', ',').split(',')]
-    if ingevuld in delen_ruw: return True
-    
-    schoon = re.sub(r'\(.*?\)', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
-    delen_schoon = [d.strip() for d in schoon.replace(';', ',').split(',')]
-    if ingevuld in [d for d in delen_schoon if d]: return True
-    
-    zonder = re.sub(r'[()\[\]]', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
-    delen_zonder = [d.strip() for d in zonder.replace(';', ',').split(',')]
-    if ingevuld in [d for d in delen_zonder if d]: return True
-    return False
+    def maak_opties(zin):
+        schoon = re.sub(r'\(.*?\)', '', zin).replace('=', '').replace('*', '').replace('+', '')
+        return [d.strip() for d in schoon.replace(';', ',').split(',') if d.strip()]
+
+    opties = maak_opties(correcte_zin)
+    return ingevuld in opties or ingevuld == correcte_zin
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
     info = bsb_info 
@@ -100,18 +92,19 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-# --- GEFASEERD LEREN ALGORITME ---
-def krijg_streak(item, module):
+# --- ALGORITMES ---
+def krijg_streak(item, module, modus_id=None):
+    if module == 'vocab': return int(item.get(f'streak_m{modus_id}', 0))
     return int(item.get('streak', 0))
 
-def kies_gefaseerde_oefensessie(doel_lijst, module, max_nieuw=3):
+def kies_gefaseerde_oefensessie(doel_lijst, module, modus_id=None, max_nieuw=3):
     nieuw, training, beheerst, mastery = [], [], [], []
     for item in doel_lijst:
-        s = krijg_streak(item, module)
+        s = krijg_streak(item, module, modus_id)
         if s == 0: nieuw.append(item)
-        elif 1 <= s <= 4: training.append(item)
-        elif 5 <= s <= 19: beheerst.append(item)
-        else: mastery.append(item)
+        elif 1 <= s <= 15: training.append(item) # AANGEPAST NAAR 15
+        elif 16 <= s <= 29: beheerst.append(item) # AANGEPAST NAAR 16-29
+        else: mastery.append(item) # 30+ is Mastery
     
     random.shuffle(nieuw); random.shuffle(training); random.shuffle(beheerst); random.shuffle(mastery)
     
@@ -135,9 +128,11 @@ def bereken_gewicht(item):
     gewicht += (int(item.get('score_fout', 0)) * 1.5)
     gewicht -= (int(item.get('score_goed', 0)) * 0.1)
     
-    streak = int(item.get('streak', 0))
-    gewicht -= (streak * 0.5)
-    if streak >= 20: gewicht *= 0.1
+    sm1, sm2, sm3, sm4 = int(item.get('streak_m1', 0)), int(item.get('streak_m2', 0)), int(item.get('streak_m3', 0)), int(item.get('streak_m4', 0))
+    mastery_score = (sm1 * 0.5) + (sm2 * 1.0) + (sm3 * 1.5) + (sm4 * 2.0)
+    gewicht -= (mastery_score * 0.2)
+    gem_streak = (sm1 + sm2 + sm3 + sm4) / 4
+    if sm4 >= 30 or gem_streak >= 30: gewicht *= 0.1 # AANGEPAST NAAR 30
     return max(0.1, gewicht)
 
 # --- DATABASE FUNCTIES ---
@@ -197,16 +192,9 @@ def laad_gebruiker_data(naam):
             except: st.session_state.struct_stats = {}
             
         for r in basis:
-            stats = st.session_state.vocab_stats.get(r['grieks'], {})
-            # MIGRATIE SCRIPT (M1 x 0, M2 x 1, M3 x 2, M4 x 4)
-            if 'm4' in stats or 'm1' in stats:
-                m1 = stats.get('m1', 0); m2 = stats.get('m2', 0); m3 = stats.get('m3', 0); m4 = stats.get('m4', 0)
-                r['streak'] = (m1 * 0) + (m2 * 1) + (m3 * 2) + (m4 * 4)
-            else:
-                r['streak'] = stats.get('streak', 0)
-            
-            r['score_goed'] = stats.get('g', 0)
-            r['score_fout'] = stats.get('f', 0)
+            stats = st.session_state.vocab_stats.get(r['grieks'], {'m1':0, 'm2':0, 'm3':0, 'm4':0, 'g':0, 'f':0})
+            r['streak_m1'] = stats.get('m1', 0); r['streak_m2'] = stats.get('m2', 0); r['streak_m3'] = stats.get('m3', 0); r['streak_m4'] = stats.get('m4', 0)
+            r['score_goed'] = stats.get('g', 0); r['score_fout'] = stats.get('f', 0)
         return basis
     except Exception: return None
 
@@ -228,20 +216,18 @@ def opslaan_naar_cloud():
     except Exception: pass
 
 def trigger_save():
-    # SAFETY LOCK
-    if not st.session_state.get('last_user') or not st.session_state.get('data'): return
+    if not st.session_state.get('last_user'): return
     for word in st.session_state.data:
         st.session_state.vocab_stats[word['grieks']] = {
-            'streak': word.get('streak', 0),
-            'g': word.get('score_goed', 0),
-            'f': word.get('score_fout', 0)
+            'm1': word.get('streak_m1', 0), 'm2': word.get('streak_m2', 0), 'm3': word.get('streak_m3', 0), 'm4': word.get('streak_m4', 0),
+            'g': word.get('score_goed', 0), 'f': word.get('score_fout', 0)
         }
     opslaan_naar_cloud()
 
 # --- INITIALISATIE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user', 'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen',
-            'actief_flashcard_huidig', 'actief_nakijk_resultaten', 'mix_combo',
+            'actief_flashcard_huidig', 'actief_nakijk_resultaten',
             'stam_sessie_lijst', 'stam_huidig', 'stam_sub_modus', 'stam_fouten', 'stam_feedback', 'stam_opties_gram', 'stam_opties_praesens', 'stam_mc_solved',
             'struct_sessie_lijst', 'struct_huidig', 'struct_sub_modus', 'struct_fouten', 'struct_feedback', 'struct_opties_cat', 'struct_opties_eig', 'struct_opties_bet', 'struct_mc_solved']:
     if key not in st.session_state: st.session_state[key] = None
@@ -249,7 +235,6 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
 if st.session_state.stam_sessie_lijst is None: st.session_state.stam_sessie_lijst = []
 if st.session_state.struct_sessie_lijst is None: st.session_state.struct_sessie_lijst = []
 if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
-if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
 
 def laad_volgend_woord():
     if st.session_state.sessie_lijst:
@@ -312,19 +297,20 @@ def main():
                     gekozen = st.multiselect("Kies lessen", alle_lessen)
                     doel = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
                 elif keuze == "Mastery":
-                    doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 20]
+                    # AANGEPAST NAAR 30
+                    doel = [word for word in st.session_state.data if ((int(word.get('streak_m1',0))+int(word.get('streak_m2',0))+int(word.get('streak_m3',0))+int(word.get('streak_m4',0)))/4) >= 30]
                 
                 if st.button("Start Sessie"):
                     if doel:
                         modus_id = str(modus[0])
-                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab')
+                        opslag_mod = "4" if modus_id == "4" else ("2" if modus_id == "2" else "3")
+                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab', modus_id=opslag_mod)
                         st.session_state.modus_actief = modus_id
                         
                         if modus_id == "3":
                             mc_deel = [(w, "3_mc") for w in sampled]
                             typ_deel = [(w, "3_typ") for w in sampled]
                             st.session_state.sessie_lijst = mc_deel + typ_deel
-                            st.session_state.mix_combo = {w['grieks']: False for w in sampled} # Init Combo
                         else:
                             st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
                         
@@ -334,8 +320,11 @@ def main():
                 if st.session_state.huidig_item:
                     item = st.session_state.huidig_item
                     huidige_sub_modus = st.session_state.huidige_sub_modus
+                    opslag_modus = "4" if huidige_sub_modus in ["4", "3_typ"] else ("2" if huidige_sub_modus == "3_mc" else huidige_sub_modus)
+                    act_streak_key = f"streak_m{opslag_modus}"
                     
-                    is_mastery = int(item.get('streak', 0)) >= 20
+                    sm1, sm2, sm3, sm4 = int(item.get('streak_m1', 0)), int(item.get('streak_m2', 0)), int(item.get('streak_m3', 0)), int(item.get('streak_m4', 0))
+                    is_mastery = ((sm1 + sm2 + sm3 + sm4) / 4) >= 30 or sm4 >= 30 # AANGEPAST NAAR 30
                     heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                     
                     if st.session_state.huidige_vorm_data is None:
@@ -353,33 +342,14 @@ def main():
 
                     st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     if is_mastery and heeft_vormen and huidige_vorm != item.get('grieks'): st.caption(f"🏆 Vormleer Modus. (Basiswoord: **{item.get('grieks')}**)")
-                    
+                    if huidige_sub_modus == '1' or st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+
                     correct_antw = str(item.get('nederlands', ''))
                     fout_msg_volledig = f"**{item.get('grieks')}** — {item.get('fonetisch', '')} — **{correct_antw}**"
                     if is_mastery and heeft_vormen: fout_msg_volledig += f" ({huidige_parsing})"
 
-                    # OVERTIKKEN STRAFWERK
-                    if huidige_sub_modus == 'overtik':
-                        st.warning("⚠️ Overtikken: Je had dit woord zojuist fout. Typ de exacte betekenis over om door te gaan.")
-                        st.info(f"Het juiste antwoord is: **{correct_antw}**")
-                        with st.form(key=f"form_overtik_{item.get('grieks')}", clear_on_submit=True):
-                            inp = st.text_input("Typ het antwoord over:").lower().strip()
-                            if st.form_submit_button("Bevestig"):
-                                if check_betekenis(inp, correct_antw):
-                                    st.session_state.feedback = {"type": "success", "msg": "Genoteerd! Dit woord komt straks nog een keer terug."}
-                                    laad_volgend_woord(); st.rerun()
-                                else:
-                                    st.error("Niet exact overgetypt. Kijk goed naar het voorbeeld hierboven.")
-
-                    # LEREN MODUS
-                    elif huidige_sub_modus == '1':
-                        st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
-                        st.write(f"Betekenis: **{correct_antw}**")
-                        if st.button("Volgende (Geen Punten)"): laad_volgend_woord(); st.rerun()
-
                     # TYPEN
-                    elif huidige_sub_modus in ['4', '3_typ']:
-                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                    if huidige_sub_modus in ['4', '3_typ']:
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Woordenboekvertaling:").lower().strip()
                             if is_mastery and heeft_vormen: p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip()
@@ -391,34 +361,29 @@ def main():
 
                                 if betekenis_goed and vorm_goed:
                                     if st.session_state.fouten_huidig_woord == 0:
+                                        item[act_streak_key] = int(item.get(act_streak_key, 0)) + 1
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                        if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
-                                        elif huidige_sub_modus == '3_typ':
-                                            if st.session_state.mix_combo.get(item['grieks'], False): item['streak'] = int(item.get('streak', 0)) + 2 # Combo
-                                            else: item['streak'] = int(item.get('streak', 0)) + 1
-                                    st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! {fout_msg_volledig}"}
+                                    st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! **{huidige_vorm}** = {correct_antw}"}
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
-                                    if huidige_sub_modus == '3_typ': st.session_state.mix_combo[item['grieks']] = False
                                     st.session_state.fouten_huidig_woord += 1
-                                    
                                     if st.session_state.fouten_huidig_woord == 1:
-                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1 # Streak bevriest
                                         st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint en probeer nog eens."}
                                     elif st.session_state.fouten_huidig_woord == 2:
-                                        item['streak'] = max(0, int(item.get('streak', 0)) - 2) # Straf
-                                        st.session_state.sessie_lijst.insert(0, (item, 'overtik')) # Eerst overtikken
-                                        st.session_state.sessie_lijst.append((item, huidige_sub_modus)) # Later herkansen
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Jouw invoer: '{inp}'. Het was: {fout_msg_volledig}"}
+                                        item[act_streak_key] = max(0, int(item.get(act_streak_key, 0)) - 2); item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        st.session_state.sessie_lijst.append((item, huidige_sub_modus))
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Jouw invoer: '{inp}'. Het was: {fout_msg_volledig}."}
                                         trigger_save(); laad_volgend_woord()
                                     st.rerun()
                     
                     # MEERKEUZE
                     else:
-                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         if not st.session_state.huidige_opties:
-                            afleiders = []; gekozen_betekenissen = {correct_antw}
+                            huidige_woordsoort = item.get('woordsoort', '')
+                            afleiders = []
+                            gekozen_betekenissen = {correct_antw}
+                            
                             if is_mastery and heeft_vormen:
                                 andere = [str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]
                                 if andere: afleiders = [f"{correct_antw} ({f})" for f in random.sample(andere, min(3, len(andere)))]
@@ -439,30 +404,22 @@ def main():
                             if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
                                 if optie == correct_optie:
                                     if st.session_state.fouten_huidig_woord == 0:
-                                        item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                        if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
-                                        elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
-                                    st.session_state.feedback = {"type": "success", "msg": f"✓ Juist! {fout_msg_volledig}"}
+                                        item[act_streak_key] = int(item.get(act_streak_key, 0)) + 1; item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                    st.session_state.feedback = {"type": "success", "msg": f"✓ Juist! **{huidige_vorm}** = {correct_antw}"}
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
-                                    if huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = False
                                     st.session_state.fouten_huidig_woord += 1
-                                    
                                     if st.session_state.fouten_huidig_woord == 1:
-                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                        st.session_state.feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint!"}
+                                        st.session_state.feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint en probeer nog eens!"}
                                     elif st.session_state.fouten_huidig_woord == 2:
-                                        item['streak'] = max(0, int(item.get('streak', 0)) - 2)
-                                        st.session_state.sessie_lijst.insert(0, (item, 'overtik'))
+                                        item[act_streak_key] = max(0, int(item.get(act_streak_key, 0)) - 2); item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         st.session_state.sessie_lijst.append((item, huidige_sub_modus))
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}"}
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}."}
                                         trigger_save(); laad_volgend_woord()
                                     st.rerun()
 
-                    if huidige_sub_modus != 'overtik':
-                        st.write("---")
-                        fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<5 else ('Beheerst' if int(item.get('streak', 0))<20 else 'Mastery'))
-                        st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)}")
+                    st.write("---")
+                    st.caption(f"Streak voor deze modus: {item.get(act_streak_key, 0)} | Totaal Goed/Fout: {item.get('score_goed', 0)} / {item.get('score_fout', 0)}")
 
         # ==========================================
         # TAB 2: LIJST
@@ -475,7 +432,7 @@ def main():
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                 les_filter = st.selectbox("Bekijk les:", alle_lessen)
                 df = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
-                if not df.empty: st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'woordsoort'] if c in df.columns]], use_container_width=True)
+                if not df.empty: st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak_m1', 'streak_m2', 'streak_m3', 'streak_m4', 'score_goed', 'score_fout', 'woordsoort'] if c in df.columns]], use_container_width=True)
             elif weergave == "Actief Beheersen (Rijtjes)":
                 st.info("De scores voor actieve rijtjes worden per specifieke cel bijgehouden in je profiel.")
             elif weergave == "Stamtijden":
@@ -506,11 +463,13 @@ def main():
             tot_goed_v, tot_fout_v = 0, 0
             if st.session_state.data:
                 for w in st.session_state.data:
-                    strk = int(w.get('streak', 0))
+                    sm1, sm2, sm3, sm4 = int(w.get('streak_m1',0)), int(w.get('streak_m2',0)), int(w.get('streak_m3',0)), int(w.get('streak_m4',0))
+                    gem = (sm1+sm2+sm3+sm4)/4
                     tot_goed_v += int(w.get('score_goed', 0)); tot_fout_v += int(w.get('score_fout', 0))
-                    if strk >= 20: stats_vocab['Mastery'] += 1
-                    elif strk >= 5: stats_vocab['Beheerst'] += 1
-                    elif strk >= 1: stats_vocab['In Training'] += 1
+                    # AANGEPAST NAAR 30, 16 en 1
+                    if gem >= 30: stats_vocab['Mastery'] += 1
+                    elif gem >= 16: stats_vocab['Beheerst'] += 1
+                    elif gem >= 1: stats_vocab['In Training'] += 1
                     else: stats_vocab['Nieuw'] += 1
 
             stats_stam = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
@@ -521,8 +480,9 @@ def main():
                     for t_d, vorm in w['stamtijden'].items():
                         s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
                         tot_goed_s += s['g']; tot_fout_s += s['f']
-                        if s['streak'] >= 20: stats_stam['Mastery'] += 1
-                        elif s['streak'] >= 5: stats_stam['Beheerst'] += 1
+                        # AANGEPAST NAAR 30, 16 en 1
+                        if s['streak'] >= 30: stats_stam['Mastery'] += 1
+                        elif s['streak'] >= 16: stats_stam['Beheerst'] += 1
                         elif s['streak'] >= 1: stats_stam['In Training'] += 1
                         else: stats_stam['Nieuw'] += 1
 
@@ -533,8 +493,9 @@ def main():
                 for w in str_db:
                     s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
                     tot_goed_st += s['g']; tot_fout_st += s['f']
-                    if s['streak'] >= 20: stats_str['Mastery'] += 1
-                    elif s['streak'] >= 5: stats_str['Beheerst'] += 1
+                    # AANGEPAST NAAR 30, 16 en 1
+                    if s['streak'] >= 30: stats_str['Mastery'] += 1
+                    elif s['streak'] >= 16: stats_str['Beheerst'] += 1
                     elif s['streak'] >= 1: stats_str['In Training'] += 1
                     else: stats_str['Nieuw'] += 1
 
@@ -552,9 +513,9 @@ def main():
             df_plot = pd.DataFrame({
                 'Module': ['Vocabulaire', 'Stamtijden', 'Structuurwoorden'],
                 'Nieuw (0)': [stats_vocab['Nieuw'], stats_stam['Nieuw'], stats_str['Nieuw']],
-                'In Training (1-4)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']],
-                'Beheerst (5-19)': [stats_vocab['Beheerst'], stats_stam['Beheerst'], stats_str['Beheerst']],
-                'Mastery (20+)': [stats_vocab['Mastery'], stats_stam['Mastery'], stats_str['Mastery']]
+                'In Training (1-15)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']], # AANGEPAST
+                'Beheerst (16-29)': [stats_vocab['Beheerst'], stats_stam['Beheerst'], stats_str['Beheerst']], # AANGEPAST
+                'Mastery (30+)': [stats_vocab['Mastery'], stats_stam['Mastery'], stats_str['Mastery']] # AANGEPAST
             })
             fig, ax = plt.subplots(figsize=(10, 4))
             df_plot.set_index('Module').plot(kind='bar', stacked=True, color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'], ax=ax)
@@ -708,21 +669,7 @@ def main():
                         correct_betekenis = huidig['basis']['betekenis']
                         fout_msg_volledig = f"**{huidig['vraag_vorm']['vorm']}** — {correct_gram} van **{correct_praesens}** — **{correct_betekenis}**"
                         
-                        # OVERTIKKEN
-                        if sub_modus == 'overtik':
-                            st.warning("⚠️ Overtikken: Je had dit woord fout. Vul de juiste gegevens in.")
-                            st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
-                            with st.form("form_stamtijd_overtik", clear_on_submit=True):
-                                p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
-                                p_praesens = st.text_input("Praesens:")
-                                if st.form_submit_button("Bevestig"):
-                                    if (p_gram == correct_gram) and (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(correct_praesens)):
-                                        st.session_state.stam_feedback = {"type": "success", "msg": "Genoteerd! Hij komt straks weer."}
-                                        trigger_save(); laad_volgend_stam_woord(); st.rerun()
-                                    else:
-                                        st.error("Nog niet foutloos overgetypt. Kijk goed naar het voorbeeld.")
-                        
-                        elif sub_modus == "Typen":
+                        if sub_modus == "Typen":
                             with st.form("form_stamtijd_typen", clear_on_submit=True):
                                 c_gram, c_bet = st.columns(2)
                                 with c_gram:
@@ -743,16 +690,15 @@ def main():
                                     else:
                                         st.session_state.stam_fouten += 1
                                         if st.session_state.stam_fouten == 1:
-                                            st.session_state.stam_stats[vid]['f'] += 1 # Streak freeze
                                             st.session_state.stam_feedback = {"type": "warning", "msg": "Bijna! Probeer het nog eens!"}
                                         elif st.session_state.stam_fouten == 2:
-                                            st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
-                                            st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik'))
+                                            st.session_state.stam_stats[vid]['f'] += 1; st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
                                             st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             
+                                            # Jouw eigen invoer laten zien
                                             jouw_inv = f"Grammatica: {p_gram} | Praesens: {p_praesens} | Betekenis: {p_betekenis}"
-                                            st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
-                                            trigger_save(); laad_volgend_stam_woord()
+                                            st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
+                                            trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
                         else: # PARTIËLE MC FEEDBACK
                             if not st.session_state.stam_opties_gram:
@@ -800,22 +746,20 @@ def main():
                                     else:
                                         st.session_state.stam_fouten += 1
                                         if st.session_state.stam_fouten == 1:
-                                            st.session_state.stam_stats[vid]['f'] += 1 # Freeze
                                             st.session_state.stam_feedback = {"type": "warning", "msg": "Een van je keuzes is niet juist. Het goede deel is vastgezet!"}
                                         elif st.session_state.stam_fouten == 2:
-                                            st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
-                                            st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik'))
+                                            st.session_state.stam_stats[vid]['f'] += 1; st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
                                             st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"Grammatica: {keuze_gram} | Herleiding: {keuze_praesens}"
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
-                                            trigger_save(); laad_volgend_stam_woord()
+                                            trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
 
-                        if sub_modus != 'overtik':
-                            st.write("---")
-                            fase_naam = 'Nieuw' if st.session_state.stam_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.stam_stats[vid].get('streak', 0)<5 else ('Beheerst' if st.session_state.stam_stats[vid].get('streak', 0)<20 else 'Mastery'))
-                            st.caption(f"Fase: {fase_naam} | Streak: {st.session_state.stam_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.stam_stats[vid].get('g', 0)}/{st.session_state.stam_stats[vid].get('f', 0)}")
+                        st.write("---")
+                        # AANGEPAST NAAR 16-29, 30+
+                        fase_naam = 'Nieuw' if st.session_state.stam_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.stam_stats[vid].get('streak', 0)<=15 else ('Beheerst' if st.session_state.stam_stats[vid].get('streak', 0)<=29 else 'Mastery'))
+                        st.caption(f"Fase: {fase_naam} | Streak: {st.session_state.stam_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.stam_stats[vid].get('g', 0)}/{st.session_state.stam_stats[vid].get('f', 0)}")
 
         # ==========================================
         # TAB 6: STRUCTUURWOORDEN (Dynamische Menu's)
@@ -871,28 +815,18 @@ def main():
                         
                         alle_cats = list(set([w['categorie'] for w in struct_db]))
                         
-                        if sub_modus == 'overtik':
-                            st.warning("⚠️ Overtikken: Je had dit woord fout. Kies de juiste gegevens.")
-                            st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
-                            with st.form("form_struct_overtik", clear_on_submit=True):
-                                p_cat = st.selectbox("1. Categorie:", [""] + alle_cats)
-                                p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen):")
-                                if st.form_submit_button("Bevestig"):
-                                    if p_cat == correct_cat and p_eig.lower().strip() == correct_eig.lower().strip():
-                                        st.session_state.struct_feedback = {"type": "success", "msg": "Genoteerd! Komt straks terug."}
-                                        trigger_save(); laad_volgend_struct_woord(); st.rerun()
-                                    else:
-                                        st.error("Niet correct overgenomen.")
-
-                        elif sub_modus == "Typen":
+                        if sub_modus == "Typen":
+                            # Categorie direct selecteren zodat Eigenschap filtert
                             gekozen_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key="dyn_cat")
                             
                             with st.form("form_struct_typen", clear_on_submit=True):
                                 c_eig, c_bet = st.columns(2)
                                 with c_eig: 
+                                    # Dynamische Eigenschap opties o.b.v. Categorie
                                     gefilterde_eigs = list(set([w['eigenschap'] for w in struct_db if w['categorie'] == gekozen_cat])) if gekozen_cat else []
                                     p_eig = st.selectbox("2. Eigenschap/Naamval", [""] + gefilterde_eigs)
-                                with c_bet: p_bet = st.text_input("3. Betekenis:")
+                                with c_bet: 
+                                    p_bet = st.text_input("3. Betekenis:")
                                 
                                 if st.form_submit_button("Check Antwoord"):
                                     is_cat_correct = (gekozen_cat == correct_cat)
@@ -907,16 +841,14 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1
                                         if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
                                             st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
                                         elif st.session_state.struct_fouten == 2:
-                                            st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
-                                            st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik'))
+                                            st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
                                             st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"{gekozen_cat} | {p_eig} | {p_bet}"
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
-                                            trigger_save(); laad_volgend_struct_woord()
+                                            trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                         st.rerun()
                         else: # PARTIËLE MC FEEDBACK
                             if not st.session_state.struct_opties_cat:
@@ -970,22 +902,20 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1
                                         if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
                                             st.session_state.struct_feedback = {"type": "warning", "msg": "De goede delen zijn vastgezet. Probeer de rest opnieuw!"}
                                         elif st.session_state.struct_fouten == 2:
-                                            st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
-                                            st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik'))
+                                            st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
                                             st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"{keuze_cat} | {keuze_eig} | {keuze_bet}"
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
-                                            trigger_save(); laad_volgend_struct_woord()
+                                            trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                         st.rerun()
 
-                        if sub_modus != 'overtik':
-                            st.write("---")
-                            fase_naam = 'Nieuw' if st.session_state.struct_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.struct_stats[vid].get('streak', 0)<5 else ('Beheerst' if st.session_state.struct_stats[vid].get('streak', 0)<20 else 'Mastery'))
-                            st.caption(f"Fase: {fase_naam} | Streak: {st.session_state.struct_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.struct_stats[vid].get('g', 0)}/{st.session_state.struct_stats[vid].get('f', 0)}")
+                        st.write("---")
+                        # AANGEPAST NAAR 16-29, 30+
+                        fase_naam = 'Nieuw' if st.session_state.struct_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.struct_stats[vid].get('streak', 0)<=15 else ('Beheerst' if st.session_state.struct_stats[vid].get('streak', 0)<=29 else 'Mastery'))
+                        st.caption(f"Fase: {fase_naam} | Streak: {st.session_state.struct_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.struct_stats[vid].get('g', 0)}/{st.session_state.struct_stats[vid].get('f', 0)}")
 
         # ==========================================
         # TAB 7: LEESTEKSTEN
