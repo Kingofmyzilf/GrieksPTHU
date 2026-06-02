@@ -130,12 +130,33 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
     if keuze:
         ref, zin = keuze
         html_zin = ""
+        grieks_puur = ""
+        engels_puur = ""
+        
         for zw in zin:
+            g_woord = zw['grieks']
+            interp = zw.get('interpunctie', '')
+            grieks_puur += f"{g_woord}{interp} "
+            engels_puur += f"{zw.get('vertaling_bsb', '')} "
+            
+            # Veilig maken voor HTML tooltips
+            tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
+            tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
+            
             if str(zw.get('strong', '')) == str(strong_nr):
-                html_zin += f"<span style='color: #33ccff; font-weight: bold; text-decoration: underline;' title='{zw.get('parsing_info', '')}'>{zw['grieks']}</span>{zw.get('interpunctie', '')} "
+                html_zin += f"<span style='color: #33ccff; font-weight: bold; text-decoration: underline; cursor: help;' title='{tooltip}'>{g_woord}</span>{interp} "
             else:
-                html_zin += f"<span style='color: #888888;'>{zw['grieks']}</span>{zw.get('interpunctie', '')} "
-        return f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
+                # Grijze woorden met een stippellijntje eronder zodat je weet dat je eroverheen kan muizen
+                html_zin += f"<span style='color: #888888; cursor: help; border-bottom: 1px dotted #555;' title='{tooltip}'>{g_woord}</span>{interp} "
+                
+        html_weergave = f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
+        
+        return {
+            "html": html_weergave,
+            "ref": ref,
+            "grieks_puur": grieks_puur.strip(),
+            "engels_puur": engels_puur.strip()
+        }
     return None
 
 # --- ALGORITMES ---
@@ -386,13 +407,13 @@ def main():
                         else: st.error(st.session_state.feedback["msg"])
                         st.session_state.feedback = None 
 
-                    # NIEUW: Contextuele Inbedding voor Mastery
+                    zin_data = None
                     if is_mastery and huidige_sub_modus != '1':
                         st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
-                        zin_html = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db)
-                        if zin_html:
-                            st.markdown(zin_html, unsafe_allow_html=True)
+                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db)
+                        if zin_data:
+                            st.markdown(zin_data["html"], unsafe_allow_html=True)
                         else:
                             st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else:
@@ -437,7 +458,12 @@ def main():
                                         elif huidige_sub_modus == '3_typ':
                                             if st.session_state.mix_combo.get(item['grieks'], False): item['streak'] = int(item.get('streak', 0)) + 2
                                             else: item['streak'] = int(item.get('streak', 0)) + 1
-                                    st.session_state.feedback = {"type": "success", "msg": f"✓ Goed! **{huidige_vorm}** = {correct_antw}"}
+                                            
+                                    success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
+                                    if zin_data: 
+                                        success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    st.session_state.feedback = {"type": "success", "msg": success_msg}
+                                    
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
                                     if huidige_sub_modus == '3_typ': st.session_state.mix_combo[item['grieks']] = False
@@ -482,7 +508,12 @@ def main():
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                         if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
                                         elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
-                                    st.session_state.feedback = {"type": "success", "msg": f"✓ Juist! {fout_msg_volledig}"}
+                                        
+                                    success_msg = f"✓ Juist! {fout_msg_volledig}"
+                                    if zin_data: 
+                                        success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    st.session_state.feedback = {"type": "success", "msg": success_msg}
+                                    
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
                                     if huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = False
