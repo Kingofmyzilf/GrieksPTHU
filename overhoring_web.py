@@ -296,8 +296,6 @@ def laad_gebruiker_data(naam):
     try:
         df = conn.read(ttl=0) 
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
-        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
-        
         user_row = df[df['gebruikersnaam'] == naam]
         
         if os.path.exists("basis_woorden.json"):
@@ -307,14 +305,27 @@ def laad_gebruiker_data(naam):
         if user_row.empty:
             st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}
             df_andere = df[df['gebruikersnaam'] != naam]
-            nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam, 'vocab_stats': '{}', 'gram_stats': '{}', 'stam_stats': '{}', 'struct_stats': '{}', 'dag_stats': '{}'}])
+            nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
         else:
-            st.session_state.vocab_stats = veilige_json_load(user_row.iloc[0].get('vocab_stats', '{}'))
-            st.session_state.gram_stats = veilige_json_load(user_row.iloc[0].get('gram_stats', '{}'))
-            st.session_state.stam_stats = veilige_json_load(user_row.iloc[0].get('stam_stats', '{}'))
-            st.session_state.struct_stats = veilige_json_load(user_row.iloc[0].get('struct_stats', '{}'))
-            st.session_state.dag_stats = veilige_json_load(user_row.iloc[0].get('dag_stats', '{}'))
+            row = user_row.iloc[0]
+            
+            # --- DE CHUNK-LEZER: Lijmt alle losse celletjes weer aan elkaar ---
+            def reassemble_chunks(prefix, count_col):
+                if count_col in row and not pd.isna(row[count_col]):
+                    try:
+                        count = int(row[count_col])
+                        s = "".join([str(row[f"{prefix}_{i}"]) for i in range(count) if f"{prefix}_{i}" in row])
+                        return veilige_json_load(s)
+                    except: return {}
+                else:
+                    return veilige_json_load(row.get(prefix, '{}'))
+
+            st.session_state.vocab_stats = reassemble_chunks('vocab_stats', 'v_chunks')
+            st.session_state.gram_stats = reassemble_chunks('gram_stats', 'g_chunks')
+            st.session_state.stam_stats = reassemble_chunks('stam_stats', 'st_chunks')
+            st.session_state.struct_stats = reassemble_chunks('struct_stats', 'sr_chunks')
+            st.session_state.dag_stats = reassemble_chunks('dag_stats', 'd_chunks')
             
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
@@ -336,23 +347,44 @@ def opslaan_naar_cloud():
     try:
         df = conn.read(ttl=0)
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
-        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
-        
         df_andere = df[df['gebruikersnaam'] != st.session_state.last_user]
         
-        nieuwe_rij = pd.DataFrame([{
+        # --- DE SCHAAR: Knipt enorme bestanden op in stukken van 40.000 tekens ---
+        def get_chunks(data_dict, prefix, max_len=40000):
+            s = json.dumps(data_dict, ensure_ascii=False)
+            chunks = [s[i:i+max_len] for i in range(0, len(s), max_len)]
+            res = {}
+            for idx, chunk in enumerate(chunks):
+                res[f"{prefix}_{idx}"] = chunk
+            return res, len(chunks)
+        
+        v_ch, v_count = get_chunks(st.session_state.get('vocab_stats', {}), 'vocab_stats')
+        g_ch, g_count = get_chunks(st.session_state.get('gram_stats', {}), 'gram_stats')
+        st_ch, st_count = get_chunks(st.session_state.get('stam_stats', {}), 'stam_stats')
+        sr_ch, sr_count = get_chunks(st.session_state.get('struct_stats', {}), 'struct_stats')
+        d_ch, d_count = get_chunks(st.session_state.get('dag_stats', {}), 'dag_stats')
+        
+        nieuwe_rij_dict = {
             'gebruikersnaam': st.session_state.last_user,
-            'vocab_stats': json.dumps(st.session_state.get('vocab_stats', {}), ensure_ascii=False),
-            'gram_stats': json.dumps(st.session_state.get('gram_stats', {}), ensure_ascii=False),
-            'stam_stats': json.dumps(st.session_state.get('stam_stats', {}), ensure_ascii=False),
-            'struct_stats': json.dumps(st.session_state.get('struct_stats', {}), ensure_ascii=False),
-            'dag_stats': json.dumps(st.session_state.get('dag_stats', {}), ensure_ascii=False)
-        }])
+            'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count
+        }
+        
+        nieuwe_rij_dict.update(v_ch)
+        nieuwe_rij_dict.update(g_ch)
+        nieuwe_rij_dict.update(st_ch)
+        nieuwe_rij_dict.update(sr_ch)
+        nieuwe_rij_dict.update(d_ch)
+        
+        nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
-    except Exception: pass
+    except Exception as e:
+        st.error(f"⚠️ Fout bij cloud-opslag. Je verliest geen data in deze sessie, maar controleer je Google Sheet koppeling: {e}")
 
 def trigger_save():
     if not st.session_state.get('last_user') or not st.session_state.get('data'): return
+    
+    # We slaan hier weer ALLES op in st.session_state (zoals vroeger).
+    # Het opknippen voor de Google Sheets limiet gebeurt nu veilig in opslaan_naar_cloud()
     for word in st.session_state.data:
         st.session_state.vocab_stats[word['grieks']] = {
             'streak': word.get('streak', 0),
@@ -421,13 +453,15 @@ def main():
             
             st.write("---")
             with st.expander("⚙️ Geavanceerd / Backup"):
-                st.caption("Plak hier je ruwe JSON-backup om je scores veilig te herstellen:")
+                st.caption("Plak hier je ruwe JSON-backup om je scores direct en veilig te herstellen:")
                 backup_input = st.text_area("JSON Backup", label_visibility="collapsed")
                 if st.button("Herstel Voortgang"):
                     if backup_input:
                         try:
-                            nieuwe_data = json.loads(backup_input.strip())
-                            st.session_state.vocab_stats = nieuwe_data
+                            # Auto-correctie voor Google Sheets opmaak
+                            schoon_input = backup_input.strip().replace('“', '"').replace('”', '"').replace("'", '"')
+                            nieuwe_data = json.loads(schoon_input)
+                            
                             for w in st.session_state.data:
                                 if w['grieks'] in nieuwe_data:
                                     b = nieuwe_data[w['grieks']]
@@ -436,9 +470,9 @@ def main():
                                     w['score_fout'] = b.get('f', 0)
                                     w['laatst_geoefend'] = b.get('laatst_geoefend', "")
                             trigger_save()
-                            st.success("Backup succesvol hersteld! Je kunt dit menu nu sluiten.")
+                            st.success("Backup is succesvol hersteld en opgeknipt naar de cloud! Je kunt dit menu nu sluiten.")
                         except Exception as e:
-                            st.error("Fout! Ongeldige code. Controleer of je alles exact goed hebt gekopieerd.")
+                            st.error(f"Fout! Ongeldige code. Details: {e}")
 
     if st.session_state.data:
         menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten"])
@@ -629,7 +663,7 @@ def main():
                         st.write("---")
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
                         laatst = item.get('laatst_geoefend', 'Nooit')
-                        st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst geoefend: {laatst}")
+                        st.caption(f"Fase: {fase} | Universele Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst geoefend: {laatst}")
 
         # ==========================================
         # TAB 2: LIJST
@@ -764,7 +798,14 @@ def main():
                     for idx, row in df_global.iterrows():
                         g_naam = row.get('gebruikersnaam', 'Anoniem')
                         if not g_naam: continue
-                        try: d_stats_raw = json.loads(str(row.get('dag_stats', '{}')))
+                        try:
+                            # Reassemble the chunked dag_stats logic
+                            if 'd_chunks' in row and not pd.isna(row['d_chunks']):
+                                count = int(row['d_chunks'])
+                                s = "".join([str(row[f"dag_stats_{i}"]) for i in range(count) if f"dag_stats_{i}" in row])
+                                d_stats_raw = veilige_json_load(s)
+                            else:
+                                d_stats_raw = veilige_json_load(str(row.get('dag_stats', '{}')))
                         except: d_stats_raw = {}
                         
                         tot_14 = 0
