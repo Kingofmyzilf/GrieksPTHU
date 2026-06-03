@@ -22,11 +22,59 @@ st.markdown("""
     .stTextInput>div>div>input { font-size: 20px; text-align: center; }
     .grieks-woord { font-size: 50px; font-weight: bold; color: #33ccff; text-align: center; padding: 20px; }
     .grieks-zin { font-size: 28px; line-height: 1.8; color: #ffffff; padding: 20px; background-color: #1e1e1e; border-radius: 10px; }
-    .woord-bekend { color: #00ffff; font-weight: bold; border-bottom: 2px solid #00ffff; cursor: help; padding: 0 4px; }
-    .woord-stamtijd { color: #d63384; font-weight: bold; border-bottom: 2px solid #d63384; cursor: help; padding: 0 4px; }
-    .woord-onbekend { color: #aaaaaa; cursor: help; padding: 0 2px; }
+    .woord-bekend { color: #00ffff; font-weight: bold; border-bottom: 2px solid #00ffff; padding: 0 4px; }
+    .woord-stamtijd { color: #d63384; font-weight: bold; border-bottom: 2px solid #d63384; padding: 0 4px; }
+    .woord-onbekend { color: #aaaaaa; padding: 0 2px; }
     .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
     .rooster-input>div>div>input { font-size: 16px; padding: 5px; }
+    
+    /* NIEUW: Mobiel-vriendelijke tooltips op tap/hover */
+    .mobile-tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none; /* Verwijder blauwe focus-lijn op mobiel */
+    }
+    .mobile-tooltip .tooltiptext {
+        visibility: hidden;
+        width: max-content;
+        max-width: 240px;
+        background-color: #2b2b2b;
+        color: #f8f9fa;
+        text-align: center;
+        border-radius: 8px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 9999;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.2s;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 1.4;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
+        pointer-events: none; 
+        white-space: pre-wrap;
+    }
+    /* Pijltje onder de tooltip */
+    .mobile-tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: #2b2b2b transparent transparent transparent;
+    }
+    .mobile-tooltip:hover .tooltiptext,
+    .mobile-tooltip:focus .tooltiptext,
+    .mobile-tooltip:active .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -113,13 +161,11 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
                 p = w.get('parsing_info', '')
                 is_dict_form = False
                 if woordsoort == 'ww' or "Werkwoord" in p:
-                    # Voorkeur voor 1e persoon enkelvoud indicativus (actief of deponens)
                     if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
                 elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
-                    # Voorkeur voor Nominativus enkelvoud
                     if "Nom" in p and "ev" in p: is_dict_form = True
                 else:
-                    is_dict_form = True # Voor partikels/voorzetsels is elke zin goed
+                    is_dict_form = True 
 
                 if is_dict_form:
                     beste_zin = (ref, zin)
@@ -139,15 +185,13 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
             
-            # Veilig maken voor HTML tooltips
             tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
             tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
             
             if str(zw.get('strong', '')) == str(strong_nr):
-                html_zin += f"<span style='color: #33ccff; font-weight: bold; text-decoration: underline; cursor: help;' title='{tooltip}'>{g_woord}</span>{interp} "
+                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #33ccff; font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
             else:
-                # Grijze woorden met een stippellijntje eronder zodat je weet dat je eroverheen kan muizen
-                html_zin += f"<span style='color: #888888; cursor: help; border-bottom: 1px dotted #555;' title='{tooltip}'>{g_woord}</span>{interp} "
+                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #888888; border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
                 
         html_weergave = f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
         
@@ -633,14 +677,13 @@ def main():
             plt.xticks(rotation=0)
             st.pyplot(fig)
             
-            # NIEUW: KNELPUNTEN ANALYSE
             st.write("---")
             st.subheader("🔥 Jouw Knelpunten (Top 10)")
             knelpunten = []
             for w in st.session_state.data:
                 g = int(w.get('score_goed', 0))
                 f = int(w.get('score_fout', 0))
-                if (g + f) >= 3 and f > 0: # Alleen berekenen als je woord 3x of vaker hebt gezien
+                if (g + f) >= 3 and f > 0: 
                     ratio = f / (g + f)
                     knelpunten.append({"Woord": w['grieks'], "Betekenis": w['nederlands'], "Fout-ratio": f"{int(ratio*100)}%", "Fouten": f})
             
@@ -650,7 +693,6 @@ def main():
             else:
                 st.success("Je hebt nog geen duidelijke knelpunten. Ga zo door!")
                 
-            # NIEUW: DATA EXPORT
             st.write("---")
             st.subheader("💾 Exporteer je data")
             df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout']]
@@ -837,7 +879,7 @@ def main():
                                     else:
                                         st.session_state.stam_fouten += 1
                                         if st.session_state.stam_fouten == 1:
-                                            st.session_state.stam_stats[vid]['f'] += 1 # Streak freeze
+                                            st.session_state.stam_stats[vid]['f'] += 1 
                                             st.session_state.stam_feedback = {"type": "warning", "msg": "Bijna! Probeer het nog eens!"}
                                         elif st.session_state.stam_fouten == 2:
                                             st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
@@ -848,7 +890,7 @@ def main():
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
-                        else: # PARTIËLE MC FEEDBACK
+                        else: 
                             if not st.session_state.stam_opties_gram:
                                 afleiders_g = [g for g in ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"] if g != correct_gram]
                                 st.session_state.stam_opties_gram = [correct_gram] + random.sample(afleiders_g, 3)
@@ -894,9 +936,10 @@ def main():
                                     else:
                                         st.session_state.stam_fouten += 1
                                         if st.session_state.stam_fouten == 1:
+                                            st.session_state.stam_stats[vid]['f'] += 1 
                                             st.session_state.stam_feedback = {"type": "warning", "msg": "Een van je keuzes is niet juist. Het goede deel is vastgezet!"}
                                         elif st.session_state.stam_fouten == 2:
-                                            st.session_state.stam_stats[vid]['f'] += 1; st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
+                                            st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
                                             st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             
@@ -1001,7 +1044,7 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1
                                         if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
+                                            st.session_state.struct_stats[vid]['f'] += 1 
                                             st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
                                         elif st.session_state.struct_fouten == 2:
                                             st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
@@ -1012,7 +1055,7 @@ def main():
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
                                             trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                         st.rerun()
-                        else: # PARTIËLE MC FEEDBACK
+                        else: 
                             if not st.session_state.struct_opties_cat:
                                 afleiders_c = [c for c in alle_cats if c != correct_cat]
                                 st.session_state.struct_opties_cat = [correct_cat] + random.sample(afleiders_c, min(3, len(afleiders_c)))
@@ -1064,9 +1107,10 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1
                                         if st.session_state.struct_fouten == 1:
+                                            st.session_state.struct_stats[vid]['f'] += 1 
                                             st.session_state.struct_feedback = {"type": "warning", "msg": "De goede delen zijn vastgezet. Probeer de rest opnieuw!"}
                                         elif st.session_state.struct_fouten == 2:
-                                            st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
+                                            st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
                                             
@@ -1170,6 +1214,8 @@ def main():
                     
                     for w in st.session_state.huidig_vers:
                         tooltip = f"{w['vertaling_bsb']} ({w['parsing_info']})"
+                        tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
+                        
                         extra_style = ""
                         if kleur_naamvallen:
                             if "Nom" in w['parsing_info']: extra_style += "color: #33ccff;"
@@ -1197,19 +1243,20 @@ def main():
                                     hover_text = f"Les {les_nr}: {basis_nederlands} | {tooltip}"
                                 else: hover_text = f"{actieve_stam_vormen[clean_w]['betekenis']} | {tooltip}"
                             else: hover_text = "Oefenwoord! Vul de gegevens hieronder in."
-                                
-                            html_zin += f"<span class='{css_class}' style='{extra_style}' title='{hover_text}'>{w['grieks']}</span>{w['interpunctie']} "
+                            
+                            hover_text = hover_text.replace("'", "&#39;").replace('"', "&quot;")
+                            html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}'>{w['grieks']}<span class='tooltiptext'>{hover_text}</span></span>{w['interpunctie']} "
                             oef_dict = w.copy()
                             oef_dict['is_stamtijd'] = is_stam
                             oef_dict['stam_info'] = actieve_stam_vormen[clean_w] if is_stam else None
                             oefen_woorden.append(oef_dict)
                         else:
-                            html_zin += f"<span class='{css_class}' style='{extra_style}' title='{tooltip}'>{w['grieks']}</span>{w['interpunctie']} "
+                            html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}; border-bottom: 1px dotted #555;'>{w['grieks']}<span class='tooltiptext'>{tooltip}</span></span>{w['interpunctie']} "
                     
                     if kleur_naamvallen: st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
 
                     st.markdown(f"<div class='grieks-zin'>{html_zin}</div>", unsafe_allow_html=True)
-                    st.caption("ℹ️ Hover over een woord om de vertaling te zien. Cyaan/Paarse woorden komen uit je actieve lessen.")
+                    st.caption("ℹ️ Tik op (of hover over) een woord om de vertaling en ontleding te zien. Cyaan/Paarse woorden komen uit je actieve lessen.")
                     
                     if oefen_woorden and "1." not in tekst_modus:
                         st.write("### 📝 Oefen je woorden in context")
