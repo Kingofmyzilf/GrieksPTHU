@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import unicodedata
+from datetime import datetime
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
@@ -28,12 +29,11 @@ st.markdown("""
     .grid-label { font-weight: bold; color: #33ccff; margin-bottom: 5px; }
     .rooster-input>div>div>input { font-size: 16px; padding: 5px; }
     
-    /* NIEUW: Mobiel-vriendelijke tooltips op tap/hover */
     .mobile-tooltip {
         position: relative;
         display: inline-block;
         cursor: pointer;
-        outline: none; /* Verwijder blauwe focus-lijn op mobiel */
+        outline: none;
     }
     .mobile-tooltip .tooltiptext {
         visibility: hidden;
@@ -58,7 +58,6 @@ st.markdown("""
         pointer-events: none; 
         white-space: pre-wrap;
     }
-    /* Pijltje onder de tooltip */
     .mobile-tooltip .tooltiptext::after {
         content: "";
         position: absolute;
@@ -157,7 +156,6 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
         for w in zin:
             if str(w.get('strong', '')) == str(strong_nr):
                 if not fallback_zin: fallback_zin = (ref, zin)
-                
                 p = w.get('parsing_info', '')
                 is_dict_form = False
                 if woordsoort == 'ww' or "Werkwoord" in p:
@@ -195,15 +193,17 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
                 
         html_weergave = f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
         
-        return {
-            "html": html_weergave,
-            "ref": ref,
-            "grieks_puur": grieks_puur.strip(),
-            "engels_puur": engels_puur.strip()
-        }
+        return {"html": html_weergave, "ref": ref, "grieks_puur": grieks_puur.strip(), "engels_puur": engels_puur.strip()}
     return None
 
-# --- ALGORITMES ---
+# --- ALGORITMES & TRACKING ---
+def registreer_oefening(item=None):
+    vandaag = str(datetime.now().date())
+    if 'dag_stats' not in st.session_state: st.session_state.dag_stats = {}
+    st.session_state.dag_stats[vandaag] = st.session_state.dag_stats.get(vandaag, 0) + 1
+    if item is not None:
+        item['laatst_geoefend'] = vandaag
+
 def krijg_streak(item, module, modus_id=None):
     if module == 'vocab': return int(item.get('streak', 0))
     return int(item.get('streak', 0))
@@ -279,6 +279,8 @@ def laad_gebruiker_data(naam):
     try:
         df = conn.read(ttl=0) 
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
+        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
+        
         user_row = df[df['gebruikersnaam'] == naam]
         
         if os.path.exists("basis_woorden.json"):
@@ -286,9 +288,9 @@ def laad_gebruiker_data(naam):
         else: return None
 
         if user_row.empty:
-            st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}
+            st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}
             df_andere = df[df['gebruikersnaam'] != naam]
-            nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam, 'vocab_stats': '{}', 'gram_stats': '{}', 'stam_stats': '{}', 'struct_stats': '{}'}])
+            nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam, 'vocab_stats': '{}', 'gram_stats': '{}', 'stam_stats': '{}', 'struct_stats': '{}', 'dag_stats': '{}'}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
         else:
             try: st.session_state.vocab_stats = json.loads(str(user_row.iloc[0].get('vocab_stats', '{}')))
@@ -299,6 +301,8 @@ def laad_gebruiker_data(naam):
             except: st.session_state.stam_stats = {}
             try: st.session_state.struct_stats = json.loads(str(user_row.iloc[0].get('struct_stats', '{}')))
             except: st.session_state.struct_stats = {}
+            try: st.session_state.dag_stats = json.loads(str(user_row.iloc[0].get('dag_stats', '{}')))
+            except: st.session_state.dag_stats = {}
             
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
@@ -308,7 +312,9 @@ def laad_gebruiker_data(naam):
             else:
                 r['streak'] = stats.get('streak', 0)
             
-            r['score_goed'] = stats.get('g', 0); r['score_fout'] = stats.get('f', 0)
+            r['score_goed'] = stats.get('g', 0)
+            r['score_fout'] = stats.get('f', 0)
+            r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
         return basis
     except Exception: return None
 
@@ -317,6 +323,8 @@ def opslaan_naar_cloud():
     try:
         df = conn.read(ttl=0)
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
+        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
+        
         df_andere = df[df['gebruikersnaam'] != st.session_state.last_user]
         
         nieuwe_rij = pd.DataFrame([{
@@ -324,7 +332,8 @@ def opslaan_naar_cloud():
             'vocab_stats': json.dumps(st.session_state.get('vocab_stats', {}), ensure_ascii=False),
             'gram_stats': json.dumps(st.session_state.get('gram_stats', {}), ensure_ascii=False),
             'stam_stats': json.dumps(st.session_state.get('stam_stats', {}), ensure_ascii=False),
-            'struct_stats': json.dumps(st.session_state.get('struct_stats', {}), ensure_ascii=False)
+            'struct_stats': json.dumps(st.session_state.get('struct_stats', {}), ensure_ascii=False),
+            'dag_stats': json.dumps(st.session_state.get('dag_stats', {}), ensure_ascii=False)
         }])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
     except Exception: pass
@@ -335,14 +344,15 @@ def trigger_save():
         st.session_state.vocab_stats[word['grieks']] = {
             'streak': word.get('streak', 0),
             'g': word.get('score_goed', 0),
-            'f': word.get('score_fout', 0)
+            'f': word.get('score_fout', 0),
+            'laatst_geoefend': word.get('laatst_geoefend', "")
         }
     opslaan_naar_cloud()
 
 # --- INITIALISATIE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige_vorm_data', 'feedback', 
             'fouten_huidig_woord', 'huidige_opties', 'last_user', 'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen',
-            'actief_flashcard_huidig', 'actief_nakijk_resultaten', 'mix_combo',
+            'actief_flashcard_huidig', 'actief_nakijk_resultaten', 'mix_combo', 'dag_stats',
             'stam_sessie_lijst', 'stam_huidig', 'stam_sub_modus', 'stam_fouten', 'stam_feedback', 'stam_opties_gram', 'stam_opties_praesens', 'stam_mc_solved',
             'struct_sessie_lijst', 'struct_huidig', 'struct_sub_modus', 'struct_fouten', 'struct_feedback', 'struct_opties_cat', 'struct_opties_eig', 'struct_opties_bet', 'struct_mc_solved']:
     if key not in st.session_state: st.session_state[key] = None
@@ -351,6 +361,7 @@ if st.session_state.stam_sessie_lijst is None: st.session_state.stam_sessie_lijs
 if st.session_state.struct_sessie_lijst is None: st.session_state.struct_sessie_lijst = []
 if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
+if st.session_state.dag_stats is None: st.session_state.dag_stats = {}
 
 def laad_volgend_woord():
     if st.session_state.sessie_lijst:
@@ -473,6 +484,7 @@ def main():
                         with st.form(key=f"form_overtik_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Typ het exacte antwoord over:").lower().strip()
                             if st.form_submit_button("Bevestig"):
+                                registreer_oefening(item)
                                 if check_betekenis(inp, correct_antw):
                                     st.session_state.feedback = {"type": "success", "msg": "Goed overgetypt! Dit woord komt straks nog een keer terug."}
                                     laad_volgend_woord(); st.rerun()
@@ -492,6 +504,7 @@ def main():
                             else: p_vorm = huidige_parsing.lower().strip()
 
                             if st.form_submit_button("Check Antwoord"):
+                                registreer_oefening(item)
                                 betekenis_goed = check_betekenis(inp, correct_antw)
                                 vorm_goed = (p_vorm == huidige_parsing.lower().strip())
 
@@ -504,10 +517,8 @@ def main():
                                             else: item['streak'] = int(item.get('streak', 0)) + 1
                                             
                                     success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
-                                    if zin_data: 
-                                        success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    if zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
-                                    
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
                                     if huidige_sub_modus == '3_typ': st.session_state.mix_combo[item['grieks']] = False
@@ -547,6 +558,7 @@ def main():
                         cols = st.columns(2)
                         for idx, optie in enumerate(st.session_state.huidige_opties):
                             if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
+                                registreer_oefening(item)
                                 if optie == correct_optie:
                                     if st.session_state.fouten_huidig_woord == 0:
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
@@ -554,10 +566,8 @@ def main():
                                         elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
                                         
                                     success_msg = f"✓ Juist! {fout_msg_volledig}"
-                                    if zin_data: 
-                                        success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    if zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
-                                    
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
                                     if huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = False
@@ -577,7 +587,8 @@ def main():
                     if huidige_sub_modus != 'overtik':
                         st.write("---")
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
-                        st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)}")
+                        laatst = item.get('laatst_geoefend', 'Nooit')
+                        st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst geoefend: {laatst}")
 
         # ==========================================
         # TAB 2: LIJST
@@ -590,7 +601,7 @@ def main():
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                 les_filter = st.selectbox("Bekijk les:", alle_lessen)
                 df = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
-                if not df.empty: st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'woordsoort'] if c in df.columns]], use_container_width=True)
+                if not df.empty: st.dataframe(df[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort'] if c in df.columns]], use_container_width=True)
             elif weergave == "Actief Beheersen (Rijtjes)":
                 st.info("De scores voor actieve rijtjes worden per specifieke cel bijgehouden in je profiel.")
             elif weergave == "Stamtijden":
@@ -677,6 +688,30 @@ def main():
             plt.xticks(rotation=0)
             st.pyplot(fig)
             
+            # AGENDA HEATMAP
+            st.write("---")
+            st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
+            if st.session_state.dag_stats:
+                df_dagen = pd.DataFrame(list(st.session_state.dag_stats.items()), columns=['Datum', 'Aantal'])
+                df_dagen['Datum'] = pd.to_datetime(df_dagen['Datum'])
+                vandaag = pd.to_datetime('today').normalize()
+                start_datum = vandaag - pd.Timedelta(days=13)
+                
+                df_dagen = df_dagen[df_dagen['Datum'] >= start_datum]
+                alle_dagen = pd.date_range(start=start_datum, end=vandaag)
+                df_dagen = df_dagen.set_index('Datum').reindex(alle_dagen, fill_value=0).reset_index()
+                df_dagen.columns = ['Datum', 'Aantal']
+                df_dagen['Datum_str'] = df_dagen['Datum'].dt.strftime('%d-%m')
+
+                fig2, ax2 = plt.subplots(figsize=(10, 3))
+                ax2.bar(df_dagen['Datum_str'], df_dagen['Aantal'], color='#28a745')
+                ax2.set_ylabel("Geoefende items")
+                plt.xticks(rotation=45)
+                st.pyplot(fig2)
+                st.metric("Totaal geoefend (All-time)", sum(st.session_state.dag_stats.values()))
+            else:
+                st.info("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
+            
             st.write("---")
             st.subheader("🔥 Jouw Knelpunten (Top 10)")
             knelpunten = []
@@ -686,7 +721,6 @@ def main():
                 if (g + f) >= 3 and f > 0: 
                     ratio = f / (g + f)
                     knelpunten.append({"Woord": w['grieks'], "Betekenis": w['nederlands'], "Fout-ratio": f"{int(ratio*100)}%", "Fouten": f})
-            
             if knelpunten:
                 knelpunten.sort(key=lambda x: x["Fouten"], reverse=True)
                 st.dataframe(pd.DataFrame(knelpunten[:10]), use_container_width=True)
@@ -695,7 +729,7 @@ def main():
                 
             st.write("---")
             st.subheader("💾 Exporteer je data")
-            df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout']]
+            df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend']]
             csv = df_export.to_csv(index=False).encode('utf-8')
             st.download_button(label="📥 Download Data als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
 
@@ -732,6 +766,7 @@ def main():
                                     input_refs[item['id']] = st.text_input("", key=f"inp_{item['id']}", label_visibility="collapsed")
                             
                             if st.form_submit_button("Nakijken"):
+                                registreer_oefening()
                                 st.session_state.actief_nakijk_resultaten = {}
                                 alles_goed = True
                                 for item in huidig_rijtje:
@@ -771,6 +806,7 @@ def main():
                             with st.form(key=f"form_flash_{huidig['id']}"):
                                 inp = st.text_input("Jouw antwoord (Bèta-code):")
                                 if st.form_submit_button("Controleer"):
+                                    registreer_oefening()
                                     if huidig['id'] not in st.session_state.gram_stats: st.session_state.gram_stats[huidig['id']] = {'goed': 0, 'fout': 0, 'streak': 0}
                                     ingevuld = naar_grieks_transliteratie(inp)
                                     if normaliseer_accent(ingevuld) == normaliseer_accent(huidig['vorm']):
@@ -781,7 +817,7 @@ def main():
                                         st.error(f"✗ Onjuist. Het juiste antwoord is: **{huidig['vorm']}**"); trigger_save()
 
         # ==========================================
-        # TAB 5: STAMTIJDEN (Filters + Fout Overtikken)
+        # TAB 5: STAMTIJDEN
         # ==========================================
         with menu[4]: 
             stamtijden_db = laad_stamtijden_db()
@@ -852,6 +888,7 @@ def main():
                                 p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
                                 p_praesens = st.text_input("Praesens:")
                                 if st.form_submit_button("Bevestig"):
+                                    registreer_oefening()
                                     if (p_gram == correct_gram) and (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(correct_praesens)):
                                         st.session_state.stam_feedback = {"type": "success", "msg": "Genoteerd! Hij komt straks weer."}
                                         trigger_save(); laad_volgend_stam_woord(); st.rerun()
@@ -867,6 +904,7 @@ def main():
                                 with c_bet: p_betekenis = st.text_input("Betekenis:")
                                 
                                 if st.form_submit_button("Check Antwoord"):
+                                    registreer_oefening()
                                     is_gram_correct = (p_gram == correct_gram)
                                     is_praesens_correct = (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(correct_praesens))
                                     is_bet_correct = check_betekenis(p_betekenis, correct_betekenis)
@@ -890,7 +928,7 @@ def main():
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
-                        else: 
+                        else: # PARTIËLE MC FEEDBACK
                             if not st.session_state.stam_opties_gram:
                                 afleiders_g = [g for g in ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"] if g != correct_gram]
                                 st.session_state.stam_opties_gram = [correct_gram] + random.sample(afleiders_g, 3)
@@ -922,6 +960,7 @@ def main():
                                     keuze_praesens = st.radio("Bij welk werkwoord hoort dit?", st.session_state.stam_opties_praesens, index=None, label_visibility="collapsed")
                                 
                                 if st.form_submit_button("Check Antwoord"):
+                                    registreer_oefening()
                                     is_gram_correct = (keuze_gram == correct_gram)
                                     is_prae_correct = (keuze_praesens == f"{correct_praesens} — {correct_betekenis}")
                                     
@@ -954,7 +993,7 @@ def main():
                             st.caption(f"Fase: {fase_naam} | Streak: {st.session_state.stam_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.stam_stats[vid].get('g', 0)}/{st.session_state.stam_stats[vid].get('f', 0)}")
 
         # ==========================================
-        # TAB 6: STRUCTUURWOORDEN (Dynamische Menu's)
+        # TAB 6: STRUCTUURWOORDEN
         # ==========================================
         with menu[5]: 
             struct_db = laad_structuurwoorden_db()
@@ -1014,6 +1053,7 @@ def main():
                                 p_cat = st.selectbox("1. Categorie:", [""] + alle_cats)
                                 p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen):")
                                 if st.form_submit_button("Bevestig"):
+                                    registreer_oefening()
                                     if p_cat == correct_cat and p_eig.lower().strip() == correct_eig.lower().strip():
                                         st.session_state.struct_feedback = {"type": "success", "msg": "Genoteerd! Komt straks terug."}
                                         trigger_save(); laad_volgend_struct_woord(); st.rerun()
@@ -1032,6 +1072,7 @@ def main():
                                     p_bet = st.text_input("3. Betekenis:")
                                 
                                 if st.form_submit_button("Check Antwoord"):
+                                    registreer_oefening()
                                     is_cat_correct = (gekozen_cat == correct_cat)
                                     is_eig_correct = (p_eig == correct_eig)
                                     is_bet_correct = check_betekenis(p_bet, correct_bet)
@@ -1044,7 +1085,7 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1
                                         if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 
+                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
                                             st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
                                         elif st.session_state.struct_fouten == 2:
                                             st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
@@ -1055,7 +1096,7 @@ def main():
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
                                             trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                         st.rerun()
-                        else: 
+                        else: # PARTIËLE MC FEEDBACK
                             if not st.session_state.struct_opties_cat:
                                 afleiders_c = [c for c in alle_cats if c != correct_cat]
                                 st.session_state.struct_opties_cat = [correct_cat] + random.sample(afleiders_c, min(3, len(afleiders_c)))
@@ -1091,6 +1132,7 @@ def main():
                                 else: keuze_bet = st.radio("3. Betekenis:", st.session_state.struct_opties_bet, index=None)
                                 
                                 if st.form_submit_button("Check Antwoord"):
+                                    registreer_oefening()
                                     is_cat_correct = (keuze_cat == correct_cat)
                                     is_eig_correct = (keuze_eig == correct_eig)
                                     is_bet_correct = (keuze_bet == correct_bet)
@@ -1107,7 +1149,7 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1
                                         if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 
+                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
                                             st.session_state.struct_feedback = {"type": "warning", "msg": "De goede delen zijn vastgezet. Probeer de rest opnieuw!"}
                                         elif st.session_state.struct_fouten == 2:
                                             st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
@@ -1272,6 +1314,7 @@ def main():
                                     with c_bet: p_betekenis = st.text_input("Betekenis:", key=f"s_b_{idx}")
                                     
                                     if st.form_submit_button("Check Stamtijd"):
+                                        registreer_oefening()
                                         is_gram_correct = (p_gram == stam_data['tijd_diathese'])
                                         is_praesens_correct = (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(stam_data['praesens']))
                                         is_bet_correct = check_betekenis(p_betekenis, stam_data['betekenis'])
@@ -1307,6 +1350,7 @@ def main():
                                     cols = st.columns(2)
                                     for c_idx, optie in enumerate(st.session_state[f"mc_opties_{idx}"]):
                                         if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}"):
+                                            registreer_oefening(basis)
                                             if optie == basis['nederlands']: 
                                                 basis['streak'] = int(basis.get('streak', 0)) + 1; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save()
                                                 st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
@@ -1318,6 +1362,7 @@ def main():
                                     with st.form(key=f"form_typ_{idx}"):
                                         inp = st.text_input("Woordenboekvertaling:")
                                         if st.form_submit_button("Check"):
+                                            registreer_oefening(basis)
                                             if check_betekenis(inp, basis['nederlands']): 
                                                 basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save()
                                                 st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
@@ -1353,6 +1398,7 @@ def main():
                                                 with c2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_ww_{idx}")
                                                 
                                         if st.button("Controleer Analyse", key=f"chk_{idx}"):
+                                            registreer_oefening(basis)
                                             betekenis_ok = check_betekenis(t_inp, basis['nederlands'])
                                             parsing_ok = check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info'])
                                             if betekenis_ok and parsing_ok:
