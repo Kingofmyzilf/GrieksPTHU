@@ -107,11 +107,11 @@ def check_betekenis(ingevuld, correcte_zin):
     delen_ruw = [d.strip() for d in correcte_zin.replace(';', ',').split(',')]
     if ingevuld in delen_ruw: return True
     
-    schoon = re.sub(r'\(.*?\)', '', correcte_zin).replace('=', '').replace('*', '').replace('+')
+    schoon = re.sub(r'\(.*?\)', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
     delen_schoon = [d.strip() for d in schoon.replace(';', ',').split(',')]
     if ingevuld in [d for d in delen_schoon if d]: return True
     
-    zonder = re.sub(r'[()\[\]]', '', correcte_zin).replace('=', '').replace('*', '').replace('+')
+    zonder = re.sub(r'[()\[\]]', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
     delen_zonder = [d.strip() for d in zonder.replace(';', ',').split(',')]
     if ingevuld in [d for d in delen_zonder if d]: return True
     return False
@@ -196,6 +196,15 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
         return {"html": html_weergave, "ref": ref, "grieks_puur": grieks_puur.strip(), "engels_puur": engels_puur.strip()}
     return None
 
+def veilige_json_load(data_str):
+    s = str(data_str).strip()
+    if not s or s.lower() == 'nan': return {}
+    s = s.replace('“', '"').replace('”', '"').replace("'", '"')
+    try:
+        return json.loads(s)
+    except:
+        return {}
+
 # --- ALGORITMES & TRACKING ---
 def registreer_oefening(item=None):
     vandaag = str(datetime.now().date())
@@ -216,7 +225,6 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, max_nieuw=3):
         elif 16 <= s <= 29: beheerst.append(item)
         else: mastery.append(item)
     
-    # SYSTEMATISCHE SPACED REPETITION LOGICA
     def sorteer_key(x):
         d_str = x.get('laatst_geoefend', '')
         if not d_str: return datetime.min.date()
@@ -302,21 +310,15 @@ def laad_gebruiker_data(naam):
             nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam, 'vocab_stats': '{}', 'gram_stats': '{}', 'stam_stats': '{}', 'struct_stats': '{}', 'dag_stats': '{}'}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
         else:
-            try: st.session_state.vocab_stats = json.loads(str(user_row.iloc[0].get('vocab_stats', '{}')))
-            except: st.session_state.vocab_stats = {}
-            try: st.session_state.gram_stats = json.loads(str(user_row.iloc[0].get('gram_stats', '{}')))
-            except: st.session_state.gram_stats = {}
-            try: st.session_state.stam_stats = json.loads(str(user_row.iloc[0].get('stam_stats', '{}')))
-            except: st.session_state.stam_stats = {}
-            try: st.session_state.struct_stats = json.loads(str(user_row.iloc[0].get('struct_stats', '{}')))
-            except: st.session_state.struct_stats = {}
-            try: st.session_state.dag_stats = json.loads(str(user_row.iloc[0].get('dag_stats', '{}')))
-            except: st.session_state.dag_stats = {}
+            st.session_state.vocab_stats = veilige_json_load(user_row.iloc[0].get('vocab_stats', '{}'))
+            st.session_state.gram_stats = veilige_json_load(user_row.iloc[0].get('gram_stats', '{}'))
+            st.session_state.stam_stats = veilige_json_load(user_row.iloc[0].get('stam_stats', '{}'))
+            st.session_state.struct_stats = veilige_json_load(user_row.iloc[0].get('struct_stats', '{}'))
+            st.session_state.dag_stats = veilige_json_load(user_row.iloc[0].get('dag_stats', '{}'))
             
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
             
-            # Veiligheidsmigratie (Voor het geval Google Sheets nog oude m1, m2 bevat)
             if 'm4' in stats or 'm1' in stats:
                 m1 = stats.get('m1', 0); m2 = stats.get('m2', 0); m3 = stats.get('m3', 0); m4 = stats.get('m4', 0)
                 r['streak'] = (m1 * 0) + (m2 * 1) + (m3 * 2) + (m4 * 4)
@@ -416,6 +418,27 @@ def main():
         
         if st.session_state.data:
             if st.button("🚪 Uitloggen"): trigger_save(); st.session_state.data = None; st.rerun()
+            
+            st.write("---")
+            with st.expander("⚙️ Geavanceerd / Backup"):
+                st.caption("Plak hier je ruwe JSON-backup om je scores veilig te herstellen:")
+                backup_input = st.text_area("JSON Backup", label_visibility="collapsed")
+                if st.button("Herstel Voortgang"):
+                    if backup_input:
+                        try:
+                            nieuwe_data = json.loads(backup_input.strip())
+                            st.session_state.vocab_stats = nieuwe_data
+                            for w in st.session_state.data:
+                                if w['grieks'] in nieuwe_data:
+                                    b = nieuwe_data[w['grieks']]
+                                    w['streak'] = b.get('streak', 0)
+                                    w['score_goed'] = b.get('g', 0)
+                                    w['score_fout'] = b.get('f', 0)
+                                    w['laatst_geoefend'] = b.get('laatst_geoefend', "")
+                            trigger_save()
+                            st.success("Backup succesvol hersteld! Je kunt dit menu nu sluiten.")
+                        except Exception as e:
+                            st.error("Fout! Ongeldige code. Controleer of je alles exact goed hebt gekopieerd.")
 
     if st.session_state.data:
         menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten"])
@@ -606,7 +629,7 @@ def main():
                         st.write("---")
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
                         laatst = item.get('laatst_geoefend', 'Nooit')
-                        st.caption(f"Fase: {fase} | Universele Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst geoefend: {laatst}")
+                        st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst geoefend: {laatst}")
 
         # ==========================================
         # TAB 2: LIJST
@@ -706,7 +729,6 @@ def main():
             plt.xticks(rotation=0)
             st.pyplot(fig)
             
-            # LOCALIZED OEFENRITME HEATMAP
             st.write("---")
             st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
             if st.session_state.dag_stats:
@@ -731,9 +753,8 @@ def main():
             else:
                 st.info("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
             
-            # NIEUW: MULTIPLAYER COMPETITIE TRACKER
             st.write("---")
-            st.subheader("🏆 Competitie Dashboard (Trailing 14 Days)")
+            st.subheader("🏆 Competitie Dashboard (Laatste 14 dagen)")
             try:
                 df_global = conn.read(ttl=0)
                 if 'gebruikersnaam' in df_global.columns and 'dag_stats' in df_global.columns:
@@ -757,9 +778,8 @@ def main():
                     df_comp = pd.DataFrame(comp_data).sort_values(by="Geoefende Items", ascending=False).reset_index(drop=True)
                     df_comp.index += 1
                     
-                    # Berekeningen voor context
                     andere_gebruikers = df_comp[df_comp['Gebruiker'] != st.session_state.last_user]
-                    hoogste_score = df_comp['Geoefende Items'].max()
+                    hoogste_score = df_comp['Geoefende Items'].max() if not df_comp.empty else 0
                     gemiddelde_anderen = int(andere_gebruikers['Geoefende Items'].mean()) if not andere_gebruikers.empty else 0
                     
                     c1, c2, c3 = st.columns(3)
@@ -989,7 +1009,7 @@ def main():
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
-                        else: # PARTIËLE MC FEEDBACK
+                        else: 
                             if not st.session_state.stam_opties_gram:
                                 afleiders_g = [g for g in ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"] if g != correct_gram]
                                 st.session_state.stam_opties_gram = [correct_gram] + random.sample(afleiders_g, 3)
@@ -1054,7 +1074,7 @@ def main():
                             st.caption(f"Fase: {fase_naam} | Universele Streak: {st.session_state.stam_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.stam_stats[vid].get('g', 0)}/{st.session_state.stam_stats[vid].get('f', 0)}")
 
         # ==========================================
-        # TAB 6: STRUCTUURWOORDEN (Dynamische Menu's)
+        # TAB 6: STRUCTUURWOORDEN
         # ==========================================
         with menu[5]: 
             struct_db = laad_structuurwoorden_db()
@@ -1129,7 +1149,8 @@ def main():
                                 with c_eig: 
                                     gefilterde_eigs = list(set([w['eigenschap'] for w in struct_db if w['categorie'] == gekozen_cat])) if gekozen_cat else []
                                     p_eig = st.selectbox("2. Eigenschap/Naamval", [""] + gefilterde_eigs)
-                                with c_bet: p_bet = st.text_input("3. Betekenis:")
+                                with c_bet: 
+                                    p_bet = st.text_input("3. Betekenis:")
                                 
                                 if st.form_submit_button("Check Antwoord"):
                                     registreer_oefening()
