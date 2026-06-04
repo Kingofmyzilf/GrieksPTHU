@@ -196,18 +196,17 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False):
             elif not anti_spiek and ("Voegwoord" in p_info or "Conjunction" in p_info):
                 kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
             else:
-                kleur_stijl += "color: #33ccff;" # Fallback highlight kleur
+                kleur_stijl += "color: #888888;" # Standaard grijs voor werkwoorden/overig
             
             if str(zw.get('strong', '')) == str(strong_nr):
+                # DOELWOORD: Krijgt GEEN grammaticale kleur, alleen dikgedrukt wit
                 if anti_spiek:
-                    # GEEN TOOLTIP: Alleen kleur en styling als hint
-                    html_zin += f"<span tabindex='0' style='{kleur_stijl} font-weight: bold; text-decoration: underline;'>{g_woord}</span>{interp} "
+                    html_zin += f"<span tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}</span>{interp} "
                 else:
-                    html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{kleur_stijl} font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
+                    html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
             else:
-                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #888888; border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
-                
-        html_weergave = f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
+                # CONTEXTWOORDEN: Krijgen wél de kleur als hint (en de tooltip om te spieken)
+                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{kleur_stijl} border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
         
         return {"html": html_weergave, "ref": ref, "grieks_puur": grieks_puur.strip(), "engels_puur": engels_puur.strip()}
     return None
