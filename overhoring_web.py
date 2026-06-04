@@ -493,7 +493,7 @@ def main():
             
             col_u, col_p = st.columns(2)
             with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
-            with col_p: u_code = st.text_input("Code", key="inp_code").strip()
+            with col_p: u_code = st.text_input("Code", type="password", key="inp_code").strip()
             
             if st.button("Inloggen", type="primary"):
                 if u_naam and u_code:
