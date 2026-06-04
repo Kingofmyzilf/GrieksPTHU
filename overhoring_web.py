@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
+import extra_streamlit_components as stx
 import json
 import random
 import re
@@ -8,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
@@ -263,7 +264,6 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
     
     sessie = []
     
-    # 🎛️ ZELF SAMENSTELLEN MODUS
     if custom_counts is not None:
         sessie.extend(nieuw[:custom_counts.get('nieuw', 0)])
         sessie.extend(training[:custom_counts.get('training', 0)])
@@ -272,7 +272,6 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         random.shuffle(sessie)
         return sessie
 
-    # 🤖 STANDAARD SPACED REPETITION MODUS
     doel_grootte = 15 if (len(nieuw) + len(training)) <= 4 else 10
     ruimte_voor_training = min(len(training), 8 - min(len(nieuw), max_nieuw))
     sessie.extend(training[:ruimte_voor_training])
@@ -481,22 +480,46 @@ def laad_volgend_struct_woord():
 # MAIN APP FUNCTIE
 # ==========================================
 def main():
+    # 1. Activeer de Cookie Manager
+    cookie_manager = stx.CookieManager()
+    
+    # 2. Lees uit of de speler al een account opgeslagen heeft op dit toestel
+    ingelogde_gebruiker = cookie_manager.get(cookie="grieks_tutor_user")
+    
+    # 3. Voer AUTO-LOGIN uit als we een cookie vinden en nog niet waren ingelogd
+    if st.session_state.data is None and ingelogde_gebruiker is not None:
+        st.session_state.last_user = ingelogde_gebruiker
+        st.session_state.data = laad_gebruiker_data(ingelogde_gebruiker)
+
     with st.sidebar:
-        st.header("👤 Inloggen")
-        st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent. Wachtwoordherstel is niet mogelijk (het is geen echt account), dus kies iets wat je makkelijk onthoudt!")
-        
-        col_u, col_p = st.columns(2)
-        with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
-        with col_p: u_code = st.text_input("Code", key="inp_code").strip()
-        
-        if u_naam and u_code:
-            user_input = f"{u_naam}_{u_code}"
-            if st.session_state.data is None or st.session_state.last_user != user_input:
-                st.session_state.data = laad_gebruiker_data(user_input)
-                st.session_state.last_user = user_input
-        
-        if st.session_state.data:
-            if st.button("🚪 Uitloggen"): trigger_save(); st.session_state.data = None; st.rerun()
+        if st.session_state.data is None:
+            st.header("👤 Inloggen")
+            st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent. Let op: Je blijft hierna automatisch ingelogd!")
+            
+            col_u, col_p = st.columns(2)
+            with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
+            with col_p: u_code = st.text_input("Code", key="inp_code").strip()
+            
+            if st.button("Inloggen", type="primary"):
+                if u_naam and u_code:
+                    user_input = f"{u_naam}_{u_code}"
+                    st.session_state.data = laad_gebruiker_data(user_input)
+                    st.session_state.last_user = user_input
+                    
+                    # 4. Sla inloggegevens op als cookie (geldig tot volgend jaar)
+                    vervaldatum = datetime.now() + timedelta(days=365)
+                    cookie_manager.set("grieks_tutor_user", user_input, expires_at=vervaldatum)
+                    st.rerun()
+                else:
+                    st.warning("Vul beide velden in om in te loggen.")
+        else:
+            st.success(f"👋 Welkom terug, {st.session_state.last_user.split('_')[0]}!")
+            if st.button("🚪 Uitloggen (en onthouden uitzetten)"): 
+                trigger_save()
+                st.session_state.data = None
+                st.session_state.last_user = None
+                cookie_manager.delete("grieks_tutor_user")
+                st.rerun()
             
             st.write("---")
             with st.expander("⚙️ Geavanceerd / Backup"):
@@ -550,7 +573,6 @@ def main():
                     knel_lijst.sort(key=lambda x: x[1], reverse=True)
                     doel = [x[0] for x in knel_lijst[:15]]
                 
-                # --- NIEUW: SCHUIFJES & CONTEXT SETTINGS ---
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
                 
@@ -559,40 +581,40 @@ def main():
                 
                 custom_counts = None
                 if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
-                        c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
-                        c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
-                        c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
-                        c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
+                    c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
+                    c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
+                    c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
+                    c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
+                    
+                    st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
+                    
+                    if c_nieuw > 0:
+                        val_nieuw = st.slider(f"Nieuw (0) - Beschikbaar: {c_nieuw}", 0, min(20, c_nieuw), min(3, c_nieuw))
+                    else:
+                        val_nieuw = 0
+                        st.write("➖ Geen 'Nieuwe' woorden beschikbaar.")
                         
-                        st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
+                    if c_train > 0:
+                        val_train = st.slider(f"In Training (1-15) - Beschikbaar: {c_train}", 0, min(20, c_train), min(5, c_train))
+                    else:
+                        val_train = 0
+                        st.write("➖ Geen woorden 'In Training' beschikbaar.")
                         
-                        if c_nieuw > 0:
-                            val_nieuw = st.slider(f"Nieuw (0) - Beschikbaar: {c_nieuw}", 0, min(20, c_nieuw), min(3, c_nieuw))
-                        else:
-                            val_nieuw = 0
-                            st.write("➖ Geen 'Nieuwe' woorden beschikbaar.")
-                            
-                        if c_train > 0:
-                            val_train = st.slider(f"In Training (1-15) - Beschikbaar: {c_train}", 0, min(20, c_train), min(5, c_train))
-                        else:
-                            val_train = 0
-                            st.write("➖ Geen woorden 'In Training' beschikbaar.")
-                            
-                        if c_beheer > 0:
-                            val_beheer = st.slider(f"Beheerst (16-29) - Beschikbaar: {c_beheer}", 0, min(20, c_beheer), 0)
-                        else:
-                            val_beheer = 0
-                            st.write("➖ Geen 'Beheerste' woorden beschikbaar.")
-                            
-                        if c_mast > 0:
-                            val_mast = st.slider(f"Mastery (30+) - Beschikbaar: {c_mast}", 0, min(20, c_mast), 0)
-                        else:
-                            val_mast = 0
-                            st.write("➖ Geen 'Mastery' woorden beschikbaar.")
+                    if c_beheer > 0:
+                        val_beheer = st.slider(f"Beheerst (16-29) - Beschikbaar: {c_beheer}", 0, min(20, c_beheer), 0)
+                    else:
+                        val_beheer = 0
+                        st.write("➖ Geen 'Beheerste' woorden beschikbaar.")
                         
-                        custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
+                    if c_mast > 0:
+                        val_mast = st.slider(f"Mastery (30+) - Beschikbaar: {c_mast}", 0, min(20, c_mast), 0)
+                    else:
+                        val_mast = 0
+                        st.write("➖ Geen 'Mastery' woorden beschikbaar.")
+                    
+                    custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
                 
-                if st.button("Start Sessie"):
+                if st.button("Start Sessie", type="primary"):
                     if doel:
                         modus_id = str(modus[0])
                         sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
@@ -635,7 +657,6 @@ def main():
                         else: st.error(st.session_state.feedback["msg"])
                         st.session_state.feedback = None 
 
-                    # --- NIEUW: VRIJWILLIGE OF VERPLICHTE CONTEXT LOGICA ---
                     zin_data = None
                     is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False)
                     
@@ -646,8 +667,6 @@ def main():
                             st.caption(f"📖 Leren in Context. (Basiswoord: **{item.get('grieks')}**)")
                             
                         bijbel_db = laad_bijbel_db()
-                        
-                        # In de Leermodus (1) mag de tooltip ook op het doelwoord blijven staan om te leren. Anders verbergen.
                         anti_spiek_aan = (huidige_sub_modus != '1')
                         
                         zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=anti_spiek_aan, specifieke_vorm=huidige_vorm)
