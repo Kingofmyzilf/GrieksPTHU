@@ -558,7 +558,7 @@ def main():
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
                 custom_counts = None
-                        if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
+                if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
                         c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
                         c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
                         c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
