@@ -193,7 +193,7 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False):
             elif "Dat" in p_info: kleur_stijl += "color: #6f42c1;"
             elif "Acc" in p_info: kleur_stijl += "color: #dc3545;"
             elif "Voc" in p_info: kleur_stijl += "color: #fd7e14;"
-            elif "Voegwoord" in p_info or "Conjunction" in p_info:
+            elif not anti_spiek and ("Voegwoord" in p_info or "Conjunction" in p_info):
                 kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
             else:
                 kleur_stijl += "color: #33ccff;" # Fallback highlight kleur
@@ -470,7 +470,7 @@ def main():
         
         col_u, col_p = st.columns(2)
         with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
-        with col_p: u_code = st.text_input("Code", type="password", key="inp_code").strip()
+        with col_p: u_code = st.text_input("Code", key="inp_code").strip()
         
         if u_naam and u_code:
             user_input = f"{u_naam}_{u_code}"
@@ -572,13 +572,16 @@ def main():
                         st.session_state.feedback = None 
 
                     zin_data = None
-                    if is_mastery and huidige_sub_modus != '1':
+                   if is_mastery and huidige_sub_modus != '1':
                         st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
                         # ANTI-SPIEK: Doelwoord verbergt zijn tooltip!
                         zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=True)
-                        if zin_data: st.markdown(zin_data["html"], unsafe_allow_html=True)
-                        else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
+                        if zin_data: 
+                            st.markdown(zin_data["html"], unsafe_allow_html=True)
+                            st.markdown("<div style='font-size: 14px; margin-bottom: 10px;'>**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
+                        else: 
+                            st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else:
                         st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     
