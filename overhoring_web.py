@@ -1701,16 +1701,26 @@ def main():
         # ==========================================
         # TAB 8: UITLEG & HULP
         # ==========================================
+        # ==========================================
+        # TAB 8: UITLEG & HULP
+        # ==========================================
         with menu[7]:
             st.subheader("ℹ️ Uitleg & Hulp")
+            
+            st.markdown("### 📱 Download de Android App")
+            st.info("Voor de meest vloeiende, fullscreen ervaring zonder inlogproblemen kun je de native Android-app installeren.")
+            
+            # Plaats hier de raw-link naar je APK op GitHub
+            st.link_button("📥 Download App (.apk)", "PLAK_HIER_JOUW_GITHUB_RAW_LINK", type="primary")
+            
+            st.markdown("""
+            *Installatie-instructie voor Android:* Wanneer je het bestand opent, geeft je telefoon mogelijk de melding dat de applicatie afkomstig is uit een 'onbekende bron'. Dit is een standaard beveiligingsmelding voor applicaties die buiten de Google Play Store om worden geïnstalleerd. Je kunt bij instellingen toestemming geven en veilig op 'Toch installeren' klikken.
+            """)
+            
+            st.write("---")
+            
             st.markdown("""
             Welkom bij de Grieks Cloud Tutor! Deze app helpt je om Griekse vocabulaires en paradigma's effectief in je langetermijngeheugen te verankeren door middel van *Spaced Repetition* (gespreide herhaling) en contextueel leren.
-            
-            ### 📱 De App installeren (PWA)
-            Je kunt deze applicatie gebruiken als een 'echte' app op je telefoon. Dit zorgt ervoor dat hij fullscreen opent zonder afleidende adresbalk.
-            * **iPhone:** Open deze website in **Safari**. Tik onderin op de Deel-knop (het vierkantje met het pijltje omhoog) en kies voor *"Zet op beginscherm"*.
-            * **Android:** Open deze website in **Google Chrome**. Tik rechtsboven op de drie puntjes en kies voor *"Toevoegen aan startscherm"*.
-            * *Let op: Je hebt nog wel steeds een internetverbinding nodig om de app te gebruiken.*
             
             ### 🧠 Het Leeralgoritme
             De app houdt voor elk woord een "Universele Streak" bij en kijkt wanneer je deze voor het laatst hebt geoefend. De fasering is als volgt:
@@ -1724,7 +1734,7 @@ def main():
             * Via "Knelpunten" (in de Oefening-dropdown) kun je een gerichte sessie starten die zich uitsluitend focust op jouw top 15 meest gemaakte fouten.
             
             ### 💬 Feedback & Vragen
-            Heb je vragen, bugs gevonden, of tips om de app didactisch nog sterker te maken?
+            Heb je vragen, of tips om de applicatie didactisch nog sterker te maken?
             Stuur dan gerust een e-mail naar: **jtimmer@students.pthu.nl**
             """)
 
