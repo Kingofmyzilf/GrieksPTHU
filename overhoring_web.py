@@ -241,7 +241,7 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
-def kies_gefaseerde_oefensessie(doel_lijst, module, max_nieuw=3):
+def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3):
     nieuw, training, beheerst, mastery = [], [], [], []
     for item in doel_lijst:
         s = krijg_streak(item, module)
@@ -262,8 +262,18 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, max_nieuw=3):
     random.shuffle(nieuw)
     
     sessie = []
-    doel_grootte = 15 if (len(nieuw) + len(training)) <= 4 else 10
     
+    # 🎛️ ZELF SAMENSTELLEN MODUS
+    if custom_counts is not None:
+        sessie.extend(nieuw[:custom_counts.get('nieuw', 0)])
+        sessie.extend(training[:custom_counts.get('training', 0)])
+        sessie.extend(beheerst[:custom_counts.get('beheerst', 0)])
+        sessie.extend(mastery[:custom_counts.get('mastery', 0)])
+        random.shuffle(sessie)
+        return sessie
+
+    # 🤖 STANDAARD SPACED REPETITION MODUS
+    doel_grootte = 15 if (len(nieuw) + len(training)) <= 4 else 10
     ruimte_voor_training = min(len(training), 8 - min(len(nieuw), max_nieuw))
     sessie.extend(training[:ruimte_voor_training])
     sessie.extend(nieuw[:max_nieuw])
@@ -522,6 +532,7 @@ def main():
                 modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
                 keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)"])
                 doel = []
+                
                 if keuze == "Lessen":
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                     gekozen = st.multiselect("Kies lessen", alle_lessen)
@@ -539,21 +550,47 @@ def main():
                     knel_lijst.sort(key=lambda x: x[1], reverse=True)
                     doel = [x[0] for x in knel_lijst[:15]]
                 
+                # --- NIEUW: SCHUIFJES & CONTEXT SETTINGS ---
+                st.write("---")
+                st.write("⚙️ **Sessie Instellingen**")
+                
+                optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context")
+                oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
+                
+                custom_counts = None
+                if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
+                    c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
+                    c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
+                    c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
+                    c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
+                    
+                    st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
+                    val_nieuw = st.slider(f"Nieuw (0) - Beschikbaar: {c_nieuw}", 0, min(20, c_nieuw), min(3, c_nieuw))
+                    val_train = st.slider(f"In Training (1-15) - Beschikbaar: {c_train}", 0, min(20, c_train), min(5, c_train))
+                    val_beheer = st.slider(f"Beheerst (16-29) - Beschikbaar: {c_beheer}", 0, min(20, c_beheer), 0)
+                    val_mast = st.slider(f"Mastery (30+) - Beschikbaar: {c_mast}", 0, min(20, c_mast), 0)
+                    
+                    custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
+                
                 if st.button("Start Sessie"):
                     if doel:
                         modus_id = str(modus[0])
-                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab')
-                        st.session_state.modus_actief = modus_id
+                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
                         
-                        if modus_id == "3":
-                            mc_deel = [(w, "3_mc") for w in sampled]
-                            typ_deel = [(w, "3_typ") for w in sampled]
-                            st.session_state.sessie_lijst = mc_deel + typ_deel
-                            st.session_state.mix_combo = {w['grieks']: False for w in sampled}
+                        if not sampled:
+                            st.warning("⚠️ Je hebt 0 woorden geselecteerd met de schuifjes. Verhoog de sliders om te beginnen.")
                         else:
-                            st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
-                        
-                        laad_volgend_woord(); st.rerun()
+                            st.session_state.modus_actief = modus_id
+                            
+                            if modus_id == "3":
+                                mc_deel = [(w, "3_mc") for w in sampled]
+                                typ_deel = [(w, "3_typ") for w in sampled]
+                                st.session_state.sessie_lijst = mc_deel + typ_deel
+                                st.session_state.mix_combo = {w['grieks']: False for w in sampled}
+                            else:
+                                st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
+                            
+                            laad_volgend_woord(); st.rerun()
 
             with col2:
                 if st.session_state.huidig_item:
@@ -578,11 +615,22 @@ def main():
                         else: st.error(st.session_state.feedback["msg"])
                         st.session_state.feedback = None 
 
+                    # --- NIEUW: VRIJWILLIGE OF VERPLICHTE CONTEXT LOGICA ---
                     zin_data = None
-                    if is_mastery and huidige_sub_modus != '1':
-                        st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
+                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False)
+                    
+                    if is_context_gewenst:
+                        if is_mastery and huidige_sub_modus != '1':
+                            st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
+                        else:
+                            st.caption(f"📖 Leren in Context. (Basiswoord: **{item.get('grieks')}**)")
+                            
                         bijbel_db = laad_bijbel_db()
-                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=True, specifieke_vorm=huidige_vorm)
+                        
+                        # In de Leermodus (1) mag de tooltip ook op het doelwoord blijven staan om te leren. Anders verbergen.
+                        anti_spiek_aan = (huidige_sub_modus != '1')
+                        
+                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=anti_spiek_aan, specifieke_vorm=huidige_vorm)
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
                             st.markdown("<div style='font-size: 14px; margin-bottom: 10px;'>**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
