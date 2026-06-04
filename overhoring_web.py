@@ -558,19 +558,39 @@ def main():
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
                 custom_counts = None
-                if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
-                    c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
-                    c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
-                    c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
-                    c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
-                    
-                    st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
-                    val_nieuw = st.slider(f"Nieuw (0) - Beschikbaar: {c_nieuw}", 0, min(20, c_nieuw), min(3, c_nieuw))
-                    val_train = st.slider(f"In Training (1-15) - Beschikbaar: {c_train}", 0, min(20, c_train), min(5, c_train))
-                    val_beheer = st.slider(f"Beheerst (16-29) - Beschikbaar: {c_beheer}", 0, min(20, c_beheer), 0)
-                    val_mast = st.slider(f"Mastery (30+) - Beschikbaar: {c_mast}", 0, min(20, c_mast), 0)
-                    
-                    custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
+                    if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
+                        c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
+                        c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
+                        c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
+                        c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
+                        
+                        st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
+                        
+                        if c_nieuw > 0:
+                            val_nieuw = st.slider(f"Nieuw (0) - Beschikbaar: {c_nieuw}", 0, min(20, c_nieuw), min(3, c_nieuw))
+                        else:
+                            val_nieuw = 0
+                            st.write("➖ Geen 'Nieuwe' woorden beschikbaar.")
+                            
+                        if c_train > 0:
+                            val_train = st.slider(f"In Training (1-15) - Beschikbaar: {c_train}", 0, min(20, c_train), min(5, c_train))
+                        else:
+                            val_train = 0
+                            st.write("➖ Geen woorden 'In Training' beschikbaar.")
+                            
+                        if c_beheer > 0:
+                            val_beheer = st.slider(f"Beheerst (16-29) - Beschikbaar: {c_beheer}", 0, min(20, c_beheer), 0)
+                        else:
+                            val_beheer = 0
+                            st.write("➖ Geen 'Beheerste' woorden beschikbaar.")
+                            
+                        if c_mast > 0:
+                            val_mast = st.slider(f"Mastery (30+) - Beschikbaar: {c_mast}", 0, min(20, c_mast), 0)
+                        else:
+                            val_mast = 0
+                            st.write("➖ Geen 'Mastery' woorden beschikbaar.")
+                        
+                        custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
                 
                 if st.button("Start Sessie"):
                     if doel:
