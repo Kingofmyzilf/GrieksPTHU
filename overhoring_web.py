@@ -1,6 +1,5 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
-import extra_streamlit_components as stx
 import json
 import random
 import re
@@ -9,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import unicodedata
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
@@ -480,21 +479,17 @@ def laad_volgend_struct_woord():
 # MAIN APP FUNCTIE
 # ==========================================
 def main():
-    # 1. Activeer de Cookie Manager
-    cookie_manager = stx.CookieManager()
-    
-    # 2. Lees uit of de speler al een account opgeslagen heeft op dit toestel
-    ingelogde_gebruiker = cookie_manager.get(cookie="grieks_tutor_user")
-    
-    # 3. Voer AUTO-LOGIN uit als we een cookie vinden en nog niet waren ingelogd
-    if st.session_state.data is None and ingelogde_gebruiker is not None:
-        st.session_state.last_user = ingelogde_gebruiker
-        st.session_state.data = laad_gebruiker_data(ingelogde_gebruiker)
+    # 1. URL-Based Auto-Login (Werkt áltijd op mobiel!)
+    if "u" in st.query_params:
+        auto_user = st.query_params["u"]
+        if st.session_state.data is None or st.session_state.last_user != auto_user:
+            st.session_state.last_user = auto_user
+            st.session_state.data = laad_gebruiker_data(auto_user)
 
     with st.sidebar:
         if st.session_state.data is None:
             st.header("👤 Inloggen")
-            st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent. Let op: Je blijft hierna automatisch ingelogd!")
+            st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent.")
             
             col_u, col_p = st.columns(2)
             with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
@@ -503,22 +498,22 @@ def main():
             if st.button("Inloggen", type="primary"):
                 if u_naam and u_code:
                     user_input = f"{u_naam}_{u_code}"
+                    st.query_params["u"] = user_input # Dit zet de login-code vast in de adresbalk!
                     st.session_state.data = laad_gebruiker_data(user_input)
                     st.session_state.last_user = user_input
-                    
-                    # 4. Sla inloggegevens op als cookie (geldig tot volgend jaar)
-                    vervaldatum = datetime.now() + timedelta(days=365)
-                    cookie_manager.set("grieks_tutor_user", user_input, expires_at=vervaldatum)
                     st.rerun()
                 else:
                     st.warning("Vul beide velden in om in te loggen.")
         else:
             st.success(f"👋 Welkom terug, {st.session_state.last_user.split('_')[0]}!")
-            if st.button("🚪 Uitloggen (en onthouden uitzetten)"): 
+            st.info("💡 **Auto-Login via de Adresbalk:**\n\nJe bent nu ingelogd. Als je **deze specifieke link** nu toevoegt aan je Startscherm of Bladwijzers, logt de app volgende keer vanzelf in. Je hoeft niets meer in te typen!")
+            
+            if st.button("🚪 Uitloggen"): 
                 trigger_save()
                 st.session_state.data = None
                 st.session_state.last_user = None
-                cookie_manager.delete("grieks_tutor_user")
+                if "u" in st.query_params:
+                    del st.query_params["u"]
                 st.rerun()
             
             st.write("---")
@@ -1703,7 +1698,7 @@ def main():
             Welkom bij de Grieks Cloud Tutor! Deze app helpt je om Griekse vocabulaires en paradigma's effectief in je langetermijngeheugen te verankeren door middel van *Spaced Repetition* (gespreide herhaling) en contextueel leren.
             
             ### 📱 De App installeren (PWA)
-            Je kunt deze applicatie gebruiken als een 'echte' app op je telefoon. Dit zorgt ervoor dat hij fullscreen opent zonder afleidende adresbalk.
+            Je kunt deze applicatie gebruiken als een 'echte' app op je telefoon. Dit zorgt ervoor dat hij fullscreen opent zonder afleidende adresbalk. 
             * **iPhone:** Open deze website in **Safari**. Tik onderin op de Deel-knop (het vierkantje met het pijltje omhoog) en kies voor *"Zet op beginscherm"*.
             * **Android:** Open deze website in **Google Chrome**. Tik rechtsboven op de drie puntjes en kies voor *"Toevoegen aan startscherm"*.
             * *Let op: Je hebt nog wel steeds een internetverbinding nodig om de app te gebruiken.*
