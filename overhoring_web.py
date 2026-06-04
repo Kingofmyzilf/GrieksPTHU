@@ -572,7 +572,7 @@ def main():
                         st.session_state.feedback = None 
 
                     zin_data = None
-                   if is_mastery and huidige_sub_modus != '1':
+                    if is_mastery and huidige_sub_modus != '1':
                         st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
                         # ANTI-SPIEK: Doelwoord verbergt zijn tooltip!
