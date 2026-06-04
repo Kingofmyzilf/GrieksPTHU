@@ -2,4 +2,4 @@ streamlit
 pandas
 matplotlib
 st-gsheets-connection
-extra-streamlit-components
+streamlit-local-storage
