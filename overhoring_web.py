@@ -147,7 +147,7 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False):
     if not strong_nr or not bijbel_db: return None
     beste_zin = None
     fallback_zin = None
@@ -186,8 +186,24 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db):
             tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
             tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
             
+            p_info = zw.get('parsing_info', '')
+            kleur_stijl = ""
+            if "Nom" in p_info: kleur_stijl += "color: #33ccff;"
+            elif "Gen" in p_info: kleur_stijl += "color: #28a745;"
+            elif "Dat" in p_info: kleur_stijl += "color: #6f42c1;"
+            elif "Acc" in p_info: kleur_stijl += "color: #dc3545;"
+            elif "Voc" in p_info: kleur_stijl += "color: #fd7e14;"
+            elif "Voegwoord" in p_info or "Conjunction" in p_info:
+                kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
+            else:
+                kleur_stijl += "color: #33ccff;" # Fallback highlight kleur
+            
             if str(zw.get('strong', '')) == str(strong_nr):
-                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #33ccff; font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
+                if anti_spiek:
+                    # GEEN TOOLTIP: Alleen kleur en styling als hint
+                    html_zin += f"<span tabindex='0' style='{kleur_stijl} font-weight: bold; text-decoration: underline;'>{g_woord}</span>{interp} "
+                else:
+                    html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{kleur_stijl} font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
             else:
                 html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #888888; border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
                 
@@ -296,10 +312,14 @@ def laad_gebruiker_data(naam):
     try:
         df = conn.read(ttl=0) 
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
+        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
+        
         user_row = df[df['gebruikersnaam'] == naam]
         
-        if os.path.exists("basis_woorden.json"):
-            with open("basis_woorden.json", "r", encoding="utf-8") as f: basis = json.load(f)
+        # We laden hier je verrijkte json in (mag ook gewoon basis_woorden.json heten)
+        bestand = "basis_woorden_verrijkt.json" if os.path.exists("basis_woorden_verrijkt.json") else "basis_woorden.json"
+        if os.path.exists(bestand):
+            with open(bestand, "r", encoding="utf-8") as f: basis = json.load(f)
         else: return None
 
         if user_row.empty:
@@ -309,8 +329,6 @@ def laad_gebruiker_data(naam):
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
         else:
             row = user_row.iloc[0]
-            
-            # --- DE CHUNK-LEZER: Lijmt alle losse celletjes weer aan elkaar ---
             def reassemble_chunks(prefix, count_col):
                 if count_col in row and not pd.isna(row[count_col]):
                     try:
@@ -339,6 +357,11 @@ def laad_gebruiker_data(naam):
             r['score_goed'] = stats.get('g', 0)
             r['score_fout'] = stats.get('f', 0)
             r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
+            
+            # Zorg dat de lege varianten robuust worden afgevangen
+            if 'lexeem_info' not in r or not r['lexeem_info']:
+                r['lexeem_info'] = r.get('grieks_info', '')
+
         return basis
     except Exception: return None
 
@@ -347,15 +370,15 @@ def opslaan_naar_cloud():
     try:
         df = conn.read(ttl=0)
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
+        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
+        
         df_andere = df[df['gebruikersnaam'] != st.session_state.last_user]
         
-        # --- DE SCHAAR: Knipt enorme bestanden op in stukken van 40.000 tekens ---
         def get_chunks(data_dict, prefix, max_len=40000):
             s = json.dumps(data_dict, ensure_ascii=False)
             chunks = [s[i:i+max_len] for i in range(0, len(s), max_len)]
             res = {}
-            for idx, chunk in enumerate(chunks):
-                res[f"{prefix}_{idx}"] = chunk
+            for idx, chunk in enumerate(chunks): res[f"{prefix}_{idx}"] = chunk
             return res, len(chunks)
         
         v_ch, v_count = get_chunks(st.session_state.get('vocab_stats', {}), 'vocab_stats')
@@ -369,29 +392,29 @@ def opslaan_naar_cloud():
             'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count
         }
         
-        nieuwe_rij_dict.update(v_ch)
-        nieuwe_rij_dict.update(g_ch)
-        nieuwe_rij_dict.update(st_ch)
-        nieuwe_rij_dict.update(sr_ch)
-        nieuwe_rij_dict.update(d_ch)
+        nieuwe_rij_dict.update(v_ch); nieuwe_rij_dict.update(g_ch); nieuwe_rij_dict.update(st_ch)
+        nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch)
         
         nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
     except Exception as e:
-        st.error(f"⚠️ Fout bij cloud-opslag. Je verliest geen data in deze sessie, maar controleer je Google Sheet koppeling: {e}")
+        st.error(f"⚠️ Fout bij cloud-opslag. Je verliest geen data, maar check je Google Sheet koppeling: {e}")
 
 def trigger_save():
     if not st.session_state.get('last_user') or not st.session_state.get('data'): return
     
-    # We slaan hier weer ALLES op in st.session_state (zoals vroeger).
-    # Het opknippen voor de Google Sheets limiet gebeurt nu veilig in opslaan_naar_cloud()
+    nieuwe_vocab_stats = {}
     for word in st.session_state.data:
-        st.session_state.vocab_stats[word['grieks']] = {
-            'streak': word.get('streak', 0),
-            'g': word.get('score_goed', 0),
-            'f': word.get('score_fout', 0),
-            'laatst_geoefend': word.get('laatst_geoefend', "")
-        }
+        s = int(word.get('streak', 0))
+        g = int(word.get('score_goed', 0))
+        f = int(word.get('score_fout', 0))
+        l = word.get('laatst_geoefend', "")
+        if s > 0 or g > 0 or f > 0 or l != "":
+            entry = {'streak': s, 'g': g, 'f': f}
+            if l: entry['laatst_geoefend'] = l
+            nieuwe_vocab_stats[word['grieks']] = entry
+            
+    st.session_state.vocab_stats = nieuwe_vocab_stats
     opslaan_naar_cloud()
 
 # --- INITIALISATIE ---
@@ -443,10 +466,17 @@ def laad_volgend_struct_woord():
 def main():
     with st.sidebar:
         st.header("👤 Inloggen")
-        user_input = st.text_input("Naam", key="user_login").strip()
-        if user_input and (st.session_state.data is None or st.session_state.last_user != user_input):
-            st.session_state.data = laad_gebruiker_data(user_input)
-            st.session_state.last_user = user_input
+        st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent. Wachtwoordherstel is niet mogelijk (het is geen echt account), dus kies iets wat je makkelijk onthoudt!")
+        
+        col_u, col_p = st.columns(2)
+        with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
+        with col_p: u_code = st.text_input("Code", type="password", key="inp_code").strip()
+        
+        if u_naam and u_code:
+            user_input = f"{u_naam}_{u_code}"
+            if st.session_state.data is None or st.session_state.last_user != user_input:
+                st.session_state.data = laad_gebruiker_data(user_input)
+                st.session_state.last_user = user_input
         
         if st.session_state.data:
             if st.button("🚪 Uitloggen"): trigger_save(); st.session_state.data = None; st.rerun()
@@ -458,10 +488,8 @@ def main():
                 if st.button("Herstel Voortgang"):
                     if backup_input:
                         try:
-                            # Auto-correctie voor Google Sheets opmaak
                             schoon_input = backup_input.strip().replace('“', '"').replace('”', '"').replace("'", '"')
                             nieuwe_data = json.loads(schoon_input)
-                            
                             for w in st.session_state.data:
                                 if w['grieks'] in nieuwe_data:
                                     b = nieuwe_data[w['grieks']]
@@ -475,7 +503,7 @@ def main():
                             st.error(f"Fout! Ongeldige code. Details: {e}")
 
     if st.session_state.data:
-        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten"])
+        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "ℹ️ Uitleg & Hulp"])
 
         # ==========================================
         # TAB 1: WOORDENSCHAT
@@ -484,7 +512,7 @@ def main():
             col1, col2 = st.columns([1, 2])
             with col1:
                 modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
-                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten"])
+                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)"])
                 doel = []
                 if keuze == "Lessen":
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
@@ -492,7 +520,7 @@ def main():
                     doel = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
                 elif keuze == "Mastery":
                     doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
-                elif keuze == "Knelpunten":
+                elif "Knelpunten" in keuze:
                     knel_lijst = []
                     for w in st.session_state.data:
                         g = int(w.get('score_goed', 0))
@@ -533,6 +561,9 @@ def main():
 
                     huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item.get('grieks')))
                     huidige_parsing = str(st.session_state.huidige_vorm_data.get('parsing', 'basis'))
+                    
+                    # UITGANGEN OPHALEN
+                    extra_info = item.get('lexeem_info', '') or item.get('grieks_info', '')
 
                     if st.session_state.feedback:
                         if st.session_state.feedback["type"] == "success": st.success(st.session_state.feedback["msg"])
@@ -544,14 +575,15 @@ def main():
                     if is_mastery and huidige_sub_modus != '1':
                         st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
-                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db)
+                        # ANTI-SPIEK: Doelwoord verbergt zijn tooltip!
+                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=True)
                         if zin_data: st.markdown(zin_data["html"], unsafe_allow_html=True)
                         else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else:
                         st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     
                     correct_antw = str(item.get('nederlands', ''))
-                    fout_msg_volledig = f"**{item.get('grieks')}** — {item.get('fonetisch', '')} — **{correct_antw}**"
+                    fout_msg_volledig = f"**{item.get('grieks')}** ({extra_info}) — {item.get('fonetisch', '')} — **{correct_antw}**"
                     if is_mastery and heeft_vormen: fout_msg_volledig += f" ({huidige_parsing})"
 
                     if huidige_sub_modus == 'overtik':
@@ -567,12 +599,12 @@ def main():
                                 else: st.error("Niet exact overgetypt. Kijk goed naar het voorbeeld hierboven.")
 
                     elif huidige_sub_modus == '1':
-                        st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                        st.info(f"💡 {extra_info} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
                         st.write(f"Betekenis: **{correct_antw}**")
                         if st.button("Volgende (Geen Punten)"): laad_volgend_woord(); st.rerun()
 
                     elif huidige_sub_modus in ['4', '3_typ']:
-                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {extra_info} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Woordenboekvertaling:").lower().strip()
                             if is_mastery and heeft_vormen: p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip()
@@ -591,7 +623,7 @@ def main():
                                             if st.session_state.mix_combo.get(item['grieks'], False): item['streak'] = int(item.get('streak', 0)) + 2
                                             else: item['streak'] = int(item.get('streak', 0)) + 1
                                             
-                                    success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
+                                    success_msg = f"✓ Goed! **{huidige_vorm}** ({extra_info}) = {correct_antw}"
                                     if zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
                                     trigger_save(); laad_volgend_woord(); st.rerun()
@@ -611,17 +643,31 @@ def main():
                                     st.rerun()
                     
                     else:
-                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {extra_info} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
+                        
                         if not st.session_state.huidige_opties:
-                            afleiders = []; gekozen_betekenissen = {correct_antw}
+                            # INTELLIGENTE AFLEIDERS LOGICA
+                            huidige_w_soort = item.get('woordsoort', '')
+                            prefix = item.get('grieks', '')[:2] # Kijk naar eerste 2 letters
+                            
+                            afleiders = []
+                            gekozen_betekenissen = {correct_antw}
+                            
                             if is_mastery and heeft_vormen:
                                 andere = [str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]
                                 if andere: afleiders = [f"{correct_antw} ({f})" for f in random.sample(andere, min(3, len(andere)))]
                             else:
-                                mogelijke_afleiders = [w for w in st.session_state.data if w.get('grieks') != item.get('grieks')]
-                                random.shuffle(mogelijke_afleiders)
-                                for w in mogelijke_afleiders:
+                                # Stap 1: Filter op dezelfde woordsoort
+                                pool = [w for w in st.session_state.data if w['grieks'] != item['grieks'] and w.get('woordsoort') == huidige_w_soort]
+                                if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']] # Fallback
+                                
+                                # Stap 2: Zoek visueel/morfologisch gelijkende woorden
+                                similar = [w for w in pool if w['grieks'].startswith(prefix)]
+                                random.shuffle(similar)
+                                random.shuffle(pool)
+                                
+                                for w in similar + pool:
                                     bet = str(w.get('nederlands', ''))
                                     if bet not in gekozen_betekenissen:
                                         afleiders.append(bet); gekozen_betekenissen.add(bet)
@@ -676,7 +722,7 @@ def main():
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                 les_filter = st.selectbox("Bekijk les:", alle_lessen)
                 df_vocab = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
-                if not df_vocab.empty: st.dataframe(df_vocab[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort'] if c in df_vocab.columns]], use_container_width=True)
+                if not df_vocab.empty: st.dataframe(df_vocab[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort', 'lexeem_info'] if c in df_vocab.columns]], use_container_width=True)
             elif weergave == "Actief Beheersen (Rijtjes)":
                 st.info("De scores voor actieve rijtjes worden per specifieke cel bijgehouden in je profiel.")
             elif weergave == "Stamtijden":
@@ -699,7 +745,7 @@ def main():
                     st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
 
         # ==========================================
-        # TAB 3: VOORTGANG (COMPETITIE & HEATMAP)
+        # TAB 3: VOORTGANG
         # ==========================================
         with menu[2]: 
             st.subheader("📊 Persoonlijk Dashboard")
@@ -796,10 +842,9 @@ def main():
                     start_compare = datetime.now().date() - pd.Timedelta(days=13)
                     
                     for idx, row in df_global.iterrows():
-                        g_naam = row.get('gebruikersnaam', 'Anoniem')
+                        g_naam = row.get('gebruikersnaam', 'Anoniem').split('_')[0] # Alleen de naam tonen, niet de code
                         if not g_naam: continue
                         try:
-                            # Reassemble the chunked dag_stats logic
                             if 'd_chunks' in row and not pd.isna(row['d_chunks']):
                                 count = int(row['d_chunks'])
                                 s = "".join([str(row[f"dag_stats_{i}"]) for i in range(count) if f"dag_stats_{i}" in row])
@@ -814,23 +859,26 @@ def main():
                                 d_dt = datetime.strptime(d_str, '%Y-%m-%d').date()
                                 if start_compare <= d_dt <= datetime.now().date(): tot_14 += int(aantal)
                             except: pass
-                        comp_data.append({"Gebruiker": g_naam, "Geoefende Items": tot_14})
+                        if tot_14 > 0: comp_data.append({"Gebruiker": g_naam, "Geoefende Items": tot_14})
                     
-                    df_comp = pd.DataFrame(comp_data).sort_values(by="Geoefende Items", ascending=False).reset_index(drop=True)
-                    df_comp.index += 1
-                    
-                    andere_gebruikers = df_comp[df_comp['Gebruiker'] != st.session_state.last_user]
-                    hoogste_score = df_comp['Geoefende Items'].max() if not df_comp.empty else 0
-                    gemiddelde_anderen = int(andere_gebruikers['Geoefende Items'].mean()) if not andere_gebruikers.empty else 0
-                    
-                    c1, c2, c3 = st.columns(3)
-                    c1.metric("Hoogste score in groep", hoogste_score)
-                    c2.metric("Gemiddelde van de rest", gemiddelde_anderen)
-                    
-                    user_rank = df_comp[df_comp['Gebruiker'] == st.session_state.last_user].index
-                    if len(user_rank) > 0: c3.metric("Jouw Positie", f"#{user_rank[0]} van de {len(df_comp)}")
-                    
-                    st.dataframe(df_comp, use_container_width=True)
+                    if comp_data:
+                        df_comp = pd.DataFrame(comp_data).groupby('Gebruiker').sum().reset_index()
+                        df_comp = df_comp.sort_values(by="Geoefende Items", ascending=False).reset_index(drop=True)
+                        df_comp.index += 1
+                        
+                        eigen_naam = st.session_state.last_user.split('_')[0]
+                        andere_gebruikers = df_comp[df_comp['Gebruiker'] != eigen_naam]
+                        hoogste_score = df_comp['Geoefende Items'].max() if not df_comp.empty else 0
+                        gemiddelde_anderen = int(andere_gebruikers['Geoefende Items'].mean()) if not andere_gebruikers.empty else 0
+                        
+                        c1, c2, c3 = st.columns(3)
+                        c1.metric("Hoogste score in groep", hoogste_score)
+                        c2.metric("Gemiddelde van de rest", gemiddelde_anderen)
+                        
+                        user_rank = df_comp[df_comp['Gebruiker'] == eigen_naam].index
+                        if len(user_rank) > 0: c3.metric("Jouw Positie", f"#{user_rank[0]} van de {len(df_comp)}")
+                        
+                        st.dataframe(df_comp, use_container_width=True)
             except Exception:
                 st.caption("Kon de competitiegegevens momenteel niet synchroniseren.")
             
@@ -1050,7 +1098,7 @@ def main():
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
-                        else: 
+                        else: # PARTIËLE MC FEEDBACK
                             if not st.session_state.stam_opties_gram:
                                 afleiders_g = [g for g in ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"] if g != correct_gram]
                                 st.session_state.stam_opties_gram = [correct_gram] + random.sample(afleiders_g, 3)
@@ -1536,6 +1584,36 @@ def main():
                     if st.button("Toon officiële vertaling"):
                         officiële_zin = " ".join([w['vertaling_bsb'] for w in st.session_state.huidig_vers])
                         st.success(f"**Officiële Engelse zinsvertaling (BSB):** {officiële_zin}")
+                        
+        # ==========================================
+        # TAB 8: UITLEG & HULP
+        # ==========================================
+        with menu[7]:
+            st.subheader("ℹ️ Uitleg & Hulp")
+            st.markdown("""
+            Welkom bij de Grieks Cloud Tutor! Deze app helpt je om Griekse vocabulaires en paradigma's effectief in je langetermijngeheugen te verankeren door middel van *Spaced Repetition* (gespreide herhaling) en contextueel leren.
+            
+            ### 📱 De App installeren (PWA)
+            Je kunt deze applicatie gebruiken als een 'echte' app op je telefoon. Dit zorgt ervoor dat hij fullscreen opent zonder afleidende adresbalk.
+            * **iPhone:** Open deze website in **Safari**. Tik onderin op de Deel-knop (het vierkantje met het pijltje omhoog) en kies voor *"Zet op beginscherm"*.
+            * **Android:** Open deze website in **Google Chrome**. Tik rechtsboven op de drie puntjes en kies voor *"Toevoegen aan startscherm"*.
+            * *Let op: Je hebt nog wel steeds een internetverbinding nodig om de app te gebruiken.*
+            
+            ### 🧠 Het Leeralgoritme
+            De app houdt voor elk woord een "Universele Streak" bij en kijkt wanneer je deze voor het laatst hebt geoefend. De fasering is als volgt:
+            * **Nieuw (Streak 0):** Woorden die je nog nooit goed hebt beantwoord.
+            * **In Training (Streak 1-15):** Woorden die je aan het leren bent.
+            * **Beheerst (Streak 16-29):** Woorden die in je geheugen zitten. Deze komen minder vaak terug.
+            * **Mastery (Streak 30+):** Zodra een woord de Mastery-fase bereikt, wordt het **nooit meer los overhoord**. Je krijgt vanaf dat moment een Bijbelzin te zien waarin het woord is verwerkt. Het is aan jou om het te herkennen in context!
+            
+            ### 🎯 Knelpunten en Overtikken
+            * Zodra je een woord twee keer fout doet, daalt je streak stevig (-2 punten). Bovendien móét je het woord direct foutloos overtikken (strafwerk) om door te mogen.
+            * Via "Knelpunten" (in de Oefening-dropdown) kun je een gerichte sessie starten die zich uitsluitend focust op jouw top 15 meest gemaakte fouten.
+            
+            ### 💬 Feedback & Vragen
+            Heb je vragen, bugs gevonden, of tips om de app didactisch nog sterker te maken?
+            Stuur dan gerust een e-mail naar: **jtimmer@students.pthu.nl**
+            """)
 
 if __name__ == "__main__":
     main()
