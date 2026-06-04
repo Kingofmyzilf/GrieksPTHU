@@ -147,30 +147,38 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None):
     if not strong_nr or not bijbel_db: return None
     beste_zin = None
     fallback_zin = None
     
+    doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
+    
     for ref, zin in bijbel_db.items():
         for w in zin:
             if str(w.get('strong', '')) == str(strong_nr):
-                if not fallback_zin: fallback_zin = (ref, zin)
-                p = w.get('parsing_info', '')
-                is_dict_form = False
-                if woordsoort == 'ww' or "Werkwoord" in p:
-                    if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
-                elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
-                    if "Nom" in p and "ev" in p: is_dict_form = True
+                if doel_vorm_schoon:
+                    if normaliseer_accent(w['grieks']) == doel_vorm_schoon:
+                        beste_zin = (ref, zin)
+                        break
                 else:
-                    is_dict_form = True 
+                    if not fallback_zin: fallback_zin = (ref, zin)
+                    p = w.get('parsing_info', '')
+                    is_dict_form = False
+                    if woordsoort == 'ww' or "Werkwoord" in p:
+                        if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
+                    elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
+                        if "Nom" in p and "ev" in p: is_dict_form = True
+                    else:
+                        is_dict_form = True 
 
-                if is_dict_form:
-                    beste_zin = (ref, zin)
-                    break
+                    if is_dict_form:
+                        beste_zin = (ref, zin)
+                        break
         if beste_zin: break
         
-    keuze = beste_zin if beste_zin else fallback_zin
+    keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
+    
     if keuze:
         ref, zin = keuze
         html_zin = ""
@@ -196,17 +204,19 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False):
             elif not anti_spiek and ("Voegwoord" in p_info or "Conjunction" in p_info):
                 kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
             else:
-                kleur_stijl += "color: #888888;" # Standaard grijs voor werkwoorden/overig
+                kleur_stijl += "color: #888888;"
             
-            if str(zw.get('strong', '')) == str(strong_nr):
-                # DOELWOORD: Krijgt GEEN grammaticale kleur, alleen dikgedrukt wit
+            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
+            
+            if is_doelwoord:
                 if anti_spiek:
                     html_zin += f"<span tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}</span>{interp} "
                 else:
                     html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
             else:
-                # CONTEXTWOORDEN: Krijgen wél de kleur als hint (en de tooltip om te spieken)
                 html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{kleur_stijl} border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
+                
+        html_weergave = f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
         
         return {"html": html_weergave, "ref": ref, "grieks_puur": grieks_puur.strip(), "engels_puur": engels_puur.strip()}
     return None
@@ -315,7 +325,6 @@ def laad_gebruiker_data(naam):
         
         user_row = df[df['gebruikersnaam'] == naam]
         
-        # We laden hier je verrijkte json in (mag ook gewoon basis_woorden.json heten)
         bestand = "basis_woorden_verrijkt.json" if os.path.exists("basis_woorden_verrijkt.json") else "basis_woorden.json"
         if os.path.exists(bestand):
             with open(bestand, "r", encoding="utf-8") as f: basis = json.load(f)
@@ -357,7 +366,6 @@ def laad_gebruiker_data(naam):
             r['score_fout'] = stats.get('f', 0)
             r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
             
-            # Zorg dat de lege varianten robuust worden afgevangen
             if 'lexeem_info' not in r or not r['lexeem_info']:
                 r['lexeem_info'] = r.get('grieks_info', '')
 
@@ -489,6 +497,7 @@ def main():
                         try:
                             schoon_input = backup_input.strip().replace('“', '"').replace('”', '"').replace("'", '"')
                             nieuwe_data = json.loads(schoon_input)
+                            
                             for w in st.session_state.data:
                                 if w['grieks'] in nieuwe_data:
                                     b = nieuwe_data[w['grieks']]
@@ -561,7 +570,6 @@ def main():
                     huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item.get('grieks')))
                     huidige_parsing = str(st.session_state.huidige_vorm_data.get('parsing', 'basis'))
                     
-                    # UITGANGEN OPHALEN
                     extra_info = item.get('lexeem_info', '') or item.get('grieks_info', '')
 
                     if st.session_state.feedback:
@@ -574,8 +582,7 @@ def main():
                     if is_mastery and huidige_sub_modus != '1':
                         st.caption(f"🏆 Mastery Modus. (Basiswoord: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
-                        # ANTI-SPIEK: Doelwoord verbergt zijn tooltip!
-                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=True)
+                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=True, specifieke_vorm=huidige_vorm)
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
                             st.markdown("<div style='font-size: 14px; margin-bottom: 10px;'>**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
@@ -649,22 +656,35 @@ def main():
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         
                         if not st.session_state.huidige_opties:
-                            # INTELLIGENTE AFLEIDERS LOGICA
-                            huidige_w_soort = item.get('woordsoort', '')
-                            prefix = item.get('grieks', '')[:2] # Kijk naar eerste 2 letters
-                            
                             afleiders = []
-                            gekozen_betekenissen = {correct_antw}
+                            gekozen_betekenissen = {correct_optie}
                             
                             if is_mastery and heeft_vormen:
-                                andere = [str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]
-                                if andere: afleiders = [f"{correct_antw} ({f})" for f in random.sample(andere, min(3, len(andere)))]
-                            else:
-                                # Stap 1: Filter op dezelfde woordsoort
-                                pool = [w for w in st.session_state.data if w['grieks'] != item['grieks'] and w.get('woordsoort') == huidige_w_soort]
-                                if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']] # Fallback
+                                andere_parsings = list(set([str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]))
+                                random.shuffle(andere_parsings)
+                                for p in andere_parsings:
+                                    optie = f"{correct_antw} ({p})"
+                                    if optie not in gekozen_betekenissen:
+                                        afleiders.append(optie); gekozen_betekenissen.add(optie)
+                                    if len(afleiders) >= 3: break
                                 
-                                # Stap 2: Zoek visueel/morfologisch gelijkende woorden
+                                if len(afleiders) < 3:
+                                    pool = [w for w in st.session_state.data if w.get('woordsoort') == item.get('woordsoort') and 'vormen_data' in w]
+                                    random.shuffle(pool)
+                                    for w in pool:
+                                        for v in w.get('vormen_data', []):
+                                            p = v.get('parsing', '')
+                                            optie = f"{correct_antw} ({p})" 
+                                            if optie not in gekozen_betekenissen:
+                                                afleiders.append(optie); gekozen_betekenissen.add(optie)
+                                            if len(afleiders) >= 3: break
+                                        if len(afleiders) >= 3: break
+                            else:
+                                huidige_w_soort = item.get('woordsoort', '')
+                                prefix = item.get('grieks', '')[:2] 
+                                pool = [w for w in st.session_state.data if w['grieks'] != item['grieks'] and w.get('woordsoort') == huidige_w_soort]
+                                if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']]
+                                
                                 similar = [w for w in pool if w['grieks'].startswith(prefix)]
                                 random.shuffle(similar)
                                 random.shuffle(pool)
@@ -844,7 +864,7 @@ def main():
                     start_compare = datetime.now().date() - pd.Timedelta(days=13)
                     
                     for idx, row in df_global.iterrows():
-                        g_naam = row.get('gebruikersnaam', 'Anoniem').split('_')[0] # Alleen de naam tonen, niet de code
+                        g_naam = row.get('gebruikersnaam', 'Anoniem').split('_')[0] 
                         if not g_naam: continue
                         try:
                             if 'd_chunks' in row and not pd.isna(row['d_chunks']):
@@ -1100,7 +1120,7 @@ def main():
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         st.rerun()
-                        else: # PARTIËLE MC FEEDBACK
+                        else: 
                             if not st.session_state.stam_opties_gram:
                                 afleiders_g = [g for g in ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"] if g != correct_gram]
                                 st.session_state.stam_opties_gram = [correct_gram] + random.sample(afleiders_g, 3)
