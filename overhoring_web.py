@@ -1727,7 +1727,7 @@ def main():
         # ==========================================
         # TAB 8: UITLEG & HULP
         # ==========================================
-         with menu[7]:
+        with menu[7]:
             st.subheader("ℹ️ Uitleg & Hulp")
             st.markdown("""
             Welkom bij de Grieks Cloud Tutor! Deze app helpt je om Griekse vocabulaires en paradigma's effectief in je langetermijngeheugen te verankeren door middel van *Spaced Repetition* (gespreide herhaling) en contextueel leren.
