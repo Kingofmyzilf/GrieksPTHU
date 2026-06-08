@@ -1,6 +1,5 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
-from streamlit_local_storage import LocalStorage
 import json
 import random
 import re
@@ -99,22 +98,57 @@ def normaliseer_accent(woord):
         return w.strip()
     return ""
 
+def levenshtein(s1, s2):
+    if len(s1) < len(s2):
+        return levenshtein(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    return previous_row[-1]
+
 def check_betekenis(ingevuld, correcte_zin):
     ingevuld = str(ingevuld).lower().strip()
     correcte_zin = str(correcte_zin).lower().strip()
     if not ingevuld: return False
-    if ingevuld == correcte_zin: return True
-    
+
+    def is_match(user_input, target):
+        u = user_input.strip()
+        t = target.strip()
+        if not u or not t: return False
+        if u == t: return True
+        # Typfout tolerantie
+        if len(t) > 4 and levenshtein(u, t) <= 1: return True
+        if len(t) > 8 and levenshtein(u, t) <= 2: return True
+        return False
+
+    if is_match(ingevuld, correcte_zin): return True
+
     delen_ruw = [d.strip() for d in correcte_zin.replace(';', ',').split(',')]
-    if ingevuld in delen_ruw: return True
-    
-    schoon = re.sub(r'\(.*?\)', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
-    delen_schoon = [d.strip() for d in schoon.replace(';', ',').split(',')]
-    if ingevuld in [d for d in delen_schoon if d]: return True
-    
-    zonder = re.sub(r'[()\[\]]', '', correcte_zin).replace('=', '').replace('*', '').replace('+', '')
-    delen_zonder = [d.strip() for d in zonder.replace(';', ',').split(',')]
-    if ingevuld in [d for d in delen_zonder if d]: return True
+    for d in delen_ruw:
+        if is_match(ingevuld, d): return True
+
+    schoon = re.sub(r'\([^)]*\)', '', correcte_zin)
+    schoon = re.sub(r'\[[^\]]*\]', '', schoon)
+    schoon = re.sub(r'\{[^}]*\}', '', schoon)
+    schoon = schoon.replace('=', '').replace('*', '').replace('+', '')
+
+    delen_schoon = [d.strip() for d in schoon.replace(';', ',').split(',') if d.strip()]
+    for d in delen_schoon:
+        if is_match(ingevuld, d): return True
+
+    ingevuld_puur = re.sub(r'[^\w\s]', '', ingevuld).strip()
+    for d in delen_schoon:
+        d_puur = re.sub(r'[^\w\s]', '', d).strip()
+        if d_puur and is_match(ingevuld_puur, d_puur): return True
+
     return False
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
@@ -480,33 +514,26 @@ def laad_volgend_struct_woord():
 # MAIN APP FUNCTIE
 # ==========================================
 def main():
-    # 1. Activeer de Local Storage Manager
-    localS = LocalStorage()
-    
-    # 2. Lees uit of de browser lokaal een profiel heeft opgeslagen
-    ingelogde_gebruiker = localS.getItem("grieks_tutor_user")
-    
-    # 3. Voer AUTO-LOGIN uit als we data vinden
-    if st.session_state.data is None and ingelogde_gebruiker and isinstance(ingelogde_gebruiker, str):
-        st.session_state.last_user = ingelogde_gebruiker
-        st.session_state.data = laad_gebruiker_data(ingelogde_gebruiker)
+    # URL-Based Auto-Login
+    if "u" in st.query_params:
+        auto_user = st.query_params["u"]
+        if st.session_state.data is None or st.session_state.last_user != auto_user:
+            st.session_state.last_user = auto_user
+            st.session_state.data = laad_gebruiker_data(auto_user)
 
     with st.sidebar:
         if st.session_state.data is None:
             st.header("👤 Inloggen")
-            st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent. Let op: Je blijft hierna automatisch ingelogd op dit apparaat!")
+            st.caption("ℹ️ Kies een unieke naam en persoonlijke code (bijv. 'zomer2026' of je postcode). Dit voorkomt dat een naamgenoot met jouw data oefent.")
             
             col_u, col_p = st.columns(2)
             with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
-            with col_p: u_code = st.text_input("Code", key="inp_code").strip()
+            with col_p: u_code = st.text_input("Code", type="password", key="inp_code").strip()
             
             if st.button("Inloggen", type="primary"):
                 if u_naam and u_code:
                     user_input = f"{u_naam}_{u_code}"
-                    
-                    # 4. Sla inloggegevens op in de browser Local Storage
-                    localS.setItem("grieks_tutor_user", user_input)
-                    
+                    st.query_params["u"] = user_input
                     st.session_state.data = laad_gebruiker_data(user_input)
                     st.session_state.last_user = user_input
                     st.rerun()
@@ -514,15 +541,14 @@ def main():
                     st.warning("Vul beide velden in om in te loggen.")
         else:
             st.success(f"👋 Welkom terug, {st.session_state.last_user.split('_')[0]}!")
-            st.info("💡 Je browser onthoudt vanaf nu dat je bent ingelogd.")
+            st.info("💡 **Auto-Login via de Adresbalk:**\n\nJe bent nu ingelogd. Als je **deze specifieke link** nu toevoegt aan je Startscherm of Bladwijzers, logt de app volgende keer vanzelf in. Je hoeft niets meer in te typen!")
             
-            if st.button("🚪 Uitloggen (en onthouden uitzetten)"): 
+            if st.button("🚪 Uitloggen"): 
                 trigger_save()
                 st.session_state.data = None
                 st.session_state.last_user = None
-                
-                # 5. Wis de Local Storage bij het uitloggen
-                localS.deleteAll()
+                if "u" in st.query_params:
+                    del st.query_params["u"]
                 st.rerun()
             
             st.write("---")
@@ -1701,7 +1727,7 @@ def main():
         # ==========================================
         # TAB 8: UITLEG & HULP
         # ==========================================
-        with menu[7]:
+         with menu[7]:
             st.subheader("ℹ️ Uitleg & Hulp")
             st.markdown("""
             Welkom bij de Grieks Cloud Tutor! Deze app helpt je om Griekse vocabulaires en paradigma's effectief in je langetermijngeheugen te verankeren door middel van *Spaced Repetition* (gespreide herhaling) en contextueel leren.
