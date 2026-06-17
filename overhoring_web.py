@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 import json
 import random
@@ -78,6 +79,20 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- HELPER FUNCTIES ---
+def forceer_focus():
+    components.html(
+        """
+        <script>
+        setTimeout(function() {
+            const inputs = window.parent.document.querySelectorAll('.stTextInput input');
+            if (inputs.length > 0) {
+                inputs[0].focus();
+            }
+        }, 100);
+        </script>
+        """, height=0
+    )
+
 def veilig_les_nummer(item):
     try: return int(item.get('les', 1))
     except: return 1
@@ -99,10 +114,8 @@ def normaliseer_accent(woord):
     return ""
 
 def levenshtein(s1, s2):
-    if len(s1) < len(s2):
-        return levenshtein(s2, s1)
-    if len(s2) == 0:
-        return len(s1)
+    if len(s1) < len(s2): return levenshtein(s2, s1)
+    if len(s2) == 0: return len(s1)
     previous_row = range(len(s2) + 1)
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
@@ -124,7 +137,6 @@ def check_betekenis(ingevuld, correcte_zin):
         t = target.strip()
         if not u or not t: return False
         if u == t: return True
-        # Typfout tolerantie
         if len(t) > 4 and levenshtein(u, t) <= 1: return True
         if len(t) > 8 and levenshtein(u, t) <= 2: return True
         return False
@@ -472,7 +484,8 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
             'fouten_huidig_woord', 'huidige_opties', 'last_user', 'huidig_vers', 'huidige_vers_referentie', 'geziene_verzen',
             'actief_flashcard_huidig', 'actief_nakijk_resultaten', 'mix_combo', 'dag_stats',
             'stam_sessie_lijst', 'stam_huidig', 'stam_sub_modus', 'stam_fouten', 'stam_feedback', 'stam_opties_gram', 'stam_opties_praesens', 'stam_mc_solved',
-            'struct_sessie_lijst', 'struct_huidig', 'struct_sub_modus', 'struct_fouten', 'struct_feedback', 'struct_opties_cat', 'struct_opties_eig', 'struct_opties_bet', 'struct_mc_solved']:
+            'struct_sessie_lijst', 'struct_huidig', 'struct_sub_modus', 'struct_fouten', 'struct_feedback', 'struct_opties_cat', 'struct_opties_eig', 'struct_opties_bet', 'struct_mc_solved',
+            'gestrafte_woorden_vocab', 'gestrafte_woorden_stam', 'gestrafte_woorden_struct']:
     if key not in st.session_state: st.session_state[key] = None
 
 if st.session_state.stam_sessie_lijst is None: st.session_state.stam_sessie_lijst = []
@@ -480,6 +493,11 @@ if st.session_state.struct_sessie_lijst is None: st.session_state.struct_sessie_
 if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
 if st.session_state.dag_stats is None: st.session_state.dag_stats = {}
+
+# Beveiliging Strafbankjes
+if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
+if st.session_state.gestrafte_woorden_stam is None: st.session_state.gestrafte_woorden_stam = set()
+if st.session_state.gestrafte_woorden_struct is None: st.session_state.gestrafte_woorden_struct = set()
 
 def laad_volgend_woord():
     if st.session_state.sessie_lijst:
@@ -646,6 +664,7 @@ def main():
                 
                 if st.button("Start Sessie", type="primary"):
                     if doel:
+                        st.session_state.gestrafte_woorden_vocab = set() # Reset de strafbank voor Vocab
                         modus_id = str(modus[0])
                         sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
                         
@@ -713,16 +732,17 @@ def main():
                     if is_mastery and heeft_vormen: fout_msg_volledig += f" ({huidige_parsing})"
 
                     if huidige_sub_modus == 'overtik':
-                        st.warning("⚠️ Overtikken: Typ de exacte betekenis over om door te gaan.")
+                        st.warning("⚠️ Overtikken: Typ de betekenis over om door te gaan.")
                         st.info(f"Het juiste antwoord is: **{correct_antw}**")
+                        forceer_focus()
                         with st.form(key=f"form_overtik_{item.get('grieks')}", clear_on_submit=True):
-                            inp = st.text_input("Typ het exacte antwoord over:").lower().strip()
+                            inp = st.text_input("Typ het juiste antwoord over:").lower().strip()
                             if st.form_submit_button("Bevestig"):
                                 registreer_oefening(item)
                                 if check_betekenis(inp, correct_antw):
-                                    st.session_state.feedback = {"type": "success", "msg": "Goed overgetypt! Dit woord komt straks nog een keer terug."}
+                                    st.session_state.feedback = {"type": "success", "msg": "Genoteerd! Dit woord komt straks nog een keer terug."}
                                     laad_volgend_woord(); st.rerun()
-                                else: st.error("Niet exact overgetypt. Kijk goed naar het voorbeeld hierboven.")
+                                else: st.error("Niet correct overgetypt. Kijk goed naar het voorbeeld hierboven.")
 
                     elif huidige_sub_modus == '1':
                         st.info(f"💡 {extra_info} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
@@ -731,6 +751,7 @@ def main():
 
                     elif huidige_sub_modus in ['4', '3_typ']:
                         if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {extra_info} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                        forceer_focus()
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Woordenboekvertaling:").lower().strip()
                             if is_mastery and heeft_vormen: p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip()
@@ -743,29 +764,37 @@ def main():
 
                                 if betekenis_goed and vorm_goed:
                                     if st.session_state.fouten_huidig_woord == 0:
-                                        item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                        if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
-                                        elif huidige_sub_modus == '3_typ':
-                                            if st.session_state.mix_combo.get(item['grieks'], False): item['streak'] = int(item.get('streak', 0)) + 2
-                                            else: item['streak'] = int(item.get('streak', 0)) + 1
+                                        if item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
+                                            item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                            if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
+                                            elif huidige_sub_modus == '3_typ':
+                                                if st.session_state.mix_combo.get(item['grieks'], False): item['streak'] = int(item.get('streak', 0)) + 2
+                                                else: item['streak'] = int(item.get('streak', 0)) + 1
                                             
                                     success_msg = f"✓ Goed! **{huidige_vorm}** ({extra_info}) = {correct_antw}"
-                                    if zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    if item['grieks'] in st.session_state.gestrafte_woorden_vocab:
+                                        success_msg += " *(Maar wegens je eerdere fout levert dit geen streak-punten op)*"
+                                    elif zin_data: 
+                                        success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
                                     if huidige_sub_modus == '3_typ': st.session_state.mix_combo[item['grieks']] = False
-                                    st.session_state.fouten_huidig_woord += 1
                                     
-                                    if st.session_state.fouten_huidig_woord == 1:
-                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                        st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint en probeer nog eens."}
-                                    elif st.session_state.fouten_huidig_woord == 2:
-                                        item['streak'] = max(0, int(item.get('streak', 0)) - 2)
+                                    st.session_state.fouten_huidig_woord += 1
+                                    huidige_streak = int(item.get('streak', 0))
+                                    
+                                    if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
+                                        item['streak'] = max(0, huidige_streak - 2)
+                                        st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik'))
                                         st.session_state.sessie_lijst.append((item, huidige_sub_modus))
                                         st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Jouw invoer: '{inp}'. Het was: {fout_msg_volledig}"}
                                         trigger_save(); laad_volgend_woord()
+                                    else:
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint en probeer nog eens."}
                                     st.rerun()
                     
                     else:
@@ -821,27 +850,35 @@ def main():
                                 registreer_oefening(item)
                                 if optie == correct_optie:
                                     if st.session_state.fouten_huidig_woord == 0:
-                                        item['score_goed'] = int(item.get('score_goed', 0)) + 1
-                                        if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
-                                        elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
+                                        if item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
+                                            item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                            if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
+                                            elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
                                         
                                     success_msg = f"✓ Juist! {fout_msg_volledig}"
-                                    if zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                    if item['grieks'] in st.session_state.gestrafte_woorden_vocab:
+                                        success_msg += " *(Maar wegens je eerdere fout levert dit geen streak-punten op)*"
+                                    elif zin_data: 
+                                        success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
+                                        
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
                                     trigger_save(); laad_volgend_woord(); st.rerun()
                                 else:
                                     if huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = False
-                                    st.session_state.fouten_huidig_woord += 1
                                     
-                                    if st.session_state.fouten_huidig_woord == 1:
-                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
-                                        st.session_state.feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint!"}
-                                    elif st.session_state.fouten_huidig_woord == 2:
-                                        item['streak'] = max(0, int(item.get('streak', 0)) - 2)
+                                    st.session_state.fouten_huidig_woord += 1
+                                    huidige_streak = int(item.get('streak', 0))
+                                    
+                                    if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
+                                        item['streak'] = max(0, huidige_streak - 2)
+                                        st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik'))
                                         st.session_state.sessie_lijst.append((item, huidige_sub_modus))
                                         st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}"}
                                         trigger_save(); laad_volgend_woord()
+                                    else:
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        st.session_state.feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint!"}
                                     st.rerun()
 
                     if huidige_sub_modus != 'overtik':
@@ -1112,6 +1149,7 @@ def main():
                         huidig = st.session_state.actief_flashcard_huidig
                         if huidig:
                             st.markdown(f"<div class='grieks-woord' style='font-size: 30px;'>Geef de vorm voor: <b>{huidig['label']}</b></div>", unsafe_allow_html=True)
+                            forceer_focus()
                             with st.form(key=f"form_flash_{huidig['id']}"):
                                 inp = st.text_input("Jouw antwoord (Bèta-code):")
                                 if st.form_submit_button("Controleer"):
@@ -1147,6 +1185,7 @@ def main():
                     focus_tijd = st.multiselect("Focus op tijd/diathese:", alle_tijden)
                     
                     if st.button("Start Sessie", key="btn_start_stam"):
+                        st.session_state.gestrafte_woorden_stam = set() # Reset de strafbank
                         doel_vormen = []
                         for w in stamtijden_db:
                             if w.get('les', 0) in gekozen_stam:
@@ -1193,6 +1232,7 @@ def main():
                         if sub_modus == 'overtik':
                             st.warning("⚠️ Overtikken: Je had dit woord fout. Vul de juiste gegevens in.")
                             st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
+                            forceer_focus()
                             with st.form("form_stamtijd_overtik", clear_on_submit=True):
                                 p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
                                 p_praesens = st.text_input("Praesens:")
@@ -1205,6 +1245,7 @@ def main():
                                         st.error("Nog niet foutloos overgetypt. Kijk goed naar het voorbeeld.")
                         
                         elif sub_modus == "Typen":
+                            forceer_focus()
                             with st.form("form_stamtijd_typen", clear_on_submit=True):
                                 c_gram, c_bet = st.columns(2)
                                 with c_gram:
@@ -1220,22 +1261,31 @@ def main():
                                     
                                     if is_gram_correct and is_praesens_correct and is_bet_correct:
                                         if st.session_state.stam_fouten == 0:
-                                            st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
-                                        st.session_state.stam_feedback = {"type": "success", "msg": f"✓ Goed! {fout_msg_volledig}"}
+                                            if vid not in st.session_state.gestrafte_woorden_stam:
+                                                st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
+                                                
+                                        success_msg = f"✓ Goed! {fout_msg_volledig}"
+                                        if vid in st.session_state.gestrafte_woorden_stam:
+                                            success_msg += " *(Maar wegens je eerdere fout levert dit geen streak-punten op)*"
+                                        st.session_state.stam_feedback = {"type": "success", "msg": success_msg}
+                                        
                                         trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                     else:
                                         st.session_state.stam_fouten += 1
-                                        if st.session_state.stam_fouten == 1:
-                                            st.session_state.stam_stats[vid]['f'] += 1 
-                                            st.session_state.stam_feedback = {"type": "warning", "msg": "Bijna! Probeer het nog eens!"}
-                                        elif st.session_state.stam_fouten == 2:
-                                            st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
+                                        huidige_streak = st.session_state.stam_stats[vid]['streak']
+                                        
+                                        if huidige_streak >= 16 or st.session_state.stam_fouten >= 2:
+                                            st.session_state.stam_stats[vid]['streak'] = max(0, huidige_streak - 2)
+                                            st.session_state.gestrafte_woorden_stam.add(vid)
                                             st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"Grammatica: {p_gram} | Praesens: {p_praesens} | Betekenis: {p_betekenis}"
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}. Hij komt later terug."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                        else:
+                                            st.session_state.stam_stats[vid]['f'] += 1 
+                                            st.session_state.stam_feedback = {"type": "warning", "msg": "Bijna! Probeer het nog eens!"}
                                         st.rerun()
                         else: 
                             if not st.session_state.stam_opties_gram:
@@ -1278,22 +1328,31 @@ def main():
                                     
                                     if st.session_state.stam_mc_solved["gram"] and st.session_state.stam_mc_solved["praesens"]:
                                         if st.session_state.stam_fouten == 0:
-                                            st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
-                                        st.session_state.stam_feedback = {"type": "success", "msg": f"✓ Goed! {fout_msg_volledig}"}
+                                            if vid not in st.session_state.gestrafte_woorden_stam:
+                                                st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
+                                        
+                                        success_msg = f"✓ Goed! {fout_msg_volledig}"
+                                        if vid in st.session_state.gestrafte_woorden_stam:
+                                            success_msg += " *(Maar wegens je eerdere fout levert dit geen streak-punten op)*"
+                                        st.session_state.stam_feedback = {"type": "success", "msg": success_msg}
+                                        
                                         trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                     else:
                                         st.session_state.stam_fouten += 1
-                                        if st.session_state.stam_fouten == 1:
-                                            st.session_state.stam_stats[vid]['f'] += 1 
-                                            st.session_state.stam_feedback = {"type": "warning", "msg": "Een van je keuzes is niet juist. Het goede deel is vastgezet!"}
-                                        elif st.session_state.stam_fouten == 2:
-                                            st.session_state.stam_stats[vid]['streak'] = max(0, st.session_state.stam_stats[vid]['streak'] - 2)
+                                        huidige_streak = st.session_state.stam_stats[vid]['streak']
+                                        
+                                        if huidige_streak >= 16 or st.session_state.stam_fouten >= 2:
+                                            st.session_state.stam_stats[vid]['streak'] = max(0, huidige_streak - 2)
+                                            st.session_state.gestrafte_woorden_stam.add(vid)
                                             st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"Grammatica: {keuze_gram} | Herleiding: {keuze_praesens}"
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                        else:
+                                            st.session_state.stam_stats[vid]['f'] += 1 
+                                            st.session_state.stam_feedback = {"type": "warning", "msg": "Een van je keuzes is niet juist. Het goede deel is vastgezet!"}
                                         st.rerun()
 
                         if sub_modus != 'overtik':
@@ -1313,6 +1372,7 @@ def main():
                 with c1:
                     struct_modus = st.radio("Modus:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="struct_modus_radio")
                     if st.button("Start Sessie", key="btn_start_struct"):
+                        st.session_state.gestrafte_woorden_struct = set() # Reset de strafbank
                         doel_vormen = []
                         for w in struct_db:
                             vid = w['grieks']
@@ -1358,6 +1418,7 @@ def main():
                         if sub_modus == 'overtik':
                             st.warning("⚠️ Overtikken: Je had dit woord fout. Kies de juiste gegevens.")
                             st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
+                            forceer_focus()
                             with st.form("form_struct_overtik", clear_on_submit=True):
                                 p_cat = st.selectbox("1. Categorie:", [""] + alle_cats)
                                 p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen):")
@@ -1371,7 +1432,7 @@ def main():
 
                         elif sub_modus == "Typen":
                             gekozen_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key="dyn_cat")
-                            
+                            forceer_focus()
                             with st.form("form_struct_typen", clear_on_submit=True):
                                 c_eig, c_bet = st.columns(2)
                                 with c_eig: 
@@ -1388,22 +1449,31 @@ def main():
                                     
                                     if is_cat_correct and is_eig_correct and is_bet_correct:
                                         if st.session_state.struct_fouten == 0:
-                                            st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
-                                        st.session_state.struct_feedback = {"type": "success", "msg": f"✓ Goed! {fout_msg_volledig}"}
+                                            if vid not in st.session_state.gestrafte_woorden_struct:
+                                                st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
+                                        
+                                        success_msg = f"✓ Goed! {fout_msg_volledig}"
+                                        if vid in st.session_state.gestrafte_woorden_struct:
+                                            success_msg += " *(Maar wegens je eerdere fout levert dit geen streak-punten op)*"
+                                        st.session_state.struct_feedback = {"type": "success", "msg": success_msg}
+                                        
                                         trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                     else:
                                         st.session_state.struct_fouten += 1
-                                        if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
-                                            st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
-                                        elif st.session_state.struct_fouten == 2:
-                                            st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
+                                        huidige_streak = st.session_state.struct_stats[vid]['streak']
+                                        
+                                        if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
+                                            st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2)
+                                            st.session_state.gestrafte_woorden_struct.add(vid)
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"{gekozen_cat} | {p_eig} | {p_bet}"
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
                                             trigger_save(); laad_volgend_struct_woord(); st.rerun()
+                                        else:
+                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
+                                            st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
                                         st.rerun()
                         else: # PARTIËLE MC FEEDBACK
                             if not st.session_state.struct_opties_cat:
@@ -1452,22 +1522,31 @@ def main():
                                     
                                     if st.session_state.struct_mc_solved["cat"] and st.session_state.struct_mc_solved["eig"] and st.session_state.struct_mc_solved["bet"]:
                                         if st.session_state.struct_fouten == 0:
-                                            st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
-                                        st.session_state.struct_feedback = {"type": "success", "msg": f"✓ Goed! {fout_msg_volledig}"}
+                                            if vid not in st.session_state.gestrafte_woorden_struct:
+                                                st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
+                                        
+                                        success_msg = f"✓ Goed! {fout_msg_volledig}"
+                                        if vid in st.session_state.gestrafte_woorden_struct:
+                                            success_msg += " *(Maar wegens je eerdere fout levert dit geen streak-punten op)*"
+                                        st.session_state.struct_feedback = {"type": "success", "msg": success_msg}
+                                        
                                         trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                     else:
                                         st.session_state.struct_fouten += 1
-                                        if st.session_state.struct_fouten == 1:
-                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
-                                            st.session_state.struct_feedback = {"type": "warning", "msg": "De goede delen zijn vastgezet. Probeer de rest opnieuw!"}
-                                        elif st.session_state.struct_fouten == 2:
-                                            st.session_state.struct_stats[vid]['streak'] = max(0, st.session_state.struct_stats[vid]['streak'] - 2)
+                                        huidige_streak = st.session_state.struct_stats[vid]['streak']
+                                        
+                                        if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
+                                            st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2)
+                                            st.session_state.gestrafte_woorden_struct.add(vid)
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
                                             
                                             jouw_inv = f"{keuze_cat} | {keuze_eig} | {keuze_bet}"
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{jouw_inv}*. Het was: {fout_msg_volledig}."}
                                             trigger_save(); laad_volgend_struct_woord(); st.rerun()
+                                        else:
+                                            st.session_state.struct_stats[vid]['f'] += 1 # Freeze
+                                            st.session_state.struct_feedback = {"type": "warning", "msg": "De goede delen zijn vastgezet. Probeer de rest opnieuw!"}
                                         st.rerun()
 
                         if sub_modus != 'overtik':
@@ -1615,6 +1694,7 @@ def main():
                             if w['is_stamtijd'] and kleur_stamtijden:
                                 stam_data = w['stam_info']
                                 st.markdown(f"**<div style='color:#d63384'>[Stamtijd]</div> {w['grieks']}**", unsafe_allow_html=True)
+                                forceer_focus()
                                 with st.form(key=f"form_lees_stam_{idx}"):
                                     c_gram, c_bet = st.columns(2)
                                     with c_gram:
@@ -1668,6 +1748,7 @@ def main():
                                                 st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                                     
                                 elif "3." in tekst_modus: 
+                                    forceer_focus()
                                     with st.form(key=f"form_typ_{idx}"):
                                         inp = st.text_input("Woordenboekvertaling:")
                                         if st.form_submit_button("Check"):
