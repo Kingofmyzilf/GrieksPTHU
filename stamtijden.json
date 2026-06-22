@@ -4,6 +4,18 @@
     "betekenis": "worden, gebeuren",
     "les": 7,
     "frequentie": 712,
+    "strong_nummer": "G1096",
+    "morfologie": {
+      "stamwortel": "γίν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "γενήσομαι",
       "Aoristus Actief/Medium": "ἐγενόμην",
@@ -17,6 +29,18 @@
     "betekenis": "inzien",
     "les": 7,
     "frequentie": 307,
+    "strong_nummer": "G1097",
+    "morfologie": {
+      "stamwortel": "γινώσκ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "γνώσομαι",
       "Aoristus Actief/Medium": "ἔγνων",
@@ -30,6 +54,18 @@
     "betekenis": "geven",
     "les": 7,
     "frequentie": 548,
+    "strong_nummer": "G1325",
+    "morfologie": {
+      "stamwortel": "δίδω",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ω",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "δώσω",
       "Aoristus Actief/Medium": "ἔδωκα",
@@ -43,6 +79,18 @@
     "betekenis": "gaan, komen",
     "les": 7,
     "frequentie": 1394,
+    "strong_nummer": "G2064",
+    "morfologie": {
+      "stamwortel": "onregelmatig",
+      "klasse": "suppletie",
+      "memoriseren_vereist": true,
+      "mutatieregel": {
+        "type": "suppletie",
+        "stam_eindigt_op": "n.v.t.",
+        "formule": "Uit het hoofd leren",
+        "toelichting": "Suppletie: dit werkwoord gebruikt compleet verschillende stammen. Leer deze vormen uit het hoofd."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἐλεύσομαι",
       "Aoristus Actief/Medium": "ἠλθον",
@@ -56,6 +104,18 @@
     "betekenis": "eten",
     "les": 7,
     "frequentie": 158,
+    "strong_nummer": "G2068",
+    "morfologie": {
+      "stamwortel": "ἐσθί",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ί",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "φαγόμαι",
       "Aoristus Actief/Medium": "ἔφαγον",
@@ -69,6 +129,18 @@
     "betekenis": "hebben",
     "les": 7,
     "frequentie": 841,
+    "strong_nummer": "G2192",
+    "morfologie": {
+      "stamwortel": "onregelmatig",
+      "klasse": "suppletie",
+      "memoriseren_vereist": true,
+      "mutatieregel": {
+        "type": "suppletie",
+        "stam_eindigt_op": "n.v.t.",
+        "formule": "Uit het hoofd leren",
+        "toelichting": "Suppletie: dit werkwoord gebruikt compleet verschillende stammen. Leer deze vormen uit het hoofd."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἕξω",
       "Aoristus Actief/Medium": "ἔσχον",
@@ -82,6 +154,18 @@
     "betekenis": "nemen, ontvangen",
     "les": 7,
     "frequentie": 390,
+    "strong_nummer": "G2983",
+    "morfologie": {
+      "stamwortel": "onregelmatig",
+      "klasse": "suppletie",
+      "memoriseren_vereist": true,
+      "mutatieregel": {
+        "type": "suppletie",
+        "stam_eindigt_op": "n.v.t.",
+        "formule": "Uit het hoofd leren",
+        "toelichting": "Suppletie: dit werkwoord gebruikt compleet verschillende stammen. Leer deze vormen uit het hoofd."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "λήμψομαι",
       "Aoristus Actief/Medium": "ἔλαβον",
@@ -95,6 +179,18 @@
     "betekenis": "zeggen",
     "les": 7,
     "frequentie": 2353,
+    "strong_nummer": "G3004",
+    "morfologie": {
+      "stamwortel": "λέγ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἐρῶ",
       "Aoristus Actief/Medium": "εἶπον",
@@ -108,6 +204,18 @@
     "betekenis": "zien",
     "les": 7,
     "frequentie": 696,
+    "strong_nummer": "G3708",
+    "morfologie": {
+      "stamwortel": "ὁρά",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ά",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ὄψομαι",
       "Aoristus Actief/Medium": "εἶδον",
@@ -121,6 +229,18 @@
     "betekenis": "doen, maken",
     "les": 7,
     "frequentie": 600,
+    "strong_nummer": "G4160",
+    "morfologie": {
+      "stamwortel": "ποιέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ποιήσω",
       "Aoristus Actief/Medium": "ἐποίησα",
@@ -134,6 +254,18 @@
     "betekenis": "leiden",
     "les": 8,
     "frequentie": 261,
+    "strong_nummer": "G71",
+    "morfologie": {
+      "stamwortel": "ἄγ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἄξω",
       "Aoristus Actief/Medium": "ἤγαγον",
@@ -147,6 +279,18 @@
     "betekenis": "horen",
     "les": 8,
     "frequentie": 460,
+    "strong_nummer": "G191",
+    "morfologie": {
+      "stamwortel": "ἀκού",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ύ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀκούσω",
       "Aoristus Actief/Medium": "ἤκουσα",
@@ -160,6 +304,17 @@
     "betekenis": "gaan",
     "les": 8,
     "frequentie": 127,
+    "morfologie": {
+      "stamwortel": "βαίν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "βήσομαι",
       "Aoristus Actief/Medium": "ἔβην",
@@ -173,6 +328,18 @@
     "betekenis": "gooien",
     "les": 8,
     "frequentie": 270,
+    "strong_nummer": "G906",
+    "morfologie": {
+      "stamwortel": "βάλλ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "βαλῶ",
       "Aoristus Actief/Medium": "ἔβαλον",
@@ -186,6 +353,18 @@
     "betekenis": "kunnen",
     "les": 8,
     "frequentie": 209,
+    "strong_nummer": "G1410",
+    "morfologie": {
+      "stamwortel": "δύναμαι",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ι",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "δυνήσομαι",
       "Aoristus Actief/Medium": "———",
@@ -198,6 +377,18 @@
     "betekenis": "willen",
     "les": 8,
     "frequentie": 207,
+    "strong_nummer": "G2309",
+    "morfologie": {
+      "stamwortel": "θέλ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "θελήσω",
       "Aoristus Actief/Medium": "ἠθέλησα",
@@ -211,6 +402,18 @@
     "betekenis": "roepen",
     "les": 8,
     "frequentie": 338,
+    "strong_nummer": "G2564",
+    "morfologie": {
+      "stamwortel": "καλέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "καλέσω",
       "Aoristus Actief/Medium": "ἐκάλεσα",
@@ -224,6 +427,18 @@
     "betekenis": "spreken",
     "les": 8,
     "frequentie": 314,
+    "strong_nummer": "G2980",
+    "morfologie": {
+      "stamwortel": "λαλέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "λαλήσω",
       "Aoristus Actief/Medium": "ἐλάλησα",
@@ -237,6 +452,18 @@
     "betekenis": "blijven",
     "les": 8,
     "frequentie": 176,
+    "strong_nummer": "G3306",
+    "morfologie": {
+      "stamwortel": "μέν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "μενῶ",
       "Aoristus Actief/Medium": "ἔμεινα",
@@ -250,6 +477,18 @@
     "betekenis": "bidden",
     "les": 8,
     "frequentie": 86,
+    "strong_nummer": "G4336",
+    "morfologie": {
+      "stamwortel": "προσεύχ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "προσεύξομαι",
       "Aoristus Actief/Medium": "προσηυξάμην",
@@ -263,6 +502,18 @@
     "betekenis": "antwoorden",
     "les": 9,
     "frequentie": 231,
+    "strong_nummer": "G611",
+    "morfologie": {
+      "stamwortel": "ἀποκρίν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀποκρινοῦμαι",
       "Aoristus Actief/Medium": "ἀπεκρινάμην",
@@ -276,6 +527,18 @@
     "betekenis": "vinden",
     "les": 9,
     "frequentie": 176,
+    "strong_nummer": "G2147",
+    "morfologie": {
+      "stamwortel": "εὑρίσκ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "εὑρήσω",
       "Aoristus Actief/Medium": "εὗρον",
@@ -289,6 +552,18 @@
     "betekenis": "zoeken",
     "les": 9,
     "frequentie": 137,
+    "strong_nummer": "G2212",
+    "morfologie": {
+      "stamwortel": "ζητέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ζητήσω",
       "Aoristus Actief/Medium": "ἐζήτησα",
@@ -302,6 +577,18 @@
     "betekenis": "losmaken",
     "les": 9,
     "frequentie": 140,
+    "strong_nummer": "G3089",
+    "morfologie": {
+      "stamwortel": "λύ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ύ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "λύσω",
       "Aoristus Actief/Medium": "ἔλυσα",
@@ -315,6 +602,18 @@
     "betekenis": "vertrouwen",
     "les": 9,
     "frequentie": 241,
+    "strong_nummer": "G4100",
+    "morfologie": {
+      "stamwortel": "πιστεύ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ύ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πιστεύσω",
       "Aoristus Actief/Medium": "ἐπίστευσα",
@@ -328,6 +627,18 @@
     "betekenis": "gaan, reizen",
     "les": 9,
     "frequentie": 224,
+    "strong_nummer": "G4198",
+    "morfologie": {
+      "stamwortel": "πορεύ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ύ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πορεύσομαι",
       "Aoristus Actief/Medium": "ἐπορεύθην",
@@ -341,6 +652,18 @@
     "betekenis": "vereren",
     "les": 9,
     "frequentie": 60,
+    "strong_nummer": "G4352",
+    "morfologie": {
+      "stamwortel": "προσκυνέ",
+      "klasse": "contracta",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "klinkerrekking",
+        "stam_eindigt_op": "α, ε, ο",
+        "formule": "α/ε -> η, ο -> ω",
+        "toelichting": "De stamklinker rekt op vóór de sigma van het futurum of de aoristus."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "προσκυνήσω",
       "Aoristus Actief/Medium": "προσεκύνησα",
@@ -354,6 +677,18 @@
     "betekenis": "plaatsen",
     "les": 9,
     "frequentie": 227,
+    "strong_nummer": "G5087",
+    "morfologie": {
+      "stamwortel": "τίθη",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "η",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "θήσω",
       "Aoristus Actief/Medium": "ἔθηκα",
@@ -367,6 +702,18 @@
     "betekenis": "dragen, brengen",
     "les": 9,
     "frequentie": 193,
+    "strong_nummer": "G5342",
+    "morfologie": {
+      "stamwortel": "φέρ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "οἴσω",
       "Aoristus Actief/Medium": "ἤνεγκα",
@@ -380,6 +727,18 @@
     "betekenis": "roepen",
     "les": 9,
     "frequentie": 60,
+    "strong_nummer": "G5455",
+    "morfologie": {
+      "stamwortel": "φωνέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "φωνήσω",
       "Aoristus Actief/Medium": "ἐφώνησα",
@@ -393,6 +752,18 @@
     "betekenis": "uitzenden",
     "les": 10,
     "frequentie": 146,
+    "strong_nummer": "G649",
+    "morfologie": {
+      "stamwortel": "ἀποστέλλ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀποστελῶ",
       "Aoristus Actief/Medium": "ἀπέστειλα",
@@ -406,6 +777,18 @@
     "betekenis": "kijken",
     "les": 10,
     "frequentie": 159,
+    "strong_nummer": "G991",
+    "morfologie": {
+      "stamwortel": "βλέπ",
+      "klasse": "labiaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "π, β, φ, πτ",
+        "formule": "π, β, φ + σ -> ψ",
+        "toelichting": "Wanneer een lipklank botst met de sigma, versmelten deze tot een psi (ψ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "βλέψω",
       "Aoristus Actief/Medium": "ἔβλεψα",
@@ -419,6 +802,18 @@
     "betekenis": "verwekken",
     "les": 10,
     "frequentie": 97,
+    "strong_nummer": "G1080",
+    "morfologie": {
+      "stamwortel": "γεννά",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ά",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "γεννήσω",
       "Aoristus Actief/Medium": "ἐγέννησα",
@@ -432,6 +827,18 @@
     "betekenis": "schrijven",
     "les": 10,
     "frequentie": 208,
+    "strong_nummer": "G1125",
+    "morfologie": {
+      "stamwortel": "γράφ",
+      "klasse": "labiaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "π, β, φ, πτ",
+        "formule": "π, β, φ + σ -> ψ",
+        "toelichting": "Wanneer een lipklank botst met de sigma, versmelten deze tot een psi (ψ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "γράψω",
       "Aoristus Actief/Medium": "ἔγραψα",
@@ -445,6 +852,18 @@
     "betekenis": "staan",
     "les": 10,
     "frequentie": 155,
+    "strong_nummer": "G2476",
+    "morfologie": {
+      "stamwortel": "ἵστη",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "η",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "στήσω",
       "Aoristus Actief/Medium": "ἔστησα / ἔστην",
@@ -458,6 +877,18 @@
     "betekenis": "oordelen",
     "les": 10,
     "frequentie": 172,
+    "strong_nummer": "G2919",
+    "morfologie": {
+      "stamwortel": "κρίν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "κρινῶ",
       "Aoristus Actief/Medium": "ἔκρινα",
@@ -471,6 +902,18 @@
     "betekenis": "overtuigen",
     "les": 10,
     "frequentie": 53,
+    "strong_nummer": "G3982",
+    "morfologie": {
+      "stamwortel": "πείθ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πείσω",
       "Aoristus Actief/Medium": "ἔπεισα",
@@ -484,6 +927,18 @@
     "betekenis": "zenden",
     "les": 10,
     "frequentie": 106,
+    "strong_nummer": "G3992",
+    "morfologie": {
+      "stamwortel": "πέμπ",
+      "klasse": "labiaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "π, β, φ, πτ",
+        "formule": "π, β, φ + σ -> ψ",
+        "toelichting": "Wanneer een lipklank botst met de sigma, versmelten deze tot een psi (ψ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πέμψω",
       "Aoristus Actief/Medium": "ἔπεμψα",
@@ -497,6 +952,18 @@
     "betekenis": "vallen",
     "les": 10,
     "frequentie": 148,
+    "strong_nummer": "G4098",
+    "morfologie": {
+      "stamwortel": "πίπτ",
+      "klasse": "labiaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "π, β, φ, πτ",
+        "formule": "π, β, φ + σ -> ψ",
+        "toelichting": "Wanneer een lipklank botst met de sigma, versmelten deze tot een psi (ψ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πεσοῦμαι",
       "Aoristus Actief/Medium": "ἔπεσον",
@@ -510,6 +977,17 @@
     "betekenis": "stellen",
     "les": 10,
     "frequentie": 93,
+    "morfologie": {
+      "stamwortel": "τάσσ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "τάξω",
       "Aoristus Actief/Medium": "ἔταξα",
@@ -523,6 +1001,18 @@
     "betekenis": "liefhebben",
     "les": 11,
     "frequentie": 143,
+    "strong_nummer": "G25",
+    "morfologie": {
+      "stamwortel": "ἀγαπά",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ά",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀγαπήσω",
       "Aoristus Actief/Medium": "ἠγάπησα",
@@ -536,6 +1026,17 @@
     "betekenis": "berichten",
     "les": 11,
     "frequentie": 118,
+    "morfologie": {
+      "stamwortel": "ἀγγέλλ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀγγελῶ",
       "Aoristus Actief/Medium": "ἤγγειλα",
@@ -549,6 +1050,18 @@
     "betekenis": "sterven",
     "les": 11,
     "frequentie": 111,
+    "strong_nummer": "G599",
+    "morfologie": {
+      "stamwortel": "ἀποθνῄσκ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀποθανοῦμαι",
       "Aoristus Actief/Medium": "ἀπέθανον",
@@ -562,6 +1075,18 @@
     "betekenis": "heersen, beginnen",
     "les": 11,
     "frequentie": 146,
+    "strong_nummer": "G756",
+    "morfologie": {
+      "stamwortel": "ἄρχ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἄρξω",
       "Aoristus Actief/Medium": "ἤρξα",
@@ -575,6 +1100,18 @@
     "betekenis": "laten gaan, vergeven",
     "les": 11,
     "frequentie": 143,
+    "strong_nummer": "G863",
+    "morfologie": {
+      "stamwortel": "ἀφίη",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "η",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀφήσω",
       "Aoristus Actief/Medium": "ἀφῆκα",
@@ -588,6 +1125,18 @@
     "betekenis": "vragen",
     "les": 11,
     "frequentie": 120,
+    "strong_nummer": "G2065",
+    "morfologie": {
+      "stamwortel": "ἐρωτά",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ά",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἐρωτήσω",
       "Aoristus Actief/Medium": "ἠρώτησα",
@@ -601,6 +1150,18 @@
     "betekenis": "leven",
     "les": 11,
     "frequentie": 145,
+    "strong_nummer": "G2198",
+    "morfologie": {
+      "stamwortel": "ζά",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ά",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ζήσω",
       "Aoristus Actief/Medium": "ἔζησα",
@@ -614,6 +1175,18 @@
     "betekenis": "drinken",
     "les": 11,
     "frequentie": 81,
+    "strong_nummer": "G4095",
+    "morfologie": {
+      "stamwortel": "πίν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πίομαι",
       "Aoristus Actief/Medium": "ἔπιον",
@@ -627,6 +1200,18 @@
     "betekenis": "draaien",
     "les": 11,
     "frequentie": 125,
+    "strong_nummer": "G4762",
+    "morfologie": {
+      "stamwortel": "στρέφ",
+      "klasse": "labiaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "π, β, φ, πτ",
+        "formule": "π, β, φ + σ -> ψ",
+        "toelichting": "Wanneer een lipklank botst met de sigma, versmelten deze tot een psi (ψ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "στρέψω",
       "Aoristus Actief/Medium": "ἔστρεψα",
@@ -640,6 +1225,18 @@
     "betekenis": "redden",
     "les": 11,
     "frequentie": 114,
+    "strong_nummer": "G4982",
+    "morfologie": {
+      "stamwortel": "σῴζ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "σώσω",
       "Aoristus Actief/Medium": "ἔσωσα",
@@ -653,6 +1250,18 @@
     "betekenis": "opheffen",
     "les": 12,
     "frequentie": 101,
+    "strong_nummer": "G142",
+    "morfologie": {
+      "stamwortel": "αἴρ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀρῶ",
       "Aoristus Actief/Medium": "ἦρα",
@@ -666,6 +1275,18 @@
     "betekenis": "tonen",
     "les": 12,
     "frequentie": 63,
+    "strong_nummer": "G1166",
+    "morfologie": {
+      "stamwortel": "δείκνυ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "υ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "δείξω",
       "Aoristus Actief/Medium": "ἔδειξα",
@@ -679,6 +1300,18 @@
     "betekenis": "onderwijzen",
     "les": 12,
     "frequentie": 97,
+    "strong_nummer": "G1321",
+    "morfologie": {
+      "stamwortel": "διδάσκ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "διδάξω",
       "Aoristus Actief/Medium": "ἐδίδαξα",
@@ -692,6 +1325,18 @@
     "betekenis": "opwekken",
     "les": 12,
     "frequentie": 144,
+    "strong_nummer": "G1453",
+    "morfologie": {
+      "stamwortel": "ἐγείρ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἐγερῶ",
       "Aoristus Actief/Medium": "ἤγειρα",
@@ -705,6 +1350,18 @@
     "betekenis": "zitten",
     "les": 12,
     "frequentie": 93,
+    "strong_nummer": "G2521",
+    "morfologie": {
+      "stamwortel": "κάθημαι",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ι",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "καθήσομαι",
       "Aoristus Actief/Medium": "———",
@@ -718,6 +1375,18 @@
     "betekenis": "getuigen",
     "les": 12,
     "frequentie": 109,
+    "strong_nummer": "G3140",
+    "morfologie": {
+      "stamwortel": "μαρτυρέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "μαρτυρήσω",
       "Aoristus Actief/Medium": "ἐμαρτύρησα",
@@ -731,6 +1400,18 @@
     "betekenis": "zullen",
     "les": 12,
     "frequentie": 110,
+    "strong_nummer": "G3195",
+    "morfologie": {
+      "stamwortel": "μέλλ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "μελλήσω",
       "Aoristus Actief/Medium": "ἔμελλον",
@@ -744,6 +1425,18 @@
     "betekenis": "wandelen",
     "les": 12,
     "frequentie": 96,
+    "strong_nummer": "G4043",
+    "morfologie": {
+      "stamwortel": "περιπατέ",
+      "klasse": "contracta",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "klinkerrekking",
+        "stam_eindigt_op": "α, ε, ο",
+        "formule": "α/ε -> η, ο -> ω",
+        "toelichting": "De stamklinker rekt op vóór de sigma van het futurum of de aoristus."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "περιπατήσω",
       "Aoristus Actief/Medium": "περιεπάτησα",
@@ -757,6 +1450,18 @@
     "betekenis": "vullen",
     "les": 12,
     "frequentie": 99,
+    "strong_nummer": "G4137",
+    "morfologie": {
+      "stamwortel": "πληρό",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ό",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "πληρώσω",
       "Aoristus Actief/Medium": "ἐπλήρωσα",
@@ -770,6 +1475,18 @@
     "betekenis": "bang zijn",
     "les": 12,
     "frequentie": 96,
+    "strong_nummer": "G5399",
+    "morfologie": {
+      "stamwortel": "φοβέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "φοβήσω",
       "Aoristus Actief/Medium": "ἐφόβησα",
@@ -783,6 +1500,18 @@
     "betekenis": "volgen",
     "les": 13,
     "frequentie": 90,
+    "strong_nummer": "G190",
+    "morfologie": {
+      "stamwortel": "ἀκολουθέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀκολουθήσω",
       "Aoristus Actief/Medium": "ἠκολούθησα",
@@ -796,6 +1525,18 @@
     "betekenis": "openen",
     "les": 13,
     "frequentie": 78,
+    "strong_nummer": "G455",
+    "morfologie": {
+      "stamwortel": "ἀνοίγ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀνοίξω",
       "Aoristus Actief/Medium": "ἀνέῳξα",
@@ -809,6 +1550,18 @@
     "betekenis": "vernietigen",
     "les": 13,
     "frequentie": 91,
+    "strong_nummer": "G622",
+    "morfologie": {
+      "stamwortel": "ἀπόλλυ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "υ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀπολέσω",
       "Aoristus Actief/Medium": "ἀπώλεσα",
@@ -822,6 +1575,18 @@
     "betekenis": "dopen",
     "les": 13,
     "frequentie": 76,
+    "strong_nummer": "G907",
+    "morfologie": {
+      "stamwortel": "βαπτίζ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "βαπτίσω",
       "Aoristus Actief/Medium": "ἐβάπτισα",
@@ -835,6 +1600,18 @@
     "betekenis": "verwelkomen",
     "les": 13,
     "frequentie": 80,
+    "strong_nummer": "G1209",
+    "morfologie": {
+      "stamwortel": "δέχ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "δέξομαι",
       "Aoristus Actief/Medium": "ἐδεξάμην",
@@ -848,6 +1625,18 @@
     "betekenis": "menen",
     "les": 13,
     "frequentie": 89,
+    "strong_nummer": "G1380",
+    "morfologie": {
+      "stamwortel": "δοκέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "δόξω",
       "Aoristus Actief/Medium": "ἔδοξα",
@@ -861,6 +1650,17 @@
     "betekenis": "begrijpen",
     "les": 13,
     "frequentie": 91,
+    "morfologie": {
+      "stamwortel": "νοέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "νοήσω",
       "Aoristus Actief/Medium": "ἐνόησα",
@@ -874,6 +1674,18 @@
     "betekenis": "bewaren",
     "les": 13,
     "frequentie": 82,
+    "strong_nummer": "G5083",
+    "morfologie": {
+      "stamwortel": "τηρέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "τηρήσω",
       "Aoristus Actief/Medium": "ἐτήρησα",
@@ -887,6 +1699,18 @@
     "betekenis": "zeggen",
     "les": 13,
     "frequentie": 66,
+    "strong_nummer": "G5346",
+    "morfologie": {
+      "stamwortel": "φημί",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "ί",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "φήσω",
       "Aoristus Actief/Medium": "ἔφην",
@@ -900,6 +1724,18 @@
     "betekenis": "blij zijn",
     "les": 13,
     "frequentie": 81,
+    "strong_nummer": "G5463",
+    "morfologie": {
+      "stamwortel": "χαίρ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "χαρήσομαι",
       "Aoristus Actief/Medium": "ἐχαρισάμην",
@@ -913,6 +1749,17 @@
     "betekenis": "nemen",
     "les": 14,
     "frequentie": 61,
+    "morfologie": {
+      "stamwortel": "αἱρέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "αἱρήσομαι",
       "Aoristus Actief/Medium": "εἱλόμην",
@@ -926,6 +1773,18 @@
     "betekenis": "vragen",
     "les": 14,
     "frequentie": 76,
+    "strong_nummer": "G154",
+    "morfologie": {
+      "stamwortel": "αἰτέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "αἰτήσω",
       "Aoristus Actief/Medium": "ᾔτησα",
@@ -939,6 +1798,18 @@
     "betekenis": "doden",
     "les": 14,
     "frequentie": 74,
+    "strong_nummer": "G615",
+    "morfologie": {
+      "stamwortel": "ἀποκτείν",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀποκτενῶ",
       "Aoristus Actief/Medium": "ἀπέκτεινα",
@@ -952,6 +1823,18 @@
     "betekenis": "groeten",
     "les": 14,
     "frequentie": 59,
+    "strong_nummer": "G782",
+    "morfologie": {
+      "stamwortel": "ἀσπάζ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "ἀσπάσομαι",
       "Aoristus Actief/Medium": "ἠσθένησα",
@@ -965,6 +1848,18 @@
     "betekenis": "verheerlijken",
     "les": 14,
     "frequentie": 62,
+    "strong_nummer": "G1392",
+    "morfologie": {
+      "stamwortel": "δοξάζ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "δοξάσω",
       "Aoristus Actief/Medium": "ἐδόξασα",
@@ -978,6 +1873,18 @@
     "betekenis": "bekijken",
     "les": 14,
     "frequentie": 60,
+    "strong_nummer": "G2334",
+    "morfologie": {
+      "stamwortel": "θεωρέ",
+      "klasse": "regelmatig",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "basis",
+        "stam_eindigt_op": "έ",
+        "formule": "Stam + σ",
+        "toelichting": "Dit werkwoord volgt de regelmatige vervoeging door een sigma toe te voegen."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "θεωρήσω",
       "Aoristus Actief/Medium": "ἐθεώρησα",
@@ -991,6 +1898,18 @@
     "betekenis": "verkondigen",
     "les": 14,
     "frequentie": 62,
+    "strong_nummer": "G2784",
+    "morfologie": {
+      "stamwortel": "κηρύσσ",
+      "klasse": "gutturaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "κ, γ, χ, σσ/ττ",
+        "formule": "κ, γ, χ + σ -> ξ",
+        "toelichting": "Wanneer een keelklank botst met de sigma, versmelten deze tot een xi (ξ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "κηρύξω",
       "Aoristus Actief/Medium": "ἐκήρυξα",
@@ -1004,6 +1923,18 @@
     "betekenis": "schreeuwen",
     "les": 14,
     "frequentie": 60,
+    "strong_nummer": "G2896",
+    "morfologie": {
+      "stamwortel": "κράζ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "κράξω",
       "Aoristus Actief/Medium": "ἔκραξα",
@@ -1017,6 +1948,18 @@
     "betekenis": "inschatten",
     "les": 14,
     "frequentie": 60,
+    "strong_nummer": "G3049",
+    "morfologie": {
+      "stamwortel": "λογίζ",
+      "klasse": "dentaal",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "medeklinkerinteractie",
+        "stam_eindigt_op": "τ, δ, θ, ζ",
+        "formule": "τ, δ, θ, ζ + σ -> σ",
+        "toelichting": "De tandklank valt simpelweg weg voor de sigma (σ)."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "λογιοῦμαι",
       "Aoristus Actief/Medium": "ἐλογισάμην",
@@ -1030,6 +1973,18 @@
     "betekenis": "zaaien",
     "les": 14,
     "frequentie": 56,
+    "strong_nummer": "G4687",
+    "morfologie": {
+      "stamwortel": "σπείρ",
+      "klasse": "liquida",
+      "memoriseren_vereist": false,
+      "mutatieregel": {
+        "type": "vloeiklank_contractie",
+        "stam_eindigt_op": "λ, μ, ν, ρ",
+        "formule": "Stam + ε + ω -> -ῶ (Fut), Sigma valt weg + compensatorische rekking (Aor)",
+        "toelichting": "Vloeiklanken verdragen de sigma niet. Het futurum krijgt een contractie, in de aoristus rekt de stamklinker op."
+      }
+    },
     "stamtijden": {
       "Futurum Actief/Medium": "σπερῶ",
       "Aoristus Actief/Medium": "ἔσπειρα",
