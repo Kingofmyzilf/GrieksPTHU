@@ -1080,88 +1080,181 @@ def main():
             st.download_button(label="📥 Download Data als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
 
         # ==========================================
-        # TAB 4: ACTIEF BEHEERSEN
+        # TAB 4: ACTIEF BEHEERSEN (PARADIGMA'S)
         # ==========================================
         with menu[3]: 
-            actief_db = laad_actief_beheersen_db()
-            if not actief_db: st.warning("Kan actief_beheersen.json niet vinden.")
+            actief_db = laad_actief_db()
+            if not actief_db:
+                st.warning("Bestand 'actief_beheersen_verrijkt.json' ontbreekt of is niet ingeladen.")
             else:
-                st.subheader("🎓 Actief Beheersen (Tentamentraining)")
-                c1, c2, c3 = st.columns(3)
-                with c1: niveau = st.selectbox("Niveau:", [n for n in actief_db.keys() if actief_db[n]])
-                with c2: 
-                    if niveau: categorie = st.selectbox("Categorie:", list(actief_db[niveau].keys()))
-                with c3:
-                    if niveau and categorie: subcat = st.selectbox("Rijtje/Paradigma:", list(actief_db[niveau][categorie].keys()))
+                # BÈTA-CODE SPIEKBRIEF
+                with st.expander("⌨️ Spiekbrief: Hoe typ ik Grieks? (Latijnse toetsen)"):
+                    sc1, sc2, sc3 = st.columns(3)
+                    sc1.markdown("**Klinkers:**\n* `a` = α\n* `e` = ε\n* `h` = η\n* `i` = ι\n* `o` = ο\n* `u` = υ\n* `w` = ω")
+                    sc2.markdown("**Medeklinkers:**\n* `b`=β, `g`=γ, `d`=δ, `z`=ζ\n* `k`=κ, `l`=λ, `m`=μ, `n`=ν\n* `p`=π, `r`=ρ, `t`=τ")
+                    sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
-                if niveau and categorie and subcat:
-                    huidig_rijtje = actief_db[niveau][categorie][subcat]
-                    st.write("---")
-                    oefen_modus = st.radio("Kies je Oefenmethode:", ["📝 Tentamen (Heel Rooster)", "🎯 Train Zwakke Plekken (Flashcards)"], horizontal=True)
-                    st.write("---")
-                    st.info("ℹ️ Gebruik Bèta-code. Accenten worden automatisch genegeerd bij het nakijken.")
+                st.subheader("📝 Paradigma's: Analyseren & Reproduceren")
 
-                    if oefen_modus == "📝 Tentamen (Heel Rooster)":
-                        with st.form(key=f"form_tentamen_{niveau}_{categorie}_{subcat}"):
-                            st.markdown(f"### {categorie} - {subcat}")
-                            cols = st.columns(3)
-                            input_refs = {}
-                            for idx, item in enumerate(huidig_rijtje):
-                                with cols[idx % 3]:
-                                    st.markdown(f"<div class='grid-label'>{item['label']}</div>", unsafe_allow_html=True)
-                                    input_refs[item['id']] = st.text_input("", key=f"inp_{item['id']}", label_visibility="collapsed")
+                # De 4 didactische leerniveaus
+                actief_modus = st.radio(
+                    "Kies je leervorm:", 
+                    ["📖 0. Paradigma-paspoort (Bestuderen)", "🎯 1. Focus op Uitgangen", "📝 2. Volledig Tentamenrooster", "⚡ 3. Flashcards (Zwakke plekken)"], 
+                    horizontal=True
+                )
+                st.write("---")
+
+                # Selectie menu
+                niveaus = list(actief_db.keys())
+                gekozen_niv = st.selectbox("Niveau / Boek:", niveaus)
+                
+                categorieen = list(actief_db[gekozen_niv].keys())
+                gekozen_cat = st.selectbox("Categorie:", categorieen)
+                
+                subcats = list(actief_db[gekozen_niv][gekozen_cat].keys())
+                gekozen_sub = st.selectbox("Paradigma:", subcats)
+                
+                huidig_paradigma = actief_db[gekozen_niv][gekozen_cat][gekozen_sub]
+                
+                st.write("---")
+
+                # =========================================================
+                # MODUS 0: PARADIGMA-PASPOORT (De Mental Map)
+                # =========================================================
+                if "0." in actief_modus:
+                    st.markdown(f"### {gekozen_sub}")
+                    st.info("💡 **Bestudeer de structuur:** De vaste stam is wit, de variabele uitgang is blauw gekleurd.")
+                    
+                    cols = st.columns(2)
+                    for idx, item in enumerate(huidig_paradigma):
+                        with cols[idx % 2]:
+                            stam_html = item.get("stam", "")
+                            uitgang_html = f"<span style='color:#33ccff'>{item.get('uitgang', '')}</span>"
+                            toelichting = item.get("toelichting", "")
                             
-                            if st.form_submit_button("Nakijken"):
-                                registreer_oefening()
-                                st.session_state.actief_nakijk_resultaten = {}
-                                alles_goed = True
-                                for item in huidig_rijtje:
-                                    ingevuld = naar_grieks_transliteratie(input_refs[item['id']])
-                                    correct = normaliseer_accent(ingevuld) == normaliseer_accent(item['vorm'])
-                                    if item['id'] not in st.session_state.gram_stats: st.session_state.gram_stats[item['id']] = {'goed': 0, 'fout': 0, 'streak': 0}
-                                    if correct:
-                                        st.session_state.gram_stats[item['id']]['goed'] += 1; st.session_state.gram_stats[item['id']]['streak'] += 1
-                                    else:
-                                        st.session_state.gram_stats[item['id']]['fout'] += 1; st.session_state.gram_stats[item['id']]['streak'] = 0; alles_goed = False
-                                    st.session_state.actief_nakijk_resultaten[item['id']] = {"ingevuld": ingevuld, "correct": correct, "antwoord": item['vorm']}
-                                trigger_save()
-                                if alles_goed: st.balloons(); st.success("Uitstekend! Je hebt het hele rooster foutloos ingevuld.")
-                                
-                        if st.session_state.actief_nakijk_resultaten:
-                            st.markdown("### Resultaten:")
-                            r_cols = st.columns(3)
-                            for idx, item in enumerate(huidig_rijtje):
-                                res = st.session_state.actief_nakijk_resultaten.get(item['id'])
-                                if res:
-                                    with r_cols[idx % 3]:
-                                        if res['correct']: st.success(f"**{item['label']}**: {res['ingevuld']} ✅")
-                                        else: st.error(f"**{item['label']}**: ❌ Jouw antwoord: '{res['ingevuld']}'. Correct is: **{res['antwoord']}**")
+                            st.markdown(f"**{item['label']}**")
+                            st.markdown(f"<div style='font-size:24px; font-weight:bold; background-color:#222; padding:10px; border-radius:6px; margin-bottom:5px;'>{stam_html}{uitgang_html}</div>", unsafe_allow_html=True)
+                            if toelichting:
+                                st.caption(f"_{toelichting}_")
+                            st.write("")
 
-                    elif oefen_modus == "🎯 Train Zwakke Plekken (Flashcards)":
-                        st.write(f"Hier train je specifieke vormen uit **{subcat}** door elkaar.")
-                        if st.button("Nieuwe Vorm") or not st.session_state.get('actief_flashcard_huidig'):
-                            weights = []
-                            for item in huidig_rijtje:
-                                stats = st.session_state.gram_stats.get(item['id'], {'goed': 0, 'fout': 0, 'streak': 0})
-                                weights.append(max(0.1, 1.0 + (stats['fout'] * 1.5) - (stats['streak'] * 0.4)))
-                            st.session_state.actief_flashcard_huidig = random.choices(huidig_rijtje, weights=weights, k=1)[0]
+                # =========================================================
+                # MODUS 1: FOCUS OP UITGANGEN (Micro-Scaffolding)
+                # =========================================================
+                elif "1." in actief_modus:
+                    st.markdown(f"### {gekozen_sub} (Alleen uitgangen)")
+                    st.write("De stam is al voor je ingevuld. Typ uitsluitend de juiste uitgang!")
+                    
+                    with st.form("form_focus_uitgangen"):
+                        inputs = {}
+                        cols = st.columns(2)
+                        for idx, item in enumerate(huidig_paradigma):
+                            stam = item.get("stam", "")
+                            with cols[idx % 2]:
+                                st.markdown(f"**{item['label']}**")
+                                c_stam, c_in = st.columns([1, 2])
+                                c_stam.markdown(f"<div style='font-size:22px; text-align:right; padding-top:4px;'>{stam} + </div>", unsafe_allow_html=True)
+                                inputs[item["id"]] = c_in.text_input("Uitgang", key=f"foc_{item['id']}", label_visibility="collapsed")
                         
-                        huidig = st.session_state.actief_flashcard_huidig
-                        if huidig:
-                            st.markdown(f"<div class='grieks-woord' style='font-size: 30px;'>Geef de vorm voor: <b>{huidig['label']}</b></div>", unsafe_allow_html=True)
-                            forceer_focus()
-                            with st.form(key=f"form_flash_{huidig['id']}"):
-                                inp = st.text_input("Jouw antwoord (Bèta-code):")
-                                if st.form_submit_button("Controleer"):
-                                    registreer_oefening()
-                                    if huidig['id'] not in st.session_state.gram_stats: st.session_state.gram_stats[huidig['id']] = {'goed': 0, 'fout': 0, 'streak': 0}
-                                    ingevuld = naar_grieks_transliteratie(inp)
-                                    if normaliseer_accent(ingevuld) == normaliseer_accent(huidig['vorm']):
-                                        st.session_state.gram_stats[huidig['id']]['goed'] += 1; st.session_state.gram_stats[huidig['id']]['streak'] += 1
-                                        st.success(f"✓ Correct! **{huidig['vorm']}**"); st.session_state.actief_flashcard_huidig = None; trigger_save()
+                        st.write("")
+                        if st.form_submit_button("Nakijken", type="primary"):
+                            score = 0
+                            fouten = []
+                            for item in huidig_paradigma:
+                                verwacht = normaliseer_accent(item.get("uitgang", ""))
+                                ingevuld = normaliseer_accent(naar_grieks_transliteratie(inputs[item["id"]]))
+                                stam = item.get("stam", "")
+                                
+                                if verwacht == ingevuld or (verwacht == "" and ingevuld == ""):
+                                    score += 1
+                                else:
+                                    fouten.append(f"**{item['label']}:** Verwacht: `{stam}` + `{item.get('uitgang', '')}`, jij typte: `{stam}` + `{ingevuld}`")
+                            
+                            if score == len(huidig_paradigma):
+                                st.success(f"🎉 Perfect! Je hebt alle {score} uitgangen correct!")
+                                st.balloons()
+                            else:
+                                st.error(f"Je had er {score} van de {len(huidig_paradigma)} goed. Kijk naar je fouten:")
+                                for f in fouten: st.write("-", f)
+
+                # =========================================================
+                # MODUS 2: VOLLEDIG TENTAMENROOSTER (Met Cel-Bevriezing)
+                # =========================================================
+                elif "2." in actief_modus:
+                    st.markdown(f"### {gekozen_sub} (Tentamen)")
+                    st.write("Typ de volledige vormen. Goede antwoorden worden vastgezet, foute velden worden leeggemaakt voor een nieuwe poging.")
+                    
+                    # Beheer van de status per cel in session_state
+                    if "tent_state" not in st.session_state: st.session_state.tent_state = {}
+                    if st.session_state.get("tent_para") != gekozen_sub:
+                        st.session_state.tent_state = {item["id"]: {"correct": False, "value": ""} for item in huidig_paradigma}
+                        st.session_state.tent_para = gekozen_sub
+
+                    cols = st.columns(2)
+                    huidige_inputs = {}
+                    
+                    for idx, item in enumerate(huidig_paradigma):
+                        with cols[idx % 2]:
+                            i_id = item["id"]
+                            state = st.session_state.tent_state.get(i_id, {"correct": False, "value": ""})
+                            
+                            if state["correct"]:
+                                st.success(f"**{item['label']}:** {item['vorm']}")
+                            else:
+                                huidige_inputs[i_id] = st.text_input(f"**{item['label']}**", value=state["value"], key=f"tent_{i_id}")
+
+                    st.write("")
+                    # Als nog niet alles goed is, toon nakijk knop
+                    if not all(s["correct"] for s in st.session_state.tent_state.values()):
+                        if st.button("Nakijken", type="primary"):
+                            for item in huidig_paradigma:
+                                i_id = item["id"]
+                                if not st.session_state.tent_state[i_id]["correct"]:
+                                    ingevuld = normaliseer_accent(naar_grieks_transliteratie(huidige_inputs.get(i_id, "")))
+                                    verwacht = normaliseer_accent(item["vorm"])
+                                    
+                                    if ingevuld == verwacht:
+                                        st.session_state.tent_state[i_id]["correct"] = True
+                                        st.session_state.tent_state[i_id]["value"] = item["vorm"]
                                     else:
-                                        st.session_state.gram_stats[huidig['id']]['fout'] += 1; st.session_state.gram_stats[huidig['id']]['streak'] = 0
-                                        st.error(f"✗ Onjuist. Het juiste antwoord is: **{huidig['vorm']}**"); trigger_save()
+                                        st.session_state.tent_state[i_id]["value"] = "" # Cel genadeloos leegmaken bij fout!
+                            st.rerun()
+                    else:
+                        st.success("🏆 Geweldig! Je hebt het volledige paradigma foutloos gereproduceerd!")
+                        if st.button("Reset Rooster"):
+                            st.session_state.tent_state = {item["id"]: {"correct": False, "value": ""} for item in huidig_paradigma}
+                            st.rerun()
+
+                # =========================================================
+                # MODUS 3: FLASHCARDS (Zwakke plekken)
+                # =========================================================
+                elif "3." in actief_modus:
+                    st.markdown(f"### ⚡ Flashcards ({gekozen_sub})")
+                    st.write("Overhoor willekeurige losse vormen uit dit paradigma om je snelheid te trainen.")
+                    
+                    import random
+                    if "flash_huidig" not in st.session_state or st.session_state.get("flash_para_id") != gekozen_sub:
+                        st.session_state.flash_para_id = gekozen_sub
+                        st.session_state.flash_huidig = random.choice(huidig_paradigma)
+                    
+                    huidig_fc = st.session_state.flash_huidig
+                    
+                    st.info(f"Vertaal naar het Grieks: **{gekozen_cat} - {huidig_fc['label']}**")
+                    
+                    with st.form("fc_form", clear_on_submit=True):
+                        fc_in = st.text_input("Griekse vorm:")
+                        if st.form_submit_button("Controleer"):
+                            verwacht = normaliseer_accent(huidig_fc["vorm"])
+                            ingevuld = normaliseer_accent(naar_grieks_transliteratie(fc_in))
+                            
+                            if verwacht == ingevuld:
+                                st.success(f"✓ Goed! Het was inderdaad **{huidig_fc['vorm']}**.")
+                                st.session_state.flash_huidig = random.choice(huidig_paradigma)
+                            else:
+                                stam = huidig_fc.get("stam", "")
+                                uitgang = huidig_fc.get("uitgang", "")
+                                toelichting = huidig_fc.get("toelichting", "")
+                                st.error(f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*")
 
         # ==========================================
         # TAB 5: STAMTIJDEN
