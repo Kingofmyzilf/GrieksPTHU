@@ -347,7 +347,16 @@ def laad_actief_beheersen_db():
     if os.path.exists("actief_beheersen.json"):
         with open("actief_beheersen.json", "r", encoding="utf-8") as f: return json.load(f)
     return None
-
+    
+@st.cache_data
+def laad_actief_db():
+    try:
+        # Zorg dat deze bestandsnaam exact overeenkomt met de naam in je map
+        with open("actief_beheersen.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return None
+        
 @st.cache_data
 def laad_stamtijden_db():
     if os.path.exists("stamtijden.json"):
