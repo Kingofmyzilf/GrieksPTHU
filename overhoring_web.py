@@ -969,7 +969,7 @@ def main():
                         str_lijst.append({"Woord": w['grieks'], "Categorie": w['categorie'], "Eigenschap": w['eigenschap'], "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
                     st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
 
-        # ==========================================
+       # ==========================================
         # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
         with menu[2]: 
