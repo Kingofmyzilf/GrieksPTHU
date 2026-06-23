@@ -1085,7 +1085,7 @@ def main():
         with menu[3]: 
             actief_db = laad_actief_db()
             if not actief_db:
-                st.warning("Bestand 'actief_beheersen_verrijkt.json' ontbreekt of is niet ingeladen.")
+                st.warning("Bestand 'actief_beheersen.json' ontbreekt of is niet ingeladen.")
             else:
                 # BÈTA-CODE SPIEKBRIEF
                 with st.expander("⌨️ Spiekbrief: Hoe typ ik Grieks? (Latijnse toetsen)"):
