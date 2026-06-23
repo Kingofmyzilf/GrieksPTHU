@@ -254,7 +254,7 @@
           "id": "grieks_1_werkwoord_actief_indicativus_praesens_1e_ev",
           "stam": "λύ",
           "uitgang": "ω",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
@@ -748,7 +748,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__nom_ev",
           "stam": "κώμ",
           "uitgang": "η",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -756,7 +756,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__gen_ev",
           "stam": "κώμ",
           "uitgang": "ης",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -764,7 +764,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__dat_ev",
           "stam": "κώμ",
           "uitgang": "ῃ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -772,7 +772,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__acc_ev",
           "stam": "κώμ",
           "uitgang": "ην",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -780,7 +780,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__nom_mv",
           "stam": "κῶμ",
           "uitgang": "αι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -788,7 +788,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__gen_mv",
           "stam": "κωμ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -796,7 +796,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__dat_mv",
           "stam": "κώμ",
           "uitgang": "αις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -804,7 +804,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__acc_mv",
           "stam": "κώμ",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "-α (θύρα)": [
@@ -814,7 +814,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__nom_ev",
           "stam": "θύρ",
           "uitgang": "α",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -822,7 +822,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__gen_ev",
           "stam": "θύρ",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -830,7 +830,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__dat_ev",
           "stam": "θύρ",
           "uitgang": "ᾳ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -838,7 +838,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__acc_ev",
           "stam": "θύρ",
           "uitgang": "αν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -846,7 +846,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__nom_mv",
           "stam": "θύρ",
           "uitgang": "αι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -854,7 +854,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__gen_mv",
           "stam": "θυρ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -862,7 +862,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__dat_mv",
           "stam": "θύρ",
           "uitgang": "αις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -870,7 +870,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__acc_mv",
           "stam": "θύρ",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "-α (ἄκανθα)": [
@@ -880,7 +880,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__nom_ev",
           "stam": "ἄκανθ",
           "uitgang": "α",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -888,7 +888,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__gen_ev",
           "stam": "ἀκάνθ",
           "uitgang": "ης",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -896,7 +896,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__dat_ev",
           "stam": "ἀκάνθ",
           "uitgang": "ῃ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -904,7 +904,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__acc_ev",
           "stam": "ἄκανθ",
           "uitgang": "αν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -912,7 +912,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__nom_mv",
           "stam": "ἄκανθ",
           "uitgang": "αι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -920,7 +920,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__gen_mv",
           "stam": "ἀκανθ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -928,7 +928,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__dat_mv",
           "stam": "ἀκάνθ",
           "uitgang": "αις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -936,7 +936,7 @@
           "id": "grieks_1_groep_1_vrouwelijk__acc_mv",
           "stam": "ἀκάνθ",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ]
     },
@@ -948,7 +948,7 @@
           "id": "grieks_1_groep_1_mannelijk__nom_ev",
           "stam": "προφήτ",
           "uitgang": "ης",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -956,7 +956,7 @@
           "id": "grieks_1_groep_1_mannelijk__gen_ev",
           "stam": "προφήτ",
           "uitgang": "ου",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -964,7 +964,7 @@
           "id": "grieks_1_groep_1_mannelijk__dat_ev",
           "stam": "προφήτ",
           "uitgang": "ῃ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -972,7 +972,7 @@
           "id": "grieks_1_groep_1_mannelijk__acc_ev",
           "stam": "προφήτ",
           "uitgang": "ην",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -980,7 +980,7 @@
           "id": "grieks_1_groep_1_mannelijk__nom_mv",
           "stam": "προφῆτ",
           "uitgang": "αι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -988,7 +988,7 @@
           "id": "grieks_1_groep_1_mannelijk__gen_mv",
           "stam": "προφητ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -996,7 +996,7 @@
           "id": "grieks_1_groep_1_mannelijk__dat_mv",
           "stam": "προφήτ",
           "uitgang": "αις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -1004,7 +1004,7 @@
           "id": "grieks_1_groep_1_mannelijk__acc_mv",
           "stam": "προφήτ",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "-ας (νεανίας)": [
@@ -1014,7 +1014,7 @@
           "id": "grieks_1_groep_1_mannelijk__nom_ev",
           "stam": "νεανί",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -1022,7 +1022,7 @@
           "id": "grieks_1_groep_1_mannelijk__gen_ev",
           "stam": "νεανί",
           "uitgang": "ου",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -1030,7 +1030,7 @@
           "id": "grieks_1_groep_1_mannelijk__dat_ev",
           "stam": "νεανί",
           "uitgang": "ᾳ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -1038,7 +1038,7 @@
           "id": "grieks_1_groep_1_mannelijk__acc_ev",
           "stam": "νεανί",
           "uitgang": "αν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -1046,7 +1046,7 @@
           "id": "grieks_1_groep_1_mannelijk__nom_mv",
           "stam": "νεανί",
           "uitgang": "αι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -1054,7 +1054,7 @@
           "id": "grieks_1_groep_1_mannelijk__gen_mv",
           "stam": "νεανι",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -1062,7 +1062,7 @@
           "id": "grieks_1_groep_1_mannelijk__dat_mv",
           "stam": "νεανί",
           "uitgang": "αις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -1070,7 +1070,7 @@
           "id": "grieks_1_groep_1_mannelijk__acc_mv",
           "stam": "νεανί",
           "uitgang": "ας",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ]
     },
@@ -1082,7 +1082,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_ev",
           "stam": "δοῦλ",
           "uitgang": "ος",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -1090,7 +1090,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_ev",
           "stam": "δούλ",
           "uitgang": "ου",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -1098,7 +1098,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_ev",
           "stam": "δούλ",
           "uitgang": "ῳ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -1106,7 +1106,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_ev",
           "stam": "δοῦλ",
           "uitgang": "ον",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -1114,7 +1114,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_mv",
           "stam": "δοῦλ",
           "uitgang": "οι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -1122,7 +1122,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_mv",
           "stam": "δούλ",
           "uitgang": "ων",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -1130,7 +1130,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_mv",
           "stam": "δούλ",
           "uitgang": "οις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -1138,7 +1138,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_mv",
           "stam": "δούλ",
           "uitgang": "ους",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "-ος (βίβλος)": [
@@ -1148,7 +1148,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_ev",
           "stam": "βίβλ",
           "uitgang": "ος",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -1156,7 +1156,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_ev",
           "stam": "βίβλ",
           "uitgang": "ου",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -1164,7 +1164,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_ev",
           "stam": "βίβλ",
           "uitgang": "ῳ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -1172,7 +1172,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_ev",
           "stam": "βίβλ",
           "uitgang": "ον",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -1180,7 +1180,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_mv",
           "stam": "βίβλ",
           "uitgang": "οι",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -1188,7 +1188,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_mv",
           "stam": "βίβλ",
           "uitgang": "ων",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -1196,7 +1196,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_mv",
           "stam": "βίβλ",
           "uitgang": "οις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -1204,7 +1204,7 @@
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_mv",
           "stam": "βίβλ",
           "uitgang": "ους",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "-ους (νοῦς)": [
@@ -1212,15 +1212,17 @@
           "label": "nom. ev.",
           "vorm": "νοῦς",
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_ev",
-          "stam": "νοῦς",
-          "uitgang": ""
+          "stam": "νοῦ",
+          "uitgang": "ς",
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
           "vorm": "νοῦ",
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__gen_ev",
           "stam": "νοῦ",
-          "uitgang": ""
+          "uitgang": "",
+          "toelichting": "Dit is de zuivere stam of nominativus (geen zichtbare uitgang toegevoegd)."
         },
         {
           "label": "dat. ev.",
@@ -1233,15 +1235,17 @@
           "label": "acc. ev.",
           "vorm": "νοῦν",
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_ev",
-          "stam": "νοῦν",
-          "uitgang": ""
+          "stam": "νοῦ",
+          "uitgang": "ν",
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
           "vorm": "νοῖ",
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__nom_mv",
-          "stam": "νοῖ",
-          "uitgang": ""
+          "stam": "νο",
+          "uitgang": "ῖ",
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -1254,15 +1258,17 @@
           "label": "dat. mv.",
           "vorm": "νοῖς",
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__dat_mv",
-          "stam": "νοῖς",
-          "uitgang": ""
+          "stam": "νο",
+          "uitgang": "ῖς",
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
           "vorm": "νοῦς",
           "id": "grieks_1_groep_2_mannelijk_vrouwelijk__acc_mv",
-          "stam": "νοῦς",
-          "uitgang": ""
+          "stam": "νοῦ",
+          "uitgang": "ς",
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ]
     },
@@ -1274,7 +1280,7 @@
           "id": "grieks_1_groep_2_onzijdig__nom_ev",
           "stam": "ἔργ",
           "uitgang": "ον",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -1282,7 +1288,7 @@
           "id": "grieks_1_groep_2_onzijdig__gen_ev",
           "stam": "ἔργ",
           "uitgang": "ου",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -1290,7 +1296,7 @@
           "id": "grieks_1_groep_2_onzijdig__dat_ev",
           "stam": "ἔργ",
           "uitgang": "ῳ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -1298,7 +1304,7 @@
           "id": "grieks_1_groep_2_onzijdig__acc_ev",
           "stam": "ἔργ",
           "uitgang": "ον",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -1306,7 +1312,7 @@
           "id": "grieks_1_groep_2_onzijdig__nom_mv",
           "stam": "ἔργ",
           "uitgang": "α",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -1314,7 +1320,7 @@
           "id": "grieks_1_groep_2_onzijdig__gen_mv",
           "stam": "ἔργ",
           "uitgang": "ων",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -1322,7 +1328,7 @@
           "id": "grieks_1_groep_2_onzijdig__dat_mv",
           "stam": "ἔργ",
           "uitgang": "οις",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -1330,7 +1336,7 @@
           "id": "grieks_1_groep_2_onzijdig__acc_mv",
           "stam": "ἔργ",
           "uitgang": "α",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "-ουν (ὀστοῦν)": [
@@ -1340,7 +1346,7 @@
           "id": "grieks_1_groep_2_onzijdig__nom_ev",
           "stam": "ὀστ",
           "uitgang": "οῦν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. ev.",
@@ -1348,7 +1354,7 @@
           "id": "grieks_1_groep_2_onzijdig__gen_ev",
           "stam": "ὀστ",
           "uitgang": "οῦ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. ev.",
@@ -1356,7 +1362,7 @@
           "id": "grieks_1_groep_2_onzijdig__dat_ev",
           "stam": "ὀστ",
           "uitgang": "ῷ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. ev.",
@@ -1364,7 +1370,7 @@
           "id": "grieks_1_groep_2_onzijdig__acc_ev",
           "stam": "ὀστ",
           "uitgang": "οῦν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. mv.",
@@ -1372,7 +1378,7 @@
           "id": "grieks_1_groep_2_onzijdig__nom_mv",
           "stam": "ὀστ",
           "uitgang": "ᾶ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. mv.",
@@ -1380,7 +1386,7 @@
           "id": "grieks_1_groep_2_onzijdig__gen_mv",
           "stam": "ὀστ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. mv.",
@@ -1388,7 +1394,7 @@
           "id": "grieks_1_groep_2_onzijdig__dat_mv",
           "stam": "ὀστ",
           "uitgang": "οῖς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. mv.",
@@ -1396,7 +1402,7 @@
           "id": "grieks_1_groep_2_onzijdig__acc_mv",
           "stam": "ὀστ",
           "uitgang": "ᾶ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ]
     },
@@ -1408,7 +1414,7 @@
           "id": "grieks_1_adjectiva_mannelijk_nom_sg",
           "stam": "καλ",
           "uitgang": "ός",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. sg.",
@@ -1416,7 +1422,7 @@
           "id": "grieks_1_adjectiva_mannelijk_gen_sg",
           "stam": "καλ",
           "uitgang": "οῦ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. sg.",
@@ -1424,7 +1430,7 @@
           "id": "grieks_1_adjectiva_mannelijk_dat_sg",
           "stam": "καλ",
           "uitgang": "ῷ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. sg.",
@@ -1432,7 +1438,7 @@
           "id": "grieks_1_adjectiva_mannelijk_acc_sg",
           "stam": "καλ",
           "uitgang": "όν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. pl.",
@@ -1440,7 +1446,7 @@
           "id": "grieks_1_adjectiva_mannelijk_nom_pl",
           "stam": "καλ",
           "uitgang": "οί",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. pl.",
@@ -1448,7 +1454,7 @@
           "id": "grieks_1_adjectiva_mannelijk_gen_pl",
           "stam": "καλ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. pl.",
@@ -1456,7 +1462,7 @@
           "id": "grieks_1_adjectiva_mannelijk_dat_pl",
           "stam": "καλ",
           "uitgang": "οῖς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. pl.",
@@ -1464,7 +1470,7 @@
           "id": "grieks_1_adjectiva_mannelijk_acc_pl",
           "stam": "καλ",
           "uitgang": "ούς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "Vrouwelijk": [
@@ -1474,7 +1480,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_nom_sg",
           "stam": "καλ",
           "uitgang": "ή",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. sg.",
@@ -1482,7 +1488,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_gen_sg",
           "stam": "καλ",
           "uitgang": "ῆς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. sg.",
@@ -1490,7 +1496,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_dat_sg",
           "stam": "καλ",
           "uitgang": "ῇ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. sg.",
@@ -1498,7 +1504,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_acc_sg",
           "stam": "καλ",
           "uitgang": "ήν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. pl.",
@@ -1506,7 +1512,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_nom_pl",
           "stam": "καλ",
           "uitgang": "αί",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. pl.",
@@ -1514,7 +1520,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_gen_pl",
           "stam": "καλ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. pl.",
@@ -1522,7 +1528,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_dat_pl",
           "stam": "καλ",
           "uitgang": "αῖς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. pl.",
@@ -1530,7 +1536,7 @@
           "id": "grieks_1_adjectiva_vrouwelijk_acc_pl",
           "stam": "καλ",
           "uitgang": "άς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ],
       "Onzijdig": [
@@ -1540,7 +1546,7 @@
           "id": "grieks_1_adjectiva_onzijdig_nom_sg",
           "stam": "καλ",
           "uitgang": "όν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. sg.",
@@ -1548,7 +1554,7 @@
           "id": "grieks_1_adjectiva_onzijdig_gen_sg",
           "stam": "καλ",
           "uitgang": "οῦ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. sg.",
@@ -1556,7 +1562,7 @@
           "id": "grieks_1_adjectiva_onzijdig_dat_sg",
           "stam": "καλ",
           "uitgang": "ῷ",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. sg.",
@@ -1564,7 +1570,7 @@
           "id": "grieks_1_adjectiva_onzijdig_acc_sg",
           "stam": "καλ",
           "uitgang": "όν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "nom. pl.",
@@ -1572,7 +1578,7 @@
           "id": "grieks_1_adjectiva_onzijdig_nom_pl",
           "stam": "καλ",
           "uitgang": "ά",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "gen. pl.",
@@ -1580,7 +1586,7 @@
           "id": "grieks_1_adjectiva_onzijdig_gen_pl",
           "stam": "καλ",
           "uitgang": "ῶν",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "dat. pl.",
@@ -1588,7 +1594,7 @@
           "id": "grieks_1_adjectiva_onzijdig_dat_pl",
           "stam": "καλ",
           "uitgang": "οῖς",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         },
         {
           "label": "acc. pl.",
@@ -1596,7 +1602,7 @@
           "id": "grieks_1_adjectiva_onzijdig_acc_pl",
           "stam": "καλ",
           "uitgang": "ά",
-          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze klasse."
+          "toelichting": "Standaard naamvals- of persoonsuitgang voor deze verbuiging."
         }
       ]
     },
@@ -2494,7 +2500,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_ev",
           "stam": "ἔβη",
           "uitgang": "ν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 2e ev",
@@ -2502,7 +2508,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_ev",
           "stam": "ἔβη",
           "uitgang": "ς",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 3e ev",
@@ -2518,7 +2524,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_mv",
           "stam": "ἔβη",
           "uitgang": "μεν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 2e mv",
@@ -2526,7 +2532,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_mv",
           "stam": "ἔβη",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 3e mv",
@@ -2542,7 +2548,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_ev",
           "stam": "βῆ",
           "uitgang": "θι",
-          "toelichting": "De thèta (θ) is hier het vaste herkenningspunt van de passieve aoristus."
+          "toelichting": "Oeroude, onregelmatige actieve imperativus-uitgang (heeft niets met passief te maken!)."
         },
         {
           "label": "Imp 3e ev",
@@ -2550,7 +2556,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_ev",
           "stam": "βή",
           "uitgang": "τω",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Imp 2e mv",
@@ -2558,7 +2564,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_mv",
           "stam": "βῆ",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Imp 3e mv",
@@ -2566,7 +2572,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_mv",
           "stam": "βή",
           "uitgang": "τωσαν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Infinitivus",
@@ -2574,7 +2580,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_infinitivus",
           "stam": "βῆ",
           "uitgang": "ναι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Stam (ἔγνων)": [
@@ -2584,7 +2590,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_ev",
           "stam": "ἔγνω",
           "uitgang": "ν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 2e ev",
@@ -2592,7 +2598,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_ev",
           "stam": "ἔγνω",
           "uitgang": "ς",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 3e ev",
@@ -2608,7 +2614,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_1e_mv",
           "stam": "ἔγνω",
           "uitgang": "μεν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 2e mv",
@@ -2616,7 +2622,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_ind_2e_mv",
           "stam": "ἔγνω",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Ind 3e mv",
@@ -2632,7 +2638,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_ev",
           "stam": "γνῶ",
           "uitgang": "θι",
-          "toelichting": "De thèta (θ) is hier het vaste herkenningspunt van de passieve aoristus."
+          "toelichting": "Oeroude, onregelmatige actieve imperativus-uitgang (heeft niets met passief te maken!)."
         },
         {
           "label": "Imp 3e ev",
@@ -2640,7 +2646,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_ev",
           "stam": "γνώ",
           "uitgang": "τω",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Imp 2e mv",
@@ -2648,7 +2654,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_2e_mv",
           "stam": "γνῶ",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Imp 3e mv",
@@ -2656,7 +2662,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_imp_3e_mv",
           "stam": "γνώ",
           "uitgang": "τωσαν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Infinitivus",
@@ -2664,7 +2670,7 @@
           "id": "grieks_2_werkwoord_speciale_aoristus_stam_infinitivus",
           "stam": "γνῶ",
           "uitgang": "ναι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ]
     },
@@ -2684,7 +2690,7 @@
           "id": "grieks_2_werkwoord_medium_passief_indicativus_praesens_m_p_2e_ev",
           "stam": "λύ",
           "uitgang": "ῃ",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e ev",
@@ -2724,8 +2730,9 @@
           "label": "1e ev",
           "vorm": "ἐλυόμην",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_1e_ev",
-          "stam": "ἐλυόμην",
-          "uitgang": ""
+          "stam": "ἐλυ",
+          "uitgang": "όμην",
+          "toelichting": "Let op de thematische bindvocaal (ο / ε) die fungeert als lijm tussen de stam en de persoonsuitgang."
         },
         {
           "label": "2e ev",
@@ -2747,8 +2754,9 @@
           "label": "1e mv",
           "vorm": "ἐλυόμεθα",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_imperfectum_m_p_1e_mv",
-          "stam": "ἐλυόμεθα",
-          "uitgang": ""
+          "stam": "ἐλυ",
+          "uitgang": "όμεθα",
+          "toelichting": "Let op de thematische bindvocaal (ο / ε) die fungeert als lijm tussen de stam en de persoonsuitgang."
         },
         {
           "label": "2e mv",
@@ -2872,8 +2880,9 @@
           "label": "1e ev",
           "vorm": "ἐλυσάμην",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_1e_ev",
-          "stam": "ἐλυσάμην",
-          "uitgang": ""
+          "stam": "ἐλυ",
+          "uitgang": "σάμην",
+          "toelichting": "De sigma (σ) fungeert hier als tijdskenmerk (futurum of aoristus)."
         },
         {
           "label": "2e ev",
@@ -2895,8 +2904,9 @@
           "label": "1e mv",
           "vorm": "ἐλυσάμεθα",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_aoristus_med_1e_mv",
-          "stam": "ἐλυσάμεθα",
-          "uitgang": ""
+          "stam": "ἐλυ",
+          "uitgang": "σάμεθα",
+          "toelichting": "De sigma (σ) fungeert hier als tijdskenmerk (futurum of aoristus)."
         },
         {
           "label": "2e mv",
@@ -2970,22 +2980,25 @@
           "label": "1e ev",
           "vorm": "λέλυμαι",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_1e_ev",
-          "stam": "λέλυμαι",
-          "uitgang": ""
+          "stam": "λέλυ",
+          "uitgang": "μαι",
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
           "vorm": "λέλυσαι",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_2e_ev",
-          "stam": "λέλυσαι",
-          "uitgang": ""
+          "stam": "λέλυ",
+          "uitgang": "σαι",
+          "toelichting": "De sigma (σ) fungeert hier als tijdskenmerk (futurum of aoristus)."
         },
         {
           "label": "3e ev",
           "vorm": "λέλυται",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_3e_ev",
-          "stam": "λέλυται",
-          "uitgang": ""
+          "stam": "λέλυ",
+          "uitgang": "ται",
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "1e mv",
@@ -2993,21 +3006,23 @@
           "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_1e_mv",
           "stam": "λελύ",
           "uitgang": "μεθα",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
           "vorm": "λέλυσθε",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_2e_mv",
-          "stam": "λέλυσθε",
-          "uitgang": ""
+          "stam": "λέλυ",
+          "uitgang": "σθε",
+          "toelichting": "De sigma (σ) fungeert hier als tijdskenmerk (futurum of aoristus)."
         },
         {
           "label": "3e mv",
           "vorm": "λέλυνται",
           "id": "grieks_2_werkwoord_medium_passief_indicativus_perfectum_m_p_3e_mv",
-          "stam": "λέλυνται",
-          "uitgang": ""
+          "stam": "λέλυ",
+          "uitgang": "νται",
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Indicativus Plusquamperf. (M/P)": [
@@ -3017,7 +3032,7 @@
           "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_1e_ev",
           "stam": "ἐλελύ",
           "uitgang": "μην",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
@@ -3039,7 +3054,7 @@
           "id": "grieks_2_werkwoord_medium_passief_indicativus_plusquamperf_m_p_1e_mv",
           "stam": "ἐλελύ",
           "uitgang": "μεθα",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
@@ -3213,7 +3228,7 @@
           "id": "grieks_2_participium_praesens_actief_participium_nom_ev_m",
           "stam": "λύ",
           "uitgang": "ων",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Participium Nom. ev. V",
@@ -3993,7 +4008,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_1e_ev",
           "stam": "λύ",
           "uitgang": "ω",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
@@ -4001,7 +4016,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_2e_ev",
           "stam": "λύ",
           "uitgang": "ῃς",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e ev",
@@ -4009,7 +4024,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_3e_ev",
           "stam": "λύ",
           "uitgang": "ῃ",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "1e mv",
@@ -4017,7 +4032,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_1e_mv",
           "stam": "λύ",
           "uitgang": "ωμεν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
@@ -4025,7 +4040,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_2e_mv",
           "stam": "λύ",
           "uitgang": "ητε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e mv",
@@ -4033,7 +4048,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_actief_3e_mv",
           "stam": "λύ",
           "uitgang": "ωσι(ν)",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Praesens Medium": [
@@ -4043,7 +4058,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_1e_ev",
           "stam": "λύ",
           "uitgang": "ωμαι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
@@ -4051,7 +4066,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_2e_ev",
           "stam": "λύ",
           "uitgang": "ῃ",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e ev",
@@ -4059,7 +4074,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_3e_ev",
           "stam": "λύ",
           "uitgang": "ηται",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "1e mv",
@@ -4067,7 +4082,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_1e_mv",
           "stam": "λυ",
           "uitgang": "ώμεθα",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
@@ -4075,7 +4090,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_2e_mv",
           "stam": "λύ",
           "uitgang": "ησθε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e mv",
@@ -4083,7 +4098,7 @@
           "id": "grieks_3_werkwoord_conjunctivus_praesens_medium_3e_mv",
           "stam": "λύ",
           "uitgang": "ωνται",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Aoristus Actief": [
@@ -4245,7 +4260,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_1e_ev",
           "stam": "δείκνυ",
           "uitgang": "μι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
@@ -4253,7 +4268,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_2e_ev",
           "stam": "δείκνυ",
           "uitgang": "ς",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e ev",
@@ -4269,7 +4284,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_1e_mv",
           "stam": "δείκνυ",
           "uitgang": "μεν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
@@ -4277,7 +4292,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_2e_mv",
           "stam": "δείκνυ",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e mv",
@@ -4285,7 +4300,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_praesens_actief_3e_mv",
           "stam": "δεικνύ",
           "uitgang": "ασι(ν)",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Indicativus Imperfectum Actief": [
@@ -4295,7 +4310,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_1e_ev",
           "stam": "ἐδείκνυ",
           "uitgang": "ν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e ev",
@@ -4303,7 +4318,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_2e_ev",
           "stam": "ἐδείκνυ",
           "uitgang": "ς",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e ev",
@@ -4319,7 +4334,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_1e_mv",
           "stam": "ἐδείκνυ",
           "uitgang": "μεν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
@@ -4327,7 +4342,7 @@
           "id": "grieks_3_werkwoord_op_indicativus_imperfectum_actief_2e_mv",
           "stam": "ἐδείκνυ",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e mv",
@@ -4353,7 +4368,7 @@
           "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_3e_ev",
           "stam": "δεικνύ",
           "uitgang": "τω",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "2e mv",
@@ -4361,7 +4376,7 @@
           "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_2e_mv",
           "stam": "δείκνυ",
           "uitgang": "τε",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "3e mv",
@@ -4369,7 +4384,7 @@
           "id": "grieks_3_werkwoord_op_imperativus_praesens_actief_3e_mv",
           "stam": "δεικνύ",
           "uitgang": "τωσαν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Infinitivus Praesens Actief": [
@@ -4379,7 +4394,7 @@
           "id": "grieks_3_werkwoord_op_infinitivus_praesens_actief_infinitivus",
           "stam": "δεικνύ",
           "uitgang": "ναι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ]
     },
@@ -4391,7 +4406,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_nom_ev",
           "stam": "δεικνύ",
           "uitgang": "ς",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Gen ev",
@@ -4399,7 +4414,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_gen_ev",
           "stam": "δεικνύ",
           "uitgang": "ντος",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Dat ev",
@@ -4407,7 +4422,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_dat_ev",
           "stam": "δεικνύ",
           "uitgang": "ντι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Acc ev",
@@ -4415,7 +4430,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_acc_ev",
           "stam": "δεικνύ",
           "uitgang": "ντα",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Nom mv",
@@ -4423,7 +4438,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_nom_mv",
           "stam": "δεικνύ",
           "uitgang": "ντες",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Gen mv",
@@ -4431,7 +4446,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_gen_mv",
           "stam": "δεικνύ",
           "uitgang": "ντων",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Dat mv",
@@ -4447,7 +4462,7 @@
           "id": "grieks_3_participium_op_praesens_actief_m_acc_mv",
           "stam": "δεικνύ",
           "uitgang": "ντας",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ],
       "Praesens Actief (V)": [
@@ -4523,7 +4538,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_nom_ev",
           "stam": "δεικνύ",
           "uitgang": "ν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Gen ev",
@@ -4531,7 +4546,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_gen_ev",
           "stam": "δεικνύ",
           "uitgang": "ντος",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Dat ev",
@@ -4539,7 +4554,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_dat_ev",
           "stam": "δεικνύ",
           "uitgang": "ντι",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Acc ev",
@@ -4547,7 +4562,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_acc_ev",
           "stam": "δεικνύ",
           "uitgang": "ν",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Nom mv",
@@ -4555,7 +4570,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_nom_mv",
           "stam": "δεικνύ",
           "uitgang": "ντα",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Gen mv",
@@ -4563,7 +4578,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_gen_mv",
           "stam": "δεικνύ",
           "uitgang": "ντων",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         },
         {
           "label": "Dat mv",
@@ -4579,7 +4594,7 @@
           "id": "grieks_3_participium_op_praesens_actief_o_acc_mv",
           "stam": "δεικνύ",
           "uitgang": "ντα",
-          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de (gewijzigde) stam."
+          "toelichting": "Vaste persoons- of participiumuitgang toegevoegd aan de stam."
         }
       ]
     }
