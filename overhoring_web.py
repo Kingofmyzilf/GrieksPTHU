@@ -881,7 +881,6 @@ def main():
                                 if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']]
                                 
                                 similar = [w for w in pool if w['grieks'].startswith(prefix)]
-                                random.shuffle(similar)
                                 random.shuffle(pool)
                                 
                                 for w in similar + pool:
