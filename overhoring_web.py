@@ -381,6 +381,14 @@ def laad_actief_beheersen_db():
     return None
     
 @st.cache_data
+def laad_vocab_db():
+    bestand = "basis_woorden_verrijkt.json" if os.path.exists("basis_woorden_verrijkt.json") else "basis_woorden.json"
+    if os.path.exists(bestand):
+        with open(bestand, "r", encoding="utf-8") as f: 
+            return json.load(f)
+    return []
+    
+@st.cache_data
 def laad_actief_db():
     try:
         # Zorg dat deze bestandsnaam exact overeenkomt met de naam in je map
