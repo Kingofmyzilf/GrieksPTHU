@@ -961,7 +961,7 @@ def main():
                         str_lijst.append({"Woord": w['grieks'], "Categorie": w['categorie'], "Eigenschap": w['eigenschap'], "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
                     st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
 
-        # ==========================================
+         # ==========================================
         # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
         with menu[2]: 
@@ -1036,7 +1036,7 @@ def main():
             
             st.write("---")
 
-            # --- 4. VOORTGANG PER VAK (Nieuw!) ---
+            # --- 4. VOORTGANG PER VAK ---
             st.markdown("### 🏛️ Voortgang per Verplicht Onderdeel")
             st.caption("Norm: Een item telt als 'Beheerst' zodra het een universele streak van 16 of hoger heeft bereikt.")
 
@@ -1085,7 +1085,7 @@ def main():
 
             st.write("---")
 
-            # --- 5. DE STAMTIJDEN SLUIS (Nieuw!) ---
+            # --- 5. DE STAMTIJDEN SLUIS ---
             st.markdown("### ⏳ De Stamtijden-Sluis")
             tot_stam_ww = len(stamtijden_db) if stamtijden_db else 0
             ontgrendeld_stam_ww = sum(1 for w in stamtijden_db if vocab_streaks.get(w['praesens'], 0) >= 5) if stamtijden_db else 0
@@ -1099,6 +1099,11 @@ def main():
                 st.info(f"🔒 Nog **{nog_te_gaan}** werkwoorden te ontgrendelen via het Woorden-tabblad.")
 
             st.write("---")
+
+            # --- 6. FASERING LEERLIJNEN GRAFIEK ---
+            st.markdown("### 📈 Fasering Leerlijnen")
+            
+            df_plot = pd.DataFrame({
                 'Module': ['Vocabulaire', 'Stamtijden', 'Structuurwoorden'],
                 'Nieuw (0)': [stats_vocab['Nieuw'], stats_stam['Nieuw'], stats_str['Nieuw']],
                 'In Training (1-15)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']],
@@ -1113,9 +1118,9 @@ def main():
             
             st.write("---")
 
-            # --- 7. JOUW OEFENRITME (Jouw bestaande logica) ---
+            # --- 7. JOUW OEFENRITME ---
             st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
-            from datetime import datetime
+            
             if st.session_state.dag_stats:
                 df_dagen = pd.DataFrame(list(st.session_state.dag_stats.items()), columns=['Datum', 'Aantal'])
                 df_dagen['Datum'] = pd.to_datetime(df_dagen['Datum'])
@@ -1140,10 +1145,9 @@ def main():
             
             st.write("---")
 
-            # --- 8. COMPETITIE DASHBOARD (Jouw bestaande logica) ---
+            # --- 8. COMPETITIE DASHBOARD ---
             st.subheader("🏆 Competitie Dashboard (Laatste 14 dagen)")
             try:
-                # Let op: Zorg dat 'conn' wereldwijd of in deze scope gedefinieerd is in jouw script
                 df_global = conn.read(ttl=0)
                 if 'gebruikersnaam' in df_global.columns and 'dag_stats' in df_global.columns:
                     comp_data = []
@@ -1192,7 +1196,7 @@ def main():
             
             st.write("---")
 
-            # --- 9. KNELPUNTEN (Jouw bestaande logica) ---
+            # --- 9. KNELPUNTEN ---
             st.subheader("🔥 Jouw Knelpunten (Top 10)")
             knelpunten = []
             for w in st.session_state.data:
