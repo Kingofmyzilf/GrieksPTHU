@@ -969,7 +969,7 @@ def main():
                         str_lijst.append({"Woord": w['grieks'], "Categorie": w['categorie'], "Eigenschap": w['eigenschap'], "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
                     st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
 
-         # ==========================================
+        # ==========================================
         # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
         with menu[2]: 
@@ -984,16 +984,17 @@ def main():
             if "actief_stats" not in st.session_state:
                 st.session_state.actief_stats = {}
 
-            # Hulpfunctie voor voortgangsbalken
             def toon_meting(label, beheerst, totaal):
                 pct = int((beheerst / totaal) * 100) if totaal > 0 else 0
                 st.markdown(f"**{label}** (`{beheerst}/{totaal}` — **{pct}%**)")
                 st.progress(beheerst / totaal if totaal > 0 else 0.0)
 
-            # --- 2. STATISTIEKEN BEREKENEN (Jouw bestaande logica) ---
+            # --- 2. STATISTIEKEN BEREKENEN ---
             stats_vocab = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
             tot_goed_v, tot_fout_v = 0, 0
-            vocab_streaks = {} # Handige dictionary voor snelle lookups verderop
+            vocab_streaks = {} 
+            bekende_freq = 0
+            totale_freq = 0
 
             if st.session_state.data:
                 for w in st.session_state.data:
@@ -1001,9 +1002,12 @@ def main():
                     strk = int(w.get('streak', 0))
                     vocab_streaks[grieks_woord] = strk
                     
+                    freq = int(w.get('frequentie', w.get('frequentie_nt', 1)))
+                    totale_freq += freq
+                    
                     tot_goed_v += int(w.get('score_goed', 0)); tot_fout_v += int(w.get('score_fout', 0))
-                    if strk >= 30: stats_vocab['Mastery'] += 1
-                    elif strk >= 16: stats_vocab['Beheerst'] += 1
+                    if strk >= 30: stats_vocab['Mastery'] += 1; bekende_freq += freq
+                    elif strk >= 16: stats_vocab['Beheerst'] += 1; bekende_freq += freq
                     elif strk >= 1: stats_vocab['In Training'] += 1
                     else: stats_vocab['Nieuw'] += 1
 
@@ -1032,19 +1036,32 @@ def main():
                     elif strk_st >= 1: stats_str['In Training'] += 1
                     else: stats_str['Nieuw'] += 1
 
-            # --- 3. TOP METRICS WEERGAVE ---
-            c_met1, c_met2, c_met3 = st.columns(3)
+            # --- 3. TOP METRICS & BAROMETER ---
+            c_met1, c_met2, c_met3, c_met4 = st.columns(4)
             tot_g = tot_goed_v + tot_goed_s + tot_goed_st
             tot_f = tot_fout_v + tot_fout_s + tot_fout_st
             acc = int((tot_g / (tot_g + tot_f) * 100)) if (tot_g + tot_f) > 0 else 0
             
+            # Formule: Basiswoordenlijst PThU dekt doorgaans ca. 78% van het gehele NT
+            dekking_pct = int((bekende_freq / max(1, totale_freq)) * 78) if totale_freq else 0
+            
             c_met1.metric("Totale Accuratesse", f"{acc}%")
             c_met2.metric("Items op 'Mastery'", stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery'])
-            c_met3.metric("Totale Beoordelingen", tot_g + tot_f)
+            c_met3.metric("Beoordelingen", tot_g + tot_f)
+            c_met4.metric("🌍 NT Exegese-Dekking", f"~{dekking_pct}%", help="Geschat percentage van het Nieuwe Testament dat je nu zónder woordenboek kunt lezen op basis van de theologische frequentie van jouw beheerste woorden.")
             
             st.write("---")
 
-            # --- 4. VOORTGANG PER VAK ---
+            # --- 4. DE LEKKENDE EMMER ---
+            lekkende_woorden = [w for w in st.session_state.data if 16 <= int(w.get('streak', 0)) <= 17]
+            if lekkende_woorden:
+                st.warning(f"🪣 **De Lekkende Emmer:** Je hebt momenteel **{len(lekkende_woorden)} woorden** die balanceren op het randje van je langetermijngeheugen (Streak 16 of 17). Eén foutje en ze vallen terug naar 'In Training'. Ga naar *Tabblad 1* en kies *'Knelpunten'* om deze te stutten!")
+            else:
+                st.success("🛡️ **Geen Lekkende Emmer:** Al jouw beheerste woorden staan momenteel stevig in de steigers (Streak 18+).")
+
+            st.write("---")
+
+            # --- 5. VOORTGANG PER VAK ---
             st.markdown("### 🏛️ Voortgang per Verplicht Onderdeel")
             st.caption("Norm: Een item telt als 'Beheerst' zodra het een universele streak van 16 of hoger heeft bereikt.")
 
@@ -1093,7 +1110,7 @@ def main():
 
             st.write("---")
 
-            # --- 5. DE STAMTIJDEN SLUIS ---
+            # --- 6. DE STAMTIJDEN SLUIS ---
             st.markdown("### ⏳ De Stamtijden-Sluis")
             tot_stam_ww = len(stamtijden_db) if stamtijden_db else 0
             ontgrendeld_stam_ww = sum(1 for w in stamtijden_db if vocab_streaks.get(w['praesens'], 0) >= 5) if stamtijden_db else 0
@@ -1108,7 +1125,7 @@ def main():
 
             st.write("---")
 
-            # --- 6. FASERING LEERLIJNEN GRAFIEK ---
+            # --- 7. FASERING LEERLIJNEN GRAFIEK ---
             st.markdown("### 📈 Fasering Leerlijnen")
             
             df_plot = pd.DataFrame({
@@ -1126,7 +1143,7 @@ def main():
             
             st.write("---")
 
-            # --- 7. JOUW OEFENRITME ---
+            # --- 8. JOUW OEFENRITME ---
             st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
             
             if st.session_state.dag_stats:
@@ -1153,7 +1170,7 @@ def main():
             
             st.write("---")
 
-            # --- 8. COMPETITIE DASHBOARD ---
+            # --- 9. COMPETITIE DASHBOARD ---
             st.subheader("🏆 Competitie Dashboard (Laatste 14 dagen)")
             try:
                 df_global = conn.read(ttl=0)
@@ -1204,24 +1221,46 @@ def main():
             
             st.write("---")
 
-            # --- 9. KNELPUNTEN ---
-            st.subheader("🔥 Jouw Knelpunten (Top 10)")
-            knelpunten = []
+            # --- 10. AARTSRIVALEN TOP 5 (Vervangt Knelpunten) ---
+            st.subheader("⚔️ Jouw Aartsrivalen (Top 5 Nemesissen)")
+            st.caption("Dit zijn de items over álle vakken heen (Woorden, Stamtijden & Structuur) waar je structureel de meeste moeite mee hebt.")
+            nemesissen = []
+            
+            # Vocab
             for w in st.session_state.data:
-                g = int(w.get('score_goed', 0))
-                f = int(w.get('score_fout', 0))
-                if (g + f) >= 3 and f > 0: 
-                    ratio = f / (g + f)
-                    knelpunten.append({"Woord": w['grieks'], "Betekenis": w['nederlands'], "Fout-ratio": f"{int(ratio*100)}%", "Fouten": f})
-            if knelpunten:
-                knelpunten.sort(key=lambda x: x["Fouten"], reverse=True)
-                st.dataframe(pd.DataFrame(knelpunten[:10]), use_container_width=True)
+                g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0))
+                if (g + f) >= 3 and f > 0:
+                    nemesissen.append({"Type": "Woord", "Item": w['grieks'], "Betekenis": w['nederlands'], "Fout-ratio": f / (g + f), "Fouten": f})
+                    
+            # Stamtijden
+            if stamtijden_db:
+                for w in stamtijden_db:
+                    for t_d, vorm in w.get('stamtijden', {}).items():
+                        s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
+                        g, f = s.get('g', 0), s.get('f', 0)
+                        if (g + f) >= 3 and f > 0:
+                            nemesissen.append({"Type": "Stamtijd", "Item": vorm, "Betekenis": f"{t_d} van {w['praesens']}", "Fout-ratio": f / (g + f), "Fouten": f})
+
+            # Structuurwoorden
+            if str_db:
+                for w in str_db:
+                    s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
+                    g, f = s.get('g', 0), s.get('f', 0)
+                    if (g + f) >= 3 and f > 0:
+                        nemesissen.append({"Type": "Structuur", "Item": w['grieks'], "Betekenis": w['betekenis'], "Fout-ratio": f / (g + f), "Fouten": f})
+                        
+            if nemesissen:
+                nemesissen.sort(key=lambda x: (x["Fouten"], x["Fout-ratio"]), reverse=True)
+                df_nemesis = pd.DataFrame(nemesissen[:5])
+                df_nemesis["Fout-ratio"] = df_nemesis["Fout-ratio"].apply(lambda x: f"{int(x*100)}%")
+                st.dataframe(df_nemesis, use_container_width=True)
+                st.error("💡 **Exegese Tip:** Schrijf deze 5 aartsrivalen op een geeltje en plak die op je beeldscherm. Als je déze temt, schiet je totaalscore omhoog!")
             else:
-                st.success("Je hebt nog geen duidelijke knelpunten. Ga zo door!")
+                st.success("🎉 Je hebt op dit moment geen structurele aartsrivalen. Alles loopt op rolletjes!")
                 
             st.write("---")
 
-            # --- 10. EXPORTEREN ---
+            # --- 11. EXPORTEREN ---
             st.subheader("💾 Exporteer je data")
             df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend']]
             csv = df_export.to_csv(index=False).encode('utf-8')
