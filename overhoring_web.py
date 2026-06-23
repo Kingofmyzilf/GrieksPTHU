@@ -874,22 +874,52 @@ def main():
                                                 afleiders.append(optie); gekozen_betekenissen.add(optie)
                                             if len(afleiders) >= 3: break
                                         if len(afleiders) >= 3: break
-                            else:
-                                huidige_w_soort = item.get('woordsoort', '')
-                                prefix = item.get('grieks', '')[:2] 
-                                pool = [w for w in st.session_state.data if w['grieks'] != item['grieks'] and w.get('woordsoort') == huidige_w_soort]
-                                if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']]
+                            else: 
+                            if not st.session_state.huidige_opties:
+                                # We importeren hier lokaal om zeker te zijn dat de module geladen is
+                                import random as rnd 
                                 
-                                similar = [w for w in pool if w['grieks'].startswith(prefix)]
+                                afleiders = []
+                                gekozen_betekenissen = {correct_optie}
                                 
-                                for w in similar + pool:
-                                    bet = str(w.get('nederlands', ''))
-                                    if bet not in gekozen_betekenissen:
-                                        afleiders.append(bet); gekozen_betekenissen.add(bet)
-                                    if len(afleiders) >= 3: break
-                            
-                            st.session_state.huidige_opties = [correct_optie] + afleiders[:3]
-                            random.shuffle(st.session_state.huidige_opties)
+                                if is_mastery and heeft_vormen:
+                                    andere_parsings = list(set([str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]))
+                                    rnd.shuffle(andere_parsings)
+                                    for p in andere_parsings:
+                                        optie = f"{correct_antw} ({p})"
+                                        if optie not in gekozen_betekenissen:
+                                            afleiders.append(optie); gekozen_betekenissen.add(optie)
+                                        if len(afleiders) >= 3: break
+                                    
+                                    if len(afleiders) < 3:
+                                        pool = [w for w in st.session_state.data if w.get('woordsoort') == item.get('woordsoort') and 'vormen_data' in w]
+                                        rnd.shuffle(pool)
+                                        for w in pool:
+                                            for v in w.get('vormen_data', []):
+                                                p = v.get('parsing', '')
+                                                optie = f"{correct_antw} ({p})" 
+                                                if optie not in gekozen_betekenissen:
+                                                    afleiders.append(optie); gekozen_betekenissen.add(optie)
+                                                if len(afleiders) >= 3: break
+                                            if len(afleiders) >= 3: break
+                                else:
+                                    huidige_w_soort = item.get('woordsoort', '')
+                                    prefix = item.get('grieks', '')[:2] 
+                                    pool = [w for w in st.session_state.data if w['grieks'] != item['grieks'] and w.get('woordsoort') == huidige_w_soort]
+                                    if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']]
+                                    
+                                    similar = [w for w in pool if w['grieks'].startswith(prefix)]
+                                    rnd.shuffle(similar)
+                                    rnd.shuffle(pool)
+                                    
+                                    for w in similar + pool:
+                                        bet = str(w.get('nederlands', ''))
+                                        if bet not in gekozen_betekenissen:
+                                            afleiders.append(bet); gekozen_betekenissen.add(bet)
+                                        if len(afleiders) >= 3: break
+                                
+                                st.session_state.huidige_opties = [correct_optie] + afleiders[:3]
+                                rnd.shuffle(st.session_state.huidige_opties)
                         
                         cols = st.columns(2)
                         for idx, optie in enumerate(st.session_state.huidige_opties):
