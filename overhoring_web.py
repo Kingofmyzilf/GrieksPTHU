@@ -962,15 +962,37 @@ def main():
                     st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
 
         # ==========================================
-        # TAB 3: VOORTGANG
+        # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
         with menu[2]: 
-            st.subheader("📊 Persoonlijk Dashboard")
+            st.subheader("📊 Academische Cockpit & Dashboard")
+            
+            # --- 1. DATA INLADEN & INITIALISEREN ---
+            vocab_db = laad_vocab_db()
+            actief_db = laad_actief_db()
+            stamtijden_db = laad_stamtijden_db()
+            str_db = laad_structuurwoorden_db()
+
+            if "actief_stats" not in st.session_state:
+                st.session_state.actief_stats = {}
+
+            # Hulpfunctie voor voortgangsbalken
+            def toon_meting(label, beheerst, totaal):
+                pct = int((beheerst / totaal) * 100) if totaal > 0 else 0
+                st.markdown(f"**{label}** (`{beheerst}/{totaal}` — **{pct}%**)")
+                st.progress(beheerst / totaal if totaal > 0 else 0.0)
+
+            # --- 2. STATISTIEKEN BEREKENEN (Jouw bestaande logica) ---
             stats_vocab = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
             tot_goed_v, tot_fout_v = 0, 0
+            vocab_streaks = {} # Handige dictionary voor snelle lookups verderop
+
             if st.session_state.data:
                 for w in st.session_state.data:
+                    grieks_woord = w.get('grieks', '')
                     strk = int(w.get('streak', 0))
+                    vocab_streaks[grieks_woord] = strk
+                    
                     tot_goed_v += int(w.get('score_goed', 0)); tot_fout_v += int(w.get('score_fout', 0))
                     if strk >= 30: stats_vocab['Mastery'] += 1
                     elif strk >= 16: stats_vocab['Beheerst'] += 1
@@ -979,29 +1001,30 @@ def main():
 
             stats_stam = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
             tot_goed_s, tot_fout_s = 0, 0
-            stam_db = laad_stamtijden_db()
-            if stam_db:
-                for w in stam_db:
-                    for t_d, vorm in w['stamtijden'].items():
+            if stamtijden_db:
+                for w in stamtijden_db:
+                    for t_d, vorm in w.get('stamtijden', {}).items():
                         s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
-                        tot_goed_s += s['g']; tot_fout_s += s['f']
-                        if s['streak'] >= 30: stats_stam['Mastery'] += 1
-                        elif s['streak'] >= 16: stats_stam['Beheerst'] += 1
-                        elif s['streak'] >= 1: stats_stam['In Training'] += 1
+                        tot_goed_s += s.get('g', 0); tot_fout_s += s.get('f', 0)
+                        strk_s = s.get('streak', 0)
+                        if strk_s >= 30: stats_stam['Mastery'] += 1
+                        elif strk_s >= 16: stats_stam['Beheerst'] += 1
+                        elif strk_s >= 1: stats_stam['In Training'] += 1
                         else: stats_stam['Nieuw'] += 1
 
             stats_str = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
             tot_goed_st, tot_fout_st = 0, 0
-            str_db = laad_structuurwoorden_db()
             if str_db:
                 for w in str_db:
                     s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
-                    tot_goed_st += s['g']; tot_fout_st += s['f']
-                    if s['streak'] >= 30: stats_str['Mastery'] += 1
-                    elif s['streak'] >= 16: stats_str['Beheerst'] += 1
-                    elif s['streak'] >= 1: stats_str['In Training'] += 1
+                    tot_goed_st += s.get('g', 0); tot_fout_st += s.get('f', 0)
+                    strk_st = s.get('streak', 0)
+                    if strk_st >= 30: stats_str['Mastery'] += 1
+                    elif strk_st >= 16: stats_str['Beheerst'] += 1
+                    elif strk_st >= 1: stats_str['In Training'] += 1
                     else: stats_str['Nieuw'] += 1
 
+            # --- 3. TOP METRICS WEERGAVE ---
             c_met1, c_met2, c_met3 = st.columns(3)
             tot_g = tot_goed_v + tot_goed_s + tot_goed_st
             tot_f = tot_fout_v + tot_fout_s + tot_fout_st
@@ -1012,7 +1035,76 @@ def main():
             c_met3.metric("Totale Beoordelingen", tot_g + tot_f)
             
             st.write("---")
-            st.markdown("### Fasering Leerlijnen")
+
+            # --- 4. VOORTGANG PER VAK (Nieuw!) ---
+            st.markdown("### 🏛️ Voortgang per Verplicht Onderdeel")
+            st.caption("Norm: Een item telt als 'Beheerst' zodra het een universele streak van 16 of hoger heeft bereikt.")
+
+            v_g1 = [w for w in vocab_db if 1 <= w.get('les', 0) <= 6]
+            v_g2 = [w for w in vocab_db if 7 <= w.get('les', 0) <= 12]
+            v_g3 = [w for w in vocab_db if 13 <= w.get('les', 0) <= 14]
+
+            def tel_vocab_beh(lijst):
+                return sum(1 for w in lijst if vocab_streaks.get(w.get('grieks', w.get('praesens', '')), 0) >= 16)
+
+            v_g1_beh, v_g2_beh, v_g3_beh = tel_vocab_beh(v_g1), tel_vocab_beh(v_g2), tel_vocab_beh(v_g3)
+
+            def tel_paradigma_items(vak_key):
+                tot = 0; beh = 0
+                if actief_db and vak_key in actief_db:
+                    for cat, subcats in actief_db[vak_key].items():
+                        for sub, items in subcats.items():
+                            for item in items:
+                                tot += 1
+                                if st.session_state.actief_stats.get(item['id'], {}).get('streak', 0) >= 16:
+                                    beh += 1
+                return tot, beh
+
+            p_g1_tot, p_g1_beh = tel_paradigma_items("Grieks 1")
+            p_g2_tot, p_g2_beh = tel_paradigma_items("Grieks 2")
+            p_g3_tot, p_g3_beh = tel_paradigma_items("Grieks 3")
+
+            c_g1, c_g2, c_g3 = st.columns(3)
+            with c_g1:
+                st.markdown("#### 📘 Grieks 1")
+                toon_meting("Woordenschat (Les 1–6)", v_g1_beh, len(v_g1))
+                st.write("")
+                toon_meting("Paradigma's / Rijtjes", p_g1_beh, p_g1_tot)
+
+            with c_g2:
+                st.markdown("#### 📗 Grieks 2")
+                toon_meting("Woordenschat (Les 7–12)", v_g2_beh, len(v_g2))
+                st.write("")
+                toon_meting("Paradigma's / Rijtjes", p_g2_beh, p_g2_tot)
+
+            with c_g3:
+                st.markdown("#### 📙 Grieks 3")
+                toon_meting("Woordenschat (Les 13–14)", v_g3_beh, len(v_g3))
+                st.write("")
+                toon_meting("Paradigma's / Rijtjes", p_g3_beh, p_g3_tot)
+
+            st.write("---")
+
+            # --- 5. DE STAMTIJDEN SLUIS (Nieuw!) ---
+            st.markdown("### ⏳ De Stamtijden-Sluis")
+            tot_stam_ww = len(stamtijden_db) if stamtijden_db else 0
+            ontgrendeld_stam_ww = sum(1 for w in stamtijden_db if vocab_streaks.get(w['praesens'], 0) >= 5) if stamtijden_db else 0
+
+            c_sluis1, c_sluis2 = st.columns([2, 1])
+            with c_sluis1:
+                st.write("Werkwoorden waarvan de stamtijden-training is ontgrendeld (vereist een Vocab-streak van ≥ 5):")
+                toon_meting("Ontgrendelde Stam-funderingen", ontgrendeld_stam_ww, tot_stam_ww)
+            with c_sluis2:
+                nog_te_gaan = tot_stam_ww - ontgrendeld_stam_ww
+                st.info(f"🔒 Nog **{nog_te_gaan}** werkwoorden te ontgrendelen via het Woorden-tabblad.")
+
+            st.write("---")
+
+            # --- 6. FASERING LEERLIJNEN GRAFIEK (Jouw bestaande logica) ---
+            st.markdown("### 📈 Fasering Leerlijnen")
+            import pandas as pd
+            import matplotlib.pyplot as plt
+            
             df_plot = pd.DataFrame({
                 'Module': ['Vocabulaire', 'Stamtijden', 'Structuurwoorden'],
                 'Nieuw (0)': [stats_vocab['Nieuw'], stats_stam['Nieuw'], stats_str['Nieuw']],
@@ -1027,7 +1119,10 @@ def main():
             st.pyplot(fig)
             
             st.write("---")
+
+            # --- 7. JOUW OEFENRITME (Jouw bestaande logica) ---
             st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
+            from datetime import datetime
             if st.session_state.dag_stats:
                 df_dagen = pd.DataFrame(list(st.session_state.dag_stats.items()), columns=['Datum', 'Aantal'])
                 df_dagen['Datum'] = pd.to_datetime(df_dagen['Datum'])
@@ -1051,8 +1146,11 @@ def main():
                 st.info("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
             
             st.write("---")
+
+            # --- 8. COMPETITIE DASHBOARD (Jouw bestaande logica) ---
             st.subheader("🏆 Competitie Dashboard (Laatste 14 dagen)")
             try:
+                # Let op: Zorg dat 'conn' wereldwijd of in deze scope gedefinieerd is in jouw script
                 df_global = conn.read(ttl=0)
                 if 'gebruikersnaam' in df_global.columns and 'dag_stats' in df_global.columns:
                     comp_data = []
@@ -1100,6 +1198,8 @@ def main():
                 st.caption("Kon de competitiegegevens momenteel niet synchroniseren.")
             
             st.write("---")
+
+            # --- 9. KNELPUNTEN (Jouw bestaande logica) ---
             st.subheader("🔥 Jouw Knelpunten (Top 10)")
             knelpunten = []
             for w in st.session_state.data:
@@ -1115,11 +1215,13 @@ def main():
                 st.success("Je hebt nog geen duidelijke knelpunten. Ga zo door!")
                 
             st.write("---")
+
+            # --- 10. EXPORTEREN ---
             st.subheader("💾 Exporteer je data")
             df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend']]
             csv = df_export.to_csv(index=False).encode('utf-8')
             st.download_button(label="📥 Download Data als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
-
+            
         # ==========================================
         # TAB 4: ACTIEF BEHEERSEN (PARADIGMA'S)
         # ==========================================
