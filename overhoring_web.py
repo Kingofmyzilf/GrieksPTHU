@@ -113,6 +113,38 @@ def normaliseer_accent(woord):
         return w.strip()
     return ""
 
+def deconstrueer_stamtijd_live(vorm, tijd_diathese):
+    """Knipt een Griekse stamtijd live op in (Stam, Uitgang/Tijdkenmerk)"""
+    if not vorm or vorm in ["n.v.t.", "---", "-"]:
+        return "", ""
+
+    v_schoon = vorm.strip()
+
+    # De vaste Griekse tijd-markers (Gesorteerd van lang naar kort!)
+    if tijd_diathese == "Futurum Actief/Medium":
+        uitgangen = ["θήσομαι", "ήσομαι", "σομαι", "οῦμαι", "ομαι", "σω", "ψω", "ξω", "ῶ", "ω"]
+    elif tijd_diathese == "Aoristus Actief/Medium":
+        uitgangen = ["σάμην", "άμην", "όμην", "σα", "ψα", "ξα", "ον", "αν", "ην", "α", "ν"]
+    elif tijd_diathese == "Aoristus Passief":
+        uitgangen = ["θην", "ην"]
+    elif tijd_diathese == "Perfectum Actief":
+        uitgangen = ["κα", "α"]
+    elif tijd_diathese == "Perfectum Medium/Passief":
+        uitgangen = ["σμαι", "μμαι", "γμαι", "ημαι", "ειμαι", "ωμαι", "αμαι", "μαι"]
+    else:
+        return v_schoon, ""
+
+    for u in uitgangen:
+        if v_schoon.endswith(u):
+            knip = len(v_schoon) - len(u)
+            stam = v_schoon[:knip]
+            uitgang = v_schoon[knip:]
+            # Voorkom absurde splitsingen (bijv. 'ἔγνων' -> stam '' en uitgang 'ων')
+            if len(stam) > 0:
+                return stam, uitgang
+
+    return v_schoon, "" # Fallback: toon het woord ongesplitst
+    
 def levenshtein(s1, s2):
     if len(s1) < len(s2): return levenshtein(s2, s1)
     if len(s2) == 0: return len(s1)
