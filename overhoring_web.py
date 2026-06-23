@@ -11,6 +11,11 @@ import os
 import unicodedata
 from datetime import datetime
 
+def veilig_les_nummer(item):
+    try:
+        return int(item.get('les', 0))
+    except (ValueError, TypeError):
+        return 0
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
 try:
