@@ -1307,26 +1307,23 @@ def main():
             if not stamtijden_db: 
                 st.warning("Bestand 'stamtijden_verrijkt.json' ontbreekt of is niet ingeladen.")
             else:
-                # 1. BÈTA-CODE SPIEKBRIEF (Uitklapbaar bovenaan)
                 with st.expander("⌨️ Spiekbrief: Hoe typ ik Grieks? (Latijnse toetsen)"):
                     sc1, sc2, sc3 = st.columns(3)
-                    sc1.markdown("**Klinkers:**\n* `a` = α\n* `e` = ε\n* `h` = η (èta)\n* `i` = ι\n* `o` = ο\n* `u` = υ (ypsilon)\n* `w` = ω (omega)")
-                    sc2.markdown("**Standaard medeklinkers:**\n* `b` = β\n* `g` = γ\n* `d` = δ\n* `z` = ζ\n* `k` = κ\n* `l` = λ\n* `m` = μ\n* `n` = ν\n* `p` = π\n* `r` = ρ\n* `t` = τ")
-                    sc3.markdown("**Bèta-code 'Gekke' tekens:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind van een woord vanzelf een ς!)")
+                    sc1.markdown("**Klinkers:**\n* `a` = α, `e` = ε, `h` = η\n* `i` = ι, `o` = ο, `u` = υ, `w` = ω")
+                    sc2.markdown("**Medeklinkers:**\n* `b`=β, `g`=γ, `d`=δ, `z`=ζ\n* `k`=κ, `l`=λ, `m`=μ, `n`=ν\n* `p`=π, `r`=ρ, `t`=τ")
+                    sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
                 
-                # Hoofdmodus selectie (Inclusief de nieuwe Paspoort-optie!)
                 stam_modus = st.radio(
                     "Kies je activiteit:", 
                     ["📖 0. Werkwoordpaspoort (Vrij studeren)", "1. MC Overhoring", "2. Mix (MC + Typen)", "3. Typen (Herleiden)"], 
                     horizontal=True
                 )
-                
                 st.write("---")
 
                 # =================================================================
-                # MODUS 0: HET WERKWOORDPASPOORT (Compleet overzicht per woord)
+                # MODUS 0: HET WERKWOORDPASPOORT (Met oplichtende tijdkenmerken!)
                 # =================================================================
                 if "0." in stam_modus:
                     st.markdown("### 📖 Morfologisch Paspoort")
@@ -1344,7 +1341,6 @@ def main():
                             st.markdown(f"<div class='grieks-woord' style='font_size:45px;'>{w['praesens']}</div>", unsafe_allow_html=True)
                             st.markdown(f"<h4 style='text-align:center; color:#aaaaaa;'>\"{w['betekenis']}\"</h4>", unsafe_allow_html=True)
                             
-                            # Badges
                             c_b1, c_b2, c_b3, c_b4 = st.columns(4)
                             c_b1.info(f"**Klasse:** {morf.get('klasse', 'onbekend').capitalize()}")
                             c_b2.warning(f"**Stamwortel:** {morf.get('stamwortel', '-')}")
@@ -1354,25 +1350,32 @@ def main():
                             st.write("---")
                             st.markdown("#### 🏛️ De 6 Stamtijden")
                             
-                            # Vaste Griekse weergave-volgorde
+                            # Koppel de weergave direct aan de exacte JSON-tijd diathese key!
                             st_grid = [
-                                ("1. Praesens", w['praesens']),
-                                ("2. Futurum", w.get('stamtijden', {}).get("Futurum Actief/Medium", "-")),
-                                ("3. Aoristus", w.get('stamtijden', {}).get("Aoristus Actief/Medium", "-")),
-                                ("4. Perfectum Act.", w.get('stamtijden', {}).get("Perfectum Actief", "-")),
-                                ("5. Perfectum M/P", w.get('stamtijden', {}).get("Perfectum Medium/Passief", "-")),
-                                ("6. Aoristus Pass.", w.get('stamtijden', {}).get("Aoristus Passief", "-"))
+                                ("1. Praesens", w['praesens'], "Praesens"),
+                                ("2. Futurum", w.get('stamtijden', {}).get("Futurum Actief/Medium", "-"), "Futurum Actief/Medium"),
+                                ("3. Aoristus", w.get('stamtijden', {}).get("Aoristus Actief/Medium", "-"), "Aoristus Actief/Medium"),
+                                ("4. Perfectum Act.", w.get('stamtijden', {}).get("Perfectum Actief", "-"), "Perfectum Actief"),
+                                ("5. Perfectum M/P", w.get('stamtijden', {}).get("Perfectum Medium/Passief", "-"), "Perfectum Medium/Passief"),
+                                ("6. Aoristus Pass.", w.get('stamtijden', {}).get("Aoristus Passief", "-"), "Aoristus Passief")
                             ]
                             
                             g_cols = st.columns(3)
-                            for idx, (titel, svorm) in enumerate(st_grid):
+                            for idx, (titel, svorm, t_diathese) in enumerate(st_grid):
                                 with g_cols[idx % 3]:
                                     st.markdown(f"<div class='grid-label'>{titel}</div>", unsafe_allow_html=True)
-                                    st.markdown(f"<div style='font-size:22px; font-weight:bold; color:{'#33ccff' if svorm != '-' else '#555'}; background-color:#222; padding:10px; border-radius:6px; text-align:center; margin-bottom:15px;'>{svorm}</div>", unsafe_allow_html=True)
+                                    if svorm != "-":
+                                        # Deconstrueer de vorm live!
+                                        dstam, duit = deconstrueer_stamtijd_live(svorm, t_diathese)
+                                        gekleurd_html = f"{dstam}<span style='color:#33ccff'>{duit}</span>" if duit else svorm
+                                    else:
+                                        gekleurd_html = "-"
+
+                                    st.markdown(f"<div style='font-size:22px; font-weight:bold; color:#fff; background-color:#222; padding:10px; border-radius:6px; text-align:center; margin-bottom:15px;'>{gekleurd_html}</div>", unsafe_allow_html=True)
                             
                             st.markdown("#### ⚙️ De Klankwet achter dit raamwerk")
                             if morf.get('memoriseren_vereist'):
-                                st.error(f"**Suppletie-werkwoord:** {regel.get('toelichting', 'Vormen veranderen wezenlijk van stam. Puur memoriseren.')}")
+                                st.error(f"**Suppletie-werkwoord:** {regel.get('toelichting', 'Puur memoriseren.')}")
                             else:
                                 st.success(f"**Formule:** `{regel.get('formule', 'Stam + σ')}`\n\n**Uitleg:** {regel.get('toelichting', '')}")
 
@@ -1382,9 +1385,7 @@ def main():
                 else:
                     c1, c2 = st.columns([1, 2])
                     with c1:
-                        # BRON SELECTIE (Inclusief Bijbelfilter!)
                         bron_keuze = st.radio("Oefenbron:", ["📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"], horizontal=True)
-                        
                         gekozen_stam_lessen = []
                         gefilterde_ww_pool = []
                         
@@ -1394,32 +1395,26 @@ def main():
                             gefilterde_ww_pool = [w for w in stamtijden_db if w.get('les', 0) in gekozen_stam_lessen]
                             
                         elif bron_keuze == "📖 Uit een Bijbeltekst":
-                            # Unieke boeken en hoofdstukken destilleren uit de Bijbel JSON
                             b_lijst = sorted(list(set(k.split(" ")[0] for k in bijbel_db.keys() if " " in k)))
                             p_boek = st.selectbox("Kies Bijbelboek:", b_lijst if b_lijst else ["Mattheus"])
-                            
                             h_lijst = sorted(list(set(k.split(" ")[1].split(":")[0] for k in bijbel_db.keys() if k.startswith(p_boek) and ":" in k)), key=lambda x: int(x) if x.isdigit() else 0)
                             p_hoofdstuk = st.selectbox("Kies Hoofdstuk:", h_lijst)
                             
-                            # Zoek alle verzen van dit hoofdstuk en verzamel de Strong-nummers
                             strongs_in_tekst = set()
                             prefix_zoek = f"{p_boek} {p_hoofdstuk}:"
                             for ref, zin in bijbel_db.items():
                                 if ref.startswith(prefix_zoek):
                                     for woord in zin:
-                                        if w_str := woord.get('strong'):
-                                            strongs_in_tekst.add(str(w_str))
+                                        if w_str := woord.get('strong'): strongs_in_tekst.add(str(w_str))
                                             
-                            st.caption(f"Gevonden unieke werkwoord-stammen in {p_boek} {p_hoofdstuk}: {len(strongs_in_tekst)}")
-                            # Filter de database op deze Strongs
+                            st.caption(f"Gevonden unieke werkwoord-stammen: {len(strongs_in_tekst)}")
                             gefilterde_ww_pool = [w for w in stamtijden_db if str(w.get('strong_nummer', '')).replace('G', '') in strongs_in_tekst]
 
-                        # FASERINGS-SCHUIFJES OF AUTOMISCH
                         oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
                         custom_counts = None
                         
                         if oefen_stijl == "🎛️ Zelf Fasen Samenstellen" and gefilterde_ww_pool:
-                            st.caption("Kies de exacte verdeling van de stamtijd-vormen:")
+                            st.caption("Kies de verdeling van de stamtijd-vormen:")
                             custom_counts = {
                                 'nieuw': st.slider("Nieuw (Streak 0)", 0, 20, 4),
                                 'training': st.slider("In Training (Streak 1–15)", 0, 20, 6),
@@ -1430,22 +1425,18 @@ def main():
                         if st.button("Start Sessie", key="btn_start_stam", type="primary"):
                             st.session_state.gestrafte_woorden_stam = set()
                             doel_vormen = []
-                            
                             tijden_volgorde = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
 
                             for w in gefilterde_ww_pool:
-                                # HARDE SLUIS: Basiswoord moet in vocab_stats op streak >= 5 staan!
                                 p_streak = st.session_state.vocab_stats.get(w['praesens'], {}).get('streak', 0)
                                 if p_streak < 5: continue 
                                 
                                 vorige_streak = p_streak
                                 for t_d in tijden_volgorde:
                                     if not (vorm := w.get('stamtijden', {}).get(t_d)): continue
-                                    
                                     vid = f"{w['praesens']}_{vorm}"
-                                    stats = st.session_state.stam_stats.get(vid, {'g': 0, 'f': 0, 'streak': 0})
+                                    stats = st.session_state.stam_stats.get(vid, {'g':0, 'f':0, 'streak':0})
                                     
-                                    # Scaffolding: mag hij getoond worden?
                                     if vorige_streak >= 5:
                                         doel_vormen.append({
                                             "basis": w, "vraag_vorm": {"tijd_diathese": t_d, "vorm": vorm}, 
@@ -1457,14 +1448,11 @@ def main():
                             if doel_vormen:
                                 sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts) 
                                 m_id = "3" if "3." in stam_modus else ("2" if "2." in stam_modus else "1")
-                                
                                 if m_id == "2": st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled[::2]] + [(v, "Typen") for v in sampled[1::2]]
                                 elif m_id == "3": st.session_state.stam_sessie_lijst = [(v, "Typen") for v in sampled]
                                 else: st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled]
-                                    
                                 laad_volgend_stam_woord(); st.rerun()
-                            else:
-                                st.warning("⚠️ Geen stamtijden gevonden. Zorg dat je basiswoorden in de geselecteerde les op streak >= 5 staan!")
+                            else: st.warning("⚠️ Geen stamtijden gevonden. Zorg dat basiswoorden op streak >= 5 staan!")
 
                     with c2:
                         if st.session_state.stam_huidig:
@@ -1483,13 +1471,17 @@ def main():
                             correct_gram = huidig['vraag_vorm']['tijd_diathese']
                             correct_praesens = huidig['basis']['praesens']
                             correct_betekenis = huidig['basis']['betekenis']
-                            fout_msg = f"**{huidig['vraag_vorm']['vorm']}** — {correct_gram} van **{correct_praesens}** — **{correct_betekenis}**"
+                            
+                            # DECONSTRUEER DE VORM VOOR DE FEEDBACK!
+                            dstam, duit = deconstrueer_stamtijd_live(huidig['vraag_vorm']['vorm'], correct_gram)
+                            gekleurde_vorm_html = f"**{dstam}**<span style='color:#33ccff'>**{duit}**</span>" if duit else f"**{huidig['vraag_vorm']['vorm']}**"
+                            
+                            fout_msg = f"{gekleurde_vorm_html} — {correct_gram} van **{correct_praesens}** — **{correct_betekenis}**"
                             
                             morf = huidig['basis'].get('morfologie', {})
                             regel = morf.get('mutatieregel', {})
                             uitleg_regel = f"⚠️ **Suppletie:** {regel.get('toelichting', 'Puur memoriseren.')}" if morf.get('memoriseren_vereist') else f"💡 **Klankwet ({morf.get('klasse', 'regelmatig')}):** {regel.get('formule','')} — *{regel.get('toelichting','')}*"
 
-                            # Weergave
                             huidige_streak = huidig.get('streak', 0)
                             if huidige_streak >= 30:
                                 st.caption("🏆 Mastery Modus: Herken de stamtijd in de Bijbel!")
@@ -1501,50 +1493,26 @@ def main():
                                 st.caption("Identificeer deze Griekse stamtijd-vorm:")
                                 st.markdown(f"<div class='grieks-woord'>{huidig['vraag_vorm']['vorm']}</div>", unsafe_allow_html=True)
 
-                            # =========================================================================
-                            # DIGITAAL TOETSENBORD-PLANKJE (Gekoppeld aan session_state)
-                            # =========================================================================
-                            toon_plankje = st.checkbox("🖲️ Klap digitaal Grieks toetsenbord uit")
-                            if "kbd_p" not in st.session_state: st.session_state.kbd_p = ""
-                            if "kbd_b" not in st.session_state: st.session_state.kbd_b = ""
-                            
-                            if toon_plankje and sub_modus in ['Typen', 'overtik']:
-                                st.write("---")
-                                st.caption("Klik de tekens bij elkaar voor het veld **Praesens**: ")
-                                
-                                grid_letters = ['α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','ς','τ','υ','φ','χ','ψ','ω']
-                                kcols = st.columns(13)
-                                for idx, char in enumerate(grid_letters):
-                                    if kcols[idx % 13].button(char, key=f"kb_{char}"):
-                                        st.session_state.kbd_p += char
-                                        
-                                col_bsp, col_clear, _ = st.columns([2, 2, 8])
-                                if col_bsp.button("⌫ Backspace"): st.session_state.kbd_p = st.session_state.kbd_p[:-1]
-                                if col_clear.button("✗ Maak veld leeg"): st.session_state.kbd_p = ""
-                                st.write("---")
-
                             # OVERTIKKEN
                             if sub_modus == 'overtik':
                                 st.warning("⚠️ Overtikken: Je had deze vorm fout. Vul de correcte gegevens exact in.")
                                 st.info(f"Het juiste antwoord is: {fout_msg}")
                                 st.markdown(uitleg_regel)
                                 
-                                # We gebruiken hier losse inputs i.p.v. st.form vanwege de live-toetsenbord knoppen!
                                 p_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
-                                p_prae = st.text_input("2. Praesens bronwoord:", value=st.session_state.kbd_p, key="in_ov_p")
+                                p_prae = st.text_input("2. Praesens bronwoord:", key="in_ov_p")
                                 
                                 if st.button("Bevestig Overtikken"):
                                     registreer_oefening()
-                                    if p_gram == correct_gram and normaliseer_accent(p_prae) == normaliseer_accent(correct_praesens):
+                                    if p_gram == correct_gram and normaliseer_accent(naar_grieks_transliteratie(p_prae)) == normaliseer_accent(correct_praesens):
                                         st.session_state.stam_feedback = {"type": "success", "msg": "Genoteerd! Hij komt straks weer."}
-                                        st.session_state.kbd_p = "" # Veld resetten
                                         trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                     else: st.error("Nog niet exact overgetypt!")
 
-                            # TYPEN (Zonder st.form, zodat live virtueel toetsenbord werkt)
+                            # TYPEN
                             elif sub_modus == "Typen":
                                 t_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
-                                t_prae = st.text_input("2. Praesens bronwoord:", value=st.session_state.kbd_p, key="in_tp_p")
+                                t_prae = st.text_input("2. Praesens bronwoord:", key="in_tp_p")
                                 t_bete = st.text_input("3. Betekenis bronwoord:", key="in_tp_b")
                                 
                                 if st.button("Controleer Antwoord", type="primary"):
@@ -1560,7 +1528,6 @@ def main():
                                         s_msg = f"✓ Goed! {fout_msg}\n\n{uitleg_regel}"
                                         if vid in st.session_state.gestrafte_woorden_stam: s_msg += "\n\n*(Geen streak-punten wegens eerdere fout)*"
                                         st.session_state.stam_feedback = {"type": "success", "msg": s_msg}
-                                        st.session_state.kbd_p = ""
                                         trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                     else:
                                         st.session_state.stam_fouten += 1
@@ -1570,7 +1537,6 @@ def main():
                                             st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik'))
                                             st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg}.\n\n{uitleg_regel}"}
-                                            st.session_state.kbd_p = ""
                                             trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                         else:
                                             st.session_state.stam_stats[vid]['f'] += 1 
