@@ -1099,13 +1099,6 @@ def main():
                 st.info(f"🔒 Nog **{nog_te_gaan}** werkwoorden te ontgrendelen via het Woorden-tabblad.")
 
             st.write("---")
-
-            # --- 6. FASERING LEERLIJNEN GRAFIEK (Jouw bestaande logica) ---
-            st.markdown("### 📈 Fasering Leerlijnen")
-            import pandas as pd
-            import matplotlib.pyplot as plt
-            
-            df_plot = pd.DataFrame({
                 'Module': ['Vocabulaire', 'Stamtijden', 'Structuurwoorden'],
                 'Nieuw (0)': [stats_vocab['Nieuw'], stats_stam['Nieuw'], stats_str['Nieuw']],
                 'In Training (1-15)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']],
