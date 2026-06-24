@@ -1714,23 +1714,29 @@ def main():
                                 st.caption(f"Fase: {fn} | Autonome Streak: {huidige_streak} | Goed/Fout: {st.session_state.stam_stats[vid].get('g',0)}/{st.session_state.stam_stats[vid].get('f',0)}")
 
         # ==========================================
-        # TAB 6: STRUCTUURWOORDEN
+        # TAB 6: STRUCTUURWOORDEN & SYNTAXIS
         # ==========================================
         with menu[5]: 
             struct_db = laad_structuurwoorden_db()
-            if not struct_db: st.warning("Bestand 'structuurwoorden.json' ontbreekt.")
+            if not struct_db: 
+                st.warning("Bestand 'structuurwoorden.json' ontbreekt.")
             else:
-                st.subheader("🧱 Structuurwoorden Herkennen")
+                st.subheader("🧱 Structuurwoorden Herkennen & Syntaxis")
                 c1, c2 = st.columns([1, 2])
+                
                 with c1:
                     struct_modus = st.radio("Modus:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="struct_modus_radio")
-                    if st.button("Start Sessie", key="btn_start_struct"):
+                    if st.button("Start Sessie", key="btn_start_struct", type="primary"):
                         st.session_state.gestrafte_woorden_struct = set()
                         doel_vormen = []
-                        for w in struct_db:
-                            vid = w['grieks']
-                            stats = st.session_state.struct_stats.get(vid, {'g': 0, 'f': 0, 'streak': 0})
-                            w['score_goed'] = stats['g']; w['score_fout'] = stats['f']; w['streak'] = stats['streak']; w['vid'] = vid
+                        for idx_w, w in enumerate(struct_db):
+                            # Waterdichte unieke ID per item (ook noodzakelijk omdat 'κατά' 2x in de PThU-lijst voorkomt)
+                            vid = f"{w['grieks']}_{idx_w}"
+                            stats = st.session_state.struct_stats.get(vid, st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0}))
+                            w['score_goed'] = stats.get('g', 0)
+                            w['score_fout'] = stats.get('f', 0)
+                            w['streak'] = stats.get('streak', 0)
+                            w['vid'] = vid
                             doel_vormen.append(w)
                         
                         if doel_vormen:
@@ -1739,14 +1745,18 @@ def main():
                             if modus_id == "2": st.session_state.struct_sessie_lijst = [(v, "MC") for v in sampled] + [(v, "Typen") for v in sampled]
                             elif modus_id == "3": st.session_state.struct_sessie_lijst = [(v, "Typen") for v in sampled]
                             else: st.session_state.struct_sessie_lijst = [(v, "MC") for v in sampled]
-                            laad_volgend_struct_woord(); st.rerun()
+                            laad_volgend_struct_woord()
+                            st.rerun()
 
                 with c2:
                     if st.session_state.struct_huidig:
                         huidig = st.session_state.struct_huidig
                         sub_modus = st.session_state.struct_sub_modus
                         vid = huidig['vid']
-                        if vid not in st.session_state.struct_stats: st.session_state.struct_stats[vid] = {'g': 0, 'f': 0, 'streak': 0}
+                        w_id_clean = re.sub(r'\W+', '_', vid) # Gegarandeerd schone string voor HTML-sleutels
+                        
+                        if vid not in st.session_state.struct_stats: 
+                            st.session_state.struct_stats[vid] = {'g': 0, 'f': 0, 'streak': 0}
                         
                         if st.session_state.struct_feedback:
                             if st.session_state.struct_feedback["type"] == "success": st.success(st.session_state.struct_feedback["msg"])
@@ -1754,7 +1764,13 @@ def main():
                             else: st.error(st.session_state.struct_feedback["msg"])
                             st.session_state.struct_feedback = None 
 
-                        # --- AUTHENTIEK ZINVERBAND INJECTOR ---
+                        correct_cat = huidig['categorie']
+                        correct_eig = huidig['eigenschap']
+                        correct_bet = huidig['betekenis']
+                        fout_msg_volledig = f"**{huidig['grieks']}** — {correct_cat} ({correct_eig}) — **{correct_bet}**"
+                        alle_cats = sorted(list(set([w['categorie'] for w in struct_db])))
+
+                        # --- AUTHENTIEK ZINVERBAND ZOEKEN ---
                         bijbel_db = laad_bijbel_db()
                         gezocht_str = normaliseer_accent(huidig['grieks'])
                         gevonden_context = None
@@ -1765,7 +1781,6 @@ def main():
                                 for idx_w, w in enumerate(zin):
                                     norm_w = normaliseer_accent(w['grieks'])
                                     if norm_w == gezocht_str or norm_w == gezocht_str.replace('ς','σ'):
-                                        # Peil bij voorzetsels direct de naamval van het woord dat erop volgt!
                                         if idx_w + 1 < len(zin):
                                             next_p = zin[idx_w + 1].get('parsing_info', '')
                                             if "Gen" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Genitivus)*"
@@ -1789,35 +1804,38 @@ def main():
                         else:
                             st.markdown(f"<div class='grieks-woord'>{huidig['grieks']}</div>", unsafe_allow_html=True)
                             st.caption("Identificeer dit structuurwoord.")
-                        
-                        correct_cat = huidig['categorie']; correct_eig = huidig['eigenschap']; correct_bet = huidig['betekenis']
-                        fout_msg_volledig = f"**{huidig['grieks']}** — {correct_cat} ({correct_eig}) — **{correct_bet}**"
-                        alle_cats = list(set([w['categorie'] for w in struct_db]))
-                        
+
+                        # --- MODUS 1: OVERTIKKEN ---
                         if sub_modus == 'overtik':
-                            st.warning("⚠️ Overtikken: Je had dit woord fout. Kies de juiste gegevens.")
+                            st.warning("⚠️ Overtikken: Je had dit woord zojuist onjuist. Vul de correcte gegevens exact in om de verbinding te herstellen.")
                             st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
                             forceer_focus()
-                            with st.form("form_struct_overtik", clear_on_submit=True):
-                                p_cat = st.selectbox("1. Categorie:", [""] + alle_cats); p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen):")
+                            with st.form(f"form_ov_{w_id_clean}", clear_on_submit=True):
+                                p_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key=f"ov_c_{w_id_clean}")
+                                p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen):", key=f"ov_e_{w_id_clean}")
                                 if st.form_submit_button("Bevestig"):
                                     registreer_oefening()
                                     if p_cat == correct_cat and p_eig.lower().strip() == correct_eig.lower().strip():
-                                        st.session_state.struct_feedback = {"type": "success", "msg": "Genoteerd! Komt straks terug."}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
-                                    else: st.error("Niet correct overgenomen.")
+                                        st.session_state.struct_feedback = {"type": "success", "msg": "Genoteerd! Komt straks terug."}
+                                        trigger_save(); laad_volgend_struct_woord(); st.rerun()
+                                    else: st.error("Nog niet exact overgetypt.")
 
+                        # --- MODUS 2: TYPEN ---
                         elif sub_modus == "Typen":
-                            gekozen_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key="dyn_cat")
+                            gekozen_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key=f"typ_c_{w_id_clean}")
                             forceer_focus()
-                            with st.form("form_struct_typen", clear_on_submit=True):
+                            with st.form(f"form_typ_{w_id_clean}", clear_on_submit=True):
                                 c_eig, c_bet = st.columns(2)
-                                with c_eig: gefilterde_eigs = list(set([w['eigenschap'] for w in struct_db if w['categorie'] == gekozen_cat])) if gekozen_cat else []; p_eig = st.selectbox("2. Eigenschap/Naamval", [""] + gefilterde_eigs)
-                                with c_bet: p_bet = st.text_input("3. Betekenis:")
+                                with c_eig: 
+                                    gefilterde_eigs = sorted(list(set([w['eigenschap'] for w in struct_db if w['categorie'] == gekozen_cat]))) if gekozen_cat else []
+                                    p_eig = st.selectbox("2. Eigenschap/Naamval", [""] + gefilterde_eigs, key=f"typ_e_{w_id_clean}")
+                                with c_bet: p_bet = st.text_input("3. Betekenis:", key=f"typ_b_{w_id_clean}")
                                 
                                 if st.form_submit_button("Check Antwoord"):
                                     registreer_oefening()
                                     if (gekozen_cat == correct_cat) and (p_eig == correct_eig) and check_betekenis(p_bet, correct_bet):
-                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct: st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
+                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct: 
+                                            st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
                                         success_msg = f"✓ Goed! {fout_msg_volledig}"
                                         if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
                                         st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
@@ -1826,55 +1844,66 @@ def main():
                                         if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
                                             st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_struct.add(vid)
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik')); st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
-                                            st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{gekozen_cat} | {p_eig} | {p_bet}*. Het was: {fout_msg_volledig}."}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
-                                        else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Probeer het nog eens!"}
+                                            st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{gekozen_cat} | {p_eig} | {p_bet}*. Het was: {fout_msg_volledig}."}; trigger_save(); laad_volgend_struct_woord()
+                                        else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint en probeer het opnieuw!"}
                                         st.rerun()
+
+                        # --- MODUS 3: MEERKEUZE (WATERDICHT GESCHEIDEN) ---
                         else: 
                             if not st.session_state.struct_opties_cat:
-                                afleiders_c = [c for c in alle_cats if c != correct_cat]; st.session_state.struct_opties_cat = [correct_cat] + r_engine.sample(afleiders_c, min(3, len(afleiders_c))); r_engine.shuffle(st.session_state.struct_opties_cat)
-                                alle_eigs = list(set([w['eigenschap'] for w in struct_db])); afleiders_e = [e for e in alle_eigs if e != correct_eig]; st.session_state.struct_opties_eig = [correct_eig] + r_engine.sample(afleiders_e, min(3, len(afleiders_e))); r_engine.shuffle(st.session_state.struct_opties_eig)
-                                afleiders_b = []; bestaande_b = {correct_bet}; str_pool = [w for w in struct_db if w['betekenis'] != correct_bet]
-                                r_engine.shuffle(str_pool)
-                                for w in str_pool:
-                                    if w['betekenis'] not in bestaande_b: afleiders_b.append(w['betekenis']); bestaande_b.add(w['betekenis'])
-                                    if len(afleiders_b) >= 3: break
-                                st.session_state.struct_opties_bet = [correct_bet] + afleiders_b; r_engine.shuffle(st.session_state.struct_opties_bet)
+                                import random as rnd
+                                afleiders_c = [c for c in alle_cats if c != correct_cat]
+                                st.session_state.struct_opties_cat = [correct_cat] + rnd.sample(afleiders_c, min(3, len(afleiders_c))); rnd.shuffle(st.session_state.struct_opties_cat)
                                 
-                            with st.form("form_struct_mc"):
+                                alle_eigs = sorted(list(set([w['eigenschap'] for w in struct_db])))
+                                afleiders_e = [e for e in alle_eigs if e != correct_eig]
+                                st.session_state.struct_opties_eig = [correct_eig] + rnd.sample(afleiders_e, min(3, len(afleiders_e))); rnd.shuffle(st.session_state.struct_opties_eig)
+                                
+                                afleiders_b = []; bestaande_b = {correct_bet}
+                                str_pool = [w['betekenis'] for w in struct_db if w['betekenis'] != correct_bet]
+                                rnd.shuffle(str_pool)
+                                for b_txt in str_pool:
+                                    if b_txt not in bestaande_b: afleiders_b.append(b_txt); bestaande_b.add(b_txt)
+                                    if len(afleiders_b) >= 3: break
+                                st.session_state.struct_opties_bet = [correct_bet] + afleiders_b; rnd.shuffle(st.session_state.struct_opties_bet)
+                                
+                            with st.form(f"form_mc_{w_id_clean}"):
+                                # Door f"mc_c_{w_id_clean}" te gebruiken, is hergebruik van de selectie van het vorige woord onmogelijk
                                 if st.session_state.struct_mc_solved["cat"]: st.success(f"✓ Categorie: {correct_cat}"); keuze_cat = correct_cat
-                                else: keuze_cat = st.radio("1. Categorie:", st.session_state.struct_opties_cat, index=None)
+                                else: keuze_cat = st.radio("1. Categorie:", st.session_state.struct_opties_cat, index=None, key=f"mc_c_{w_id_clean}")
                                 
                                 if st.session_state.struct_mc_solved["eig"]: st.success(f"✓ Eigenschap: {correct_eig}"); keuze_eig = correct_eig
-                                else: keuze_eig = st.radio("2. Eigenschap / Naamval:", st.session_state.struct_opties_eig, index=None)
+                                else: keuze_eig = st.radio("2. Eigenschap / Naamval:", st.session_state.struct_opties_eig, index=None, key=f"mc_e_{w_id_clean}")
                                 
                                 if st.session_state.struct_mc_solved["bet"]: st.success(f"✓ Betekenis: {correct_bet}"); keuze_bet = correct_bet
-                                else: keuze_bet = st.radio("3. Betekenis:", st.session_state.struct_opties_bet, index=None)
+                                else: keuze_bet = st.radio("3. Betekenis:", st.session_state.struct_opties_bet, index=None, key=f"mc_b_{w_id_clean}")
                                 
                                 if st.form_submit_button("Check Antwoord"):
                                     registreer_oefening()
-                                    if (keuze_cat == correct_cat) and not st.session_state.struct_mc_solved["cat"]: st.session_state.struct_mc_solved["cat"] = True
-                                    if (keuze_eig == correct_eig) and not st.session_state.struct_mc_solved["eig"]: st.session_state.struct_mc_solved["eig"] = True
-                                    if (keuze_bet == correct_bet) and not st.session_state.struct_mc_solved["bet"]: st.session_state.struct_mc_solved["bet"] = True
+                                    if (keuze_cat == correct_cat): st.session_state.struct_mc_solved["cat"] = True
+                                    if (keuze_eig == correct_eig): st.session_state.struct_mc_solved["eig"] = True
+                                    if (keuze_bet == correct_bet): st.session_state.struct_mc_solved["bet"] = True
                                     
                                     if st.session_state.struct_mc_solved["cat"] and st.session_state.struct_mc_solved["eig"] and st.session_state.struct_mc_solved["bet"]:
-                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct: st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
+                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct: 
+                                            st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
                                         success_msg = f"✓ Goed! {fout_msg_volledig}"
                                         if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
-                                        st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
+                                        st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord()
                                     else:
                                         st.session_state.struct_fouten += 1; huidige_streak = st.session_state.struct_stats[vid]['streak']
                                         if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
                                             st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_struct.add(vid)
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik')); st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
-                                            st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{keuze_cat} | {keuze_eig} | {keuze_bet}*. Het was: {fout_msg_volledig}."}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
-                                        else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "De goede delen zijn vastgezet. Probeer de rest opnieuw!"}
-                                        st.rerun()
+                                            st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{keuze_cat} | {keuze_eig} | {keuze_bet}*. Het was: {fout_msg_volledig}."}; trigger_save(); laad_volgend_struct_woord()
+                                        else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "De correcte delen zijn vastgezet. Probeer de overgebleven velden opnieuw!"}
+                                    st.rerun()
 
                         if sub_modus != 'overtik':
                             st.write("---")
-                            fase_naam = 'Nieuw' if st.session_state.struct_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.struct_stats[vid].get('streak', 0)<=15 else ('Beheerst' if st.session_state.struct_stats[vid].get('streak', 0)<=29 else 'Mastery'))
-                            st.caption(f"Fase: {fase_naam} | Streak: {st.session_state.struct_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.struct_stats[vid].get('g', 0)}/{st.session_state.struct_stats[vid].get('f', 0)}")
-
+                            f_naam = 'Nieuw' if st.session_state.struct_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.struct_stats[vid].get('streak', 0)<=15 else ('Beheerst' if st.session_state.struct_stats[vid].get('streak', 0)<=29 else 'Mastery'))
+                            st.caption(f"Fase: {f_naam} | Autonome Streak: {st.session_state.struct_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.struct_stats[vid].get('g', 0)}/{st.session_state.struct_stats[vid].get('f', 0)}")
+                            
         # ==========================================
         # TAB 7: LEESTEKSTEN
         # ==========================================
