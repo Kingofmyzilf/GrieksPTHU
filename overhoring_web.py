@@ -330,6 +330,53 @@ def bereken_gewicht(item):
     if streak >= 30: gewicht *= 0.1 
     return max(0.1, gewicht)
 
+def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dagelijkse_oefeningen=30):
+    if not items_lijst or not st.session_state.data:
+        return None
+        
+    # 1. Bepaal totale openstaande schuld
+    totale_schuld = 0
+    tot_goed = 0
+    tot_fout = 0
+    
+    for item in items_lijst:
+        if module_naam == 'vocab':
+            stats = st.session_state.vocab_stats.get(item['grieks'], {})
+            huidige_streak = int(item.get('streak', stats.get('streak', 0)))
+        elif module_naam == 'stam':
+            # Voor stamtijden pakken we de gemiddelde streak van zijn 5 sub-vormen
+            huidige_streak = item.get('streak', 0)
+        else:
+            huidige_streak = 0
+            
+        totale_schuld += max(0, doel_streak - huidige_streak)
+        tot_goed += int(item.get('score_goed', 0))
+        tot_fout += int(item.get('score_fout', 0))
+
+    if totale_schuld == 0:
+        return {"dagen": 0, "einddatum": "Al bereikt!", "accuratesse": 100, "netto_winst": 0}
+
+    # 2. Bereken historische accuratesse van deze specifieke student
+    totaal_pogingen = tot_goed + tot_fout
+    accuratesse = (tot_goed / totaal_pogingen) if totaal_pogingen > 10 else 0.80
+    accuratesse = max(0.50, min(1.0, accuratesse)) # Houd tussen 50% en 100%
+
+    # 3. De frictie-formule
+    netto_winst_per_oefening = (accuratesse * 1.2) - ((1.0 - accuratesse) * 2.0)
+    netto_winst_per_oefening = max(0.1, netto_winst_per_oefening) # Voorkom oneindige deling
+
+    netto_punten_per_dag = dagelijkse_oefeningen * netto_winst_per_oefening
+    benodigde_dagen = math.ceil(totale_schuld / netto_punten_per_dag)
+    
+    eind_datum = datetime.now().date() + pd.Timedelta(days=benodigde_dagen)
+    
+    return {
+        "dagen": benodigde_dagen,
+        "einddatum": eind_datum.strftime("%d %B %Y"),
+        "accuratesse": int(accuratesse * 100),
+        "netto_winst": round(netto_winst_per_oefening, 2),
+        "schuld": totale_schuld
+    }
 # --- DATABASE FUNCTIES ---
 @st.cache_data
 def laad_actief_beheersen_db():
