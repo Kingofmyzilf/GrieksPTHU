@@ -273,6 +273,53 @@ def veilige_json_load(data_str):
     except: return {}
 
 # --- ALGORITMES & TRACKING ---
+def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dagelijkse_oefeningen=30):
+    """Berekent de burndown-tijd op basis van openstaande streak-schuld en historische fouten-frictie."""
+    if not items_lijst or not st.session_state.data:
+        return None
+        
+    totale_schuld = 0
+    tot_goed = 0
+    tot_fout = 0
+    
+    for item in items_lijst:
+        if module_naam == 'vocab':
+            stats = st.session_state.vocab_stats.get(item['grieks'], {})
+            huidige_streak = int(item.get('streak', stats.get('streak', 0)))
+        elif module_naam == 'stam':
+            huidige_streak = int(item.get('streak', 0))
+        else:
+            huidige_streak = 0
+            
+        totale_schuld += max(0, doel_streak - huidige_streak)
+        tot_goed += int(item.get('score_goed', 0))
+        tot_fout += int(item.get('score_fout', 0))
+
+    if totale_schuld == 0:
+        return {"dagen": 0, "einddatum": "Al bereikt!", "accuratesse": 100, "netto_winst": 0, "schuld": 0}
+
+    # Genuanceerde aanname voor startende studenten: we trekken ze voorzichtig op 75%
+    totaal_pogingen = tot_goed + tot_fout
+    accuratesse = (tot_goed / totaal_pogingen) if totaal_pogingen > 10 else 0.75
+    accuratesse = max(0.50, min(1.0, accuratesse))
+
+    # Netto winst per gemaakte oefening = (P_goed * 1.2) - (P_fout * 2.0)
+    netto_winst_per_oefening = (accuratesse * 1.2) - ((1.0 - accuratesse) * 2.0)
+    netto_winst_per_oefening = max(0.08, netto_winst_per_oefening) # Zelfs bij zware frictie schuift men minimaal op
+
+    netto_punten_per_dag = dagelijkse_oefeningen * netto_winst_per_oefening
+    benodigde_dagen = math.ceil(totale_schuld / netto_punten_per_dag)
+    
+    eind_datum = datetime.now() + pd.Timedelta(days=benodigde_dagen)
+    
+    return {
+        "dagen": benodigde_dagen,
+        "einddatum": eind_datum.strftime("%d-%m-%Y"),
+        "accuratesse": int(accuratesse * 100),
+        "netto_winst": round(netto_winst_per_oefening, 2),
+        "schuld": totale_schuld
+    }
+    
 def registreer_oefening(item=None):
     vandaag = str(datetime.now().date())
     if 'dag_stats' not in st.session_state: st.session_state.dag_stats = {}
@@ -1003,6 +1050,37 @@ def main():
                 st.write("")
                 toon_meting("Paradigma's / Rijtjes", p_g3_beh, p_g3_tot)
 
+            st.write("---")
+
+            # --- DE MORFOLOGISCHE HORIZON (Studie-Forecaster) ---
+            st.markdown("### 🧭 De Morfologische Horizon (Prognose)")
+            st.caption("Dit model berekent jouw resterende 'Streak-schuld' ten opzichte van het langetermijngeheugen (Streak 16) en corrigeert dit real-time met jouw persoonlijke fouten-frictie.")
+
+            fc_c1, fc_c2 = st.columns([1, 2])
+            with fc_c1:
+                st.write("**Simuleer je dagelijkse inzet:**")
+                sim_dag_vocab = st.slider("Woord-oefeningen per dag:", min_value=10, max_value=100, value=30, step=5)
+                sim_doel = st.selectbox("Kies je horizon:", ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"])
+
+            with fc_c2:
+                if "1" in sim_doel: fc_pool = v_g1
+                elif "2" in sim_doel: fc_pool = v_g2
+                else: fc_pool = v_g3
+                
+                prognose = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=16, dagelijkse_oefeningen=sim_dag_vocab)
+                
+                if prognose:
+                    if prognose["schuld"] == 0:
+                        st.success(f"🎉 **Doel behaald!** Je hebt de vereiste kennis-massa voor {sim_doel} al volledig in het langetermijngeheugen verankerd.")
+                    else:
+                        p_c1, p_c2, p_c3 = st.columns(3)
+                        p_c1.metric("Openstaande Schuld", f"{prognose['schuld']} pt")
+                        p_c2.metric("Netto Dag-Snelheid", f"~{prognose['netto_winst']} pt/oef", help="Zoveel streak-punten win je gemiddeld per gemaakte vraag, na aftrek van de -2 strafpunt-frictie bij foute antwoorden.")
+                        p_c3.metric("Geschatte Einddatum", f"⏳ {prognose['dagen']} dagen", delta=prognose['einddatum'], delta_color="off")
+                        
+                        minuten_per_dag = max(3, int(sim_dag_vocab * 0.22))
+                        st.markdown(f"> 💡 **Studieadvies:** Met jouw actuele accuratesse van **{prognose['accuratesse']}%** levert elke gemaakte fout een kleine rem op. Om op **{prognose['einddatum']}** klaar te zijn, hoef je dagelijks slechts circa **{minuten_per_dag} minuten** gereserveerde studietijd aan de app te besteden.")
+            
             st.write("---")
 
             # --- DE STAMTIJDEN SLUIS ---
