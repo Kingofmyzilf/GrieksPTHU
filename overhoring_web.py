@@ -1770,31 +1770,51 @@ def main():
                         fout_msg_volledig = f"**{huidig['grieks']}** — {correct_cat} ({correct_eig}) — **{correct_bet}**"
                         alle_cats = sorted(list(set([w['categorie'] for w in struct_db])))
 
-                        # --- AUTHENTIEK ZINVERBAND ZOEKEN ---
+                        # --- AUTHENTIEK ZINVERBAND ZOEKEN (GEÜPGRADED) ---
                         bijbel_db = laad_bijbel_db()
-                        gezocht_str = normaliseer_accent(huidig['grieks'])
+                        
+                        # 1. Sloop tekst tussen haakjes weg (bijv ' (met gen)')
+                        label_puur = re.sub(r'\(.*?\)', '', huidig['grieks']).strip()
+                        # 2. Knip op slashes en maak een lijstje schone opties (bijv ['εκ', 'εξ'])
+                        zoek_opties = [normaliseer_accent(d) for d in label_puur.split('/') if d.strip()]
+                        
                         gevonden_context = None
                         extra_casus_hint = ""
+                        doel_nv = huidig.get('eigenschap', '') 
                         
                         if bijbel_db:
                             for ref, zin in bijbel_db.items():
                                 for idx_w, w in enumerate(zin):
                                     norm_w = normaliseer_accent(w['grieks'])
-                                    if norm_w == gezocht_str or norm_w == gezocht_str.replace('ς','σ'):
-                                        if idx_w + 1 < len(zin):
-                                            next_p = zin[idx_w + 1].get('parsing_info', '')
-                                            if "Gen" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Genitivus)*"
-                                            elif "Dat" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Dativus)*"
-                                            elif "Acc" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Accusativus)*"
+                                    if any(norm_w == k or norm_w == k.replace('ς','σ') for k in zoek_opties):
+                                        
+                                        # Als dit een Voorzetsel is, dwing de zoeker dan een zin te pakken 
+                                        # waar het woord eráCHTER de geëiste naamval heeft!
+                                        eis_voldaan = True
+                                        if "Voorzetsel" in huidig.get('categorie', ''):
+                                            if idx_w + 1 < len(zin):
+                                                next_p = zin[idx_w + 1].get('parsing_info', '')
+                                                nv_prefix = doel_nv[:3] # Map 'Genitivus' -> 'Gen'
+                                                if nv_prefix not in next_p:
+                                                    eis_voldaan = False
+                                            else: eis_voldaan = False
                                             
-                                        html_z = ""
-                                        for sub_w in zin:
-                                            if normaliseer_accent(sub_w['grieks']) in [gezocht_str, gezocht_str.replace('ς','σ')]:
-                                                html_z += f"<span style='color: #ffd700; font-weight: bold; text-decoration: underline; padding: 0 3px;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
-                                            else:
-                                                html_z += f"<span style='color: #aaa;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
-                                        gevonden_context = (ref, html_z.strip())
-                                        break
+                                        if eis_voldaan:
+                                            if idx_w + 1 < len(zin):
+                                                next_p = zin[idx_w + 1].get('parsing_info', '')
+                                                if "Gen" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Genitivus)*"
+                                                elif "Dat" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Dativus)*"
+                                                elif "Acc" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Accusativus)*"
+                                                
+                                            html_z = ""
+                                            for sub_w in zin:
+                                                n_sub = normaliseer_accent(sub_w['grieks'])
+                                                if any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties):
+                                                    html_z += f"<span style='color: #ffd700; font-weight: bold; text-decoration: underline; padding: 0 3px;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
+                                                else:
+                                                    html_z += f"<span style='color: #aaa;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
+                                            gevonden_context = (ref, html_z.strip())
+                                            break
                                 if gevonden_context: break
 
                         if gevonden_context:
