@@ -1035,7 +1035,7 @@ def main():
 
             st.write("---")
 
-            # --- DE MORFOLOGISCHE HORIZON (Interactieve Studieplanner) ---
+            # --- DE MORFOLOGISCHE HORIZON (Interactieve Studieplanner 2.1) ---
             st.markdown("### 🧭 De Morfologische Horizon (Interactieve Studieplanner)")
             st.caption("Analyseer de wiskundige verhouding tussen doelniveau, dagelijks oefenritme en persoonlijke focus om een haalbare planning te maken.")
 
@@ -1043,16 +1043,20 @@ def main():
             
             with fc_c1:
                 st.write("**1. Kies je tentamengroep:**")
-                sim_doel_groep = st.selectbox("Onderdeel:", ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"], label_visibility="collapsed")
+                sim_doel_groep = st.selectbox(
+                    "Onderdeel:", 
+                    ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"], 
+                    label_visibility="collapsed"
+                )
                 
-                if "1" in sim_doel_groep: fc_pool = v_g1
-                elif "2" in sim_doel_groep: fc_pool = v_g2
+                # De gecorrigeerde, strikte controle op de groepsnaam
+                if "Grieks 1" in sim_doel_groep: fc_pool = v_g1
+                elif "Grieks 2" in sim_doel_groep: fc_pool = v_g2
                 else: fc_pool = v_g3
 
-                # Veilige berekening van de werkelijke historische accuratesse van de student
                 sub_g, sub_f = 0, 0
                 if st.session_state.get('data'):
-                    gekozen_lessen = [1,2,3,4,5,6] if "1" in sim_doel_groep else ([7,8,9,10,11,12] if "2" in sim_doel_groep else [13,14])
+                    gekozen_lessen = [1,2,3,4,5,6] if "Grieks 1" in sim_doel_groep else ([7,8,9,10,11,12] if "Grieks 2" in sim_doel_groep else [13,14])
                     for w in st.session_state.data:
                         if veilig_les_nummer(w) in gekozen_lessen:
                             try: sub_g += int(w.get('score_goed', 0))
@@ -1069,6 +1073,32 @@ def main():
                 sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
 
             with fc_c2:
+                # --- LIVE TELLING PER CATEGORIE VOOR DE GEKOZEN GROEP ---
+                fase_telling = {'Nieuw': 0, 'Training': 0, 'Beheerst': 0, 'Mastery': 0}
+                actuele_dict = {w['grieks']: w for w in st.session_state.get('data', []) if isinstance(w, dict) and 'grieks' in w}
+                
+                for w in fc_pool:
+                    key = w.get('grieks', '')
+                    live_w = actuele_dict.get(key, {})
+                    try: strk = int(live_w.get('streak', 0))
+                    except (ValueError, TypeError): strk = 0
+                        
+                    if strk == 0: fase_telling['Nieuw'] += 1
+                    elif 1 <= strk <= 15: fase_telling['Training'] += 1
+                    elif 16 <= strk <= 29: fase_telling['Beheerst'] += 1
+                    else: fase_telling['Mastery'] += 1
+
+                label_groep = f"{sim_doel_groep.split(' ')[1]} {sim_doel_groep.split(' ')[2]}"
+                st.write(f"**Huidige verdeling van {label_groep}:**")
+                
+                c_f1, c_f2, c_f3, c_f4 = st.columns(4)
+                c_f1.metric("Nieuw (0)", fase_telling['Nieuw'])
+                c_f2.metric("In Training (1–15)", fase_telling['Training'])
+                c_f3.metric("Beheerst (16–29)", fase_telling['Beheerst'])
+                c_f4.metric("Mastery (30+)", fase_telling['Mastery'])
+                
+                st.write("") # Visuele ademruimte
+
                 prognose = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=sim_acc_override)
                 
                 if prognose and prognose.get("schuld", 0) == 0:
@@ -1098,7 +1128,6 @@ def main():
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Reken door wat een gerichte focus-verhoging van 5% zou opleveren
                     winst_bij_plus5 = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=min(100, sim_acc_override + 5))
                     if winst_bij_plus5:
                         dagen_bespaard = prognose["dagen"] - winst_bij_plus5["dagen"]
