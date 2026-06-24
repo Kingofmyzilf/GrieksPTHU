@@ -707,6 +707,11 @@ def main():
                     huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item.get('grieks')))
                     huidige_parsing = str(st.session_state.huidige_vorm_data.get('parsing', 'basis'))
                     extra_info = item.get('lexeem_info', '') or item.get('grieks_info', '')
+                    # --- CENTRALE HINT GENERATOR ---
+                    hint_delen = [d for d in [extra_info, item.get('fonetisch', '')] if d]
+                    ezelsbrug = f"{item.get('anker', '')} {item.get('beeld', item.get('associatie', item.get('opmerking', '')))}".strip()
+                    if ezelsbrug: hint_delen.append(ezelsbrug)
+                    actuele_hint = "💡 " + " | ".join(hint_delen)
 
                     if st.session_state.feedback:
                         if st.session_state.feedback["type"] == "success": st.success(st.session_state.feedback["msg"])
@@ -745,12 +750,13 @@ def main():
                                 else: st.error("Niet correct overgetypt.")
 
                     elif huidige_sub_modus == '1':
-                        st.info(f"💡 {extra_info} | {item.get('fonetisch', '')} | {item.get('anker', '')} {item.get('beeld', '')}")
+                        st.info(actuele_hint)
                         st.write(f"Betekenis: **{correct_antw}**")
                         if st.button("Volgende"): laad_volgend_woord(); st.rerun()
 
                     elif huidige_sub_modus in ['4', '3_typ']:
-                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {extra_info} | {item.get('fonetisch', '')}")
+                        if st.session_state.fouten_huidig_woord >= 1: 
+                            st.info(actuele_hint)
                         forceer_focus()
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Vertaling:").lower().strip()
@@ -783,7 +789,8 @@ def main():
                                     else: item['score_fout'] = int(item.get('score_fout', 0)) + 1; st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint."}
                                     st.rerun()
                     else:
-                        if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {extra_info} | {item.get('fonetisch', '')}")
+                        if st.session_state.fouten_huidig_woord >= 1: 
+                            st.info(actuele_hint)
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         
                         if not st.session_state.huidige_opties:
