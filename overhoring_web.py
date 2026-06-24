@@ -273,8 +273,7 @@ def veilige_json_load(data_str):
     except: return {}
 
 # --- ALGORITMES & TRACKING ---
-def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dagelijkse_oefeningen=30):
-    """Berekent de burndown-tijd op basis van openstaande streak-schuld en historische fouten-frictie."""
+def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dagelijkse_oefeningen=30, sim_accuratesse=None):
     if not items_lijst or not st.session_state.data:
         return None
         
@@ -296,14 +295,17 @@ def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dageli
         tot_fout += int(item.get('score_fout', 0))
 
     if totale_schuld == 0:
-        return {"dagen": 0, "einddatum": "Al bereikt!", "accuratesse": 100, "netto_winst": 0, "schuld": 0}
+        return {"dagen": 0, "einddatum": "Doel al behaald!", "accuratesse": sim_accuratesse if sim_accuratesse else 100, "netto_winst": 0, "schuld": 0}
 
-    # Genuanceerde aanname voor startende studenten: we trekken ze voorzichtig op 75%
-    totaal_pogingen = tot_goed + tot_fout
-    accuratesse = (tot_goed / totaal_pogingen) if totaal_pogingen > 10 else 0.75
-    accuratesse = max(0.50, min(1.0, accuratesse))
+    # Bepaal de te gebruiken accuratesse (De door de student gekozen slider, óf zijn echte historie)
+    if sim_accuratesse is not None:
+        accuratesse = sim_accuratesse / 100.0
+    else:
+        totaal_pogingen = tot_goed + tot_fout
+        accuratesse = (tot_goed / totaal_pogingen) if totaal_pogingen > 10 else 0.75
+        accuratesse = max(0.50, min(1.0, accuratesse))
 
-    # Netto winst per gemaakte oefening = (P_goed * 1.2) - (P_fout * 2.0)
+    # Formule: Netto winst per gemaakte oefening = (P_goed * 1.2) - (P_fout * 2.0)
     netto_winst_per_oefening = (accuratesse * 1.2) - ((1.0 - accuratesse) * 2.0)
     netto_winst_per_oefening = max(0.08, netto_winst_per_oefening) # Zelfs bij zware frictie schuift men minimaal op
 
@@ -1052,35 +1054,68 @@ def main():
 
             st.write("---")
 
-            # --- DE MORFOLOGISCHE HORIZON (Studie-Forecaster) ---
-            st.markdown("### 🧭 De Morfologische Horizon (Prognose)")
-            st.caption("Dit model berekent jouw resterende 'Streak-schuld' ten opzichte van het langetermijngeheugen (Streak 16) en corrigeert dit real-time met jouw persoonlijke fouten-frictie.")
+            # --- DE MORFOLOGISCHE HORIZON (Studie-Forecaster 2.0) ---
+            st.markdown("### 🧭 De Morfologische Horizon (Interactieve Studieplanner)")
+            st.caption("Speel met de knoppen: verlaag je doelniveau, verhoog je dagelijkse ritme of simuleer een hogere focus om jouw ideale tentamen-route uit te stippelen.")
 
-            fc_c1, fc_c2 = st.columns([1, 2])
+            fc_c1, fc_c2 = st.columns([1.1, 1.9])
+            
             with fc_c1:
-                st.write("**Simuleer je dagelijkse inzet:**")
-                sim_dag_vocab = st.slider("Woord-oefeningen per dag:", min_value=10, max_value=100, value=30, step=5)
-                sim_doel = st.selectbox("Kies je horizon:", ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"])
+                st.write("**1. Kies je tentamengroep:**")
+                sim_doel_groep = st.selectbox("Onderdeel:", ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"], label_visibility="collapsed")
+                
+                if "1" in sim_doel_groep: fc_pool = v_g1
+                elif "2" in sim_doel_groep: fc_pool = v_g2
+                else: fc_pool = v_g3
+
+                # Bereken live de échte historische accuratesse van de student voor deze specifieke lessen!
+                sub_g = sum(int(w.get('score_goed', 0)) for w in fc_pool)
+                sub_f = sum(int(w.get('score_fout', 0)) for w in fc_pool)
+                echte_hist_acc = int((sub_g / (sub_g + sub_f)) * 100) if (sub_g + sub_f) > 0 else 78
+
+                st.write("**2. Bepaal je parameters:**")
+                sim_doel_streak = st.slider("Gewenste Kennis-diepte (Streak):", min_value=2, max_value=30, value=16, help="16 = Beheerst (Standaard PThU norm). 8 = Voldoende om passief te herkennen in een tekst. 30 = Vloeiende Mastery.")
+                sim_dag_vocab = st.slider("Woorden oefenen per dag:", min_value=5, max_value=100, value=30, step=5)
+                sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
 
             with fc_c2:
-                if "1" in sim_doel: fc_pool = v_g1
-                elif "2" in sim_doel: fc_pool = v_g2
-                else: fc_pool = v_g3
+                prognose = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=sim_acc_override)
                 
-                prognose = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=16, dagelijkse_oefeningen=sim_dag_vocab)
-                
-                if prognose:
-                    if prognose["schuld"] == 0:
-                        st.success(f"🎉 **Doel behaald!** Je hebt de vereiste kennis-massa voor {sim_doel} al volledig in het langetermijngeheugen verankerd.")
-                    else:
-                        p_c1, p_c2, p_c3 = st.columns(3)
-                        p_c1.metric("Openstaande Schuld", f"{prognose['schuld']} pt")
-                        p_c2.metric("Netto Dag-Snelheid", f"~{prognose['netto_winst']} pt/oef", help="Zoveel streak-punten win je gemiddeld per gemaakte vraag, na aftrek van de -2 strafpunt-frictie bij foute antwoorden.")
-                        p_c3.metric("Geschatte Einddatum", f"⏳ {prognose['dagen']} dagen", delta=prognose['einddatum'], delta_color="off")
-                        
-                        minuten_per_dag = max(3, int(sim_dag_vocab * 0.22))
-                        st.markdown(f"> 💡 **Studieadvies:** Met jouw actuele accuratesse van **{prognose['accuratesse']}%** levert elke gemaakte fout een kleine rem op. Om op **{prognose['einddatum']}** klaar te zijn, hoef je dagelijks slechts circa **{minuten_per_dag} minuten** gereserveerde studietijd aan de app te besteden.")
-            
+                if prognose["schuld"] == 0:
+                    st.success(f"🎉 **Doel al bereikt!** Alle woorden binnen deze selectie hebben de door jou ingestelde drempelwaarde van **streak {sim_doel_streak}** al behaald.")
+                else:
+                    min_per_dag = max(3, int(sim_dag_vocab * 0.22))
+                    
+                    # Custom Dark Card voor de weergave
+                    st.markdown(f"""
+                    <div style="background-color: #1a1a1a; padding: 22px; border-radius: 12px; border-left: 6px solid #33ccff; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                        <div style="font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Verwachte afrondingsdatum</div>
+                        <div style="font-size: 34px; font-weight: 800; color: #33ccff; margin: 4px 0 10px 0;">{prognose['einddatum']}</div>
+                        <div style="font-size: 15px; color: #ddd; margin-bottom: 16px;">Doorlooptijd: <strong>{prognose['dagen']} dagen</strong> bij {min_per_dag} minuten studie per dag.</div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #333; padding-top: 14px;">
+                            <div>
+                                <span style="font-size: 20px; font-weight: bold; color: #fff;">{prognose['schuld']} pt</span><br>
+                                <span style="font-size: 12px; color: #aaa;">Totale Streak-schuld</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 20px; font-weight: bold; color: #f6c23e;">~{prognose['netto_winst']} pt</span><br>
+                                <span style="font-size: 12px; color: #aaa;">Netto winst / oefening</span>
+                            </div>
+                            <div>
+                                <span style="font-size: 20px; font-weight: bold; color: #28a745;">{sim_acc_override}%</span><br>
+                                <span style="font-size: 12px; color: #aaa;">Ingevoerde Focus</span>
+                            </div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # De didactische 'Hefboom' berekening
+                    winst_bij_plus5 = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=min(100, sim_acc_override + 5))
+                    dagen_bespaard = prognose["dagen"] - winst_bij_plus5["dagen"]
+                    
+                    if dagen_bespaard > 1 and sim_acc_override < 95:
+                        st.caption(f"💡 **Exegese Hefboom:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijv. door bij twijfel eerst op de hint te klikken in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** studietijd!")
+
             st.write("---")
 
             # --- DE STAMTIJDEN SLUIS ---
