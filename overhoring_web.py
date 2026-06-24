@@ -1906,24 +1906,47 @@ def main():
                                         else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint en probeer het opnieuw!"}
                                         st.rerun()
 
-                        # --- MODUS 3: MEERKEUZE ---
+# --- MODUS 3: MEERKEUZE (GEÜPGRADED MET FAMILIE-TRIAGE) ---
                         else: 
                             if not st.session_state.struct_opties_cat:
                                 import random as rnd
+                                
+                                # 1. Bepaal de 'Bloedgroep' van het huidige woord
+                                cat_txt = huidig.get('categorie', '')
+                                if "Voorzetsel" in cat_txt: fam = "Voorzetsel"
+                                elif "Voegwoord" in cat_txt or "Partikel" in cat_txt: fam = "Voegwoord"
+                                else: fam = "Pronomina"
+
+                                # Helper om te checken of een ander DB-item tot dezelfde familie behoort
+                                def is_genoot(item_cat, doel_fam):
+                                    if doel_fam == "Voorzetsel": return "Voorzetsel" in item_cat
+                                    elif doel_fam == "Voegwoord": return "Voegwoord" in item_cat or "Partikel" in item_cat
+                                    else: return "Vnw" in item_cat or "Pronomina" in item_cat
+
+                                # Vraag 1 (Categorie): Mag globaal blijven om de hoofdsoort te toetsen
                                 afleiders_c = [c for c in alle_cats if c != correct_cat]
-                                st.session_state.struct_opties_cat = [correct_cat] + rnd.sample(afleiders_c, min(3, len(afleiders_c))); rnd.shuffle(st.session_state.struct_opties_cat)
+                                st.session_state.struct_opties_cat = [correct_cat] + rnd.sample(afleiders_c, min(3, len(afleiders_c)))
+                                rnd.shuffle(st.session_state.struct_opties_cat)
                                 
-                                alle_eigs = sorted(list(set([w['eigenschap'] for w in struct_db])))
-                                afleiders_e = [e for e in alle_eigs if e != correct_eig]
-                                st.session_state.struct_opties_eig = [correct_eig] + rnd.sample(afleiders_e, min(3, len(afleiders_e))); rnd.shuffle(st.session_state.struct_opties_eig)
+                                # Vraag 2 (Eigenschap / Naamval): STRIKT BINNEN DEZELFDE FAMILIE
+                                if fam == "Voorzetsel":
+                                    # Voorzetsels dwingen we op de 3 reële Griekse casus-opties:
+                                    mogelijke_nv = ["Genitivus", "Dativus", "Accusativus"]
+                                    if correct_eig in mogelijke_nv:
+                                        st.session_state.struct_opties_eig = mogelijke_nv
+                                    else:
+                                        st.session_state.struct_opties_eig = [correct_eig] + [n for n in mogelijke_nv if n != correct_eig]
+                                else:
+                                    # Pronomina of Voegwoorden pakken de unieke parsing-termen van soortgenoten
+                                    poule_e = sorted(list(set([w['eigenschap'] for w in struct_db if is_genoot(w['categorie'], fam) and w['eigenschap'] != correct_eig])))
+                                    st.session_state.struct_opties_eig = [correct_eig] + rnd.sample(poule_e, min(3, len(poule_e)))
                                 
-                                afleiders_b = []; bestaande_b = {correct_bet}
-                                str_pool = [w['betekenis'] for w in struct_db if w['betekenis'] != correct_bet]
-                                rnd.shuffle(str_pool)
-                                for b_txt in str_pool:
-                                    if b_txt not in bestaande_b: afleiders_b.append(b_txt); bestaande_b.add(b_txt)
-                                    if len(afleiders_b) >= 3: break
-                                st.session_state.struct_opties_bet = [correct_bet] + afleiders_b; rnd.shuffle(st.session_state.struct_opties_bet)
+                                rnd.shuffle(st.session_state.struct_opties_eig)
+                                
+                                # Vraag 3 (Betekenis): STRIKT VERTALINGEN VAN SOORTGENOTEN
+                                poule_b = list(set([w['betekenis'] for w in struct_db if is_genoot(w['categorie'], fam) and w['betekenis'] != correct_bet]))
+                                st.session_state.struct_opties_bet = [correct_bet] + rnd.sample(poule_b, min(3, len(poule_b)))
+                                rnd.shuffle(st.session_state.struct_opties_bet)
                                 
                             with st.form(f"form_mc_{w_id_clean}"):
                                 if st.session_state.struct_mc_solved["cat"]: st.success(f"✓ Categorie: {correct_cat}"); keuze_cat = correct_cat
