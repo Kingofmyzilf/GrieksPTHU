@@ -1128,11 +1128,22 @@ def main():
                     </div>
                     """, unsafe_allow_html=True)
                     
+                    # --- GECOMBINEERD DIDACTISCH ADVIESPANEEL ---
+                    st.write("") # Visuele ademruimte
+                    
+                    advies_box = "**💡 Strategische knoppen voor jouw planning:**\n\n"
+                    
+                    # Hefboom 1: De Modus-keuze (Jouw nieuwe inzicht)
+                    advies_box += "1. **Kies de Typ-modus:** Dit model rekent met een standaard mix-sessie. Omdat actieve reproductie bij *Typen* (+3 streak-punten) een aanzienlijk zwaarder beroep doet op je geheugen dan herkenning bij *Meerkeuze* (+1 punt), beloont de motor dit: overschakelen naar de Typ-modus verkort de berekende doorlooptijd in de praktijk fors.\n"
+                    
+                    # Hefboom 2: De Accuratesse-hefboom
                     winst_bij_plus5 = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=min(100, sim_acc_override + 5))
                     if winst_bij_plus5:
                         dagen_bespaard = prognose["dagen"] - winst_bij_plus5["dagen"]
                         if dagen_bespaard > 1 and sim_acc_override < 95:
-                            st.caption(f"💡 **Didactische Hefboom:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijvoorbeeld door bij twijfel op de hint te klikken in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** doorlooptijd.")
+                            advies_box += f"2. **Hefboom op Focus:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijvoorbeeld door bij twijfel de hint te openen in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** doorlooptijd."
+                            
+                    st.info(advies_box)
 
             st.write("---")
 
