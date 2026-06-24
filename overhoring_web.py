@@ -1853,14 +1853,18 @@ def main():
                                             break
                                 if gevonden_context: break
 
+                        # --- SPOILERVRIJE WEERGAVE ---
+                        # Zuiver de weergavenaam permanent van haakjes (maakt van 'παρά (dat)' -> 'παρά')
+                        toon_naam = re.sub(r'\(.*?\)', '', huidig['grieks']).strip()
+
                         if gevonden_context:
                             st.markdown(f"<div style='font-size: 13px; color: #f6c23e; margin-bottom: 2px;'>📖 Zinverband ({gevonden_context[0]}):</div>", unsafe_allow_html=True)
                             if struct_kleur_nv:
                                 st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
                             st.markdown(f"<div class='grieks-zin' style='font-size: 22px; padding: 12px; margin-bottom: 12px;'>{gevonden_context[1]}</div>", unsafe_allow_html=True)
-                            st.caption(f"Kijk naar de grammaticale functie van **{huidig['grieks']}** in deze zin{extra_casus_hint}:")
+                            st.caption(f"Kijk naar de grammaticale functie van **{toon_naam}** in deze zin:")
                         else:
-                            st.markdown(f"<div class='grieks-woord'>{huidig['grieks']}</div>", unsafe_allow_html=True)
+                            st.markdown(f"<div class='grieks-woord'>{toon_naam}</div>", unsafe_allow_html=True)
                             st.caption("Identificeer dit structuurwoord.")
 
                         # --- MODUS 1: OVERTIKKEN ---
