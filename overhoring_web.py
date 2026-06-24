@@ -793,13 +793,15 @@ def main():
                             st.info(actuele_hint)
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         
+                 # --- ROBUUSTE LOOK-A-LIKE MEERKEUZE ENGINE ---
                         if not st.session_state.huidige_opties:
                             afleiders = []
                             gekozen_betekenissen = {correct_optie}
+                            import random as rnd
                             
                             if is_mastery and heeft_vormen:
                                 andere_parsings = list(set([str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]))
-                                r_engine.shuffle(andere_parsings)
+                                rnd.shuffle(andere_parsings)
                                 for p in andere_parsings:
                                     optie = f"{correct_antw} ({p})"
                                     if optie not in gekozen_betekenissen: afleiders.append(optie); gekozen_betekenissen.add(optie)
@@ -807,7 +809,7 @@ def main():
                                 
                                 if len(afleiders) < 3:
                                     pool = [w for w in st.session_state.data if w.get('woordsoort') == item.get('woordsoort') and 'vormen_data' in w]
-                                    r_engine.shuffle(pool)
+                                    rnd.shuffle(pool)
                                     for w in pool:
                                         for v in w.get('vormen_data', []):
                                             optie = f"{correct_antw} ({v.get('parsing', '')})" 
@@ -816,20 +818,48 @@ def main():
                                         if len(afleiders) >= 3: break
                             else:
                                 huidige_w_soort = item.get('woordsoort', '')
-                                prefix = item.get('grieks', '')[:2] 
-                                pool = [w for w in st.session_state.data if w['grieks'] != item['grieks'] and w.get('woordsoort') == huidige_w_soort]
-                                if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']]
+                                grieks_doel = normaliseer_accent(item.get('grieks', ''))
+                                prefix_2 = grieks_doel[:2] if len(grieks_doel)>=2 else ''
+                                stam_gok = grieks_doel[1:-2] if len(grieks_doel)>=5 else ''
                                 
-                                similar = [w for w in pool if w['grieks'].startswith(prefix)]
-                                r_engine.shuffle(similar); r_engine.shuffle(pool)
+                                # --- 1. GERECHTE LOOK-A-LIKES ZOEKEN ---
+                                lookalikes_ned = []
+                                pool_ws = []
                                 
-                                for w in similar + pool:
-                                    bet = str(w.get('nederlands', ''))
-                                    if bet and bet not in gekozen_betekenissen: afleiders.append(bet); gekozen_betekenissen.add(bet)
+                                for w in st.session_state.data:
+                                    g_ander = normaliseer_accent(w.get('grieks', ''))
+                                    n_ander = str(w.get('nederlands', '')).strip()
+                                    if not g_ander or not n_ander or n_ander in gekozen_betekenissen or g_ander == grieks_doel: continue
+                                    
+                                    if w.get('woordsoort') == huidige_w_soort: pool_ws.append(n_ander)
+                                    
+                                    # Criterium A: Gedeelde stam/wortel (bijv. 'ερχ' in απερχομαι en διερχομαι)
+                                    if stam_gok and len(stam_gok)>=3 and stam_gok in g_ander: lookalikes_ned.append(n_ander)
+                                    # Criterium B: Zelfde preverbale prefix + zelfde lengte-orde
+                                    elif prefix_2 and g_ander.startswith(prefix_2) and abs(len(g_ander)-len(grieks_doel))<=2: lookalikes_ned.append(n_ander)
+
+                                rnd.shuffle(lookalikes_ned)
+                                for ned in lookalikes_ned:
+                                    if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
                                     if len(afleiders) >= 3: break
-                            
+                                    
+                                # --- 2. TRAP 2: WOORDSOORT GENOTEN ---
+                                if len(afleiders) < 3:
+                                    rnd.shuffle(pool_ws)
+                                    for ned in pool_ws:
+                                        if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
+                                        if len(afleiders) >= 3: break
+                                        
+                                # --- 3. ABSOLUTE FALLBACK ---
+                                if len(afleiders) < 3:
+                                    rest_pool = [w.get('nederlands','') for w in st.session_state.data if w.get('nederlands') not in gekozen_betekenissen and w.get('nederlands')]
+                                    rnd.shuffle(rest_pool)
+                                    for ned in rest_pool:
+                                        if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
+                                        if len(afleiders) >= 3: break
+
                             st.session_state.huidige_opties = [correct_optie] + afleiders[:3]
-                            r_engine.shuffle(st.session_state.huidige_opties)
+                            rnd.shuffle(st.session_state.huidige_opties)
                         
                         cols = st.columns(2)
                         for idx, optie in enumerate(st.session_state.huidige_opties):
@@ -1719,8 +1749,41 @@ def main():
                             else: st.error(st.session_state.struct_feedback["msg"])
                             st.session_state.struct_feedback = None 
 
-                        st.markdown(f"<div class='grieks-woord'>{huidig['grieks']}</div>", unsafe_allow_html=True)
-                        st.caption("Identificeer dit structuurwoord.")
+                        # --- AUTHENTIEK ZINVERBAND INJECTOR ---
+                        bijbel_db = laad_bijbel_db()
+                        gezocht_str = normaliseer_accent(huidig['grieks'])
+                        gevonden_context = None
+                        extra_casus_hint = ""
+                        
+                        if bijbel_db:
+                            for ref, zin in bijbel_db.items():
+                                for idx_w, w in enumerate(zin):
+                                    norm_w = normaliseer_accent(w['grieks'])
+                                    if norm_w == gezocht_str or norm_w == gezocht_str.replace('ς','σ'):
+                                        # Peil bij voorzetsels direct de naamval van het woord dat erop volgt!
+                                        if idx_w + 1 < len(zin):
+                                            next_p = zin[idx_w + 1].get('parsing_info', '')
+                                            if "Gen" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Genitivus)*"
+                                            elif "Dat" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Dativus)*"
+                                            elif "Acc" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Accusativus)*"
+                                            
+                                        html_z = ""
+                                        for sub_w in zin:
+                                            if normaliseer_accent(sub_w['grieks']) in [gezocht_str, gezocht_str.replace('ς','σ')]:
+                                                html_z += f"<span style='color: #ffd700; font-weight: bold; text-decoration: underline; padding: 0 3px;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
+                                            else:
+                                                html_z += f"<span style='color: #aaa;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
+                                        gevonden_context = (ref, html_z.strip())
+                                        break
+                                if gevonden_context: break
+
+                        if gevonden_context:
+                            st.markdown(f"<div style='font-size: 13px; color: #f6c23e; margin-bottom: 2px;'>📖 Zinverband ({gevonden_context[0]}):</div>", unsafe_allow_html=True)
+                            st.markdown(f"<div class='grieks-zin' style='font-size: 22px; padding: 12px; margin-bottom: 12px;'>{gevonden_context[1]}</div>", unsafe_allow_html=True)
+                            st.caption(f"Kijk naar de grammaticale functie van **{huidig['grieks']}** in deze zin{extra_casus_hint}:")
+                        else:
+                            st.markdown(f"<div class='grieks-woord'>{huidig['grieks']}</div>", unsafe_allow_html=True)
+                            st.caption("Identificeer dit structuurwoord.")
                         
                         correct_cat = huidig['categorie']; correct_eig = huidig['eigenschap']; correct_bet = huidig['betekenis']
                         fout_msg_volledig = f"**{huidig['grieks']}** — {correct_cat} ({correct_eig}) — **{correct_bet}**"
