@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 import json
 import pandas as pd
-import random as rnd  # <-- Gestandaardiseerd naar 'rnd' om scope-conflicten te elimineren
+import random
 import re
 import math
 import matplotlib.pyplot as plt
@@ -298,7 +298,7 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         except: return datetime.min.date()
 
     training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
-    rnd.shuffle(nieuw)
+    random.shuffle(nieuw)
     
     sessie = []
     if custom_counts is not None:
@@ -306,7 +306,7 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         sessie.extend(training[:custom_counts.get('training', 0)])
         sessie.extend(beheerst[:custom_counts.get('beheerst', 0)])
         sessie.extend(mastery[:custom_counts.get('mastery', 0)])
-        rnd.shuffle(sessie)
+        random.shuffle(sessie)
         return sessie
 
     doel_grootte = 15 if (len(nieuw) + len(training)) <= 4 else 10
@@ -316,7 +316,7 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
     
     if len(sessie) < doel_grootte: sessie.extend(beheerst[:doel_grootte - len(sessie)])
     if len(sessie) < doel_grootte: sessie.extend(mastery[:doel_grootte - len(sessie)])
-    rnd.shuffle(sessie)
+    random.shuffle(sessie)
     return sessie
 
 def bereken_gewicht(item):
@@ -631,7 +631,7 @@ def main():
                     heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                     
                     if st.session_state.huidige_vorm_data is None:
-                        if is_mastery and heeft_vormen: st.session_state.huidige_vorm_data = rnd.choice(item['vormen_data'])
+                        if is_mastery and heeft_vormen: st.session_state.huidige_vorm_data = random.choice(item['vormen_data'])
                         else: st.session_state.huidige_vorm_data = {"vorm": item.get('grieks', 'Onbekend'), "parsing": "basis"}
 
                     huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item.get('grieks')))
@@ -716,14 +716,13 @@ def main():
                         if st.session_state.fouten_huidig_woord >= 1: st.info(f"💡 {extra_info} | {item.get('fonetisch', '')}")
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         
-                        # --- ROBUUSTE MEERKEUZE LOGICA ---
                         if not st.session_state.huidige_opties:
                             afleiders = []
                             gekozen_betekenissen = {correct_optie}
                             
                             if is_mastery and heeft_vormen:
                                 andere_parsings = list(set([str(v.get('parsing', '')) for v in item.get('vormen_data', []) if str(v.get('parsing', '')) != str(huidige_parsing)]))
-                                rnd.shuffle(andere_parsings)
+                                random.shuffle(andere_parsings)
                                 for p in andere_parsings:
                                     optie = f"{correct_antw} ({p})"
                                     if optie not in gekozen_betekenissen: afleiders.append(optie); gekozen_betekenissen.add(optie)
@@ -731,7 +730,7 @@ def main():
                                 
                                 if len(afleiders) < 3:
                                     pool = [w for w in st.session_state.data if w.get('woordsoort') == item.get('woordsoort') and 'vormen_data' in w]
-                                    rnd.shuffle(pool)
+                                    random.shuffle(pool)
                                     for w in pool:
                                         for v in w.get('vormen_data', []):
                                             optie = f"{correct_antw} ({v.get('parsing', '')})" 
@@ -745,7 +744,7 @@ def main():
                                 if len(pool) < 3: pool = [w for w in st.session_state.data if w['grieks'] != item['grieks']]
                                 
                                 similar = [w for w in pool if w['grieks'].startswith(prefix)]
-                                rnd.shuffle(similar); rnd.shuffle(pool)
+                                random.shuffle(similar); random.shuffle(pool)
                                 
                                 for w in similar + pool:
                                     bet = str(w.get('nederlands', ''))
@@ -753,7 +752,7 @@ def main():
                                     if len(afleiders) >= 3: break
                             
                             st.session_state.huidige_opties = [correct_optie] + afleiders[:3]
-                            rnd.shuffle(st.session_state.huidige_opties)
+                            random.shuffle(st.session_state.huidige_opties)
                         
                         cols = st.columns(2)
                         for idx, optie in enumerate(st.session_state.huidige_opties):
@@ -819,7 +818,7 @@ def main():
                         s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
                         str_lijst.append({"Woord": w['grieks'], "Categorie": w['categorie'], "Eigenschap": w['eigenschap'], "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
                     st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
-
+        
         # ==========================================
         # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
@@ -1235,9 +1234,10 @@ def main():
                     st.markdown(f"### ⚡ Flashcards ({gekozen_sub})")
                     st.write("Overhoor willekeurige losse vormen uit dit paradigma om je snelheid te trainen.")
                     
+                    # --- DE DADER IS HIER WEGGESNEDEN (import random is foetsie!) ---
                     if "flash_huidig" not in st.session_state or st.session_state.get("flash_para_id") != gekozen_sub:
                         st.session_state.flash_para_id = gekozen_sub
-                        st.session_state.flash_huidig = rnd.choice(huidig_paradigma)
+                        st.session_state.flash_huidig = random.choice(huidig_paradigma)
                     
                     huidig_fc = st.session_state.flash_huidig
                     st.info(f"Vertaal naar het Grieks: **{gekozen_cat} - {huidig_fc['label']}**")
@@ -1249,7 +1249,7 @@ def main():
                             ingevuld = normaliseer_accent(naar_grieks_transliteratie(fc_in))
                             if verwacht == ingevuld:
                                 st.success(f"✓ Goed! Het was inderdaad **{huidig_fc['vorm']}**.")
-                                st.session_state.flash_huidig = rnd.choice(huidig_paradigma)
+                                st.session_state.flash_huidig = random.choice(huidig_paradigma)
                             else:
                                 stam = huidig_fc.get("stam", ""); uitgang = huidig_fc.get("uitgang", ""); toelichting = huidig_fc.get("toelichting", "")
                                 st.error(f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*")
@@ -1446,15 +1446,15 @@ def main():
                             else: 
                                 if not st.session_state.stam_opties_gram:
                                     afleiders_g = [g for g in ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"] if g != correct_gram]
-                                    st.session_state.stam_opties_gram = [correct_gram] + rnd.sample(afleiders_g, 3); rnd.shuffle(st.session_state.stam_opties_gram)
+                                    st.session_state.stam_opties_gram = [correct_gram] + random.sample(afleiders_g, 3); random.shuffle(st.session_state.stam_opties_gram)
                                     
                                     correct_p = f"{correct_praesens} — {correct_betekenis}"; afleiders_p = []; bestaande_b = {correct_betekenis}
                                     ww_pool = [w for w in stamtijden_db if w['praesens'] != correct_praesens]
-                                    rnd.shuffle(ww_pool)
+                                    random.shuffle(ww_pool)
                                     for w in ww_pool:
                                         if w['betekenis'] not in bestaande_b: afleiders_p.append(f"{w['praesens']} — {w['betekenis']}"); bestaande_b.add(w['betekenis'])
                                         if len(afleiders_p) >= 3: break
-                                    st.session_state.stam_opties_praesens = [correct_p] + afleiders_p; rnd.shuffle(st.session_state.stam_opties_praesens)
+                                    st.session_state.stam_opties_praesens = [correct_p] + afleiders_p; random.shuffle(st.session_state.stam_opties_praesens)
 
                                 with st.form("form_stamtijd_mc"):
                                     st.write("**1. Grammatica:**")
@@ -1574,14 +1574,14 @@ def main():
                                         st.rerun()
                         else: 
                             if not st.session_state.struct_opties_cat:
-                                afleiders_c = [c for c in alle_cats if c != correct_cat]; st.session_state.struct_opties_cat = [correct_cat] + rnd.sample(afleiders_c, min(3, len(afleiders_c))); rnd.shuffle(st.session_state.struct_opties_cat)
-                                alle_eigs = list(set([w['eigenschap'] for w in struct_db])); afleiders_e = [e for e in alle_eigs if e != correct_eig]; st.session_state.struct_opties_eig = [correct_eig] + rnd.sample(afleiders_e, min(3, len(afleiders_e))); rnd.shuffle(st.session_state.struct_opties_eig)
+                                afleiders_c = [c for c in alle_cats if c != correct_cat]; st.session_state.struct_opties_cat = [correct_cat] + random.sample(afleiders_c, min(3, len(afleiders_c))); random.shuffle(st.session_state.struct_opties_cat)
+                                alle_eigs = list(set([w['eigenschap'] for w in struct_db])); afleiders_e = [e for e in alle_eigs if e != correct_eig]; st.session_state.struct_opties_eig = [correct_eig] + random.sample(afleiders_e, min(3, len(afleiders_e))); random.shuffle(st.session_state.struct_opties_eig)
                                 afleiders_b = []; bestaande_b = {correct_bet}; str_pool = [w for w in struct_db if w['betekenis'] != correct_bet]
-                                rnd.shuffle(str_pool)
+                                random.shuffle(str_pool)
                                 for w in str_pool:
                                     if w['betekenis'] not in bestaande_b: afleiders_b.append(w['betekenis']); bestaande_b.add(w['betekenis'])
                                     if len(afleiders_b) >= 3: break
-                                st.session_state.struct_opties_bet = [correct_bet] + afleiders_b; rnd.shuffle(st.session_state.struct_opties_bet)
+                                st.session_state.struct_opties_bet = [correct_bet] + afleiders_b; random.shuffle(st.session_state.struct_opties_bet)
                                 
                             with st.form("form_struct_mc"):
                                 if st.session_state.struct_mc_solved["cat"]: st.success(f"✓ Categorie: {correct_cat}"); keuze_cat = correct_cat
@@ -1696,7 +1696,7 @@ def main():
                         if not passende: st.session_state.geziene_verzen = []; st.warning("Geschiedenis gereset. Geen nieuwe verzen gevonden, klik nogmaals om opnieuw te beginnen.")
                         else:
                             passende.sort(key=lambda x: x[2], reverse=True)
-                            top_picks = passende[:min(10, len(passende))]; gekozen_vers = rnd.choice(top_picks)
+                            top_picks = passende[:min(10, len(passende))]; gekozen_vers = random.choice(top_picks)
                             st.session_state.huidig_vers = gekozen_vers[1]; st.session_state.huidige_vers_referentie = gekozen_vers[0]
                             st.session_state.geziene_verzen.append(gekozen_vers[0]); st.session_state.geziene_verzen = st.session_state.geziene_verzen[-100:]
 
@@ -1768,10 +1768,10 @@ def main():
                                 
                                 if "2." in tekst_modus: 
                                     if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
-                                        rnd.seed(st.session_state.huidige_vers_referentie + str(idx))
+                                        random.seed(st.session_state.huidige_vers_referentie + str(idx))
                                         afleiders = list(set([i['nederlands'] for i in st.session_state.data if i['nederlands'] != basis['nederlands']]))
-                                        opties = [basis['nederlands']] + rnd.sample(afleiders, min(3, len(afleiders)))
-                                        rnd.shuffle(opties); rnd.seed()
+                                        opties = [basis['nederlands']] + random.sample(afleiders, min(3, len(afleiders)))
+                                        random.shuffle(opties); random.seed()
                                         st.session_state[f"mc_opties_{idx}"] = opties; st.session_state[f"mc_vers_{idx}"] = st.session_state.huidige_vers_referentie
                                         
                                     cols = st.columns(2)
