@@ -1770,17 +1770,17 @@ def main():
                         fout_msg_volledig = f"**{huidig['grieks']}** — {correct_cat} ({correct_eig}) — **{correct_bet}**"
                         alle_cats = sorted(list(set([w['categorie'] for w in struct_db])))
 
-                        # --- AUTHENTIEK ZINVERBAND ZOEKEN (GEÜPGRADED) ---
+                        # --- AUTHENTIEK ZINVERBAND ZOEKEN (GEÜPGRADED MET TOOLTIPS & KLEUR) ---
                         bijbel_db = laad_bijbel_db()
-                        
-                        # 1. Sloop tekst tussen haakjes weg (bijv ' (met gen)')
                         label_puur = re.sub(r'\(.*?\)', '', huidig['grieks']).strip()
-                        # 2. Knip op slashes en maak een lijstje schone opties (bijv ['εκ', 'εξ'])
                         zoek_opties = [normaliseer_accent(d) for d in label_puur.split('/') if d.strip()]
                         
                         gevonden_context = None
                         extra_casus_hint = ""
                         doel_nv = huidig.get('eigenschap', '') 
+
+                        # De permanente schakelaar: blijft de hele sessie aan staan als je hem aanvinkt!
+                        struct_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="struct_global_kleur_nv")
                         
                         if bijbel_db:
                             for ref, zin in bijbel_db.items():
@@ -1788,13 +1788,11 @@ def main():
                                     norm_w = normaliseer_accent(w['grieks'])
                                     if any(norm_w == k or norm_w == k.replace('ς','σ') for k in zoek_opties):
                                         
-                                        # Als dit een Voorzetsel is, dwing de zoeker dan een zin te pakken 
-                                        # waar het woord eráCHTER de geëiste naamval heeft!
                                         eis_voldaan = True
                                         if "Voorzetsel" in huidig.get('categorie', ''):
                                             if idx_w + 1 < len(zin):
                                                 next_p = zin[idx_w + 1].get('parsing_info', '')
-                                                nv_prefix = doel_nv[:3] # Map 'Genitivus' -> 'Gen'
+                                                nv_prefix = doel_nv[:3]
                                                 if nv_prefix not in next_p:
                                                     eis_voldaan = False
                                             else: eis_voldaan = False
@@ -1802,23 +1800,46 @@ def main():
                                         if eis_voldaan:
                                             if idx_w + 1 < len(zin):
                                                 next_p = zin[idx_w + 1].get('parsing_info', '')
-                                                if "Gen" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Genitivus)*"
-                                                elif "Dat" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Dativus)*"
-                                                elif "Acc" in next_p: extra_casus_hint = " *(wordt hier gevolgd door de Accusativus)*"
+                                                if "Gen" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Genitivus)*"
+                                                elif "Dat" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Dativus)*"
+                                                elif "Acc" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Accusativus)*"
                                                 
+                                            # --- DE HTML-ZIN SMEDEN MET ZWEVENDE TOOLTIPS ---
                                             html_z = ""
                                             for sub_w in zin:
+                                                # Tooltip tekst veilig klaarmaken voor HTML-injectie
+                                                t_tip = f"{sub_w.get('vertaling_bsb', '')} ({sub_w.get('parsing_info', '')})".replace("'", "&#39;").replace('"', "&quot;")
+                                                
+                                                # Kleurbepaling per woord
+                                                txt_col = "#bbb" # Standaard rustig lees-grijs
+                                                if struct_kleur_nv:
+                                                    p_inf = sub_w.get('parsing_info', '')
+                                                    if "Nom" in p_inf: txt_col = "#33ccff"
+                                                    elif "Gen" in p_inf: txt_col = "#28a745"
+                                                    elif "Dat" in p_inf: txt_col = "#6f42c1"
+                                                    elif "Acc" in p_inf: txt_col = "#dc3545"
+                                                    elif "Voc" in p_inf: txt_col = "#fd7e14"
+
                                                 n_sub = normaliseer_accent(sub_w['grieks'])
-                                                if any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties):
-                                                    html_z += f"<span style='color: #ffd700; font-weight: bold; text-decoration: underline; padding: 0 3px;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
+                                                is_doel = any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties)
+
+                                                if is_doel:
+                                                    # Het gezochte woord krijgt een schitterend gouden kader, 
+                                                    # maar de tekst zélf behoudt de kleur van zijn naamval!
+                                                    w_style = f"color: {txt_col}; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
                                                 else:
-                                                    html_z += f"<span style='color: #aaa;'>{sub_w['grieks']}</span>{sub_w.get('interpunctie','')} "
+                                                    w_style = f"color: {txt_col}; border-bottom: 1px dotted #555;"
+
+                                                html_z += f"<span class='mobile-tooltip' tabindex='0' style='{w_style}'>{sub_w['grieks']}<span class='tooltiptext'>{t_tip}</span></span>{sub_w.get('interpunctie','')} "
+                                                
                                             gevonden_context = (ref, html_z.strip())
                                             break
                                 if gevonden_context: break
 
                         if gevonden_context:
                             st.markdown(f"<div style='font-size: 13px; color: #f6c23e; margin-bottom: 2px;'>📖 Zinverband ({gevonden_context[0]}):</div>", unsafe_allow_html=True)
+                            if struct_kleur_nv:
+                                st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
                             st.markdown(f"<div class='grieks-zin' style='font-size: 22px; padding: 12px; margin-bottom: 12px;'>{gevonden_context[1]}</div>", unsafe_allow_html=True)
                             st.caption(f"Kijk naar de grammaticale functie van **{huidig['grieks']}** in deze zin{extra_casus_hint}:")
                         else:
