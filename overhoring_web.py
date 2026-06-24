@@ -160,16 +160,20 @@ def check_betekenis(ingevuld, correcte_zin):
         return False
 
     if is_match(ingevuld, correcte_zin): return True
-    delen_ruw = [d.strip() for d in correcte_zin.replace(';', ',').split(',')]
+
+    # HIER IS DE SLASH TOEGEVOEGD: / en ; worden direct synoniem aan een komma
+    correcte_zin_genormaliseerd = correcte_zin.replace(';', ',').replace('/', ',')
+
+    delen_ruw = [d.strip() for d in correcte_zin_genormaliseerd.split(',')]
     for d in delen_ruw:
         if is_match(ingevuld, d): return True
 
-    schoon = re.sub(r'\([^)]*\)', '', correcte_zin)
+    schoon = re.sub(r'\([^)]*\)', '', correcte_zin_genormaliseerd)
     schoon = re.sub(r'\[[^\]]*\]', '', schoon)
     schoon = re.sub(r'\{[^}]*\}', '', schoon)
     schoon = schoon.replace('=', '').replace('*', '').replace('+', '')
 
-    delen_schoon = [d.strip() for d in schoon.replace(';', ',').split(',') if d.strip()]
+    delen_schoon = [d.strip() for d in schoon.split(',') if d.strip()]
     for d in delen_schoon:
         if is_match(ingevuld, d): return True
 
@@ -177,6 +181,7 @@ def check_betekenis(ingevuld, correcte_zin):
     for d in delen_schoon:
         d_puur = re.sub(r'[^\w\s]', '', d).strip()
         if d_puur and is_match(ingevuld_puur, d_puur): return True
+
     return False
 
 def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, bsb_info):
