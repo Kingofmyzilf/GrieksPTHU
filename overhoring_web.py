@@ -1713,7 +1713,7 @@ def main():
                                 fn = 'Nieuw' if huidige_streak==0 else ('In Training' if huidige_streak<=15 else ('Beheerst' if huidige_streak<=29 else 'Mastery'))
                                 st.caption(f"Fase: {fn} | Autonome Streak: {huidige_streak} | Goed/Fout: {st.session_state.stam_stats[vid].get('g',0)}/{st.session_state.stam_stats[vid].get('f',0)}")
 
-        # ==========================================
+       # ==========================================
         # TAB 6: STRUCTUURWOORDEN & SYNTAXIS
         # ==========================================
         with menu[5]: 
@@ -1725,12 +1725,32 @@ def main():
                 c1, c2 = st.columns([1, 2])
                 
                 with c1:
-                    struct_modus = st.radio("Modus:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="struct_modus_radio")
+                    # --- DE NIEUWE LEER-SPOOR FILTER ---
+                    struct_filter = st.selectbox(
+                        "1. Kies leer-spoor:", 
+                        [
+                            "Alles gemixt", 
+                            "Alleen Voorzetsels", 
+                            "Voegwoorden & Partikels", 
+                            "Voornaamwoorden (Pronomina)"
+                        ],
+                        key="struct_filter_box"
+                    )
+                    
+                    struct_modus = st.radio("2. Oefenvorm:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="struct_modus_radio")
+                    
                     if st.button("Start Sessie", key="btn_start_struct", type="primary"):
                         st.session_state.gestrafte_woorden_struct = set()
                         doel_vormen = []
+                        
                         for idx_w, w in enumerate(struct_db):
-                            # Waterdichte unieke ID per item (ook noodzakelijk omdat 'κατά' 2x in de PThU-lijst voorkomt)
+                            cat_str = w.get('categorie', '')
+                            
+                            # Toepassing van de door de student gekozen filter
+                            if struct_filter == "Alleen Voorzetsels" and "Voorzetsel" not in cat_str: continue
+                            if struct_filter == "Voegwoorden & Partikels" and "Voegwoord" not in cat_str and "Partikel" not in cat_str: continue
+                            if struct_filter == "Voornaamwoorden (Pronomina)" and "Vnw" not in cat_str and "Pronomina" not in cat_str: continue
+
                             vid = f"{w['grieks']}_{idx_w}"
                             stats = st.session_state.struct_stats.get(vid, st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0}))
                             w['score_goed'] = stats.get('g', 0)
@@ -1753,7 +1773,7 @@ def main():
                         huidig = st.session_state.struct_huidig
                         sub_modus = st.session_state.struct_sub_modus
                         vid = huidig['vid']
-                        w_id_clean = re.sub(r'\W+', '_', vid) # Gegarandeerd schone string voor HTML-sleutels
+                        w_id_clean = re.sub(r'\W+', '_', vid)
                         
                         if vid not in st.session_state.struct_stats: 
                             st.session_state.struct_stats[vid] = {'g': 0, 'f': 0, 'streak': 0}
@@ -1770,7 +1790,7 @@ def main():
                         fout_msg_volledig = f"**{huidig['grieks']}** — {correct_cat} ({correct_eig}) — **{correct_bet}**"
                         alle_cats = sorted(list(set([w['categorie'] for w in struct_db])))
 
-                        # --- AUTHENTIEK ZINVERBAND ZOEKEN (GEÜPGRADED MET TOOLTIPS & KLEUR) ---
+                        # --- AUTHENTIEK ZINVERBAND MET ANTI-SPOIL TOOLTIPS ---
                         bijbel_db = laad_bijbel_db()
                         label_puur = re.sub(r'\(.*?\)', '', huidig['grieks']).strip()
                         zoek_opties = [normaliseer_accent(d) for d in label_puur.split('/') if d.strip()]
@@ -1779,7 +1799,6 @@ def main():
                         extra_casus_hint = ""
                         doel_nv = huidig.get('eigenschap', '') 
 
-                        # De permanente schakelaar: blijft de hele sessie aan staan als je hem aanvinkt!
                         struct_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="struct_global_kleur_nv")
                         
                         if bijbel_db:
@@ -1793,8 +1812,7 @@ def main():
                                             if idx_w + 1 < len(zin):
                                                 next_p = zin[idx_w + 1].get('parsing_info', '')
                                                 nv_prefix = doel_nv[:3]
-                                                if nv_prefix not in next_p:
-                                                    eis_voldaan = False
+                                                if nv_prefix not in next_p: eis_voldaan = False
                                             else: eis_voldaan = False
                                             
                                         if eis_voldaan:
@@ -1804,14 +1822,9 @@ def main():
                                                 elif "Dat" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Dativus)*"
                                                 elif "Acc" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Accusativus)*"
                                                 
-                                            # --- DE HTML-ZIN SMEDEN MET ZWEVENDE TOOLTIPS ---
                                             html_z = ""
                                             for sub_w in zin:
-                                                # Tooltip tekst veilig klaarmaken voor HTML-injectie
-                                                t_tip = f"{sub_w.get('vertaling_bsb', '')} ({sub_w.get('parsing_info', '')})".replace("'", "&#39;").replace('"', "&quot;")
-                                                
-                                                # Kleurbepaling per woord
-                                                txt_col = "#bbb" # Standaard rustig lees-grijs
+                                                txt_col = "#bbb"
                                                 if struct_kleur_nv:
                                                     p_inf = sub_w.get('parsing_info', '')
                                                     if "Nom" in p_inf: txt_col = "#33ccff"
@@ -1824,10 +1837,14 @@ def main():
                                                 is_doel = any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties)
 
                                                 if is_doel:
-                                                    # Het gezochte woord krijgt een schitterend gouden kader, 
-                                                    # maar de tekst zélf behoudt de kleur van zijn naamval!
+                                                    # HIER IS DE SPOILER WEGGESNEDEN:
+                                                    t_tip = "❓ [Dit woord wordt getoetst]"
                                                     w_style = f"color: {txt_col}; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
                                                 else:
+                                                    v_bsb = sub_w.get('vertaling_bsb', '')
+                                                    p_inf = sub_w.get('parsing_info', '')
+                                                    t_tip = f"{v_bsb} ({p_inf})" if v_bsb else p_inf
+                                                    t_tip = t_tip.replace("'", "&#39;").replace('"', "&quot;")
                                                     w_style = f"color: {txt_col}; border-bottom: 1px dotted #555;"
 
                                                 html_z += f"<span class='mobile-tooltip' tabindex='0' style='{w_style}'>{sub_w['grieks']}<span class='tooltiptext'>{t_tip}</span></span>{sub_w.get('interpunctie','')} "
@@ -1889,7 +1906,7 @@ def main():
                                         else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "Niet helemaal juist. Bekijk de hint en probeer het opnieuw!"}
                                         st.rerun()
 
-                        # --- MODUS 3: MEERKEUZE (WATERDICHT GESCHEIDEN) ---
+                        # --- MODUS 3: MEERKEUZE ---
                         else: 
                             if not st.session_state.struct_opties_cat:
                                 import random as rnd
@@ -1909,7 +1926,6 @@ def main():
                                 st.session_state.struct_opties_bet = [correct_bet] + afleiders_b; rnd.shuffle(st.session_state.struct_opties_bet)
                                 
                             with st.form(f"form_mc_{w_id_clean}"):
-                                # Door f"mc_c_{w_id_clean}" te gebruiken, is hergebruik van de selectie van het vorige woord onmogelijk
                                 if st.session_state.struct_mc_solved["cat"]: st.success(f"✓ Categorie: {correct_cat}"); keuze_cat = correct_cat
                                 else: keuze_cat = st.radio("1. Categorie:", st.session_state.struct_opties_cat, index=None, key=f"mc_c_{w_id_clean}")
                                 
