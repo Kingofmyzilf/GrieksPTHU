@@ -2329,7 +2329,7 @@ def main():
 
                                 st.markdown(f"**{w['grieks']}**" if "4." in tekst_modus else f"**{w['grieks']}** (Basis: {basis['grieks']})")
                                 
-                               if "2." in tekst_modus: 
+                                if "2." in tekst_modus: 
                                     if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
                                         # Gecorrigeerde aanroep via de alias r_engine
                                         r_engine.seed(str(st.session_state.huidige_vers_referentie) + str(idx))
