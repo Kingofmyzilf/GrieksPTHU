@@ -404,7 +404,7 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
-def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3, sorteer_oudste_eerst=False):
+def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False):
     nieuw, training, beheerst, mastery = [], [], [], []
     for item in doel_lijst:
         s = krijg_streak(item, module)
@@ -419,35 +419,39 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         try: return datetime.strptime(d_str, '%Y-%m-%d').date()
         except: return datetime.min.date()
 
-    # Training, Beheerst en Mastery stonden historisch al gesorteerd op oudste datum eerst
     training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
     
-    # Bij de reguliere les-modus schuffelen we 'Nieuw' om vaste alfabetische volgorde te doorbreken.
-    # Bij de onderhoudsmodus dwingen we geresette/foute woorden op hun daadwerkelijke vervaldatum:
     if sorteer_oudste_eerst:
         nieuw.sort(key=sorteer_key)
     else:
         r_engine.shuffle(nieuw)
+        
+    # --- DE DIDACTISCHE NOODREM ---
+    # Als Typen actief is óf de onderhoudsmodus draait, vriest de kaartenbak 'Nieuw' wiskundig dicht naar 0.
+    actieve_nieuw_poule = [] if verbied_nieuwe_woorden else nieuw
     
     sessie = []
     if custom_counts is not None:
-        sessie.extend(nieuw[:custom_counts.get('nieuw', 0)])
+        c_n = 0 if verbied_nieuwe_woorden else custom_counts.get('nieuw', 0)
+        sessie.extend(actieve_nieuw_poule[:c_n])
         sessie.extend(training[:custom_counts.get('training', 0)])
         sessie.extend(beheerst[:custom_counts.get('beheerst', 0)])
         sessie.extend(mastery[:custom_counts.get('mastery', 0)])
         r_engine.shuffle(sessie)
         return sessie
 
-    doel_grootte = 15 if (len(nieuw) + len(training)) <= 4 else 10
-    ruimte_voor_training = min(len(training), 8 - min(len(nieuw), max_nieuw))
+    doel_grootte = 15 if (len(actieve_nieuw_poule) + len(training)) <= 4 else 10
+    aantal_n = 0 if verbied_nieuwe_woorden else min(len(actieve_nieuw_poule), max_nieuw)
+    
+    ruimte_voor_training = min(len(training), 8 - aantal_n)
     sessie.extend(training[:ruimte_voor_training])
-    sessie.extend(nieuw[:max_nieuw])
+    sessie.extend(actieve_nieuw_poule[:aantal_n])
     
     if len(sessie) < doel_grootte: sessie.extend(beheerst[:doel_grootte - len(sessie)])
     if len(sessie) < doel_grootte: sessie.extend(mastery[:doel_grootte - len(sessie)])
     r_engine.shuffle(sessie)
     return sessie
-
+    
 def bereken_gewicht(item):
     gewicht = 1.0
     freq = int(item.get('frequentie_nt', 0))
@@ -696,7 +700,7 @@ def main():
     if st.session_state.data:
         menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "ℹ️ Uitleg & Hulp"])
 
-# ==========================================
+        # ==========================================
         # TAB 1: WOORDENSCHAT
         # ==========================================
         with menu[0]: 
@@ -759,9 +763,20 @@ def main():
                         modus_id = str(modus[0])
                         
                         is_lang_geleden_modus = ("Lang niet gedaan" in keuze)
-                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts, sorteer_oudste_eerst=is_lang_geleden_modus)
+                        is_puur_typen = (modus_id == "4")
                         
-                        if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
+                        # De poort sluit onmiddellijk als je alleen typt of oud onderhoud draait:
+                        geen_nieuw_toegestaan = is_lang_geleden_modus or is_puur_typen
+                        
+                        sampled = kies_gefaseerde_oefensessie(
+                            doel, 
+                            module='vocab', 
+                            custom_counts=custom_counts, 
+                            sorteer_oudste_eerst=is_lang_geleden_modus,
+                            verbied_nieuwe_woorden=geen_nieuw_toegestaan
+                        )
+                        
+                        if not sampled: st.warning("⚠️ 0 woorden geselecteerd voor de door jou ingestelde criteria.")
                         else:
                             if st.session_state.get('optie_cluster_vocab', False):
                                 b_db_temp = laad_bijbel_db()
