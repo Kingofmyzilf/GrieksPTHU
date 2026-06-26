@@ -404,7 +404,7 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
-def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3):
+ddef kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3, sorteer_oudste_eerst=False):
     nieuw, training, beheerst, mastery = [], [], [], []
     for item in doel_lijst:
         s = krijg_streak(item, module)
@@ -419,8 +419,15 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         try: return datetime.strptime(d_str, '%Y-%m-%d').date()
         except: return datetime.min.date()
 
+    # Training, Beheerst en Mastery stonden historisch al gesorteerd op oudste datum eerst
     training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
-    r_engine.shuffle(nieuw)
+    
+    # Bij de reguliere les-modus schuffelen we 'Nieuw' om vaste alfabetische volgorde te doorbreken.
+    # Bij de onderhoudsmodus dwingen we geresette/foute woorden op hun daadwerkelijke vervaldatum:
+    if sorteer_oudste_eerst:
+        nieuw.sort(key=sorteer_key)
+    else:
+        r_engine.shuffle(nieuw)
     
     sessie = []
     if custom_counts is not None:
@@ -689,7 +696,7 @@ def main():
     if st.session_state.data:
         menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "ℹ️ Uitleg & Hulp"])
 
-       # ==========================================
+# ==========================================
         # TAB 1: WOORDENSCHAT
         # ==========================================
         with menu[0]: 
@@ -699,7 +706,7 @@ def main():
             col1, col2 = st.columns([1, 2])
             with col1:
                 modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
-                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)"])
+                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"])
                 doel = []
                 
                 if keuze == "Lessen":
@@ -714,6 +721,9 @@ def main():
                         if (g + f) >= 3 and f > 0: knel_lijst.append((w, f / (g + f)))
                     knel_lijst.sort(key=lambda x: x[1], reverse=True)
                     doel = [x[0] for x in knel_lijst[:15]]
+                elif "Lang niet gedaan" in keuze:
+                    # Filtert strikt op items die in het verleden een geoefend-stempel hebben gekregen
+                    doel = [w for w in st.session_state.data if str(w.get('laatst_geoefend', '') or '').strip() != '']
                 
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
@@ -741,7 +751,9 @@ def main():
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         modus_id = str(modus[0])
-                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
+                        
+                        is_lang_geleden_modus = ("Lang niet gedaan" in keuze)
+                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts, sorteer_oudste_eerst=is_lang_geleden_modus)
                         
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
                         else:
@@ -781,7 +793,6 @@ def main():
                                 st.session_state.vocab_sessie_verzen = v_map
                                 st.session_state.vocab_cluster_strongs = dict(cluster_strongs)
                                 
-                                # Positie-bepaling binnen de versregel (van links naar rechts)
                                 pos_map = {}
                                 for w in sampled:
                                     grieks_k = w['grieks']
@@ -794,7 +805,6 @@ def main():
                                                 pos = idx_zw; break
                                     pos_map[grieks_k] = pos
                                     
-                                # Primair groeperen op Bijbeltekst, secundair op woord-index in die zin
                                 sampled.sort(key=lambda w: (str(v_map.get(w['grieks']) or 'zzz_solo'), pos_map.get(w['grieks'], 999)))
                             else:
                                 st.session_state.vocab_sessie_verzen = {}
@@ -806,6 +816,8 @@ def main():
                                 st.session_state.mix_combo = {w['grieks']: False for w in sampled}
                             else: st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
                             laad_volgend_woord(); st.rerun()
+                    else:
+                        st.warning("⚠️ Geen geoefende woorden gevonden in je historie voor deze selectie.")
 
             with col2:
                 if st.session_state.huidig_item:
