@@ -404,12 +404,13 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
-def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False):
-    nieuw, training, beheerst, mastery = [], [], [], []
+def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=2, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False):
+    nieuw, incubatie, training, beheerst, mastery = [], [], [], [], []
     for item in doel_lijst:
         s = krijg_streak(item, module)
         if s == 0: nieuw.append(item)
-        elif 1 <= s <= 15: training.append(item)
+        elif 1 <= s <= 3: incubatie.append(item)
+        elif 4 <= s <= 15: training.append(item)
         elif 16 <= s <= 29: beheerst.append(item)
         else: mastery.append(item)
     
@@ -419,8 +420,8 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         try: return datetime.strptime(d_str, '%Y-%m-%d').date()
         except: return datetime.min.date()
 
-    # Sorteer historische bakken chronologisch (oudste datums / Nooit geoefend bovenaan)
-    training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
+    # Historische bakken chronologisch sorteren (Oudste datum / Nooit geoefend bovenaan)
+    incubatie.sort(key=sorteer_key); training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
     
     if sorteer_oudste_eerst: nieuw.sort(key=sorteer_key)
     else: r_engine.shuffle(nieuw)
@@ -428,51 +429,52 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
     actieve_nieuw = [] if verbied_nieuwe_woorden else nieuw
     sessie = []
 
-    # --- ROUTE 1: JIJ HEBT DE REGIE OVER DE AANTALLEN ('Zelf Samenstellen') ---
+    # --- ROUTE 1: ZELF SAMENSTELLEN (5 Sliders) ---
     if custom_counts is not None:
         c_n = 0 if verbied_nieuwe_woorden else custom_counts.get('nieuw', 0)
         sessie.extend(actieve_nieuw[:c_n])
+        sessie.extend(incubatie[:custom_counts.get('incubatie', 0)])
         sessie.extend(training[:custom_counts.get('training', 0)])
         sessie.extend(beheerst[:custom_counts.get('beheerst', 0)])
         sessie.extend(mastery[:custom_counts.get('mastery', 0)])
         r_engine.shuffle(sessie)
         return sessie
 
-    # --- ROUTE 2: DE AUTOMATISCHE, GEWICHTS-BEWUSTE MENTOR ---
+    # --- ROUTE 2: DE AUTOMATISCHE 5-FASEN MENTOR ---
     if not verbied_nieuwe_woorden:
-        # Scenario A: Nieuwe lesstof toegestaan
         poule_n = actieve_nieuw[:max_nieuw]
         sessie.extend(poule_n)
         
-        ruimte_train = min(len(training), 8 - len(poule_n))
+        # Trekt eerst de extreem broze kaarten van gisteren (max 3)
+        poule_inc = incubatie[:3]
+        sessie.extend(poule_inc)
+        
+        ruimte_train = min(len(training), 8 - (len(poule_n) + len(poule_inc)))
         poule_t = training[:ruimte_train]
         sessie.extend(poule_t)
         
-        # Keihard didactisch anker: altijd 1 verwezen Mastery-woord
         if mastery: sessie.append(mastery[0])
         
-        # Bereken frictiegewicht van de geselecteerde trainingskaarten
-        frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in poule_t)
-        
-        if frictie_som > 45: aanvulling = 2
-        elif frictie_som > 25: aanvulling = 4
-        else: aanvulling = 6
+        frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in (poule_inc + poule_t))
+        aanvulling = 1 if frictie_som > 50 else (2 if frictie_som > 25 else 4)
         
         sessie.extend(beheerst[:aanvulling])
         if len(sessie) < 10: sessie.extend(mastery[1:1 + (10 - len(sessie))])
         
     else:
-        # Scenario B: Alleen bestaande kennis herstellen (Typen / Onderhoud / Checkbox uit)
-        poule_t = training[:8]
+        # Scenario zonder nieuwe stof: Kraamkamer krijgt ruime baan (max 4)
+        poule_inc = incubatie[:4]
+        sessie.extend(poule_inc)
+        
+        ruimte_train = min(len(training), 8 - len(poule_inc))
+        poule_t = training[:ruimte_train]
         sessie.extend(poule_t)
         
-        # Twee verwezen Mastery ankers
         poule_m = mastery[:2]
         sessie.extend(poule_m)
         
-        frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in poule_t)
-        
-        aanvulling = 2 if frictie_som > 50 else (3 if frictie_som > 30 else 5)
+        frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in (poule_inc + poule_t))
+        aanvulling = 2 if frictie_som > 40 else 4
         
         rest_pool = beheerst + mastery[2:]
         sessie.extend(rest_pool[:aanvulling])
@@ -728,7 +730,7 @@ def main():
     if st.session_state.data:
         menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "ℹ️ Uitleg & Hulp"])
 
-        # ==========================================
+       # ==========================================
         # TAB 1: WOORDENSCHAT
         # ==========================================
         with menu[0]: 
@@ -741,20 +743,16 @@ def main():
                 keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"])
                 doel = []
                 
-                # --- GECOMBINEERDE LES- EN ONDERHOUDSFILTER ---
                 if keuze in ["Lessen", "Lang niet gedaan (Geheugen-onderhoud)"]:
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                     gekozen = st.multiselect("Kies lessen", alle_lessen, default=alle_lessen[:3] if alle_lessen else [])
                     poule_lessen = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
                     
                     if "Lang niet gedaan" in keuze:
-                        # Kruisfilter: Pak uit de gekozen lessen uitsluitend de ooit al gestarte woorden
                         doel = [w for w in poule_lessen if str(w.get('laatst_geoefend', '') or '').strip() != '']
-                    else:
-                        doel = poule_lessen
+                    else: doel = poule_lessen
 
-                elif keuze == "Mastery": 
-                    doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
+                elif keuze == "Mastery": doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
                 elif "Knelpunten" in keuze:
                     knel_lijst = []
                     for w in st.session_state.data:
@@ -766,61 +764,51 @@ def main():
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
                 optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context")
-                optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", help="Bekijkt de Strong-nummers van jouw bijeengeraapte oefenwoorden en zoekt in de Bijbel naar verzen die er meerdere tegelijk bevatten.")
+                optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab")
                 optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=True)
-                
-                # DE NIEUWE KERN-SCHAKELAAR:
-                optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=True, help="Staat dit aan, dan trekt de app max. 3 nieuwe kaarten en weegt de rest dynamisch. Staat dit uit, dan traint hij uitsluitend je bestaande kennis.")
+                optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=True)
                 
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
                 custom_counts = None
                 if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
+                    # De nieuwe 5-traps telling:
                     c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
-                    c_train = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 15])
+                    c_inc = len([w for w in doel if 1 <= krijg_streak(w, 'vocab') <= 3])
+                    c_train = len([w for w in doel if 4 <= krijg_streak(w, 'vocab') <= 15])
                     c_beheer = len([w for w in doel if 16 <= krijg_streak(w, 'vocab') <= 29])
                     c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
                     
                     st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
                     
-                    # --- GEHEUGEN INITIALISATIE (Start op 0 bij openingsstart) ---
-                    if 'vocab_slider_nieuw' not in st.session_state: st.session_state.vocab_slider_nieuw = 0
-                    if 'vocab_slider_train' not in st.session_state: st.session_state.vocab_slider_train = 0
-                    if 'vocab_slider_beheer' not in st.session_state: st.session_state.vocab_slider_beheer = 0
-                    if 'vocab_slider_mast' not in st.session_state: st.session_state.vocab_slider_mast = 0
+                    if 'v_sl_nieuw' not in st.session_state: st.session_state.v_sl_nieuw = 0
+                    if 'v_sl_inc' not in st.session_state: st.session_state.v_sl_inc = 0
+                    if 'v_sl_train' not in st.session_state: st.session_state.v_sl_train = 0
+                    if 'v_sl_beheer' not in st.session_state: st.session_state.v_sl_beheer = 0
+                    if 'v_sl_mast' not in st.session_state: st.session_state.v_sl_mast = 0
 
-                    # Veiligheids-clipping: voorkomt crashes als een kaartenbak tussendoor krimpt
-                    def_nieuw = min(st.session_state.vocab_slider_nieuw, c_nieuw)
-                    def_train = min(st.session_state.vocab_slider_train, c_train)
-                    def_beheer = min(st.session_state.vocab_slider_beheer, c_beheer)
-                    def_mast = min(st.session_state.vocab_slider_mast, c_mast)
+                    d_n = min(st.session_state.v_sl_nieuw, c_nieuw); d_i = min(st.session_state.v_sl_inc, c_inc)
+                    d_t = min(st.session_state.v_sl_train, c_train); d_b = min(st.session_state.v_sl_beheer, c_beheer); d_m = min(st.session_state.v_sl_mast, c_mast)
 
-                    # De schuifjes schrijven hun keuzes direct weg in het globale sessie-geheugen:
-                    val_nieuw = st.slider(f"Nieuw (0) — Beschikbaar: {c_nieuw}", 0, max(1, min(20, c_nieuw)), def_nieuw, key="vocab_slider_nieuw")
-                    val_train = st.slider(f"In Training (1-15) — Beschikbaar: {c_train}", 0, max(1, min(20, c_train)), def_train, key="vocab_slider_train")
-                    val_beheer = st.slider(f"Beheerst (16-29) — Beschikbaar: {c_beheer}", 0, max(1, min(20, c_beheer)), def_beheer, key="vocab_slider_beheer")
-                    val_mast = st.slider(f"Mastery (30+) — Beschikbaar: {c_mast}", 0, max(1, min(20, c_mast)), def_mast, key="vocab_slider_mast")
+                    val_n = st.slider(f"🌱 Nieuw (0) — Beschikbaar: {c_nieuw}", 0, max(1, min(20, c_nieuw)), d_n, key="v_sl_nieuw")
+                    val_i = st.slider(f"🐣 Prille start (1-3) — Beschikbaar: {c_inc}", 0, max(1, min(20, c_inc)), d_i, key="v_sl_inc")
+                    val_t = st.slider(f"🏃 In Training (4-15) — Beschikbaar: {c_train}", 0, max(1, min(20, c_train)), d_t, key="v_sl_train")
+                    val_b = st.slider(f"🛡️ Beheerst (16-29) — Beschikbaar: {c_beheer}", 0, max(1, min(20, c_beheer)), d_b, key="v_sl_beheer")
+                    val_m = st.slider(f"🏆 Mastery (30+) — Beschikbaar: {c_mast}", 0, max(1, min(20, c_mast)), d_m, key="v_sl_mast")
                     
-                    custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
+                    custom_counts = {'nieuw': val_n, 'incubatie': val_i, 'training': val_t, 'beheerst': val_b, 'mastery': val_m}
                 
                 if st.button("Start Sessie", type="primary"):
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         modus_id = str(modus[0])
-                        
-                        is_lang_geleden_modus = ("Lang niet gedaan" in keuze)
+                        is_lang_geleden = ("Lang niet gedaan" in keuze)
                         is_puur_typen = (modus_id == "4")
-                        mag_geen_nieuw = is_lang_geleden_modus or is_puur_typen or (not optie_nieuw_mee)
+                        mag_geen_nieuw = is_lang_geleden or is_puur_typen or (not optie_nieuw_mee)
                         
-                        sampled = kies_gefaseerde_oefensessie(
-                            doel, 
-                            module='vocab', 
-                            custom_counts=custom_counts, 
-                            sorteer_oudste_eerst=is_lang_geleden_modus,
-                            verbied_nieuwe_woorden=mag_geen_nieuw
-                        )
+                        sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts, sorteer_oudste_eerst=is_lang_geleden, verbied_nieuwe_woorden=mag_geen_nieuw)
                         
-                        if not sampled: st.warning("⚠️ 0 woorden geselecteerd voor de door jou ingestelde criteria.")
+                        if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
                         else:
                             if st.session_state.get('optie_cluster_vocab', False):
                                 b_db_temp = laad_bijbel_db()
@@ -829,51 +817,38 @@ def main():
                                 for w in sampled:
                                     if w.get('strong'): s_map[str(w['strong'])].append(w['grieks'])
                                     
-                                ongetoetst = set(s_map.keys())
-                                v_map = {}
-                                cluster_strongs = defaultdict(set)
+                                ongetoetst = set(s_map.keys()); v_map = {}; cluster_strongs = defaultdict(set)
                                 
                                 while len(ongetoetst) >= 2:
-                                    beste_ref = None
-                                    beste_hits = set()
+                                    beste_ref = None; beste_hits = set()
                                     for ref, zin in b_db_temp.items():
                                         zs = {str(z.get('strong', '')) for z in zin if z.get('strong')}
                                         ov = ongetoetst.intersection(zs)
                                         if len(ov) > len(beste_hits):
-                                            beste_hits = ov
-                                            beste_ref = ref
+                                            beste_hits = ov; beste_ref = ref
                                             if len(beste_hits) >= 4: break
                                     
                                     if beste_ref and len(beste_hits) >= 2:
                                         for s in beste_hits:
-                                            for k in s_map[s]: 
-                                                v_map[k] = beste_ref
-                                                cluster_strongs[beste_ref].add(s)
+                                            for k in s_map[s]: v_map[k] = beste_ref; cluster_strongs[beste_ref].add(s)
                                             ongetoetst.remove(s)
                                     else: break
                                     
                                 for s in ongetoetst:
                                     for k in s_map[s]: v_map[k] = None
                                     
-                                st.session_state.vocab_sessie_verzen = v_map
-                                st.session_state.vocab_cluster_strongs = dict(cluster_strongs)
-                                
+                                st.session_state.vocab_sessie_verzen = v_map; st.session_state.vocab_cluster_strongs = dict(cluster_strongs)
                                 pos_map = {}
                                 for w in sampled:
-                                    grieks_k = w['grieks']
-                                    ref = v_map.get(grieks_k)
-                                    pos = 999
+                                    grieks_k = w['grieks']; ref = v_map.get(grieks_k); pos = 999
                                     if ref and ref in b_db_temp:
                                         target_s = str(w.get('strong', ''))
                                         for idx_zw, zw in enumerate(b_db_temp[ref]):
-                                            if str(zw.get('strong', '')) == target_s:
-                                                pos = idx_zw; break
+                                            if str(zw.get('strong', '')) == target_s: pos = idx_zw; break
                                     pos_map[grieks_k] = pos
                                     
                                 sampled.sort(key=lambda w: (str(v_map.get(w['grieks']) or 'zzz_solo'), pos_map.get(w['grieks'], 999)))
-                            else:
-                                st.session_state.vocab_sessie_verzen = {}
-                                st.session_state.vocab_cluster_strongs = {}
+                            else: st.session_state.vocab_sessie_verzen = {}; st.session_state.vocab_cluster_strongs = {}
 
                             st.session_state.modus_actief = modus_id
                             if modus_id == "3":
@@ -881,8 +856,7 @@ def main():
                                 st.session_state.mix_combo = {w['grieks']: False for w in sampled}
                             else: st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
                             laad_volgend_woord(); st.rerun()
-                    else:
-                        st.warning("⚠️ Geen geoefende woorden gevonden in je historie voor de door jou aangevinkte lessen.")
+                    else: st.warning("⚠️ Geen geoefende woorden gevonden in je historie.")
 
             with col2:
                 if st.session_state.huidig_item:
