@@ -404,7 +404,7 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
-ddef kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3, sorteer_oudste_eerst=False):
+def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=3, sorteer_oudste_eerst=False):
     nieuw, training, beheerst, mastery = [], [], [], []
     for item in doel_lijst:
         s = krijg_streak(item, module)
