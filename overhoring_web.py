@@ -2145,9 +2145,11 @@ def main():
 
                         if css_class in ["woord-bekend", "woord-stamtijd"]:
                             if "1." in tekst_modus:
-                                if is_bekend: hover_text = f"Les {actieve_strongs[str(w['strong'])].get('les', '?')}: {actieve_strongs[str(w['strong'])].get('nederlands', '')} | {tooltip}"
-                                else: hover_text = f"{actieve_stam_vormen[clean_w]['betekenis']} | {tooltip}"
-                            else: hover_text = "Oefenwoord! Vul de gegevens hieronder in."
+                                if is_bekend: 
+                                    b_woord = actieve_strongs[str(w['strong'])]
+                                    hover_text = f"Les {b_woord.get('les', '?')} | {b_woord.get('grieks', '?')} → {b_woord.get('nederlands', '')}\n{tooltip}"
+                                else: 
+                                    hover_text = f"{actieve_stam_vormen[clean_w]['praesens']} → {actieve_stam_vormen[clean_w]['betekenis']}\n{tooltip}"
                             
                             html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}'>{w['grieks']}<span class='tooltiptext'>{hover_text.replace('\'', '&#39;').replace('\"', '&quot;')}</span></span>{w['interpunctie']} "
                             oef_dict = w.copy(); oef_dict['is_stamtijd'] = is_stam; oef_dict['stam_info'] = actieve_stam_vormen[clean_w] if is_stam else None; oefen_woorden.append(oef_dict)
