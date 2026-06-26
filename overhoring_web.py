@@ -404,7 +404,7 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
-def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=2, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False, globale_db=None):
+def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=2, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False, totale_db=None):
     nieuw, incubatie, training, beheerst, mastery = [], [], [], [], []
     for item in doel_lijst:
         s = krijg_streak(item, module)
@@ -428,7 +428,7 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
     actieve_nieuw = [] if verbied_nieuwe_woorden else nieuw
     sessie = []
 
-    # ROUTE 1: ZELF SAMENSTELLEN (Strikt binnen de geselecteerde les)
+    # ROUTE 1: ZELF SAMENSTELLEN (Strikt binnen de geselecteerde lescriteria)
     if custom_counts is not None:
         c_n = 0 if verbied_nieuwe_woorden else custom_counts.get('nieuw', 0)
         sessie.extend(actieve_nieuw[:c_n])
@@ -439,21 +439,21 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         r_engine.shuffle(sessie)
         return sessie
 
-    # --- ISOLATIE VAN HET GLOBALE GEHEUGEN-ANKER (Over álle lessen heen) ---
-    globaal_anker = None
-    if globale_db and module == 'vocab':
+    # --- ISOLATIE VAN HET OVERKOEPELENDE HERHALINGSWOORD (Alle eerdere lessen) ---
+    extern_herhalingswoord = None
+    if totale_db and module == 'vocab':
         doel_grieks = {w.get('grieks') for w in doel_lijst if isinstance(w, dict)}
-        ooit_geoefend_buiten_les = [
-            w for w in globale_db 
+        geoefend_buiten_selectie = [
+            w for w in totale_db 
             if isinstance(w, dict) 
             and w.get('grieks') not in doel_grieks 
             and (int(w.get('streak', 0)) >= 1 or str(w.get('laatst_geoefend', '') or '').strip() != '')
         ]
-        if ooit_geoefend_buiten_les:
-            ooit_geoefend_buiten_les.sort(key=sorteer_key)
-            globaal_anker = ooit_geoefend_buiten_les[0]
+        if geoefend_buiten_selectie:
+            geoefend_buiten_selectie.sort(key=sorteer_key)
+            extern_herhalingswoord = geoefend_buiten_selectie[0]
 
-    # ROUTE 2: DE AUTOMATISCHE 5-FASEN MENTOR
+    # ROUTE 2: DE AUTOMATISCHE, GEWICHTS-BEWUSTE MENTOR
     if not verbied_nieuwe_woorden:
         poule_n = actieve_nieuw[:max_nieuw]
         sessie.extend(poule_n)
@@ -465,8 +465,8 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         poule_t = training[:ruimte_train]
         sessie.extend(poule_t)
         
-        # Externe anker-injectie (met lokaal mastery/beheerst woord als fallback)
-        if globaal_anker: sessie.append(globaal_anker)
+        # Prioriteit aan het externe retentie-woord, anders lokaal mastery/beheerst
+        if extern_herhalingswoord: sessie.append(extern_herhalingswoord)
         elif mastery: sessie.append(mastery[0])
         elif beheerst: sessie.append(beheerst[0])
         
@@ -474,7 +474,9 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         aanvulling = 1 if frictie_som > 50 else (2 if frictie_som > 25 else 4)
         
         sessie.extend(beheerst[:aanvulling])
-        if len(sessie) < 10: sessie.extend(mastery[:10 - len(sessie)])
+        if len(sessie) < 10:
+            rest_mastery = [w for w in mastery if w not in sessie]
+            sessie.extend(rest_mastery[:10 - len(sessie)])
         
     else:
         poule_inc = incubatie[:4]
@@ -484,8 +486,8 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         poule_t = training[:ruimte_train]
         sessie.extend(poule_t)
         
-        if globaal_anker: 
-            sessie.append(globaal_anker)
+        if extern_herhalingswoord:
+            sessie.append(extern_herhalingswoord)
             if mastery: sessie.append(mastery[0])
         else:
             sessie.extend(mastery[:2])
@@ -493,7 +495,7 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in (poule_inc + poule_t))
         aanvulling = 2 if frictie_som > 40 else 4
         
-        rest_pool = beheerst + (mastery[1:] if globaal_anker else mastery[2:])
+        rest_pool = [w for w in (beheerst + mastery) if w not in sessie]
         sessie.extend(rest_pool[:aanvulling])
 
     r_engine.shuffle(sessie)
@@ -827,9 +829,9 @@ def main():
                             doel, 
                             module='vocab', 
                             custom_counts=custom_counts, 
-                            sorteer_oudste_eerst=is_lang_geleden, 
+                            sorteer_oudste_eerst=is_lang_geleden,
                             verbied_nieuwe_woorden=mag_geen_nieuw,
-                            globale_db=st.session_state.data
+                            totale_db=st.session_state.data
                         )
                         
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
