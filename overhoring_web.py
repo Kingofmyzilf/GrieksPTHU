@@ -2029,7 +2029,11 @@ def main():
 
                 st.write("---")
                 st.markdown("### 3. Selecteer een Bijbeltekst")
-                lees_modus = st.radio("Hoe wil je de tekst kiezen?", ["Kies specifiek(e) vers(zen)", "Scavenger Hunt (Willekeurig)"], horizontal=True)
+                lees_modus = st.radio(
+                    "Hoe wil je de tekst kiezen?", 
+                    ["Kies specifiek(e) vers(zen)", "Scavenger Hunt (Willekeurig)", "🛡️ Autonome Leestekst (100% Bekend)"], 
+                    horizontal=True
+                )
                 
                 if lees_modus == "Kies specifiek(e) vers(zen)":
                     parsed_db = {}
@@ -2065,7 +2069,8 @@ def main():
                         if gecombineerd_vers:
                             st.session_state.huidig_vers = gecombineerd_vers
                             st.session_state.huidige_vers_referentie = f"{gekozen_boek} {gekozen_hoofdstuk}:{', '.join(gekozen_verzen)}"
-                else:
+                            
+                elif lees_modus == "Scavenger Hunt (Willekeurig)":
                     if st.button("Vind passend vers (Focus op zwakke woorden)"):
                         passende = []
                         for ref, w_list in bijbel_db.items():
@@ -2080,6 +2085,39 @@ def main():
                             top_picks = passende[:min(10, len(passende))]; gekozen_vers = r_engine.choice(top_picks)
                             st.session_state.huidig_vers = gekozen_vers[1]; st.session_state.huidige_vers_referentie = gekozen_vers[0]
                             st.session_state.geziene_verzen.append(gekozen_vers[0]); st.session_state.geziene_verzen = st.session_state.geziene_verzen[-100:]
+
+                else: # --- MODUS 3: AUTONOME LEESTEKST (100% BEKEND) ---
+                    st.caption("Dit model zoekt in het Nieuwe Testament naar verzen die uitsluitend bestaan uit woorden met een actuele streak van ≥ 1.")
+                    if st.button("Zoek autonome tekst", type="primary"):
+                        bekende_strongs_all = {str(w['strong']) for w in st.session_state.data if int(w.get('streak', 0)) >= 1 and w.get('strong')}
+                        
+                        perfecte_matches = []
+                        bijna_matches = [] 
+
+                        for ref, zin in bijbel_db.items():
+                            if ref in st.session_state.geziene_verzen: continue
+                            
+                            lexicale_items = [w for w in zin if w.get('strong')]
+                            if len(lexicale_items) < 3: continue 
+
+                            onbekende_tellers = sum(1 for w in lexicale_items if str(w['strong']) not in bekende_strongs_all)
+
+                            if onbekende_tellers == 0: perfecte_matches.append((ref, zin))
+                            elif onbekende_tellers == 1: bijna_matches.append((ref, zin))
+
+                        selectie_pool = perfecte_matches if perfecte_matches else bijna_matches
+                        
+                        if not selectie_pool:
+                            st.warning("Er zijn op dit moment geen ongelezen verzen gevonden die volledig binnen je beheerste woordenschat vallen. Train nog enkele nieuwe lessen in Tabblad 1.")
+                        else:
+                            gekozen_v = r_engine.choice(selectie_pool)
+                            st.session_state.huidig_vers = gekozen_v[1]
+                            st.session_state.huidige_vers_referentie = gekozen_v[0]
+                            st.session_state.geziene_verzen.append(gekozen_v[0])
+                            st.session_state.geziene_verzen = st.session_state.geziene_verzen[-100:]
+                            
+                            if not perfecte_matches and bijna_matches:
+                                st.toast("ℹ️ Geen vers met 100% bekende woorden gevonden; dit vers bevat exact 1 nieuw woord (Krashen i+1 principe).")
 
                 st.write("---")
 
