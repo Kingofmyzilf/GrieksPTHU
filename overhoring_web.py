@@ -215,7 +215,7 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None):
     if not strong_nr or not bijbel_db: return None
     beste_zin = None; fallback_zin = None
     doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
@@ -247,7 +247,18 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             interp = zw.get('interpunctie', '')
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
-            tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})".replace("'", "&#39;").replace('"', "&quot;")
+            s_id = str(zw.get('strong', ''))
+            known_item = bekende_vocab.get(s_id) if bekende_vocab else None
+
+            if known_item and not is_doelwoord:
+                nl_t = known_item.get('nederlands', '')
+                lem = known_item.get('grieks', '')
+                les = known_item.get('les', '?')
+                tooltip = f"Les {les} | {lem} → {nl_t}\n{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
+             else:
+                 tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
+
+             tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
             
             p_info = zw.get('parsing_info', '')
             kleur_stijl = ""
