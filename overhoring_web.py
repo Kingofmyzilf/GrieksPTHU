@@ -2246,7 +2246,9 @@ def main():
                         
                         if kleur_voegwoorden and ("Voegwoord" in w['parsing_info'] or "Conjunction" in w['parsing_info']): extra_style += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
 
-                        clean_w = normaliseer_accent(w['grieks']); is_stam = clean_w in actieve_stam_vormen; is_bekend = w.get('strong') and str(w['strong']) in actieve_strongs
+                        clean_w = normaliseer_accent(w['grieks'])
+                        is_stam = clean_w in actieve_stam_vormen
+                        is_bekend = w.get('strong') and str(w['strong']) in actieve_strongs
                         
                         if is_stam and kleur_stamtijden: css_class = "woord-stamtijd"
                         elif is_bekend: css_class = "woord-bekend"
@@ -2259,10 +2261,14 @@ def main():
                                     hover_text = f"Les {b_woord.get('les', '?')} | {b_woord.get('grieks', '?')} → {b_woord.get('nederlands', '')}\n{tooltip}"
                                 else: 
                                     hover_text = f"{actieve_stam_vormen[clean_w]['praesens']} → {actieve_stam_vormen[clean_w]['betekenis']}\n{tooltip}"
+                            else:
+                                # HIER IS HET VANGNET TERUGGEPLAATST:
+                                hover_text = f"❓ [Oefenwoord] Beantwoord de opdracht hieronder.\n{tooltip}"
                             
                             html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}'>{w['grieks']}<span class='tooltiptext'>{hover_text.replace('\'', '&#39;').replace('\"', '&quot;')}</span></span>{w['interpunctie']} "
                             oef_dict = w.copy(); oef_dict['is_stamtijd'] = is_stam; oef_dict['stam_info'] = actieve_stam_vormen[clean_w] if is_stam else None; oefen_woorden.append(oef_dict)
-                        else: html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}; border-bottom: 1px dotted #555;'>{w['grieks']}<span class='tooltiptext'>{tooltip}</span></span>{w['interpunctie']} "
+                        else: 
+                            html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}; border-bottom: 1px dotted #555;'>{w['grieks']}<span class='tooltiptext'>{tooltip}</span></span>{w['interpunctie']} "
                     
                     if kleur_naamvallen: st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
                     st.markdown(f"<div class='grieks-zin'>{html_zin}</div>", unsafe_allow_html=True)
