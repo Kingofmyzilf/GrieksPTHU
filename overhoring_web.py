@@ -884,17 +884,33 @@ def main():
                         st.write(f"Betekenis: **{correct_antw}**")
                         if st.button("Volgende"): laad_volgend_woord(); st.rerun()
 
-                    elif huidige_sub_modus in ['4', '3_typ']:
+                   elif huidige_sub_modus in ['4', '3_typ']:
                         if st.session_state.fouten_huidig_woord >= 1: 
                             st.info(actuele_hint)
                         forceer_focus()
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Vertaling:").lower().strip()
-                            p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip() if (is_mastery and heeft_vormen) else huidige_parsing.lower().strip()
+                            vorm_getoetst = is_mastery and heeft_vormen
+                            p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip() if vorm_getoetst else huidige_parsing.lower().strip()
 
                             if st.form_submit_button("Check Antwoord"):
                                 registreer_oefening(item)
-                                if check_betekenis(inp, correct_antw) and (p_vorm == huidige_parsing.lower().strip()):
+                                
+                                # Ontkoppelde semantische en syntactische evaluatie
+                                vertaling_correct = check_betekenis(inp, correct_antw)
+                                
+                                def norm_p(p_str):
+                                    s = str(p_str).lower().replace('.', ' ').strip()
+                                    s = re.sub(r'\s+', ' ', s)
+                                    s = s.replace('accusativus', 'acc').replace('accusatief', 'acc').replace('genitivus', 'gen').replace('genitief', 'gen')
+                                    s = s.replace('dativus', 'dat').replace('datief', 'dat').replace('nominativus', 'nom').replace('nominatief', 'nom').replace('vocativus', 'voc').replace('vocatief', 'voc')
+                                    s = s.replace('enkelvoud', 'ev').replace('meervoud', 'mv').replace('singularis', 'ev').replace('pluralis', 'mv').replace('sg', 'ev').replace('pl', 'mv')
+                                    s = s.replace('mannelijk', 'm').replace('vrouwelijk', 'v').replace('onzijdig', 'o').replace('fem', 'v').replace('masc', 'm').replace('neut', 'o')
+                                    return re.sub(r'[^\w]', '', s)
+
+                                vorm_correct = (norm_p(p_vorm) == norm_p(huidige_parsing)) if vorm_getoetst else True
+
+                                if vertaling_correct and vorm_correct:
                                     if st.session_state.fouten_huidig_woord == 0 and item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                         if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
@@ -906,6 +922,17 @@ def main():
                                     
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
                                     trigger_save(); laad_volgend_woord(); st.rerun()
+                                    
+                                elif vertaling_correct and not vorm_correct:
+                                    # Genuanceerde opvang: vertaling wél snappen, grammaticale duiding afwijken
+                                    st.session_state.fouten_huidig_woord += 1
+                                    item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                    st.session_state.feedback = {
+                                        "type": "warning", 
+                                        "msg": f"Inhoudelijk juist (**{inp}**)! Je grammaticale ontleding (*{p_vorm if p_vorm else 'leeg'}*) afweek echter van de officiële duiding: **{huidige_parsing}**."
+                                    }
+                                    st.rerun()
+                                    
                                 else:
                                     if huidige_sub_modus == '3_typ': st.session_state.mix_combo[item['grieks']] = False
                                     st.session_state.fouten_huidig_woord += 1
