@@ -715,10 +715,11 @@ def main():
                     c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
                     
                     st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
-                    val_nieuw = st.slider(f"Nieuw (0) - Beschikbaar: {c_nieuw}", 0, min(20, c_nieuw), min(3, c_nieuw)) if c_nieuw > 0 else 0
-                    val_train = st.slider(f"In Training (1-15) - Beschikbaar: {c_train}", 0, min(20, c_train), min(5, c_train)) if c_train > 0 else 0
-                    val_beheer = st.slider(f"Beheerst (16-29) - Beschikbaar: {c_beheer}", 0, min(20, c_beheer), 0) if c_beheer > 0 else 0
-                    val_mast = st.slider(f"Mastery (30+) - Beschikbaar: {c_mast}", 0, min(20, c_mast), 0) if c_mast > 0 else 0
+                    # STABILITEITSPATCH: Sliders blijven altijd zichtbaar, ook bij 0 beschikbare woorden
+                    val_nieuw = st.slider(f"Nieuw (0) — Beschikbaar: {c_nieuw}", 0, max(1, min(20, c_nieuw)), min(3, c_nieuw) if c_nieuw > 0 else 0)
+                    val_train = st.slider(f"In Training (1-15) — Beschikbaar: {c_train}", 0, max(1, min(20, c_train)), min(5, c_train) if c_train > 0 else 0)
+                    val_beheer = st.slider(f"Beheerst (16-29) — Beschikbaar: {c_beheer}", 0, max(1, min(20, c_beheer)), 0)
+                    val_mast = st.slider(f"Mastery (30+) — Beschikbaar: {c_mast}", 0, max(1, min(20, c_mast)), 0)
                     custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
                 
                 if st.button("Start Sessie", type="primary"):
@@ -798,29 +799,9 @@ def main():
                         else: st.error(st.session_state.feedback["msg"])
                         st.session_state.feedback = None 
 
-                    if is_context_gewenst:
-                        st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
-                        bijbel_db = laad_bijbel_db()
-                        user_vocab_map = {str(w['strong']): w for w in st.session_state.data if w.get('strong')}
-                        
-                        zin_data = zoek_context_zin(
-                            item.get('strong'), 
-                            item.get('woordsoort', ''), 
-                            bijbel_db, 
-                            anti_spiek=(huidige_sub_modus != '1'), 
-                            specifieke_vorm=huidige_vorm,
-                            bekende_vocab=user_vocab_map,
-                            strikte_dekking=st.session_state.get('optie_autonoom_vocab', False),
-                            vastgezet_vers_ref=st.session_state.vocab_sessie_verzen.get(item['grieks'])
-                        )
-                        if zin_data: 
-                            st.markdown(zin_data["html"], unsafe_allow_html=True)
-                            st.markdown("<div style='font-size:14px; margin-bottom:4px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
-                            
-                            # HIER IS DE TREFWOORD-ANCHOR TERUGGEZET:
-                            st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
-                        else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
-                    else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
+                    # --- HERSTELDE DECLARATIE EN ONTDUBBELD BLOK ---
+                    zin_data = None
+                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_cluster_vocab', False)
                     
                     if is_context_gewenst:
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
@@ -838,7 +819,8 @@ def main():
                         )
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
-                            st.markdown("<div style='font-size:14px; margin-bottom:10px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
+                            st.markdown("<div style='font-size:14px; margin-bottom:4px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
+                            st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
                         else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     
