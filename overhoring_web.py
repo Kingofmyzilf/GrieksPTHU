@@ -255,10 +255,10 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
                 lem = known_item.get('grieks', '')
                 les = known_item.get('les', '?')
                 tooltip = f"Les {les} | {lem} → {nl_t}\n{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
-             else:
-                 tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
+            else:
+                tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
 
-             tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
+            tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
             
             p_info = zw.get('parsing_info', '')
             kleur_stijl = ""
