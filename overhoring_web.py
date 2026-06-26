@@ -827,7 +827,6 @@ def main():
                                 prefix_2 = grieks_doel[:2] if len(grieks_doel)>=2 else ''
                                 stam_gok = grieks_doel[1:-2] if len(grieks_doel)>=5 else ''
                                 
-                                # --- 1. GERECHTE LOOK-A-LIKES ZOEKEN ---
                                 lookalikes_ned = []
                                 pool_ws = []
                                 
@@ -836,22 +835,34 @@ def main():
                                     n_ander = str(w.get('nederlands', '')).strip()
                                     if not g_ander or not n_ander or n_ander in gekozen_betekenissen or g_ander == grieks_doel: continue
                                     
-                                    if w.get('woordsoort') == huidige_w_soort: pool_ws.append(n_ander)
-                                    
-                                    # Criterium A: Gedeelde stam/wortel (bijv. 'ερχ' in απερχομαι en διερχομαι)
-                                    if stam_gok and len(stam_gok)>=3 and stam_gok in g_ander: lookalikes_ned.append(n_ander)
-                                    # Criterium B: Zelfde preverbale prefix + zelfde lengte-orde
-                                    elif prefix_2 and g_ander.startswith(prefix_2) and abs(len(g_ander)-len(grieks_doel))<=2: lookalikes_ned.append(n_ander)
+                                    # POORT 1: Het woord MOET tot exact dezelfde grammaticale woordsoort behoren
+                                    if w.get('woordsoort') == huidige_w_soort:
+                                        pool_ws.append(n_ander)
+                                        
+                                        # POORT 2: Pas binnen diezelfde woordsoort testen we op stam of prefix
+                                        verwant_stam = (stam_gok and len(stam_gok)>=3 and stam_gok in g_ander)
+                                        verwant_prefix = (prefix_2 and g_ander.startswith(prefix_2) and abs(len(g_ander)-len(grieks_doel))<=2)
+                                        
+                                        if verwant_stam or verwant_prefix:
+                                            lookalikes_ned.append(n_ander)
 
                                 rnd.shuffle(lookalikes_ned)
                                 for ned in lookalikes_ned:
                                     if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
                                     if len(afleiders) >= 3: break
                                     
-                                # --- 2. TRAP 2: WOORDSOORT GENOTEN ---
+                                # TRAP 2: Aanvullen met willekeurige soortgenoten (als er te weinig stam-verpleegde lookalikes waren)
                                 if len(afleiders) < 3:
                                     rnd.shuffle(pool_ws)
                                     for ned in pool_ws:
+                                        if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
+                                        if len(afleiders) >= 3: break
+                                        
+                                # TRAP 3: Absolute fallback (uitsluitend actief bij een vrijwel lege database)
+                                if len(afleiders) < 3:
+                                    rest_pool = [w.get('nederlands','') for w in st.session_state.data if w.get('nederlands') not in gekozen_betekenissen and w.get('nederlands')]
+                                    rnd.shuffle(rest_pool)
+                                    for ned in rest_pool:
                                         if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
                                         if len(afleiders) >= 3: break
                                         
