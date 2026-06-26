@@ -247,6 +247,11 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             interp = zw.get('interpunctie', '')
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
+            
+            # --- STAP 1: CHRONOLOGISCH EERST BEPAAL JE HET DOELWOORD ---
+            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
+
+            # --- STAP 2: PAS DAARNA BOUW JE DE TOOLTIP MET DIE KENNIS OP ---
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
 
@@ -271,7 +276,6 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
                 kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
             else: kleur_stijl += "color: #888888;"
             
-            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
             if is_doelwoord:
                 if anti_spiek: html_zin += f"<span tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}</span>{interp} "
                 else: html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
