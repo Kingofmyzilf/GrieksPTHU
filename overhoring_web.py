@@ -1878,11 +1878,17 @@ def main():
                             correct_betekenis = huidig['basis']['betekenis']
                             
                             dstam, duit = deconstrueer_stamtijd_live(huidig['vraag_vorm']['vorm'], correct_gram)
-                            gekleurde_vorm_html = f"**{dstam}**<span style='color:#33ccff'>**{duit}**</span>" if duit else f"**{huidig['vraag_vorm']['vorm']}**"
+                            
+                            # OPLOSSING 1: Native Streamlit markdown-kleurcode :blue[...] in plaats van HTML
+                            gekleurde_vorm_html = f"**{dstam}**:blue[**{duit}**]" if duit else f"**{huidig['vraag_vorm']['vorm']}**"
                             fout_msg = f"{gekleurde_vorm_html} — {correct_gram} van **{correct_praesens}** — **{correct_betekenis}**"
+                            
+                            # OPLOSSING 2: Voorkomen dat 'Suppletie' dubbel wordt geprint
                             morf = huidig['basis'].get('morfologie', {}); regel = morf.get('mutatieregel', {})
-                            uitleg_regel = f"⚠️ **Suppletie:** {regel.get('toelichting', 'Puur memoriseren.')}" if morf.get('memoriseren_vereist') else f"💡 **Klankwet ({morf.get('klasse', 'regelmatig')}):** {regel.get('formule','')} — *{regel.get('toelichting','')}*"
-
+                            toelichting_txt = regel.get('toelichting', 'Puur memoriseren.')
+                            prefix_sup = "⚠️ " if toelichting_txt.startswith("Suppletie") else "⚠️ **Suppletie:** "
+                            uitleg_regel = f"{prefix_sup}{toelichting_txt}" if morf.get('memoriseren_vereist') else f"💡 **Klankwet ({morf.get('klasse', 'regelmatig')}):** {regel.get('formule','')} — *{regel.get('toelichting','')}*"
+                            
                             huidige_streak = huidig.get('streak', 0)
                             if huidige_streak >= 30:
                                 st.caption("🏆 Mastery Modus: Herken de stamtijd in de Bijbel!")
