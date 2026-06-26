@@ -674,15 +674,14 @@ def main():
             col1, col2 = st.columns([1, 2])
             with col1:
                 modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
-                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "📖 Autonome Bijbelzin (100% Bekend)"])
+                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)"])
                 doel = []
                 
                 if keuze == "Lessen":
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                     gekozen = st.multiselect("Kies lessen", alle_lessen)
                     doel = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
-                elif keuze == "Mastery": 
-                    doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
+                elif keuze == "Mastery": doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
                 elif "Knelpunten" in keuze:
                     knel_lijst = []
                     for w in st.session_state.data:
@@ -690,30 +689,12 @@ def main():
                         if (g + f) >= 3 and f > 0: knel_lijst.append((w, f / (g + f)))
                     knel_lijst.sort(key=lambda x: x[1], reverse=True)
                     doel = [x[0] for x in knel_lijst[:15]]
-                elif "Autonome Bijbelzin" in keuze:
-                    bijbel_db = laad_bijbel_db()
-                    user_dict = {str(w['strong']): w for w in st.session_state.data if int(w.get('streak',0)) >= 1 and w.get('strong')}
-                    
-                    if not st.session_state.gekozen_autonoom_vers:
-                        geschikte = []
-                        for ref, zin in bijbel_db.items():
-                            w_strongs = [w for w in zin if w.get('strong')]
-                            if len(w_strongs) >= 4 and all(str(w['strong']) in user_dict for w in w_strongs):
-                                geschikte.append((ref, [user_dict[str(w['strong'])] for w in w_strongs]))
-                        if geschikte:
-                            st.session_state.gekozen_autonoom_vers = r_engine.choice(geschikte)
-                    
-                    if st.session_state.gekozen_autonoom_vers:
-                        ref_txt, doel = st.session_state.gekozen_autonoom_vers
-                        st.info(f"Geselecteerd vers: **{ref_txt}** ({len(doel)} bekende woorden)")
-                        if st.button("🔄 Kies ander vers", size="small"):
-                            st.session_state.gekozen_autonoom_vers = None; st.rerun()
-                    else:
-                        st.warning("Nog geen vers gevonden met ≥4 woorden die je al kent (Streak ≥1).")
                 
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
                 optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context")
+                optie_autonoom = st.checkbox("🛡️ Koppel selectie aan 100% bekende Bijbelverzen", key="optie_autonoom_vocab", help="Zoekt achteraf naar een Bijbelvers waarin jouw geselecteerde oefenwoorden figureren, omringd door uitsluitend woorden die je al kent.")
+                
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
                 custom_counts = None
@@ -735,12 +716,9 @@ def main():
                         st.session_state.gestrafte_woorden_vocab = set()
                         modus_id = str(modus[0])
                         
-                        if "Autonome" in keuze and st.session_state.gekozen_autonoom_vers:
-                            st.session_state.actieve_sessie_vast_vers = st.session_state.gekozen_autonoom_vers[0]
-                        else:
-                            st.session_state.actieve_sessie_vast_vers = None
-
+                        # 1. JIJ BEPAALT EERST DE EXACTE WOORDENLIJST VAN DE SESSIE:
                         sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
+                        
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
                         else:
                             st.session_state.modus_actief = modus_id
@@ -777,12 +755,14 @@ def main():
                         st.session_state.feedback = None 
 
                     zin_data = None
-                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or (st.session_state.actieve_sessie_vast_vers is not None)
+                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_autonoom_vocab', False)
                     
                     if is_context_gewenst:
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
                         user_vocab_map = {str(w['strong']): w for w in st.session_state.data if w.get('strong')}
+                        
+                        # 2. DE AI ZOEKT ACHTERAF NAAR EEN PASSEND VERS BIJ JOUW ACTIEVE WOORD:
                         zin_data = zoek_context_zin(
                             item.get('strong'), 
                             item.get('woordsoort', ''), 
@@ -790,7 +770,7 @@ def main():
                             anti_spiek=(huidige_sub_modus != '1'), 
                             specifieke_vorm=huidige_vorm,
                             bekende_vocab=user_vocab_map,
-                            vast_vers_ref=st.session_state.actieve_sessie_vast_vers
+                            strikte_dekking=st.session_state.get('optie_autonoom_vocab', False)
                         )
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
@@ -859,7 +839,7 @@ def main():
                             st.info(actuele_hint)
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         
-                 # --- ROBUUSTE LOOK-A-LIKE MEERKEUZE ENGINE ---
+                        # --- GECORRIGEERDE LOOK-A-LIKE ENGINE (STRIKT PER WOORDSOORT) ---
                         if not st.session_state.huidige_opties:
                             afleiders = []
                             gekozen_betekenissen = {correct_optie}
@@ -896,6 +876,7 @@ def main():
                                     n_ander = str(w.get('nederlands', '')).strip()
                                     if not g_ander or not n_ander or n_ander in gekozen_betekenissen or g_ander == grieks_doel: continue
                                     
+                                    # Poort 1: Strikt dezelfde grammaticale woordsoort
                                     if w.get('woordsoort') == huidige_w_soort:
                                         pool_ws.append(n_ander)
                                         verwant_stam = (stam_gok and len(stam_gok)>=3 and stam_gok in g_ander)
