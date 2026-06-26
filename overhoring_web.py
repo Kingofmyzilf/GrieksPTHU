@@ -215,10 +215,10 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None, kleur_aan=True, co_doel_strongs=None):
     if not strong_nr or not bijbel_db: return None
+    if co_doel_strongs is None: co_doel_strongs = set()
     
-    # Check of de gevraagde vorm een echte specifieke vervoeging is, of gewoon het woordenboek-lemma zelf
     is_specifieke_vervoeging = False
     if specifieke_vorm and bekende_vocab and str(strong_nr) in bekende_vocab:
         lemma_norm = normaliseer_accent(bekende_vocab[str(strong_nr)].get('grieks', ''))
@@ -269,11 +269,15 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
             
             is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_check or normaliseer_accent(g_woord) == doel_vorm_check)
+            is_sessie_genoot = (str(zw.get('strong', '')) in co_doel_strongs) and not is_doelwoord
 
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
 
-            if known_item and not is_doelwoord:
+            if is_sessie_genoot:
+                # Voorkomt dat de zwevende tooltip het antwoord van een komend oefenwoord weggeeft
+                tooltip = f"❓ [Oefenwoord in deze vertaalsessie]\n{zw.get('parsing_info', '')}"
+            elif known_item and not is_doelwoord:
                 nl_t = known_item.get('nederlands', '')
                 lem = known_item.get('grieks', '')
                 les = known_item.get('les', '?')
@@ -285,19 +289,29 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             
             p_info = zw.get('parsing_info', '')
             kleur_stijl = ""
-            if "Nom" in p_info: kleur_stijl += "color: #33ccff;"
-            elif "Gen" in p_info: kleur_stijl += "color: #28a745;"
-            elif "Dat" in p_info: kleur_stijl += "color: #6f42c1;"
-            elif "Acc" in p_info: kleur_stijl += "color: #dc3545;"
-            elif "Voc" in p_info: kleur_stijl += "color: #fd7e14;"
-            elif not anti_spiek and ("Voegwoord" in p_info or "Conjunction" in p_info):
-                kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
-            else: kleur_stijl += "color: #888888;"
+            if kleur_aan:
+                if "Nom" in p_info: kleur_stijl += "color: #33ccff;"
+                elif "Gen" in p_info: kleur_stijl += "color: #28a745;"
+                elif "Dat" in p_info: kleur_stijl += "color: #6f42c1;"
+                elif "Acc" in p_info: kleur_stijl += "color: #dc3545;"
+                elif "Voc" in p_info: kleur_stijl += "color: #fd7e14;"
+                elif not anti_spiek and ("Voegwoord" in p_info or "Conjunction" in p_info):
+                    kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
+                else: kleur_stijl += "color: #888888;"
+            else:
+                kleur_stijl = "color: #888888;"
             
             if is_doelwoord:
-                if anti_spiek: html_zin += f"<span tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}</span>{interp} "
-                else: html_zin += f"<span class='mobile-tooltip' tabindex='0' style='color: #ffffff; font-weight: bold; text-decoration: underline;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
-            else: html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{kleur_stijl} border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
+                # Actieve vraag: Helder wit font met een oplichttend cyaanblauw kader
+                w_style = "color: #ffffff; font-weight: 900; background-color: rgba(51, 204, 255, 0.3); border: 2px solid #33ccff; border-bottom: 4px solid #33ccff; padding: 1px 8px; border-radius: 6px; box-shadow: 0 0 10px rgba(51,204,255,0.4);"
+                if anti_spiek: html_zin += f"<span tabindex='0' style='{w_style}'>{g_woord}</span>{interp} "
+                else: html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{w_style}'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
+            elif is_sessie_genoot:
+                # Co-doelwoord binnen hetzelfde vers: permanent helder wit opgelicht met streeplijn
+                w_style = "color: #ffffff; font-weight: bold; background-color: rgba(255, 255, 255, 0.1); border-bottom: 2px dashed #ffffff; padding: 1px 5px; border-radius: 4px;"
+                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{w_style}'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
+            else: 
+                html_zin += f"<span class='mobile-tooltip' tabindex='0' style='{kleur_stijl} border-bottom: 1px dotted #555;'>{g_woord}<span class='tooltiptext'>{tooltip}</span></span>{interp} "
                 
         html_weergave = f"<div style='font-size: 14px; margin-bottom: 5px; color: #f6c23e;'>📖 Context: {ref}</div><div class='grieks-zin' style='font-size: 24px; padding: 15px; margin-bottom: 15px;'>{html_zin.strip()}</div>"
         return {"html": html_weergave, "ref": ref, "grieks_puur": grieks_puur.strip(), "engels_puur": engels_puur.strip()}
@@ -675,11 +689,12 @@ def main():
     if st.session_state.data:
         menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "ℹ️ Uitleg & Hulp"])
 
-        # ==========================================
+       # ==========================================
         # TAB 1: WOORDENSCHAT
         # ==========================================
         with menu[0]: 
             if 'vocab_sessie_verzen' not in st.session_state: st.session_state.vocab_sessie_verzen = {}
+            if 'vocab_cluster_strongs' not in st.session_state: st.session_state.vocab_cluster_strongs = {}
             
             col1, col2 = st.columns([1, 2])
             with col1:
@@ -704,6 +719,7 @@ def main():
                 st.write("⚙️ **Sessie Instellingen**")
                 optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context")
                 optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", help="Bekijkt de Strong-nummers van jouw bijeengeraapte oefenwoorden en zoekt in de Bijbel naar verzen die er meerdere tegelijk bevatten.")
+                optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=True)
                 
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
@@ -715,7 +731,6 @@ def main():
                     c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
                     
                     st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
-                    # STABILITEITSPATCH: Sliders blijven altijd zichtbaar, ook bij 0 beschikbare woorden
                     val_nieuw = st.slider(f"Nieuw (0) — Beschikbaar: {c_nieuw}", 0, max(1, min(20, c_nieuw)), min(3, c_nieuw) if c_nieuw > 0 else 0)
                     val_train = st.slider(f"In Training (1-15) — Beschikbaar: {c_train}", 0, max(1, min(20, c_train)), min(5, c_train) if c_train > 0 else 0)
                     val_beheer = st.slider(f"Beheerst (16-29) — Beschikbaar: {c_beheer}", 0, max(1, min(20, c_beheer)), 0)
@@ -730,7 +745,6 @@ def main():
                         
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
                         else:
-                            # --- GREEDY VERSE CLUSTERING ENGINE ---
                             if st.session_state.get('optie_cluster_vocab', False):
                                 b_db_temp = laad_bijbel_db()
                                 from collections import defaultdict
@@ -740,6 +754,7 @@ def main():
                                     
                                 ongetoetst = set(s_map.keys())
                                 v_map = {}
+                                cluster_strongs = defaultdict(set)
                                 
                                 while len(ongetoetst) >= 2:
                                     beste_ref = None
@@ -754,7 +769,9 @@ def main():
                                     
                                     if beste_ref and len(beste_hits) >= 2:
                                         for s in beste_hits:
-                                            for k in s_map[s]: v_map[k] = beste_ref
+                                            for k in s_map[s]: 
+                                                v_map[k] = beste_ref
+                                                cluster_strongs[beste_ref].add(s)
                                             ongetoetst.remove(s)
                                     else: break
                                     
@@ -762,9 +779,26 @@ def main():
                                     for k in s_map[s]: v_map[k] = None
                                     
                                 st.session_state.vocab_sessie_verzen = v_map
-                                sampled.sort(key=lambda w: str(v_map.get(w['grieks'], 'zzz_solo')))
+                                st.session_state.vocab_cluster_strongs = dict(cluster_strongs)
+                                
+                                # Positie-bepaling binnen de versregel (van links naar rechts)
+                                pos_map = {}
+                                for w in sampled:
+                                    grieks_k = w['grieks']
+                                    ref = v_map.get(grieks_k)
+                                    pos = 999
+                                    if ref and ref in b_db_temp:
+                                        target_s = str(w.get('strong', ''))
+                                        for idx_zw, zw in enumerate(b_db_temp[ref]):
+                                            if str(zw.get('strong', '')) == target_s:
+                                                pos = idx_zw; break
+                                    pos_map[grieks_k] = pos
+                                    
+                                # Primair groeperen op Bijbeltekst, secundair op woord-index in die zin
+                                sampled.sort(key=lambda w: (str(v_map.get(w['grieks']) or 'zzz_solo'), pos_map.get(w['grieks'], 999)))
                             else:
                                 st.session_state.vocab_sessie_verzen = {}
+                                st.session_state.vocab_cluster_strongs = {}
 
                             st.session_state.modus_actief = modus_id
                             if modus_id == "3":
@@ -799,7 +833,6 @@ def main():
                         else: st.error(st.session_state.feedback["msg"])
                         st.session_state.feedback = None 
 
-                    # --- HERSTELDE DECLARATIE EN ONTDUBBELD BLOK ---
                     zin_data = None
                     is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_cluster_vocab', False)
                     
@@ -807,6 +840,8 @@ def main():
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
                         user_vocab_map = {str(w['strong']): w for w in st.session_state.data if w.get('strong')}
+                        actief_vers_ref = st.session_state.vocab_sessie_verzen.get(item['grieks'])
+                        co_strongs = st.session_state.vocab_cluster_strongs.get(actief_vers_ref, set()) if actief_vers_ref else set()
                         
                         zin_data = zoek_context_zin(
                             item.get('strong'), 
@@ -815,11 +850,14 @@ def main():
                             anti_spiek=(huidige_sub_modus != '1'), 
                             specifieke_vorm=huidige_vorm,
                             bekende_vocab=user_vocab_map,
-                            vastgezet_vers_ref=st.session_state.vocab_sessie_verzen.get(item['grieks'])
+                            vastgezet_vers_ref=actief_vers_ref,
+                            kleur_aan=st.session_state.get('optie_kleur_nv_vocab', True),
+                            co_doel_strongs=co_strongs
                         )
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
-                            st.markdown("<div style='font-size:14px; margin-bottom:4px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
+                            if st.session_state.get('optie_kleur_nv_vocab', True):
+                                st.markdown("<div style='font-size:14px; margin-bottom:4px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
                             st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
                         else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
@@ -885,7 +923,6 @@ def main():
                             st.info(actuele_hint)
                         correct_optie = f"{correct_antw} ({huidige_parsing})" if (is_mastery and heeft_vormen) else correct_antw
                         
-                        # --- GECORRIGEERDE LOOK-A-LIKE ENGINE (STRIKT PER WOORDSOORT) ---
                         if not st.session_state.huidige_opties:
                             afleiders = []
                             gekozen_betekenissen = {correct_optie}
