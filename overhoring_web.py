@@ -741,7 +741,15 @@ def main():
                     if is_context_gewenst:
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
-                        zin_data = zoek_context_zin(item.get('strong'), item.get('woordsoort', ''), bijbel_db, anti_spiek=(huidige_sub_modus != '1'), specifieke_vorm=huidige_vorm)
+                        user_vocab_map = {str(w['strong']): w for w in st.session_state.data if w.get('strong')}
+                        zin_data = zoek_context_zin(
+                            item.get('strong'), 
+                            item.get('woordsoort', ''), 
+                            bijbel_db, 
+                            anti_spiek=(huidige_sub_modus != '1'), 
+                            specifieke_vorm=huidige_vorm,
+                            bekende_vocab=user_vocab_map
+                        )
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
                             st.markdown("<div style='font-size:14px; margin-bottom:10px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
