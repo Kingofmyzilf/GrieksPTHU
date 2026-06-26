@@ -215,53 +215,50 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, vast_vers_ref=None):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False):
     if not strong_nr or not bijbel_db: return None
-    keuze = None
+    beste_zin = None; fallback_zin = None
+    doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
     
-    # ALS EEN VAST VERS IS GEEÏST, PAK DIRECT DIE EXACTE REGEL UIT DE DB:
-    if vast_vers_ref and vast_vers_ref in bijbel_db:
-        keuze = (vast_vers_ref, bijbel_db[vast_vers_ref])
-    else:
-        beste_zin = None; fallback_zin = None
-        doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
+    for ref, zin in bijbel_db.items():
+        # --- FILTER OP BEKENDE OMGEVINGSWOORDEN ---
+        if strikte_dekking and bekende_vocab:
+            lex_items = [w for w in zin if w.get('strong')]
+            # Eisen: minimaal 3 woorden én alle overige woorden in de zin moeten in de bekende woordenschat zitten
+            if len(lex_items) < 3 or any((str(w['strong']) not in bekende_vocab and str(w['strong']) != str(strong_nr)) for w in lex_items):
+                continue
+
+        for w in zin:
+            if str(w.get('strong', '')) == str(strong_nr):
+                if doel_vorm_schoon:
+                    if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
+                else:
+                    if not fallback_zin: fallback_zin = (ref, zin)
+                    p = w.get('parsing_info', '')
+                    is_dict_form = False
+                    if woordsoort == 'ww' or "Werkwoord" in p:
+                        if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
+                    elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
+                        if "Nom" in p and "ev" in p: is_dict_form = True
+                    else: is_dict_form = True 
+
+                    if is_dict_form: beste_zin = (ref, zin); break
+        if beste_zin: break
         
-        for ref, zin in bijbel_db.items():
-            for w in zin:
-                if str(w.get('strong', '')) == str(strong_nr):
-                    if doel_vorm_schoon:
-                        if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
-                    else:
-                        if not fallback_zin: fallback_zin = (ref, zin)
-                        p = w.get('parsing_info', '')
-                        is_dict_form = False
-                        if woordsoort == 'ww' or "Werkwoord" in p:
-                            if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
-                        elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
-                            if "Nom" in p and "ev" in p: is_dict_form = True
-                        else: is_dict_form = True 
-
-                        if is_dict_form: beste_zin = (ref, zin); break
-            if beste_zin: break
-            
-        keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
-
+    keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
     if keuze:
         ref, zin = keuze
         html_zin = ""; grieks_puur = ""; engels_puur = ""
-        doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
-
         for zw in zin:
             g_woord = zw['grieks']
             interp = zw.get('interpunctie', '')
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
             
-            if vast_vers_ref:
-                is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr))
-            else:
-                is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
+            # --- CHRONOLOGISCH HERSTEL: Eerst doelwoord vaststellen ---
+            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
 
+            # --- Tooltip genereren op basis van doelwoord-status ---
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
 
