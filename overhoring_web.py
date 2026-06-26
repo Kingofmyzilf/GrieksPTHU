@@ -405,10 +405,19 @@ def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
 def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=2, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False, totale_db=None):
-    nieuw, incubatie, training, beheerst, mastery = [], [], [], [], []
+    nieuw_herstel, nieuw_vers, incubatie, training, beheerst, mastery = [], [], [], [], [], []
+    
     for item in doel_lijst:
         s = krijg_streak(item, module)
-        if s == 0: nieuw.append(item)
+        if s == 0:
+            g = int(item.get('score_goed', 0))
+            f = int(item.get('score_fout', 0))
+            l = str(item.get('laatst_geoefend', '')).strip()
+            # Splitsing tussen gesneuvelde soldaten en maagdelijke woorden
+            if g > 0 or f > 0 or l != '':
+                nieuw_herstel.append(item)
+            else:
+                nieuw_vers.append(item)
         elif 1 <= s <= 3: incubatie.append(item)
         elif 4 <= s <= 15: training.append(item)
         elif 16 <= s <= 29: beheerst.append(item)
@@ -422,15 +431,22 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
 
     incubatie.sort(key=sorteer_key); training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
     
-    if sorteer_oudste_eerst: nieuw.sort(key=sorteer_key)
-    else: r_engine.shuffle(nieuw)
+    if sorteer_oudste_eerst: 
+        nieuw_herstel.sort(key=sorteer_key)
+        nieuw_vers.sort(key=sorteer_key)
+    else: 
+        r_engine.shuffle(nieuw_herstel)
+        r_engine.shuffle(nieuw_vers)
         
-    actieve_nieuw = [] if verbied_nieuwe_woorden else nieuw
+    # --- DE ABSOLUTE PRIORITEITSREGEL ---
+    # De blokkade treft uitsluitend de onbekende (vers) woorden. 
+    # De herstelwoorden staan altijd vooraan in de rij en mogen altijd door de poort.
+    actieve_nieuw = nieuw_herstel + ([] if verbied_nieuwe_woorden else nieuw_vers)
     sessie = []
 
     # ROUTE 1: ZELF SAMENSTELLEN (Strikt binnen de geselecteerde lescriteria)
     if custom_counts is not None:
-        c_n = 0 if verbied_nieuwe_woorden else custom_counts.get('nieuw', 0)
+        c_n = custom_counts.get('nieuw', 0)
         sessie.extend(actieve_nieuw[:c_n])
         sessie.extend(incubatie[:custom_counts.get('incubatie', 0)])
         sessie.extend(training[:custom_counts.get('training', 0)])
@@ -454,10 +470,10 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
             extern_herhalingswoord = geoefend_buiten_selectie[0]
 
     # ROUTE 2: DE AUTOMATISCHE, GEWICHTS-BEWUSTE MENTOR
+    poule_n = actieve_nieuw[:max_nieuw]
+    sessie.extend(poule_n)
+
     if not verbied_nieuwe_woorden:
-        poule_n = actieve_nieuw[:max_nieuw]
-        sessie.extend(poule_n)
-        
         poule_inc = incubatie[:3]
         sessie.extend(poule_inc)
         
@@ -465,7 +481,6 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         poule_t = training[:ruimte_train]
         sessie.extend(poule_t)
         
-        # Prioriteit aan het externe retentie-woord, anders lokaal mastery/beheerst
         if extern_herhalingswoord: sessie.append(extern_herhalingswoord)
         elif mastery: sessie.append(mastery[0])
         elif beheerst: sessie.append(beheerst[0])
@@ -474,15 +489,11 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         aanvulling = 1 if frictie_som > 50 else (2 if frictie_som > 25 else 4)
         
         sessie.extend(beheerst[:aanvulling])
-        if len(sessie) < 10:
-            rest_mastery = [w for w in mastery if w not in sessie]
-            sessie.extend(rest_mastery[:10 - len(sessie)])
-        
     else:
         poule_inc = incubatie[:4]
         sessie.extend(poule_inc)
         
-        ruimte_train = min(len(training), 8 - len(poule_inc))
+        ruimte_train = min(len(training), 8 - (len(poule_n) + len(poule_inc)))
         poule_t = training[:ruimte_train]
         sessie.extend(poule_t)
         
@@ -497,6 +508,13 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         
         rest_pool = [w for w in (beheerst + mastery) if w not in sessie]
         sessie.extend(rest_pool[:aanvulling])
+
+    # --- HET KNELPUNTEN VANGNET ---
+    # Als de sessie door strenge modus-filters (zoals Knelpunten) nog niet de 10 kaarten haalt, 
+    # vullen we agressief aan met alle restanten uit je actieve doel-selectie.
+    if len(sessie) < 10:
+        rest_alles = [w for w in (actieve_nieuw + incubatie + training + beheerst + mastery) if w not in sessie]
+        sessie.extend(rest_alles[:10 - len(sessie)])
 
     r_engine.shuffle(sessie)
     return sessie
