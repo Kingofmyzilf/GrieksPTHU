@@ -419,36 +419,64 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         try: return datetime.strptime(d_str, '%Y-%m-%d').date()
         except: return datetime.min.date()
 
+    # Sorteer historische bakken chronologisch (oudste datums / Nooit geoefend bovenaan)
     training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
     
-    if sorteer_oudste_eerst:
-        nieuw.sort(key=sorteer_key)
-    else:
-        r_engine.shuffle(nieuw)
+    if sorteer_oudste_eerst: nieuw.sort(key=sorteer_key)
+    else: r_engine.shuffle(nieuw)
         
-    # --- DE DIDACTISCHE NOODREM ---
-    # Als Typen actief is óf de onderhoudsmodus draait, vriest de kaartenbak 'Nieuw' wiskundig dicht naar 0.
-    actieve_nieuw_poule = [] if verbied_nieuwe_woorden else nieuw
-    
+    actieve_nieuw = [] if verbied_nieuwe_woorden else nieuw
     sessie = []
+
+    # --- ROUTE 1: JIJ HEBT DE REGIE OVER DE AANTALLEN ('Zelf Samenstellen') ---
     if custom_counts is not None:
         c_n = 0 if verbied_nieuwe_woorden else custom_counts.get('nieuw', 0)
-        sessie.extend(actieve_nieuw_poule[:c_n])
+        sessie.extend(actieve_nieuw[:c_n])
         sessie.extend(training[:custom_counts.get('training', 0)])
         sessie.extend(beheerst[:custom_counts.get('beheerst', 0)])
         sessie.extend(mastery[:custom_counts.get('mastery', 0)])
         r_engine.shuffle(sessie)
         return sessie
 
-    doel_grootte = 15 if (len(actieve_nieuw_poule) + len(training)) <= 4 else 10
-    aantal_n = 0 if verbied_nieuwe_woorden else min(len(actieve_nieuw_poule), max_nieuw)
-    
-    ruimte_voor_training = min(len(training), 8 - aantal_n)
-    sessie.extend(training[:ruimte_voor_training])
-    sessie.extend(actieve_nieuw_poule[:aantal_n])
-    
-    if len(sessie) < doel_grootte: sessie.extend(beheerst[:doel_grootte - len(sessie)])
-    if len(sessie) < doel_grootte: sessie.extend(mastery[:doel_grootte - len(sessie)])
+    # --- ROUTE 2: DE AUTOMATISCHE, GEWICHTS-BEWUSTE MENTOR ---
+    if not verbied_nieuwe_woorden:
+        # Scenario A: Nieuwe lesstof toegestaan
+        poule_n = actieve_nieuw[:max_nieuw]
+        sessie.extend(poule_n)
+        
+        ruimte_train = min(len(training), 8 - len(poule_n))
+        poule_t = training[:ruimte_train]
+        sessie.extend(poule_t)
+        
+        # Keihard didactisch anker: altijd 1 verwezen Mastery-woord
+        if mastery: sessie.append(mastery[0])
+        
+        # Bereken frictiegewicht van de geselecteerde trainingskaarten
+        frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in poule_t)
+        
+        if frictie_som > 45: aanvulling = 2
+        elif frictie_som > 25: aanvulling = 4
+        else: aanvulling = 6
+        
+        sessie.extend(beheerst[:aanvulling])
+        if len(sessie) < 10: sessie.extend(mastery[1:1 + (10 - len(sessie))])
+        
+    else:
+        # Scenario B: Alleen bestaande kennis herstellen (Typen / Onderhoud / Checkbox uit)
+        poule_t = training[:8]
+        sessie.extend(poule_t)
+        
+        # Twee verwezen Mastery ankers
+        poule_m = mastery[:2]
+        sessie.extend(poule_m)
+        
+        frictie_som = sum(max(0, 16 - krijg_streak(w, module)) for w in poule_t)
+        
+        aanvulling = 2 if frictie_som > 50 else (3 if frictie_som > 30 else 5)
+        
+        rest_pool = beheerst + mastery[2:]
+        sessie.extend(rest_pool[:aanvulling])
+
     r_engine.shuffle(sessie)
     return sessie
     
@@ -741,6 +769,9 @@ def main():
                 optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", help="Bekijkt de Strong-nummers van jouw bijeengeraapte oefenwoorden en zoekt in de Bijbel naar verzen die er meerdere tegelijk bevatten.")
                 optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=True)
                 
+                # DE NIEUWE KERN-SCHAKELAAR:
+                optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=True, help="Staat dit aan, dan trekt de app max. 3 nieuwe kaarten en weegt de rest dynamisch. Staat dit uit, dan traint hij uitsluitend je bestaande kennis.")
+                
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
                 custom_counts = None
@@ -764,16 +795,14 @@ def main():
                         
                         is_lang_geleden_modus = ("Lang niet gedaan" in keuze)
                         is_puur_typen = (modus_id == "4")
-                        
-                        # De poort sluit onmiddellijk als je alleen typt of oud onderhoud draait:
-                        geen_nieuw_toegestaan = is_lang_geleden_modus or is_puur_typen
+                        mag_geen_nieuw = is_lang_geleden_modus or is_puur_typen or (not optie_nieuw_mee)
                         
                         sampled = kies_gefaseerde_oefensessie(
                             doel, 
                             module='vocab', 
                             custom_counts=custom_counts, 
                             sorteer_oudste_eerst=is_lang_geleden_modus,
-                            verbied_nieuwe_woorden=geen_nieuw_toegestaan
+                            verbied_nieuwe_woorden=mag_geen_nieuw
                         )
                         
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd voor de door jou ingestelde criteria.")
