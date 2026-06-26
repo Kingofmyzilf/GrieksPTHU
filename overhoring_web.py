@@ -218,12 +218,21 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
 def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None):
     if not strong_nr or not bijbel_db: return None
     
-    # --- DE NIEUWE SNELWEG VOOR GECLUSTERDE VERZEN ---
+    # Check of de gevraagde vorm een echte specifieke vervoeging is, of gewoon het woordenboek-lemma zelf
+    is_specifieke_vervoeging = False
+    if specifieke_vorm and bekende_vocab and str(strong_nr) in bekende_vocab:
+        lemma_norm = normaliseer_accent(bekende_vocab[str(strong_nr)].get('grieks', ''))
+        if normaliseer_accent(specifieke_vorm) != lemma_norm:
+            is_specifieke_vervoeging = True
+    elif specifieke_vorm and not bekende_vocab:
+        is_specifieke_vervoeging = True
+
+    doel_vorm_check = normaliseer_accent(specifieke_vorm) if is_specifieke_vervoeging else None
+
     if vastgezet_vers_ref and vastgezet_vers_ref in bijbel_db:
         keuze = (vastgezet_vers_ref, bijbel_db[vastgezet_vers_ref])
     else:
         beste_zin = None; fallback_zin = None
-        doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
         
         for ref, zin in bijbel_db.items():
             if strikte_dekking and bekende_vocab:
@@ -233,8 +242,8 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
 
             for w in zin:
                 if str(w.get('strong', '')) == str(strong_nr):
-                    if doel_vorm_schoon:
-                        if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
+                    if doel_vorm_check:
+                        if normaliseer_accent(w['grieks']) == doel_vorm_check: beste_zin = (ref, zin); break
                     else:
                         if not fallback_zin: fallback_zin = (ref, zin)
                         p = w.get('parsing_info', '')
@@ -248,7 +257,7 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
                         if is_dict_form: beste_zin = (ref, zin); break
             if beste_zin: break
             
-        keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
+        keuze = beste_zin if beste_zin else fallback_zin
 
     if keuze:
         ref, zin = keuze
@@ -259,8 +268,7 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
             
-            doel_v_check = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
-            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_v_check or normaliseer_accent(g_woord) == doel_v_check)
+            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_check or normaliseer_accent(g_woord) == doel_vorm_check)
 
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
@@ -790,8 +798,29 @@ def main():
                         else: st.error(st.session_state.feedback["msg"])
                         st.session_state.feedback = None 
 
-                    zin_data = None
-                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_cluster_vocab', False)
+                    if is_context_gewenst:
+                        st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
+                        bijbel_db = laad_bijbel_db()
+                        user_vocab_map = {str(w['strong']): w for w in st.session_state.data if w.get('strong')}
+                        
+                        zin_data = zoek_context_zin(
+                            item.get('strong'), 
+                            item.get('woordsoort', ''), 
+                            bijbel_db, 
+                            anti_spiek=(huidige_sub_modus != '1'), 
+                            specifieke_vorm=huidige_vorm,
+                            bekende_vocab=user_vocab_map,
+                            strikte_dekking=st.session_state.get('optie_autonoom_vocab', False),
+                            vastgezet_vers_ref=st.session_state.vocab_sessie_verzen.get(item['grieks'])
+                        )
+                        if zin_data: 
+                            st.markdown(zin_data["html"], unsafe_allow_html=True)
+                            st.markdown("<div style='font-size:14px; margin-bottom:4px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
+                            
+                            # HIER IS DE TREFWOORD-ANCHOR TERUGGEZET:
+                            st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
+                        else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
+                    else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     
                     if is_context_gewenst:
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
