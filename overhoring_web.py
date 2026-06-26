@@ -709,11 +709,20 @@ def main():
                 keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"])
                 doel = []
                 
-                if keuze == "Lessen":
+                # --- GECOMBINEERDE LES- EN ONDERHOUDSFILTER ---
+                if keuze in ["Lessen", "Lang niet gedaan (Geheugen-onderhoud)"]:
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
-                    gekozen = st.multiselect("Kies lessen", alle_lessen)
-                    doel = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
-                elif keuze == "Mastery": doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
+                    gekozen = st.multiselect("Kies lessen", alle_lessen, default=alle_lessen[:3] if alle_lessen else [])
+                    poule_lessen = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
+                    
+                    if "Lang niet gedaan" in keuze:
+                        # Kruisfilter: Pak uit de gekozen lessen uitsluitend de ooit al gestarte woorden
+                        doel = [w for w in poule_lessen if str(w.get('laatst_geoefend', '') or '').strip() != '']
+                    else:
+                        doel = poule_lessen
+
+                elif keuze == "Mastery": 
+                    doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
                 elif "Knelpunten" in keuze:
                     knel_lijst = []
                     for w in st.session_state.data:
@@ -721,9 +730,6 @@ def main():
                         if (g + f) >= 3 and f > 0: knel_lijst.append((w, f / (g + f)))
                     knel_lijst.sort(key=lambda x: x[1], reverse=True)
                     doel = [x[0] for x in knel_lijst[:15]]
-                elif "Lang niet gedaan" in keuze:
-                    # Filtert strikt op items die in het verleden een geoefend-stempel hebben gekregen
-                    doel = [w for w in st.session_state.data if str(w.get('laatst_geoefend', '') or '').strip() != '']
                 
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
@@ -817,7 +823,7 @@ def main():
                             else: st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
                             laad_volgend_woord(); st.rerun()
                     else:
-                        st.warning("⚠️ Geen geoefende woorden gevonden in je historie voor deze selectie.")
+                        st.warning("⚠️ Geen geoefende woorden gevonden in je historie voor de door jou aangevinkte lessen.")
 
             with col2:
                 if st.session_state.huidig_item:
