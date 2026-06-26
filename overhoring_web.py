@@ -762,23 +762,34 @@ def main():
                 keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"])
                 doel = []
                 
-                if keuze in ["Lessen", "Lang niet gedaan (Geheugen-onderhoud)"]:
+                # --- GECOMBINEERDE LES-, KNELPUNT- EN ONDERHOUDSFILTER ---
+                if keuze in ["Lessen", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"]:
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                     gekozen = st.multiselect("Kies lessen", alle_lessen, default=alle_lessen[:3] if alle_lessen else [])
                     poule_lessen = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
                     
                     if "Lang niet gedaan" in keuze:
                         doel = [w for w in poule_lessen if str(w.get('laatst_geoefend', '') or '').strip() != '']
-                    else: doel = poule_lessen
+                        
+                    elif "Knelpunten" in keuze:
+                        knel_kandidaten = []
+                        for w in poule_lessen:
+                            g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
+                            
+                            # Realistische drempel: elke gemaakte fout óf een lage retentie ondanks oefenen
+                            if f > 0 or (g > 0 and s <= 3):
+                                ratio = f / max(1, (g + f))
+                                knel_kandidaten.append((w, ratio, f))
+                                
+                        # Sorteer primair op hoogste fout-ratio, secundair op absolute fouten
+                        knel_kandidaten.sort(key=lambda x: (x[1], x[2]), reverse=True)
+                        doel = [x[0] for x in knel_kandidaten[:20]]
+                        
+                    else: 
+                        doel = poule_lessen
 
-                elif keuze == "Mastery": doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
-                elif "Knelpunten" in keuze:
-                    knel_lijst = []
-                    for w in st.session_state.data:
-                        g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0))
-                        if (g + f) >= 3 and f > 0: knel_lijst.append((w, f / (g + f)))
-                    knel_lijst.sort(key=lambda x: x[1], reverse=True)
-                    doel = [x[0] for x in knel_lijst[:15]]
+                elif keuze == "Mastery": 
+                    doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
                 
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
@@ -820,21 +831,24 @@ def main():
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         modus_id = str(modus[0])
-                        is_lang_geleden = ("Lang niet gedaan" in keuze)
-                        is_puur_typen = (modus_id == "4")
-                        mag_geen_nieuw = is_lang_geleden or is_puur_typen or (not optie_nieuw_mee)
                         
-                        # OVERHANDIGING VAN DE TOTALE DATABASE:
+                        is_lang_geleden = ("Lang niet gedaan" in keuze)
+                        is_knelpunten = ("Knelpunten" in keuze)
+                        is_puur_typen = (modus_id == "4")
+                        
+                        # Bij knelpunten vriest de instroom van gloednieuwe woorden dicht:
+                        mag_geen_nieuw = is_lang_geleden or is_knelpunten or is_puur_typen or (not optie_nieuw_mee)
+                        
                         sampled = kies_gefaseerde_oefensessie(
                             doel, 
                             module='vocab', 
                             custom_counts=custom_counts, 
-                            sorteer_oudste_eerst=is_lang_geleden,
+                            sorteer_oudste_eerst=is_lang_geleden, 
                             verbied_nieuwe_woorden=mag_geen_nieuw,
                             totale_db=st.session_state.data
                         )
                         
-                        if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
+                        if not sampled: st.warning("⚠️ 0 woorden geselecteerd voor deze criteria.")
                         else:
                             if st.session_state.get('optie_cluster_vocab', False):
                                 b_db_temp = laad_bijbel_db()
@@ -882,7 +896,7 @@ def main():
                                 st.session_state.mix_combo = {w['grieks']: False for w in sampled}
                             else: st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
                             laad_volgend_woord(); st.rerun()
-                    else: st.warning("⚠️ Geen geoefende woorden gevonden in je historie.")
+                    else: st.warning("⚠️ Geen knelpunten of oefenwoorden gevonden in de geselecteerde lessen.")
 
             with col2:
                 if st.session_state.huidig_item:
