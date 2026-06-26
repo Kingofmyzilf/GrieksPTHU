@@ -215,37 +215,41 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None):
     if not strong_nr or not bijbel_db: return None
-    beste_zin = None; fallback_zin = None
-    doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
     
-    for ref, zin in bijbel_db.items():
-        # --- FILTER OP BEKENDE OMGEVINGSWOORDEN ---
-        if strikte_dekking and bekende_vocab:
-            lex_items = [w for w in zin if w.get('strong')]
-            # Eisen: minimaal 3 woorden én alle overige woorden in de zin moeten in de bekende woordenschat zitten
-            if len(lex_items) < 3 or any((str(w['strong']) not in bekende_vocab and str(w['strong']) != str(strong_nr)) for w in lex_items):
-                continue
-
-        for w in zin:
-            if str(w.get('strong', '')) == str(strong_nr):
-                if doel_vorm_schoon:
-                    if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
-                else:
-                    if not fallback_zin: fallback_zin = (ref, zin)
-                    p = w.get('parsing_info', '')
-                    is_dict_form = False
-                    if woordsoort == 'ww' or "Werkwoord" in p:
-                        if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
-                    elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
-                        if "Nom" in p and "ev" in p: is_dict_form = True
-                    else: is_dict_form = True 
-
-                    if is_dict_form: beste_zin = (ref, zin); break
-        if beste_zin: break
+    # --- DE NIEUWE SNELWEG VOOR GECLUSTERDE VERZEN ---
+    if vastgezet_vers_ref and vastgezet_vers_ref in bijbel_db:
+        keuze = (vastgezet_vers_ref, bijbel_db[vastgezet_vers_ref])
+    else:
+        beste_zin = None; fallback_zin = None
+        doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
         
-    keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
+        for ref, zin in bijbel_db.items():
+            if strikte_dekking and bekende_vocab:
+                lex_items = [w for w in zin if w.get('strong')]
+                if len(lex_items) < 3 or any((str(w['strong']) not in bekende_vocab and str(w['strong']) != str(strong_nr)) for w in lex_items):
+                    continue
+
+            for w in zin:
+                if str(w.get('strong', '')) == str(strong_nr):
+                    if doel_vorm_schoon:
+                        if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
+                    else:
+                        if not fallback_zin: fallback_zin = (ref, zin)
+                        p = w.get('parsing_info', '')
+                        is_dict_form = False
+                        if woordsoort == 'ww' or "Werkwoord" in p:
+                            if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
+                        elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
+                            if "Nom" in p and "ev" in p: is_dict_form = True
+                        else: is_dict_form = True 
+
+                        if is_dict_form: beste_zin = (ref, zin); break
+            if beste_zin: break
+            
+        keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
+
     if keuze:
         ref, zin = keuze
         html_zin = ""; grieks_puur = ""; engels_puur = ""
@@ -255,10 +259,9 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
             
-            # --- CHRONOLOGISCH HERSTEL: Eerst doelwoord vaststellen ---
-            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
+            doel_v_check = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
+            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_v_check or normaliseer_accent(g_woord) == doel_v_check)
 
-            # --- Tooltip genereren op basis van doelwoord-status ---
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
 
@@ -668,6 +671,8 @@ def main():
         # TAB 1: WOORDENSCHAT
         # ==========================================
         with menu[0]: 
+            if 'vocab_sessie_verzen' not in st.session_state: st.session_state.vocab_sessie_verzen = {}
+            
             col1, col2 = st.columns([1, 2])
             with col1:
                 modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
@@ -690,7 +695,7 @@ def main():
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
                 optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context")
-                optie_autonoom = st.checkbox("🛡️ Koppel selectie aan 100% bekende Bijbelverzen", key="optie_autonoom_vocab", help="Zoekt achteraf naar een Bijbelvers waarin jouw geselecteerde oefenwoorden figureren, omringd door uitsluitend woorden die je al kent.")
+                optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", help="Bekijkt de Strong-nummers van jouw bijeengeraapte oefenwoorden en zoekt in de Bijbel naar verzen die er meerdere tegelijk bevatten.")
                 
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
@@ -712,12 +717,46 @@ def main():
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         modus_id = str(modus[0])
-                        
-                        # 1. JIJ BEPAALT EERST DE EXACTE WOORDENLIJST VAN DE SESSIE:
                         sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
                         
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
                         else:
+                            # --- GREEDY VERSE CLUSTERING ENGINE ---
+                            if st.session_state.get('optie_cluster_vocab', False):
+                                b_db_temp = laad_bijbel_db()
+                                from collections import defaultdict
+                                s_map = defaultdict(list)
+                                for w in sampled:
+                                    if w.get('strong'): s_map[str(w['strong'])].append(w['grieks'])
+                                    
+                                ongetoetst = set(s_map.keys())
+                                v_map = {}
+                                
+                                while len(ongetoetst) >= 2:
+                                    beste_ref = None
+                                    beste_hits = set()
+                                    for ref, zin in b_db_temp.items():
+                                        zs = {str(z.get('strong', '')) for z in zin if z.get('strong')}
+                                        ov = ongetoetst.intersection(zs)
+                                        if len(ov) > len(beste_hits):
+                                            beste_hits = ov
+                                            beste_ref = ref
+                                            if len(beste_hits) >= 4: break
+                                    
+                                    if beste_ref and len(beste_hits) >= 2:
+                                        for s in beste_hits:
+                                            for k in s_map[s]: v_map[k] = beste_ref
+                                            ongetoetst.remove(s)
+                                    else: break
+                                    
+                                for s in ongetoetst:
+                                    for k in s_map[s]: v_map[k] = None
+                                    
+                                st.session_state.vocab_sessie_verzen = v_map
+                                sampled.sort(key=lambda w: str(v_map.get(w['grieks'], 'zzz_solo')))
+                            else:
+                                st.session_state.vocab_sessie_verzen = {}
+
                             st.session_state.modus_actief = modus_id
                             if modus_id == "3":
                                 st.session_state.sessie_lijst = [(w, "3_mc") for w in sampled] + [(w, "3_typ") for w in sampled]
@@ -752,14 +791,13 @@ def main():
                         st.session_state.feedback = None 
 
                     zin_data = None
-                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_autonoom_vocab', False)
+                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_cluster_vocab', False)
                     
                     if is_context_gewenst:
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
                         bijbel_db = laad_bijbel_db()
                         user_vocab_map = {str(w['strong']): w for w in st.session_state.data if w.get('strong')}
                         
-                        # 2. DE AI ZOEKT ACHTERAF NAAR EEN PASSEND VERS BIJ JOUW ACTIEVE WOORD:
                         zin_data = zoek_context_zin(
                             item.get('strong'), 
                             item.get('woordsoort', ''), 
@@ -767,7 +805,7 @@ def main():
                             anti_spiek=(huidige_sub_modus != '1'), 
                             specifieke_vorm=huidige_vorm,
                             bekende_vocab=user_vocab_map,
-                            strikte_dekking=st.session_state.get('optie_autonoom_vocab', False)
+                            vastgezet_vers_ref=st.session_state.vocab_sessie_verzen.get(item['grieks'])
                         )
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
@@ -873,7 +911,6 @@ def main():
                                     n_ander = str(w.get('nederlands', '')).strip()
                                     if not g_ander or not n_ander or n_ander in gekozen_betekenissen or g_ander == grieks_doel: continue
                                     
-                                    # Poort 1: Strikt dezelfde grammaticale woordsoort
                                     if w.get('woordsoort') == huidige_w_soort:
                                         pool_ws.append(n_ander)
                                         verwant_stam = (stam_gok and len(stam_gok)>=3 and stam_gok in g_ander)
@@ -934,7 +971,7 @@ def main():
                         st.write("---")
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
                         st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst: {item.get('laatst_geoefend', 'Nooit')}")
-
+                        
         # ==========================================
         # TAB 2: LIJST
         # ==========================================
