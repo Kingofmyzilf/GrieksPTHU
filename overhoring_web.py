@@ -2329,20 +2329,25 @@ def main():
 
                                 st.markdown(f"**{w['grieks']}**" if "4." in tekst_modus else f"**{w['grieks']}** (Basis: {basis['grieks']})")
                                 
-                                if "2." in tekst_modus: 
+                               if "2." in tekst_modus: 
                                     if f"mc_opties_{idx}" not in st.session_state or st.session_state.get(f"mc_vers_{idx}") != st.session_state.huidige_vers_referentie:
-                                        random.seed(st.session_state.huidige_vers_referentie + str(idx))
+                                        # Gecorrigeerde aanroep via de alias r_engine
+                                        r_engine.seed(str(st.session_state.huidige_vers_referentie) + str(idx))
                                         afleiders = list(set([i['nederlands'] for i in st.session_state.data if i['nederlands'] != basis['nederlands']]))
                                         opties = [basis['nederlands']] + r_engine.sample(afleiders, min(3, len(afleiders)))
-                                        r_engine.shuffle(opties); random.seed()
+                                        r_engine.shuffle(opties); r_engine.seed()
                                         st.session_state[f"mc_opties_{idx}"] = opties; st.session_state[f"mc_vers_{idx}"] = st.session_state.huidige_vers_referentie
                                         
                                     cols = st.columns(2)
                                     for c_idx, optie in enumerate(st.session_state[f"mc_opties_{idx}"]):
                                         if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}"):
                                             registreer_oefening(basis)
-                                            if optie == basis['nederlands']: basis['streak'] = int(basis.get('streak', 0)) + 1; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save(); st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
-                                            else: basis['streak'] = max(0, int(basis.get('streak', 0)) - 2); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Fout. Het was: {basis['nederlands']}")
+                                            if optie == basis['nederlands']: 
+                                                basis['streak'] = int(basis.get('streak', 0)) + 1; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save()
+                                                st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
+                                            else: 
+                                                basis['streak'] = max(0, int(basis.get('streak', 0)) - 2); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save()
+                                                st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                                     
                                 elif "3." in tekst_modus: 
                                     forceer_focus()
