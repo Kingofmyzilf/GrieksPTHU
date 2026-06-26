@@ -782,10 +782,25 @@ def main():
                     c_mast = len([w for w in doel if krijg_streak(w, 'vocab') >= 30])
                     
                     st.caption("Kies exact hoeveel woorden je per fase wilt oefenen:")
-                    val_nieuw = st.slider(f"Nieuw (0) — Beschikbaar: {c_nieuw}", 0, max(1, min(20, c_nieuw)), min(3, c_nieuw) if c_nieuw > 0 else 0)
-                    val_train = st.slider(f"In Training (1-15) — Beschikbaar: {c_train}", 0, max(1, min(20, c_train)), min(5, c_train) if c_train > 0 else 0)
-                    val_beheer = st.slider(f"Beheerst (16-29) — Beschikbaar: {c_beheer}", 0, max(1, min(20, c_beheer)), 0)
-                    val_mast = st.slider(f"Mastery (30+) — Beschikbaar: {c_mast}", 0, max(1, min(20, c_mast)), 0)
+                    
+                    # --- GEHEUGEN INITIALISATIE (Start op 0 bij openingsstart) ---
+                    if 'vocab_slider_nieuw' not in st.session_state: st.session_state.vocab_slider_nieuw = 0
+                    if 'vocab_slider_train' not in st.session_state: st.session_state.vocab_slider_train = 0
+                    if 'vocab_slider_beheer' not in st.session_state: st.session_state.vocab_slider_beheer = 0
+                    if 'vocab_slider_mast' not in st.session_state: st.session_state.vocab_slider_mast = 0
+
+                    # Veiligheids-clipping: voorkomt crashes als een kaartenbak tussendoor krimpt
+                    def_nieuw = min(st.session_state.vocab_slider_nieuw, c_nieuw)
+                    def_train = min(st.session_state.vocab_slider_train, c_train)
+                    def_beheer = min(st.session_state.vocab_slider_beheer, c_beheer)
+                    def_mast = min(st.session_state.vocab_slider_mast, c_mast)
+
+                    # De schuifjes schrijven hun keuzes direct weg in het globale sessie-geheugen:
+                    val_nieuw = st.slider(f"Nieuw (0) — Beschikbaar: {c_nieuw}", 0, max(1, min(20, c_nieuw)), def_nieuw, key="vocab_slider_nieuw")
+                    val_train = st.slider(f"In Training (1-15) — Beschikbaar: {c_train}", 0, max(1, min(20, c_train)), def_train, key="vocab_slider_train")
+                    val_beheer = st.slider(f"Beheerst (16-29) — Beschikbaar: {c_beheer}", 0, max(1, min(20, c_beheer)), def_beheer, key="vocab_slider_beheer")
+                    val_mast = st.slider(f"Mastery (30+) — Beschikbaar: {c_mast}", 0, max(1, min(20, c_mast)), def_mast, key="vocab_slider_mast")
+                    
                     custom_counts = {'nieuw': val_nieuw, 'training': val_train, 'beheerst': val_beheer, 'mastery': val_mast}
                 
                 if st.button("Start Sessie", type="primary"):
