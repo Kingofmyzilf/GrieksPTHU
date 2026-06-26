@@ -949,7 +949,7 @@ def main():
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                 les_filter = st.selectbox("Bekijk les:", alle_lessen)
                 df_vocab = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
-                if not df_vocab.empty: st.dataframe(df_vocab[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort', 'lexeem_info'] if c in df_vocab.columns]], use_container_width=True)
+                if not df_vocab.empty: st.dataframe(df_vocab[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort', 'lexeem_info'] if c in df_vocab.columns]], width='stretch')
             elif weergave == "Actief Beheersen (Rijtjes)": st.info("De scores voor actieve rijtjes worden per specifieke cel bijgehouden in je profiel.")
             elif weergave == "Stamtijden":
                 stamtijden_db = laad_stamtijden_db()
@@ -959,7 +959,7 @@ def main():
                         for t_d, vorm in w['stamtijden'].items():
                             s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
                             stam_lijst.append({"Les": w.get('les', 0), "Praesens": w['praesens'], "Tijd/Diathese": t_d, "Vorm": vorm, "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
-                    st.dataframe(pd.DataFrame(stam_lijst), use_container_width=True)
+                    st.dataframe(pd.DataFrame(stam_lijst), width='stretch')
             elif weergave == "Structuurwoorden":
                 struct_db = laad_structuurwoorden_db()
                 if struct_db:
@@ -967,7 +967,7 @@ def main():
                     for w in struct_db:
                         s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
                         str_lijst.append({"Woord": w['grieks'], "Categorie": w['categorie'], "Eigenschap": w['eigenschap'], "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
-                    st.dataframe(pd.DataFrame(str_lijst), use_container_width=True)
+                    st.dataframe(pd.DataFrame(str_lijst), width='stretch')
         
         # ==========================================
         # TAB 3: VOORTGANG & DASHBOARD
@@ -1325,7 +1325,7 @@ def main():
                         user_rank = df_comp[df_comp['Gebruiker'] == eigen_naam].index
                         if len(user_rank) > 0: c3.metric("Jouw Positie", f"#{user_rank[0]} van de {len(df_comp)}")
                         
-                        st.dataframe(df_comp, use_container_width=True)
+                        st.dataframe(df_comp, width='stretch')
             except Exception:
                 st.caption("Kon de competitiegegevens momenteel niet synchroniseren.")
             
@@ -1360,7 +1360,7 @@ def main():
                 nemesissen.sort(key=lambda x: (x["Fouten"], x["Fout-ratio"]), reverse=True)
                 df_nemesis = pd.DataFrame(nemesissen[:5])
                 df_nemesis["Fout-ratio"] = df_nemesis["Fout-ratio"].apply(lambda x: f"{int(x*100)}%")
-                st.dataframe(df_nemesis, use_container_width=True)
+                st.dataframe(df_nemesis, width='stretch')
                 st.error("💡 **Exegese Tip:** Schrijf deze 5 aartsrivalen op een geeltje en plak die op je beeldscherm. Als je déze temt, schiet je totaalscore omhoog!")
             else:
                 st.success("🎉 Je hebt op dit moment geen structurele aartsrivalen. Alles loopt op rolletjes!")
