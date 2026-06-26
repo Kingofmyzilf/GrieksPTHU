@@ -215,43 +215,53 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
-def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None):
+def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, vast_vers_ref=None):
     if not strong_nr or not bijbel_db: return None
-    beste_zin = None; fallback_zin = None
-    doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
+    keuze = None
     
-    for ref, zin in bijbel_db.items():
-        for w in zin:
-            if str(w.get('strong', '')) == str(strong_nr):
-                if doel_vorm_schoon:
-                    if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
-                else:
-                    if not fallback_zin: fallback_zin = (ref, zin)
-                    p = w.get('parsing_info', '')
-                    is_dict_form = False
-                    if woordsoort == 'ww' or "Werkwoord" in p:
-                        if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
-                    elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
-                        if "Nom" in p and "ev" in p: is_dict_form = True
-                    else: is_dict_form = True 
-
-                    if is_dict_form: beste_zin = (ref, zin); break
-        if beste_zin: break
+    # ALS EEN VAST VERS IS GEEÏST, PAK DIRECT DIE EXACTE REGEL UIT DE DB:
+    if vast_vers_ref and vast_vers_ref in bijbel_db:
+        keuze = (vast_vers_ref, bijbel_db[vast_vers_ref])
+    else:
+        beste_zin = None; fallback_zin = None
+        doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
         
-    keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
+        for ref, zin in bijbel_db.items():
+            for w in zin:
+                if str(w.get('strong', '')) == str(strong_nr):
+                    if doel_vorm_schoon:
+                        if normaliseer_accent(w['grieks']) == doel_vorm_schoon: beste_zin = (ref, zin); break
+                    else:
+                        if not fallback_zin: fallback_zin = (ref, zin)
+                        p = w.get('parsing_info', '')
+                        is_dict_form = False
+                        if woordsoort == 'ww' or "Werkwoord" in p:
+                            if "1e pers." in p and "ev" in p and "Indicativus" in p: is_dict_form = True
+                        elif woordsoort in ['znw', 'bnw', 'lidw'] or any(x in p for x in ["Zelfst.", "Bijv.", "Lidw"]):
+                            if "Nom" in p and "ev" in p: is_dict_form = True
+                        else: is_dict_form = True 
+
+                        if is_dict_form: beste_zin = (ref, zin); break
+            if beste_zin: break
+            
+        keuze = beste_zin if beste_zin else (fallback_zin if not doel_vorm_schoon else None)
+
     if keuze:
         ref, zin = keuze
         html_zin = ""; grieks_puur = ""; engels_puur = ""
+        doel_vorm_schoon = normaliseer_accent(specifieke_vorm) if specifieke_vorm else None
+
         for zw in zin:
             g_woord = zw['grieks']
             interp = zw.get('interpunctie', '')
             grieks_puur += f"{g_woord}{interp} "
             engels_puur += f"{zw.get('vertaling_bsb', '')} "
             
-            # --- STAP 1: CHRONOLOGISCH EERST BEPAAL JE HET DOELWOORD ---
-            is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
+            if vast_vers_ref:
+                is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr))
+            else:
+                is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_schoon or normaliseer_accent(g_woord) == doel_vorm_schoon)
 
-            # --- STAP 2: PAS DAARNA BOUW JE DE TOOLTIP MET DIE KENNIS OP ---
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
 
@@ -564,7 +574,7 @@ for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige
             'actief_flashcard_huidig', 'actief_nakijk_resultaten', 'mix_combo', 'dag_stats',
             'stam_sessie_lijst', 'stam_huidig', 'stam_sub_modus', 'stam_fouten', 'stam_feedback', 'stam_opties_gram', 'stam_opties_praesens', 'stam_mc_solved',
             'struct_sessie_lijst', 'struct_huidig', 'struct_sub_modus', 'struct_fouten', 'struct_feedback', 'struct_opties_cat', 'struct_opties_eig', 'struct_opties_bet', 'struct_mc_solved',
-            'gestrafte_woorden_vocab', 'gestrafte_woorden_stam', 'gestrafte_woorden_struct']:
+            'gestrafte_woorden_vocab', 'gestrafte_woorden_stam', 'gestrafte_woorden_struct', 'actieve_sessie_vast_vers', 'gekozen_autonoom_vers']:
     if key not in st.session_state: st.session_state[key] = None
 
 if st.session_state.stam_sessie_lijst is None: st.session_state.stam_sessie_lijst = []
@@ -664,14 +674,15 @@ def main():
             col1, col2 = st.columns([1, 2])
             with col1:
                 modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
-                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)"])
+                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "📖 Autonome Bijbelzin (100% Bekend)"])
                 doel = []
                 
                 if keuze == "Lessen":
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                     gekozen = st.multiselect("Kies lessen", alle_lessen)
                     doel = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
-                elif keuze == "Mastery": doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
+                elif keuze == "Mastery": 
+                    doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
                 elif "Knelpunten" in keuze:
                     knel_lijst = []
                     for w in st.session_state.data:
@@ -679,6 +690,26 @@ def main():
                         if (g + f) >= 3 and f > 0: knel_lijst.append((w, f / (g + f)))
                     knel_lijst.sort(key=lambda x: x[1], reverse=True)
                     doel = [x[0] for x in knel_lijst[:15]]
+                elif "Autonome Bijbelzin" in keuze:
+                    bijbel_db = laad_bijbel_db()
+                    user_dict = {str(w['strong']): w for w in st.session_state.data if int(w.get('streak',0)) >= 1 and w.get('strong')}
+                    
+                    if not st.session_state.gekozen_autonoom_vers:
+                        geschikte = []
+                        for ref, zin in bijbel_db.items():
+                            w_strongs = [w for w in zin if w.get('strong')]
+                            if len(w_strongs) >= 4 and all(str(w['strong']) in user_dict for w in w_strongs):
+                                geschikte.append((ref, [user_dict[str(w['strong'])] for w in w_strongs]))
+                        if geschikte:
+                            st.session_state.gekozen_autonoom_vers = r_engine.choice(geschikte)
+                    
+                    if st.session_state.gekozen_autonoom_vers:
+                        ref_txt, doel = st.session_state.gekozen_autonoom_vers
+                        st.info(f"Geselecteerd vers: **{ref_txt}** ({len(doel)} bekende woorden)")
+                        if st.button("🔄 Kies ander vers", size="small"):
+                            st.session_state.gekozen_autonoom_vers = None; st.rerun()
+                    else:
+                        st.warning("Nog geen vers gevonden met ≥4 woorden die je al kent (Streak ≥1).")
                 
                 st.write("---")
                 st.write("⚙️ **Sessie Instellingen**")
@@ -703,6 +734,12 @@ def main():
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         modus_id = str(modus[0])
+                        
+                        if "Autonome" in keuze and st.session_state.gekozen_autonoom_vers:
+                            st.session_state.actieve_sessie_vast_vers = st.session_state.gekozen_autonoom_vers[0]
+                        else:
+                            st.session_state.actieve_sessie_vast_vers = None
+
                         sampled = kies_gefaseerde_oefensessie(doel, module='vocab', custom_counts=custom_counts)
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd.")
                         else:
@@ -727,7 +764,7 @@ def main():
                     huidige_vorm = str(st.session_state.huidige_vorm_data.get('vorm', item.get('grieks')))
                     huidige_parsing = str(st.session_state.huidige_vorm_data.get('parsing', 'basis'))
                     extra_info = item.get('lexeem_info', '') or item.get('grieks_info', '')
-                    # --- CENTRALE HINT GENERATOR ---
+                    
                     hint_delen = [d for d in [extra_info, item.get('fonetisch', '')] if d]
                     ezelsbrug = f"{item.get('anker', '')} {item.get('beeld', item.get('associatie', item.get('opmerking', '')))}".strip()
                     if ezelsbrug: hint_delen.append(ezelsbrug)
@@ -740,7 +777,7 @@ def main():
                         st.session_state.feedback = None 
 
                     zin_data = None
-                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False)
+                    is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or (st.session_state.actieve_sessie_vast_vers is not None)
                     
                     if is_context_gewenst:
                         st.caption(f"{'🏆 Mastery Modus' if (is_mastery and huidige_sub_modus != '1') else '📖 Leren in Context'}. (Basis: **{item.get('grieks')}**)")
@@ -752,7 +789,8 @@ def main():
                             bijbel_db, 
                             anti_spiek=(huidige_sub_modus != '1'), 
                             specifieke_vorm=huidige_vorm,
-                            bekende_vocab=user_vocab_map
+                            bekende_vocab=user_vocab_map,
+                            vast_vers_ref=st.session_state.actieve_sessie_vast_vers
                         )
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
@@ -858,38 +896,23 @@ def main():
                                     n_ander = str(w.get('nederlands', '')).strip()
                                     if not g_ander or not n_ander or n_ander in gekozen_betekenissen or g_ander == grieks_doel: continue
                                     
-                                    # POORT 1: Het woord MOET tot exact dezelfde grammaticale woordsoort behoren
                                     if w.get('woordsoort') == huidige_w_soort:
                                         pool_ws.append(n_ander)
-                                        
-                                        # POORT 2: Pas binnen diezelfde woordsoort testen we op stam of prefix
                                         verwant_stam = (stam_gok and len(stam_gok)>=3 and stam_gok in g_ander)
                                         verwant_prefix = (prefix_2 and g_ander.startswith(prefix_2) and abs(len(g_ander)-len(grieks_doel))<=2)
-                                        
-                                        if verwant_stam or verwant_prefix:
-                                            lookalikes_ned.append(n_ander)
+                                        if verwant_stam or verwant_prefix: lookalikes_ned.append(n_ander)
 
                                 rnd.shuffle(lookalikes_ned)
                                 for ned in lookalikes_ned:
                                     if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
                                     if len(afleiders) >= 3: break
                                     
-                                # TRAP 2: Aanvullen met willekeurige soortgenoten (als er te weinig stam-verpleegde lookalikes waren)
                                 if len(afleiders) < 3:
                                     rnd.shuffle(pool_ws)
                                     for ned in pool_ws:
                                         if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
                                         if len(afleiders) >= 3: break
                                         
-                                # TRAP 3: Absolute fallback (uitsluitend actief bij een vrijwel lege database)
-                                if len(afleiders) < 3:
-                                    rest_pool = [w.get('nederlands','') for w in st.session_state.data if w.get('nederlands') not in gekozen_betekenissen and w.get('nederlands')]
-                                    rnd.shuffle(rest_pool)
-                                    for ned in rest_pool:
-                                        if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
-                                        if len(afleiders) >= 3: break
-                                        
-                                # --- 3. ABSOLUTE FALLBACK ---
                                 if len(afleiders) < 3:
                                     rest_pool = [w.get('nederlands','') for w in st.session_state.data if w.get('nederlands') not in gekozen_betekenissen and w.get('nederlands')]
                                     rnd.shuffle(rest_pool)
