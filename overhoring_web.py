@@ -884,7 +884,7 @@ def main():
                         st.write(f"Betekenis: **{correct_antw}**")
                         if st.button("Volgende"): laad_volgend_woord(); st.rerun()
 
-                   elif huidige_sub_modus in ['4', '3_typ']:
+                    elif huidige_sub_modus in ['4', '3_typ']:
                         if st.session_state.fouten_huidig_woord >= 1: 
                             st.info(actuele_hint)
                         forceer_focus()
