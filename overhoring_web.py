@@ -294,7 +294,6 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
                 # Woord buiten je leslijst: toon de volledige NL-glosse + naamval + BSB-anker
                 _kop = _nl_glosse if _nl_glosse else _bsb
                 tooltip = f"{_kop}\n{_parsing}{_anker}"
-
             else:
                 tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
 
