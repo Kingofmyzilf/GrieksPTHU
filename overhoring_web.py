@@ -263,10 +263,12 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
         ref, zin = keuze
         html_zin = ""; grieks_puur = ""; engels_puur = ""
         for zw in zin:
-            g_woord = zw['grieks']
+           g_woord = zw['grieks']
             interp = zw.get('interpunctie', '')
             grieks_puur += f"{g_woord}{interp} "
-            engels_puur += f"{zw.get('vertaling_bsb', '')} "
+            # Nederlandse glosse als primaire vertaling; val terug op BSB als er geen NL is
+            _nl = zw.get('vertaling_nl', '') or zw.get('vertaling_bsb', '')
+            engels_puur += f"{_nl} "
             
             is_doelwoord = (str(zw.get('strong', '')) == str(strong_nr)) and (not doel_vorm_check or normaliseer_accent(g_woord) == doel_vorm_check)
             is_sessie_genoot = (str(zw.get('strong', '')) in co_doel_strongs) and not is_doelwoord
@@ -274,14 +276,25 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             s_id = str(zw.get('strong', ''))
             known_item = bekende_vocab.get(s_id) if bekende_vocab else None
 
+            _nl_glosse = zw.get('vertaling_nl', '')
+            _bsb = zw.get('vertaling_bsb', '')
+            _parsing = zw.get('parsing_info', '')
+            # BSB alleen tonen als er iets zinnigs staat (na opschoning kan hij leeg zijn)
+            _anker = f"\nEN: {_bsb}" if _bsb.strip() else ""
+
             if is_sessie_genoot:
                 # Voorkomt dat de zwevende tooltip het antwoord van een komend oefenwoord weggeeft
-                tooltip = f"❓ [Oefenwoord in deze vertaalsessie]\n{zw.get('parsing_info', '')}"
+                tooltip = f"❓ [Oefenwoord in deze vertaalsessie]\n{_parsing}"
             elif known_item and not is_doelwoord:
                 nl_t = known_item.get('nederlands', '')
                 lem = known_item.get('grieks', '')
                 les = known_item.get('les', '?')
-                tooltip = f"Les {les} | {lem} → {nl_t}\n{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
+                tooltip = f"Les {les} | {lem} → {nl_t}\n{_parsing}{_anker}"
+            else:
+                # Woord buiten je leslijst: toon de volledige NL-glosse + naamval + BSB-anker
+                _kop = _nl_glosse if _nl_glosse else _bsb
+                tooltip = f"{_kop}\n{_parsing}{_anker}"
+
             else:
                 tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
 
@@ -2509,7 +2522,12 @@ def main():
                     st.write("---")
                     st.write("### ✍️ Zinsvertaling")
                     user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
-                    if st.button("Toon officiële vertaling"): st.success(f"**Officiële Engelse zinsvertaling (BSB):** {' '.join([w['vertaling_bsb'] for w in st.session_state.huidig_vers])}")
+                   if st.button("Toon vertaling"):
+                        _nl_zin = ' '.join([(w.get('vertaling_nl') or w.get('vertaling_bsb', '')) for w in st.session_state.huidig_vers]).strip()
+                        _bsb_zin = ' '.join([w.get('vertaling_bsb', '') for w in st.session_state.huidig_vers if w.get('vertaling_bsb', '').strip()]).strip()
+                        st.success(f"**Nederlandse glosse-vertaling (woord-voor-woord):**\n\n{_nl_zin}")
+                        if _bsb_zin:
+                            st.caption(f"Engels (BSB) ter controle: {_bsb_zin}")
                         
         # ==========================================
         # TAB 8: UITLEG & HULP (Masterclass Bijsluiter)
