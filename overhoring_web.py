@@ -2387,7 +2387,11 @@ def main():
                     html_zin = ""; oefen_woorden = []
                     
                     for w in st.session_state.huidig_vers:
-                        tooltip = f"{w['vertaling_bsb']} ({w['parsing_info']})".replace("'", "&#39;").replace('"', "&quot;")
+                        _nl_g = w.get('vertaling_nl', '')
+                        _bsb_g = w.get('vertaling_bsb', '')
+                        _kop_g = _nl_g if _nl_g else _bsb_g
+                        _anker_g = f"\nEN: {_bsb_g}" if _bsb_g.strip() else ""
+                        tooltip = f"{_kop_g}\n{w['parsing_info']}{_anker_g}".replace("'", "&#39;").replace('"', "&quot;")
                         extra_style = ""
                         if kleur_naamvallen:
                             if "Nom" in w['parsing_info']: extra_style += "color: #33ccff;"
@@ -2520,9 +2524,17 @@ def main():
                     st.write("### ✍️ Zinsvertaling")
                     user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
                     if st.button("Toon vertaling"):
-                        _nl_zin = ' '.join([(w.get('vertaling_nl') or w.get('vertaling_bsb', '')) for w in st.session_state.huidig_vers]).strip()
+                        def _eerste_betekenis(g):
+                            # Pak alleen de eerste betekenis (tot eerste komma/slash) voor een leesbare zin;
+                            # strip eventuele naamval-aanduiding als "(+gen.)" vooraan.
+                            g = str(g).strip()
+                            g = re.sub(r'^\(\+?[^)]*\)\s*', '', g)
+                            g = re.split(r'[,/;]', g)[0].strip()
+                            return g
+                        _nl_zin = ' '.join([_eerste_betekenis(w.get('vertaling_nl') or w.get('vertaling_bsb', '')) for w in st.session_state.huidig_vers]).strip()
                         _bsb_zin = ' '.join([w.get('vertaling_bsb', '') for w in st.session_state.huidig_vers if w.get('vertaling_bsb', '').strip()]).strip()
                         st.success(f"**Nederlandse glosse-vertaling (woord-voor-woord):**\n\n{_nl_zin}")
+                        st.caption("Alleen de kernbetekenis per woord; hover over de Griekse woorden hierboven voor alle betekenissen.")
                         if _bsb_zin:
                             st.caption(f"Engels (BSB) ter controle: {_bsb_zin}")
                         
