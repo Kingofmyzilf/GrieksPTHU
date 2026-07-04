@@ -1,0 +1,425 @@
+{
+ "items": {
+  "1": {
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 3,
+   "pdf_eind": 10,
+   "aantal": 8,
+   "ng_pagina": []
+  },
+  "2": {
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 11,
+   "pdf_eind": 16,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "3": {
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 17,
+   "pdf_eind": 22,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "4": {
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "pdf_start": 23,
+   "pdf_eind": 44,
+   "aantal": 22,
+   "ng_pagina": []
+  },
+  "5": {
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "pdf_start": 45,
+   "pdf_eind": 53,
+   "aantal": 9,
+   "ng_pagina": []
+  },
+  "6": {
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "pdf_start": 54,
+   "pdf_eind": 66,
+   "aantal": 13,
+   "ng_pagina": []
+  },
+  "7": {
+   "titel": "Partikels en voegwoorden",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 67,
+   "pdf_eind": 69,
+   "aantal": 3,
+   "ng_pagina": []
+  },
+  "8": {
+   "titel": "Verba: modus, tempus, diathese, pers., getal",
+   "thema": "Werkwoorden",
+   "pdf_start": 70,
+   "pdf_eind": 74,
+   "aantal": 5,
+   "ng_pagina": []
+  },
+  "9": {
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "pdf_start": 75,
+   "pdf_eind": 83,
+   "aantal": 9,
+   "ng_pagina": []
+  },
+  "10": {
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "pdf_start": 84,
+   "pdf_eind": 89,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "11": {
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "pdf_start": 90,
+   "pdf_eind": 95,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "12": {
+   "titel": "Het werkwoord 'zijn'",
+   "thema": "Werkwoorden",
+   "pdf_start": 96,
+   "pdf_eind": 97,
+   "aantal": 2,
+   "ng_pagina": []
+  },
+  "13": {
+   "titel": "Negaties",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 98,
+   "pdf_eind": 100,
+   "aantal": 3,
+   "ng_pagina": []
+  },
+  "14": {
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "pdf_start": 101,
+   "pdf_eind": 107,
+   "aantal": 7,
+   "ng_pagina": [
+    48
+   ]
+  },
+  "15": {
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "pdf_start": 108,
+   "pdf_eind": 114,
+   "aantal": 7,
+   "ng_pagina": []
+  },
+  "16": {
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "pdf_start": 115,
+   "pdf_eind": 120,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "17": {
+   "titel": "Verba muta",
+   "thema": "Werkwoorden",
+   "pdf_start": 121,
+   "pdf_eind": 125,
+   "aantal": 5,
+   "ng_pagina": []
+  },
+  "18": {
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "pdf_start": 126,
+   "pdf_eind": 142,
+   "aantal": 17,
+   "ng_pagina": [
+    184,
+    185
+   ]
+  },
+  "19": {
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "pdf_start": 143,
+   "pdf_eind": 153,
+   "aantal": 11,
+   "ng_pagina": []
+  },
+  "20": {
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "pdf_start": 154,
+   "pdf_eind": 159,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "21": {
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "pdf_start": 160,
+   "pdf_eind": 169,
+   "aantal": 10,
+   "ng_pagina": []
+  },
+  "22": {
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "pdf_start": 170,
+   "pdf_eind": 175,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "23": {
+   "titel": "Verba liquida",
+   "thema": "Werkwoorden",
+   "pdf_start": 176,
+   "pdf_eind": 180,
+   "aantal": 5,
+   "ng_pagina": []
+  },
+  "24": {
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 181,
+   "pdf_eind": 189,
+   "aantal": 9,
+   "ng_pagina": []
+  },
+  "25": {
+   "titel": "Pronomen possessivum",
+   "thema": "Voornaamwoorden",
+   "pdf_start": 190,
+   "pdf_eind": 193,
+   "aantal": 4,
+   "ng_pagina": []
+  },
+  "26": {
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "pdf_start": 194,
+   "pdf_eind": 203,
+   "aantal": 10,
+   "ng_pagina": []
+  },
+  "27": {
+   "titel": "Medium praesens en imperfectum",
+   "thema": "Werkwoorden",
+   "pdf_start": 204,
+   "pdf_eind": 207,
+   "aantal": 4,
+   "ng_pagina": []
+  },
+  "28": {
+   "titel": "Stamtijden",
+   "thema": "Werkwoorden",
+   "pdf_start": 208,
+   "pdf_eind": 209,
+   "aantal": 2,
+   "ng_pagina": []
+  },
+  "29": {
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "pdf_start": 210,
+   "pdf_eind": 220,
+   "aantal": 11,
+   "ng_pagina": []
+  },
+  "30": {
+   "titel": "Vragend en onbepaald voornaamwoord",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 221,
+   "pdf_eind": 222,
+   "aantal": 2,
+   "ng_pagina": []
+  },
+  "31": {
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "pdf_start": 223,
+   "pdf_eind": 231,
+   "aantal": 9,
+   "ng_pagina": [
+    186
+   ]
+  },
+  "32": {
+   "titel": "Telwoorden",
+   "thema": "Naamwoorden",
+   "pdf_start": 232,
+   "pdf_eind": 235,
+   "aantal": 4,
+   "ng_pagina": []
+  },
+  "33": {
+   "titel": "Accusativus cum Infinitivo",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 236,
+   "pdf_eind": 239,
+   "aantal": 4,
+   "ng_pagina": []
+  },
+  "34": {
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "pdf_start": 240,
+   "pdf_eind": 246,
+   "aantal": 7,
+   "ng_pagina": []
+  },
+  "35": {
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "pdf_start": 247,
+   "pdf_eind": 255,
+   "aantal": 9,
+   "ng_pagina": []
+  },
+  "36": {
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "pdf_start": 256,
+   "pdf_eind": 263,
+   "aantal": 8,
+   "ng_pagina": []
+  },
+  "37": {
+   "titel": "Correlativa",
+   "thema": "Voornaamwoorden",
+   "pdf_start": 264,
+   "pdf_eind": 267,
+   "aantal": 4,
+   "ng_pagina": []
+  },
+  "38": {
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "pdf_start": 268,
+   "pdf_eind": 291,
+   "aantal": 24,
+   "ng_pagina": []
+  },
+  "39": {
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "pdf_start": 292,
+   "pdf_eind": 302,
+   "aantal": 11,
+   "ng_pagina": []
+  },
+  "40": {
+   "titel": "Genitivus absolutus",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 303,
+   "pdf_eind": 305,
+   "aantal": 3,
+   "ng_pagina": []
+  },
+  "41": {
+   "titel": "Accusativus cum Participio",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 306,
+   "pdf_eind": 307,
+   "aantal": 2,
+   "ng_pagina": []
+  },
+  "42": {
+   "titel": "Gesubstantiveerde infinitivus + voorzetsel",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 308,
+   "pdf_eind": 310,
+   "aantal": 3,
+   "ng_pagina": [
+    259
+   ]
+  },
+  "43": {
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 311,
+   "pdf_eind": 317,
+   "aantal": 7,
+   "ng_pagina": []
+  },
+  "44": {
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "pdf_start": 318,
+   "pdf_eind": 331,
+   "aantal": 14,
+   "ng_pagina": []
+  },
+  "45": {
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "pdf_start": 332,
+   "pdf_eind": 337,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "46": {
+   "titel": "Bijwoorden",
+   "thema": "Syntaxis & overig",
+   "pdf_start": 338,
+   "pdf_eind": 341,
+   "aantal": 4,
+   "ng_pagina": []
+  },
+  "47": {
+   "titel": "ἄν + indicativus: irrealis",
+   "thema": "Werkwoorden",
+   "pdf_start": 342,
+   "pdf_eind": 344,
+   "aantal": 3,
+   "ng_pagina": []
+  },
+  "48": {
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "pdf_start": 345,
+   "pdf_eind": 356,
+   "aantal": 12,
+   "ng_pagina": []
+  },
+  "49": {
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "pdf_start": 357,
+   "pdf_eind": 362,
+   "aantal": 6,
+   "ng_pagina": []
+  },
+  "50": {
+   "titel": "Werkwoorden op -μι: vocaalstammen",
+   "thema": "Werkwoorden",
+   "pdf_start": 363,
+   "pdf_eind": 367,
+   "aantal": 5,
+   "ng_pagina": []
+  }
+ },
+ "overzichten": {
+  "368": "Overzicht functies van naamvallen",
+  "369": "Bijzonderheden vervoegingsgroepen activum",
+  "370": "Volledig overzicht praesensversterkingen",
+  "371": "Samenvatting aspecten tempora",
+  "372": "Samenvatting bijzondere syntactische constructies",
+  "373": "Samenvatting: typen vorming indic. aoristus A/M",
+  "374": "Samenvatting typen vorming indic. aoristus P",
+  "375": "Overzicht gebruik coniunctivus",
+  "376": "Overzicht ἄν + modi/tempora"
+ },
+ "totaal_slides": 376
+}

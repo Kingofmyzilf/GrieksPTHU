@@ -9,7 +9,14 @@ import math
 import matplotlib.pyplot as plt
 import os
 import unicodedata
+import base64
 from datetime import datetime
+
+try:
+    import fitz  # PyMuPDF: rendert de grammatica-slides uit de PDF
+    FITZ_BESCHIKBAAR = True
+except Exception:
+    FITZ_BESCHIKBAAR = False
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
@@ -573,6 +580,41 @@ def laad_structuurwoorden_db():
     return None
 
 @st.cache_data
+def laad_grammatica_db():
+    """Laadt de index (G-item -> titel, thema, slide-bereik) van het grammatica-overzicht."""
+    if os.path.exists("grammatica_index.json"):
+        with open("grammatica_index.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
+GRAMMATICA_PDF = "grammatica_overzicht.pdf"
+
+@st.cache_resource
+def open_grammatica_pdf():
+    """Opent de PDF één keer en houdt hem in het geheugen (cache_resource = niet-serialiseerbaar object)."""
+    if FITZ_BESCHIKBAAR and os.path.exists(GRAMMATICA_PDF):
+        try:
+            return fitz.open(GRAMMATICA_PDF)
+        except Exception:
+            return None
+    return None
+
+@st.cache_data(show_spinner=False)
+def render_slide(paginanummer, dpi=120):
+    """Rendert één slide (1-indexed) naar PNG-bytes. Gecached per (pagina, dpi)."""
+    doc = open_grammatica_pdf()
+    if doc is None:
+        return None
+    idx = paginanummer - 1
+    if idx < 0 or idx >= doc.page_count:
+        return None
+    try:
+        pix = doc[idx].get_pixmap(dpi=dpi)
+        return pix.tobytes("png")
+    except Exception:
+        return None
+
+@st.cache_data
 def laad_bijbel_db():
     bijbel = {}
     if os.path.exists("bijbel_nt.json"):
@@ -775,7 +817,7 @@ def main():
                         except Exception as e: st.error(f"Fout: {e}")
 
     if st.session_state.data:
-        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "ℹ️ Uitleg & Hulp"])
+        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp"])
 
        # ==========================================
         # TAB 1: WOORDENSCHAT
@@ -2538,10 +2580,246 @@ def main():
                         if _bsb_zin:
                             st.caption(f"Engels (BSB) ter controle: {_bsb_zin}")
                         
+
         # ==========================================
-        # TAB 8: UITLEG & HULP (Masterclass Bijsluiter)
+        # TAB 8: GRAMMATICA (Overzicht G1-G50 + zelftoets)
         # ==========================================
         with menu[7]:
+            st.subheader("📐 Grammatica-overzicht (G1–G50)")
+            gram_db = laad_grammatica_db()
+
+            if gram_db is None:
+                st.warning("Bestand 'grammatica_index.json' ontbreekt of is niet ingeladen.")
+            elif not FITZ_BESCHIKBAAR or open_grammatica_pdf() is None:
+                st.error("De grammatica-slides konden niet worden geopend. Controleer of 'grammatica_overzicht.pdf' aanwezig is en of PyMuPDF is geïnstalleerd (voeg `pymupdf` toe aan requirements.txt).")
+            else:
+                items = gram_db["items"]
+                overzichten = gram_db.get("overzichten", {})
+
+                if 'gram_stats' not in st.session_state or st.session_state.gram_stats is None:
+                    st.session_state.gram_stats = {}
+
+                gram_modus = st.radio(
+                    "Kies je leervorm:",
+                    ["📖 Bestuderen (slides)", "🧠 Zelftoets (herken de regel)", "📊 Mijn grammatica-voortgang"],
+                    horizontal=True
+                )
+                st.write("---")
+
+                # ---------- HELPER: één G-item kiezen ----------
+                def kies_g_item(sleutel_prefix):
+                    themas = ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"]
+                    gekozen_thema = st.selectbox("Filter op thema:", themas, key=f"{sleutel_prefix}_thema")
+
+                    g_nummers = sorted(items.keys(), key=lambda x: int(x))
+                    if gekozen_thema != "Alle thema's":
+                        g_nummers = [g for g in g_nummers if items[g]["thema"] == gekozen_thema]
+
+                    if not g_nummers:
+                        st.info("Geen onderwerpen in dit thema.")
+                        return None
+
+                    labels = {g: f"G{g} · {items[g]['titel']}" for g in g_nummers}
+                    gekozen = st.selectbox(
+                        "Kies een grammatica-onderwerp:",
+                        g_nummers,
+                        format_func=lambda g: labels[g],
+                        key=f"{sleutel_prefix}_gitem"
+                    )
+                    return gekozen
+
+                # ==========================================================
+                # MODUS 1: BESTUDEREN (bladeren door de slides)
+                # ==========================================================
+                if gram_modus.startswith("📖"):
+                    gekozen_g = kies_g_item("study")
+                    if gekozen_g:
+                        info = items[gekozen_g]
+                        start, eind = info["pdf_start"], info["pdf_eind"]
+                        aantal = eind - start + 1
+
+                        st.markdown(f"### G{gekozen_g} · {info['titel']}")
+                        cap = f"Thema: {info['thema']} · {aantal} slide{'s' if aantal != 1 else ''}"
+                        if info.get("ng_pagina"):
+                            paginas = ", ".join(str(p) for p in info["ng_pagina"])
+                            cap += f" · Zie ook boek deel 1, p. {paginas}"
+                        st.caption(cap)
+
+                        bladerkey = f"study_pos_{gekozen_g}"
+                        if bladerkey not in st.session_state:
+                            st.session_state[bladerkey] = start
+                        # begrens binnen het bereik (bijv. na wisselen van onderwerp)
+                        st.session_state[bladerkey] = max(start, min(eind, st.session_state[bladerkey]))
+                        huidige = st.session_state[bladerkey]
+
+                        c_prev, c_mid, c_next = st.columns([1, 2, 1])
+                        with c_prev:
+                            if st.button("⬅️ Vorige", key=f"prev_{gekozen_g}", disabled=(huidige <= start), use_container_width=True):
+                                st.session_state[bladerkey] = huidige - 1
+                                st.rerun()
+                        with c_mid:
+                            st.markdown(f"<div style='text-align:center; padding-top:8px; font-weight:bold;'>Slide {huidige - start + 1} / {aantal}</div>", unsafe_allow_html=True)
+                        with c_next:
+                            if st.button("Volgende ➡️", key=f"next_{gekozen_g}", disabled=(huidige >= eind), use_container_width=True):
+                                st.session_state[bladerkey] = huidige + 1
+                                st.rerun()
+
+                        png = render_slide(huidige, dpi=130)
+                        if png:
+                            st.image(png, use_container_width=True)
+                        else:
+                            st.warning("Deze slide kon niet worden weergegeven.")
+
+                        # Miniatuur-navigatie voor snel springen bij veel slides
+                        if aantal > 1:
+                            with st.expander(f"📑 Ga direct naar slide (1–{aantal})"):
+                                spring = st.slider("Slide", 1, aantal, huidige - start + 1, key=f"slider_{gekozen_g}")
+                                doel = start + spring - 1
+                                if doel != huidige:
+                                    st.session_state[bladerkey] = doel
+                                    st.rerun()
+
+                    st.write("---")
+                    with st.expander("📚 Losse overzichten & samenvattingen achterin"):
+                        if overzichten:
+                            ov_keys = sorted(overzichten.keys(), key=lambda x: int(x))
+                            ov_labels = {k: overzichten[k] for k in ov_keys}
+                            gekozen_ov = st.selectbox(
+                                "Kies een overzicht:",
+                                ov_keys,
+                                format_func=lambda k: ov_labels[k],
+                                key="overzicht_keuze"
+                            )
+                            png_ov = render_slide(int(gekozen_ov), dpi=130)
+                            if png_ov:
+                                st.image(png_ov, use_container_width=True)
+                        else:
+                            st.caption("Geen losse overzichten gevonden.")
+
+                # ==========================================================
+                # MODUS 2: ZELFTOETS (herken de regel bij een slide)
+                # ==========================================================
+                elif gram_modus.startswith("🧠"):
+                    st.info("💡 Je krijgt een grammatica-slide te zien. Bepaal éérst zelf welk onderwerp het is en beoordeel daarna eerlijk of je het beheerste. Zo bouw je een streak op per onderwerp.")
+
+                    themas = ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"]
+                    toets_thema = st.selectbox("Oefen binnen thema:", themas, key="toets_thema")
+                    toets_pool = sorted(items.keys(), key=lambda x: int(x))
+                    if toets_thema != "Alle thema's":
+                        toets_pool = [g for g in toets_pool if items[g]["thema"] == toets_thema]
+
+                    only_zwak = st.checkbox("Alleen zwakke plekken (streak < 3)", value=False, key="toets_zwak")
+                    if only_zwak:
+                        toets_pool = [g for g in toets_pool if int(st.session_state.gram_stats.get(g, {}).get("streak", 0)) < 3]
+
+                    if not toets_pool:
+                        st.success("🎉 Geen onderwerpen over in deze selectie — alles beheerst!")
+                    else:
+                        # Kies (of behoud) een vraag
+                        if st.session_state.get("gram_toets_g") not in toets_pool:
+                            st.session_state.gram_toets_g = r_engine.choice(toets_pool)
+                            st.session_state.gram_toets_onthuld = False
+
+                        huidig_g = st.session_state.gram_toets_g
+                        info = items[huidig_g]
+                        # Toon een representatieve slide (de tweede slide van het onderwerp indien aanwezig, anders de eerste — de eerste is vaak alleen een titel)
+                        toon_pagina = info["pdf_start"] + 1 if info["aantal"] > 1 else info["pdf_start"]
+
+                        cur = st.session_state.gram_stats.get(huidig_g, {})
+                        streak = int(cur.get("streak", 0))
+                        goed = int(cur.get("g", 0)); fout = int(cur.get("f", 0))
+                        st.caption(f"Streak: {streak} · Goed/Fout: {goed}/{fout}")
+
+                        png = render_slide(toon_pagina, dpi=120)
+                        if png:
+                            st.image(png, use_container_width=True)
+
+                        if not st.session_state.get("gram_toets_onthuld", False):
+                            st.write("**Welk grammatica-onderwerp is dit?** Denk na en klik dan op onthullen.")
+                            if st.button("👁️ Onthul het antwoord", type="primary", key="onthul_gram"):
+                                st.session_state.gram_toets_onthuld = True
+                                st.rerun()
+                        else:
+                            st.success(f"**G{huidig_g} · {info['titel']}**  \n_Thema: {info['thema']}_")
+                            st.write("Wist je dit onderwerp te benoemen?")
+                            b1, b2 = st.columns(2)
+                            with b1:
+                                if st.button("✅ Ja, ik wist het", key="gram_goed", use_container_width=True):
+                                    entry = st.session_state.gram_stats.get(huidig_g, {"g": 0, "f": 0, "streak": 0})
+                                    entry["g"] = int(entry.get("g", 0)) + 1
+                                    entry["streak"] = int(entry.get("streak", 0)) + 1
+                                    entry["laatst_geoefend"] = str(datetime.now().date())
+                                    st.session_state.gram_stats[huidig_g] = entry
+                                    registreer_oefening()
+                                    st.session_state.gram_toets_g = r_engine.choice(toets_pool)
+                                    st.session_state.gram_toets_onthuld = False
+                                    trigger_save()
+                                    st.rerun()
+                            with b2:
+                                if st.button("❌ Nee, nog niet", key="gram_fout", use_container_width=True):
+                                    entry = st.session_state.gram_stats.get(huidig_g, {"g": 0, "f": 0, "streak": 0})
+                                    entry["f"] = int(entry.get("f", 0)) + 1
+                                    entry["streak"] = max(0, int(entry.get("streak", 0)) - 2)
+                                    entry["laatst_geoefend"] = str(datetime.now().date())
+                                    st.session_state.gram_stats[huidig_g] = entry
+                                    registreer_oefening()
+                                    st.session_state.gram_toets_g = huidig_g  # herhaal hetzelfde onderwerp niet direct? -> nieuwe kiezen
+                                    st.session_state.gram_toets_g = r_engine.choice(toets_pool)
+                                    st.session_state.gram_toets_onthuld = False
+                                    trigger_save()
+                                    st.rerun()
+
+                            st.write("---")
+                            if st.button("📖 Bekijk alle slides van dit onderwerp", key="gram_naar_studie"):
+                                st.info(f"Ga naar de leervorm 'Bestuderen' en kies G{huidig_g} om alle {info['aantal']} slides te doorlopen.")
+
+                # ==========================================================
+                # MODUS 3: VOORTGANG
+                # ==========================================================
+                else:
+                    st.markdown("### 📊 Jouw grammatica-voortgang per onderwerp")
+                    st.caption("De streak loopt op bij elke keer dat je een onderwerp in de zelftoets correct herkent. Vanaf streak 3 rekenen we een onderwerp als 'op weg', vanaf 8 als 'beheerst'.")
+
+                    rijen = []
+                    for g in sorted(items.keys(), key=lambda x: int(x)):
+                        s = st.session_state.gram_stats.get(g, {})
+                        streak = int(s.get("streak", 0))
+                        if streak >= 8: status = "🟢 Beheerst"
+                        elif streak >= 3: status = "🟡 Op weg"
+                        elif streak >= 1 or int(s.get("g", 0)) > 0 or int(s.get("f", 0)) > 0: status = "🟠 Begonnen"
+                        else: status = "⚪ Nog niet"
+                        rijen.append({
+                            "Onderwerp": f"G{g} · {items[g]['titel']}",
+                            "Thema": items[g]["thema"],
+                            "Streak": streak,
+                            "Goed": int(s.get("g", 0)),
+                            "Fout": int(s.get("f", 0)),
+                            "Status": status,
+                        })
+
+                    df_gram = pd.DataFrame(rijen)
+                    beheerst = sum(1 for r in rijen if "Beheerst" in r["Status"])
+                    op_weg = sum(1 for r in rijen if "Op weg" in r["Status"])
+                    begonnen = sum(1 for r in rijen if "Begonnen" in r["Status"])
+                    totaal = len(rijen)
+
+                    m1, m2, m3, m4 = st.columns(4)
+                    m1.metric("Beheerst", f"{beheerst}/{totaal}")
+                    m2.metric("Op weg", op_weg)
+                    m3.metric("Begonnen", begonnen)
+                    m4.metric("Voortgang", f"{int(100 * beheerst / totaal) if totaal else 0}%")
+
+                    st.progress(beheerst / totaal if totaal else 0)
+                    st.write("---")
+
+                    thema_filter = st.selectbox("Toon thema:", ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"], key="voortgang_thema")
+                    toon_df = df_gram if thema_filter == "Alle thema's" else df_gram[df_gram["Thema"] == thema_filter]
+                    st.dataframe(toon_df, use_container_width=True, hide_index=True)
+
+        # ==========================================
+        # TAB 9: UITLEG & HULP (Masterclass Bijsluiter)
+        # ==========================================
+        with menu[8]:
             st.subheader("ℹ️ Handboek & Achterliggende Logica")
             st.markdown("### 📱 De App installeren als PWA (Beginscherm)")
             st.info("Je kunt deze webapplicatie opslaan op je telefoon. Hij opent dan razendsnel in full-screen zonder afleidende adresbalk.")
