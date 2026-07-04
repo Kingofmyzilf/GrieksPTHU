@@ -263,7 +263,7 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
         ref, zin = keuze
         html_zin = ""; grieks_puur = ""; engels_puur = ""
         for zw in zin:
-           g_woord = zw['grieks']
+            g_woord = zw['grieks']
             interp = zw.get('interpunctie', '')
             grieks_puur += f"{g_woord}{interp} "
             # Nederlandse glosse als primaire vertaling; val terug op BSB als er geen NL is
