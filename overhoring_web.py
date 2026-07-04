@@ -294,8 +294,6 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
                 # Woord buiten je leslijst: toon de volledige NL-glosse + naamval + BSB-anker
                 _kop = _nl_glosse if _nl_glosse else _bsb
                 tooltip = f"{_kop}\n{_parsing}{_anker}"
-            else:
-                tooltip = f"{zw.get('vertaling_bsb', '')} ({zw.get('parsing_info', '')})"
 
             tooltip = tooltip.replace("'", "&#39;").replace('"', "&quot;")
             
@@ -2521,7 +2519,7 @@ def main():
                     st.write("---")
                     st.write("### ✍️ Zinsvertaling")
                     user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
-                   if st.button("Toon vertaling"):
+                    if st.button("Toon vertaling"):
                         _nl_zin = ' '.join([(w.get('vertaling_nl') or w.get('vertaling_bsb', '')) for w in st.session_state.huidig_vers]).strip()
                         _bsb_zin = ' '.join([w.get('vertaling_bsb', '') for w in st.session_state.huidig_vers if w.get('vertaling_bsb', '').strip()]).strip()
                         st.success(f"**Nederlandse glosse-vertaling (woord-voor-woord):**\n\n{_nl_zin}")
