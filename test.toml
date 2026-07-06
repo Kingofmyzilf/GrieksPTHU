@@ -1,0 +1,9 @@
+# Plaats dit bestand in je repo als: .streamlit/config.toml
+# Forceert het donkere thema zodat de app-styling (witte tekst op donkere achtergrond,
+# gekleurde Griekse woorden) altijd klopt, ongeacht de systeeminstelling van de gebruiker.
+[theme]
+base = "dark"
+primaryColor = "#33ccff"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#1e1e1e"
+textColor = "#fafafa"
