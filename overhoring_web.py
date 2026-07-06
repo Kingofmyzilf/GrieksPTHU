@@ -813,7 +813,7 @@ def opslaan_naar_cloud():
     except Exception as e:
         st.error(f"⚠️ Fout bij cloud-opslag: {e}")
 
-def trigger_save():
+def trigger_save(forceer=False):
     if not st.session_state.get('last_user') or not st.session_state.get('data'): return
     nieuwe_vocab_stats = {}
     for word in st.session_state.data:
@@ -822,9 +822,17 @@ def trigger_save():
             entry = {'streak': s, 'g': g, 'f': f}
             if l: entry['laatst_geoefend'] = l
             nieuwe_vocab_stats[word['grieks']] = entry
-            
+
     st.session_state.vocab_stats = nieuwe_vocab_stats
-    opslaan_naar_cloud()
+
+    # --- GEBATCHTE CLOUD-OPSLAG ---
+    # De in-memory stats hierboven zijn altijd up-to-date (instant). Het trage deel is het
+    # wegschrijven naar Google Sheets (read + update = twee netwerkrondjes). Dat doen we niet
+    # meer op élk antwoord, maar elke 5 antwoorden — plus altijd geforceerd bij einde/uitloggen.
+    st.session_state.save_teller = st.session_state.get('save_teller', 0) + 1
+    if forceer or st.session_state.save_teller >= 5:
+        st.session_state.save_teller = 0
+        opslaan_naar_cloud()
 
 # --- INITIALISATIE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige_vorm_data', 'feedback', 
@@ -841,6 +849,7 @@ if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
 if st.session_state.dag_stats is None: st.session_state.dag_stats = {}
 if st.session_state.get('prod_stats') is None: st.session_state.prod_stats = {}
+if st.session_state.get('save_teller') is None: st.session_state.save_teller = 0
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
 if st.session_state.gestrafte_woorden_stam is None: st.session_state.gestrafte_woorden_stam = set()
 if st.session_state.gestrafte_woorden_struct is None: st.session_state.gestrafte_woorden_struct = set()
@@ -850,7 +859,9 @@ def laad_volgend_woord():
         volgend = st.session_state.sessie_lijst.pop(0)
         st.session_state.huidig_item = volgend[0]
         st.session_state.huidige_sub_modus = volgend[1]
-    else: st.session_state.huidig_item = None; st.session_state.huidige_sub_modus = None
+    else:
+        st.session_state.huidig_item = None; st.session_state.huidige_sub_modus = None
+        trigger_save(forceer=True)  # einde sessie: laatste antwoorden zeker wegschrijven
     st.session_state.fouten_huidig_woord = 0
     st.session_state.huidige_opties = []; st.session_state.huidige_vorm_data = None
 
@@ -859,7 +870,9 @@ def laad_volgend_stam_woord():
         volgend = st.session_state.stam_sessie_lijst.pop(0)
         st.session_state.stam_huidig = volgend[0]
         st.session_state.stam_sub_modus = volgend[1]
-    else: st.session_state.stam_huidig = None; st.session_state.stam_sub_modus = None
+    else:
+        st.session_state.stam_huidig = None; st.session_state.stam_sub_modus = None
+        trigger_save(forceer=True)
     st.session_state.stam_fouten = 0
     st.session_state.stam_opties_gram = []; st.session_state.stam_opties_praesens = []
     st.session_state.stam_mc_solved = {"gram": False, "praesens": False}
@@ -869,7 +882,9 @@ def laad_volgend_struct_woord():
         volgend = st.session_state.struct_sessie_lijst.pop(0)
         st.session_state.struct_huidig = volgend[0]
         st.session_state.struct_sub_modus = volgend[1]
-    else: st.session_state.struct_huidig = None; st.session_state.struct_sub_modus = None
+    else:
+        st.session_state.struct_huidig = None; st.session_state.struct_sub_modus = None
+        trigger_save(forceer=True)
     st.session_state.struct_fouten = 0
     st.session_state.struct_opties_cat = []; st.session_state.struct_opties_eig = []; st.session_state.struct_opties_bet = []
     st.session_state.struct_mc_solved = {"cat": False, "eig": False, "bet": False}
@@ -903,7 +918,7 @@ def main():
         else:
             st.success(f"👋 Welkom, {st.session_state.last_user.split('_')[0]}!")
             if st.button("🚪 Uitloggen"): 
-                trigger_save(); st.session_state.data = None; st.session_state.last_user = None
+                trigger_save(forceer=True); st.session_state.data = None; st.session_state.last_user = None
                 if "u" in st.query_params: del st.query_params["u"]
                 st.rerun()
             
