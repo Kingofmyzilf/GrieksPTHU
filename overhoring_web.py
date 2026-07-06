@@ -440,11 +440,35 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         elif 16 <= s <= 29: beheerst.append(item)
         else: mastery.append(item)
     
-    def sorteer_key(x):
+    vandaag_d = datetime.now().date()
+
+    def dagen_geleden(x):
         d_str = x.get('laatst_geoefend', '')
-        if not d_str: return datetime.min.date()
-        try: return datetime.strptime(d_str, '%Y-%m-%d').date()
-        except: return datetime.min.date()
+        if not d_str:
+            return 9999  # nooit gedaan telt als 'heel lang geleden'
+        try:
+            return (vandaag_d - datetime.strptime(d_str, '%Y-%m-%d').date()).days
+        except:
+            return 9999
+
+    def struggle_bonus(x):
+        # Lichte, schema-vrije 'worstel-score': hardnekkig-foute woorden komen eerder terug.
+        # Uitgedrukt in dag-equivalenten zodat het naadloos optelt bij 'dagen geleden'.
+        g = int(x.get('score_goed', 0)); f = int(x.get('score_fout', 0))
+        streak = int(x.get('streak', 0))
+        totaal = g + f
+        if totaal == 0:
+            return 0
+        fout_ratio = f / totaal                     # 0..1: aandeel fouten over de hele historie
+        bonus = fout_ratio * 8                       # tot ~8 'extra dagen' voor een altijd-foute
+        if streak == 0 and f > 0:
+            bonus += 4                               # recent teruggevallen / net fout: extra prioriteit
+        bonus -= min(streak, 10) * 0.3               # stevige streak dempt de urgentie licht
+        return max(0, bonus)
+
+    # Hoogste effectieve 'ouderdom' eerst (oud + worstelend bovenaan, vers + solide onderaan).
+    def sorteer_key(x):
+        return -(dagen_geleden(x) + struggle_bonus(x))
 
     incubatie.sort(key=sorteer_key); training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
     
@@ -547,6 +571,38 @@ def bereken_gewicht(item):
     if streak >= 30: gewicht *= 0.1 
     return max(0.1, gewicht)
 
+def _is_al_geoefend(w):
+    """Een woord telt als 'al geoefend' zodra er ooit een poging op is gedaan."""
+    return (int(w.get('streak', 0)) > 0
+            or int(w.get('score_goed', 0)) > 0
+            or int(w.get('score_fout', 0)) > 0
+            or str(w.get('laatst_geoefend', '') or '').strip() != '')
+
+def voeg_verwar_twins_toe(sampled, alle_data, twins_map, max_twins=3):
+    """Trekt look-alike twins van reeds-gekozen woorden in dezelfde sessie, zodat de
+    student ze naast elkaar leert onderscheiden. Voegt NOOIT nieuwe (ongeoefende) woorden toe."""
+    if not twins_map:
+        return sampled
+    grieks_index = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
+    al_in_sessie = {w.get('grieks') for w in sampled if isinstance(w, dict)}
+    toegevoegd = []
+    for w in list(sampled):
+        if len(toegevoegd) >= max_twins:
+            break
+        for twin_grieks in twins_map.get(w.get('grieks', ''), []):
+            if len(toegevoegd) >= max_twins:
+                break
+            if twin_grieks in al_in_sessie:
+                continue  # twin zit al in de sessie
+            twin_w = grieks_index.get(twin_grieks)
+            if twin_w and _is_al_geoefend(twin_w):  # harde eis: nooit een nieuw woord
+                toegevoegd.append(twin_w)
+                al_in_sessie.add(twin_grieks)
+    if toegevoegd:
+        sampled = sampled + toegevoegd
+        r_engine.shuffle(sampled)  # twins verspreiden i.p.v. achteraan plakken
+    return sampled
+
 # --- DATABASE FUNCTIES ---
 @st.cache_data
 def laad_actief_beheersen_db():
@@ -578,6 +634,15 @@ def laad_structuurwoorden_db():
     if os.path.exists("structuurwoorden.json"):
         with open("structuurwoorden.json", "r", encoding="utf-8") as f: return json.load(f)
     return None
+
+@st.cache_data
+def laad_verwarparen_db():
+    """Laadt de map grieks_woord -> lijst van look-alike twins (op gelijkenis gesorteerd)."""
+    if os.path.exists("verwarparen.json"):
+        with open("verwarparen.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data.get("twins", {})
+    return {}
 
 @st.cache_data
 def laad_grammatica_db():
@@ -870,6 +935,7 @@ def main():
                 optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab")
                 optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=True)
                 optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=True)
+                optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=True, help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
                 
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
@@ -920,7 +986,14 @@ def main():
                             verbied_nieuwe_woorden=mag_geen_nieuw,
                             totale_db=st.session_state.data
                         )
-                        
+
+                        # Verwar-twins van gekozen woorden erbij trekken (alleen al-geoefende woorden),
+                        # zodat look-alikes in dezelfde sessie naast elkaar geoefend worden.
+                        if sampled and st.session_state.get('optie_verwarparen', True):
+                            sampled = voeg_verwar_twins_toe(
+                                sampled, st.session_state.data, laad_verwarparen_db(), max_twins=3
+                            )
+
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd voor deze criteria.")
                         else:
                             if st.session_state.get('optie_cluster_vocab', False):
@@ -1105,7 +1178,20 @@ def main():
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg_volledig}"}
+                                        # 'Let op'-notitie als dit woord een bekende look-alike heeft
+                                        _twin_note = ""
+                                        _tw_map = laad_verwarparen_db()
+                                        _tw_list = _tw_map.get(item.get('grieks', ''), [])
+                                        if _tw_list:
+                                            _idx = {w.get('grieks'): w for w in st.session_state.data if w.get('grieks')}
+                                            _labels = []
+                                            for _tg in _tw_list[:2]:
+                                                _tw = _idx.get(_tg)
+                                                if _tw:
+                                                    _labels.append(f"{_tg} ({str(_tw.get('nederlands',''))[:25]})")
+                                            if _labels:
+                                                _twin_note = "\n\n⚠️ Let op — niet verwarren met: " + "; ".join(_labels)
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg_volledig}{_twin_note}"}
                                         trigger_save(); laad_volgend_woord()
                                     else: item['score_fout'] = int(item.get('score_fout', 0)) + 1; st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint."}
                                     st.rerun()
@@ -1144,7 +1230,20 @@ def main():
                                 
                                 lookalikes_ned = []
                                 pool_ws = []
-                                
+
+                                # PRIO 1: de precieze look-alike twin(s) uit verwarparen.json als afleider,
+                                # maar alleen woorden die de student al eens geoefend heeft.
+                                _twins_map = laad_verwarparen_db()
+                                _grieks_idx = {w.get('grieks'): w for w in st.session_state.data if w.get('grieks')}
+                                for _twin_g in _twins_map.get(item.get('grieks', ''), []):
+                                    _tw = _grieks_idx.get(_twin_g)
+                                    if _tw and _is_al_geoefend(_tw):
+                                        _tw_ned = str(_tw.get('nederlands', '')).strip()
+                                        if _tw_ned and _tw_ned not in gekozen_betekenissen:
+                                            afleiders.append(_tw_ned); gekozen_betekenissen.add(_tw_ned)
+                                    if len(afleiders) >= 2:  # laat ruimte voor variatie
+                                        break
+
                                 for w in st.session_state.data:
                                     g_ander = normaliseer_accent(w.get('grieks', ''))
                                     n_ander = str(w.get('nederlands', '')).strip()
@@ -2951,25 +3050,27 @@ def main():
                         soort = st.radio("Oefenstof:", ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)", "Augment (verleden tijd)"], horizontal=True, key="contr_soort")
                         st.write("---")
 
-                        # bouw een platte lijst van opgaven op basis van soort
+                        # bouw een platte lijst van opgaven op basis van soort.
+                        # LET OP: 'hint' bevat NOOIT het antwoord (geen 'naar'-vorm) — anders spoiler.
                         def bouw_opgaven():
                             opg = []
                             if soort.startswith("σ"):
                                 for regel in cdb["sigma"]:
                                     for (van, naar, bet) in regel["vb"]:
-                                        opg.append({"van": van, "naar": naar, "bet": bet,
+                                        opg.append({"van": van, "naar": naar, "hint": bet,
                                                     "klasse": regel["klasse"], "regel": regel["regel"],
                                                     "uitkomst": regel["uitkomst"]})
                             elif soort.startswith("Verba"):
                                 for regel in cdb["contracta"]:
+                                    # 'vb' bevat het antwoord, dus die gebruiken we NIET als hint
                                     opg.append({"van": regel["combo"], "naar": regel["uitkomst"],
-                                                "bet": regel["vb"], "klasse": f"stam op -{regel['stam']}",
+                                                "hint": f"stam op -{regel['stam']}", "klasse": f"stam op -{regel['stam']}",
                                                 "regel": f"{regel['combo']} → {regel['uitkomst']}",
                                                 "uitkomst": regel["uitkomst"]})
                             else:
                                 for regel in cdb["augment"]:
                                     for (van, naar) in regel["vb"]:
-                                        opg.append({"van": van, "naar": naar, "bet": regel["regel"],
+                                        opg.append({"van": van, "naar": naar, "hint": f"begint met {regel['begin']}",
                                                     "klasse": f"begint met {regel['begin']}", "regel": regel["regel"],
                                                     "uitkomst": naar})
                             return opg
@@ -2977,94 +3078,111 @@ def main():
                         opgaven = bouw_opgaven()
                         skey = f"contr_state_{soort}_{niveau}"
                         if skey not in st.session_state:
-                            st.session_state[skey] = {"idx": r_engine.randrange(len(opgaven)), "onthuld": False, "goed": 0, "totaal": 0}
+                            st.session_state[skey] = {"idx": r_engine.randrange(len(opgaven)), "goed": 0, "totaal": 0, "feedback": None}
                         stt = st.session_state[skey]
                         opg = opgaven[stt["idx"]]
 
+                        # --- Feedbackbanner van de vórige opgave bovenaan (flow zoals bij woorden leren) ---
+                        if stt.get("feedback"):
+                            fb = stt["feedback"]
+                            if fb["type"] == "success":
+                                st.success(fb["msg"])
+                            else:
+                                st.error(fb["msg"])
+                            stt["feedback"] = None
                         if stt["totaal"]:
                             st.caption(f"Deze sessie: {stt['goed']}/{stt['totaal']} goed")
+
+                        def _norm(s):
+                            s = unicodedata.normalize("NFD", str(s).strip().lower())
+                            return "".join(c for c in s if unicodedata.category(c) != "Mn")
+
+                        def volgende_opgave(goed, banner):
+                            stt["totaal"] += 1
+                            if goed:
+                                stt["goed"] += 1
+                            stt["feedback"] = {"type": "success" if goed else "error", "msg": banner}
+                            stt["idx"] = r_engine.randrange(len(opgaven))
+                            registreer_oefening()
+                            trigger_save()
+                            st.rerun()
 
                         # ---- NIVEAU 1: herken de klasse ----
                         if niveau.startswith("1"):
                             st.markdown(f"### {opg['van']}  →  ?")
                             if soort.startswith("σ"):
-                                st.write(f"_{opg['bet']}_ — tot welke klankklasse behoort de stam?")
+                                st.write("Tot welke klankklasse behoort de stam?")
                                 opties = [r["klasse"] for r in cdb["sigma"]]
+                                goed_antwoord = opg["klasse"]
                             elif soort.startswith("Verba"):
                                 st.write("Welke uitkomst heeft deze klinkercombinatie?")
                                 opties = sorted({r["uitkomst"] for r in cdb["contracta"]})
+                                goed_antwoord = opg["uitkomst"]
                             else:
                                 st.write("Welke augment-regel geldt hier?")
                                 opties = [r["regel"] for r in cdb["augment"]]
-                            goed_antwoord = opg["klasse"] if soort.startswith("σ") else (opg["uitkomst"] if soort.startswith("Verba") else opg["regel"])
-                            keuze = st.radio("Kies:", opties, key=f"n1_{skey}_{stt['idx']}")
+                                goed_antwoord = opg["regel"]
+                            keuze = st.radio("Kies:", opties, index=None, key=f"n1_{skey}_{stt['idx']}")
                             if st.button("Controleer", key=f"chk1_{skey}", type="primary"):
-                                stt["totaal"] += 1
-                                if keuze == goed_antwoord:
-                                    stt["goed"] += 1
-                                    st.success(f"✅ Juist! {opg['van']} → **{opg['naar']}** ({opg['regel']})")
+                                if keuze is None:
+                                    st.warning("Kies eerst een optie.")
                                 else:
-                                    st.error(f"❌ Het was **{goed_antwoord}**. {opg['van']} → {opg['naar']} ({opg['regel']})")
-                                registreer_oefening()
+                                    goed = (keuze == goed_antwoord)
+                                    banner = (f"✅ Juist! {opg['van']} → {opg['naar']} ({opg['regel']})" if goed
+                                              else f"❌ Het was **{goed_antwoord}**. {opg['van']} → {opg['naar']} ({opg['regel']})")
+                                    volgende_opgave(goed, banner)
 
-                        # ---- NIVEAU 2: voorspel uitkomst (meerkeuze vorm) ----
+                        # ---- NIVEAU 2: voorspel de uitkomstvorm (meerkeuze) ----
                         elif niveau.startswith("2"):
                             st.markdown(f"### {opg['van']}  →  ?")
-                            st.write(f"_{opg['bet']}_" if opg.get("bet") else "")
-                            # afleiders: andere 'naar'-vormen uit dezelfde soort
+                            st.caption("Welke vorm ontstaat er na de samensmelting/contractie?")
                             alle_naar = list({o["naar"] for o in opgaven})
                             afleiders = [x for x in alle_naar if x != opg["naar"]]
                             r_engine.shuffle(afleiders)
                             opties = afleiders[:3] + [opg["naar"]]
                             r_engine.shuffle(opties)
-                            keuze = st.radio("Wat is de juiste vorm?", opties, key=f"n2_{skey}_{stt['idx']}")
+                            keuze = st.radio("Wat is de juiste vorm?", opties, index=None, key=f"n2_{skey}_{stt['idx']}")
                             if st.button("Controleer", key=f"chk2_{skey}", type="primary"):
-                                stt["totaal"] += 1
-                                if keuze == opg["naar"]:
-                                    stt["goed"] += 1
-                                    st.success(f"✅ Juist! Regel: {opg['regel']}")
+                                if keuze is None:
+                                    st.warning("Kies eerst een optie.")
                                 else:
-                                    st.error(f"❌ Het was **{opg['naar']}**. Regel: {opg['regel']}")
-                                registreer_oefening()
+                                    goed = (keuze == opg["naar"])
+                                    banner = (f"✅ Juist! {opg['van']} → {opg['naar']} — {opg['regel']}" if goed
+                                              else f"❌ Het was **{opg['naar']}**. {opg['van']} → {opg['naar']} — {opg['regel']}")
+                                    volgende_opgave(goed, banner)
 
                         # ---- NIVEAU 3: zelf typen ----
                         else:
                             st.markdown(f"### {opg['van']}  →  ?")
-                            st.write(f"_{opg['bet']}_" if opg.get("bet") else "")
                             st.caption("Typ de gecontraheerde/samengesmolten vorm (Grieks). Kleine accentafwijkingen worden soepel nagekeken.")
-                            antwoord = st.text_input("Jouw vorm:", key=f"n3_{skey}_{stt['idx']}")
-                            if st.button("Controleer", key=f"chk3_{skey}", type="primary"):
-                                stt["totaal"] += 1
-                                def norm(s):
-                                    s = unicodedata.normalize("NFD", s.strip().lower())
-                                    return "".join(c for c in s if unicodedata.category(c) != "Mn")
-                                if antwoord and norm(antwoord) == norm(opg["naar"]):
-                                    stt["goed"] += 1
-                                    st.success(f"✅ Precies! {opg['van']} → **{opg['naar']}** ({opg['regel']})")
-                                elif antwoord and difflib.SequenceMatcher(None, norm(antwoord), norm(opg["naar"])).ratio() > 0.8:
-                                    stt["goed"] += 1
-                                    st.success(f"✅ Goed (op accenten na). Correct: **{opg['naar']}** ({opg['regel']})")
+                            with st.form(f"form_n3_{skey}_{stt['idx']}"):
+                                antwoord = st.text_input("Jouw vorm:", key=f"n3_{skey}_{stt['idx']}")
+                                verzonden = st.form_submit_button("Controleer", type="primary")
+                            if verzonden:
+                                if not antwoord.strip():
+                                    st.warning("Typ eerst een vorm.")
                                 else:
-                                    st.error(f"❌ Het was **{opg['naar']}** ({opg['regel']})")
-                                registreer_oefening()
+                                    exact = _norm(antwoord) == _norm(opg["naar"])
+                                    dichtbij = difflib.SequenceMatcher(None, _norm(antwoord), _norm(opg["naar"])).ratio() > 0.8
+                                    goed = exact or dichtbij
+                                    if exact:
+                                        banner = f"✅ Precies! {opg['van']} → {opg['naar']} ({opg['regel']})"
+                                    elif dichtbij:
+                                        banner = f"✅ Goed (op accenten na). Correct: {opg['naar']} ({opg['regel']})"
+                                    else:
+                                        banner = f"❌ Het was **{opg['naar']}** ({opg['regel']})"
+                                    volgende_opgave(goed, banner)
 
-                        cA, cB = st.columns(2)
-                        with cA:
-                            if st.button("➡️ Volgende opgave", key=f"next_contr_{skey}", use_container_width=True):
-                                stt["idx"] = r_engine.randrange(len(opgaven))
-                                stt["onthuld"] = False
-                                st.rerun()
-                        with cB:
-                            with st.expander("📋 Toon alle regels (spiekbriefje)"):
-                                if soort.startswith("σ"):
-                                    for regel in cdb["sigma"]:
-                                        st.markdown(f"**{regel['klasse']}** ({regel['medeklinkers']}) → {regel['uitkomst']}  \n_{regel['regel']}_")
-                                elif soort.startswith("Verba"):
-                                    for regel in cdb["contracta"]:
-                                        st.markdown(f"stam -{regel['stam']}: **{regel['combo']} → {regel['uitkomst']}** _(bv. {regel['vb']})_")
-                                else:
-                                    for regel in cdb["augment"]:
-                                        st.markdown(f"**{regel['begin']}**: {regel['regel']}")
+                        with st.expander("📋 Toon alle regels (spiekbriefje)"):
+                            if soort.startswith("σ"):
+                                for regel in cdb["sigma"]:
+                                    st.markdown(f"**{regel['klasse']}** ({regel['medeklinkers']}) → {regel['uitkomst']}  \n_{regel['regel']}_")
+                            elif soort.startswith("Verba"):
+                                for regel in cdb["contracta"]:
+                                    st.markdown(f"stam -{regel['stam']}: **{regel['combo']} → {regel['uitkomst']}** _(bv. {regel['vb']})_")
+                            else:
+                                for regel in cdb["augment"]:
+                                    st.markdown(f"**{regel['begin']}**: {regel['regel']}")
 
                 # ==========================================================
                 # MODUS: VOORTGANG
