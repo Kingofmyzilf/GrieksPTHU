@@ -1805,7 +1805,7 @@ def main():
                     sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
-                stam_modus = st.radio("Kies je activiteit:", ["📖 0. Werkwoordpaspoort (Vrij studeren)", "1. MC Overhoring", "2. Mix (MC + Typen)", "3. Typen (Herleiden)"], horizontal=True)
+                stam_modus = st.radio("Kies je activiteit:", ["📖 0. Werkwoordpaspoort (Vrij studeren)", "1. MC Overhoring", "2. Mix (MC + Typen)", "3. Typen (Herleiden)", "🔎 4. Herkennen (koud)"], horizontal=True)
                 st.write("---")
 
                 if "0." in stam_modus:
@@ -1852,6 +1852,162 @@ def main():
                             st.markdown("#### ⚙️ De Klankwet achter dit raamwerk")
                             if morf.get('memoriseren_vereist'): st.error(f"**Suppletie-werkwoord:** {regel.get('toelichting', 'Puur memoriseren.')}")
                             else: st.success(f"**Formule:** `{regel.get('formule', 'Stam + σ')}`\n\n**Uitleg:** {regel.get('toelichting', '')}")
+
+                elif "4." in stam_modus:
+                    # === KOUDE HERKENNING: vorm -> welk werkwoord (lemma) + welke tijd ===
+                    st.markdown("### 🔎 Koude herkenning")
+                    st.caption("Je krijgt één losse stamtijd-vorm te zien, zónder dat je weet uit welk werkwoord hij komt — precies zoals bij het lezen van een tekst. Werk terug naar het praesens (lemma) en de tijd.")
+
+                    kc1, kc2 = st.columns([1, 2])
+                    with kc1:
+                        # Bronfilter: alle werkwoorden, of alleen de onregelmatige 'hall of pain'
+                        focus = st.radio(
+                            "Oefenselectie:",
+                            ["📚 Uit geselecteerde lessen", "🔥 Alleen onregelmatige (suppletie)", "🌍 Alle werkwoorden"],
+                            key="kh_focus"
+                        )
+                        antwoordvorm = st.radio(
+                            "Antwoordvorm:",
+                            ["🔢 Meerkeuze (herkennen)", "⌨️ Typen (reproduceren)"],
+                            key="kh_antwoordvorm"
+                        )
+
+                        kh_pool = []
+                        if focus == "📚 Uit geselecteerde lessen":
+                            alle_lessen_kh = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
+                            gekozen_kh_lessen = st.multiselect("Kies les(sen):", alle_lessen_kh, default=alle_lessen_kh[:2] if alle_lessen_kh else [], key="kh_lessen")
+                            kh_pool = [w for w in stamtijden_db if w.get('les', 0) in gekozen_kh_lessen]
+                        elif focus == "🔥 Alleen onregelmatige (suppletie)":
+                            kh_pool = [w for w in stamtijden_db if w.get('morfologie', {}).get('memoriseren_vereist')]
+                            st.caption(f"🔥 {len(kh_pool)} onregelmatige werkwoorden in de database. Dit zijn de vormen die geen klankwet volgen en die je puur uit het hoofd moet kennen.")
+                        else:
+                            kh_pool = list(stamtijden_db)
+
+                        # bouw alle (werkwoord, tijd, vorm)-combinaties
+                        alle_tijden = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
+                        kh_items = []
+                        for w in kh_pool:
+                            for t_d in alle_tijden:
+                                vorm = w.get('stamtijden', {}).get(t_d)
+                                if vorm and vorm != "-":
+                                    kh_items.append({"basis": w, "tijd": t_d, "vorm": vorm})
+
+                        st.caption(f"Beschikbare vormen om te herkennen: **{len(kh_items)}**")
+
+                        if st.button("Start / volgende vorm", key="kh_start", type="primary", use_container_width=True):
+                            if kh_items:
+                                st.session_state.kh_huidig = r_engine.choice(kh_items)
+                                st.session_state.kh_opties = None
+                                st.session_state.kh_onthuld = False
+                                st.session_state.kh_gecheckt = False
+                            else:
+                                st.session_state.kh_huidig = None
+                            st.rerun()
+
+                        if st.session_state.get("kh_score_totaal"):
+                            st.metric("Deze sessie", f"{st.session_state.get('kh_score_goed',0)}/{st.session_state.get('kh_score_totaal',0)} goed")
+
+                    with kc2:
+                        huidig_kh = st.session_state.get("kh_huidig")
+                        if not huidig_kh:
+                            st.info("Kies links je selectie en klik op **Start / volgende vorm**.")
+                        else:
+                            basis = huidig_kh["basis"]
+                            correct_prae = basis["praesens"]
+                            correct_bet = basis["betekenis"]
+                            correct_tijd = huidig_kh["tijd"]
+                            vorm = huidig_kh["vorm"]
+                            is_suppletie = basis.get("morfologie", {}).get("memoriseren_vereist", False)
+
+                            st.markdown(f"<div class='grieks-woord' style='font-size:46px; text-align:center;'>{vorm}</div>", unsafe_allow_html=True)
+                            st.caption("Uit welk werkwoord komt deze vorm, en welke tijd is het?")
+
+                            # ---- MEERKEUZE ----
+                            if antwoordvorm.startswith("🔢"):
+                                if not st.session_state.get("kh_opties"):
+                                    # afleiders uit de HELE database (koude herkenning: geen 'bekende pool'-hint)
+                                    correct_optie = f"{correct_prae} — {correct_bet}"
+                                    pool_andere = [w for w in stamtijden_db if w["praesens"] != correct_prae]
+                                    r_engine.shuffle(pool_andere)
+                                    afl, gezien = [], {correct_bet}
+                                    for w in pool_andere:
+                                        if w["betekenis"] not in gezien:
+                                            afl.append(f"{w['praesens']} — {w['betekenis']}"); gezien.add(w["betekenis"])
+                                        if len(afl) >= 3: break
+                                    opties_lemma = [correct_optie] + afl
+                                    r_engine.shuffle(opties_lemma)
+                                    st.session_state.kh_opties = opties_lemma
+
+                                with st.form("kh_mc_form"):
+                                    keuze_lemma = st.radio("Welk werkwoord?", st.session_state.kh_opties, index=None)
+                                    afleiders_t = [t for t in alle_tijden if t != correct_tijd]
+                                    opties_tijd = [correct_tijd] + r_engine.sample(afleiders_t, min(3, len(afleiders_t)))
+                                    opties_tijd = sorted(set(opties_tijd))
+                                    keuze_tijd = st.radio("Welke tijd?", opties_tijd, index=None)
+                                    if st.form_submit_button("Controleer", type="primary"):
+                                        registreer_oefening()
+                                        goed_lemma = (keuze_lemma == f"{correct_prae} — {correct_bet}")
+                                        goed_tijd = (keuze_tijd == correct_tijd)
+                                        st.session_state.kh_score_totaal = st.session_state.get("kh_score_totaal", 0) + 1
+                                        if goed_lemma and goed_tijd:
+                                            st.session_state.kh_score_goed = st.session_state.get("kh_score_goed", 0) + 1
+                                        st.session_state.kh_gecheckt = True
+                                        st.session_state.kh_res = (goed_lemma, goed_tijd)
+                                        st.rerun()
+
+                                if st.session_state.get("kh_gecheckt"):
+                                    goed_lemma, goed_tijd = st.session_state.get("kh_res", (False, False))
+                                    if goed_lemma and goed_tijd:
+                                        st.success(f"✅ Juist! **{vorm}** = {correct_tijd} van **{correct_prae}** — _{correct_bet}_")
+                                    else:
+                                        deel_l = "✓" if goed_lemma else "✗"
+                                        deel_t = "✓" if goed_tijd else "✗"
+                                        st.error(f"{deel_l} lemma · {deel_t} tijd — het was **{correct_tijd}** van **{correct_prae}** — _{correct_bet}_")
+                                    morf = basis.get("morfologie", {}); regel = morf.get("mutatieregel", {})
+                                    if is_suppletie:
+                                        st.warning(f"🔥 **Onregelmatig (suppletie):** {regel.get('toelichting', 'Puur memoriseren.')}")
+                                    else:
+                                        st.info(f"💡 **Klankwet ({morf.get('klasse','regelmatig')}):** {regel.get('formule','')} — {regel.get('toelichting','')}")
+                                    if st.button("➡️ Volgende vorm", key="kh_next_mc", use_container_width=True):
+                                        st.session_state.kh_huidig = r_engine.choice(kh_items) if kh_items else None
+                                        st.session_state.kh_opties = None; st.session_state.kh_gecheckt = False
+                                        st.rerun()
+
+                            # ---- TYPEN ----
+                            else:
+                                with st.form("kh_typ_form"):
+                                    in_prae = st.text_input("1. Praesens (lemma) — Latijnse toetsen mag:", key="kh_in_prae")
+                                    in_bet = st.text_input("2. Betekenis:", key="kh_in_bet")
+                                    afleiders_t = [t for t in alle_tijden if t != correct_tijd]
+                                    opties_tijd = sorted(set([correct_tijd] + r_engine.sample(afleiders_t, min(3, len(afleiders_t)))))
+                                    in_tijd = st.selectbox("3. Tijd:", [""] + opties_tijd)
+                                    if st.form_submit_button("Controleer", type="primary"):
+                                        registreer_oefening()
+                                        ok_prae = normaliseer_accent(naar_grieks_transliteratie(in_prae)) == normaliseer_accent(correct_prae)
+                                        ok_bet = check_betekenis(in_bet, correct_bet)
+                                        ok_tijd = (in_tijd == correct_tijd)
+                                        st.session_state.kh_score_totaal = st.session_state.get("kh_score_totaal", 0) + 1
+                                        if ok_prae and ok_bet and ok_tijd:
+                                            st.session_state.kh_score_goed = st.session_state.get("kh_score_goed", 0) + 1
+                                        st.session_state.kh_gecheckt = True
+                                        st.session_state.kh_res_typ = (ok_prae, ok_bet, ok_tijd)
+                                        st.rerun()
+
+                                if st.session_state.get("kh_gecheckt"):
+                                    ok_prae, ok_bet, ok_tijd = st.session_state.get("kh_res_typ", (False, False, False))
+                                    if ok_prae and ok_bet and ok_tijd:
+                                        st.success(f"✅ Precies! **{vorm}** = {correct_tijd} van **{correct_prae}** — _{correct_bet}_")
+                                    else:
+                                        st.error(f"{'✓' if ok_prae else '✗'} lemma · {'✓' if ok_bet else '✗'} betekenis · {'✓' if ok_tijd else '✗'} tijd  \nCorrect: **{correct_prae}** — _{correct_bet}_ ({correct_tijd})")
+                                    morf = basis.get("morfologie", {}); regel = morf.get("mutatieregel", {})
+                                    if is_suppletie:
+                                        st.warning(f"🔥 **Onregelmatig (suppletie):** {regel.get('toelichting', 'Puur memoriseren.')}")
+                                    else:
+                                        st.info(f"💡 **Klankwet ({morf.get('klasse','regelmatig')}):** {regel.get('formule','')} — {regel.get('toelichting','')}")
+                                    if st.button("➡️ Volgende vorm", key="kh_next_typ", use_container_width=True):
+                                        st.session_state.kh_huidig = r_engine.choice(kh_items) if kh_items else None
+                                        st.session_state.kh_opties = None; st.session_state.kh_gecheckt = False
+                                        st.rerun()
 
                 else:
                     c1, c2 = st.columns([1, 2])
