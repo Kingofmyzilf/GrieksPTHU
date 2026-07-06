@@ -1,0 +1,285 @@
+{
+ "sigma": [
+  {
+   "klasse": "Labialen",
+   "medeklinkers": "π, β, φ",
+   "uitkomst": "ψ",
+   "regel": "π/β/φ + σ versmelt tot ψ",
+   "vb": [
+    [
+     "βλέπω",
+     "βλέψω",
+     "kijken"
+    ],
+    [
+     "γράφω",
+     "γράψω",
+     "schrijven"
+    ],
+    [
+     "πέμπω",
+     "πέμψω",
+     "zenden"
+    ]
+   ]
+  },
+  {
+   "klasse": "Gutturalen",
+   "medeklinkers": "κ, γ, χ",
+   "uitkomst": "ξ",
+   "regel": "κ/γ/χ + σ versmelt tot ξ",
+   "vb": [
+    [
+     "ἄγω",
+     "ἄξω",
+     "leiden"
+    ],
+    [
+     "ἄρχω",
+     "ἄρξω",
+     "heersen"
+    ],
+    [
+     "διώκω",
+     "διώξω",
+     "vervolgen"
+    ]
+   ]
+  },
+  {
+   "klasse": "Dentalen",
+   "medeklinkers": "τ, δ, θ, ζ",
+   "uitkomst": "σ (dentaal valt weg)",
+   "regel": "τ/δ/θ/ζ vallen weg vóór de σ",
+   "vb": [
+    [
+     "πείθω",
+     "πείσω",
+     "overtuigen"
+    ],
+    [
+     "ψεύδω",
+     "ψεύσω",
+     "liegen"
+    ],
+    [
+     "ἐλπίζω",
+     "ἐλπίσω",
+     "hopen"
+    ]
+   ]
+  },
+  {
+   "klasse": "Contracta",
+   "medeklinkers": "α, ε, ο (stamklinker)",
+   "uitkomst": "verlengde klinker + σ",
+   "regel": "stamklinker rekt: α/ε→η, ο→ω, vóór de σ",
+   "vb": [
+    [
+     "ποιέω",
+     "ποιήσω",
+     "doen/maken"
+    ],
+    [
+     "ἀγαπάω",
+     "ἀγαπήσω",
+     "liefhebben"
+    ],
+    [
+     "δηλόω",
+     "δηλώσω",
+     "tonen"
+    ]
+   ]
+  },
+  {
+   "klasse": "Liquidae",
+   "medeklinkers": "λ, μ, ν, ρ",
+   "uitkomst": "σ valt weg → circumflexus (samentrekking)",
+   "regel": "liquida stoot de σ af; contractie geeft een circumflexus",
+   "vb": [
+    [
+     "μένω",
+     "μενῶ",
+     "blijven"
+    ],
+    [
+     "ἀποστέλλω",
+     "ἀποστελῶ",
+     "zenden"
+    ],
+    [
+     "κρίνω",
+     "κρινῶ",
+     "oordelen"
+    ]
+   ]
+  }
+ ],
+ "contracta": [
+  {
+   "stam": "ε",
+   "combo": "ε + ε",
+   "uitkomst": "ει",
+   "vb": "ποιέω → ποιεῖ (3e ev.)"
+  },
+  {
+   "stam": "ε",
+   "combo": "ε + ο",
+   "uitkomst": "ου",
+   "vb": "ποιέομεν → ποιοῦμεν"
+  },
+  {
+   "stam": "ε",
+   "combo": "ε + ω",
+   "uitkomst": "ω",
+   "vb": "ποιέω → ποιῶ"
+  },
+  {
+   "stam": "ε",
+   "combo": "ε + ει",
+   "uitkomst": "ει",
+   "vb": "ποιέεις → ποιεῖς"
+  },
+  {
+   "stam": "α",
+   "combo": "α + ε",
+   "uitkomst": "α",
+   "vb": "ἀγαπάω → ἀγαπᾷ"
+  },
+  {
+   "stam": "α",
+   "combo": "α + ο",
+   "uitkomst": "ω",
+   "vb": "ἀγαπάομεν → ἀγαπῶμεν"
+  },
+  {
+   "stam": "α",
+   "combo": "α + ω",
+   "uitkomst": "ω",
+   "vb": "ἀγαπάω → ἀγαπῶ"
+  },
+  {
+   "stam": "α",
+   "combo": "α + ει",
+   "uitkomst": "ᾳ",
+   "vb": "ἀγαπάεις → ἀγαπᾷς"
+  },
+  {
+   "stam": "ο",
+   "combo": "ο + ε",
+   "uitkomst": "ου",
+   "vb": "δηλόω → δηλοῦ"
+  },
+  {
+   "stam": "ο",
+   "combo": "ο + ο",
+   "uitkomst": "ου",
+   "vb": "δηλόομεν → δηλοῦμεν"
+  },
+  {
+   "stam": "ο",
+   "combo": "ο + ω",
+   "uitkomst": "ω",
+   "vb": "δηλόω → δηλῶ"
+  },
+  {
+   "stam": "ο",
+   "combo": "ο + ει",
+   "uitkomst": "οι",
+   "vb": "δηλόεις → δηλοῖς"
+  }
+ ],
+ "augment": [
+  {
+   "begin": "medeklinker",
+   "regel": "ε- ervoor",
+   "vb": [
+    [
+     "λύω",
+     "ἔλυον"
+    ],
+    [
+     "γράφω",
+     "ἔγραφον"
+    ]
+   ]
+  },
+  {
+   "begin": "α-",
+   "regel": "α → η",
+   "vb": [
+    [
+     "ἀκούω",
+     "ἤκουον"
+    ],
+    [
+     "ἄγω",
+     "ἦγον"
+    ]
+   ]
+  },
+  {
+   "begin": "ε-",
+   "regel": "ε → η",
+   "vb": [
+    [
+     "ἐλπίζω",
+     "ἤλπιζον"
+    ],
+    [
+     "ἐγείρω",
+     "ἤγειρον"
+    ]
+   ]
+  },
+  {
+   "begin": "ο-",
+   "regel": "ο → ω",
+   "vb": [
+    [
+     "ὀνομάζω",
+     "ὠνόμαζον"
+    ],
+    [
+     "ὁμιλέω",
+     "ὡμίλουν"
+    ]
+   ]
+  },
+  {
+   "begin": "αι-",
+   "regel": "αι → ῃ",
+   "vb": [
+    [
+     "αἰτέω",
+     "ᾔτουν"
+    ],
+    [
+     "αἴρω",
+     "ᾖρον"
+    ]
+   ]
+  },
+  {
+   "begin": "ει-",
+   "regel": "ει → ῃ",
+   "vb": [
+    [
+     "εἰκάζω",
+     "ᾔκαζον"
+    ]
+   ]
+  },
+  {
+   "begin": "αὐ-",
+   "regel": "αὐ → ηυ",
+   "vb": [
+    [
+     "αὐξάνω",
+     "ηὔξανον"
+    ]
+   ]
+  }
+ ]
+}

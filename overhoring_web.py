@@ -9,11 +9,11 @@ import math
 import matplotlib.pyplot as plt
 import os
 import unicodedata
-import base64
+import difflib
 from datetime import datetime
 
 try:
-    import fitz  # PyMuPDF: rendert de grammatica-slides uit de PDF
+    import fitz  # PyMuPDF: rendert de grammatica-slides
     FITZ_BESCHIKBAAR = True
 except Exception:
     FITZ_BESCHIKBAAR = False
@@ -581,9 +581,15 @@ def laad_structuurwoorden_db():
 
 @st.cache_data
 def laad_grammatica_db():
-    """Laadt de index (G-item -> titel, thema, slide-bereik) van het grammatica-overzicht."""
     if os.path.exists("grammatica_index.json"):
         with open("grammatica_index.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
+@st.cache_data
+def laad_contractie_db():
+    if os.path.exists("contractie_data.json"):
+        with open("contractie_data.json", "r", encoding="utf-8") as f:
             return json.load(f)
     return None
 
@@ -591,7 +597,6 @@ GRAMMATICA_PDF = "grammatica_overzicht.pdf"
 
 @st.cache_resource
 def open_grammatica_pdf():
-    """Opent de PDF één keer en houdt hem in het geheugen (cache_resource = niet-serialiseerbaar object)."""
     if FITZ_BESCHIKBAAR and os.path.exists(GRAMMATICA_PDF):
         try:
             return fitz.open(GRAMMATICA_PDF)
@@ -601,7 +606,6 @@ def open_grammatica_pdf():
 
 @st.cache_data(show_spinner=False)
 def render_slide(paginanummer, dpi=120):
-    """Rendert één slide (1-indexed) naar PNG-bytes. Gecached per (pagina, dpi)."""
     doc = open_grammatica_pdf()
     if doc is None:
         return None
@@ -609,8 +613,7 @@ def render_slide(paginanummer, dpi=120):
     if idx < 0 or idx >= doc.page_count:
         return None
     try:
-        pix = doc[idx].get_pixmap(dpi=dpi)
-        return pix.tobytes("png")
+        return doc[idx].get_pixmap(dpi=dpi).tobytes("png")
     except Exception:
         return None
 
@@ -2155,9 +2158,14 @@ def main():
                                                     t_tip = "❓ [Dit woord wordt getoetst]"
                                                     w_style = f"color: {txt_col}; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
                                                 else:
+                                                    v_nl = sub_w.get('vertaling_nl', '')
                                                     v_bsb = sub_w.get('vertaling_bsb', '')
                                                     p_inf = sub_w.get('parsing_info', '')
-                                                    t_tip = f"{v_bsb} ({p_inf})" if v_bsb else p_inf
+                                                    # Nederlandse glosse primair; val terug op BSB; toon EN alleen als anker
+                                                    _kern = v_nl if v_nl.strip() else v_bsb
+                                                    _en_anker = f"\nEN: {v_bsb}" if (v_nl.strip() and v_bsb.strip()) else ""
+                                                    t_tip = f"{_kern} ({p_inf})" if _kern else p_inf
+                                                    t_tip = f"{t_tip}{_en_anker}"
                                                     t_tip = t_tip.replace("'", "&#39;").replace('"', "&quot;")
                                                     w_style = f"color: {txt_col}; border-bottom: 1px dotted #555;"
 
@@ -2582,10 +2590,10 @@ def main():
                         
 
         # ==========================================
-        # TAB 8: GRAMMATICA (Overzicht G1-G50 + zelftoets)
+        # TAB 8: GRAMMATICA (zoeken · bestuderen · contractietrainer)
         # ==========================================
         with menu[7]:
-            st.subheader("📐 Grammatica-overzicht (G1–G50)")
+            st.subheader("📐 Grammatica")
             gram_db = laad_grammatica_db()
 
             if gram_db is None:
@@ -2595,21 +2603,117 @@ def main():
             else:
                 items = gram_db["items"]
                 overzichten = gram_db.get("overzichten", {})
+                slide_index = gram_db.get("slide_index", {})
+                book_toc = gram_db.get("book_toc", [])
 
                 if 'gram_stats' not in st.session_state or st.session_state.gram_stats is None:
                     st.session_state.gram_stats = {}
 
+                def toon_boekverwijzingen(info, compact=True):
+                    refs = info.get("boek_refs", [])
+                    if not refs:
+                        return
+                    regels = []
+                    for e in refs:
+                        deel = e["deel"]
+                        regels.append(f"• **Deel {deel}**, hfdst. {e['hoofdstuk']} — {e['sub']} · boek p. {e['boekpagina']} _(PDF-pag. {e['pdf_pagina']})_")
+                    with st.expander(f"📖 Vindplaats in het handboek ({len(refs)})", expanded=not compact):
+                        st.markdown("\n".join(regels))
+                        st.caption("⚠️ Automatisch gekoppeld via de inhoudsopgaven — controleer de exacte paragraaf zelf even in het boek.")
+
                 gram_modus = st.radio(
-                    "Kies je leervorm:",
-                    ["📖 Bestuderen (slides)", "🧠 Zelftoets (herken de regel)", "📊 Mijn grammatica-voortgang"],
+                    "Kies:",
+                    ["🔎 Zoeken", "📖 Bestuderen", "🔀 Contractietrainer", "📊 Voortgang"],
                     horizontal=True
                 )
                 st.write("---")
 
-                # ---------- HELPER: één G-item kiezen ----------
-                def kies_g_item(sleutel_prefix):
+                # ==========================================================
+                # MODUS: ZOEKEN
+                # ==========================================================
+                if gram_modus.startswith("🔎"):
+                    st.markdown("#### Zoek een grammaticaal onderwerp of term")
+                    st.caption("Typ bijv. *genitivus absolutus*, *aoristus*, *αὐτός*, *contractie* of *voorwaardelijke zin*. Grieks mag mét of zonder accenten, of getypt in gewone letters (*logos* → λόγος, *didwmi* → δίδωμι, θ=q, ξ=c, ω=w, ψ=y, η=h). Je krijgt de slide(s) én de vindplaats in het handboek.")
+                    zoek = st.text_input("Zoekterm:", key="gram_zoek", placeholder="genitivus absolutus")
+
+                    if zoek and len(zoek.strip()) >= 2:
+                        q = zoek.strip().lower()
+                        q_woorden = [w for w in re.split(r"\s+", q) if w]
+
+                        def _ontaccent(s):
+                            s = unicodedata.normalize("NFD", s.lower())
+                            return "".join(c for c in s if unicodedata.category(c) != "Mn")
+                        # Grieks -> Latijnse sleutel: zo matcht getypte transliteratie ('logos')
+                        # op het Griekse trefwoord (λόγος). Eén richting = robuust (ς/σ, spiritus).
+                        _GR2LAT = {'α':'a','β':'b','γ':'g','δ':'d','ε':'e','ζ':'z','η':'h','θ':'q',
+                                   'ι':'i','κ':'k','λ':'l','μ':'m','ν':'n','ξ':'c','ο':'o','π':'p',
+                                   'ρ':'r','σ':'s','ς':'s','τ':'t','υ':'u','φ':'f','χ':'x','ψ':'y','ω':'w'}
+                        def _translit(s):
+                            return "".join(_GR2LAT.get(c, c) for c in _ontaccent(s))
+                        q_norm = _ontaccent(q)
+                        q_key = _translit(q)
+                        qn_woorden = [_ontaccent(w) for w in q_woorden]
+
+                        # Score per G-item: titel > trefwoorden > OCR van slides
+                        resultaten = []
+                        for g_str, info in items.items():
+                            titel = info["titel"].lower()
+                            trefw = " ".join(info.get("trefwoorden", [])).lower()
+                            ocr_all = " ".join(
+                                slide_index.get(str(p), {}).get("ocr", "")
+                                for p in range(info["pdf_start"], info["pdf_eind"] + 1)
+                            ).lower()
+                            titel_n = _ontaccent(titel)
+                            trefw_n = _ontaccent(trefw)
+                            trefw_key = _translit(trefw)
+
+                            score = 0
+                            if q in titel: score += 100
+                            if q_norm and q_norm in trefw_n: score += 60  # Griekse trefwoord-match (accentvrij)
+                            if q_key and len(q_key) >= 3 and q_key in trefw_key: score += 45  # getypte transliteratie
+                            for w, wn in zip(q_woorden, qn_woorden):
+                                if w in titel: score += 40
+                                if w in trefw: score += 25
+                                elif wn and wn in trefw_n: score += 22  # accentvrije Griekse match
+                                if w in ocr_all: score += 6
+                            # fuzzy op titelwoorden (typefouten)
+                            for w in q_woorden:
+                                for tw in titel.split():
+                                    if len(w) >= 4 and difflib.SequenceMatcher(None, w, tw).ratio() > 0.85:
+                                        score += 15
+                            if score > 0:
+                                resultaten.append((score, int(g_str), info))
+
+                        resultaten.sort(key=lambda x: (-x[0], x[1]))
+
+                        if not resultaten:
+                            st.info("Niets gevonden. Probeer een andere term (bijv. de Latijnse naam of een kernwoord).")
+                        else:
+                            st.success(f"{len(resultaten)} onderwerp(en) gevonden.")
+                            for score, g, info in resultaten[:8]:
+                                with st.container(border=True):
+                                    st.markdown(f"**G{g} · {info['titel']}**  \n_{info['thema']} · {info['aantal']} slide(s)_")
+                                    kw = info.get("trefwoorden", [])
+                                    if kw:
+                                        st.caption("Trefwoorden: " + ", ".join(kw[:8]))
+                                    c1, c2 = st.columns([1, 1])
+                                    with c1:
+                                        if st.button(f"📖 Bekijk slides van G{g}", key=f"zoek_naar_{g}", use_container_width=True):
+                                            st.session_state["gram_spring_naar"] = g
+                                            st.session_state["gram_modus_forceer"] = "📖 Bestuderen"
+                                            st.rerun()
+                                    with c2:
+                                        first = render_slide(info["pdf_start"] + (1 if info["aantal"] > 1 else 0), dpi=70)
+                                        if first:
+                                            st.image(first, use_container_width=True)
+                                    toon_boekverwijzingen(info, compact=True)
+
+                # ==========================================================
+                # MODUS: BESTUDEREN
+                # ==========================================================
+                elif gram_modus.startswith("📖"):
                     themas = ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"]
-                    gekozen_thema = st.selectbox("Filter op thema:", themas, key=f"{sleutel_prefix}_thema")
+                    gekozen_thema = st.selectbox("Filter op thema:", themas, key="study_thema")
 
                     g_nummers = sorted(items.keys(), key=lambda x: int(x))
                     if gekozen_thema != "Alle thema's":
@@ -2617,203 +2721,222 @@ def main():
 
                     if not g_nummers:
                         st.info("Geen onderwerpen in dit thema.")
-                        return None
-
-                    labels = {g: f"G{g} · {items[g]['titel']}" for g in g_nummers}
-                    gekozen = st.selectbox(
-                        "Kies een grammatica-onderwerp:",
-                        g_nummers,
-                        format_func=lambda g: labels[g],
-                        key=f"{sleutel_prefix}_gitem"
-                    )
-                    return gekozen
-
-                # ==========================================================
-                # MODUS 1: BESTUDEREN (bladeren door de slides)
-                # ==========================================================
-                if gram_modus.startswith("📖"):
-                    gekozen_g = kies_g_item("study")
-                    if gekozen_g:
+                    else:
+                        labels = {g: f"G{g} · {items[g]['titel']}" for g in g_nummers}
+                        # eventueel doorgesprongen vanuit de zoekfunctie
+                        default_idx = 0
+                        spring = st.session_state.pop("gram_spring_naar", None)
+                        if spring is not None and str(spring) in g_nummers:
+                            default_idx = g_nummers.index(str(spring))
+                        gekozen_g = st.selectbox(
+                            "Kies een grammatica-onderwerp:", g_nummers,
+                            index=default_idx, format_func=lambda g: labels[g], key="study_gitem"
+                        )
                         info = items[gekozen_g]
-                        start, eind = info["pdf_start"], info["pdf_eind"]
-                        aantal = eind - start + 1
+                        start, eind, aantal = info["pdf_start"], info["pdf_eind"], info["aantal"]
 
                         st.markdown(f"### G{gekozen_g} · {info['titel']}")
-                        cap = f"Thema: {info['thema']} · {aantal} slide{'s' if aantal != 1 else ''}"
-                        if info.get("ng_pagina"):
-                            paginas = ", ".join(str(p) for p in info["ng_pagina"])
-                            cap += f" · Zie ook boek deel 1, p. {paginas}"
-                        st.caption(cap)
+                        st.caption(f"Thema: {info['thema']} · {aantal} slide(s)")
+                        toon_boekverwijzingen(info, compact=True)
 
                         bladerkey = f"study_pos_{gekozen_g}"
                         if bladerkey not in st.session_state:
                             st.session_state[bladerkey] = start
-                        # begrens binnen het bereik (bijv. na wisselen van onderwerp)
                         st.session_state[bladerkey] = max(start, min(eind, st.session_state[bladerkey]))
                         huidige = st.session_state[bladerkey]
 
                         c_prev, c_mid, c_next = st.columns([1, 2, 1])
                         with c_prev:
                             if st.button("⬅️ Vorige", key=f"prev_{gekozen_g}", disabled=(huidige <= start), use_container_width=True):
-                                st.session_state[bladerkey] = huidige - 1
-                                st.rerun()
+                                st.session_state[bladerkey] = huidige - 1; st.rerun()
                         with c_mid:
-                            st.markdown(f"<div style='text-align:center; padding-top:8px; font-weight:bold;'>Slide {huidige - start + 1} / {aantal}</div>", unsafe_allow_html=True)
+                            st.markdown(f"<div style='text-align:center;padding-top:8px;font-weight:bold;'>Slide {huidige-start+1} / {aantal}</div>", unsafe_allow_html=True)
                         with c_next:
                             if st.button("Volgende ➡️", key=f"next_{gekozen_g}", disabled=(huidige >= eind), use_container_width=True):
-                                st.session_state[bladerkey] = huidige + 1
-                                st.rerun()
+                                st.session_state[bladerkey] = huidige + 1; st.rerun()
 
                         png = render_slide(huidige, dpi=130)
                         if png:
                             st.image(png, use_container_width=True)
-                        else:
-                            st.warning("Deze slide kon niet worden weergegeven.")
-
-                        # Miniatuur-navigatie voor snel springen bij veel slides
                         if aantal > 1:
-                            with st.expander(f"📑 Ga direct naar slide (1–{aantal})"):
-                                spring = st.slider("Slide", 1, aantal, huidige - start + 1, key=f"slider_{gekozen_g}")
-                                doel = start + spring - 1
-                                if doel != huidige:
-                                    st.session_state[bladerkey] = doel
-                                    st.rerun()
+                            with st.expander(f"📑 Direct naar slide (1–{aantal})"):
+                                spr = st.slider("Slide", 1, aantal, huidige - start + 1, key=f"slider_{gekozen_g}")
+                                if start + spr - 1 != huidige:
+                                    st.session_state[bladerkey] = start + spr - 1; st.rerun()
 
-                    st.write("---")
-                    with st.expander("📚 Losse overzichten & samenvattingen achterin"):
-                        if overzichten:
-                            ov_keys = sorted(overzichten.keys(), key=lambda x: int(x))
-                            ov_labels = {k: overzichten[k] for k in ov_keys}
-                            gekozen_ov = st.selectbox(
-                                "Kies een overzicht:",
-                                ov_keys,
-                                format_func=lambda k: ov_labels[k],
-                                key="overzicht_keuze"
-                            )
-                            png_ov = render_slide(int(gekozen_ov), dpi=130)
-                            if png_ov:
-                                st.image(png_ov, use_container_width=True)
-                        else:
-                            st.caption("Geen losse overzichten gevonden.")
+                        st.write("---")
+                        with st.expander("📚 Losse overzichten & samenvattingen achterin"):
+                            if overzichten:
+                                ov_keys = sorted(overzichten.keys(), key=lambda x: int(x))
+                                gekozen_ov = st.selectbox("Kies een overzicht:", ov_keys,
+                                    format_func=lambda k: overzichten[k], key="overzicht_keuze")
+                                png_ov = render_slide(int(gekozen_ov), dpi=130)
+                                if png_ov:
+                                    st.image(png_ov, use_container_width=True)
+                            else:
+                                st.caption("Geen losse overzichten gevonden.")
 
                 # ==========================================================
-                # MODUS 2: ZELFTOETS (herken de regel bij een slide)
+                # MODUS: CONTRACTIETRAINER
                 # ==========================================================
-                elif gram_modus.startswith("🧠"):
-                    st.info("💡 Je krijgt een grammatica-slide te zien. Bepaal éérst zelf welk onderwerp het is en beoordeel daarna eerlijk of je het beheerste. Zo bouw je een streak op per onderwerp.")
-
-                    themas = ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"]
-                    toets_thema = st.selectbox("Oefen binnen thema:", themas, key="toets_thema")
-                    toets_pool = sorted(items.keys(), key=lambda x: int(x))
-                    if toets_thema != "Alle thema's":
-                        toets_pool = [g for g in toets_pool if items[g]["thema"] == toets_thema]
-
-                    only_zwak = st.checkbox("Alleen zwakke plekken (streak < 3)", value=False, key="toets_zwak")
-                    if only_zwak:
-                        toets_pool = [g for g in toets_pool if int(st.session_state.gram_stats.get(g, {}).get("streak", 0)) < 3]
-
-                    if not toets_pool:
-                        st.success("🎉 Geen onderwerpen over in deze selectie — alles beheerst!")
+                elif gram_modus.startswith("🔀"):
+                    cdb = laad_contractie_db()
+                    if cdb is None:
+                        st.warning("Bestand 'contractie_data.json' ontbreekt.")
                     else:
-                        # Kies (of behoud) een vraag
-                        if st.session_state.get("gram_toets_g") not in toets_pool:
-                            st.session_state.gram_toets_g = r_engine.choice(toets_pool)
-                            st.session_state.gram_toets_onthuld = False
+                        st.markdown("#### 🔀 Contractie- & samensmeltingstrainer")
+                        st.caption("Oplopende moeilijkheid: eerst de regel herkennen, daarna zelf toepassen. Traint de σ-klankwetten, de verba contracta en het augment.")
 
-                        huidig_g = st.session_state.gram_toets_g
-                        info = items[huidig_g]
-                        # Toon een representatieve slide (de tweede slide van het onderwerp indien aanwezig, anders de eerste — de eerste is vaak alleen een titel)
-                        toon_pagina = info["pdf_start"] + 1 if info["aantal"] > 1 else info["pdf_start"]
+                        niveau = st.select_slider(
+                            "Niveau",
+                            options=["1 · Herken de klankklasse", "2 · Voorspel de uitkomst", "3 · Vorm zelf (typen)"],
+                            key="contr_niveau"
+                        )
+                        soort = st.radio("Oefenstof:", ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)", "Augment (verleden tijd)"], horizontal=True, key="contr_soort")
+                        st.write("---")
 
-                        cur = st.session_state.gram_stats.get(huidig_g, {})
-                        streak = int(cur.get("streak", 0))
-                        goed = int(cur.get("g", 0)); fout = int(cur.get("f", 0))
-                        st.caption(f"Streak: {streak} · Goed/Fout: {goed}/{fout}")
+                        # bouw een platte lijst van opgaven op basis van soort
+                        def bouw_opgaven():
+                            opg = []
+                            if soort.startswith("σ"):
+                                for regel in cdb["sigma"]:
+                                    for (van, naar, bet) in regel["vb"]:
+                                        opg.append({"van": van, "naar": naar, "bet": bet,
+                                                    "klasse": regel["klasse"], "regel": regel["regel"],
+                                                    "uitkomst": regel["uitkomst"]})
+                            elif soort.startswith("Verba"):
+                                for regel in cdb["contracta"]:
+                                    opg.append({"van": regel["combo"], "naar": regel["uitkomst"],
+                                                "bet": regel["vb"], "klasse": f"stam op -{regel['stam']}",
+                                                "regel": f"{regel['combo']} → {regel['uitkomst']}",
+                                                "uitkomst": regel["uitkomst"]})
+                            else:
+                                for regel in cdb["augment"]:
+                                    for (van, naar) in regel["vb"]:
+                                        opg.append({"van": van, "naar": naar, "bet": regel["regel"],
+                                                    "klasse": f"begint met {regel['begin']}", "regel": regel["regel"],
+                                                    "uitkomst": naar})
+                            return opg
 
-                        png = render_slide(toon_pagina, dpi=120)
-                        if png:
-                            st.image(png, use_container_width=True)
+                        opgaven = bouw_opgaven()
+                        skey = f"contr_state_{soort}_{niveau}"
+                        if skey not in st.session_state:
+                            st.session_state[skey] = {"idx": r_engine.randrange(len(opgaven)), "onthuld": False, "goed": 0, "totaal": 0}
+                        stt = st.session_state[skey]
+                        opg = opgaven[stt["idx"]]
 
-                        if not st.session_state.get("gram_toets_onthuld", False):
-                            st.write("**Welk grammatica-onderwerp is dit?** Denk na en klik dan op onthullen.")
-                            if st.button("👁️ Onthul het antwoord", type="primary", key="onthul_gram"):
-                                st.session_state.gram_toets_onthuld = True
-                                st.rerun()
+                        if stt["totaal"]:
+                            st.caption(f"Deze sessie: {stt['goed']}/{stt['totaal']} goed")
+
+                        # ---- NIVEAU 1: herken de klasse ----
+                        if niveau.startswith("1"):
+                            st.markdown(f"### {opg['van']}  →  ?")
+                            if soort.startswith("σ"):
+                                st.write(f"_{opg['bet']}_ — tot welke klankklasse behoort de stam?")
+                                opties = [r["klasse"] for r in cdb["sigma"]]
+                            elif soort.startswith("Verba"):
+                                st.write("Welke uitkomst heeft deze klinkercombinatie?")
+                                opties = sorted({r["uitkomst"] for r in cdb["contracta"]})
+                            else:
+                                st.write("Welke augment-regel geldt hier?")
+                                opties = [r["regel"] for r in cdb["augment"]]
+                            goed_antwoord = opg["klasse"] if soort.startswith("σ") else (opg["uitkomst"] if soort.startswith("Verba") else opg["regel"])
+                            keuze = st.radio("Kies:", opties, key=f"n1_{skey}_{stt['idx']}")
+                            if st.button("Controleer", key=f"chk1_{skey}", type="primary"):
+                                stt["totaal"] += 1
+                                if keuze == goed_antwoord:
+                                    stt["goed"] += 1
+                                    st.success(f"✅ Juist! {opg['van']} → **{opg['naar']}** ({opg['regel']})")
+                                else:
+                                    st.error(f"❌ Het was **{goed_antwoord}**. {opg['van']} → {opg['naar']} ({opg['regel']})")
+                                registreer_oefening()
+
+                        # ---- NIVEAU 2: voorspel uitkomst (meerkeuze vorm) ----
+                        elif niveau.startswith("2"):
+                            st.markdown(f"### {opg['van']}  →  ?")
+                            st.write(f"_{opg['bet']}_" if opg.get("bet") else "")
+                            # afleiders: andere 'naar'-vormen uit dezelfde soort
+                            alle_naar = list({o["naar"] for o in opgaven})
+                            afleiders = [x for x in alle_naar if x != opg["naar"]]
+                            r_engine.shuffle(afleiders)
+                            opties = afleiders[:3] + [opg["naar"]]
+                            r_engine.shuffle(opties)
+                            keuze = st.radio("Wat is de juiste vorm?", opties, key=f"n2_{skey}_{stt['idx']}")
+                            if st.button("Controleer", key=f"chk2_{skey}", type="primary"):
+                                stt["totaal"] += 1
+                                if keuze == opg["naar"]:
+                                    stt["goed"] += 1
+                                    st.success(f"✅ Juist! Regel: {opg['regel']}")
+                                else:
+                                    st.error(f"❌ Het was **{opg['naar']}**. Regel: {opg['regel']}")
+                                registreer_oefening()
+
+                        # ---- NIVEAU 3: zelf typen ----
                         else:
-                            st.success(f"**G{huidig_g} · {info['titel']}**  \n_Thema: {info['thema']}_")
-                            st.write("Wist je dit onderwerp te benoemen?")
-                            b1, b2 = st.columns(2)
-                            with b1:
-                                if st.button("✅ Ja, ik wist het", key="gram_goed", use_container_width=True):
-                                    entry = st.session_state.gram_stats.get(huidig_g, {"g": 0, "f": 0, "streak": 0})
-                                    entry["g"] = int(entry.get("g", 0)) + 1
-                                    entry["streak"] = int(entry.get("streak", 0)) + 1
-                                    entry["laatst_geoefend"] = str(datetime.now().date())
-                                    st.session_state.gram_stats[huidig_g] = entry
-                                    registreer_oefening()
-                                    st.session_state.gram_toets_g = r_engine.choice(toets_pool)
-                                    st.session_state.gram_toets_onthuld = False
-                                    trigger_save()
-                                    st.rerun()
-                            with b2:
-                                if st.button("❌ Nee, nog niet", key="gram_fout", use_container_width=True):
-                                    entry = st.session_state.gram_stats.get(huidig_g, {"g": 0, "f": 0, "streak": 0})
-                                    entry["f"] = int(entry.get("f", 0)) + 1
-                                    entry["streak"] = max(0, int(entry.get("streak", 0)) - 2)
-                                    entry["laatst_geoefend"] = str(datetime.now().date())
-                                    st.session_state.gram_stats[huidig_g] = entry
-                                    registreer_oefening()
-                                    st.session_state.gram_toets_g = huidig_g  # herhaal hetzelfde onderwerp niet direct? -> nieuwe kiezen
-                                    st.session_state.gram_toets_g = r_engine.choice(toets_pool)
-                                    st.session_state.gram_toets_onthuld = False
-                                    trigger_save()
-                                    st.rerun()
+                            st.markdown(f"### {opg['van']}  →  ?")
+                            st.write(f"_{opg['bet']}_" if opg.get("bet") else "")
+                            st.caption("Typ de gecontraheerde/samengesmolten vorm (Grieks). Kleine accentafwijkingen worden soepel nagekeken.")
+                            antwoord = st.text_input("Jouw vorm:", key=f"n3_{skey}_{stt['idx']}")
+                            if st.button("Controleer", key=f"chk3_{skey}", type="primary"):
+                                stt["totaal"] += 1
+                                def norm(s):
+                                    s = unicodedata.normalize("NFD", s.strip().lower())
+                                    return "".join(c for c in s if unicodedata.category(c) != "Mn")
+                                if antwoord and norm(antwoord) == norm(opg["naar"]):
+                                    stt["goed"] += 1
+                                    st.success(f"✅ Precies! {opg['van']} → **{opg['naar']}** ({opg['regel']})")
+                                elif antwoord and difflib.SequenceMatcher(None, norm(antwoord), norm(opg["naar"])).ratio() > 0.8:
+                                    stt["goed"] += 1
+                                    st.success(f"✅ Goed (op accenten na). Correct: **{opg['naar']}** ({opg['regel']})")
+                                else:
+                                    st.error(f"❌ Het was **{opg['naar']}** ({opg['regel']})")
+                                registreer_oefening()
 
-                            st.write("---")
-                            if st.button("📖 Bekijk alle slides van dit onderwerp", key="gram_naar_studie"):
-                                st.info(f"Ga naar de leervorm 'Bestuderen' en kies G{huidig_g} om alle {info['aantal']} slides te doorlopen.")
+                        cA, cB = st.columns(2)
+                        with cA:
+                            if st.button("➡️ Volgende opgave", key=f"next_contr_{skey}", use_container_width=True):
+                                stt["idx"] = r_engine.randrange(len(opgaven))
+                                stt["onthuld"] = False
+                                st.rerun()
+                        with cB:
+                            with st.expander("📋 Toon alle regels (spiekbriefje)"):
+                                if soort.startswith("σ"):
+                                    for regel in cdb["sigma"]:
+                                        st.markdown(f"**{regel['klasse']}** ({regel['medeklinkers']}) → {regel['uitkomst']}  \n_{regel['regel']}_")
+                                elif soort.startswith("Verba"):
+                                    for regel in cdb["contracta"]:
+                                        st.markdown(f"stam -{regel['stam']}: **{regel['combo']} → {regel['uitkomst']}** _(bv. {regel['vb']})_")
+                                else:
+                                    for regel in cdb["augment"]:
+                                        st.markdown(f"**{regel['begin']}**: {regel['regel']}")
 
                 # ==========================================================
-                # MODUS 3: VOORTGANG
+                # MODUS: VOORTGANG
                 # ==========================================================
                 else:
                     st.markdown("### 📊 Jouw grammatica-voortgang per onderwerp")
-                    st.caption("De streak loopt op bij elke keer dat je een onderwerp in de zelftoets correct herkent. Vanaf streak 3 rekenen we een onderwerp als 'op weg', vanaf 8 als 'beheerst'.")
-
+                    st.caption("Deze telling gebruikt je oefenmomenten in dit tabblad. Vanaf 3 correcte herkenningen op rij = 'op weg', vanaf 8 = 'beheerst'.")
                     rijen = []
                     for g in sorted(items.keys(), key=lambda x: int(x)):
                         s = st.session_state.gram_stats.get(g, {})
                         streak = int(s.get("streak", 0))
                         if streak >= 8: status = "🟢 Beheerst"
                         elif streak >= 3: status = "🟡 Op weg"
-                        elif streak >= 1 or int(s.get("g", 0)) > 0 or int(s.get("f", 0)) > 0: status = "🟠 Begonnen"
+                        elif streak >= 1 or int(s.get("g", 0)) or int(s.get("f", 0)): status = "🟠 Begonnen"
                         else: status = "⚪ Nog niet"
-                        rijen.append({
-                            "Onderwerp": f"G{g} · {items[g]['titel']}",
-                            "Thema": items[g]["thema"],
-                            "Streak": streak,
-                            "Goed": int(s.get("g", 0)),
-                            "Fout": int(s.get("f", 0)),
-                            "Status": status,
-                        })
-
+                        rijen.append({"Onderwerp": f"G{g} · {items[g]['titel']}", "Thema": items[g]["thema"],
+                                      "Streak": streak, "Goed": int(s.get("g", 0)), "Fout": int(s.get("f", 0)), "Status": status})
                     df_gram = pd.DataFrame(rijen)
                     beheerst = sum(1 for r in rijen if "Beheerst" in r["Status"])
-                    op_weg = sum(1 for r in rijen if "Op weg" in r["Status"])
-                    begonnen = sum(1 for r in rijen if "Begonnen" in r["Status"])
                     totaal = len(rijen)
-
-                    m1, m2, m3, m4 = st.columns(4)
+                    m1, m2, m3 = st.columns(3)
                     m1.metric("Beheerst", f"{beheerst}/{totaal}")
-                    m2.metric("Op weg", op_weg)
-                    m3.metric("Begonnen", begonnen)
-                    m4.metric("Voortgang", f"{int(100 * beheerst / totaal) if totaal else 0}%")
-
+                    m2.metric("Op weg", sum(1 for r in rijen if "Op weg" in r["Status"]))
+                    m3.metric("Voortgang", f"{int(100*beheerst/totaal) if totaal else 0}%")
                     st.progress(beheerst / totaal if totaal else 0)
                     st.write("---")
-
-                    thema_filter = st.selectbox("Toon thema:", ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"], key="voortgang_thema")
-                    toon_df = df_gram if thema_filter == "Alle thema's" else df_gram[df_gram["Thema"] == thema_filter]
+                    tf = st.selectbox("Toon thema:", ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"], key="voortgang_thema")
+                    toon_df = df_gram if tf == "Alle thema's" else df_gram[df_gram["Thema"] == tf]
                     st.dataframe(toon_df, use_container_width=True, hide_index=True)
 
         # ==========================================

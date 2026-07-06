@@ -6,7 +6,31 @@
    "pdf_start": 3,
    "pdf_eind": 10,
    "aantal": 8,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 1,
+     "sub": "Het Griekse schrift / alfabet",
+     "boekpagina": 19,
+     "deel": 1,
+     "pdf_pagina": 14
+    },
+    {
+     "hoofdstuk": 1,
+     "sub": "Klinkers, tweeklanken, accenten, leestekens, spiritus",
+     "boekpagina": 23,
+     "deel": 1,
+     "pdf_pagina": 18
+    }
+   ],
+   "trefwoorden": [
+    "alfabet",
+    "letters",
+    "uitspraak",
+    "erasmus",
+    "iota subscriptum",
+    "tweeklanken"
+   ]
   },
   "2": {
    "titel": "Spiritus, accenten en leestekens",
@@ -14,7 +38,27 @@
    "pdf_start": 11,
    "pdf_eind": 16,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 1,
+     "sub": "Klinkers, tweeklanken, accenten, leestekens, spiritus",
+     "boekpagina": 23,
+     "deel": 1,
+     "pdf_pagina": 18
+    }
+   ],
+   "trefwoorden": [
+    "spiritus",
+    "asper",
+    "lenis",
+    "accenten",
+    "acutus",
+    "gravis",
+    "circumflexus",
+    "leestekens",
+    "enclitica"
+   ]
   },
   "3": {
    "titel": "Voorzetsels en voorvoegsels",
@@ -22,7 +66,27 @@
    "pdf_start": 17,
    "pdf_eind": 22,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 6,
+     "sub": "Preposities / voorzetsels",
+     "boekpagina": 59,
+     "deel": 1,
+     "pdf_pagina": 54
+    }
+   ],
+   "trefwoorden": [
+    "voorzetsels",
+    "preposities",
+    "voorvoegsels",
+    "composita",
+    "ἐν",
+    "εἰς",
+    "ἐκ",
+    "πρός",
+    "διά"
+   ]
   },
   "4": {
    "titel": "Nomina: naamval, geslacht en getal",
@@ -30,7 +94,32 @@
    "pdf_start": 23,
    "pdf_eind": 44,
    "aantal": 22,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 2,
+     "sub": "Substantiva / zelfstandige naamwoorden – inleiding",
+     "boekpagina": 27,
+     "deel": 1,
+     "pdf_pagina": 22
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Grammaticale termen",
+     "boekpagina": 89,
+     "deel": 1,
+     "pdf_pagina": 86
+    }
+   ],
+   "trefwoorden": [
+    "naamval",
+    "geslacht",
+    "getal",
+    "nomina",
+    "verbuiging",
+    "declinatie",
+    "casus"
+   ]
   },
   "5": {
    "titel": "Lidwoorden",
@@ -38,7 +127,22 @@
    "pdf_start": 45,
    "pdf_eind": 53,
    "aantal": 9,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 2,
+     "sub": "Lidwoord",
+     "boekpagina": 30,
+     "deel": 1,
+     "pdf_pagina": 25
+    }
+   ],
+   "trefwoorden": [
+    "lidwoord",
+    "artikel",
+    "ὁ ἡ τό",
+    "bepaald"
+   ]
   },
   "6": {
    "titel": "Substantiva 1e en 2e declinatie",
@@ -46,7 +150,31 @@
    "pdf_start": 54,
    "pdf_eind": 66,
    "aantal": 13,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 2,
+     "sub": "Eerste declinatie (a-stammen)",
+     "boekpagina": 31,
+     "deel": 1,
+     "pdf_pagina": 26
+    },
+    {
+     "hoofdstuk": 2,
+     "sub": "Tweede declinatie (o-stammen)",
+     "boekpagina": 34,
+     "deel": 1,
+     "pdf_pagina": 29
+    }
+   ],
+   "trefwoorden": [
+    "substantiva",
+    "eerste declinatie",
+    "tweede declinatie",
+    "a-stammen",
+    "o-stammen",
+    "zelfstandig naamwoord"
+   ]
   },
   "7": {
    "titel": "Partikels en voegwoorden",
@@ -54,7 +182,25 @@
    "pdf_start": 67,
    "pdf_eind": 69,
    "aantal": 3,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Partikels",
+     "boekpagina": 260,
+     "deel": 2,
+     "pdf_pagina": 35
+    }
+   ],
+   "trefwoorden": [
+    "partikels",
+    "voegwoorden",
+    "καί",
+    "δέ",
+    "γάρ",
+    "μέν",
+    "conjuncties"
+   ]
   },
   "8": {
    "titel": "Verba: modus, tempus, diathese, pers., getal",
@@ -62,7 +208,53 @@
    "pdf_start": 70,
    "pdf_eind": 74,
    "aantal": 5,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 9,
+     "sub": "Verba / werkwoorden – inleiding; het Griekse werkwoord",
+     "boekpagina": 83,
+     "deel": 1,
+     "pdf_pagina": 80
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Tempora / tijden",
+     "boekpagina": 84,
+     "deel": 1,
+     "pdf_pagina": 81
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Modi / wijzen en participia / deelwoorden",
+     "boekpagina": 85,
+     "deel": 1,
+     "pdf_pagina": 82
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Genera verbi / geslachten van het werkwoord",
+     "boekpagina": 87,
+     "deel": 1,
+     "pdf_pagina": 84
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Grammaticale termen",
+     "boekpagina": 89,
+     "deel": 1,
+     "pdf_pagina": 86
+    }
+   ],
+   "trefwoorden": [
+    "modus",
+    "tempus",
+    "diathese",
+    "persoon",
+    "getal",
+    "verbum",
+    "werkwoord eigenschappen"
+   ]
   },
   "9": {
    "titel": "Indicativus, imperativus, infinitivus praesens",
@@ -70,7 +262,38 @@
    "pdf_start": 75,
    "pdf_eind": 83,
    "aantal": 9,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Modi / wijzen en participia / deelwoorden",
+     "boekpagina": 85,
+     "deel": 1,
+     "pdf_pagina": 82
+    }
+   ],
+   "trefwoorden": [
+    "indicativus",
+    "imperativus",
+    "infinitivus",
+    "praesens",
+    "tegenwoordige tijd",
+    "persoonsuitgangen"
+   ]
   },
   "10": {
    "titel": "Imperfectum en futurum",
@@ -78,7 +301,30 @@
    "pdf_start": 84,
    "pdf_eind": 89,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "imperfectum",
+    "futurum",
+    "toekomende tijd",
+    "verleden tijd",
+    "augment sigma"
+   ]
   },
   "11": {
    "titel": "Augment",
@@ -86,7 +332,30 @@
    "pdf_start": 90,
    "pdf_eind": 95,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "augment",
+    "verleden tijd",
+    "ε-augment",
+    "reduplicatie",
+    "verlenging"
+   ]
   },
   "12": {
    "titel": "Het werkwoord 'zijn'",
@@ -94,7 +363,30 @@
    "pdf_start": 96,
    "pdf_eind": 97,
    "aantal": 2,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "εἰμί",
+    "zijn",
+    "koppelwerkwoord",
+    "onregelmatig werkwoord",
+    "ἦν"
+   ]
   },
   "13": {
    "titel": "Negaties",
@@ -102,7 +394,24 @@
    "pdf_start": 98,
    "pdf_eind": 100,
    "aantal": 3,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Partikels",
+     "boekpagina": 260,
+     "deel": 2,
+     "pdf_pagina": 35
+    }
+   ],
+   "trefwoorden": [
+    "negatie",
+    "ontkenning",
+    "οὐ",
+    "μή",
+    "niet",
+    "οὐδείς"
+   ]
   },
   "14": {
    "titel": "Adiectiva 1e/2e declinatie",
@@ -112,6 +421,29 @@
    "aantal": 7,
    "ng_pagina": [
     48
+   ],
+   "boek_refs": [
+    {
+     "hoofdstuk": 3,
+     "sub": "Adiectiva / bijvoeglijke naamwoorden",
+     "boekpagina": 45,
+     "deel": 1,
+     "pdf_pagina": 40
+    },
+    {
+     "hoofdstuk": 3,
+     "sub": "Adiectiva bij substantiva; zelfstandig gebruikte adiectiva",
+     "boekpagina": 50,
+     "deel": 1,
+     "pdf_pagina": 45
+    }
+   ],
+   "trefwoorden": [
+    "adiectiva",
+    "bijvoeglijk naamwoord",
+    "1e declinatie",
+    "2e declinatie",
+    "congruentie"
    ]
   },
   "15": {
@@ -120,7 +452,31 @@
    "pdf_start": 108,
    "pdf_eind": 114,
    "aantal": 7,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "aoristus",
+    "sigma-aoristus",
+    "verleden tijd",
+    "ingressief",
+    "gnomisch",
+    "stamaoristus"
+   ]
   },
   "16": {
    "titel": "Pronomen personale",
@@ -128,7 +484,34 @@
    "pdf_start": 115,
    "pdf_eind": 120,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Het voornaamwoord αὐτός",
+     "boekpagina": 68,
+     "deel": 1,
+     "pdf_pagina": 63
+    },
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina personalia / persoonlijke voornaamwoorden",
+     "boekpagina": 69,
+     "deel": 1,
+     "pdf_pagina": 64
+    }
+   ],
+   "trefwoorden": [
+    "pronomen personale",
+    "persoonlijk voornaamwoord",
+    "ἐγώ",
+    "σύ",
+    "ἡμεῖς",
+    "ὑμεῖς",
+    "αὐτός",
+    "hij zij het",
+    "3e persoon"
+   ]
   },
   "17": {
    "titel": "Verba muta",
@@ -136,7 +519,25 @@
    "pdf_start": 121,
    "pdf_eind": 125,
    "aantal": 5,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω: bijzonderheden",
+     "boekpagina": 173,
+     "deel": 1,
+     "pdf_pagina": 170
+    }
+   ],
+   "trefwoorden": [
+    "verba muta",
+    "stomme medeklinkers",
+    "labialen",
+    "gutturalen",
+    "dentalen",
+    "π β φ κ γ χ τ δ θ",
+    "contractie sigma"
+   ]
   },
   "18": {
    "titel": "Perfectum en plusquamperfectum",
@@ -147,6 +548,30 @@
    "ng_pagina": [
     184,
     185
+   ],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "perfectum",
+    "plusquamperfectum",
+    "voltooid",
+    "reduplicatie",
+    "resultatief",
+    "κ-perfectum"
    ]
   },
   "19": {
@@ -155,7 +580,24 @@
    "pdf_start": 143,
    "pdf_eind": 153,
    "aantal": 11,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina demonstrativa / aanwijzende voornaamwoorden",
+     "boekpagina": 67,
+     "deel": 1,
+     "pdf_pagina": 62
+    }
+   ],
+   "trefwoorden": [
+    "pronomen demonstrativum",
+    "aanwijzend voornaamwoord",
+    "οὗτος",
+    "ἐκεῖνος",
+    "ὅδε",
+    "αὐτός"
+   ]
   },
   "20": {
    "titel": "Verba contracta",
@@ -163,7 +605,40 @@
    "pdf_start": 154,
    "pdf_eind": 159,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω: bijzonderheden",
+     "boekpagina": 173,
+     "deel": 1,
+     "pdf_pagina": 170
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "verba contracta",
+    "samentrekking",
+    "contractie",
+    "α ε ο",
+    "ποιέω",
+    "ἀγαπάω",
+    "φιλέω",
+    "stamklinker"
+   ]
   },
   "21": {
    "titel": "Pronomen relativum",
@@ -171,7 +646,29 @@
    "pdf_start": 160,
    "pdf_eind": 169,
    "aantal": 10,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina relativa / betrekkelijke voornaamwoorden",
+     "boekpagina": 74,
+     "deel": 1,
+     "pdf_pagina": 71
+    },
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina correlativa / correlatieve voornaamwoorden",
+     "boekpagina": 76,
+     "deel": 1,
+     "pdf_pagina": 73
+    }
+   ],
+   "trefwoorden": [
+    "pronomen relativum",
+    "betrekkelijk voornaamwoord",
+    "ὅς ἥ ὅ",
+    "relatief"
+   ]
   },
   "22": {
    "titel": "Pronomen reflexivum en reciprocum",
@@ -179,7 +676,31 @@
    "pdf_start": 170,
    "pdf_eind": 175,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina reflexiva / wederkerende voornaamwoorden",
+     "boekpagina": 71,
+     "deel": 1,
+     "pdf_pagina": 66
+    },
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomen reciprocum / wederkerig voornaamwoord",
+     "boekpagina": 72,
+     "deel": 1,
+     "pdf_pagina": 69
+    }
+   ],
+   "trefwoorden": [
+    "pronomen reflexivum",
+    "wederkerend",
+    "ἐμαυτοῦ",
+    "pronomen reciprocum",
+    "wederkerig",
+    "ἀλλήλων"
+   ]
   },
   "23": {
    "titel": "Verba liquida",
@@ -187,7 +708,24 @@
    "pdf_start": 176,
    "pdf_eind": 180,
    "aantal": 5,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω: bijzonderheden",
+     "boekpagina": 173,
+     "deel": 1,
+     "pdf_pagina": 170
+    }
+   ],
+   "trefwoorden": [
+    "verba liquida",
+    "vloeiklanken",
+    "λ μ ν ρ",
+    "circumflexus",
+    "μένω",
+    "liquida-aoristus"
+   ]
   },
   "24": {
    "titel": "Thematische aoristus en stamaoristus",
@@ -195,7 +733,30 @@
    "pdf_start": 181,
    "pdf_eind": 189,
    "aantal": 9,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "thematische aoristus",
+    "stamaoristus",
+    "wortelaoristus",
+    "ἔλαβον",
+    "2e aoristus"
+   ]
   },
   "25": {
    "titel": "Pronomen possessivum",
@@ -203,7 +764,23 @@
    "pdf_start": 190,
    "pdf_eind": 193,
    "aantal": 4,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina possessiva / bezittelijke voornaamwoorden",
+     "boekpagina": 72,
+     "deel": 1,
+     "pdf_pagina": 69
+    }
+   ],
+   "trefwoorden": [
+    "pronomen possessivum",
+    "bezittelijk",
+    "ἐμός",
+    "σός",
+    "ἡμέτερος"
+   ]
   },
   "26": {
    "titel": "Diathese: actief, medium of passief",
@@ -211,7 +788,31 @@
    "pdf_start": 194,
    "pdf_eind": 203,
    "aantal": 10,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 13,
+     "sub": "Werkwoord – Genera verbi: Activum/Medium/Passivum",
+     "boekpagina": 237,
+     "deel": 2,
+     "pdf_pagina": 12
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Genera verbi / geslachten van het werkwoord",
+     "boekpagina": 87,
+     "deel": 1,
+     "pdf_pagina": 84
+    }
+   ],
+   "trefwoorden": [
+    "diathese",
+    "activum",
+    "medium",
+    "passivum",
+    "mediaal",
+    "genera verbi"
+   ]
   },
   "27": {
    "titel": "Medium praesens en imperfectum",
@@ -219,7 +820,29 @@
    "pdf_start": 204,
    "pdf_eind": 207,
    "aantal": 4,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "medium praesens",
+    "medium imperfectum",
+    "mediale uitgangen",
+    "μαι σαι ται"
+   ]
   },
   "28": {
    "titel": "Stamtijden",
@@ -227,7 +850,22 @@
    "pdf_start": 208,
    "pdf_eind": 209,
    "aantal": 2,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 11,
+     "sub": "Stamtijden",
+     "boekpagina": 213,
+     "deel": 1,
+     "pdf_pagina": 210
+    }
+   ],
+   "trefwoorden": [
+    "stamtijden",
+    "principale delen",
+    "zes stamtijden",
+    "tempusstammen"
+   ]
   },
   "29": {
    "titel": "Substantiva 3e declinatie",
@@ -235,7 +873,30 @@
    "pdf_start": 210,
    "pdf_eind": 220,
    "aantal": 11,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 2,
+     "sub": "Derde declinatie: medeklinkerstammen",
+     "boekpagina": 36,
+     "deel": 1,
+     "pdf_pagina": 31
+    },
+    {
+     "hoofdstuk": 2,
+     "sub": "Derde declinatie: klinker- en sigmastammen",
+     "boekpagina": 38,
+     "deel": 1,
+     "pdf_pagina": 33
+    }
+   ],
+   "trefwoorden": [
+    "derde declinatie",
+    "medeklinkerstammen",
+    "substantiva 3e",
+    "γυνή",
+    "ἀνήρ"
+   ]
   },
   "30": {
    "titel": "Vragend en onbepaald voornaamwoord",
@@ -243,7 +904,31 @@
    "pdf_start": 221,
    "pdf_eind": 222,
    "aantal": 2,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina interrogativa / vragende voornaamwoorden",
+     "boekpagina": 73,
+     "deel": 1,
+     "pdf_pagina": 70
+    },
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina indefinita / onbepaalde voornaamwoorden",
+     "boekpagina": 73,
+     "deel": 1,
+     "pdf_pagina": 70
+    }
+   ],
+   "trefwoorden": [
+    "pronomen interrogativum",
+    "vragend",
+    "τίς τί",
+    "pronomen indefinitum",
+    "onbepaald",
+    "τις τι"
+   ]
   },
   "31": {
    "titel": "Medium futurum en aoristus",
@@ -253,6 +938,28 @@
    "aantal": 9,
    "ng_pagina": [
     186
+   ],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "medium futurum",
+    "medium aoristus",
+    "deponens",
+    "futurum medium"
    ]
   },
   "32": {
@@ -261,7 +968,23 @@
    "pdf_start": 232,
    "pdf_eind": 235,
    "aantal": 4,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 8,
+     "sub": "Numeralia / telwoorden",
+     "boekpagina": 79,
+     "deel": 1,
+     "pdf_pagina": 76
+    }
+   ],
+   "trefwoorden": [
+    "telwoorden",
+    "numeralia",
+    "getallen",
+    "εἷς δύο τρεῖς",
+    "hoofdtelwoord"
+   ]
   },
   "33": {
    "titel": "Accusativus cum Infinitivo",
@@ -269,7 +992,22 @@
    "pdf_start": 236,
    "pdf_eind": 239,
    "aantal": 4,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Accusativus cum infinitivo (AcI)",
+     "boekpagina": 253,
+     "deel": 2,
+     "pdf_pagina": 28
+    }
+   ],
+   "trefwoorden": [
+    "accusativus cum infinitivo",
+    "AcI",
+    "subjectsaccusativus",
+    "dat-zin"
+   ]
   },
   "34": {
    "titel": "Adjectiva 3e declinatie",
@@ -277,7 +1015,14 @@
    "pdf_start": 240,
    "pdf_eind": 246,
    "aantal": 7,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [],
+   "trefwoorden": [
+    "adjectiva 3e declinatie",
+    "ἀληθής",
+    "πᾶς",
+    "gemengde declinatie"
+   ]
   },
   "35": {
    "titel": "Passivum aoristus en futurum",
@@ -285,7 +1030,29 @@
    "pdf_start": 247,
    "pdf_eind": 255,
    "aantal": 9,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "passivum aoristus",
+    "passivum futurum",
+    "θη-aoristus",
+    " θήσομαι"
+   ]
   },
   "36": {
    "titel": "Medium perfectum en plusquamperfectum",
@@ -293,7 +1060,29 @@
    "pdf_start": 256,
    "pdf_eind": 263,
    "aantal": 8,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -ω / thematische verba",
+     "boekpagina": 115,
+     "deel": 1,
+     "pdf_pagina": 112
+    },
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "medium perfectum",
+    "medium plusquamperfectum",
+    "passief perfectum",
+    "reduplicatie medium"
+   ]
   },
   "37": {
    "titel": "Correlativa",
@@ -301,7 +1090,23 @@
    "pdf_start": 264,
    "pdf_eind": 267,
    "aantal": 4,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 7,
+     "sub": "Pronomina correlativa / correlatieve voornaamwoorden",
+     "boekpagina": 76,
+     "deel": 1,
+     "pdf_pagina": 73
+    }
+   ],
+   "trefwoorden": [
+    "correlativa",
+    "correlatief",
+    "τοσοῦτος",
+    "τοιοῦτος",
+    "ὅσος"
+   ]
   },
   "38": {
    "titel": "Participium: vorming λύω en gebruik",
@@ -309,7 +1114,31 @@
    "pdf_start": 268,
    "pdf_eind": 291,
    "aantal": 24,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 13,
+     "sub": "Participia / deelwoorden",
+     "boekpagina": 245,
+     "deel": 2,
+     "pdf_pagina": 20
+    },
+    {
+     "hoofdstuk": 9,
+     "sub": "Modi / wijzen en participia / deelwoorden",
+     "boekpagina": 85,
+     "deel": 1,
+     "pdf_pagina": 82
+    }
+   ],
+   "trefwoorden": [
+    "participium",
+    "deelwoord",
+    "λύων λύουσα λῦον",
+    "predicatief",
+    "attributief",
+    "genitivus absolutus"
+   ]
   },
   "39": {
    "titel": "Participium: bijzondere vormingswijzen",
@@ -317,7 +1146,23 @@
    "pdf_start": 292,
    "pdf_eind": 302,
    "aantal": 11,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 13,
+     "sub": "Participia / deelwoorden",
+     "boekpagina": 245,
+     "deel": 2,
+     "pdf_pagina": 20
+    }
+   ],
+   "trefwoorden": [
+    "participium bijzonder",
+    "aoristus participium",
+    "perfectum participium",
+    "λύσας",
+    "λελυκώς"
+   ]
   },
   "40": {
    "titel": "Genitivus absolutus",
@@ -325,7 +1170,22 @@
    "pdf_start": 303,
    "pdf_eind": 305,
    "aantal": 3,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Genitivus absolutus",
+     "boekpagina": 256,
+     "deel": 2,
+     "pdf_pagina": 31
+    }
+   ],
+   "trefwoorden": [
+    "genitivus absolutus",
+    "losse genitivus",
+    "bijzin",
+    "αὐτοῦ λαλοῦντος"
+   ]
   },
   "41": {
    "titel": "Accusativus cum Participio",
@@ -333,7 +1193,22 @@
    "pdf_start": 306,
    "pdf_eind": 307,
    "aantal": 2,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Accusativus cum infinitivo (AcI)",
+     "boekpagina": 253,
+     "deel": 2,
+     "pdf_pagina": 28
+    }
+   ],
+   "trefwoorden": [
+    "accusativus cum participio",
+    "AcP",
+    "zien horen",
+    "ὁράω ἀκούω"
+   ]
   },
   "42": {
    "titel": "Gesubstantiveerde infinitivus + voorzetsel",
@@ -343,6 +1218,22 @@
    "aantal": 3,
    "ng_pagina": [
     259
+   ],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Gesubstantiveerde infinitivus",
+     "boekpagina": 258,
+     "deel": 2,
+     "pdf_pagina": 33
+    }
+   ],
+   "trefwoorden": [
+    "gesubstantiveerde infinitivus",
+    "τό + infinitivus",
+    "voorzetsel infinitivus",
+    "ἐν τῷ",
+    "διὰ τό"
    ]
   },
   "43": {
@@ -351,7 +1242,32 @@
    "pdf_start": 311,
    "pdf_eind": 317,
    "aantal": 7,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 4,
+     "sub": "Trappen van vergelijking van de adjectiva (comparativus/superlativus)",
+     "boekpagina": 53,
+     "deel": 1,
+     "pdf_pagina": 48
+    },
+    {
+     "hoofdstuk": 5,
+     "sub": "Trappen van vergelijking van de bijwoorden",
+     "boekpagina": 57,
+     "deel": 1,
+     "pdf_pagina": 52
+    }
+   ],
+   "trefwoorden": [
+    "trappen van vergelijking",
+    "comparativus",
+    "superlativus",
+    "vergrotende trap",
+    "overtreffende trap",
+    "μᾶλλον",
+    "-τερος -τατος"
+   ]
   },
   "44": {
    "titel": "Coniunctivus: vorming λύω en gebruik",
@@ -359,7 +1275,24 @@
    "pdf_start": 318,
    "pdf_eind": 331,
    "aantal": 14,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 13,
+     "sub": "Modi / wijzen",
+     "boekpagina": 241,
+     "deel": 2,
+     "pdf_pagina": 16
+    }
+   ],
+   "trefwoorden": [
+    "coniunctivus",
+    "aanvoegende wijs",
+    "ἵνα",
+    "ἐάν",
+    "ὅταν",
+    "conjunctief"
+   ]
   },
   "45": {
    "titel": "Coniunctivus: bijzondere vormingswijzen",
@@ -367,7 +1300,21 @@
    "pdf_start": 332,
    "pdf_eind": 337,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 13,
+     "sub": "Modi / wijzen",
+     "boekpagina": 241,
+     "deel": 2,
+     "pdf_pagina": 16
+    }
+   ],
+   "trefwoorden": [
+    "coniunctivus bijzonder",
+    "aoristus coniunctivus",
+    "conjunctief vorming"
+   ]
   },
   "46": {
    "titel": "Bijwoorden",
@@ -375,7 +1322,23 @@
    "pdf_start": 338,
    "pdf_eind": 341,
    "aantal": 4,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 5,
+     "sub": "Trappen van vergelijking van de bijwoorden",
+     "boekpagina": 57,
+     "deel": 1,
+     "pdf_pagina": 52
+    }
+   ],
+   "trefwoorden": [
+    "bijwoorden",
+    "adverbia",
+    "-ως",
+    "καλῶς",
+    "adverbiaal"
+   ]
   },
   "47": {
    "titel": "ἄν + indicativus: irrealis",
@@ -383,7 +1346,31 @@
    "pdf_start": 342,
    "pdf_eind": 344,
    "aantal": 3,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 15,
+     "sub": "Partikels",
+     "boekpagina": 260,
+     "deel": 2,
+     "pdf_pagina": 35
+    },
+    {
+     "hoofdstuk": 14,
+     "sub": "Bijzinnen",
+     "boekpagina": 247,
+     "deel": 2,
+     "pdf_pagina": 22
+    }
+   ],
+   "trefwoorden": [
+    "ἄν",
+    "irrealis",
+    "potentialis",
+    "zou",
+    "onwerkelijk",
+    "hypothetisch"
+   ]
   },
   "48": {
    "titel": "Optativus",
@@ -391,7 +1378,23 @@
    "pdf_start": 345,
    "pdf_eind": 356,
    "aantal": 12,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 13,
+     "sub": "Modi / wijzen",
+     "boekpagina": 241,
+     "deel": 2,
+     "pdf_pagina": 16
+    }
+   ],
+   "trefwoorden": [
+    "optativus",
+    "wensende wijs",
+    "γένοιτο",
+    "μὴ γένοιτο",
+    "optatief"
+   ]
   },
   "49": {
    "titel": "Werkwoorden op -μι: medeklinkerstammen",
@@ -399,7 +1402,24 @@
    "pdf_start": 357,
    "pdf_eind": 362,
    "aantal": 6,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "werkwoorden op -μι",
+    "athematisch",
+    "medeklinkerstam",
+    "δίδωμι",
+    "τίθημι",
+    "ἵστημι"
+   ]
   },
   "50": {
    "titel": "Werkwoorden op -μι: vocaalstammen",
@@ -407,7 +1427,24 @@
    "pdf_start": 363,
    "pdf_eind": 367,
    "aantal": 5,
-   "ng_pagina": []
+   "ng_pagina": [],
+   "boek_refs": [
+    {
+     "hoofdstuk": 10,
+     "sub": "Verba op -μι / athematische verba",
+     "boekpagina": 186,
+     "deel": 1,
+     "pdf_pagina": 183
+    }
+   ],
+   "trefwoorden": [
+    "werkwoorden op -μι",
+    "vocaalstam",
+    "δίδωμι",
+    "τίθημι",
+    "ἵημι",
+    "athematisch"
+   ]
   }
  },
  "overzichten": {
@@ -421,5 +1458,2542 @@
   "375": "Overzicht gebruik coniunctivus",
   "376": "Overzicht ἄν + modi/tempora"
  },
- "totaal_slides": 376
+ "totaal_slides": 376,
+ "book_toc": [
+  {
+   "hoofdstuk": 1,
+   "sub": "Het Griekse schrift / alfabet",
+   "boekpagina": 19,
+   "deel": 1,
+   "pdf_pagina": 14
+  },
+  {
+   "hoofdstuk": 1,
+   "sub": "Klinkers, tweeklanken, accenten, leestekens, spiritus",
+   "boekpagina": 23,
+   "deel": 1,
+   "pdf_pagina": 18
+  },
+  {
+   "hoofdstuk": 2,
+   "sub": "Substantiva / zelfstandige naamwoorden – inleiding",
+   "boekpagina": 27,
+   "deel": 1,
+   "pdf_pagina": 22
+  },
+  {
+   "hoofdstuk": 2,
+   "sub": "Lidwoord",
+   "boekpagina": 30,
+   "deel": 1,
+   "pdf_pagina": 25
+  },
+  {
+   "hoofdstuk": 2,
+   "sub": "Eerste declinatie (a-stammen)",
+   "boekpagina": 31,
+   "deel": 1,
+   "pdf_pagina": 26
+  },
+  {
+   "hoofdstuk": 2,
+   "sub": "Tweede declinatie (o-stammen)",
+   "boekpagina": 34,
+   "deel": 1,
+   "pdf_pagina": 29
+  },
+  {
+   "hoofdstuk": 2,
+   "sub": "Derde declinatie: medeklinkerstammen",
+   "boekpagina": 36,
+   "deel": 1,
+   "pdf_pagina": 31
+  },
+  {
+   "hoofdstuk": 2,
+   "sub": "Derde declinatie: klinker- en sigmastammen",
+   "boekpagina": 38,
+   "deel": 1,
+   "pdf_pagina": 33
+  },
+  {
+   "hoofdstuk": 3,
+   "sub": "Adiectiva / bijvoeglijke naamwoorden",
+   "boekpagina": 45,
+   "deel": 1,
+   "pdf_pagina": 40
+  },
+  {
+   "hoofdstuk": 3,
+   "sub": "Adiectiva bij substantiva; zelfstandig gebruikte adiectiva",
+   "boekpagina": 50,
+   "deel": 1,
+   "pdf_pagina": 45
+  },
+  {
+   "hoofdstuk": 4,
+   "sub": "Trappen van vergelijking van de adjectiva (comparativus/superlativus)",
+   "boekpagina": 53,
+   "deel": 1,
+   "pdf_pagina": 48
+  },
+  {
+   "hoofdstuk": 5,
+   "sub": "Trappen van vergelijking van de bijwoorden",
+   "boekpagina": 57,
+   "deel": 1,
+   "pdf_pagina": 52
+  },
+  {
+   "hoofdstuk": 6,
+   "sub": "Preposities / voorzetsels",
+   "boekpagina": 59,
+   "deel": 1,
+   "pdf_pagina": 54
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina demonstrativa / aanwijzende voornaamwoorden",
+   "boekpagina": 67,
+   "deel": 1,
+   "pdf_pagina": 62
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Het voornaamwoord αὐτός",
+   "boekpagina": 68,
+   "deel": 1,
+   "pdf_pagina": 63
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina personalia / persoonlijke voornaamwoorden",
+   "boekpagina": 69,
+   "deel": 1,
+   "pdf_pagina": 64
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina reflexiva / wederkerende voornaamwoorden",
+   "boekpagina": 71,
+   "deel": 1,
+   "pdf_pagina": 66
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomen reciprocum / wederkerig voornaamwoord",
+   "boekpagina": 72,
+   "deel": 1,
+   "pdf_pagina": 69
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina possessiva / bezittelijke voornaamwoorden",
+   "boekpagina": 72,
+   "deel": 1,
+   "pdf_pagina": 69
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina interrogativa / vragende voornaamwoorden",
+   "boekpagina": 73,
+   "deel": 1,
+   "pdf_pagina": 70
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina indefinita / onbepaalde voornaamwoorden",
+   "boekpagina": 73,
+   "deel": 1,
+   "pdf_pagina": 70
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina relativa / betrekkelijke voornaamwoorden",
+   "boekpagina": 74,
+   "deel": 1,
+   "pdf_pagina": 71
+  },
+  {
+   "hoofdstuk": 7,
+   "sub": "Pronomina correlativa / correlatieve voornaamwoorden",
+   "boekpagina": 76,
+   "deel": 1,
+   "pdf_pagina": 73
+  },
+  {
+   "hoofdstuk": 8,
+   "sub": "Numeralia / telwoorden",
+   "boekpagina": 79,
+   "deel": 1,
+   "pdf_pagina": 76
+  },
+  {
+   "hoofdstuk": 9,
+   "sub": "Verba / werkwoorden – inleiding; het Griekse werkwoord",
+   "boekpagina": 83,
+   "deel": 1,
+   "pdf_pagina": 80
+  },
+  {
+   "hoofdstuk": 9,
+   "sub": "Tempora / tijden",
+   "boekpagina": 84,
+   "deel": 1,
+   "pdf_pagina": 81
+  },
+  {
+   "hoofdstuk": 9,
+   "sub": "Modi / wijzen en participia / deelwoorden",
+   "boekpagina": 85,
+   "deel": 1,
+   "pdf_pagina": 82
+  },
+  {
+   "hoofdstuk": 9,
+   "sub": "Genera verbi / geslachten van het werkwoord",
+   "boekpagina": 87,
+   "deel": 1,
+   "pdf_pagina": 84
+  },
+  {
+   "hoofdstuk": 9,
+   "sub": "Grammaticale termen",
+   "boekpagina": 89,
+   "deel": 1,
+   "pdf_pagina": 86
+  },
+  {
+   "hoofdstuk": 10,
+   "sub": "Verba op -ω / thematische verba",
+   "boekpagina": 115,
+   "deel": 1,
+   "pdf_pagina": 112
+  },
+  {
+   "hoofdstuk": 10,
+   "sub": "Verba op -ω: bijzonderheden",
+   "boekpagina": 173,
+   "deel": 1,
+   "pdf_pagina": 170
+  },
+  {
+   "hoofdstuk": 10,
+   "sub": "Verba op -μι / athematische verba",
+   "boekpagina": 186,
+   "deel": 1,
+   "pdf_pagina": 183
+  },
+  {
+   "hoofdstuk": 11,
+   "sub": "Stamtijden",
+   "boekpagina": 213,
+   "deel": 1,
+   "pdf_pagina": 210
+  },
+  {
+   "hoofdstuk": 12,
+   "sub": "Naamvallen – Nominativus",
+   "boekpagina": 227,
+   "deel": 2,
+   "pdf_pagina": 2
+  },
+  {
+   "hoofdstuk": 12,
+   "sub": "Genitivus",
+   "boekpagina": 228,
+   "deel": 2,
+   "pdf_pagina": 3
+  },
+  {
+   "hoofdstuk": 12,
+   "sub": "Dativus",
+   "boekpagina": 231,
+   "deel": 2,
+   "pdf_pagina": 6
+  },
+  {
+   "hoofdstuk": 12,
+   "sub": "Accusativus",
+   "boekpagina": 233,
+   "deel": 2,
+   "pdf_pagina": 8
+  },
+  {
+   "hoofdstuk": 12,
+   "sub": "Bepalingen van plaats en tijd",
+   "boekpagina": 234,
+   "deel": 2,
+   "pdf_pagina": 9
+  },
+  {
+   "hoofdstuk": 13,
+   "sub": "Werkwoord – Genera verbi: Activum/Medium/Passivum",
+   "boekpagina": 237,
+   "deel": 2,
+   "pdf_pagina": 12
+  },
+  {
+   "hoofdstuk": 13,
+   "sub": "Tempora / tijden",
+   "boekpagina": 238,
+   "deel": 2,
+   "pdf_pagina": 13
+  },
+  {
+   "hoofdstuk": 13,
+   "sub": "Modi / wijzen",
+   "boekpagina": 241,
+   "deel": 2,
+   "pdf_pagina": 16
+  },
+  {
+   "hoofdstuk": 13,
+   "sub": "Participia / deelwoorden",
+   "boekpagina": 245,
+   "deel": 2,
+   "pdf_pagina": 20
+  },
+  {
+   "hoofdstuk": 14,
+   "sub": "Bijzinnen",
+   "boekpagina": 247,
+   "deel": 2,
+   "pdf_pagina": 22
+  },
+  {
+   "hoofdstuk": 15,
+   "sub": "Accusativus cum infinitivo (AcI)",
+   "boekpagina": 253,
+   "deel": 2,
+   "pdf_pagina": 28
+  },
+  {
+   "hoofdstuk": 15,
+   "sub": "Genitivus absolutus",
+   "boekpagina": 256,
+   "deel": 2,
+   "pdf_pagina": 31
+  },
+  {
+   "hoofdstuk": 15,
+   "sub": "Gesubstantiveerde infinitivus",
+   "boekpagina": 258,
+   "deel": 2,
+   "pdf_pagina": 33
+  },
+  {
+   "hoofdstuk": 15,
+   "sub": "Partikels",
+   "boekpagina": 260,
+   "deel": 2,
+   "pdf_pagina": 35
+  },
+  {
+   "hoofdstuk": 15,
+   "sub": "Adiectiva verbalia",
+   "boekpagina": 270,
+   "deel": 2,
+   "pdf_pagina": 45
+  },
+  {
+   "hoofdstuk": 15,
+   "sub": "Stijlfiguren – karakteristiek taalgebruik",
+   "boekpagina": 271,
+   "deel": 2,
+   "pdf_pagina": 46
+  }
+ ],
+ "slide_index": {
+  "3": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "alfabet alpha anders bijv bijvoorbeeld echter eerste eeuw epsilon erasmus evayyéatov gangbare geklonken goed griekse hanteren heeft hetzelfde hoorbaar https ieder iedere incl inmiddels iota klassiek koiné kunnen letter meest methode omega omikron opgesteld reconstrueren regels subscriptum teken tweeklanken uitgesproken"
+  },
+  "4": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "alfabet alpha appeltaart brood béta deeg delta dzéta epsilon gamma garcon griekse jeneverbes majonaise mezze ooeg thyme théta"
+  },
+  "5": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "alfabet appa griekse iota lambda lekker maal neus omikron paksoi viskliekje witlof"
+  },
+  "6": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "alfabet fallafel gaar griekse jusvork omega reep rups sigma stoo suiker tartaar toof ypsilon"
+  },
+  "7": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "alfabet griekse hoofdletters kleine letters lijken nederlandse omega vormen vormverwarring ypsilon"
+  },
+  "8": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "aavid adpvyé aevt alfabet begin bijv bijzonderheden eigennamen einde engel enkele gamma griekse hebreeuwse iota keel keelklank kent koopog mitt sigma sommige spreek twee uitgesproken uitspraak varianten verandert weergave wereld woord ypsilon yyeaog"
+  },
+  "9": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "aangeduid alfabet dentalen fonologische griekse gutturalen indeling keelklanken kklank klanken klinkers kort labialen lang lange lipklanken macron mutae stomme tandklanken vocalen woordenboeken"
+  },
+  "10": {
+   "g": 1,
+   "titel": "Het Griekse Alfabet",
+   "thema": "Syntaxis & overig",
+   "ocr": "alfabet denk dubbele etre geschreven griekse heet hoofdletter iota klank klanken klinker klinkercombinaties korte lange liquidae medeklinkers molenaar onder quiz spirant steger subscriptum tweeklanken vloeiende volgt"
+  },
+  "11": {
+   "g": 2,
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "ocr": "accenten ademtocht asper begin berg bijvoorbeeld gaat grens heeft iedere klinker leestekens lenis lichte onuitgesproken opos ruwe samen spiriti spiritus spreek tekens tweeklank versus woord"
+  },
+  "12": {
+   "g": 2,
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "ocr": "accenten altijd asper axag begin bijzonderheden boodschap boven cursusgricks eerste enkelvoudige ervoor evayyéhtov geval goede hoofdletter klinker leestekens letter peter poudioc romeins spiriti spiritus tweede tweeklank vlak wars woord"
+  },
+  "13": {
+   "g": 2,
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "ocr": "accent accenten acutus alleen circumflexus combinatie drie gravis hoger klemtoon klinker kwint laatste lange leestekens lettergreep lettergrepen muzikaal spiriti terts uitzien volgt woord"
+  },
+  "14": {
+   "g": 2,
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "ocr": "accenten apart apostrof bijv byzantijnse coal diaeresis dubbele eeuw elie gangbaar handschriften hoge klinkers komma leestekens mozes mwiborjc opeenvolgende punt puntkomma spiriti tijd trema tweeklank uitgesproken uitgevonden verwacht vooral vraagteken weglatingsteken"
+  },
+  "15": {
+   "g": 2,
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "ocr": "accenten afbakenen afgesloten altijd bakenen bakent bestaan bijstelling bijzinnen check codering daarom deelzin deelzinnen dubbele eigen enkele gebruik handig heeft hoge ingezet inzicht komma kunnen leestekens nevengeschikte ondergeschikte opsomming participium persoonsvorm potentiéle punt samengestelde spiriti streep structuur twee vraagteken zinnen"
+  },
+  "16": {
+   "g": 2,
+   "titel": "Spiritus, accenten en leestekens",
+   "thema": "Syntaxis & overig",
+   "ocr": "accenten adyos afbakenen apxh bedc bedv bestaan bijv brengen codering codes eerste functie geeft gewoonte goede haken hebben hoyos inzicht kleurpotlood leestekens leestekst lidwoord maakt markeren meer mpdc mpdg naamwoord naamwoorden obtocg omdat omheen over peter samen sneller spiriti structuur"
+  },
+  "17": {
+   "g": 3,
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "ocr": "aandacht besteden boven compositum cursusgrieks deel denk drukken erachter frequente gebruikt grammatica komen kunnen meest naamwoorden nederlands noemen onder onderwerpen peter praeposities relatie rest samengesteld starten steeds uitmaken vallen veel verbum verschillende voorvoegsels voorzetsel voorzetsels vormen werkwoord woorden woordsoorten zelfstandig"
+  },
+  "18": {
+   "g": 3,
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "ocr": "afwijken avti avtt beetje betekenis binnen breid combinatie composita daarom elkaar enorm gaan gaat gebruikt griekse heeft héyw iedere invloed kennen keuze kunnen leer lijkt meer meerdere meteen naamval naamvallen opties over pireke plaats praepositie praeposities prepositie ruil samen specifieke"
+  },
+  "19": {
+   "g": 3,
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "ocr": "advtod andere apostrof ayyéahw begint begonnen eindigt ewevdouaptbpovv gaan getuigenis geélideerd heeft invloed kata katayyéado klinker koiné kunnen laatste leggen letters marc meestal mepi onder peter praepositie principe regels slotklinker tegen uitgestoten vals vaste veranderen verkondigen verliezen volgende volgt voorvoegsels"
+  },
+  "20": {
+   "g": 3,
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "ocr": "alles apaptiac asper begint behalve beproefd bovendien composita cursusgricks dezelfde doorzier eveneens geaspireerd geaspireerde gebeurt kabopaw kata klank klinker krijgt manier mavta medeklinker muta neerkijken peter praepositie spiritus spoldthta tletielpacpevov uitzondering verandert verba volgende voorgaande voorvoegsels voorzetsels vormt woord xwpic"
+  },
+  "21": {
+   "g": 3,
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "ocr": "avti beneden betekenis boven coytet effect geaspireerde heen kata klinker naast onder peta plaats praeeos praepositie samentrekkingsregels tapa tegen volgens voorvoegsels voorzetsels wegens"
+  },
+  "22": {
+   "g": 3,
+   "titel": "Voorzetsels en voorvoegsels",
+   "thema": "Syntaxis & overig",
+   "ocr": "agimw assimilatie assimileert baive betekenis blij composita fungeren gaan geassimileerde gupéve haubavo helpt herkennen herkent herleiden hoeft insmerer kennen laatste letter ntéw ontbreken ontvangern ovaaaybavw overkomer ovlntéw ovubaive ovyyxaipw praepositie péve redetwisten regels samen slot soms verandert verba verlaten volharden"
+  },
+  "23": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "aantal basale bijwoorden categorieén college daarbuiten diathese eigenschappen flecterende geslacht getal indeling leiden modus naamval naamwoord naamwoorden nomina partikels persoon soms taal tempus uitgang vallen verba verbogen vervoegd volgend voorvoegsel voorzetsels werkwoord werkwoorden woordsoort"
+  },
+  "24": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "andere declinatie declineren derde drie eerste geslacht getal griekse naamval naamwoorden nomina overige passen stammen tweede uitgang uitgangen verbuigen verbuiging verbuigingsgroep verbuigingsgroepen"
+  },
+  "25": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "drie dualis eigenschappen enkelvoud femininum geeft geslacht getal klassiek mannelijk masculinum meervoud naamval naamwoorden neutrum nomina onzijdig pluralis singularis tweevoud uitgang volgende vrouwelijk"
+  },
+  "26": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "algemene ander bibaoc bijv boek bomen enkelvoud geslacht getal glosse hebreeuws hemel hemeler idiomatische kunt landen maken mannelijk mannelijke meervoud meestal mogelijk naamval naamwoorden nederlandse nomina obpavoi onzijdig paar regels rivieren soms spreekt steden uitdrukkingen verkleinwoorden vertalen vertaling vrouwelijk vrouwelijke"
+  },
+  "27": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "bepaalt bepalen bepalingen betekenis betekent bijwoordelijke context dend functie geslacht getal gezegde groep hieromheen iedere lezen meestal meewerkend naamval nederlands nomina onderwerp ontleden plaats redekundig reden secundair tijd uitgang voorwerp woord woordvorm zinsontleding"
+  },
+  "28": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "accusativus avdpa avnp beide bepaalde betekenen bijt daxvet dvdpa dvijp even geeft geslacht getal hetzelfde hond kbva kbwv kova kowv kvva kvwov legt lijdend meer naamval nadruk natuurlijk nomina nominativus omgekeerde passen saver tweede uitgang uitgangen volgorde voorwerp woordvormen zinnen"
+  },
+  "29": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "accusativus alle alleen aller bepaling bepalingen beste bijvoeglijke bijwoordelijke duur gebruikt geeft genitivus geslacht getal ging hadden morgen morgens muziek naamval naamvallen nederlands nomina oorspronkelijk samen tegenwoordig temporalis terug tijd tijden uitdrukkingen versteende voorzetsel werd zien zogeheten"
+  },
+  "30": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "basis bijvoeglijk daar functie geslacht getal getoetst hoort jezelf kunnen naamval naamvallen naamwoord nomina ofwel steeds stel tentamen tile vaardigheid verklaard verklaren vermeld voorzetsel vraag waar waarom werkwoord woord woordenlijst woordgroep"
+  },
+  "31": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "alle bestaat bete cwiyv deel eavt geluid geslacht getal gewekt gezegde handeling heeft leven matiyp naamval naamwoordelijk nomina nominativus onderwerp pene piraat plotseling principe sommige vader wars werd werkwoordelijk werkwoorden woordenboekvorm zichzelf zinnen éxet"
+  },
+  "32": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "aanwijzend beschrijving bijvoeglijk bruiloftsmaal cursusgricks deel eotty etold geen gegeven genodigden geslacht getal gezegde handeling kekanlevol klaar koppelwerkwoord leek lijken naamval naamwoord naamwoordelijk nomina octopus onderwerp persoonsvorm schijnen telwoord toav uitgedrukt voornaamwoord waardig waren zelfstandig ziek"
+  },
+  "33": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "altijd bedc bepalen deel eigenaardigheden geen geest geslacht getal gezegde heeft helpt koppelwerkwoord lidwoord mvedpa naamval naamwoordelijk nomina onderwerp weggelaten woord"
+  },
+  "34": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "aangeeft aard altijd ayamnv beob bepaling betekenis bezitter bijvoeglijke bijvoorbeeld daarmee deel geheel genitivus genomen geslacht getal handelende hebben ieee jullie liefde naamval nomina object objectivus oeod oorsprong partitivus persoon possessivus relatie schriftgeleerde sommigen subjectivus tivec trapepxeode veronachtzaamd verschillen vertaling"
+  },
+  "35": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "achter angst baowelav bedg bepaling bijv dood genitivus geslacht getal hebr hemelen herhaling kepaiav koninkrijk lidwoord naamval naamwoord nomina oivou otvov ovpavev piav plaats savatou tekentje vouov zelfstandig"
+  },
+  "36": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "allen armer ayanntoic ayiotc bezittingen buiv dativus dtapyovta geef geliefden geroeper geslacht getal gezegde heiligen héyw indirect jullie kantoic lijdend marv meewerkend mtwyoic naamval nomina object obotv onderwerp rome toic twanoov verkoop voorwerp"
+  },
+  "37": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "abtw adtds ayabov belanghebbend betrokken commodi dativus dienaar dtdkxovdc eoopat ethicus geslacht getal goede meewerkend naamval nomina persoon soms vereist vertaling vids voorwerp want weggelaten wiig zoon zotat éottv"
+  },
+  "38": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "bedenk bepaling bete bijwoordelijke binnen coed dativus geslacht getal gezegde kaaguy liidend meetlat meewerkend moalv mogelijk naamval nomina onderwerp regelmatig relaties stad talloze tiyv vertaling volstaat voorwerp waar waardoor waarmee wanneer éuetpnoev"
+  },
+  "39": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "accusativus alles avtov avérjowuev bepaling bepalingen betrekking bijwoordelijke dativus direct duur gaat geslacht getal gezegde groeien kdglov kptvet laten lijdend maat mavta meeste naamval name nomina object onderwerp oordeelt sommige staan voorwerp wereld"
+  },
+  "40": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "accusativi accusativus aitodvtt aitéw altijd amoaoyiav anodoyiav aoyov begin bereid citaat dpliv dubbele dudc eenieder etowol gaan geslacht getal hoop iemand iets jullie kunnen mooie mpdg naamval nomina reden samen soms tavti teepi tref twee verantwoording verklaren vraagt vragen wees"
+  },
+  "41": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "accusativi accusativus aitodvtt aitéw altijd amoaoyiav anodoyiav antwoord aoyov begin bereid citaat dpliv dubbele dudc eenieder etowol gaan gaat geslacht getal hoop iemand iets jullie kunnen mooie mpdc naamval nomina reden samen soms tavti teepi tref twee verantwoording verklaren voorzetsel"
+  },
+  "42": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "aanspreekvorm aavid aeyovtec anit bestaat blinden cursusgricks david eigen expakgav gelijk geslacht getal heer idov klinkt kuote medelijden naamval nomina nominativus pathetisch personen persoon schreeuwden sommige soms staan toegesproken tudc tvghoi twee uitgang verbuigingsgroep verbuigingsgroepen vertalen vidg vocativus voorafgegaan vorm"
+  },
+  "43": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "aanspreekvorm accusativus bepaling bepalingen bijvoeglijke bijwoordelijke dativus deel direct dubbele functies genitivus gezegde hoort iets indirect lijdend meewerkend naamvallen naamwoordelijk nominativus object onderwerp over overzicht sommige subject vocativus voorwerp werkwoorden woordgroep zegt"
+  },
+  "44": {
+   "g": 4,
+   "titel": "Nomina: naamval, geslacht en getal",
+   "thema": "Naamwoorden",
+   "ocr": "accusativus adyou begrip belangrijk bijv bijvoorbeeld brengen bydc codering coderingssysteem codes cogiac drepoyiyv geeft genitivus geslacht getal gewoonte goed goede hanteren hoov inzicht katayyéhhwv kayo kleurcodes kleurpotlood markeren methode mpdg naamval naamvallen nomina nominativus nuttig omdat opgaven peter pvotrptov structuur"
+  },
+  "45": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "alle bepaalt bestaat bijbehorend conceptualiseert congruentie congrueren declinaties drie geen gelijk gemakkelijk geslacht getal hoort identificeert komen lidwoord lidwoorden naamval naamwoord naamwoorden onbepaald overeen regel verbuigingsgroepen vertaald waar woord zien zonder"
+  },
+  "46": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "bepaald declinatie lidwoord lidwoorden mannelijk onzijdig talis toig toug verbuiging vrouwelijk"
+  },
+  "47": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "achter bepaling bijvoeglijke dkkapmdg ertussen gedc geest genitivus geplaatst griekse hemel hemelen herhaald hoort koppelen lidwoord lidwoorden mijn naamwoord obpavoic oivou onze over partikel paso plaats soms tatep vader vertalen votc vruchteloos waar wijn éottv"
+  },
+  "48": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "adyos afleiden beds bete coed deel eigenaardigheden eigennamen eitov enkele gaat gebruik geen gezegde goden griekse heid kefas knga krijgen krijgt lagere lidwoord lidwoorden naamwoordelijk onderwerp qedc regelmatig saar tegen vertaald woord"
+  },
+  "49": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "abstracte algemene andersom begrippen dient duiden duivel dvouiav gaan gebruikt hoorders iets kpoatai lidwoord lidwoorden noodzakelijkerwijs ongerechtigheid soms stabdaov terwijl vertaald vouov waar werkers zonder épyacopevot"
+  },
+  "50": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "aanwijzend bepaling bete bezittelijk bibaiov bijvoeglijke blijft boek gebruikt genitivus hebreeuws heeft hoaiov inclusief invloed jesaja lidwoord lidwoorden meta mogelijk mpogrtov pene profeet rots soms tavty terwijl vertalen vertaling voornaamwoord vorm werkt woord"
+  },
+  "51": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "abte adyog aeyovow altijd apxi begin begint beurt bijpassend gebruikt geeft gesprek lidwoord lidwoorden naamwoord nominativus partikel persoonlijk regelmatig sprekers tegen vervalt vervanging voornaamwoord voorzetsel wisseling woord zeiden zelfstandig zonder"
+  },
+  "52": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "achter betrekkelijk bezit bezittelijk bijbehorend coed contexten cyanate duidelijk dvdpec gebruikt genitivus hemel houdt jullie lidwoord lidwoorden mannen naamwoord obpavoic onze pases persoonlijke petit plaats tlatep toic vader verondersteld vertalen vervanging voornaamwoord vrouwer waar yuvaikac"
+  },
+  "53": {
+   "g": 5,
+   "titel": "Lidwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "andere besnijdenis bijvoeglijk bijwoorden boze deelwoorden degenen doden drinken eten geboden geen groter heder ietv jezusvolgers joodse komende kwaad lidwoord lidwoorden mepttopns mogelijkheden movnpod naamwoorden namelijk nederlands overspel plegen potyevoetc povevoeic slot tivetv verzelfstandigen werkwoorden woorden zult épxouevos"
+  },
+  "54": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "bestaan bibaoc declinatie declinaties derde drie dxavoa eerste geslachten gvpa kent mannelijk mpogrtns naamwoord naamwoorden nominativusuitgangen onzijdig sear soba stammen substantiva substantivum twee veaviac verbuigingsgroepen voic volgende voorbeeldwoorden vrouwelijk zelfstandig épyov"
+  },
+  "55": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "binnen declinatie deur doorn dorp drie geslacht jongeman keun lidwoorden mannelijk mannelijke mpogytng onderscheiden ovpa profeet subgroepen substantiva twee veaviac vertegenwoordigd vrouwelijke woorden"
+  },
+  "56": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "alpha attisch bovendien daarom declinatie dkavoa elie enkelvoud gelijk genitivus hadden hebben mannelijke meervoud oorspronkelijk soms spreken stam stammen steeds subgroepen substantiva tpogrjtns uitgang uitgangen variant veaviac verschilt vijf wetenswaardigheid woorden"
+  },
+  "57": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "akavoac akavon akavons akkavoav bdpacs bupa bvpatc dcavoav declinatie dxavoat kmpats kmuns koun kwhov kwlag obpa obpav odpat oupac substantiva taic taig tijc vrouwelijke woorden xavoa"
+  },
+  "58": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "alpha andere declinatie eerste enkelvoud gaan kijk letter medeklinker naamwoord nominativus regel subgroep substantiva verbogen volgens vrouwelijk weet welke woorden woordenlijst zelfstandig"
+  },
+  "59": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "declinatie ftal mannelijke mpophtov mpopyth ntatc substantiva tipognt toic tous tovg tpoghtag tpogrths tponthv veavia veavias veaviatc veaviav veaviov veavlov woorden"
+  },
+  "60": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "afwijkende andere bijvoorbeeld daarmee daarom declinatie duiden eigennamen eindigt genitivus goed hebben iovda kennen kunnen kwunns mannelijke mpogijta mpogytns naamval nominativusvorm onder soms subgroepen substantiva twee uitgangen vallen veel verbuigingsgroep verschillende vocativus woorden"
+  },
+  "61": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "bibaoc bibaos bijv binnen boek brein dctodv declinatie drie elie geslacht gumedoc laaf lidwoorden mannelijke mapqevos meisje ners onderscheiden onzijdige pyov subgroepen substantiva tile twee type vertegenwoordigd voic vrouwelijk vrouwelijke werk wiig wijngaard woorden"
+  },
+  "62": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "banka bibaos bibaot bibaots bibaov bibaw bibawy bipaous bipaov declinatie deis fabs intctenl mannelijke sobhoug sodaov sovaoig sovaol sovawy sovhw soviov substantiva taic toic tovs ttovs vodc vodv voog vrouwelijke woorden"
+  },
+  "63": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "accent afwijkende aird alleen attisch bijvoorbeeld circumflex daar daarom declinatie derde dodxe drie duidt eindigt enkelvoud geest geleerd grijs hebben hoeft klinker koiné komen mannelijke maotc meervoud ovcg persoonsuitgang peter samen samentrekking stam stamklinker stof subgroepen substantiva trekt uitgang vaartocht"
+  },
+  "64": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "declinatie epya epyois epyov epyw onzijdige ootea ooteoig ooteou ootew ootewv ootodv substantiva toic woorden épya épyou épywv"
+  },
+  "65": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "accent alleen circumflexus declinatie dote dotodv duidt echter eindigt enkelvoud getallen grijze heel klinker leren meervoud naamvallen samen samentrekking stam stamklinker substantiva tobv todv trekt uitgang vormen woorden zwartgedrukte"
+  },
+  "66": {
+   "g": 6,
+   "titel": "Substantiva 1e en 2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "declinatie eigennaam incood inoobv inood inoods jezus onregelmatig substantiva verbuiging"
+  },
+  "67": {
+   "g": 7,
+   "titel": "Partikels en voegwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "aantal belangrijke betekenis echter functioneren geven groter immers informatie kleine meest nederlands nevenschikkende oaaa onverbuigbare over partikels sterker structuur subtieler tegenstellend tekstverband verklarend voegwoorden want welliswaar woordjes zwakker"
+  },
+  "68": {
+   "g": 7,
+   "titel": "Partikels en voegwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "concluderend cursusgrieks eerste meestal nooit opsommend partikels plaats staan sterker trap vergelijkend vergrotende vertalen vervolgend voegwoorden woord woorden zelfs zwakker"
+  },
+  "69": {
+   "g": 7,
+   "titel": "Partikels en voegwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "achtervoegsel betekent bijwoord bijzin citaat geen indic indien kabanep kawws leiden leidt moment omdat omtep onderschikkende opsomming partikels terwijl toen tote versterkt vertalen voegwoorden wanneer woord"
+  },
+  "70": {
+   "g": 8,
+   "titel": "Verba: modus, tempus, diathese, pers., getal",
+   "thema": "Werkwoorden",
+   "ocr": "aantonende aanvoegende abwv bette coniunctivus cursusgricks deelwoorden diathese eigenschappen gebiedende geslacht getal hele imperativus indicativus infinitivus komen laat later losmaken losmakend maak maken modus moge optativus participia pers persoon resp tempus tijd toestand verba wensende werkwoord werkwoorden wijs"
+  },
+  "71": {
+   "g": 8,
+   "titel": "Verba: modus, tempus, diathese, pers., getal",
+   "thema": "Werkwoorden",
+   "ocr": "belangrijkst bijvoorbeeld coderings cursusgrieks daarom deels diathese ehapev exeoev geldt gesubstantiveerde getal habe hebben hetzelfde idod infinitivi katépayev kern kleurcode maken modus naamval naamwoorden napa oddy omcirkelen omeipetv onder onderscheid onderstreept oneiowv oneipan oneipwv overige participia pers persoonsvormen structuur systeem"
+  },
+  "72": {
+   "g": 8,
+   "titel": "Verba: modus, tempus, diathese, pers., getal",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus aspect belangrijk belangrijkere dergelijk diathese engels futurum geeft getal groot handeling heden imperfectum informatie kennen lang modus nederlands onbepaalde onderscheid onderverdeeld onvoltooid over perfectum pers plusquamperfectum praesens slechts speelt strikte tegenw tempora tempus tense tijd tijdvorm tijdvormen time toekomende"
+  },
+  "73": {
+   "g": 8,
+   "titel": "Verba: modus, tempus, diathese, pers., getal",
+   "thema": "Werkwoorden",
+   "ocr": "activum call diathese enkelvoud geslacht getal jullie losgemaakt maakt medium meervoud modus nara passivum pers persoon pluralis postbode singularis tempus toestand verba vetau zeemeerminnen zich"
+  },
+  "74": {
+   "g": 8,
+   "titel": "Verba: modus, tempus, diathese, pers., getal",
+   "thema": "Werkwoorden",
+   "ocr": "basis bijvoorbeeld conjugaties contracta delen diathese dyyehaw eindigt eitii gaivw getal griekse kahvntw kopitw letter liquida modus muta oneipw onregelmatige pers préw pvadoow snadw stam tempus tipdw verba verder verschillende vervoegingsgroep vervoegingsgroepen vocalia waarmee werkwoorden zijr"
+  },
+  "75": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "actief aver dvovo elie gebruikt gevormd imperativus indicativus infinitivus jullie klinker leesteken losmaken maak maakt maken nbetc persoonsuitgangen praesens praesensstam starten ukelen vaal verba vete vocalia volgt voorbeeld vopev wiig"
+  },
+  "76": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "achterwege avopev bindvocaal blijven echter eigen eigenlijk heeft iedere imperativus indicativus infinitivus lleev maken meer moet omdat onderscheiden onderwerp persoon persoonlijk praesens samengetrokken slaaf stam themavocaal uitgang uitgangen uitspraak vergemakkelijkt vertaald voornaamwoord vormen zogeheten"
+  },
+  "77": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "cursusgrieks etwoav gebruikt grofweg imperativus incl indicativus infinitivus infinitivusuitgang lfev ollev ovot persoonsuitgangen praesens prif primaire secundaire themavocaal twee typen uitgangen"
+  },
+  "78": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "alleen avetwoav avétw bete derde gebiedende gevormd imperativus indicativus infinitivus jullie kennen kent losmaken losmaker maak maakt moet moeten nederlands persoon persoonsuitgangen praesens praesensstam tweede wijs"
+  },
+  "79": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "actief avetv doorgaans enkelvoud eten geen gevormd imperativus indicativus infinitivus infinitivusuitgang kent losmaken maken modern paetv persoon praesens praesensstam vorm werkwoord wetenswaardigheid woordenboeken woordenlijsten"
+  },
+  "80": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "adtov amnyayov buds christus cursusgrieks doel dplaptwaods eadeiv evekontounv finalis finis gebruikt genitivus geven gtavp hagev imperativus indicativus infin infinitivus inoovs jezus jullie komen koolov kruisigen kwam leidden lidwoord malen meer mpdc praesens redden sane soms tile toaaa tpdc vele"
+  },
+  "81": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "avete bovot dvbetg dvet imperativus indicativus infinitivus jullie laat laten losmaken maak maakt maken maker moet moeten node praesens vete veto vopev vétwoav"
+  },
+  "82": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "actief alle benoemen bijvoorbeeld cursusgricks determineer diathese dien eigenschappen gedetermineerd getal imperativus indicativus infinitivus meervoud modus motevouev ontleed ovow persoon praesens tempus vorm vraag werkwoord wiig"
+  },
+  "83": {
+   "g": 9,
+   "titel": "Indicativus, imperativus, infinitivus praesens",
+   "thema": "Werkwoorden",
+   "ocr": "actief akkaoapta alsof anders ayia doorgaans dumv echter eigenaardigheid enkelvoud getal gotiv gottv heilig imperativus indicativus infinitivus jullie kinderen krijgt meervoud motevw onderwerp onrein onzijdig persoon persoonsvorm praesens tekva tuotevouev vertaalt zouden érel"
+  },
+  "84": {
+   "g": 10,
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "andere augment behandelen cursusgricks deels dezelfde eerst eigen epsilon futurum gaat geen geplaatste imperativus imperfectum indicativus infinitivus kent modus noemen onvoltooid persoonsuitgangen peter praesens praesensstam stam tempora tempus tijd twee verbum verleden vocalium voorop"
+  },
+  "85": {
+   "g": 10,
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "futurum hvec imperfectum indicativus jullie maakte maakten rear vopev éhvete"
+  },
+  "86": {
+   "g": 10,
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "achtergrondinformatie afhankelijk algemeen aspect ball conatief context drukt duratief futurum gebruikt gerealiseerd gesteld gewoonlijk handeling handelingen herhaald imperf imperfecte imperfectum indic iteratief losmaker maakte maken onafgeronde onvoltooide persoon peter praesens probeerde steeds terugkomen verhaal vertalen vertaling voortduren wilde"
+  },
+  "87": {
+   "g": 10,
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "derde exactum futurum geen heeft herkennen imperativus imperfectum indicativus infinitivus kent onvoltooid oudgrieks persoonsuitgang praesens tempus terzijde tijd tijdkenletter toekomende volgt voltooid wetenswaardigheid"
+  },
+  "88": {
+   "g": 10,
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "bovot dboet dboetg doopev dvbetg dvet eavov evov futurum imperfectum indic losmaker nboovou praesens sullie vete voete vopev zullen éhvete"
+  },
+  "89": {
+   "g": 10,
+   "titel": "Imperfectum en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "aspect bete coed daarnaast ducatoobvn futurum gebruiken hand heeft hulpwerkwoord huépav imperfectum kpivety levert mogelijk nederlands oikodhevi omdat oordelen rechtvaardigheid sterker toekomend vastgesteld waarop weaael wereld wéaaw zotnoev zullen"
+  },
+  "90": {
+   "g": 11,
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "ocr": "augment avbw avov beginnen begint ervoor imperfectum kenmerk medeklinker pint pintt tijden verdubbelt verleden werkwoorden werpen éppintov"
+  },
+  "91": {
+   "g": 11,
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "ocr": "augment dgeida enkele eter hobiov klinker lang ogeid pene petit samen soms trekt verlengd verschuldigd weethov"
+  },
+  "92": {
+   "g": 11,
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "ocr": "achterwege aivé aivéw augment beide blijft ediptokov eerste etiptoxw euplok evddoyobv evhoyé evhoyéw fvouv iota klinker koiné komen nbptokov onder prijzem prijzen samen staan subscriptum trekking tweeklank uitgang verlengde verlenging vinden vormen ypsilon zegener"
+  },
+  "93": {
+   "g": 11,
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "ocr": "aantrekker augment avabhérw avébaettov badd behalve brengen eindklinker elisie hierbij kijken mept nrepibaaaw omhoog paar plaats praepositie soms teptébaddaov tipodepepov tipog tipoggep ttept uitstoting vindt voorvoegsel werkwoord"
+  },
+  "94": {
+   "g": 11,
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "ocr": "afbakenen augment baha bahdov barrw begint deel dewpifov eveypapov expadraw eyypaqw invloed klinker onder oorspronkelijke opil optekenen regels samengestelde samengetrokken stam steld tweede tweeklank uitwerper verandert verlengd volgens voorvoegsel werkwoord ypdgw zelf"
+  },
+  "95": {
+   "g": 11,
+   "titel": "Augment",
+   "thema": "Werkwoorden",
+   "ocr": "advoiyw ander andere augment augmentvorming avéwyov driedubbel dubbel eiyov enkele euéanov géhw hebben hueaaov imperfectum leren oehov onregelmatige onregelmatigheden openen peter praesens rvoiyov soort stamtijden tempora uitzonderingen vanaf veelvoorkomende verlenging verschillende vorming wedhkw willen yvéwyov zuller"
+  },
+  "96": {
+   "g": 12,
+   "titel": "Het werkwoord 'zijn'",
+   "thema": "Werkwoorden",
+   "ocr": "attisch eioi esse gote gotw gotwoav hunv imperativus imperfectum indicativus koiné praesens sini toav werkwoord zotwoav éoeo éopev éoti"
+  },
+  "97": {
+   "g": 12,
+   "titel": "Het werkwoord 'zijn'",
+   "thema": "Werkwoorden",
+   "ocr": "accent alleen attisch attische beide bent fhue gaat koiné komen leer onderscheidt rijtjes staan vaker voegwoord vormen werkwoord zelfs ziet zijw"
+  },
+  "98": {
+   "g": 13,
+   "titel": "Negaties",
+   "thema": "Syntaxis & overig",
+   "ocr": "adixia alipete alpha bete bijv bijwoord bytaivovony dkovba dmuotos evpiokopev geaspireerde gezond hoor indicativus jullie klinkers naamwoord negatie negaties nemen onrecht ontkend ontkenning ontrouw peas privans schrijft vinden voeg voorvoegsel vormen werkwoord ypaget zelfst"
+  },
+  "99": {
+   "g": 13,
+   "titel": "Negaties",
+   "thema": "Syntaxis & overig",
+   "ocr": "andere antwoord bijwoord bijwoorden blind coniunctivus eoplev eotiv etabaivete etval gebruikt geeft houtbewerker huis imperativus infinitivus keuze modi negatief negaties obtd oikiac oixiav ontkenning optativus positief tektwy toch tpelc tupaol twee verwacht vraagsteller vraagzinnen welk"
+  },
+  "100": {
+   "g": 13,
+   "titel": "Negaties",
+   "thema": "Syntaxis & overig",
+   "ocr": "alleen combinaties eens gaaa helemaal hovov iemand iets komen lnketl lntote meer mote mwmote negaties niemand niets noch nooit obte ooit oute ovdeic ovdé ovdév ovketi ovmw ovtote ovxl toen tote unde undeic unite verwacht vraagzin zelfs"
+  },
+  "101": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "addere adiectiva adjectiva adverba bijv bijvoeglijk bijwoord bijwoorden congruentieregel cursusgrieks declinatie extra gebruiken geslacht getal hoort horen ieder informatie latijn modifier naamval naamwoord naamwoorden onverbuigbaar overeen passen toevoegen waar werkwoorden wilt woorden zelfst zich"
+  },
+  "102": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adiectiva adjectivum bijvoeglijk daarbij declinatie drie echter eerste gebruikt geslacht geslachten geven goed griekse kaos leder lidwoord mannelijk mooi naamwoord naamwoorden onzijdig overeen tweede uitgangen verbuiging vrouwelijk weergegeven woordenboek zelfstandig"
+  },
+  "103": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adiectiva declinatie kaaa kaad kaads kaaoi kaaoic kadai kadaic kahh kahiis kahiyv kahod kahog kahov kahovc kani kaxoic mannelijk onzijdig vrouwelijk"
+  },
+  "104": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "accent adiectiva alpha amodg anodv apyvpodbv apyvpoic ayia ayiov aylog beide bijvoeglijk circumflexus cursusgricks declinatie dpyvpa eenvoudig eindigt epsilon geldt heilig iota klinker kunnen mannelijk naamwoord onzijdig opgaan peter plaats pyvpo regel samentrekking stam uitgang uitgangen vindt vrouwelijk zien zilveren"
+  },
+  "105": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "aantal adiectiva adjectiva alle aparte bestaat bette bijv bijvoeglijk cursusgricks daarvan declinatie dekos ducoc eenzaam geen geval hebben ieder mannelijke naamwoorden offer onder onrechtvaardig onthoud proc samengestelde subgroep tkog twee uitgangen vallen varianten verbuiging voia volgen vrouwelijk vrouwelijke"
+  },
+  "106": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adiectiva adjectiva andere basis bijbehorende cursusgrieks declinatie denken enkele groot hebben heyaan héyac iets moaa moavg peyav slot stam stammen toaah toad twee uitgangen uweyaa veel veelvoorkomende verbuiging volledige"
+  },
+  "107": {
+   "g": 14,
+   "titel": "Adiectiva 1e/2e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adiectiva adiectivum attributief ayabov ayaddv ayadev bijvoeglijk declinatie deel dien drie dyabov dyadov elie gebruikt gesubstantiveerd goed goede manieren menser naamwoordelijk nodig predicatief pyov verschil verzelfstandigd vullen werk werkwoord éottv épyov"
+  },
+  "108": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "achtergrondinformatie afgeronde algemeen aoristus aspect concrete daar ddptotoc default drie duratief eigenlijk futurum gebeurtenissen gebruikt geeft hebben heeft imperfectum kennisgemaakt kortdurende meer meest normale onbepaald opeenvolgende over praesens punctueel stappen tegenover tempora tempus veel verhaal vertellen voorkomende werkwoord"
+  },
+  "109": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "algemene alle alleen aoristus aspect begon binnenkomend eavtod eigen gdpka geloof gelover gnome gnomisch guionoev haat handeling immers indicativus ingressief kwam lichaam meer mogelijk mote niemand ooit ovdeic specifiek tegeltjesspreuk tijden uitgedrukt uitspraak vertalen waarbij ériotevoa"
+  },
+  "110": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus aoristusstam augment bindvocaal coniunctivus cursusgrieks imperativus indicativus infinitivus later leren modi neal optativus peter praesensstam pseudosigmatische reduplicaties sigmatische stam stamaoristus tempus thematische uitgang verschillende versterkingen vorming vormingswijzen zonder"
+  },
+  "111": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus aver doete dvdoovot dvoeig dvovot futurum imperf indic jullie maakte maakten nvete praesens vete voac voate voav voet voopev vopev vouev zavov éhvoapev éhvoe"
+  },
+  "112": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "abtod achtergrondinformatie acties adtob aoristus aspect avab avebreyev blind eqwvynoay eyavtoc geloofden geroepen geworden gnomisch groen hadden imperfectum indicativus joden meer meestal nepi ouders punctuele rood situatieschets soms stov totdat tovdaior tovs tupaog verschil vertaling voorbeeld voortijdigheid weer yoveic ziende"
+  },
+  "113": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus avoatw avodtwoav boate dant ddoat doov imperativus infinitivus jullie laat laten losmaken losmaker maak maakt maken moet moeten"
+  },
+  "114": {
+   "g": 15,
+   "titel": "Aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "achterwege aoristus aoristusvorm aoristusvormen aspect augment blijft didov duratieve eenmalige enkel gebruikt geef geen handeling heden herhaalde huepav iedere imperativus infinitivus medium modi onderscheid pepov praesens praesensvormen punctuele speelt tijd vaker verleden vertaalt"
+  },
+  "115": {
+   "g": 16,
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend betrekkelijk bezittelijk correlativum corresponderend cursusgrieks demonstrativum indefinitum interrogativum naamwoorden nomina onbepaald personale persoonlijk possessivum pronomen reciprocum reflexivum relativum voornaamwoord vragend wederkerend wederkerig"
+  },
+  "116": {
+   "g": 16,
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "ocr": "aannemen afhankelijk alle beide bette boek drie elie functie getallen haar herhaling jullie komen kunnen lenen meisje mocht naamvallen naamwoorden nederlands nederlandse nemen personale personen persoonlijk plaats pronomen residu terug vermijden verschillende voornaamwoorden vormen vroeg"
+  },
+  "117": {
+   "g": 16,
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "ocr": "abta abtai abth abtis abto abtod abtoi ades avdtoic avta avtac avtaic avto avtoc avtod avtoic avtoug avtovv bpeic buiv delgc figs gigla pees personale persoon poee pronomen saye twiv wale wtsrq éuoi"
+  },
+  "118": {
+   "g": 16,
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "ocr": "accent betekenis cursusgricks extra gebruik geeft geven gvopwrtoc immers johannesevangelie nadruk nominativus opmerkingen over paémet personale persoon persoonlijk persoonsvorm plaatsing pronomen septuaginta tetragrammaton toevoeging ttepl vertaling volgen voornaamwoord voorzetsels vormen ziet"
+  },
+  "119": {
+   "g": 16,
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "ocr": "abdtijs accusativus adthv adtod altijd avtéc beide best bewaart dativus exkanolay gemeente genitivus geslacht grammaticale haar heer kbptoc matpic naamval naamwoord natpic overeen overeenkomstig owet personale pronomen puadcoel redt toevallig vaderland vertaald verwijst vrouwelijk waarnaar"
+  },
+  "120": {
+   "g": 16,
+   "titel": "Pronomen personale",
+   "thema": "Voornaamwoorden",
+   "ocr": "abtd abtos achter adtds attributief betekenis bidc bids bijbehorend bijbehorende congrueert cursusgricks derde dezelfde direct dragen hetzelfde lidwoord naamwoord pers personale persoon peter positie predicatief pronomen voorafgegaan waar zelf zonder zoon"
+  },
+  "121": {
+   "g": 17,
+   "titel": "Verba muta",
+   "thema": "Werkwoorden",
+   "ocr": "ayyedhw basis conjugaties contracta delen gaivw gegeven griekse groepen herhaling kadbrtw kahdrtw konicw kopilm laatste letter liquida muta omeipw préw pvidoow pvridoow snow stam tile tiptdw verba verschillende vervoeging vervoegings vocalia volledige voorbeeldwerkwoorden werkwoorden"
+  },
+  "122": {
+   "g": 17,
+   "titel": "Verba muta",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus eindigt eres eteloa eypaya futurum invloed muta onder pass sigma siwe siwka siwkw stam treedt tteiow verandering verba werkwoord ypagw ypayw zuivere"
+  },
+  "123": {
+   "g": 17,
+   "titel": "Verba muta",
+   "thema": "Werkwoorden",
+   "ocr": "alle aoristusvormen cpatw cursusgrieks dentaal eigenaardigheden eindigt ekpagta empaga epeco extra fpeoa futurum gutturaal kataptiow kataptit katr kpat lastig maakt maken meestal moeten mpdagw muta praesensstam praesensvormen ptioa péow soms stam tipaco verba weggedacht zuivere"
+  },
+  "124": {
+   "g": 17,
+   "titel": "Verba muta",
+   "thema": "Werkwoorden",
+   "ocr": "aantal andere apéok ayyeah ayyed belangrijke gebruiken imperfectum kont koti liquida muta praesens praesensstam praesensversterkingen stam telv tempora teul vallen verba voorbeeld zuivere"
+  },
+  "125": {
+   "g": 17,
+   "titel": "Verba muta",
+   "thema": "Werkwoorden",
+   "ocr": "alle dentaalstam dentaalstammen direct drie gutturaalstam gutturaalstammen gvidoow heeft hensels kaaut kahit koautitw koil koni kopicw labiaalstammen meestal muta ovad praesensstam praesensversterking pviadcow stam verba voorbeeld voorbeeldwerkwoorden werkwoord zuivere"
+  },
+  "126": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "albehandeld aoristus balt eerst futurum gaan iaatste imperfectum impf kennen leren onbepaalde onregelmatig perfectum plpf plusquamperfectum prae praesens regelmatige sommige stamtijder tempora tijd tijdvormen twee vanaf verba vorming wars werkwoorden"
+  },
+  "127": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "attisch augment bindvocaal klassiek perfectum persoonsuitgangen plusquamperfectum reduplicatie stam tijdkenletter verba vocalia vorming zuivere"
+  },
+  "128": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aeddkaon aehdkapev aédvkee bxette ehdket hadden hebben hebt heddkate heeft hehukeioav héhvka héhvwas ikhad indic jullie losgemaake losgemaakt neer osgemaakt perfectum plusquamperfectum ulliehebben vkav éhehdketpev éhehoxers"
+  },
+  "129": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "amodvw amto begint bijpassende bijzonderheden dtoaeavuka eerste geaspireerd gebruikt geofferd hebben herhaling losgemaakt medeklinker ovopev perfectum plusquamperfectum reduplicatie stam stemloze teodkapev verschijnt voorvoegsel vrijgelater"
+  },
+  "130": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "achterwege augment augmentvorming begint blijft ebhoynka ervoor evaoynketv evhoyéw geen gehoopt geplaatst gezegend hamixate hebben jullie klinker liquida medeklinkers optreedt perfectum plaats plpf plusquamperfectum reduplicatie stam twee tweede tweeklank uitzondering verlengde éamulete"
+  },
+  "131": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "augment augmentvorming beginklinker bijv blijft bpaw dubbel dubbele epsilon ewpa ewpwv gezie gezier herhaling ikheb impf kennen onregelmatige perfectum plaats plpf plusquamperfectum reduplicatie sommige staan treduplicatie verlengde werkwoorden éwpaxa éwpdxetv"
+  },
+  "132": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "achtergeplaatste anders behoort daarmee dentaalstam eindigend exekogetc gebeurt geslagen geslager hebt hierboven iets kappa keko kottw laatste letter medeklinker muta perfectum plpf plusquamperfectum samen stam stomme ties trekt verba zuivere éamcw"
+  },
+  "133": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "actief aevkévat aoristus aspect boetv ddoat duratief dvetv eigen eigenlijk elkaar futurum geen hebben horen imperativus imperfectum impf infinitivi infinitivus lijken losgemaakt losmaken losmaker maker perfectum plpf plusquamperfectum prae praesens resp resultatief tempora verschillende zullen"
+  },
+  "134": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aspect attische begrijpen beheersen bovenste broeders ddehoi duidelijk epowoe hand hoeft imperativus indicativus jullie keer kunnen lore medium meer mijn moeten oida onderste perfectum persoon peter plusquamperfectum praesens spreekt staan steeds sterkte stil straks tegipwoo toestands tote twee vaarwel vier"
+  },
+  "135": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aspect behouder belangrijk bepaalde correct gebruik handeling hebben heden heeft meestal opmerkingen over perfectum peter plusquamperfectum principe race resultaat resultaatsperfectum resultatief spopov tegenwoordige tempus tethpnka tetéaeka tijd tiotv uitwerking verleden vertaling vertrouwen voltooid waarin zogeheten"
+  },
+  "136": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aiuatog alleen altijd belang bepaalde bijv bloed deel deelhebben gapkds geval gewoon handeling hebben heden imperativus kekolvwvnkkev kinderen meer modus onvoltooid perfectum plusquamperfectum praesens resultaat soms sprake spreekt taldia tegenwoordige tijd tile toestandsperfectum verleden vertaalt verwijst vlees voorkomen waar werkwoorden"
+  },
+  "137": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "alles aoristus avtov doet eixev extra functie gaat gebeurtenis geeft gewone haar heden heeft historisch hyopacev kocht koiné mémpakev nederlands noemt onvoltooid parel perfectum peter plusquamperfectum resultaat slot soms tavta tijd verkocht verleden vertaalt waarbij zake zwaarte"
+  },
+  "138": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "abtod adlapos arme aspect belangrijk bepaald correct deur ebebanto geval hadder handeling heeft kunnen later lazarus medium meestal mtwydc naam neergelegd noemen ovoouatl perfectum plusquamperfectum resultaat resultaats tijd tpdg uitgang vanaf verleden vertaling voltooid zekere"
+  },
+  "139": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "actie adtov alleen betreft daartoe equivalent hdetv kayo kende leidde meer oida onregelmatig onvoltooid ovdk perfectum plusquamperfectum resultaat soort telt tijd toestands toestandsperfectum verleden vertalen waarover werkwoord"
+  },
+  "140": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aantal achter altijd aoristus betekenis doen gaan gekregen hebben impf perfectum perfectumvorm plpf plusquamperfectum praesens praesensbetekenis staan staar stond toestandsperfectum totnut vertaal voorkomen werkwoorden woordenboek zotnka éotnkety"
+  },
+  "141": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "afgeleid apart betekenis cursusgrieks daarom determinatie eidéw enkel fjsety gaat geef geraakt gezien hebben kappa keer kenmerkende kent leren oida onbruik onregelmatig onvoltooid perfectum peter plpf plusquamperfectum tegenwoordige tempora tempus tijd toestandsperfectum verder vertaalt vervoeging voorkomt weet werkwoord weten wist"
+  },
+  "142": {
+   "g": 18,
+   "titel": "Perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "ctctar dette eidévat fdeioav fdetev fisetv hijweet hsetc ikweet imper indic infinitivus jullie klas oida oidac oide otdaot otdate otsapev perf perfectum plusquamperfectum vervoeging weet weten wist wiste wisten wister zijweten"
+  },
+  "143": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend betrekkelijk bezittelijk correlativum corresponderend demonstrativum indefinitum interrogativum onbepaald personale persoonlijk possessivum pronomen pronomina reciprocum reflexivum relativum voornaamwoord voornaamwoorden vragend wederkerend wederkerig"
+  },
+  "144": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzende ander boek camera daar demonstrativum dichtbij geslacht getal hebben kennen maken nederlands onderscheid pronomen soorten spreker twee variatie verder voornaamwoorden welke zaken zijnde"
+  },
+  "145": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aangesprokene aanwijzende attn bali bijna citaat cursusgrieks demonstrativum dichtbij drie duidelijk functies gebruik heeft helemaal klassiek koiné minder odtoc onderscheiden overgenomen ovtog pronomen spreker tobtto tode verder verschil verschillende volgt voorafgaat voornaam waren woorden éxeivn éxeivo éxeivoc"
+  },
+  "146": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "deis devdp ekeivo ekeivog outog sevopov tode touto"
+  },
+  "147": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanw asper avtdc bevat cursusgrieks demonstrativum eerste ervoor heeft keer lenis lidwoord obtoc pers persoon persoonlijk pronomen spiritus stam tweeklank uitgang uitgangen veelvuldig verbogen volgens vooral voornaamwoord"
+  },
+  "148": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "abdth abtat biaeed demonstrativum hale mannelijk obtol odtosg onzijdig pare pronomen taauth tadta tautaig tauths tavtas tavthv ties tout touto toutod toutoig toutou toutoug toutov toutw toutwv vrouwelijk"
+  },
+  "149": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "abtéc aéyet constructie demonstrativum dingen exeivoc geheel keer lidwoord pronomen tade verbogen volgende vooral zegt"
+  },
+  "150": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "demonstrativum dency duct ekeiviyv ekelvalg ekelvolg ekelvwv kelvov mannelijk neen onzijdig pede pronomen vrouwelijk ékeiv ékeivw ékeivy ékelvac ékelvep ékelvn ékelvo ékelvog ékelvous ékelvwv éxeiva éxeivat éxeivo éxeivov éxeivys éxelvor éxetva"
+  },
+  "151": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aide demonstrativum grijsgedrukte komen mannelijk olde onzijdig portal pronomen tade taiode thode those thvde toiode tooe tose tovde tovode tovoe twvoe vormen vrouwelijk"
+  },
+  "152": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend afhankelijk avopwrotc bent bepaald betekenis demonstrativum diegene duidelijk eopev exeivon functie gebruik geen gemaakt geslacht getal hebben hpeic knpvoow leerling leerlingen mensen mozes mwboéwe naamval nederlands oddv onderscheid paont paontai pers plaats pronomen sead tabtny tots twookw verkondig vertaling"
+  },
+  "153": {
+   "g": 19,
+   "titel": "Pronomen demonstrativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "abdtoic achter aéyet bijvoeglijk congrueert daar demonstrativum exeivoc gebruikt geslacht getal huepa leerling lidwoord naamval naamwoord pabntis paonti plaatsing predicaat pronomen tegen tijdsaanduidingen waar zelfstandig éxeivos éxeivy"
+  },
+  "154": {
+   "g": 20,
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "ocr": "ayyehhw basis bette conjugaties contracta cursusgrieks delen gegeven grea griekse groepen herhaling kahvmtw kopitw laatste letter liquida muta oneipw paivw préw puvrdoow snadw stam tile tudw verba verschillende vervoeging vervoegings vocalia volledige voorbeeldwerkwoorden werkwoorden"
+  },
+  "155": {
+   "g": 20,
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "ocr": "accent afgeleid ayamn ayandw betekenissen bijvoeglijk bindvocaal contracta contractie dikatog diuxaiow eindigt gebaseerd guiia hebben herkennen imperfectum leren liefde liefhebber naamwoord nadeel ovéw peter plaats praesens praesensstam rechtvaardig rechtvaardigen samentrekking stam stamklinker tempora uitgang verba vindt voordeel zelfst zelfstandig zien"
+  },
+  "156": {
+   "g": 20,
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "ocr": "bein bindvocaal contracta corsus medium ntre samentrekkingsregels some stam uitgang verba"
+  },
+  "157": {
+   "g": 20,
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "ocr": "alles alternatieve andersom ater avreeteenevreeta combinaties contracta cursusgrieks dekt eerste gevallen iota klank komen lang meest meeste ofwel omega ondergeschreven onthoud ooooop samentrekkingen samentrekkingsregels samenvatting terecht uitzondering verba vreemde wint zieookregel"
+  },
+  "158": {
+   "g": 20,
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "ocr": "actief ayanaw ayand blijft contracta duidelijk gireiv identificeerbaar infinitivus prae praesens regels samentrekkings snrodv stam tila tiwa toegepast uitgang vandeverba verba vervoeging volledige werkwoorden woordenboek woordenboekvorm zodat"
+  },
+  "159": {
+   "g": 20,
+   "titel": "Verba contracta",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus bete contracta dedroxa dnao eindigt futurum klinker medeklinkers pene perfectum plpf plusquamperfectum purijow stam tijdkenletters tllla vdor verba verlengd volgen waarop werkwoorden émtepiaiyketv étipnoa"
+  },
+  "160": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend betrekkelijk bezittelijk correlativum corresponderend cursusgrieks demonstrativum indefinitum interrogativum onbepaald personale persoonlijk possessivum pronomen pronomina reciprocum reflexivum relativum voornaamwoord voornaamwoorden vragend wederkerend wederkerig"
+  },
+  "161": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "alles antecedent begrippen betrekkelijk betrekkelijke bijzin capabel degene duur formeel gelukkig goed hele hetgeen hetwelk hoofdzin huis ieee ingesloten kennen klusser leeg meewerkend meisje mooi nederlands onbepaalde overlaten persoon pronomen relativum uitkomt verbindt vermeldt verouderd vind voornaamwoord voornaamwoorden voorwerp waagt"
+  },
+  "162": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "abtodc accent alle alleen antecedent asper betekenis betrekkelijk gelijk geslachten getallen iemand iets ijtt kent koiné komen kunnen lidwoord naamvallen nominativusvormen onbepaald onderscheid oorspronkelijk overeen peas peter pronomen relativum samengetrokken spiritus twee uitgangen verbogen verbuiging voornaamwoord voornaamwoorden vormen weer zorg"
+  },
+  "163": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "mannelijk onzijdig pede pees pronomen relativum vrouwelijk wale"
+  },
+  "164": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aiottot aitivees ativa atiwa dees dtov gotivac hotivoc hvtiva mannelijk olotiol olottiol olttvec onzijdig otlvl ovotivac ovtiva pronomen relativum tivl vrouwelijk vtlvm vtlvmv vtlvwv étov"
+  },
+  "165": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aypt begin betekenen betrekkelijk bijwoord bijzin combinatie eobiolev eten kennen okopev omdat onderscheidt plaats profeten pronomen péxpt relativum spatie tenzij tijd tods totdat tpogi voegwoord voorafgegaan voorzetsel zeal"
+  },
+  "166": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "alleen antecedent apostel bepaald bettie bijzin boodschap congruentie functie geslacht getal moeilijk naamval overbrengen overeen pronomen relativum vervult"
+  },
+  "167": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "accusativus alleen antecedent apostel bepaald bijzin boodschap congruentie functie geslacht getal lijd moeilijk naamval overbrengen overeen pronomen relativum vervult vrouwelijk"
+  },
+  "168": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "adtov allen antecedent bartice commodi dativus degene doopt epyovtat expliciet getuigd handiger hebt ingesloten iopdavov jordaan komen maken mooier mpdc nave obtoc over overzijde pabbi pelaptvphkas peta pronomen rabbi relativum tépav vertaling weer"
+  },
+  "169": {
+   "g": 21,
+   "titel": "Pronomen relativum",
+   "thema": "Voornaamwoorden",
+   "ocr": "abtn accolades adtdc altijd antecedent attov aveyivwoxey bakenen betrekkelijke bijvoeglijke bijzinnen coderingssysteem daarom deel degene doen duidelijk duidelijker enkele erna grijpt handig hoofdzin ingesloten komma kpatioate kunnen loopt meptoxi methode overal passage pirow pronomen relativum schrift strepen tile vanaf verder"
+  },
+  "170": {
+   "g": 22,
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "ocr": "accusativus altijd avtdc boek cursusgrieks daarom derde echter eerste epsilon genitivus geslacht jouzelf julliezelf kent mannelijk mijzelf nominativus nooit onderwerp onszelf onzijdige overeen persoon peter pronomen reciprocum reden reflexivum schrijft sigma soms terug tweede verwijst volgt voornaamwoord vormen vorming vrouwelijk"
+  },
+  "171": {
+   "g": 22,
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "ocr": "eaut eautag eautodg eautov eavtmv eavtoic eavtovs elavths elavtov eqvtoic glavtt mannelijk oeavt oeavth oeavtnhv oeavtod oeavtov oeavvtis persoon pronomen reciprocum reflexivum slavth verbuiging vrouwelijk éavtaic élavtnv élavtoo"
+  },
+  "172": {
+   "g": 22,
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "ocr": "avtt eautm eauto eautwv eavtod eavtov eavtovc eqavtoic equtag equthc equtoic mannelijk onzijdig persoon pronomen reciprocum reflexivum verbuiging vrouwelijk éavta éavtaic équtnyv"
+  },
+  "173": {
+   "g": 22,
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "ocr": "accusativus afhankelijk bijvoeglijk congruerend dativus enkel gebruikt genitivus haar jullie naamval naamwoord oftewel pronomen reciprocum reflexivum vertaling voornaamwoord wederkerend zelf zelfstandig zich zichzelf"
+  },
+  "174": {
+   "g": 22,
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "ocr": "adtod atapvnodo avtod dkkohovbeitw dpatw eavt eavtov eigen gebruikt geen gestaan herkennen klassiek koiné komen kruis levert moet nemen onderwerp otavpov persoon persoonlijk plaats pronomen reciprocum reflexivum sigma soms verloochenen vertaalprobleem vervangt volgen voornaamwoord vormen want wederkerend zich zichzelf zonder"
+  },
+  "175": {
+   "g": 22,
+   "titel": "Pronomen reflexivum en reciprocum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aaraoug adanac adaraoig adarjaatc adatawv adda addnwv afhankelijk alleen elkaar gebruik mannelijk meervoud naamval onzijdig pronomen reciprocum reflexivum vertaalt voornaamwoord vrouwelijk wederkerig"
+  },
+  "176": {
+   "g": 23,
+   "titel": "Verba liquida",
+   "thema": "Werkwoorden",
+   "ocr": "ayyehho basis bilt coniugaties contracta cursusgrieks delen gegeven griekse groepen herhaling kahintw kopitw laatste letter liquida muta oneipw otéa paiva piréw pvrdcoow snadw stam tiwdw verba verschillende vervoeging vervoegings vocalia volledige voorbeeldwerkwoord werkwoorden"
+  },
+  "177": {
+   "g": 23,
+   "titel": "Verba liquida",
+   "thema": "Werkwoorden",
+   "ocr": "anders aoristus asigmatisch cursusgrieks echter eindigt even futurum genoemd imperfectum kleine lijkt liquida molenaar namelijk perfectum plpf praesens pseudosigmatisch sigma sigmatische stam stammen tegengekomen treed verba vormverandering waarvan werkwoorden wijken zonder"
+  },
+  "178": {
+   "g": 23,
+   "titel": "Verba liquida",
+   "thema": "Werkwoorden",
+   "ocr": "accent aveite circumflexus contracta enige futurum geen gevolg levels liquida oaivete oftewel persoonsuitgangen peveic prae praesens praesensstam praesensuitgangen praesensversterkingen samentrekking sommige stam uitgangen verba verschil vorming zonder zuivere"
+  },
+  "179": {
+   "g": 23,
+   "titel": "Verba liquida",
+   "thema": "Werkwoorden",
+   "ocr": "aoristi aoristus augment ayyeh bindvocaal epavapev herkennen iota klassiek lange langealpha liquida oftewel patvoplev persoonsuitgangen seer sigma sigmatische stam stamklinker tryyera verba verlengde verlenging vorming zonder zuivere"
+  },
+  "180": {
+   "g": 23,
+   "titel": "Verba liquida",
+   "thema": "Werkwoorden",
+   "ocr": "doen eindigt gaiva gamma gemaakt heeft kappa liquida perfectum plusquamperfectum samentrekking stam tepayke treedt verba verschijner zichtbaar"
+  },
+  "181": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "actief afwijken aoristus apart asigmatische athematische bestaan bovendien heeft kunt laatste leren liquida medium meer minder moet onregelmatig praesensstam sigmatische stam stamaoristus stamtijden thematische twee verba verschillende vormingswijzen werkwoord zien"
+  },
+  "182": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "achter aoristus athematisch betreft bindvocaal cursusgrieks direct eerste genoemd naam naamgeving onderscheiding ontbreekt sigmatische staan stam stamaoristus steeds thematische themavocaal treffen tweede type uitgang uitgangen variant wortelaoristus"
+  },
+  "183": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "accent aoristus aoristusstam augment aéyw bindvocaal blijft circumflexus héyu imper imperativus impf indic indicativus infin infinitivus kort onregelmatige persoonsuitgangen praesens stam stamaoristus them thematische toevallig tweeklank vervalt vnokw vorming vyjokw zien zonder"
+  },
+  "184": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "aabete actief aoristus aubave beiv ehabes hapétw imperativus indicativus infinitivus labéettwwoav nemen senge stamaoristus thematische voorbeeld werkwoord éhabe éhabete éhabouev éhabov"
+  },
+  "185": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "afwijkende alpha aoristus aoristusstam asigmatisch aéyw baaeiv badd beide betreft bijv bindvocaal birt cursusgrieks eina einac einev einov enige enkele etmec etmev futurum gelijk hetzelfde imper imperfectum indic infin leren liquidum moet onderscheid onregelmatige peter praesens soms stam stamaoristus thematische"
+  },
+  "186": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "aantal aaupavar aeyw alaqtave amaaqtaav amaqt aoristus aqupav bara baraw eimov emacyov emvuyov eobw eoot eoxov etuov eveyk evoeltkw evolok evqov lqov maaqtoov oday oevy oevyw ofow oyary stamaoristus thematische tivw tunto tutt veelvoorkomende veykov werkwoorden yacyov éaabov ébaaov émeoov"
+  },
+  "187": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "achtergrond ander anders aoristus aoristusstam bijv cursusgrieks eldov engels geen geraakt geworden imper infin iseiv leerstof omdat onbruik oorspronkelijk opaw overbodig peter praesensstam soms stamaoristus suppletie tegenwoordige terzijde thematische tijd toevoeging wend went werkwoord"
+  },
+  "188": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "achter alleen aoristus aoristusstam augment baive baivw belangrijkste direct eiui gaan imperativus indicativus infinitivus katabaivw kennen komen komend lijken napabaivw onregelmatige persoonsuitgangen peter samenstellingen stam stamaoristus thematische uitgang uitgangen veelvoor vorming vrij weinig werkwoorden ytvwoxw"
+  },
+  "189": {
+   "g": 24,
+   "titel": "Thematische aoristus en stamaoristus",
+   "thema": "Syntaxis & overig",
+   "ocr": "aoristus bnuwev brytw brytwoav eyvw eyvwpev eyvws eyvwv imperativus indicativus infinitivus pijte rear stamaoristus thematische yvotw yvotwoav ébnte éyvw éyvwte"
+  },
+  "190": {
+   "g": 25,
+   "titel": "Pronomen possessivum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend betrekkelijk bezittelijk correlativum corresponderend demonstrativum gricks indefinitum interrogativum onbepaald personale persoonlijk possessivum pronomen pronomina reciprocum reflexivum relativum voornaamwoord voornaamwoorden vragend wederkerend wederkerig"
+  },
+  "191": {
+   "g": 25,
+   "titel": "Pronomen possessivum",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend améotethev atdc bezit bezittelijk duiden gebruikt geest genitivus gewoon haar heer iets jullie koghlovy koglov kpivy lidwoord mvevp oordeler opdat pedc persoonlijk peta possessivum pronomen regelmatig soms sterker uitgedrukt vertalen vidv want wereld xbptog zond zoon éxetvoc"
+  },
+  "192": {
+   "g": 25,
+   "titel": "Pronomen possessivum",
+   "thema": "Voornaamwoorden",
+   "ocr": "adtod avtav avties bepaald bezittelijk calle congrueert cursusgrieks derde gebruikt geeft gekoppeld genitivus geslacht herhaling hoort inzicht kata kent lidwoord meer mijn naamwoord nadruk persoon persoonlijk peter possessivum pronomen verwijst volgens voornaamwoord waar weer"
+  },
+  "193": {
+   "g": 25,
+   "titel": "Pronomen possessivum",
+   "thema": "Voornaamwoorden",
+   "ocr": "andere aytoc bezittelijk byetépa byétepov dpetepos enkelvoud gaat getallen jouw jullie kaadc meervoud mijn naamvallen npetepov nueeteepos onze persoon possessivum pronomen regel steeds twetépa verbuiging volgens volledige voornaamwoorden éulov"
+  },
+  "194": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief aoristus bali beer betrokkenheid coniunctivus cursusgrieks diathese eigenschappen enkelvoud futurum getal griekse handeling heeft herhaling imperativus imperfectum indicativus infinitivus kennen maken medium meervoud modus nederlands optativus participium passief perfectum persoon plusquamperfectum praesens subject tempus verschillende werkwoordsvorm"
+  },
+  "195": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve agens behulp betekenis blijf blijfjew cursusgrieks diathese enbed gaan geblever geconstrueerd geduwd gezegde gezegdes handeling hebben hulpwerkwoord identificeert intransitief intransitieve kent kunnen lijdend medium nederlands nederlandse omgezet onderwerp ontvanger passief passieve patiens samen transitief uitvoerder voorwerp werd werkwoord"
+  },
+  "196": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief broer cursusgrieks diathese geholpen geworden hebben help helpen hielp medium mijn passief werd"
+  },
+  "197": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief andere diathese leiden mediale medium passief persoonsuitgangen vtat werkwoordsvorm woav ynnv zelf"
+  },
+  "198": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve afhankelijk agens aoristus bepaalde bestaan betrokken betrokkenheid daarnaast deels deponentia derde diathese direct doorgaans eigen elio futurum geven gezegde griekse heeft identificatie intransitief kent mediaal mediale medium onderwerp passief passieve passiva patiens reflexief soms tempus tenzij toleratief uitgangen"
+  },
+  "199": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve aitetobe andere basis begrijpen behoeve bepaalde betekenis betrokken bijv calle context cursusgrieks diathese drie ened geeft griekstalige heeft iets indirect jezelf jullie keuze maken mediaal medium onderscheid opties passief peter reflexief tempus typen verhing vertalen vertaling voorkomen vorm"
+  },
+  "200": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "aanwijzing actief alleen aparte bantigopat baten besnijden christus cvvebovevoavto diathese elkaar gebruik gedoopt geen geldt impf jullie kennen laten later losgemaakt maakte medium mepitéuvnoe mezelf mpeobrtepot niets oudsten overlegden ovsev passief passieve perf plpf prae tegen tempus toleratief voduny vormen"
+  },
+  "201": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve afgelegd alleen altijd aoristus bepaalde bijv cursusgrieks deponens deponentia diathese futurum gaan gedeponeerd geen gezien handeling hebben hetzelfde imperfectum intransitief intransitieve kennen kent koiné komen lijsten mediale medium mediumuitgang passender passief perfectum praesens pxouat staan stam tempus toch"
+  },
+  "202": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "aangegeven achter actief actieve afwijkende beginnen bepaalde betekenis bijeen cursusgrieks diathese doen dpxw erbij gaat groter hebben heersen intransitieve kennen komen medium nabw ophouden ovvayw passief regeren soms stoppen tabu tempus verschil verzamelen vormen werkwoorden woordenlijsten"
+  },
+  "203": {
+   "g": 26,
+   "titel": "Diathese: actief, medium of passief",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve alle alleen aoristus aparte aéhvpat beginnen betekenis betrokken bijv bijy deponent doen futurum gebyw heerser intransitief kent kunnen mediaal mediumvormen navopat ophouden ophouder ouct passief passieve pyoucn reflexief speraalen stroomschema svayat tempora tempus toleratief variant vertaal vertaling vluchten"
+  },
+  "204": {
+   "g": 27,
+   "titel": "Medium praesens en imperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "activum alleen athematische augment contracta cursusgrieks dbvapat dezelfde duidelijker imperfectum medium mediumuitgangen omdat onderscheiden praesens praesensstam samentrekken starten themavocaal themavocalen uitgang verba vocalia vorming"
+  },
+  "205": {
+   "g": 27,
+   "titel": "Medium praesens en imperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aveoow aveta avopat avopeba avéoowoav dveobe dvovtat imperativus imperfectum indicativus leev medium praesens vdpeba veto vovto éhveo évounv"
+  },
+  "206": {
+   "g": 27,
+   "titel": "Medium praesens en imperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "athematische avent aveo bestaan bijv daar dbva eindigt futurum geen imper imperfectum impf indic kennen klinker komen kunt medium meeste omdat page persoon plaats prae praesens praesentia samentrekking sigma stam thematische themavocaal uitgang vervallen vindt volgt werkwoorden éadov édveo"
+  },
+  "207": {
+   "g": 27,
+   "titel": "Medium praesens en imperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "activum alles bindvocaal contracta contractio dndrotet edndodobe einde enkele gebeurt geen imper imperfectum klank klinker lall liquida medium muta oooop piete plaats praesens pretetat préw samentrekking sigma snow stam tiaw tile tlla treden veranderingen verba vervalt vindt vocalia voorbeelden xphopa"
+  },
+  "208": {
+   "g": 28,
+   "titel": "Stamtijden",
+   "thema": "Werkwoorden",
+   "ocr": "benoemen betekenis blackboard canvas contracta cursusgrieks diathese eigen eigenaardigheden exceldocument frequente gaat gebeurt grammatica iets kunt leren liquida meest memrise muta naast onregelmatigs peter regelmatige sommige specifieke staan stam stamtijden stamtijdenlijst stamvormen stamvormenlijst steeds tempora tempus tien uiteindelijk veel verba"
+  },
+  "209": {
+   "g": 28,
+   "titel": "Stamtijden",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve alleen andere aoristus aparte assief behandelen betekenis betekent coud deponent dezelfde diathesen document edium eigen ened excel futurum gegeven grammatica hebben indic kolom kolommen later leiden mediale medium onder passivum perfectum persoonsuitgang praesensa regel staan stammen stamtijden stamtijdenlijst"
+  },
+  "210": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "achter afwijkt andere bijv cursusgrieks daarom declinatie declinaties derde drie eerste gebruiken genitivusvorm kent koiné komen kunnen naamwoorden natpidoc nmatpid nominativusvorm stam steeds substantiva ttatpic tweede uitgangen verbuigingsgroepen vermeld vinden wisselt woorden woordenlijst zelfstandig zonder"
+  },
+  "211": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "declinatie mannelijk ompata onzijdig owlata owlatl owlatwv owllatosg owplagl pntopwv prtopaa prtopes prtwp prytopas prytopi prytopoi substantiva toic toig toposg tovc"
+  },
+  "212": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "afwijkingen cursusgrieks dativus declinatie eindigt enkele ervoor grotere klinker klinkerstammen laatste letter meervoud muta onregelmatige onzijdige peter plaats samentrekkingen stam substantiva uitgang uitzonderingen verba verlengd vervalt vinden wiig woorden zelfst zorgt"
+  },
+  "213": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "alleen bovendien dativus declinatie dpab ebay eindigt elio gpaytv klinkers ktpvstv meervoud muta samentrekking sigma stam stammen substantiva tauciv tlollev traud treedt ttoipectv verlengd yepotouv yepovt"
+  },
+  "214": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "bekende contracta cursusgrieks declinatie doordat gaan geslacht klinkers mannelijk onzijdige peter plaats regels samentrekking sigma stam substantiva twee uitgaan verba vindt volgens voorbeeld vrouwelijk wegvalt woorden yeveo yévoc yévouc zwakke"
+  },
+  "215": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "declinatie dred pama samentrekking stam substantiva uitgang valt weet yevel yevi yevog yevov yéveou yévoc yévoug"
+  },
+  "216": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "asine baouleds bijvoorbeeld blauwgedrukte burcht declinatie dezelfde dotv evcg gaan gaat geslacht hebben ixoie klinker koning mannelijk miottc naamwoord nominativus onzijdig samen soms stad stameindigt stammen subgroepen substantiva takic thee trekt téwe uitgang volgende volgens volgorde vooral voorbeeld vormen vrouwelijk"
+  },
+  "217": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "bactedou bactléwv baotéa baoé declinatie dotea doteo doteosg dotéewy gotea gotel ixovac ixovees ixovt ixxovwv paotlet path stam substantiva tabewv taeel taig thee toic toicg toiciy tovc"
+  },
+  "218": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "attisch bacthews bacthéwe baotafjoc baotlnfe baotrijoc bijvoorbeeld daarachter declinatie digamma eindigde fenicische genitivus geworden hebben homerus ionisch klassiek klinkers kwam lengte letter maken metathesis noemen omgedraaid omikron oorspr oorspronkelijk proto quantitatis soort stam substantiva taalkundigen tegen terzijde uitgang vanaf verkort"
+  },
+  "219": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "alleen atdc betekenen bots bows declinatie enkele frequentie gezien goddelijk grammaticaal grijze hoef horen kennen komen kunnen lage mannelijk meervoud onregelmatige oppergod rund schip slot stier substantiva vaiic volledigheid vormen vrouwelijk woord zeus zevc zwarte"
+  },
+  "220": {
+   "g": 29,
+   "titel": "Substantiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "atdc boas bods bodv boec botdc bovoi bowy declinatie substantiva tadic vabv vats vavol vews vewv"
+  },
+  "221": {
+   "g": 30,
+   "titel": "Vragend en onbepaald voornaamwoord",
+   "thema": "Syntaxis & overig",
+   "ocr": "aanwijzend betrekkelijk bezittelijk correlativum corresponderend cursusgrieks demonstrativum indefinitum interrogativum onbepaald personale persoonlijk possessivum pronomina reciprocum reflexivum relativum voornaamwoord voornaamwoorden vragend wederkerend wederkerig"
+  },
+  "222": {
+   "g": 30,
+   "titel": "Vragend en onbepaald voornaamwoord",
+   "thema": "Syntaxis & overig",
+   "ocr": "aanwezigheid accent afwezigheid ander beide bijvoeglijk declinatie derde duidt enig enkele enkelen gebruikt iemand iets leidt onbepaald onspecifieks paar sommigen tivoc tivos ttvoc verschil volgen voornaamwoord vraagzin vragend welk zekere zelfstandig"
+  },
+  "223": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus augment bindvocaal ceil eerst futurum imper impf indic infin kijken laat losmaker maakte medium mediumuitgangen mezelf praesens sigm stam tijdkenletter verba vocalia vorming zichzelf zuivere zullen"
+  },
+  "224": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aboeobar aboopat avodpeba boeo boetal boouev boovtat ddoet doovot erate futurum indic infin medium ooete pick"
+  },
+  "225": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus avoatw avoatwoav avodo avodoowoav boapev ddoat doacbe doov imper indic infin medium ooate voacoat voao voavto éhboate éhboato éhbow éhvoapeba éhvoav éhvodunv"
+  },
+  "226": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve andere aoristus baive betekenis betreft bovaouat bovaroonpat broopau daarom deponent diathese eenzelfde enkel futurum gaan geldt geval hebben interpretatie kolom leren mediale medium moet nooit onregelmatig opzoeken passief passieve peter stamtijdenlijst tempora vertaal vertaald vertaling vorm vormen welke"
+  },
+  "227": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus bedekken bedekker bedekte dentaal deponens efauny futurum gutturaal kaavyopou kkadvntw labiaal medium mezelf muta npyaoduny ontvangen ontvanger ontving opat samentrekkingen verba vervalt werken werkte xopa ékahvyauny épyacouat épyaoopau"
+  },
+  "228": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus beminde beminner coed contracta denk eerde emuunoauny esnawodunv etlunoaunvy futurum geen medium mezelf oopat petit plaats préw puurroopat samentrekking sigma snow stamklinker tijdkenletter tindaw tllnoolal tussenkomst verba verduidelijker verduidelijkte verlengde vindt"
+  },
+  "229": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "achter activum aoristus asigmatisch cryyéaaet futurum gaveitat gavobvtat gebruik gomepav krijgt liquida maakt medium oavei oneipovoi prae samengetrokken sotlelpavto stam stamklinker toner tyyette uitgangen verba verlengde verschijnen vtat yyethato zuivere zullen"
+  },
+  "230": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve alleen aoristus bindvocaal blijft deponente derde determineren dienst doen eiui futurum geen gevormd gota imperativus indic komen mediaal mediale medium moet persoon persoonsuitgangen regelmatig stam tempus tijdkenletter tweede varianten verder vertalen vervallen vormen zijw éoij"
+  },
+  "231": {
+   "g": 31,
+   "titel": "Medium futurum en aoristus",
+   "thema": "Werkwoorden",
+   "ocr": "activum aoristus aoristusstam augment bindvocaal deponens futurum gezien imperativus indicativus infinitivus komen komer kwamen medium mediumuitgangen onregelmatige stam stamtijdenlijst thematische verwachten vopat vorming waren wees werden word éyevouny"
+  },
+  "232": {
+   "g": 32,
+   "titel": "Telwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "achtervoegsels actief bijvoeglijk bijwoord bijwoorden categorieén eenmaal eerste frequentie fungeren gebruikt getallen grijs herkennen honderdtallen hoofdtelwoorden kent kunt leeradvies naamwoord nederlands rangtelwoorden reproduceren telwoorden tientallen twaalf volgende voorkomende vormen zorg"
+  },
+  "233": {
+   "g": 32,
+   "titel": "Telwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "anak bijwoord byso dect dékatog ebdopoc eenmaal eerste ektog emitaklg enta evakic evdexcixic frequentie hoofdtelwoorden oktakic oktw owbekakic rangtelwoorden reyacet seakic sekakic sevtepos swdexa swdékatog tedoapes telwoorden tetaptos tetpakig tevte tielttog tievtakig tipp tpeic tpia tpic tpitog ttos twee tweede"
+  },
+  "234": {
+   "g": 32,
+   "titel": "Telwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "achtervoegsel bijv declinatie derde duizendtallen eimne geldt grotendeels honderdtallen hoofdtelwoorden iets indeclinabel koot kovta krijgen meervoud meeste niemand niets obdév ovddepia ovdeic peter pndevi samenstellingen tegen telwoorden tientallen tplakovta undeic undepia undev undév vanaf verbogen verbuiging verbuigingen volgen volgens volledige"
+  },
+  "235": {
+   "g": 32,
+   "titel": "Telwoorden",
+   "thema": "Naamwoorden",
+   "ocr": "achtervoegsel bijv bijvoeglijk bijwoorden daartoe declinatie denk dioxide driemaal eenmaal eerste frequentie gebruikt getallen hapax indeclinabele kahdc krijgen kunnen legomena mtaxic naamwoord onregelmatig rangtelwoorden telwoorden tpig trilogie tweede tweemaal vanaf verbogen viermaal zevenmaal"
+  },
+  "236": {
+   "g": 33,
+   "titel": "Accusativus cum Infinitivo",
+   "thema": "Syntaxis & overig",
+   "ocr": "accusativus alternatief andersom constructie gecombineerd gewone infin infinitivo infinitivus klinkt komen kunnen meestal naamwoord nederlands normaler omdat omgezet peter syntactische vaker vind waarin werkwoord zetten zinnen"
+  },
+  "237": {
+   "g": 33,
+   "titel": "Accusativus cum Infinitivo",
+   "thema": "Syntaxis & overig",
+   "ocr": "accu accusativus acli bedacht constructies denken dergelijk doen doorgaans duidelijk erop ginds infinitief infinitivo joho laten lekker makkelijk melodie menen persoonsvorm staan stoomboot vertaal vertaalt volgen wees werkwoord werkwoorden zeggen"
+  },
+  "238": {
+   "g": 33,
+   "titel": "Accusativus cum Infinitivo",
+   "thema": "Syntaxis & overig",
+   "ocr": "accusativi accusativus basis beod bepalen betekenis bijzin brood deel discipelen dptov eitov eivat erticopev eten functie gebruikelijk gezegde heeft hopen infinitivo inoodv jezus kinderen lijdend naamwoordelijk objectsaccusativus onderwerp paontai payeiv ptov soms staan subjectsaccusativus tadia traudia twee tweede vidv vooropstaat"
+  },
+  "239": {
+   "g": 33,
+   "titel": "Accusativus cum Infinitivo",
+   "thema": "Syntaxis & overig",
+   "ocr": "abtdc abtov accusativus aobat berg bidden cehoeiv dagen erop eyéveto geschiede hebraisme hepatic infinitivo letterlijk mpooev onderwijzen onderwijzende sisdokwv spoc tatc tavtaic uitging veel vertaal wiis zonder éyéveto"
+  },
+  "240": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adjectiva afleiden afwijkende alle basis bijv cursusgrieks dativus declinatie derde dxavoa eerst einde elisie genitivus hebben ieder incl kleine mannelijk mavt onderscheiden onzijdig peter pédac stam stammen substantiva teaavos uitgangen verschillen vocaal volgen vorm vormen vrouwelijke wisselende zelfst zwart"
+  },
+  "241": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adjectiva declinatie deis mannelijk onzijdig peaaivev peaaivns peaava peda pedaou pteacot ptehaivery ptehdavev stammen ueaaves vedaivat vedaivn vrouwelijk weaac weaatva weaavacg weaave weaavog weadvewv wedava wehavog wéhav yeaaivas yeaatvac zwart"
+  },
+  "242": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adjectiva alle declinatie figs glee mannelijk naou onzijdig stammen taal taavta tans taoav tavta tavtag tavtes tavtog tavtov tavtt tiaa tiaoal tiaowv tiavt traou vrouwelijk"
+  },
+  "243": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adjectiva aparte baotaevc bijv cano cursusgrieks danbeo declinatie dezelfde geen gelden hebben klinkers oeindigt onzijdig samentrekkingsregels sigma stam stammen stamsigma substantiva taktc tkoc twee uitgangen vervolgens voorbeeld vrouwelijke waar wegvalt zwakke"
+  },
+  "244": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "aanbeic aanpéot adjectiva adnbij adnbois adnoeic adnoet adnoij adnpoic adnpéc arnbij canpéot danbav dandev declinatie noei onzijdig stammen"
+  },
+  "245": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adjectiva bapeia bapuc bapv bijv blauwgedrukte breed declinatie denk eigenaardigheden eindigt hebben mannelijk onzijdig overzicht regel scherp slot snel stam substantiva taateia taatl taatvc taxeia tayd tayxv uitgangen verbuiging vergelijkbaar vocaalstammen volgt voorbeeldwoord vrouwelijke wijkt zwaar"
+  },
+  "246": {
+   "g": 34,
+   "titel": "Adjectiva 3e declinatie",
+   "thema": "Naamwoorden",
+   "ocr": "adjectiva bapb bapbv bapei bapeia bapeiac bapeiatc bapeiav bapeic bapetou bapewwv baptcs bapéa bapéoc bapéocg bapéot bapéou bapéwv declinatie erst mannelijk onzijdig stammen vocaal vrouwelijk"
+  },
+  "247": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "actieve alleen aoristus aparte augment bindvocaal cursusgrieks eerst futurum geen gezien hebben imper indic infin kijken mediaal mediumuitgangen nooit passief passieve passivum peter praesens stam stamaoristus tempora tijdkenletter twee uitgangen verba vertaald vocalia vorming want werkwoord werkwoordsvormen zuivere"
+  },
+  "248": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "alontwwoav aohtw aoristus avohoetat avohon avohtl avojoopnat avonhte avoroeo avoroovtat ehvonte futurum hvonoav hvonuev ifev imper indic passivum vonodpe évonv"
+  },
+  "249": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus ball equadxonv exahvdponv futurum geaspireerd gvdaxojoopat gvrdoow invloed joopat kadv kahvmtw kticw ktio muta onder passivum raakt rjoouat théta treed verandering verba éxtioonv"
+  },
+  "250": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "activum aoristus behalve bemind bijzonderheden contracta futurum geen geéerd medium passivum stamklinker tipn verba verduidelijkt verlengde voorbeeld voorbeelden vtat werd zullen"
+  },
+  "251": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "actieve andere aoristus aoristusstam athetatisch athetatische augment behouden bestaan bindvocaal futurum geldt gelijk geval ieder liquida mediumuitgangen passief passivum persoonsuitgangen praesens soms stam stamaoristus stamtijdenlijst tijdkenletter uitgangen verba verder vormen vorming zonder zuivere"
+  },
+  "252": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus apart athetatisch athetatische best bijv daarom dezelfde futurum gezonder hanteert heeft maak otda passief passieve passivum principe stam stamtijdenlijst vorm werd werkwoord zonder"
+  },
+  "253": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus apart athetatisch athetatische bijv coal daarom dezelfde futurum gezonder hanteert heeft maak otaa otéhhw ouat passief passieve passivum principe stam stamtijdenlijst vorm werd werkwoord zonder"
+  },
+  "254": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "actief alle alleen andere anoxpivopat antwoordde antwoorden aoristus bovanony bovanoopat bovaopat deponent deponentia dmoxpiojoopa dmtexpiony futurum hebben lijst mediaal noemt passief passieve passivi passivum principe soms stamtijden tijden vertaal vormen weer werkwoorden werkwoordsvormen wilde willer woorden zuivere"
+  },
+  "255": {
+   "g": 35,
+   "titel": "Passivum aoristus en futurum",
+   "thema": "Werkwoorden",
+   "ocr": "actief aoristus aparte bestaat deponens deponentia défopar echter futurum geval joouat mediaal mediale medii ontvangen ontvanger ontving passief passieve passivum peter sexopnat tempus vertaal vertalen vorm vraag werd zowel édéx éeeapnv"
+  },
+  "256": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "augment ball bindvocaal imper imperfectum indic infin kappa llae losgemaakt medium mediumuitgangen mezelf obat ontbreken perfectum plpf plusquamperfectum praesens reduplicatie stam tijdkenletter vorming waren wees"
+  },
+  "257": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aehboowoav aehvpeba aéhvvtar dedvobat eheavpeba ehéhvooe hedvoow héavoge hédvoat hédvtal héhvpat imperativus indicativus infinitivus medium perfectum plusquamperfectum plusquampf éavove éheavm éhvoo éhéhvoo éhéhvvto éhéuto"
+  },
+  "258": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "cursusgrieks deelwoord eioi eiowv eppwode gemuilkorfd gevormd hand hehduevor hoav hoeft imperativus indic ipwoo keer kennen losgemaakt mark medium meestal menetopevot nederlands overtuigd participium perf perfectum plpf plusquamperfectum sterkte stil twee vaarwel voltooid vormen ware waren wees weinig"
+  },
+  "259": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "actief actieve activum afhankelijk aoristus aparte betekenis betreft context deponent deponentia echter futurum gebruik geen geldt geval ieder impf kennen kunnen media mediaal medium passief passieve passiva perfectum peter plusquam plusquamperfectum prae principe reflexief soms tempora tijd vaker vertaal vertalen"
+  },
+  "260": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "activum conjugaties contracta einde leveren liefgehad liefhebben medium mepanuat mezelfliefgehad ouréw perfectum persoonsuitgangen plpf plusquamperfectum stam stamklinker tile veranderingen verba verlengd verschillende"
+  },
+  "261": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "acht actieve bewaakt bewaken beware dentalen eerste erepvddaypeda gebeurt genomer gezien gutt gutturalen hadden hebben labialen letter letters medeklinker medeklinkers mediale medium muta onszelf ovidcow pbaakt perfectum persoonsuitgang plpf plusquamperfectum regels samentrekkingen stam stomme tabel tijdkenletter treden verba volgen vormen"
+  },
+  "262": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus dentalen geldt gutturalen klasou labialen liquida liquidaop medium muta passief perfectum plusquamperfectum plusquampf regels samentrekking samentrekkingen verba"
+  },
+  "263": {
+   "g": 36,
+   "titel": "Medium perfectum en plusquamperfectum",
+   "thema": "Werkwoorden",
+   "ocr": "aive coed doen eindigt liquida maakte medeklinker medium mepayke molenaar pavtke peba perfectum petit plpf plusquamperfectum regels samentrekking stam tabel treedt verba verschene verschijner vloeiende waren zichtbaar érepappeba"
+  },
+  "264": {
+   "g": 37,
+   "titel": "Correlativa",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzende betrekkelijke betrekking correlativa danig demonstrativa drie elkaar groot grootte hebben herkenbaar hoedanigheid hoeveelheid interrogativa kunnen onder onderling relativa samenhangen vallen veel voornaamwoorden vragende woordsoorten"
+  },
+  "265": {
+   "g": 37,
+   "titel": "Correlativa",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanw aanwijzende asper betrekkelijke bijv correlativa danig demonstrativa groot interrogativa kdaoc kdoc kenmerk notoc obdtoc otanog relativa spiritus tlogog tolodtog toooutog towwo ttoi veel verbuiging voornaamwoorden vragende"
+  },
+  "266": {
+   "g": 37,
+   "titel": "Correlativa",
+   "thema": "Voornaamwoorden",
+   "ocr": "allen alles asia bete combinaties correlativa dcov enkele groot idiomatische mavta mavtec oefeningen tocodtw uitdrukkingen vaste voorbeelden werkboek zinsverband zoveel zover"
+  },
+  "267": {
+   "g": 37,
+   "titel": "Correlativa",
+   "thema": "Voornaamwoorden",
+   "ocr": "aanwijzend accent andere apart asper behalve bete betrekkelijk correlativa daar daarheen daarlangs deels eens ekelvods ergens evtavoc gedeelde geen grootte hebben heen hierheen hierlangs hoedanigheid hoef indir kenmerken langs leren maken manier mote node nuttig onbepaald onmote onobev oorsprong overzicht"
+  },
+  "268": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "actief deel deelwoord deelwoorden gebruik gebruikelijk gevlucht gezien hebben kennen koine lezen maakt minder nederlands nieuwe pars participia participium passief tegenwoordig teksten testament veelvuldig vluchtend voltooid vorming zijnde"
+  },
+  "269": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "afwachtend attributief bijvoeglijk deel deelwoorden droop dubbelverbonden gebruik gebruikt gegeven gelopen gesubstantiveerd gezegde ging iets kunnen levende manieren naamwoordelijk nederlands onder onderwerp opgestane over paard participium predicatief rechter rijdende strijdend verslagen vier vorming werkw zegt zelfstandig"
+  },
+  "270": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "actief afgeleid aoristus bekende declinaties deels deelwoord diathesen echter eigenschappen functioneert futurum gebruik geen gelukkig geslacht getal geval grotendeels kent maken medium naamval naamwoord naamwoordelijke participium passief perfectum persoonsuitgangen praesens verbogen volgens vorming werkwoord werkwoordelijke"
+  },
+  "271": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aehvkws aehvpeevocg aici avodpevos avonodpevog dboac diathesen dowv eruit gebruik hebbende hvbeic hyosau letterlijke losgemaakt losmakend losmaker meest osmaken participium perf pnony pnwiytravie prac tempora verschillende vertaling voopevos vorming wordende zien zijnde zullende"
+  },
+  "272": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "algemeen alle bijv bijvoeglijk dativus declinatie derde drie dxav evoc gebruik geldt geslachten hebben kaxn kddog kdov mannelijk naamwoorden onzijdig over overige part participia participium perf regel stam stamklinker uitgang uitgangen uitzondering valt verlengd volgen volgende volgt vormen vorming vormleer"
+  },
+  "273": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "actief afleiden alle andere aoristus bedenk diathese diathesen frequentie futurum gebruik geheel herkennen kenmerken kunnen kunt leeradvies moet nieuwe participia participium perfectum praesens reproduceren steeds tempora tempus testament uitgeschreven verbuigingen volgen vormen vorming welke"
+  },
+  "274": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "abovoa abovoav abovta actief avdvtwy avobon avovoac avovoaic avovon avovow avovtwv bovoat bovta bovtac bovteeec bovtt dbovoi dbovot dbovta ddov gebruik lectus mannelijk mbovtog movtoc movtt onzijdig participium praesens vorming vrouwelijk"
+  },
+  "275": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "abcovtos aboovoat aboovoi actief adoovoav avobvtwv avodvtwv avoovoac avoovoaic avoovodv avoovon avoovons boovoa boovta boovtes boovtt ddoov doov doovta futurum gebruik hdoovta mannelijk moovt moovtac myowv onzijdig participium vorming vrouwelijk xbaovtos"
+  },
+  "276": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aboavtac aboavtoc actief adoaoat adoavtog adoavtt aoristus avbw avoacwv avoavta avoavtes avoavtwv avodoac avodoaic avodon avodons dboaca ddoaot ddoav doavtt gebruik mannelijk mboacav mboavta nboac ndoavta onzijdig participium sone vorming vrouwelijk"
+  },
+  "277": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "actief aeadkotac aeadkotec aeadkotl aeavkog aeavkota aeavkotog aeavkvia aedvkdc aedvkkviac aedvkviaic aedvkviat aehvkdot aehvkotwv deavkota deavkviaav deavkviac dedvkvia dedvkvidv dedvkwc dehvkoot dehvkotwv eavkota epee gebruik mannelijk onzijdig participium perfectum reet vorming vrouwelijk"
+  },
+  "278": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "avdlevog avdpevov avolevwv avoopevvwv avoopevwv avopeevat avopeevotc avopeva avopevac avopevns avopevod avopevol avopevotc avopevous avopevov avopevwr avopevy avoplevov avopévatc dvopévy gebruik mannelijk medium onzijdig participium praesens vopévnyv vorming vrouwelijk"
+  },
+  "279": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "alee avodlevov avoduevog avoduevot avoolevwv avooopevwwv avoopeeva avoopeevns avoopeevyv avoopeva avoopevac avoopevat avoopevolg avoopevooic avoopevov avoopevw avoopevwv avooplevov avooplevovg avoopévac avoopévn avoopévw avoopévy epee futurum gebruik mannelijk medium onzijdig participium vorming vrouwelijk"
+  },
+  "280": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus avoaleevotc avoalevolc avoapeevaic avoapeevoug avoapeevys avoapevey avoapevny avoapevov avoapevwv avoapevy avoapevyv avoapleevac avoaplevov avodlevot avodlevov avodpeva avodpevat avoduevog gebruik mannelijk medium onzijdig participium vorming vrouwelijk"
+  },
+  "281": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aeadhevwv aedvpeevov aedvpever aedvpevod aedvpevov aedvpévat aehvpevoc aehvpevoic aehvpevot aehvpevovsc aehvpévac aehvpévy ages alee deavlevi dedvpeva dehvpevw dehvpéevny dehvuevov devpévy gebruik hedvpeva mannelijk medium nedvpevwv nehvueevoic onzijdig participium perfectum vorming vrouwelijk"
+  },
+  "282": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "avenoopevouv avenoopevwv avongdlevov avongopevwv avonnoopleva avonodopleva avonodpeevos avonodpevat avonodpevov avonoopeevac avonoopeevatc avonoopevewr avonoopevns avonoopevot avonoopevotc avonoopevov avonoopevovc avonoopevwv avonooppevoic avonoopéevny avonoopéevw avonoopévy futurum gebruik mannelijk onzijdig participium passief vorming vrouwelijk"
+  },
+  "283": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus avbeioac avbeioatc avbeions avbevtos avdev avdevtt avevtl avoeioa avoeioat avoeioav avoev avoevta avpe avpevtog avpevtwwv crate dvbeic dvbeior dveion dvgeiot dvpévtwv erent gebruik ghiwen heed mannelijk onzijdig participium passief vbévta vbévtac vbévtec vorming vrouwelijk"
+  },
+  "284": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "actief aoristus aspect cursusgrieks dezelfde diathese futurum gebruik geheel gelden gelijktijdig handeling imperfectief kent natijdig onvoltooid overeenkomstig participium passief perfectum persoonsvorm persoonsvormen plaats praesens proces punctueel reflexief regels relatief resultatief tijd toestand vertaal vindt voltooid voortijdig vorming"
+  },
+  "285": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "attributief bijv bijvoeglijk bijwoordelijk congrueert ervoor gebruik geeft geen geplaatst gesubstantiveerd gezegde hangt herkennen informatie lidwoord mitt naast nominativus onderwerp participium predicatief verder vertaling vorming vormt vuistregel waar woordgroep zelfst zelfstandig zonder"
+  },
+  "286": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aanvullingen antedecent avgetc betrekkelijke bijzin deelwoord degene dkxohovoev epot gebruik gesubstantiveerd geéxpliciteerd ingesloten lijd losgemaakte meew naamwoord nodig participium passend pease pevyovoa vertalen verzelfstandigd vluchtelinge vluchtende volgt vorming vrijer vrouw zelfstandig"
+  },
+  "287": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aanvullingen attributief betrekkelijke bijvoeglijk bijvoeglijke bijzin bowv bruik buiten deelwoord dovdoc dovdog eenoev gebrui gebruik gebruikt iepevds kwam luid mailwv nodig noev participium peya priester riep slaaf spelende taicwv vertalen vorming"
+  },
+  "288": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aangeeft aangezien ander bete bijv bijwoordelijk bijwoordelijke bijzin coed deelwoord gebruik gebruikt gelijktijdig herkende herkennende hoewel huilde keuze liulwhokolevos nadat odsvooeve odvoceve odysseus omdat participium predicatief temporeel terwijl toen tuplvokolevos verband vertalen voegwoord voegwoorden voortijdig vorming vrouw wanneer wars yovatka"
+  },
+  "289": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "abtoic altijd antwoord antwoordde antwoordende beter bijwoordelijke bijzin bijzinnen doeltaal drtoxpiweic dynamisch eenmaal einev extra gebruik gebruikt geef gewend heel instantie letterlijk letterlijke marcus meer omdat participia participium past persoonsvorm prep tegen tentamen toen tweede veel vertaling vorming vrijer zoveel"
+  },
+  "290": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus bijvoeglijk bijwoordelijk bijwoordelijke bijzin birt cursusgrieks daarna futurum gebruik gelijk gelijktijdig hoewel hoofdzin kiezen moeten nadat natijdig omdat participium passend perfectum persoonsvorm peter praesens relatieve terwijl tijd toen vertalen voegwoord voegwoorden voortijdig vorming waarna zullen"
+  },
+  "291": {
+   "g": 38,
+   "titel": "Participium: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aanvullingen alles avta avtos bakenen beic bepaald bette bijvoorbeeld bijwoord brotayioetat coderingssysteem degene dezoon driehoekige eigen gebruik gebruikt haken handen handig hebbend heeft hiervoor katevadyet leestekstvideo leggende lijdend meewerkend nodig omarmd omdat onderwerpen onderwierp participia participium predicatief soorten tavta tote"
+  },
+  "292": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "achter actief avov bekende bijzondere bindvocaal contracta cursusgrieks eindigt evormd hebben klinker liquida maken medium muta participium praesens regels samentrekkingen stam tildw verba volgen voorbeeld vormingswijzen weer"
+  },
+  "293": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "actief alle basisvormen bettis bijzondere bindvocaal contracta dnrotoa giovoa grotyevos medium omikron opevn opevos opevov ouev ourodv ovoa ovtog part participium prae samen snaodv snhodvtos snovpevocs stamklinkers tabel tila tipd titwpevos trekt uitgang urodvtosg verba vormingswijzen vtog"
+  },
+  "294": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "achter andere aoristus bete bijzondere coed contracta dednawpeevos drnawoas futurum geen modi odllevos part participia participium passivumletter peic perf perfectum samentrekking stam stamklinker tempora tepankwe tijdkenletter tile tuuowv uanoopevos uanpnoopevos verba verlenging vormingswijzen werkwoorden"
+  },
+  "295": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus ball bijzondere determineren futurum kahvmtw kahvywv kappa kekahv kopicw kopioavtec kunnen mepvdaaypevot muta optreden part participia participium perfectum plaats probeer pvadoow pvrdéapevn samentrekkingen sigma verba vinden volgen volgende vormen vorming vormingswijzen yeypappeva"
+  },
+  "296": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "antwoord aoristus bijzondere futurum gvadoow kahvmtw kahvywv kakvmtw kappa kopitw koplioavtec kunnen muta optreden part participia participium perf perfectum plaats pvadoow pvddedpevn samentrekkingen sigma tile verba vinden volgen vorming vormingswijzen ypagw"
+  },
+  "297": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "achter aoristus asigmatisch asigmatische bijzondere bindvocaal contracta eindigt futurum gebruikt geldt giéw kennen liquida part participia participium participiumuitgangen pihéw samengetrokken stam stamklinker uitgangen verba verlengde vorming vormingswijzen werkwoorden zuivere"
+  },
+  "298": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "aeyw aipw ayyé bijv bijvoorbeeld bijzondere dpobvtoc dyyeh dyyeihac dyyéaaw futura geldt indic nintw part participia participium prae stamtijdenlijst tecodpa tecovpevoc tyyetha vormingswijzen épodvtoc évetethdunv évteaodpat évtedadptevoc évtehovpevocg évtethdptevoc évtéaaopot"
+  },
+  "299": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "aabovtoc aangenomen abwv aoovtos aoristus aoristusstam apbaven bijzondere ccurssus epxouat gekomen gevormd hebbend indicativi kennen komende nemende niinde onregelmatige part participia participium praesens primaire thematische uitgangen vergelijkbaar vertaling vormingswijzen werkwoord werkwoorden zelfde éabov"
+  },
+  "300": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus baca baivw bavtoc bijzondere gaande gegaan gevormd geweten hebbende herkennen kennen kunt onregelmatig onzz part participia participium ries samengestelde stamaoristus vertaling voorkomende vormen vormingswijzen werkwoord werkwoorden wetende yvons yvovod yvovtos yvovvv ywookkw zijnde zorg ébryv éyvwv"
+  },
+  "301": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "afgeleid afgeleide anootahévtt aoristus aoristusstam athetatische bijzondere dneotéanv dnootéahw geldt gezaaid gondpny heeft herkennen komen leren lijst omapeig omeipw onapévtes part participia participium passivum passivumletter stamtijdenlijst uitgezonden vertaling volgende vormingswijzen waaronder werkwoord werkwoorden wordende zijnde"
+  },
+  "302": {
+   "g": 39,
+   "titel": "Participium: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "aeyae afwijkende betekenis bijzondere denk eidvia eidwe emma eraan fale herkennen leer oida onregelmatige ovoa participia participium perfectumvormen prae praesens saeenigaiar shing toestandsperfectum twee veelvoorkomende vertaling vormen vormingswijzen vtoc werkwoord werkwoorden wetend zijnd"
+  },
+  "303": {
+   "g": 40,
+   "titel": "Genitivus absolutus",
+   "thema": "Syntaxis & overig",
+   "ocr": "absolutus absolvere altijd aparte bijvoeglijk bijwoordelijk congrueerde coniunctum constructie cursusgrieks echter eigen functie gebruik genitivus heeft heet hoofdzin kortom losgemaakte losmaken naamval naamwoord onderwerp participia participium persoonsvorm peter predicatief status steeds verbonden voorkomen waren woord zelfstandig"
+  },
+  "304": {
+   "g": 40,
+   "titel": "Genitivus absolutus",
+   "thema": "Syntaxis & overig",
+   "ocr": "aanvullingen absolutus antootéaov apostel avopwrous bijw constructie doopte dxaovc edidake genitivus gezet herken jezus komen lijd meew menigten mensen naamwoord nadat oinootcs onderwees pantioavtos participium stappen terwijl tods tovcs vertaal vertaling welke"
+  },
+  "305": {
+   "g": 40,
+   "titel": "Genitivus absolutus",
+   "thema": "Syntaxis & overig",
+   "ocr": "aanvullingen absolutus beste bijwoordelijke bijzin constructie dergelijke dienen dienende enkele functie gelijktijdig genitivus ingeleid kennen keuze losgemaakte naamval naamwoord nederlands omgezet onderwerp participia participium persoonsvorm reden tijd toegeving uitdrukkingen versteende vertaalt voegwoord volgens voortijdig voorwaarde weder weer"
+  },
+  "306": {
+   "g": 41,
+   "titel": "Accusativus cum Participio",
+   "thema": "Syntaxis & overig",
+   "ocr": "aantonen absolutus accusativus behandeld bijv constructie constructies cursusgrieks denken diddokovta dkovw doen dyyéaaw ebaewav gebied genitivus gezien hebben infinitivo inoodv laten melden menen opdw paontai participio participium seuxvout snaow syntactische tile vergelijkbare volgt voorbeeldzin waarnemen werkwoord werkwoorden weten wiig ytvwoxw"
+  },
+  "307": {
+   "g": 41,
+   "titel": "Accusativus cum Participio",
+   "thema": "Syntaxis & overig",
+   "ocr": "accusativus constructie cursusgrieks dokovta ebaepav hetzelfde inooiv jezus leerlingen letterlijk maakt nederlandse onderwees onderwerp onderwijzen onderwijzende paontai participio participium persoonsvorm peter predicatief terwijl tile vertaal vertaalt vertaling waarbij werkt zagen"
+  },
+  "308": {
+   "g": 42,
+   "titel": "Gesubstantiveerde infinitivus + voorzetsel",
+   "thema": "Syntaxis & overig",
+   "ocr": "altijd andere betekenis bijpassende eten eter gayeiv gebruikt gemaakt gesubstantiveerd gesubstantiveerde iets infinitivus krijgen krijgt letterlijk lidwoord naamval naamwoord nederlands onzijdig payeiv payetv plaatsen tijdens tile vertaling voegwoord voorzetsel zelfst"
+  },
+  "309": {
+   "g": 42,
+   "titel": "Gesubstantiveerde infinitivus + voorzetsel",
+   "thema": "Syntaxis & overig",
+   "ocr": "alvorens bale betekenis frequente gesubstantiveerde infinitivus meest midden nadat normale omdat onder peta prae tegen terwijl tijdens toen vertaling voordat voorzetsel voorzetsels waarmee wegens zodat"
+  },
+  "310": {
+   "g": 42,
+   "titel": "Gesubstantiveerde infinitivus + voorzetsel",
+   "thema": "Syntaxis & overig",
+   "ocr": "accusativi accusativus adtov aitijoat basis bijzin constructie context eerste erom eten gayetv genoemd gesubstantiveerde infin infinitivus ingeleid inoodv jezus jullie kies lidw onderwerp persoonsvorm subjectsacc terwijl tipo toevoegen twee vertaalt voegwoord voordat voorzetsel voorzetselbepaling vragen"
+  },
+  "311": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "achter achtervoegsel best beter bijv bijvoeglijk comparativus cursusgrieks goed kennen laat laater laatst later maken meer meest naamwoord nederlands onregelmatige overtreffende plaatsen regelmatige stam stellende superlativus trap trappen variant varianten veel verandering vergelijking vergrotende vormen"
+  },
+  "312": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "achter achtervoegsels bestaan bijv dyiwtatos dyiwtepoc dytocg eerste ervoor gevormd heilig heiliger heiligst iota kaaoc kort laatste lettergreep overtreffende plaatsen rechtvaardig rechtvaardiger rechtvaardigst sikatotatos sixatoc stam stamklinker stcadtepoc tatoc tepo trap trappen twee verbogen vergelijking vergrotende verlengd volgende volgens vormingswijzen"
+  },
+  "313": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "aparte bijv comparativus decl declinatie eerste geen genitivus hdiova heeft istotos kahdc krijgt meestal overtreffende ovoc peter regel siwy trap trappen tweede uitgangen verbogen vergelijking vergrotende volgen volgende volgens vormen vormingswijze vrouwelijke weaac welk welke zoet zoeter zoetst zonder"
+  },
+  "314": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "beetje best beter bijv bijvoorbeeld comparationis comparativus dingen doen eeylotos eicwv genitivus goed groot grootst groter grotere iwvy kaoc kgaalotos meer meest mooi mooier mooist moujoet peydan péya soms stam superlativus tovtwv trappen ugyac verandert vergelijking verschilt wars weifova"
+  },
+  "315": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "axtoto dacowy frequente goed groot kakoc klein kpatiotog kpeicowv leer meest oaiyos onregelmatige onregelmatiger peicwv slecht stammen taeiwv tasiotoc toavc trappen veel vergelijking volgende weytotos xelptotoc yeipwv yéyac zwart"
+  },
+  "316": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "attributief bijv bijvoeglijk ceavtov comparativi congrueren cursusgrieks deel ebaov ecwvvvec eipti gebruik geslacht gesubstantiveerd getal gezegde horen hout jezelf jonger kennen mpeobbtepot naamval naamw naamwoord omgordde ouderen ouderlinger predicaatsnomen predicatief superlativi toen trappen tuwwtdtov typen vergelijking verwijzen verzelfstandigd vewtepoc volgende"
+  },
+  "317": {
+   "g": 43,
+   "titel": "Trappen van vergelijking",
+   "thema": "Syntaxis & overig",
+   "ocr": "adtod adtodd bnép comparationis comparativus dmep drie eotlv genitivus gezegd hebraisme kind kleiner kunnen likpotepov llikpotepov llkpotepov manieren mapa tapa tatepa tathp tatpos tekvov trappen type vader vergelijking vergelijkingen"
+  },
+  "318": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aantonende aanvoegende coniunctivus deelwoord gebiedende gebruik hele imperativus indicativus infinitivus modi optativus participium vorming wensende werkwoord wijs wijzen"
+  },
+  "319": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aansporing aanvoegende aanwijzing almachtig beperkt beter beware bijvoorbeeld bogs coniunctivus conjunctief enbed gebruik goeddeels hedendaagse helpe hemel https kome koningin kost koste leve meer nederlands neme onder subjunctief taaladvies termen toegeving uitdrukkingen uitdrukt vaste versteende vorming waarlijk ware wens werkwoordsvorm"
+  },
+  "320": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "actief aoristus augment avowpe bindvocalen blijven coni coniunctivus cursusgrieks enkel gebruik geen hvys indic indicativus medium meer passief peter plaats prae praesens tempora tijd tijdkenletters verleden verlengde vonv vorming éavodpeba"
+  },
+  "321": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "abonobe abontat abowpev adwolv adwpev adwvtat antal avodor avofi avon avopeba avowpeba avowvtat coni coniunctivus conj ddns ddons dvno dvof dvonte gebruik hvda mdowo monte mowna prae rear voijte vorming"
+  },
+  "322": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "accent afhankelijk avog avoij circumflexus coni coniunctivus context determinatie dezelfde dvdon gebruik gedetermineerd gevormd juiste kunnen manieren meerdere prae sommige tijdkenletter uitgangen vertaling vormen vorming wiern"
+  },
+  "323": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "algemeen algemeens aspect betekenis coni coniunctivus duidt eenmaligs gebruik gebruikt geldt handeling heeft iets langdurigs maken modus orde over plaatsvindt prae specifieks tempora tijd twee verschil verschillende vorming wanneer zaken zozeer"
+  },
+  "324": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aansporing adhortativus bijzin bpdvw coniunctivus conjunctivus ervan gaan gebruik gebruikswijzen genade hangt hint hoofdzin hoofdzinnen hulpwerkwoord laten later leta onderscheiden opties persoon specifieker tappnoiac tpocepywueha troon vertaling vorm vorming vrijmoedigheid yapttoc"
+  },
+  "325": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "broeders coed coniunctivus conjunctivus davudone ddea doen dubitativus duds dvdpec dvwvev eitdv geboren gebruik gezegd hand hint hulpwerkwoord imperativus jullie mannen moet moeten moeter nodig noujownev opnieuw petit prohibitivus twijfel verbaas verbazen verbod vertaling vorming vraagzin wijs yevvnofvat"
+  },
+  "326": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "alleen baérete bete bijzinnen coed coniunctivus doel drtwe exmtéowotv finalis gebruik getuigde getuigen iemand licht lope mepi niemand omdat ontbreekt opdat popovpevoi pwtdc taavion uitkijken vast verleidt vertaling voegwoord vorming vreesden vrezen yaptvpnon ziet zonder zouden"
+  },
+  "327": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "betekent betr bijzinnen combinaties coni coniunctivus cursusgrieks drukt futuralis gebruik generalis indie niets onbepaald onderwerp sowieso tijdsindicatie verleent vertaling volgende voorwaarde voorwaardelijkheid vorming wanneer werkwoord zekere zichzelf"
+  },
+  "328": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "algemene aoristus betr buiv coniunctivus daarover dienaar duidt futuralis gebruik gemaakt generalis gewoon ghac groot herhaalbare hint ieee jullie mogelijkheid onder peyac praesens situatie smakeloos soms specifieke stdkovoc tegenwoordige tijd toch toekomende twisten valt vertaling verwachte verwachting vorming wwoavoa yevéobat"
+  },
+  "329": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus basisopties bijzinnen byiv coni coniunctivus drie drinken dubbele extra futurum gebruik gebruikt geeft gpmtehov heeft hierna hoofdzinnen idiomatische iets indic jullie manieren meer meestal mtiw naast ontkenning ovketl soms specifieke sterke them toekomst ttivw verzeker volgt vorming vrucht waarop"
+  },
+  "330": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "antwoordende banttotov bord béaztc coni coniunctivus dmokxpweic doer doper eavtijs einev futuralis futurum gebruik geeft geen hoofd inoods iwavov jezus johannes keepadty liever meteen oeaw tegen tivaxt toujow volgt vorming werkwoord willer zonder"
+  },
+  "331": {
+   "g": 44,
+   "titel": "Coniunctivus: vorming λύω en gebruik",
+   "thema": "Werkwoorden",
+   "ocr": "allemaal apart betekenen betr betrekkelijk coni coniunctivus daarna dxpt dypten gebruik genitivus hoeven kaipoi modus partikels plaats prep tanowowowv temporele tijden tile totdat uéxpt vertaald vervuld volgt volkeren vorming werkwoord zolang zowel étov"
+  },
+  "332": {
+   "g": 45,
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "andere betreffende bijzondere check coniunctivus conjugaties dezelfde eigenaardigheden enkele even gaat geen genoeg gezien grammaticadia hadden herkennen indicativus kunnen meestal nodig onderwerpen onregelmatige opzoeken rijtjes snel stampen treden vervoegingsgroepen vormen vorming vormingswijzen weer weet werkwoorden zorg"
+  },
+  "333": {
+   "g": 45,
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "actief afhankelijk bent bijv bijzondere bindvocaal coni coniunctivus context contracta determineren dezelfde ditzelfde gebruik geldt iets impf indic kennen kennis kiezen leiden medium moet overlap partikels praesens rijtjes samengaan samentrekkingen soms stamklinker verba vergelijk vertalen voegwoorden volledige vormen vormingswijzen werkwoorden"
+  },
+  "334": {
+   "g": 45,
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "alleen aoristus aoristusstam aoristusvormen aouev asigmatische augment awpev ayyeih ayyéhhw berichten berichter berichtter bijvoorbeeld bijzondere bindvocaal coni coniunctivus dyyé gaat herhaling indic indicativus kent laat laten liquida molenaar prae praesensversterkingen stam stamklinker verba verlengde vormingswijzen werkwoord werkwoorden yeiaapev zien zonder"
+  },
+  "335": {
+   "g": 45,
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "accent alleen aoristus beide bijzondere circumflexus citi coni coniunctivus daar eidijte eidéw epsilon eruit geen heeft hoewel indic jullie kennen kent komen oida onregelmatige oorspronkelijke opdat perfectum peter plpf prae praesens praesensstam samentrekking stam uitgangen vanwege vervoeging vormen vormingswijzen werkwoorden"
+  },
+  "336": {
+   "g": 45,
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "achter activum aoristus bada badr badrw bekende bete bijvoorbeeld bijzondere coed coni coniunctivus geldt krijgen medium onregelmatige passivum praesens stam stamtijdenlijst thematische uitgangen vormingswijzen werkwoorden wpat wvtat wyev yivopat"
+  },
+  "337": {
+   "g": 45,
+   "titel": "Coniunctivus: bijzondere vormingswijzen",
+   "thema": "Werkwoorden",
+   "ocr": "andere aoristus athetatische baivw bijv bijzondere coni coniunctivus eindigt eipi heeft hetzelfde indic klinker krijgen modus omapnv omaponv omega omeipa omeipw omep onap passieve samengetrokken stam stamaoristus stamtijdenlijst uitgang uitgangen verlengd vervoeging vormingswijzen want weer werkwoord werkwoorden yltvwokw yvwv zaaier"
+  },
+  "338": {
+   "g": 46,
+   "titel": "Bijwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "adjectivum adverbum afgeleid altijd ander bijv bijvoeglijk bijwoord bijwoorden deelwoord eigenlijk gebruikt geleerd grote hebben heel hele hetzelfde idioom iets klinkt kunnen loopt naamwoord naamwoorden nederlands ontzettend onverbuigbaar over redelijk slot snel tegenstelling uitgang vaste verrassing werkwoord zacht zegt zelfstandig"
+  },
+  "339": {
+   "g": 46,
+   "titel": "Bijwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "afgeleide alleen ayaboc betekenis bijv bijvoeglijk bijwoord bijwoorden eigen gebruiken gevormde goed hebben hiervoor klein lllk lovog lovov lulkpov naamwoord onregelmatig onzijdig slechts slot toad toads uitgang veel vorm weinig wijs woordenboek woordenlijst zeer"
+  },
+  "340": {
+   "g": 46,
+   "titel": "Bijwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "aangenamer amas amthwtepov beatiota best betekenis bijwoord bijwoorden comp comparativus eenvoudiger gebruikt kpatiota krijgt lota lotog rechtvaardigst stov sucadtata sucaiws super superlativus tata tatog tepos tepov uitgang"
+  },
+  "341": {
+   "g": 46,
+   "titel": "Bijwoorden",
+   "thema": "Syntaxis & overig",
+   "ocr": "alleen bijvoeglijk bijwoord bijwoorden comparativus gevormd haatota keer liever meer meest naamwoord onregelmatig overeenkomstig regelmatig sass superlativus tile veel veeleer vooral voorkomt wdra zeer zonder"
+  },
+  "342": {
+   "g": 47,
+   "titel": "ἄν + indicativus: irrealis",
+   "thema": "Werkwoorden",
+   "ocr": "algemene blind coni drukt elxete fictieve futuralis gebruikt geen generalis gezien guaptiav hebben heden heel imperf indic indicativus ireéle irrealis jullie modus mogelijkheid situatie specifieke tughoi vertaal verwachting verwoorden vorm waren werkwoord zonde zouden zullen"
+  },
+  "343": {
+   "g": 47,
+   "titel": "ἄν + indicativus: irrealis",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus beschuldigd betekent deelwoord dvaitiovs eheos euetvev eyeviponoav geen geschied geweten hadden hebben indic indicativus irrealis jullie kateducdoate krachten lexpt losopots medelijden offer omdat onpepov onschuldigen ovoiav sodom svvapeis vandaag verleden vertaal voltooid voortbestaan waren yevopevat yvaxette zottv zouden"
+  },
+  "344": {
+   "g": 47,
+   "titel": "ἄν + indicativus: irrealis",
+   "thema": "Werkwoorden",
+   "ocr": "alle allemaal betekenis bijzondere daarmee drukken erom gaat gebruikt geeft genoemd geval goed home iets irrealis juist kocht kopen misschien modale modaliteit moment nooit over relatie rijk taaladvies uitdrukken villa vindt welke werkelijkheid zegt zinnen"
+  },
+  "345": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "aanvoegende alle alleen aoristus balt bespreken blackboard bolhuis coniunctivus determinatie enkelvoud epsilon equivalent erachter ervoor gebruik gebruiken geen handleiding incl iota keer koine laatste modus moduskenletter modusteken nederlands optativi optativus overzicht persoon peter praesens samen soms tempora verdrongen volgende voornamelijk"
+  },
+  "346": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "aenefety aoyifonen beshouon bethowre biveqioa biveqion bwoigy bwveavte cero conditionalis cupitativas dibeap dibeay didays eigst eikoiay eiyi eiysi eiyst epers etzouen eurévere eviews exqpita eyowev gaye gedo hand imeem layléwe lepers mevyooney micxe mouées noyanadéa oblique oedéa ontleding oute oven"
+  },
+  "347": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "afwijkend alle aoristi aoristus bindvocaal contracta diftong eipi indic letter licht modusken moduskenletter ontstaat optativus passieve personen persoonsuitgangen praesens pseudo samen sigmatische soms stam tempora thematische tijdkenletter trekt tweeklank verba vorming waardoor"
+  },
+  "348": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "activum afwijkende aoristus augment coniunctivus geen impf kent licht medium nuev ontkenning optativus passivum persoonsuitgangen prae secundaire uitgangen yeba"
+  },
+  "349": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "aboatlt aboatto abotte adoato avdeinuev avdoatte avdoawev avgeinv avoaipnv avoaiveha avoeiev avoeinoav avoeipev avoeite avoipeba avoipnv avot avotev avotpev dboaic dboatev dboicg ddoatvto ddoto ddotobe dotvto dvbeins dvdoat dvdoato dvdotto dvgein dvowte hetzelfde optativus prae voeinte"
+  },
+  "350": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "afwijkingen alle aoristus asigmatisch ayyeihau bijv bijy bindvocaal contracta echter geen hebben indic kerkvaders klassieke kleine komen krijgen leerwerk liquida nieuwe optativus passivum persoon praesens samen septuagint stamklinker stammen teksten terzijde testament tijdkenletter tile tiny trekt uitgangen verba vormen vorming"
+  },
+  "351": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "actief alle alleen baivw ciui cursusgrieks didwut eipi enkelvoud geven herkennen iota moge onregelmatige optativus optativusvorm persoon persoons rijtjes stamaoristus steeds uitgangen vinden volgen vorm vormen werkwoorden ytyvwoxw"
+  },
+  "352": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "algemeen andermans betreft conditionalis cupitativus daden drukt gebruik gedachten hypothetische indirecte kunnen meest moge mogelijkheid moger obliquus onzekere optativus potentialis rede specifieker vertaling vervulbare voorzichtigheid wens willen woorden zekere zouden zouder"
+  },
+  "353": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "absoluut cupitativus eopeev gaaa geen genade geschieden guaptowpev heer kata kupiov laten maria moge nieuwe omdat onder optativus slavin sovan sprake testament uitdrukking verre vertaald vervulbare volov vrijer wens woord xaplv yeévolto yévorto yévotto zondigen"
+  },
+  "354": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "aoristus athematische duidt ildc kunnen mogelijkheid namelijk niemand onzekere optativus osnyr potentialis praesens samentrekking stamklinker svvaipny tijd tweeklank voorbeeld werkwoord wijzen"
+  },
+  "355": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "abth bete coed conditionalis eomtevdev hoopte iepoodavpa jeruzalem mevtnkooths moet mogelijk mogelijkheid nlepav optativus pinksteren staan svvatov voorzichtige want yeveobat"
+  },
+  "356": {
+   "g": 48,
+   "titel": "Optativus",
+   "thema": "Werkwoorden",
+   "ocr": "abtov adtod adtw afvroegen allen autos betekenen betrekking christus coed dtahoyicopévov ennpotwv gebruikt gelijkenis geslacht harten indirecte johannes kapdiaic leerlingen mapabodn misschien mocht mote navtwv obliquus onzekerheid optativus pantai petit rede tapaboan tepi terwijl twavon vanwege vroegen xptotos zich"
+  },
+  "357": {
+   "g": 49,
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "ocr": "achter allt andere athematisch athematische bindvocaal contracta direct geldt groep hebben imperfectum kleine komen liquida medeklinkerstammen meeste muta noemen praesens praesentia stam thematiscl themavocaal uitgangen veel verba vocalia voorkomen waarbij werkwoorden woorden"
+  },
+  "358": {
+   "g": 49,
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "ocr": "actieve afwijkende altijd aoristus athematisch athematische baivw bespreken daarmee dbvaucu deponentia derde echter eiui gedraagt geen gezien hebben imperfectum kennen kunnen leiden medeklinkerstammen onregelmatig peter praesens stamaoristus tijd type uitgangen verbogen want werkwoord werkwoorden weten yrwwokw zich éniotapou éyvwv"
+  },
+  "359": {
+   "g": 49,
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "ocr": "andl atohavlt belangrijkste doen eiut enui geven herkennen leggen leren medeklinkerstam medeklinkerstammen moet onregelmatig opvvut otpwvvupt peter plaatsen praesens reduplicatie seikvupe side staan stellen teiptta tiontt tonen tort uitspreiden vernietigen versterking vocaalstam vormen vullen waarvan werkwoorden zeggen zenden zweren"
+  },
+  "360": {
+   "g": 49,
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "ocr": "activum andere bindvocaal deix deixvv geen groep helpen herkennen imperfectum impf leer medeklinkerstam medeklinkerstammen medium missie onregelmatig onthouden persoon praesens praesensstam praesensversterking samen stam stamtijden tempora uitgangen vervoegings volgens voorbeeldwerkwoord vormen werkwoorden woord zuivere"
+  },
+  "361": {
+   "g": 49,
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "ocr": "deikvu deikvuc deikvv deixvuc imper impf indic infinitivus medeklinkerstammen participium prae seikvupev seikvute seixvbtwoa seixvooa setcvitw setkvvi seucvdvtoc seucvodv werkwoorden édeikvu édeikvuc édeikvupev édeikvv édeikvvv édeixvute"
+  },
+  "362": {
+   "g": 49,
+   "titel": "Werkwoorden op -μι: medeklinkerstammen",
+   "thema": "Werkwoorden",
+   "ocr": "aantal amodavpt andere athematische bali balt deikvupt detcvdw duvbw edeixonv eiéa erypat gaan gpvut gronde iotavw koiné medeklinkerstammen otpwvvvut perf regelmatig richten samentrekkingsregels seikvupt soms stamtijdenlijst tempora thematisch uitspreiden vervoegd vervoeging volgens vupt waaronder werkwoor werkwoorden zweren"
+  },
+  "363": {
+   "g": 50,
+   "titel": "Werkwoorden op -μι: vocaalstammen",
+   "thema": "Werkwoorden",
+   "ocr": "afwisseling aspiratie athematische beide ciotn daarbij didwut doen eerste eindigt extra gaat geen geven imperfectum kenmerken klinker klinkers korte lange leggen medeklinker medeklinkers meestal miumanut neusklank oorspr plaatsen praesens praesensstam reduplicatie staan stam stellen tion torn verdubbeling vocaal vocaalstammen volgende"
+  },
+  "364": {
+   "g": 50,
+   "titel": "Werkwoorden op -μι: vocaalstammen",
+   "thema": "Werkwoorden",
+   "ocr": "afwisseling alle andere bette excl fotnm futurum gnpi imperf indic klink klinker korte lange lengte pass praesens siswpt size stam stamklinker temp tempora thon tipmant ttaa vocaalstammen werkwoorden zuivere"
+  },
+  "365": {
+   "g": 50,
+   "titel": "Werkwoorden op -μι: vocaalstammen",
+   "thema": "Werkwoorden",
+   "ocr": "byow cima coat eika elonv enrnoa eswka futxe mijn mjow mémanoal oinu opar otjow otnoa ovvintt qnow rénanka stamtijden swow sédwka téberka éndnoonv éotdonv éotnka éteonv"
+  },
+  "366": {
+   "g": 50,
+   "titel": "Werkwoorden op -μι: vocaalstammen",
+   "thema": "Werkwoorden",
+   "ocr": "alle aoristus asper augment betreffende bijzonderheden complete didwpu eindigt enkele evtog geen hebben heeft herkennen hoofd imperfectum inuris inut iotnpt kunt lastig leer leeradvies leren mipmanu nkac participia perfectum plaatste praesens proberen samengetrokken sigmatische spiritus staan stam stamtijden totnpten vervoegingen"
+  },
+  "367": {
+   "g": 50,
+   "titel": "Werkwoorden op -μι: vocaalstammen",
+   "thema": "Werkwoorden",
+   "ocr": "actief alleen aoristus betekenen betekenis blijven doen fotapot futurum gaan gaat gesteld gotnka houd imperfectum intransitief iotapat medium mediumvormen mijzelf otabjoopuat otapat othoolal othow passieve perf perfectum praesens reflexief regelm resultaat staan stand stellen telt toestandsperfectum torn verschilt vocaalstammen vormen"
+  }
+ }
 }
