@@ -100,6 +100,39 @@ def forceer_focus():
         """, height=0
     )
 
+def audio_knop(fonetisch, key=""):
+    """Spreekt de Erasmiaanse transliteratie uit via de browser (Web Speech API).
+    We gebruiken bewust de fonetische spelling (bv. 'logos', 'houtos') i.p.v. het Griekse
+    schrift: Modern-Griekse TTS-stemmen volgen de Nieuwgriekse klankleer (η/υ/ει → 'ie'),
+    wat botst met de Erasmiaanse uitspraak die de cursus hanteert."""
+    if not fonetisch:
+        return
+    veilig = str(fonetisch).replace("'", "\\'").replace('"', '\\"')
+    components.html(
+        f"""
+        <button onclick="_spreek_{key}()" style="
+            background:#0e5a8a; color:#fff; border:none; border-radius:6px;
+            padding:6px 14px; font-size:15px; cursor:pointer; margin-top:4px;">
+            🔊 Uitspraak
+        </button>
+        <script>
+        function _spreek_{key}() {{
+            try {{
+                var u = new SpeechSynthesisUtterance("{veilig}");
+                u.rate = 0.85;   // iets langzamer, duidelijker
+                u.pitch = 1.0;
+                // kies een neutrale stem; forceer géén Griekse (nieuwgriekse) uitspraak
+                var stemmen = window.speechSynthesis.getVoices();
+                var voorkeur = stemmen.find(v => /en-|nl-|de-/i.test(v.lang));
+                if (voorkeur) u.voice = voorkeur;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(u);
+            }} catch (e) {{ console.log("TTS niet beschikbaar:", e); }}
+        }}
+        </script>
+        """, height=44
+    )
+
 def veilig_les_nummer(item):
     try: return int(item.get('les', 1))
     except: return 1
@@ -109,7 +142,10 @@ def naar_grieks_transliteratie(tekst):
     res = ""
     tekst = str(tekst).lower().strip()
     for char in tekst: res += mapping.get(char, char)
-    return res.replace('σ', 'ς') if res.endswith('σ') else res
+    # Alleen de LAATSTE sigma wordt een slot-sigma (ς); interne sigma's blijven σ.
+    if res.endswith('σ'):
+        res = res[:-1] + 'ς'
+    return res
 
 def normaliseer_accent(woord):
     if pd.notna(woord) and str(woord).strip() != "":
@@ -707,7 +743,7 @@ def laad_gebruiker_data(naam):
         else: return None
 
         if user_row.empty:
-            st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}
+            st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}; st.session_state.prod_stats = {}
             df_andere = df[df['gebruikersnaam'] != naam]
             nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -724,6 +760,7 @@ def laad_gebruiker_data(naam):
 
             st.session_state.vocab_stats = reassemble_chunks('vocab_stats', 'v_chunks')
             st.session_state.gram_stats = reassemble_chunks('gram_stats', 'g_chunks')
+            st.session_state.prod_stats = reassemble_chunks('prod_stats', 'pr_chunks')
             st.session_state.stam_stats = reassemble_chunks('stam_stats', 'st_chunks')
             st.session_state.struct_stats = reassemble_chunks('struct_stats', 'sr_chunks')
             st.session_state.dag_stats = reassemble_chunks('dag_stats', 'd_chunks')
@@ -759,16 +796,17 @@ def opslaan_naar_cloud():
         
         v_ch, v_count = get_chunks(st.session_state.get('vocab_stats', {}), 'vocab_stats')
         g_ch, g_count = get_chunks(st.session_state.get('gram_stats', {}), 'gram_stats')
+        pr_ch, pr_count = get_chunks(st.session_state.get('prod_stats', {}), 'prod_stats')
         st_ch, st_count = get_chunks(st.session_state.get('stam_stats', {}), 'stam_stats')
         sr_ch, sr_count = get_chunks(st.session_state.get('struct_stats', {}), 'struct_stats')
         d_ch, d_count = get_chunks(st.session_state.get('dag_stats', {}), 'dag_stats')
         
         nieuwe_rij_dict = {
             'gebruikersnaam': st.session_state.last_user,
-            'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count
+            'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count, 'pr_chunks': pr_count
         }
         nieuwe_rij_dict.update(v_ch); nieuwe_rij_dict.update(g_ch); nieuwe_rij_dict.update(st_ch)
-        nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch)
+        nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch); nieuwe_rij_dict.update(pr_ch)
         
         nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -802,6 +840,7 @@ if st.session_state.struct_sessie_lijst is None: st.session_state.struct_sessie_
 if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
 if st.session_state.dag_stats is None: st.session_state.dag_stats = {}
+if st.session_state.get('prod_stats') is None: st.session_state.prod_stats = {}
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
 if st.session_state.gestrafte_woorden_stam is None: st.session_state.gestrafte_woorden_stam = set()
 if st.session_state.gestrafte_woorden_struct is None: st.session_state.gestrafte_woorden_struct = set()
@@ -885,7 +924,7 @@ def main():
                         except Exception as e: st.error(f"Fout: {e}")
 
     if st.session_state.data:
-        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp"])
+        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
 
        # ==========================================
         # TAB 1: WOORDENSCHAT
@@ -936,6 +975,8 @@ def main():
                 optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=True)
                 optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=True)
                 optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=True, help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
+                optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=False, help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
+                optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=True, help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
                 
                 oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
                 
@@ -1048,7 +1089,9 @@ def main():
                 if st.session_state.huidig_item:
                     item = st.session_state.huidig_item
                     huidige_sub_modus = st.session_state.huidige_sub_modus
-                    is_mastery = int(item.get('streak', 0)) >= 30
+                    # Mastery-in-context (Bijbelzin + vormvragen) alleen als de gebruiker dat aanvinkt;
+                    # anders wordt ook een streak>=30 woord gewoon los overhoord (flow blijft snel).
+                    is_mastery = int(item.get('streak', 0)) >= 30 and st.session_state.get('optie_mastery_context', False)
                     heeft_vormen = 'vormen_data' in item and isinstance(item['vormen_data'], list) and len(item['vormen_data']) > 0
                     
                     if st.session_state.huidige_vorm_data is None:
@@ -1098,7 +1141,10 @@ def main():
                             st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
                         else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
-                    
+
+                    if st.session_state.get('optie_audio', True):
+                        audio_knop(item.get('fonetisch', ''), key="vocab")
+
                     correct_antw = str(item.get('nederlands', ''))
                     fout_msg_volledig = f"**{item.get('grieks')}** ({extra_info}) — {item.get('fonetisch', '')} — **{correct_antw}**"
                     if is_mastery and heeft_vormen: fout_msg_volledig += f" ({huidige_parsing})"
@@ -1627,7 +1673,19 @@ def main():
 
             # --- JOUW OEFENRITME ---
             st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
-            
+
+            # Vandaag in één oogopslag (gebruikt bestaande dag_stats + huidige fase-verdeling; geen extra opslag)
+            vandaag_str = str(datetime.now().date())
+            vandaag_aantal = int(st.session_state.dag_stats.get(vandaag_str, 0)) if st.session_state.dag_stats else 0
+            beheerst_nu = stats_vocab['Beheerst'] + stats_vocab['Mastery']
+            in_training_nu = stats_vocab['In Training']
+            cs1, cs2, cs3 = st.columns(3)
+            cs1.metric("Vandaag geoefend", vandaag_aantal)
+            cs2.metric("Woorden 'Beheerst' (streak ≥ 16)", beheerst_nu)
+            cs3.metric("Woorden 'In Training'", in_training_nu)
+            if vandaag_aantal == 0:
+                st.caption("Nog niets geoefend vandaag — een korte sessie houdt je streaks vers.")
+
             if st.session_state.dag_stats:
                 df_dagen = pd.DataFrame(list(st.session_state.dag_stats.items()), columns=['Datum', 'Aantal'])
                 df_dagen['Datum'] = pd.to_datetime(df_dagen['Datum'])
@@ -1650,6 +1708,43 @@ def main():
             else:
                 st.info("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
             
+            st.write("---")
+
+            # --- HARDNEKKIGE PROBLEEMWOORDEN (LEECHES) ---
+            st.subheader("🐛 Hardnekkige probleemwoorden")
+            st.caption("Woorden die je al meerdere keren hebt geoefend maar die telkens blijven haperen — hoge fout-verhouding én lage streak. Dit zijn je beste kandidaten voor gericht oefenen.")
+
+            leeches = []
+            if st.session_state.data:
+                for w in st.session_state.data:
+                    g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
+                    totaal = g + f
+                    # leech-criterium: minstens 3 pogingen, minstens 2 fouten, nog niet 'in training' ontstegen
+                    if totaal >= 3 and f >= 2 and s <= 3:
+                        ratio = f / totaal
+                        if ratio >= 0.4:
+                            leeches.append((ratio, f, w))
+            leeches.sort(key=lambda x: (x[0], x[1]), reverse=True)
+
+            if leeches:
+                st.warning(f"Je hebt **{len(leeches)}** hardnekkige woorden. Kies in *Tabblad 1 → 'Knelpunten (Gericht Oefenen)'* dezelfde lessen om ze gericht te stutten.")
+                leech_rijen = []
+                for ratio, f, w in leeches[:25]:
+                    leech_rijen.append({
+                        "Grieks": w.get('grieks', ''),
+                        "Betekenis": str(w.get('nederlands', ''))[:35],
+                        "Les": w.get('les', ''),
+                        "Goed": int(w.get('score_goed', 0)),
+                        "Fout": int(w.get('score_fout', 0)),
+                        "Streak": int(w.get('streak', 0)),
+                        "Fout-%": f"{int(ratio*100)}%",
+                    })
+                st.dataframe(pd.DataFrame(leech_rijen), use_container_width=True, hide_index=True)
+                if len(leeches) > 25:
+                    st.caption(f"(Top 25 van {len(leeches)} getoond, gesorteerd op hardnekkigheid.)")
+            else:
+                st.success("🎉 Geen hardnekkige probleemwoorden — niets blijft structureel haperen. Sterk!")
+
             st.write("---")
 
             # --- COMPETITIE DASHBOARD ---
@@ -3256,6 +3351,134 @@ def main():
             ---
             *Ontwikkeld voor theologische exegese aan de PThU. Vragen of suggesties? Mail naar:* **jtimmer@students.pthu.nl**[cite: 5]
             """)
+
+        # ==========================================
+        # TAB 10: NL -> GRIEKS (ACTIEVE PRODUCTIE)
+        # ==========================================
+        with menu[9]:
+            st.subheader("✍️ NL → Grieks: actieve productie")
+            st.info("Dit tabblad staat los van het gewone (passieve) woorden leren. Hier zie je de **Nederlandse** betekenis en reproduceer je zélf het Griekse woord — de moeilijkere, actieve vaardigheid. Je voortgang hier wordt apart bijgehouden en beïnvloedt je gewone streaks niet.")
+
+            prod_db = laad_vocab_db()
+            if not prod_db:
+                st.warning("Woordenbestand ontbreekt.")
+            else:
+                if 'prod_stats' not in st.session_state or st.session_state.prod_stats is None:
+                    st.session_state.prod_stats = {}
+                if 'prod_sessie' not in st.session_state:
+                    st.session_state.prod_sessie = []
+                if 'prod_huidig' not in st.session_state:
+                    st.session_state.prod_huidig = None
+                if 'prod_feedback' not in st.session_state:
+                    st.session_state.prod_feedback = None
+                if 'prod_score' not in st.session_state:
+                    st.session_state.prod_score = {"goed": 0, "totaal": 0}
+
+                pc1, pc2 = st.columns([1, 2])
+                with pc1:
+                    alle_lessen_p = sorted(list(set(veilig_les_nummer(w) for w in prod_db)))
+                    gekozen_p = st.multiselect("Kies lessen:", alle_lessen_p, default=alle_lessen_p[:2] if alle_lessen_p else [], key="prod_lessen")
+                    invoer_type = st.radio(
+                        "Invoer:",
+                        ["⌨️ Typen (Latijnse toetsen → Grieks)", "🔢 Meerkeuze (kies de juiste Griekse vorm)"],
+                        key="prod_invoer"
+                    )
+                    with st.expander("⌨️ Spiekbrief: Griekse letters typen"):
+                        st.markdown("`a`=α `b`=β `g`=γ `d`=δ `e`=ε `z`=ζ `h`=η `q`=θ `i`=ι `k`=κ `l`=λ `m`=μ `n`=ν `c`=ξ `o`=ο `p`=π `r`=ρ `s`=σ/ς `t`=τ `u`=υ `f`=φ `x`=χ `y`=ψ `w`=ω")
+                        st.caption("Accenten en spiritus hoeven niet: er wordt accent-ongevoelig nagekeken.")
+
+                    if st.button("Start / nieuwe sessie", key="prod_start", type="primary", use_container_width=True):
+                        pool = [w for w in prod_db if veilig_les_nummer(w) in gekozen_p and w.get('grieks') and w.get('nederlands')]
+                        r_engine.shuffle(pool)
+                        st.session_state.prod_sessie = pool[:15]
+                        st.session_state.prod_score = {"goed": 0, "totaal": 0}
+                        st.session_state.prod_feedback = None
+                        st.session_state.prod_huidig = st.session_state.prod_sessie.pop(0) if st.session_state.prod_sessie else None
+                        st.rerun()
+
+                    if st.session_state.prod_score["totaal"]:
+                        st.metric("Deze sessie", f"{st.session_state.prod_score['goed']}/{st.session_state.prod_score['totaal']} goed")
+
+                with pc2:
+                    if st.session_state.prod_feedback:
+                        fb = st.session_state.prod_feedback
+                        (st.success if fb["type"] == "success" else st.error)(fb["msg"])
+                        st.session_state.prod_feedback = None
+
+                    huidig_p = st.session_state.prod_huidig
+                    if not huidig_p:
+                        st.info("Kies links je lessen en klik op **Start / nieuwe sessie**.")
+                    else:
+                        correct_grieks = huidig_p.get('grieks', '')
+                        betekenis = str(huidig_p.get('nederlands', ''))
+                        strong_key = huidig_p.get('grieks', '')
+                        p_stat = st.session_state.prod_stats.get(strong_key, {"g": 0, "f": 0, "streak": 0})
+
+                        st.caption(f"Streak: {p_stat.get('streak', 0)} · Goed/Fout: {p_stat.get('g', 0)}/{p_stat.get('f', 0)}")
+                        st.markdown(f"<div style='font-size:16px; color:#aaa;'>Geef het Griekse woord voor:</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='font-size:34px; font-weight:bold; color:#fff; margin-bottom:10px;'>{betekenis}</div>", unsafe_allow_html=True)
+                        ws = huidig_p.get('woordsoort', '')
+                        if ws:
+                            st.caption(f"Woordsoort: {ws}")
+
+                        def _norm_gr(s):
+                            s = unicodedata.normalize("NFD", str(s).strip().lower())
+                            s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+                            return s.replace('ς', 'σ')  # slot-sigma en gewone sigma gelijk behandelen
+
+                        def prod_verwerk(goed):
+                            st.session_state.prod_score["totaal"] += 1
+                            entry = st.session_state.prod_stats.get(strong_key, {"g": 0, "f": 0, "streak": 0})
+                            if goed:
+                                st.session_state.prod_score["goed"] += 1
+                                entry["g"] = int(entry.get("g", 0)) + 1
+                                entry["streak"] = int(entry.get("streak", 0)) + 1
+                                st.session_state.prod_feedback = {"type": "success", "msg": f"✅ Juist! {betekenis} → {correct_grieks}"}
+                            else:
+                                entry["f"] = int(entry.get("f", 0)) + 1
+                                entry["streak"] = max(0, int(entry.get("streak", 0)) - 1)
+                                st.session_state.prod_feedback = {"type": "error", "msg": f"❌ Het was: {correct_grieks} — {betekenis}"}
+                            st.session_state.prod_stats[strong_key] = entry
+                            registreer_oefening()
+                            trigger_save()
+                            # volgende
+                            if st.session_state.prod_sessie:
+                                st.session_state.prod_huidig = st.session_state.prod_sessie.pop(0)
+                            else:
+                                st.session_state.prod_huidig = None
+                                st.session_state.prod_feedback["msg"] += "  \n\n🏁 Sessie klaar!"
+                            st.rerun()
+
+                        if invoer_type.startswith("⌨️"):
+                            with st.form(f"prod_typ_{strong_key}", clear_on_submit=True):
+                                inp = st.text_input("Grieks (Latijnse toetsen mag):", key=f"prod_in_{strong_key}")
+                                verzonden = st.form_submit_button("Controleer", type="primary")
+                            if verzonden:
+                                if not inp.strip():
+                                    st.warning("Typ eerst een antwoord.")
+                                else:
+                                    omgezet = naar_grieks_transliteratie(inp)
+                                    goed = _norm_gr(omgezet) == _norm_gr(correct_grieks)
+                                    prod_verwerk(goed)
+                            audio_knop(huidig_p.get('fonetisch', ''), key="prod")
+                        else:
+                            if 'prod_opties' not in st.session_state or not st.session_state.get('prod_opties') or st.session_state.get('prod_opties_voor') != strong_key:
+                                afl = [w.get('grieks') for w in prod_db
+                                       if w.get('grieks') and w.get('grieks') != correct_grieks
+                                       and w.get('woordsoort') == ws]
+                                r_engine.shuffle(afl)
+                                opties = [correct_grieks] + afl[:3]
+                                r_engine.shuffle(opties)
+                                st.session_state.prod_opties = opties
+                                st.session_state.prod_opties_voor = strong_key
+                            keuze = st.radio("Kies de juiste Griekse vorm:", st.session_state.prod_opties, index=None, key=f"prod_mc_{strong_key}")
+                            if st.button("Controleer", key=f"prod_mc_btn_{strong_key}", type="primary"):
+                                if keuze is None:
+                                    st.warning("Kies eerst een optie.")
+                                else:
+                                    st.session_state.prod_opties = None
+                                    prod_verwerk(keuze == correct_grieks)
+
 
 if __name__ == "__main__":
     main()
