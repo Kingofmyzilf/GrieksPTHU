@@ -6,7 +6,6 @@ import pandas as pd
 import random as r_engine
 import re
 import math
-import matplotlib.pyplot as plt
 import os
 import unicodedata
 import difflib
@@ -136,6 +135,23 @@ def audio_knop(fonetisch, key=""):
 def veilig_les_nummer(item):
     try: return int(item.get('les', 1))
     except: return 1
+
+def vier_fase_overgang(oude_streak, nieuwe_streak, label):
+    """Toont een felicitatie-toast wanneer een item een nieuwe leerfase-drempel passeert.
+    Drempels: 1 (in training), 16 (beheerst), 30 (mastery)."""
+    try:
+        for drempel, boodschap, icoon in [
+            (30, f"🏆 Mastery! {label} zit nu écht vast.", "🏆"),
+            (16, f"🎉 {label} is nu Beheerst!", "🎉"),
+            (1,  f"🌱 {label} staat nu In Training.", "🌱"),
+        ]:
+            if oude_streak < drempel <= nieuwe_streak:
+                st.toast(boodschap, icon=icoon)
+                if drempel == 30:
+                    st.balloons()
+                break
+    except Exception:
+        pass
 
 def naar_grieks_transliteratie(tekst):
     mapping = { 'a': 'α', 'b': 'β', 'g': 'γ', 'd': 'δ', 'e': 'ε', 'z': 'ζ', 'h': 'η', 'q': 'θ', 'i': 'ι', 'k': 'κ', 'l': 'λ', 'm': 'μ', 'n': 'ν', 'c': 'ξ', 'o': 'ο', 'p': 'π', 'r': 'ρ', 's': 'σ', 't': 'τ', 'u': 'υ', 'f': 'φ', 'x': 'χ', 'y': 'ψ', 'w': 'ω' }
@@ -810,6 +826,10 @@ def opslaan_naar_cloud():
         
         nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
+        try:
+            st.toast("💾 Voortgang opgeslagen", icon="✅")
+        except Exception:
+            pass
     except Exception as e:
         st.error(f"⚠️ Fout bij cloud-opslag: {e}")
 
@@ -850,6 +870,7 @@ if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
 if st.session_state.dag_stats is None: st.session_state.dag_stats = {}
 if st.session_state.get('prod_stats') is None: st.session_state.prod_stats = {}
 if st.session_state.get('save_teller') is None: st.session_state.save_teller = 0
+if st.session_state.get('sessie_net_klaar') is None: st.session_state.sessie_net_klaar = False
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
 if st.session_state.gestrafte_woorden_stam is None: st.session_state.gestrafte_woorden_stam = set()
 if st.session_state.gestrafte_woorden_struct is None: st.session_state.gestrafte_woorden_struct = set()
@@ -860,6 +881,9 @@ def laad_volgend_woord():
         st.session_state.huidig_item = volgend[0]
         st.session_state.huidige_sub_modus = volgend[1]
     else:
+        # sessie liep leeg: markeer als 'net klaar' als er daadwerkelijk geoefend was
+        if st.session_state.get('huidig_item') is not None:
+            st.session_state.sessie_net_klaar = True
         st.session_state.huidig_item = None; st.session_state.huidige_sub_modus = None
         trigger_save(forceer=True)  # einde sessie: laatste antwoorden zeker wegschrijven
     st.session_state.fouten_huidig_woord = 0
@@ -1209,11 +1233,13 @@ def main():
                                 vorm_correct = (norm_p(p_vorm) == norm_p(huidige_parsing)) if vorm_getoetst else True
 
                                 if vertaling_correct and vorm_correct:
+                                    _oude_streak = int(item.get('streak', 0))
                                     if st.session_state.fouten_huidig_woord == 0 and item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                         if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
                                         elif huidige_sub_modus == '3_typ': item['streak'] = int(item.get('streak', 0)) + (2 if st.session_state.mix_combo.get(item['grieks'], False) else 1)
-                                            
+                                    vier_fase_overgang(_oude_streak, int(item.get('streak', 0)), item.get('grieks', ''))
+
                                     success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
                                     if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
                                     elif zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
@@ -1342,11 +1368,13 @@ def main():
                             if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
                                 registreer_oefening(item)
                                 if optie == correct_optie:
+                                    _oude_streak_mc = int(item.get('streak', 0))
                                     if st.session_state.fouten_huidig_woord == 0 and item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                         if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
                                         elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
-                                        
+                                    vier_fase_overgang(_oude_streak_mc, int(item.get('streak', 0)), item.get('grieks', ''))
+
                                     success_msg = f"✓ Juist! {fout_msg_volledig}"
                                     if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
                                     elif zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
@@ -1370,7 +1398,13 @@ def main():
                         st.write("---")
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
                         st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst: {item.get('laatst_geoefend', 'Nooit')}")
-                        
+
+                elif st.session_state.get('sessie_net_klaar'):
+                    st.session_state.sessie_net_klaar = False
+                    st.balloons()
+                    st.success("🎉 **Sessie voltooid!** Je voortgang is opgeslagen.")
+                    st.markdown("Klik links op **Start Sessie** voor een nieuwe ronde, of bekijk je voortgang in het 📊-tabblad.")
+
         # ==========================================
         # TAB 2: LIJST
         # ==========================================
@@ -1677,12 +1711,17 @@ def main():
                 'In Training (1-15)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']],
                 'Beheerst (16-29)': [stats_vocab['Beheerst'], stats_stam['Beheerst'], stats_str['Beheerst']],
                 'Mastery (30+)': [stats_vocab['Mastery'], stats_stam['Mastery'], stats_str['Mastery']]
-            })
-            fig, ax = plt.subplots(figsize=(10, 4))
-            df_plot.set_index('Module').plot(kind='bar', stacked=True, color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'], ax=ax)
-            ax.set_ylabel("Aantal items")
-            plt.xticks(rotation=0)
-            st.pyplot(fig)
+            }).set_index('Module')
+            try:
+                st.bar_chart(
+                    df_plot,
+                    color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'],
+                    stack=True,
+                    height=340,
+                )
+            except TypeError:
+                # oudere Streamlit zonder 'stack'-parameter: stapelt standaard al
+                st.bar_chart(df_plot, color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'], height=340)
             
             st.write("---")
 
@@ -1707,18 +1746,18 @@ def main():
                 vandaag_dt = datetime.now().date()
                 vandaag_pd = pd.to_datetime(vandaag_dt).normalize()
                 start_datum = vandaag_pd - pd.Timedelta(days=13)
-                
+
                 df_dagen = df_dagen[df_dagen['Datum'] >= start_datum]
                 alle_dagen = pd.date_range(start=start_datum, end=vandaag_pd)
                 df_dagen = df_dagen.set_index('Datum').reindex(alle_dagen, fill_value=0).reset_index()
                 df_dagen.columns = ['Datum', 'Aantal']
-                df_dagen['Datum_str'] = df_dagen['Datum'].dt.strftime('%d-%m')
+                df_dagen['Dag'] = df_dagen['Datum'].dt.strftime('%d-%m')
 
-                fig2, ax2 = plt.subplots(figsize=(10, 3))
-                ax2.bar(df_dagen['Datum_str'], df_dagen['Aantal'], color='#28a745')
-                ax2.set_ylabel("Geoefende items")
-                plt.xticks(rotation=45)
-                st.pyplot(fig2)
+                st.bar_chart(
+                    df_dagen.set_index('Dag')['Aantal'],
+                    color='#28a745',
+                    height=260,
+                )
                 st.metric("Totaal geoefend (All-time)", sum(st.session_state.dag_stats.values()))
             else:
                 st.info("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
