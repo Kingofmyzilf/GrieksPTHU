@@ -656,9 +656,44 @@ def voeg_verwar_twins_toe(sampled, alle_data, twins_map, max_twins=3):
     return sampled
 
 # --- VERWARWOORDEN: DETECTIE, TRACKING & SELECTIE ---
+def _betekenis_delen(ned):
+    """Splitst een Nederlandse glosse in losse, genormaliseerde betekenis-delen. Gebruikt voor de
+    reverse-lookup: hier willen we LETTERLIJKE overeenkomst, geen typo-marge (Levenshtein)."""
+    s = str(ned).lower().strip()
+    s = s.replace(';', ',').replace('/', ',')
+    s = re.sub(r'\([^)]*\)', '', s)
+    s = re.sub(r'\[[^\]]*\]', '', s)
+    s = re.sub(r'\{[^}]*\}', '', s)
+    s = s.replace('=', ' ').replace('*', ' ').replace('+', ' ')
+    delen = set()
+    for d in s.split(','):
+        d = re.sub(r'^[^\wα-ωά-ώϊϋΐΰ]+|[^\wα-ωά-ώϊϋΐΰ]+$', '', d.strip()).strip()
+        if d:
+            delen.add(d)
+    return delen
+
+_LEIDWOORDEN = ("de ", "het ", "een ", "te ", "'t ")
+def _kern(s):
+    """Strip een eventueel lidwoord/infinitief-marker vooraan, zodat 'het leven' == 'leven'."""
+    s = s.strip()
+    for a in _LEIDWOORDEN:
+        if s.startswith(a):
+            return s[len(a):].strip()
+    return s
+
+def betekenis_exact(typed, ned):
+    """True als het getypte antwoord LETTERLIJK één van de betekenis-delen is (lidwoord genegeerd).
+    Geen Levenshtein — anders matcht 'zeven' op 'geven'/'leven' en krijg je willekeurige treffers."""
+    t = re.sub(r'^[^\wα-ωά-ώϊϋΐΰ]+|[^\wα-ωά-ώϊϋΐΰ]+$', '', str(typed).lower().strip()).strip()
+    if not t:
+        return False
+    delen = _betekenis_delen(ned)
+    kernen = {_kern(d) for d in delen}
+    return t in delen or t in kernen or _kern(t) in delen or _kern(t) in kernen
+
 def woorden_met_zelfde_betekenis(typed, alle_data, exclude_grieks=None, alleen_geoefend=True, max_n=5):
-    """Reverse-lookup: geeft de woorden terug waarvan de betekenis overeenkomt met wat de
-    student typte/koos. Zo zie je meteen met welk (al geoefend) woord je het mogelijk verwarde.
+    """Reverse-lookup: geeft de woorden terug waarvan de betekenis LETTERLIJK overeenkomt met wat de
+    student typte/koos. Zo zie je met welk (al geoefend) woord je het mogelijk verwarde.
     Standaard alleen woorden die minstens één keer goed óf fout zijn gedaan."""
     typed = str(typed).strip()
     if not typed:
@@ -675,7 +710,7 @@ def woorden_met_zelfde_betekenis(typed, alle_data, exclude_grieks=None, alleen_g
         ned = str(w.get('nederlands', '')).strip()
         if not ned:
             continue
-        if check_betekenis(typed, ned):
+        if betekenis_exact(typed, ned):
             treffers.append(w)
         if len(treffers) >= max_n:
             break
@@ -789,41 +824,114 @@ def badge_definities(m):
     """Bouwt de lijst met badges op basis van samengevatte statistieken (m). Puur afgeleid van
     bestaande cijfers; alleen de 'eerste keer behaald'-datum wordt apart bewaard in badges-dict."""
     B = []
+    _ROM = ["I", "II", "III", "IV", "V", "VI", "VII"]
     def add(bid, icon, titel, uitleg, behaald, voortgang=""):
         B.append({"id": bid, "icon": icon, "titel": titel, "uitleg": uitleg,
                   "behaald": bool(behaald), "voortgang": voortgang})
 
+    def trap(basis_id, icon, naam, eenheid, waarde, drempels):
+        """Voegt een oplopende reeks (I, II, III, ...) badges toe voor één statistiek."""
+        for i, dr in enumerate(drempels):
+            add(f"{basis_id}{i+1}", icon, f"{naam} {_ROM[i]}", f"{dr} {eenheid}.",
+                waarde >= dr, f"{min(waarde, dr)}/{dr}")
+
     beo = int(m.get('beoordelingen', 0))
     add("start", "🌱", "Eerste stappen", "Je allereerste woord geoefend.", beo >= 1)
-    add("vlijtig", "📚", "Vlijtig", "500 beoordelingen gemaakt.", beo >= 500, f"{min(beo,500)}/500")
-    add("marathon", "🏋️", "Marathon", "2000 beoordelingen gemaakt.", beo >= 2000, f"{min(beo,2000)}/2000")
+    trap("vlijt", "📚", "Vlijt", "beoordelingen", beo, [100, 500, 1500, 5000, 12000])
 
     dagen = int(m.get('oefendagen', 0))
-    add("week", "📅", "Trouw geoefend", "Op 7 verschillende dagen geoefend.", dagen >= 7, f"{min(dagen,7)}/7")
-    add("maand", "🗓️", "Doorzetter", "Op 30 verschillende dagen geoefend.", dagen >= 30, f"{min(dagen,30)}/30")
+    trap("trouw", "📅", "Trouw", "oefendagen", dagen, [3, 7, 30, 100])
 
     ds = int(m.get('dagstreak', 0))
-    add("streak5", "🔥", "Op dreef", "5 dagen achter elkaar geoefend.", ds >= 5, f"{min(ds,5)}/5")
-
-    acc = int(m.get('accuratesse', 0))
-    add("scherp", "🎯", "Scherpschutter", "90% accuratesse (min. 50 beoordelingen).", acc >= 90 and beo >= 50, f"{acc}%")
+    trap("vuur", "🔥", "Vuur", "dagen op rij", ds, [3, 7, 14, 30])
 
     beh = int(m.get('beheerst', 0))
     add("eerste_beh", "🛡️", "Eerste beheersing", "Je eerste woord beheerst (streak ≥ 16).", beh >= 1)
-    add("beh50", "🏛️", "Halve eeuw", "50 woorden beheerst.", beh >= 50, f"{min(beh,50)}/50")
-    add("beh150", "🏆", "Grote woordenschat", "150 woorden beheerst.", beh >= 150, f"{min(beh,150)}/150")
+    trap("beheer", "🏛️", "Beheersing", "woorden beheerst", beh, [25, 100, 250, 500])
 
     mast = int(m.get('mastery', 0))
     add("mast1", "⭐", "Mastery-starter", "Je eerste woord op Mastery (streak ≥ 30).", mast >= 1)
-    add("mast25", "🌟", "Mastery-verzamelaar", "25 woorden op Mastery.", mast >= 25, f"{min(mast,25)}/25")
+    trap("meester", "🌟", "Meesterschap", "woorden op mastery", mast, [10, 50, 150])
+
+    acc = int(m.get('accuratesse', 0))
+    add("prec1", "🎯", "Precisie I", "80% accuratesse (min. 50 beoordelingen).", acc >= 80 and beo >= 50, f"{acc}%")
+    add("prec2", "🎯", "Precisie II", "90% accuratesse (min. 100 beoordelingen).", acc >= 90 and beo >= 100, f"{acc}%")
+    add("prec3", "🏹", "Precisie III", "95% accuratesse (min. 200 beoordelingen).", acc >= 95 and beo >= 200, f"{acc}%")
 
     dek = int(m.get('dekking', 0))
-    add("dekking25", "🌍", "Bijbellezer", "Geschatte NT-dekking ≥ 25%.", dek >= 25, f"{dek}%")
-    add("dekking50", "📖", "Gevorderd lezer", "Geschatte NT-dekking ≥ 50%.", dek >= 50, f"{dek}%")
+    trap("lezer", "🌍", "NT-lezer", "% NT-dekking", dek, [10, 25, 50, 75])
 
     opg = int(m.get('verwar_opgelost', 0))
-    add("ontward", "🧩", "Ontward", "10 verwarringen opgelost.", opg >= 10, f"{min(opg,10)}/10")
+    trap("ontward", "🧩", "Ontward", "verwarringen opgelost", opg, [5, 25, 75])
+
+    niv = int(m.get('niveau', 0))
+    if niv >= 1:
+        trap("rang", "🎖️", "Rang", "leerpad-niveau bereikt", niv, [5, 10, 20, 35, 50])
     return B
+
+# --- LEERPAD (levels + XP, Duolingo-stijl) ---
+LEERPAD_CHUNK = 7      # aantal woorden per level
+LEERPAD_DREMPEL = 5    # streak waarop een woord binnen het pad als 'af' telt
+
+def bereken_xp(alle_data):
+    """XP is puur opbouwend (kan niet dalen): elke goede beurt telt, plus bonus per mijlpaal."""
+    xp = 0
+    for w in alle_data:
+        if not isinstance(w, dict):
+            continue
+        xp += int(w.get('score_goed', 0)) * 10
+        s = int(w.get('streak', 0))
+        if s >= 5: xp += 10
+        if s >= 16: xp += 25
+        if s >= 30: xp += 50
+    return xp
+
+_RANG_TITELS = ["Nieuweling", "Beginner", "Leerling", "Student", "Gevorderde", "Kenner",
+                "Exegeet", "Vertaler", "Geleerde", "Meester", "Grootmeester"]
+
+def niveau_van_xp(xp):
+    """Zet XP om in een oplopend niveau; de benodigde XP per niveau groeit gestaag (100, 175, 250, ...)."""
+    niveau = 0
+    nodig = 100
+    rest = int(xp)
+    while rest >= nodig:
+        rest -= nodig
+        niveau += 1
+        nodig += 75
+    titel = _RANG_TITELS[min(niveau // 2, len(_RANG_TITELS) - 1)]
+    return {"niveau": niveau, "titel": titel, "xp_totaal": int(xp),
+            "xp_in_niveau": rest, "xp_voor_volgend": nodig}
+
+def bouw_leerpad_levels(alle_data, chunk=LEERPAD_CHUNK):
+    """Deelt de woordenschat op in kleine levels in les-volgorde; elk level ≈ chunk woorden."""
+    per_les = {}
+    for w in alle_data:
+        if isinstance(w, dict) and w.get('grieks'):
+            per_les.setdefault(veilig_les_nummer(w), []).append(w)
+    levels = []
+    idx = 0
+    for les in sorted(per_les.keys()):
+        woorden = sorted(per_les[les], key=lambda w: str(w.get('grieks', '')))
+        for start in range(0, len(woorden), chunk):
+            idx += 1
+            levels.append({"index": idx, "les": les,
+                           "titel": f"Les {les} · deel {(start // chunk) + 1}",
+                           "woorden": woorden[start:start + chunk]})
+    return levels
+
+def leerpad_status(levels, drempel=LEERPAD_DREMPEL):
+    """Per level: hoeveel woorden 'af' zijn, of het voltooid is en of het ontgrendeld is
+    (het eerste level altijd; elk volgend level zodra het vorige voltooid is)."""
+    status = []
+    vorige_voltooid = True
+    for lv in levels:
+        totaal = len(lv["woorden"])
+        klaar = sum(1 for w in lv["woorden"] if int(w.get('streak', 0)) >= drempel)
+        voltooid = totaal > 0 and klaar == totaal
+        status.append({**lv, "klaar": klaar, "totaal": totaal,
+                       "voltooid": voltooid, "ontgrendeld": vorige_voltooid})
+        vorige_voltooid = voltooid
+    return status
 
 # --- DATABASE FUNCTIES ---
 @st.cache_data
@@ -1163,7 +1271,7 @@ def main():
                 _modus_idx = _modus_opts.index(_prefs['modus']) if _prefs.get('modus') in _modus_opts else 0
                 modus = st.radio("Modus:", _modus_opts, index=_modus_idx)
 
-                _keuze_opts = ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
+                _keuze_opts = ["Lessen", "🎮 Leerpad (levels)", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
                 _keuze_idx = _keuze_opts.index(_prefs['keuze']) if _prefs.get('keuze') in _keuze_opts else 0
                 keuze = st.selectbox("Oefening:", _keuze_opts, index=_keuze_idx)
                 doel = []
@@ -1213,6 +1321,37 @@ def main():
                         st.caption(f"🧩 {len(doel)} woorden in je persoonlijke verwar-lijst. Ze vallen vanzelf af zodra je ze weer beheerst.")
                     else:
                         st.caption("✅ Nog geen verwarwoorden geregistreerd — die verschijnen hier zodra je in een sessie twee woorden door elkaar haalt.")
+
+                elif keuze == "🎮 Leerpad (levels)":
+                    # Duolingo-stijl: XP + oplopende rang, en een pad van levels die je vrijspeelt.
+                    _xp = bereken_xp(st.session_state.data)
+                    _niv = niveau_van_xp(_xp)
+                    st.markdown(f"#### 🎮 Niveau {_niv['niveau']} · {_niv['titel']}")
+                    st.progress(_niv['xp_in_niveau'] / max(1, _niv['xp_voor_volgend']))
+                    st.caption(f"⭐ {_niv['xp_totaal']} XP — nog {_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP tot niveau {_niv['niveau'] + 1}.")
+
+                    _levels = leerpad_status(bouw_leerpad_levels(st.session_state.data))
+                    _ontgrendeld = [l for l in _levels if l['ontgrendeld']]
+                    _voltooid_n = sum(1 for l in _levels if l['voltooid'])
+                    st.caption(f"🏁 {_voltooid_n}/{len(_levels)} levels voltooid · een woord telt als 'af' bij streak ≥ {LEERPAD_DREMPEL}.")
+
+                    if _ontgrendeld:
+                        _huidig = next((l for l in _levels if l['ontgrendeld'] and not l['voltooid']), _ontgrendeld[-1])
+                        _labels = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgrendeld]
+                        _def_idx = _ontgrendeld.index(_huidig) if _huidig in _ontgrendeld else 0
+                        _sel = st.selectbox("Kies een ontgrendeld level:", _labels, index=_def_idx)
+                        _gekozen_level = _ontgrendeld[_labels.index(_sel)]
+                        doel = list(_gekozen_level['woorden'])
+                        _volgend_slot = next((l for l in _levels if not l['ontgrendeld']), None)
+                        if _volgend_slot:
+                            st.caption(f"🔒 Hierna: Level {_volgend_slot['index']} — {_volgend_slot['titel']}. Rond eerst het huidige level af.")
+                    else:
+                        doel = []
+
+                    with st.expander("🗺️ Toon het hele pad", expanded=False):
+                        for l in _levels:
+                            _ico = "✅" if l['voltooid'] else ("▶️" if l['ontgrendeld'] else "🔒")
+                            st.markdown(f"{_ico} **Level {l['index']}** · {l['titel']} — {l['klaar']}/{l['totaal']}")
 
                 st.write("---")
                 # Wens 6: alle extra opties achter een uitklap-menu zodat het scherm niet meteen vol staat.
@@ -1755,6 +1894,7 @@ def main():
                         + stats_stam['Beheerst'] + stats_stam['Mastery']
                         + stats_str['Beheerst'] + stats_str['Mastery'])
             _mast_tot = stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery']
+            _niv_info = niveau_van_xp(bereken_xp(st.session_state.data))
             _badge_stats = {
                 'beoordelingen': tot_g + tot_f,
                 'oefendagen': _oefendagen,
@@ -1764,6 +1904,7 @@ def main():
                 'mastery': _mast_tot,
                 'dekking': dekking_pct,
                 'verwar_opgelost': int((st.session_state.get('badges') or {}).get('_verwar_opgelost', 0)),
+                'niveau': _niv_info['niveau'],
             }
             _badges = badge_definities(_badge_stats)
             if not isinstance(st.session_state.get('badges'), dict):
@@ -1778,30 +1919,33 @@ def main():
             for _bid in _nieuw:
                 st.session_state.badges[_bid] = _vandaag
 
-            st.markdown(f"### 🏅 Badges ({len(_behaald_nu)}/{len(_badges)})")
-            st.caption("Verzamel badges door te oefenen, woorden te beheersen en verwarringen op te lossen.")
-            _kols = st.columns(4)
-            for _i, _b in enumerate(_badges):
-                _behaald = _b['behaald']
-                _earned_date = st.session_state.badges.get(_b['id'], "")
-                _rand = "#f6c23e" if _behaald else "#333"
-                _bg = "rgba(246,194,62,0.12)" if _behaald else "rgba(255,255,255,0.03)"
-                _op = "1" if _behaald else "0.45"
-                if _behaald:
-                    _status = "✓ behaald" + (f" · {_earned_date}" if _earned_date else "")
-                    _status_kleur = "#f6c23e"
-                else:
-                    _status = f"🔒 {_b['voortgang']}" if _b['voortgang'] else "🔒"
-                    _status_kleur = "#888"
-                with _kols[_i % 4]:
-                    st.markdown(f"""
-                    <div style="border:2px solid {_rand}; background:{_bg}; border-radius:12px; padding:12px; margin-bottom:10px; text-align:center; opacity:{_op};">
-                        <div style="font-size:34px; line-height:1;">{_b['icon']}</div>
-                        <div style="font-weight:700; color:#fff; margin-top:6px;">{_b['titel']}</div>
-                        <div style="font-size:12px; color:#bbb; margin:4px 0; min-height:32px;">{_b['uitleg']}</div>
-                        <div style="font-size:12px; color:{_status_kleur};">{_status}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+            # Altijd zichtbaar (motiverend), rest achter een dropdown:
+            st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP)")
+            with st.expander("🏅 Bekijk al je badges", expanded=False):
+                st.caption("Verzamel badges door te oefenen, woorden te beheersen, verwarringen op te lossen en niveaus te halen. Behaalde badges staan bovenaan.")
+                _gesorteerd = sorted(_badges, key=lambda b: (not b['behaald']))
+                _kols = st.columns(4)
+                for _i, _b in enumerate(_gesorteerd):
+                    _behaald = _b['behaald']
+                    _earned_date = st.session_state.badges.get(_b['id'], "")
+                    _rand = "#f6c23e" if _behaald else "#333"
+                    _bg = "rgba(246,194,62,0.12)" if _behaald else "rgba(255,255,255,0.03)"
+                    _op = "1" if _behaald else "0.45"
+                    if _behaald:
+                        _status = "✓ behaald" + (f" · {_earned_date}" if _earned_date else "")
+                        _status_kleur = "#f6c23e"
+                    else:
+                        _status = f"🔒 {_b['voortgang']}" if _b['voortgang'] else "🔒"
+                        _status_kleur = "#888"
+                    with _kols[_i % 4]:
+                        st.markdown(f"""
+                        <div style="border:2px solid {_rand}; background:{_bg}; border-radius:12px; padding:12px; margin-bottom:10px; text-align:center; opacity:{_op};">
+                            <div style="font-size:34px; line-height:1;">{_b['icon']}</div>
+                            <div style="font-weight:700; color:#fff; margin-top:6px;">{_b['titel']}</div>
+                            <div style="font-size:12px; color:#bbb; margin:4px 0; min-height:32px;">{_b['uitleg']}</div>
+                            <div style="font-size:12px; color:{_status_kleur};">{_status}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
 
             if _nieuw:
                 for _bid in _nieuw:
