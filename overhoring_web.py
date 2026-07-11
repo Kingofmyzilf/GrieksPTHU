@@ -770,32 +770,71 @@ def verzwak_verwarring(getoond_grieks):
     if not entry:
         del vs[getoond_grieks]
 
-def bouw_verwar_melding(item, typed, alle_data, twins_map, registreer=True):
+def _onthoud_verwar_kandidaten(getoond, getoond_ned, typed, kandidaten):
+    """Bewaart mogelijke-verwar-kandidaten van de huidige sessie, zodat de student ze aan het eind
+    zélf kan bevestigen (i.p.v. ze automatisch toe te voegen — dat vervuilde de lijst)."""
+    if not kandidaten:
+        return
+    acc = st.session_state.get('sessie_verwar_kandidaten')
+    if not isinstance(acc, dict):
+        acc = {}
+        st.session_state.sessie_verwar_kandidaten = acc
+    rec = acc.setdefault(getoond, {"nederlands": getoond_ned, "antwoord": "", "kandidaten": {}})
+    rec["nederlands"] = getoond_ned
+    rec["antwoord"] = str(typed)
+    rec["kandidaten"].update(kandidaten)
+
+def bouw_verwar_melding(item, typed, alle_data, twins_map, onthoud=True):
     """Bouwt de 'let op — mogelijk verward'-melding op basis van (a) betekenis-overlap met wat je
-    typte/koos en (b) look-alikes op spelling. Registreert de betekenis-verwarringen desgewenst.
-    Geeft een lege string terug als er niets zinnigs te melden valt."""
+    typte/koos en (b) look-alikes op spelling. Voegt NIETS automatisch toe aan verwar_stats, maar
+    onthoudt de kandidaten voor de eindsamenvatting (waar je zelf bevestigt wat klopte)."""
     getoond = item.get('grieks', '')
     delen = []
+    kandidaten = {}  # grieks -> nederlands
     zelfde = woorden_met_zelfde_betekenis(typed, alle_data, exclude_grieks=getoond, alleen_geoefend=True)
     if zelfde:
         labels = [f"**{w.get('grieks','')}** ({str(w.get('nederlands',''))[:30]})" for w in zelfde]
         delen.append(f"Je gaf *“{str(typed).strip()}”* — dat is de betekenis van: " + "; ".join(labels))
-        if registreer:
-            for w in zelfde:
-                registreer_verwarring(getoond, w.get('grieks', ''))
+        for w in zelfde:
+            kandidaten[w.get('grieks', '')] = str(w.get('nederlands', ''))
     idx = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
     tw_labels = []
     for tg in (twins_map.get(getoond, []) if twins_map else []):
         tw = idx.get(tg)
         if tw and _is_al_geoefend(tw):
             tw_labels.append(f"**{tg}** ({str(tw.get('nederlands',''))[:25]})")
+            kandidaten[tg] = str(tw.get('nederlands', ''))
         if len(tw_labels) >= 3:
             break
     if tw_labels:
         delen.append("Lijkt qua vorm op: " + "; ".join(tw_labels))
+    if onthoud:
+        _onthoud_verwar_kandidaten(getoond, str(item.get('nederlands', '')), typed, kandidaten)
     if not delen:
         return ""
     return "\n\n⚠️ **Let op — mogelijk verward:**\n\n- " + "\n- ".join(delen)
+
+def _sessie_noteer_goed(item):
+    """Registreert (in-memory) dat dit woord in de huidige sessie goed ging — voor de eindsamenvatting."""
+    d = st.session_state.get('sessie_goed')
+    if not isinstance(d, dict):
+        d = {}
+        st.session_state.sessie_goed = d
+    d[item.get('grieks', '')] = str(item.get('nederlands', ''))
+
+def _sessie_noteer_fout(item, antwoord):
+    """Registreert (in-memory) dat dit woord in de huidige sessie fout ging, met het gegeven antwoord."""
+    d = st.session_state.get('sessie_fout')
+    if not isinstance(d, dict):
+        d = {}
+        st.session_state.sessie_fout = d
+    d[item.get('grieks', '')] = {"nederlands": str(item.get('nederlands', '')), "antwoord": str(antwoord)}
+
+def _sessie_reset_samenvatting():
+    """Leegt de sessie-accumulatoren voor de eindsamenvatting."""
+    st.session_state.sessie_goed = {}
+    st.session_state.sessie_fout = {}
+    st.session_state.sessie_verwar_kandidaten = {}
 
 def verzamel_lookalikes(poule, twins_map):
     """Doel-lijst voor 'Gelijkende woorden': woorden binnen de selectie die een look-alike-twin
@@ -1177,6 +1216,9 @@ if st.session_state.get('prod_stats') is None: st.session_state.prod_stats = {}
 if st.session_state.get('verwar_stats') is None: st.session_state.verwar_stats = {}
 if st.session_state.get('ui_prefs') is None: st.session_state.ui_prefs = {}
 if st.session_state.get('badges') is None: st.session_state.badges = {}
+if st.session_state.get('sessie_goed') is None: st.session_state.sessie_goed = {}
+if st.session_state.get('sessie_fout') is None: st.session_state.sessie_fout = {}
+if st.session_state.get('sessie_verwar_kandidaten') is None: st.session_state.sessie_verwar_kandidaten = {}
 if st.session_state.get('save_teller') is None: st.session_state.save_teller = 0
 if st.session_state.get('sessie_net_klaar') is None: st.session_state.sessie_net_klaar = False
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
@@ -1438,6 +1480,10 @@ def main():
                 if st.button("Start Sessie", type="primary"):
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
+                        # Eindsamenvatting-accumulatoren voor de nieuwe sessie leegmaken
+                        _sessie_reset_samenvatting()
+                        st.session_state.sessie_net_klaar = False
+                        st.session_state._ballonnen_getoond = False
                         modus_id = str(modus[0])
                         
                         is_lang_geleden = ("Lang niet gedaan" in keuze)
@@ -1634,6 +1680,7 @@ def main():
                                     vier_fase_overgang(_oude_streak, int(item.get('streak', 0)), item.get('grieks', ''))
                                     if st.session_state.fouten_huidig_woord == 0:
                                         verzwak_verwarring(item.get('grieks', ''))
+                                    _sessie_noteer_goed(item)
 
                                     success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
                                     if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
@@ -1658,8 +1705,10 @@ def main():
                                     huidige_streak = int(item.get('streak', 0))
 
                                     # Wens 1+2: al bij de eerste fout tonen met welk (al geoefend) woord je het
-                                    # mogelijk verwart — zowel op betekenis (reverse-lookup) als op spelling.
-                                    _verwar_note = bouw_verwar_melding(item, inp, st.session_state.data, laad_verwarparen_db(), registreer=True)
+                                    # mogelijk verwart. Kandidaten worden onthouden voor de eindsamenvatting
+                                    # (waar je zélf bevestigt) — niet meer automatisch toegevoegd.
+                                    _sessie_noteer_fout(item, inp)
+                                    _verwar_note = bouw_verwar_melding(item, inp, st.session_state.data, laad_verwarparen_db())
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
@@ -1764,6 +1813,7 @@ def main():
                                     vier_fase_overgang(_oude_streak_mc, int(item.get('streak', 0)), item.get('grieks', ''))
                                     if st.session_state.fouten_huidig_woord == 0:
                                         verzwak_verwarring(item.get('grieks', ''))
+                                    _sessie_noteer_goed(item)
 
                                     success_msg = f"✓ Juist! {fout_msg_volledig}"
                                     if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
@@ -1777,7 +1827,9 @@ def main():
                                     huidige_streak = int(item.get('streak', 0))
 
                                     # Wens 1+2: welk (al geoefend) woord hoort bij de betekenis die je koos?
-                                    _verwar_note = bouw_verwar_melding(item, optie, st.session_state.data, laad_verwarparen_db(), registreer=True)
+                                    # Kandidaten worden onthouden voor de eindsamenvatting (zelf bevestigen).
+                                    _sessie_noteer_fout(item, optie)
+                                    _verwar_note = bouw_verwar_melding(item, optie, st.session_state.data, laad_verwarparen_db())
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
@@ -1795,10 +1847,72 @@ def main():
                         st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst: {item.get('laatst_geoefend', 'Nooit')}")
 
                 elif st.session_state.get('sessie_net_klaar'):
-                    st.session_state.sessie_net_klaar = False
-                    st.balloons()
+                    if not st.session_state.get('_ballonnen_getoond'):
+                        st.balloons()
+                        st.session_state._ballonnen_getoond = True
                     st.success("🎉 **Sessie voltooid!** Je voortgang is opgeslagen.")
-                    st.markdown("Klik links op **Start Sessie** voor een nieuwe ronde, of bekijk je voortgang in het 📊-tabblad.")
+
+                    _s_goed = st.session_state.get('sessie_goed') or {}
+                    _s_fout = st.session_state.get('sessie_fout') or {}
+                    _s_kand = st.session_state.get('sessie_verwar_kandidaten') or {}
+                    _fout_griekse = set(_s_fout.keys())
+                    _goed_only = {g: n for g, n in _s_goed.items() if g not in _fout_griekse}
+
+                    _c_ok, _c_no = st.columns(2)
+                    with _c_ok:
+                        st.markdown(f"#### ✅ Goed ({len(_goed_only)})")
+                        if _goed_only:
+                            for _g, _n in list(_goed_only.items()):
+                                st.markdown(f"- **{_g}** — {_n}")
+                        else:
+                            st.caption("—")
+                    with _c_no:
+                        st.markdown(f"#### ❌ Fout ({len(_s_fout)})")
+                        if _s_fout:
+                            for _g, _info in _s_fout.items():
+                                st.markdown(
+                                    f"- **{_g}** — {_info.get('nederlands','')}  "
+                                    f"<span style='color:#aaa;font-size:12px;'>(jij: {_info.get('antwoord','')})</span>",
+                                    unsafe_allow_html=True)
+                        else:
+                            st.caption("—")
+
+                    # --- ⚠️ Zelf bevestigen welke verwarring écht klopte ---
+                    _te_bevestigen = {g: d for g, d in _s_kand.items() if d.get('kandidaten')}
+                    if _te_bevestigen:
+                        st.write("---")
+                        st.markdown("#### ⚠️ Mogelijk verward — vink aan wat écht klopte")
+                        st.caption("Er zijn vaak meerdere woorden met dezelfde betekenis. Vink alleen aan met welk woord je het echt door elkaar haalde (één, meer of geen). Alleen die worden aan **Mijn verwarwoorden** toegevoegd.")
+                        with st.form("verwar_bevestig_form"):
+                            for _g, _d in _te_bevestigen.items():
+                                st.markdown(f"**{_g}** ({_d.get('nederlands','')}) — jij gaf: *{_d.get('antwoord','')}*")
+                                for _cg, _cn in _d.get('kandidaten', {}).items():
+                                    st.checkbox(f"↔️ ik verwarde het met **{_cg}** ({_cn})", key=f"vc_{_g}__{_cg}")
+                            _bevestig = st.form_submit_button("✅ Toevoegen aan Mijn verwarwoorden", type="primary")
+                        if _bevestig:
+                            _toegevoegd = 0
+                            for _g, _d in _te_bevestigen.items():
+                                for _cg in _d.get('kandidaten', {}):
+                                    if st.session_state.get(f"vc_{_g}__{_cg}"):
+                                        registreer_verwarring(_g, _cg)
+                                        _toegevoegd += 1
+                            trigger_save(forceer=True)
+                            _sessie_reset_samenvatting()
+                            st.session_state.sessie_net_klaar = False
+                            st.session_state._ballonnen_getoond = False
+                            try:
+                                st.toast(f"🧩 {_toegevoegd} verwarpaar(en) toegevoegd" if _toegevoegd else "Niets toegevoegd", icon="🧩")
+                            except Exception:
+                                pass
+                            st.rerun()
+
+                    st.write("---")
+                    if st.button("✔️ Overzicht sluiten"):
+                        _sessie_reset_samenvatting()
+                        st.session_state.sessie_net_klaar = False
+                        st.session_state._ballonnen_getoond = False
+                        st.rerun()
+                    st.caption("Klik links op **Start Sessie** voor een nieuwe ronde, of bekijk je voortgang in het 📊-tabblad.")
 
         # ==========================================
         # TAB 2: LIJST
