@@ -655,6 +655,176 @@ def voeg_verwar_twins_toe(sampled, alle_data, twins_map, max_twins=3):
         r_engine.shuffle(sampled)  # twins verspreiden i.p.v. achteraan plakken
     return sampled
 
+# --- VERWARWOORDEN: DETECTIE, TRACKING & SELECTIE ---
+def woorden_met_zelfde_betekenis(typed, alle_data, exclude_grieks=None, alleen_geoefend=True, max_n=5):
+    """Reverse-lookup: geeft de woorden terug waarvan de betekenis overeenkomt met wat de
+    student typte/koos. Zo zie je meteen met welk (al geoefend) woord je het mogelijk verwarde.
+    Standaard alleen woorden die minstens één keer goed óf fout zijn gedaan."""
+    typed = str(typed).strip()
+    if not typed:
+        return []
+    treffers = []
+    for w in alle_data:
+        if not isinstance(w, dict):
+            continue
+        g = w.get('grieks', '')
+        if not g or g == exclude_grieks:
+            continue
+        if alleen_geoefend and not _is_al_geoefend(w):
+            continue
+        ned = str(w.get('nederlands', '')).strip()
+        if not ned:
+            continue
+        if check_betekenis(typed, ned):
+            treffers.append(w)
+        if len(treffers) >= max_n:
+            break
+    return treffers
+
+def registreer_verwarring(getoond_grieks, verward_grieks):
+    """Legt vast dat de student, bij het overhoren van 'getoond', het antwoord van 'verward' gaf.
+    Slaat een teller + datum op in verwar_stats (later te oefenen via 'Mijn verwarwoorden')."""
+    if not getoond_grieks or not verward_grieks or getoond_grieks == verward_grieks:
+        return
+    vs = st.session_state.get('verwar_stats')
+    if not isinstance(vs, dict):
+        vs = {}
+        st.session_state.verwar_stats = vs
+    try:
+        vandaag = str(datetime.now().date())
+    except Exception:
+        vandaag = ""
+    entry = vs.setdefault(getoond_grieks, {})
+    rec = entry.setdefault(verward_grieks, {"n": 0, "laatst": ""})
+    rec["n"] = int(rec.get("n", 0)) + 1
+    rec["laatst"] = vandaag
+
+def verzwak_verwarring(getoond_grieks):
+    """Een goed antwoord dempt de geregistreerde verwarringen van dit woord; op nul verdwijnt het
+    paar. Zo verlaten woorden vanzelf de 'Mijn verwarwoorden'-lijst zodra ze weer goed gaan."""
+    vs = st.session_state.get('verwar_stats', {})
+    if not isinstance(vs, dict) or getoond_grieks not in vs:
+        return
+    entry = vs[getoond_grieks]
+    for k in list(entry.keys()):
+        entry[k]["n"] = int(entry[k].get("n", 0)) - 1
+        if entry[k]["n"] <= 0:
+            del entry[k]
+            # cumulatieve teller voor de 'Ontward'-badge (opgeloste verwarringen)
+            _bd = st.session_state.get('badges')
+            if isinstance(_bd, dict):
+                _bd['_verwar_opgelost'] = int(_bd.get('_verwar_opgelost', 0)) + 1
+    if not entry:
+        del vs[getoond_grieks]
+
+def bouw_verwar_melding(item, typed, alle_data, twins_map, registreer=True):
+    """Bouwt de 'let op — mogelijk verward'-melding op basis van (a) betekenis-overlap met wat je
+    typte/koos en (b) look-alikes op spelling. Registreert de betekenis-verwarringen desgewenst.
+    Geeft een lege string terug als er niets zinnigs te melden valt."""
+    getoond = item.get('grieks', '')
+    delen = []
+    zelfde = woorden_met_zelfde_betekenis(typed, alle_data, exclude_grieks=getoond, alleen_geoefend=True)
+    if zelfde:
+        labels = [f"**{w.get('grieks','')}** ({str(w.get('nederlands',''))[:30]})" for w in zelfde]
+        delen.append(f"Je gaf *“{str(typed).strip()}”* — dat is de betekenis van: " + "; ".join(labels))
+        if registreer:
+            for w in zelfde:
+                registreer_verwarring(getoond, w.get('grieks', ''))
+    idx = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
+    tw_labels = []
+    for tg in (twins_map.get(getoond, []) if twins_map else []):
+        tw = idx.get(tg)
+        if tw and _is_al_geoefend(tw):
+            tw_labels.append(f"**{tg}** ({str(tw.get('nederlands',''))[:25]})")
+        if len(tw_labels) >= 3:
+            break
+    if tw_labels:
+        delen.append("Lijkt qua vorm op: " + "; ".join(tw_labels))
+    if not delen:
+        return ""
+    return "\n\n⚠️ **Let op — mogelijk verward:**\n\n- " + "\n- ".join(delen)
+
+def verzamel_lookalikes(poule, twins_map):
+    """Doel-lijst voor 'Gelijkende woorden': woorden binnen de selectie die een look-alike-twin
+    (op spelling) hebben, plus de twin-partners die ook in de selectie zitten."""
+    if not twins_map:
+        return []
+    idx = {w.get('grieks'): w for w in poule if isinstance(w, dict) and w.get('grieks')}
+    doel = {}
+    for w in poule:
+        if not isinstance(w, dict):
+            continue
+        g = w.get('grieks', '')
+        if not g or not twins_map.get(g):
+            continue
+        doel[g] = w
+        for tg in twins_map.get(g, []):
+            if tg in idx and tg not in doel:
+                doel[tg] = idx[tg]
+    return list(doel.values())
+
+def verzamel_verwarwoorden(alle_data, verwar_stats):
+    """Doel-lijst voor 'Mijn verwarwoorden': woorden die je aantoonbaar verwart en die je nog
+    niet beheerst (streak < 16). Beheerste woorden vallen vanzelf uit de lijst."""
+    idx = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
+    gekozen = {}
+    for getoond, entry in (verwar_stats or {}).items():
+        w_g = idx.get(getoond)
+        if not w_g:
+            continue
+        actief = {k: v for k, v in entry.items() if int(v.get('n', 0)) > 0}
+        if not actief:
+            continue
+        if int(w_g.get('streak', 0)) >= 16:  # onder de knie → uit de oefenlijst
+            continue
+        gekozen[getoond] = w_g
+        for verward in actief:
+            w_v = idx.get(verward)
+            if w_v and verward not in gekozen:
+                gekozen[verward] = w_v
+    return list(gekozen.values())
+
+# --- BADGES / ACHIEVEMENTS ---
+def badge_definities(m):
+    """Bouwt de lijst met badges op basis van samengevatte statistieken (m). Puur afgeleid van
+    bestaande cijfers; alleen de 'eerste keer behaald'-datum wordt apart bewaard in badges-dict."""
+    B = []
+    def add(bid, icon, titel, uitleg, behaald, voortgang=""):
+        B.append({"id": bid, "icon": icon, "titel": titel, "uitleg": uitleg,
+                  "behaald": bool(behaald), "voortgang": voortgang})
+
+    beo = int(m.get('beoordelingen', 0))
+    add("start", "🌱", "Eerste stappen", "Je allereerste woord geoefend.", beo >= 1)
+    add("vlijtig", "📚", "Vlijtig", "500 beoordelingen gemaakt.", beo >= 500, f"{min(beo,500)}/500")
+    add("marathon", "🏋️", "Marathon", "2000 beoordelingen gemaakt.", beo >= 2000, f"{min(beo,2000)}/2000")
+
+    dagen = int(m.get('oefendagen', 0))
+    add("week", "📅", "Trouw geoefend", "Op 7 verschillende dagen geoefend.", dagen >= 7, f"{min(dagen,7)}/7")
+    add("maand", "🗓️", "Doorzetter", "Op 30 verschillende dagen geoefend.", dagen >= 30, f"{min(dagen,30)}/30")
+
+    ds = int(m.get('dagstreak', 0))
+    add("streak5", "🔥", "Op dreef", "5 dagen achter elkaar geoefend.", ds >= 5, f"{min(ds,5)}/5")
+
+    acc = int(m.get('accuratesse', 0))
+    add("scherp", "🎯", "Scherpschutter", "90% accuratesse (min. 50 beoordelingen).", acc >= 90 and beo >= 50, f"{acc}%")
+
+    beh = int(m.get('beheerst', 0))
+    add("eerste_beh", "🛡️", "Eerste beheersing", "Je eerste woord beheerst (streak ≥ 16).", beh >= 1)
+    add("beh50", "🏛️", "Halve eeuw", "50 woorden beheerst.", beh >= 50, f"{min(beh,50)}/50")
+    add("beh150", "🏆", "Grote woordenschat", "150 woorden beheerst.", beh >= 150, f"{min(beh,150)}/150")
+
+    mast = int(m.get('mastery', 0))
+    add("mast1", "⭐", "Mastery-starter", "Je eerste woord op Mastery (streak ≥ 30).", mast >= 1)
+    add("mast25", "🌟", "Mastery-verzamelaar", "25 woorden op Mastery.", mast >= 25, f"{min(mast,25)}/25")
+
+    dek = int(m.get('dekking', 0))
+    add("dekking25", "🌍", "Bijbellezer", "Geschatte NT-dekking ≥ 25%.", dek >= 25, f"{dek}%")
+    add("dekking50", "📖", "Gevorderd lezer", "Geschatte NT-dekking ≥ 50%.", dek >= 50, f"{dek}%")
+
+    opg = int(m.get('verwar_opgelost', 0))
+    add("ontward", "🧩", "Ontward", "10 verwarringen opgelost.", opg >= 10, f"{min(opg,10)}/10")
+    return B
+
 # --- DATABASE FUNCTIES ---
 @st.cache_data
 def laad_actief_beheersen_db():
@@ -760,6 +930,7 @@ def laad_gebruiker_data(naam):
 
         if user_row.empty:
             st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}; st.session_state.prod_stats = {}
+            st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}
             df_andere = df[df['gebruikersnaam'] != naam]
             nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -780,7 +951,10 @@ def laad_gebruiker_data(naam):
             st.session_state.stam_stats = reassemble_chunks('stam_stats', 'st_chunks')
             st.session_state.struct_stats = reassemble_chunks('struct_stats', 'sr_chunks')
             st.session_state.dag_stats = reassemble_chunks('dag_stats', 'd_chunks')
-            
+            st.session_state.verwar_stats = reassemble_chunks('verwar_stats', 'vw_chunks')
+            st.session_state.ui_prefs = reassemble_chunks('ui_prefs', 'ui_chunks')
+            st.session_state.badges = reassemble_chunks('badges', 'bd_chunks')
+
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
             if 'm4' in stats or 'm1' in stats:
@@ -816,13 +990,18 @@ def opslaan_naar_cloud():
         st_ch, st_count = get_chunks(st.session_state.get('stam_stats', {}), 'stam_stats')
         sr_ch, sr_count = get_chunks(st.session_state.get('struct_stats', {}), 'struct_stats')
         d_ch, d_count = get_chunks(st.session_state.get('dag_stats', {}), 'dag_stats')
-        
+        vw_ch, vw_count = get_chunks(st.session_state.get('verwar_stats', {}), 'verwar_stats')
+        ui_ch, ui_count = get_chunks(st.session_state.get('ui_prefs', {}), 'ui_prefs')
+        bd_ch, bd_count = get_chunks(st.session_state.get('badges', {}), 'badges')
+
         nieuwe_rij_dict = {
             'gebruikersnaam': st.session_state.last_user,
-            'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count, 'pr_chunks': pr_count
+            'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count, 'pr_chunks': pr_count,
+            'vw_chunks': vw_count, 'ui_chunks': ui_count, 'bd_chunks': bd_count
         }
         nieuwe_rij_dict.update(v_ch); nieuwe_rij_dict.update(g_ch); nieuwe_rij_dict.update(st_ch)
         nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch); nieuwe_rij_dict.update(pr_ch)
+        nieuwe_rij_dict.update(vw_ch); nieuwe_rij_dict.update(ui_ch); nieuwe_rij_dict.update(bd_ch)
         
         nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -869,6 +1048,9 @@ if st.session_state.geziene_verzen is None: st.session_state.geziene_verzen = []
 if st.session_state.mix_combo is None: st.session_state.mix_combo = {}
 if st.session_state.dag_stats is None: st.session_state.dag_stats = {}
 if st.session_state.get('prod_stats') is None: st.session_state.prod_stats = {}
+if st.session_state.get('verwar_stats') is None: st.session_state.verwar_stats = {}
+if st.session_state.get('ui_prefs') is None: st.session_state.ui_prefs = {}
+if st.session_state.get('badges') is None: st.session_state.badges = {}
 if st.session_state.get('save_teller') is None: st.session_state.save_teller = 0
 if st.session_state.get('sessie_net_klaar') is None: st.session_state.sessie_net_klaar = False
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
@@ -974,51 +1156,89 @@ def main():
             
             col1, col2 = st.columns([1, 2])
             with col1:
-                modus = st.radio("Modus:", ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"])
-                keuze = st.selectbox("Oefening:", ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"])
+                # --- Wens 7: herstel eerder gekozen instellingen als default (uit ui_prefs) ---
+                _prefs = st.session_state.get('ui_prefs', {}) or {}
+
+                _modus_opts = ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"]
+                _modus_idx = _modus_opts.index(_prefs['modus']) if _prefs.get('modus') in _modus_opts else 0
+                modus = st.radio("Modus:", _modus_opts, index=_modus_idx)
+
+                _keuze_opts = ["Lessen", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
+                _keuze_idx = _keuze_opts.index(_prefs['keuze']) if _prefs.get('keuze') in _keuze_opts else 0
+                keuze = st.selectbox("Oefening:", _keuze_opts, index=_keuze_idx)
                 doel = []
-                
+                gekozen = list(_prefs.get('lessen') or [])
+
                 # --- GECOMBINEERDE LES-, KNELPUNT- EN ONDERHOUDSFILTER ---
-                if keuze in ["Lessen", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)"]:
+                if keuze in ["Lessen", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)"]:
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
-                    gekozen = st.multiselect("Kies lessen", alle_lessen, default=alle_lessen[:3] if alle_lessen else [])
+                    _saved_lessen = [l for l in gekozen if l in alle_lessen]
+                    _default_lessen = _saved_lessen if _saved_lessen else (alle_lessen[:3] if alle_lessen else [])
+                    gekozen = st.multiselect("Kies lessen", alle_lessen, default=_default_lessen)
                     poule_lessen = [word for word in st.session_state.data if veilig_les_nummer(word) in gekozen]
-                    
+
                     if "Lang niet gedaan" in keuze:
                         doel = [w for w in poule_lessen if str(w.get('laatst_geoefend', '') or '').strip() != '']
-                        
+
                     elif "Knelpunten" in keuze:
                         knel_kandidaten = []
                         for w in poule_lessen:
                             g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
-                            
+
                             # Realistische drempel: elke gemaakte fout óf een lage retentie ondanks oefenen
                             if f > 0 or (g > 0 and s <= 3):
                                 ratio = f / max(1, (g + f))
                                 knel_kandidaten.append((w, ratio, f))
-                                
+
                         # Sorteer primair op hoogste fout-ratio, secundair op absolute fouten
                         knel_kandidaten.sort(key=lambda x: (x[1], x[2]), reverse=True)
                         doel = [x[0] for x in knel_kandidaten[:20]]
-                        
-                    else: 
+
+                    elif "Gelijkende woorden" in keuze:
+                        # Wens 3: woorden binnen de selectie die qua spelling op elkaar lijken (verwarparen.json)
+                        doel = verzamel_lookalikes(poule_lessen, laad_verwarparen_db())
+                        if not doel:
+                            st.caption("ℹ️ Geen look-alikes gevonden in deze lessen. Kies meer/andere lessen.")
+
+                    else:
                         doel = poule_lessen
 
-                elif keuze == "Mastery": 
+                elif keuze == "Mastery":
                     doel = [word for word in st.session_state.data if int(word.get('streak', 0)) >= 30]
-                
+
+                elif keuze == "Mijn verwarwoorden":
+                    # Wens 4: woorden die je aantoonbaar verwart (uit verwar_stats), over alle lessen heen.
+                    doel = verzamel_verwarwoorden(st.session_state.data, st.session_state.get('verwar_stats', {}))
+                    if doel:
+                        st.caption(f"🧩 {len(doel)} woorden in je persoonlijke verwar-lijst. Ze vallen vanzelf af zodra je ze weer beheerst.")
+                    else:
+                        st.caption("✅ Nog geen verwarwoorden geregistreerd — die verschijnen hier zodra je in een sessie twee woorden door elkaar haalt.")
+
                 st.write("---")
-                st.write("⚙️ **Sessie Instellingen**")
-                optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context")
-                optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab")
-                optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=True)
-                optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=True)
-                optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=True, help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
-                optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=False, help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
-                optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=True, help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
-                
-                oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"])
-                
+                # Wens 6: alle extra opties achter een uitklap-menu zodat het scherm niet meteen vol staat.
+                with st.expander("⚙️ Extra instellingen", expanded=False):
+                    optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context", value=_prefs.get('optie_context', False))
+                    optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", value=_prefs.get('optie_cluster_vocab', False))
+                    optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=_prefs.get('optie_kleur_nv_vocab', True))
+                    optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=_prefs.get('optie_nieuw_mee_vocab', True))
+                    optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=_prefs.get('optie_verwarparen', True), help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
+                    optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=_prefs.get('optie_mastery_context', False), help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
+                    optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=_prefs.get('optie_audio', True), help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
+
+                _stijl_opts = ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"]
+                _stijl_idx = _stijl_opts.index(_prefs['oefen_stijl']) if _prefs.get('oefen_stijl') in _stijl_opts else 0
+                oefen_stijl = st.radio("Sessie opbouw:", _stijl_opts, index=_stijl_idx)
+
+                # Wens 7: onthoud de actuele keuzes in-memory; ze worden meegeschreven bij de eerstvolgende
+                # cloud-opslag (Start Sessie, einde sessie of uitloggen).
+                st.session_state.ui_prefs = {
+                    'modus': modus, 'keuze': keuze, 'lessen': gekozen, 'oefen_stijl': oefen_stijl,
+                    'optie_context': optie_context, 'optie_cluster_vocab': optie_cluster,
+                    'optie_kleur_nv_vocab': optie_kleur_nv, 'optie_nieuw_mee_vocab': optie_nieuw_mee,
+                    'optie_verwarparen': optie_verwar, 'optie_mastery_context': optie_mastery_context,
+                    'optie_audio': optie_audio,
+                }
+
                 custom_counts = None
                 if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
                     c_nieuw = len([w for w in doel if krijg_streak(w, 'vocab') == 0])
@@ -1239,6 +1459,8 @@ def main():
                                         if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
                                         elif huidige_sub_modus == '3_typ': item['streak'] = int(item.get('streak', 0)) + (2 if st.session_state.mix_combo.get(item['grieks'], False) else 1)
                                     vier_fase_overgang(_oude_streak, int(item.get('streak', 0)), item.get('grieks', ''))
+                                    if st.session_state.fouten_huidig_woord == 0:
+                                        verzwak_verwarring(item.get('grieks', ''))
 
                                     success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
                                     if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
@@ -1261,26 +1483,19 @@ def main():
                                     if huidige_sub_modus == '3_typ': st.session_state.mix_combo[item['grieks']] = False
                                     st.session_state.fouten_huidig_woord += 1
                                     huidige_streak = int(item.get('streak', 0))
-                                    
+
+                                    # Wens 1+2: al bij de eerste fout tonen met welk (al geoefend) woord je het
+                                    # mogelijk verwart — zowel op betekenis (reverse-lookup) als op spelling.
+                                    _verwar_note = bouw_verwar_melding(item, inp, st.session_state.data, laad_verwarparen_db(), registreer=True)
+
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
-                                        # 'Let op'-notitie als dit woord een bekende look-alike heeft
-                                        _twin_note = ""
-                                        _tw_map = laad_verwarparen_db()
-                                        _tw_list = _tw_map.get(item.get('grieks', ''), [])
-                                        if _tw_list:
-                                            _idx = {w.get('grieks'): w for w in st.session_state.data if w.get('grieks')}
-                                            _labels = []
-                                            for _tg in _tw_list[:2]:
-                                                _tw = _idx.get(_tg)
-                                                if _tw:
-                                                    _labels.append(f"{_tg} ({str(_tw.get('nederlands',''))[:25]})")
-                                            if _labels:
-                                                _twin_note = "\n\n⚠️ Let op — niet verwarren met: " + "; ".join(_labels)
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg_volledig}{_twin_note}"}
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg_volledig}{_verwar_note}"}
                                         trigger_save(); laad_volgend_woord()
-                                    else: item['score_fout'] = int(item.get('score_fout', 0)) + 1; st.session_state.feedback = {"type": "warning", "msg": "Bijna! Bekijk de hint."}
+                                    else:
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        st.session_state.feedback = {"type": "warning", "msg": f"Bijna! Bekijk de hint.{_verwar_note}"}
                                     st.rerun()
                     else:
                         if st.session_state.fouten_huidig_woord >= 1: 
@@ -1374,6 +1589,8 @@ def main():
                                         if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
                                         elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
                                     vier_fase_overgang(_oude_streak_mc, int(item.get('streak', 0)), item.get('grieks', ''))
+                                    if st.session_state.fouten_huidig_woord == 0:
+                                        verzwak_verwarring(item.get('grieks', ''))
 
                                     success_msg = f"✓ Juist! {fout_msg_volledig}"
                                     if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
@@ -1385,13 +1602,18 @@ def main():
                                     if huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = False
                                     st.session_state.fouten_huidig_woord += 1
                                     huidige_streak = int(item.get('streak', 0))
-                                    
+
+                                    # Wens 1+2: welk (al geoefend) woord hoort bij de betekenis die je koos?
+                                    _verwar_note = bouw_verwar_melding(item, optie, st.session_state.data, laad_verwarparen_db(), registreer=True)
+
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
-                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}"}
+                                        st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}{_verwar_note}"}
                                         trigger_save(); laad_volgend_woord()
-                                    else: item['score_fout'] = int(item.get('score_fout', 0)) + 1; st.session_state.feedback = {"type": "warning", "msg": "Onjuist. Bekijk de hint!"}
+                                    else:
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        st.session_state.feedback = {"type": "warning", "msg": f"Onjuist. Bekijk de hint!{_verwar_note}"}
                                     st.rerun()
 
                     if huidige_sub_modus != 'overtik':
@@ -1514,7 +1736,81 @@ def main():
             c_met2.metric("Items op 'Mastery'", stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery'])
             c_met3.metric("Beoordelingen", tot_g + tot_f)
             c_met4.metric("🌍 NT Exegese-Dekking", f"~{dekking_pct}%", help="Geschat percentage van het Nieuwe Testament dat je nu zónder woordenboek kunt lezen op basis van de theologische frequentie van jouw beheerste woorden.")
-            
+
+            st.write("---")
+
+            # --- 🏅 BADGES / ACHIEVEMENTS (Wens 5) ---
+            _dagen_set = {str(d) for d in (st.session_state.dag_stats or {}).keys()}
+            _oefendagen = len(_dagen_set)
+            _dagstreak = 0
+            try:
+                _cur = pd.Timestamp(datetime.now().date())
+                while str(_cur.date()) in _dagen_set:
+                    _dagstreak += 1
+                    _cur -= pd.Timedelta(days=1)
+            except Exception:
+                _dagstreak = 0
+
+            _beh_tot = (stats_vocab['Beheerst'] + stats_vocab['Mastery']
+                        + stats_stam['Beheerst'] + stats_stam['Mastery']
+                        + stats_str['Beheerst'] + stats_str['Mastery'])
+            _mast_tot = stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery']
+            _badge_stats = {
+                'beoordelingen': tot_g + tot_f,
+                'oefendagen': _oefendagen,
+                'dagstreak': _dagstreak,
+                'accuratesse': acc,
+                'beheerst': _beh_tot,
+                'mastery': _mast_tot,
+                'dekking': dekking_pct,
+                'verwar_opgelost': int((st.session_state.get('badges') or {}).get('_verwar_opgelost', 0)),
+            }
+            _badges = badge_definities(_badge_stats)
+            if not isinstance(st.session_state.get('badges'), dict):
+                st.session_state.badges = {}
+            _reeds = {k for k in st.session_state.badges.keys() if not str(k).startswith('_')}
+            _behaald_nu = {b['id'] for b in _badges if b['behaald']}
+            _nieuw = _behaald_nu - _reeds
+            try:
+                _vandaag = str(datetime.now().date())
+            except Exception:
+                _vandaag = ""
+            for _bid in _nieuw:
+                st.session_state.badges[_bid] = _vandaag
+
+            st.markdown(f"### 🏅 Badges ({len(_behaald_nu)}/{len(_badges)})")
+            st.caption("Verzamel badges door te oefenen, woorden te beheersen en verwarringen op te lossen.")
+            _kols = st.columns(4)
+            for _i, _b in enumerate(_badges):
+                _behaald = _b['behaald']
+                _earned_date = st.session_state.badges.get(_b['id'], "")
+                _rand = "#f6c23e" if _behaald else "#333"
+                _bg = "rgba(246,194,62,0.12)" if _behaald else "rgba(255,255,255,0.03)"
+                _op = "1" if _behaald else "0.45"
+                if _behaald:
+                    _status = "✓ behaald" + (f" · {_earned_date}" if _earned_date else "")
+                    _status_kleur = "#f6c23e"
+                else:
+                    _status = f"🔒 {_b['voortgang']}" if _b['voortgang'] else "🔒"
+                    _status_kleur = "#888"
+                with _kols[_i % 4]:
+                    st.markdown(f"""
+                    <div style="border:2px solid {_rand}; background:{_bg}; border-radius:12px; padding:12px; margin-bottom:10px; text-align:center; opacity:{_op};">
+                        <div style="font-size:34px; line-height:1;">{_b['icon']}</div>
+                        <div style="font-weight:700; color:#fff; margin-top:6px;">{_b['titel']}</div>
+                        <div style="font-size:12px; color:#bbb; margin:4px 0; min-height:32px;">{_b['uitleg']}</div>
+                        <div style="font-size:12px; color:{_status_kleur};">{_status}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            if _nieuw:
+                for _bid in _nieuw:
+                    _bdef = next((x for x in _badges if x['id'] == _bid), None)
+                    if _bdef:
+                        try: st.toast(f"{_bdef['icon']} Badge behaald: {_bdef['titel']}!", icon="🏅")
+                        except Exception: pass
+                trigger_save(forceer=True)
+
             st.write("---")
 
             # --- DE LEKKENDE EMMER ---
