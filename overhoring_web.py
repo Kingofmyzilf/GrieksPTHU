@@ -2641,10 +2641,10 @@ def main():
                     sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
-                stam_modus = st.radio("Kies je activiteit:", ["📖 0. Werkwoordpaspoort (Vrij studeren)", "1. MC Overhoring", "2. Mix (MC + Typen)", "3. Typen (Herleiden)", "🔎 4. Herkennen (koud)"], horizontal=True)
+                stam_modus = st.radio("Kies je activiteit:", ["📖 Werkwoordpaspoort (vrij studeren)", "🧠 Leer (flashcards)", "🔢 MC Overhoring", "🔀 Mix (MC + Typen)", "⌨️ Typen (herleiden)", "🔎 Herkennen (koud)"], horizontal=True)
                 st.write("---")
 
-                if "0." in stam_modus:
+                if "Werkwoordpaspoort" in stam_modus:
                     st.markdown("### 📖 Morfologisch Paspoort")
                     alle_lessen_p = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
                     pas_les = st.selectbox("Selecteer uit les:", alle_lessen_p)
@@ -2689,7 +2689,102 @@ def main():
                             if morf.get('memoriseren_vereist'): st.error(f"**Suppletie-werkwoord:** {regel.get('toelichting', 'Puur memoriseren.')}")
                             else: st.success(f"**Formule:** `{regel.get('formule', 'Stam + σ')}`\n\n**Uitleg:** {regel.get('toelichting', '')}")
 
-                elif "4." in stam_modus:
+                elif "flashcards" in stam_modus:
+                    # === LEER-MODUS: rustige flashcards, vorm -> (zelf benoemen) -> antwoord tonen ===
+                    st.markdown("### 🧠 Leer-modus (flashcards)")
+                    st.caption("Bekijk de vorm, benoem in gedachten wélke tijd het is en van wélk praesens (+ betekenis) hij komt, en check jezelf. Geen punten-druk — puur om de stamtijden in te slijpen. Wat je 'nog niet' wist komt achteraan opnieuw.")
+                    _tijden_fc = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
+
+                    fc1, fc2 = st.columns([1, 2])
+                    with fc1:
+                        alle_lessen_fc = sorted(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0))
+                        gekozen_fc = st.multiselect("Kies les(sen):", alle_lessen_fc, default=alle_lessen_fc[:1], key="fc_lessen")
+                        fc_focus = st.radio("Welke vormen:", ["Alle stamtijden", "🔥 Alleen onregelmatige (suppletie)"], key="fc_focus")
+                        fc_incl_prae = st.checkbox("Praesens zelf ook als kaart tonen", value=True, key="fc_incl_prae")
+
+                        pool_fc = [w for w in stamtijden_db if w.get('les', 0) in gekozen_fc]
+                        if "onregelmatige" in fc_focus:
+                            pool_fc = [w for w in pool_fc if w.get('morfologie', {}).get('memoriseren_vereist')]
+                        items_fc = []
+                        for w in pool_fc:
+                            if fc_incl_prae:
+                                items_fc.append({"basis": w, "tijd": "Praesens", "vorm": w['praesens']})
+                            for t in _tijden_fc:
+                                vorm = w.get('stamtijden', {}).get(t)
+                                if vorm and vorm != "-":
+                                    items_fc.append({"basis": w, "tijd": t, "vorm": vorm})
+                        st.caption(f"🃏 {len(items_fc)} kaarten in deze selectie.")
+
+                        if st.button("Start / schud kaarten", type="primary", use_container_width=True, key="fc_start"):
+                            r_engine.shuffle(items_fc)
+                            st.session_state.stam_fc_queue = items_fc
+                            st.session_state.stam_fc_totaal = len(items_fc)
+                            st.session_state.stam_fc_gedaan = 0
+                            st.session_state.stam_fc_goed = 0
+                            st.session_state.stam_fc_huidig = items_fc[0] if items_fc else None
+                            st.session_state.stam_fc_onthuld = False
+                            st.rerun()
+
+                        if st.session_state.get("stam_fc_totaal"):
+                            _tot = st.session_state.get("stam_fc_totaal", 0)
+                            _ged = st.session_state.get("stam_fc_gedaan", 0)
+                            st.progress(min(1.0, _ged / _tot) if _tot else 0.0)
+                            st.caption(f"{_ged} bekeken · {st.session_state.get('stam_fc_goed', 0)} in één keer goed.")
+
+                    with fc2:
+                        h = st.session_state.get("stam_fc_huidig")
+                        if not h:
+                            if st.session_state.get("stam_fc_totaal") and st.session_state.get("stam_fc_gedaan"):
+                                st.success("🎉 Alle kaarten gehad! Klik links op **Start / schud kaarten** voor een nieuwe ronde.")
+                            else:
+                                st.info("Kies links je lessen en klik op **Start / schud kaarten**.")
+                        else:
+                            basis = h["basis"]; morf = basis.get("morfologie", {}); regel = morf.get("mutatieregel", {})
+                            st.markdown(f"<div class='grieks-woord' style='font-size:48px; text-align:center;'>{h['vorm']}</div>", unsafe_allow_html=True)
+                            if not st.session_state.get("stam_fc_onthuld"):
+                                st.caption("Welke tijd/diathese is dit? En van welk praesens (+ betekenis)?")
+                                if st.button("👁️ Toon antwoord", use_container_width=True, key="fc_reveal"):
+                                    st.session_state.stam_fc_onthuld = True; st.rerun()
+                            else:
+                                if h["tijd"] == "Praesens":
+                                    st.success(f"**Praesens** van **{basis['praesens']}** — *{basis['betekenis']}*")
+                                else:
+                                    dstam, duit = deconstrueer_stamtijd_live(h["vorm"], h["tijd"])
+                                    _vh = f"**{dstam}**:blue[**{duit}**]" if duit else f"**{h['vorm']}**"
+                                    st.success(f"{_vh}\n\n**{h['tijd']}** van **{basis['praesens']}** — *{basis['betekenis']}*")
+                                if morf.get("memoriseren_vereist"):
+                                    st.warning(f"🔥 **Onregelmatig (suppletie):** {regel.get('toelichting', 'Puur memoriseren.')}")
+                                else:
+                                    st.info(f"💡 **Klankwet ({morf.get('klasse', 'regelmatig')}):** {regel.get('formule', '')} — {regel.get('toelichting', '')}")
+
+                                _adv = None
+                                cok, cno = st.columns(2)
+                                if cok.button("✅ Wist ik", use_container_width=True, key="fc_ok"):
+                                    _adv = True
+                                if cno.button("❌ Nog niet", use_container_width=True, key="fc_no"):
+                                    _adv = False
+                                if _adv is not None:
+                                    vid = f"{basis['praesens']}_{h['vorm']}"
+                                    stt = st.session_state.stam_stats.setdefault(vid, {'g': 0, 'f': 0, 'streak': 0})
+                                    registreer_oefening()
+                                    q = st.session_state.get("stam_fc_queue", [])
+                                    if _adv:
+                                        stt['g'] = int(stt.get('g', 0)) + 1
+                                        stt['streak'] = int(stt.get('streak', 0)) + 1
+                                        st.session_state.stam_fc_goed = st.session_state.get("stam_fc_goed", 0) + 1
+                                    else:
+                                        stt['f'] = int(stt.get('f', 0)) + 1
+                                        if h not in q[1:]:
+                                            q.append(h)  # nog-niet-geweten kaart achteraan opnieuw
+                                    if q:
+                                        q.pop(0)
+                                    st.session_state.stam_fc_gedaan = st.session_state.get("stam_fc_gedaan", 0) + 1
+                                    st.session_state.stam_fc_huidig = q[0] if q else None
+                                    st.session_state.stam_fc_onthuld = False
+                                    trigger_save()
+                                    st.rerun()
+
+                elif "Herkennen" in stam_modus:
                     # === KOUDE HERKENNING: vorm -> welk werkwoord (lemma) + welke tijd ===
                     st.markdown("### 🔎 Koude herkenning")
                     st.caption("Je krijgt één losse stamtijd-vorm te zien, zónder dat je weet uit welk werkwoord hij komt — precies zoals bij het lezen van een tekst. Werk terug naar het praesens (lemma) en de tijd.")
@@ -2872,6 +2967,11 @@ def main():
                             gefilterde_ww_pool = [w for w in stamtijden_db if str(w.get('strong_nummer', '')).replace('G', '') in strongs_in_tekst]
 
                         oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
+                        stam_negeer_gate = st.checkbox(
+                            "🔓 Negeer vergrendeling (oefen ook stamtijden waarvan het basiswoord nog niet op streak 5 staat)",
+                            key="stam_negeer_gate",
+                            help="Normaal ontgrendel je de stamtijden van een werkwoord pas als je het basiswoord al kent (vocab-streak ≥ 5), en elke volgende tijd als de vorige zit. Zet dit aan om meteen met alle stamtijden te oefenen."
+                        )
                         custom_counts = None
                         if oefen_stijl == "🎛️ Zelf Fasen Samenstellen" and gefilterde_ww_pool:
                             custom_counts = {
@@ -2886,26 +2986,26 @@ def main():
 
                             for w in gefilterde_ww_pool:
                                 p_streak = st.session_state.vocab_stats.get(w['praesens'], {}).get('streak', 0)
-                                if p_streak < 5: continue 
-                                
-                                vorige_streak = p_streak
+                                if not stam_negeer_gate and p_streak < 5: continue
+
+                                vorige_streak = 999 if stam_negeer_gate else p_streak
                                 for t_d in tijden_volgorde:
                                     if not (vorm := w.get('stamtijden', {}).get(t_d)): continue
                                     vid = f"{w['praesens']}_{vorm}"
                                     stats = st.session_state.stam_stats.get(vid, {'g':0, 'f':0, 'streak':0})
-                                    if vorige_streak >= 5:
+                                    if stam_negeer_gate or vorige_streak >= 5:
                                         doel_vormen.append({"basis": w, "vraag_vorm": {"tijd_diathese": t_d, "vorm": vorm}, "score_goed": stats.get('g',0), "score_fout": stats.get('f',0), "streak": stats.get('streak',0), "vid": vid})
-                                        vorige_streak = stats.get('streak', 0)
+                                        vorige_streak = 999 if stam_negeer_gate else stats.get('streak', 0)
                                     else: break
 
                             if doel_vormen:
-                                sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts) 
-                                m_id = "3" if "3." in stam_modus else ("2" if "2." in stam_modus else "1")
+                                sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts)
+                                m_id = "2" if "Mix" in stam_modus else ("3" if "Typen" in stam_modus else "1")
                                 if m_id == "2": st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled[::2]] + [(v, "Typen") for v in sampled[1::2]]
                                 elif m_id == "3": st.session_state.stam_sessie_lijst = [(v, "Typen") for v in sampled]
                                 else: st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled]
                                 laad_volgend_stam_woord(); st.rerun()
-                            else: st.warning("⚠️ Geen stamtijden gevonden. Zorg dat basiswoorden op streak >= 5 staan!")
+                            else: st.warning("⚠️ Geen stamtijden gevonden. Zet hierboven **🔓 Negeer vergrendeling** aan om meteen te oefenen, of breng eerst de basiswoorden op streak ≥ 5 in het Woordenschat-tabblad.")
 
                     with c2:
                         if st.session_state.stam_huidig:
