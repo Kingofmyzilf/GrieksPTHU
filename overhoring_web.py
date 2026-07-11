@@ -655,6 +655,24 @@ def voeg_verwar_twins_toe(sampled, alle_data, twins_map, max_twins=3):
         r_engine.shuffle(sampled)  # twins verspreiden i.p.v. achteraan plakken
     return sampled
 
+def voeg_herhaalwoorden_toe(sampled, alle_data, aantal=1):
+    """Voegt tot 'aantal' al-geoefende woorden met de OUDSTE laatst_geoefend-datum toe die nog niet
+    in de sessie zitten. Zo neemt het Leerpad altijd wat oude stof mee (geheugen-onderhoud)."""
+    if aantal <= 0:
+        return sampled
+    in_sessie = {w.get('grieks') for w in sampled if isinstance(w, dict)}
+    kandidaten = [w for w in alle_data
+                  if isinstance(w, dict) and w.get('grieks') not in in_sessie and _is_al_geoefend(w)]
+    def _sleutel(w):
+        d = str(w.get('laatst_geoefend', '') or '').strip()
+        return d if d else '0000-00-00'  # nooit gedateerd telt als heel oud
+    kandidaten.sort(key=_sleutel)  # oudste datum eerst
+    toevoegen = kandidaten[:aantal]
+    if toevoegen:
+        sampled = list(sampled) + toevoegen
+        r_engine.shuffle(sampled)
+    return sampled
+
 # --- VERWARWOORDEN: DETECTIE, TRACKING & SELECTIE ---
 def _betekenis_delen(ned):
     """Splitst een Nederlandse glosse in losse, genormaliseerde betekenis-delen. Gebruikt voor de
@@ -1276,6 +1294,7 @@ def main():
                 keuze = st.selectbox("Oefening:", _keuze_opts, index=_keuze_idx)
                 doel = []
                 gekozen = list(_prefs.get('lessen') or [])
+                lp_herhaal_aantal = 0  # aantal 'oude woorden' dat het Leerpad meeneemt (0 = uit)
 
                 # --- GECOMBINEERDE LES-, KNELPUNT- EN ONDERHOUDSFILTER ---
                 if keuze in ["Lessen", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)"]:
@@ -1347,6 +1366,17 @@ def main():
                             st.caption(f"🔒 Hierna: Level {_volgend_slot['index']} — {_volgend_slot['titel']}. Rond eerst het huidige level af.")
                     else:
                         doel = []
+
+                    # Oude stof meenemen: standaard 1 woord (oudste datum eerst), of af en toe een hele ronde.
+                    _lp_opts = {
+                        "1 oud woord meenemen (aanrader)": 1,
+                        "Kleine herhaalronde (5 oude woorden)": 5,
+                        "Grote herhaalronde (10 oude woorden)": 10,
+                        "Alleen dit level": 0,
+                    }
+                    _lp_keuze = st.selectbox("🔁 Oude stof meenemen:", list(_lp_opts.keys()), index=0,
+                                             help="Naast de woorden van dit level worden ook je langst-niet-geoefende woorden meegenomen (oudste datum eerst), zodat je oude stof niet vergeet.")
+                    lp_herhaal_aantal = _lp_opts[_lp_keuze]
 
                     with st.expander("🗺️ Toon het hele pad", expanded=False):
                         for l in _levels:
@@ -1432,6 +1462,10 @@ def main():
                             sampled = voeg_verwar_twins_toe(
                                 sampled, st.session_state.data, laad_verwarparen_db(), max_twins=3
                             )
+
+                        # Leerpad: neem oude stof mee (langst niet geoefend, oudste datum eerst).
+                        if sampled and lp_herhaal_aantal > 0:
+                            sampled = voeg_herhaalwoorden_toe(sampled, st.session_state.data, lp_herhaal_aantal)
 
                         if not sampled: st.warning("⚠️ 0 woorden geselecteerd voor deze criteria.")
                         else:
