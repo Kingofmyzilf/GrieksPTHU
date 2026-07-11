@@ -921,6 +921,10 @@ def badge_definities(m):
     opg = int(m.get('verwar_opgelost', 0))
     trap("ontward", "🧩", "Ontward", "verwarringen opgelost", opg, [5, 25, 75])
 
+    sb = int(m.get('stam_beheerst', 0))
+    add("stam_start", "⏳", "Stamtijd-starter", "Je eerste stamtijd-vorm beheerst (streak ≥ 16).", sb >= 1)
+    trap("stamvorm", "🏺", "Stamtijden", "stamtijd-vormen beheerst", sb, [10, 40, 100])
+
     niv = int(m.get('niveau', 0))
     if niv >= 1:
         trap("rang", "🎖️", "Rang", "leerpad-niveau bereikt", niv, [5, 10, 20, 35, 50])
@@ -2053,6 +2057,7 @@ def main():
                 'dekking': dekking_pct,
                 'verwar_opgelost': int((st.session_state.get('badges') or {}).get('_verwar_opgelost', 0)),
                 'niveau': _niv_info['niveau'],
+                'stam_beheerst': stats_stam['Beheerst'] + stats_stam['Mastery'],
             }
             _badges = badge_definities(_badge_stats)
             if not isinstance(st.session_state.get('badges'), dict):
@@ -2699,30 +2704,49 @@ def main():
                     with fc1:
                         alle_lessen_fc = sorted(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0))
                         gekozen_fc = st.multiselect("Kies les(sen):", alle_lessen_fc, default=alle_lessen_fc[:1], key="fc_lessen")
-                        fc_focus = st.radio("Welke vormen:", ["Alle stamtijden", "🔥 Alleen onregelmatige (suppletie)"], key="fc_focus")
-                        fc_incl_prae = st.checkbox("Praesens zelf ook als kaart tonen", value=True, key="fc_incl_prae")
-
+                        fc_focus = st.radio("Welke werkwoorden:", ["Alle", "🔥 Alleen onregelmatige (suppletie)"], key="fc_focus")
                         pool_fc = [w for w in stamtijden_db if w.get('les', 0) in gekozen_fc]
                         if "onregelmatige" in fc_focus:
                             pool_fc = [w for w in pool_fc if w.get('morfologie', {}).get('memoriseren_vereist')]
-                        items_fc = []
-                        for w in pool_fc:
-                            if fc_incl_prae:
-                                items_fc.append({"basis": w, "tijd": "Praesens", "vorm": w['praesens']})
-                            for t in _tijden_fc:
-                                vorm = w.get('stamtijden', {}).get(t)
-                                if vorm and vorm != "-":
-                                    items_fc.append({"basis": w, "tijd": t, "vorm": vorm})
+
+                        groep = st.radio("Leer stap voor stap:",
+                                         ["🔤 Per werkwoord (mét overzicht)", "⏳ Per tijd", "🔀 Alles door elkaar"],
+                                         key="fc_group",
+                                         help="Per werkwoord: eerst het hele rijtje van één werkwoord bekijken, daarna oefenen. Per tijd: alleen één tijd (bv. aoristus) over alle gekozen werkwoorden. Alles: alle vormen gehusseld.")
+                        fc_incl_prae = st.checkbox("Praesens zelf ook als kaart tonen", value=True, key="fc_incl_prae")
+
+                        def _maak_kaart(w, tijd):
+                            vorm = w['praesens'] if tijd == "Praesens" else w.get('stamtijden', {}).get(tijd)
+                            return {"basis": w, "tijd": tijd, "vorm": vorm} if vorm and vorm != "-" else None
+
+                        gekozen_ww = None
+                        if groep.startswith("🔤"):
+                            if pool_fc:
+                                _labels_ww = [f"{w['praesens']} — {w['betekenis']}" for w in pool_fc]
+                                _sel_ww = st.selectbox("Kies werkwoord:", _labels_ww, key="fc_ww")
+                                gekozen_ww = pool_fc[_labels_ww.index(_sel_ww)]
+                            reeks = (["Praesens"] if fc_incl_prae else []) + _tijden_fc
+                            items_fc = [k for k in (_maak_kaart(gekozen_ww, t) for t in reeks) if k] if gekozen_ww else []
+                        elif groep.startswith("⏳"):
+                            gekozen_tijd = st.selectbox("Kies tijd/diathese:", _tijden_fc, key="fc_tijd")
+                            items_fc = [k for k in (_maak_kaart(w, gekozen_tijd) for w in pool_fc) if k]
+                        else:
+                            reeks = (["Praesens"] if fc_incl_prae else []) + _tijden_fc
+                            items_fc = [k for w in pool_fc for k in (_maak_kaart(w, t) for t in reeks) if k]
+
                         st.caption(f"🃏 {len(items_fc)} kaarten in deze selectie.")
 
-                        if st.button("Start / schud kaarten", type="primary", use_container_width=True, key="fc_start"):
-                            r_engine.shuffle(items_fc)
-                            st.session_state.stam_fc_queue = items_fc
+                        if st.button("Start", type="primary", use_container_width=True, key="fc_start"):
+                            _per_ww = groep.startswith("🔤")
+                            if not _per_ww:
+                                r_engine.shuffle(items_fc)
+                            st.session_state.stam_fc_queue = list(items_fc)
                             st.session_state.stam_fc_totaal = len(items_fc)
                             st.session_state.stam_fc_gedaan = 0
                             st.session_state.stam_fc_goed = 0
                             st.session_state.stam_fc_huidig = items_fc[0] if items_fc else None
                             st.session_state.stam_fc_onthuld = False
+                            st.session_state.stam_fc_overzicht = _per_ww  # per werkwoord: eerst het overzicht
                             st.rerun()
 
                         if st.session_state.get("stam_fc_totaal"):
@@ -2737,7 +2761,32 @@ def main():
                             if st.session_state.get("stam_fc_totaal") and st.session_state.get("stam_fc_gedaan"):
                                 st.success("🎉 Alle kaarten gehad! Klik links op **Start / schud kaarten** voor een nieuwe ronde.")
                             else:
-                                st.info("Kies links je lessen en klik op **Start / schud kaarten**.")
+                                st.info("Kies links je lessen en klik op **Start**.")
+                        elif st.session_state.get("stam_fc_overzicht"):
+                            # LEREN VANUIT OVERZICHT: eerst de hele rij van dit werkwoord bekijken
+                            _b = h["basis"]; _morf = _b.get("morfologie", {}); _regel = _morf.get("mutatieregel", {})
+                            st.markdown("#### 📖 Bekijk eerst het hele rijtje")
+                            st.markdown(f"<div class='grieks-woord' style='font-size:40px;'>{_b['praesens']}</div>", unsafe_allow_html=True)
+                            st.markdown(f"<h4 style='text-align:center;color:#aaa;'>\"{_b['betekenis']}\"</h4>", unsafe_allow_html=True)
+                            _grid = [("1. Praesens", _b['praesens'], "Praesens")] + \
+                                    [(f"{_i+2}. {_t.split(' ')[0]}", _b.get('stamtijden', {}).get(_t, '-'), _t) for _i, _t in enumerate(_tijden_fc)]
+                            _cols_ov = st.columns(3)
+                            for _i, (_lab, _v, _td) in enumerate(_grid):
+                                with _cols_ov[_i % 3]:
+                                    st.markdown(f"<div class='grid-label'>{_lab}</div>", unsafe_allow_html=True)
+                                    if _v and _v != "-":
+                                        _ds, _du = deconstrueer_stamtijd_live(_v, _td)
+                                        _hh = f"{_ds}<span style='color:#33ccff'>{_du}</span>" if _du else _v
+                                    else:
+                                        _hh = "-"
+                                    st.markdown(f"<div style='font-size:20px;font-weight:bold;color:#fff;background:#222;padding:8px;border-radius:6px;text-align:center;margin-bottom:12px;'>{_hh}</div>", unsafe_allow_html=True)
+                            if _morf.get("memoriseren_vereist"):
+                                st.warning(f"🔥 **Onregelmatig (suppletie):** {_regel.get('toelichting', 'Puur memoriseren.')}")
+                            else:
+                                st.info(f"💡 **Klankwet ({_morf.get('klasse', 'regelmatig')}):** {_regel.get('formule', '')} — {_regel.get('toelichting', '')}")
+                            if st.button("▶️ Ik heb het bekeken — start met oefenen", type="primary", use_container_width=True, key="fc_go"):
+                                st.session_state.stam_fc_overzicht = False
+                                st.rerun()
                         else:
                             basis = h["basis"]; morf = basis.get("morfologie", {}); regel = morf.get("mutatieregel", {})
                             st.markdown(f"<div class='grieks-woord' style='font-size:48px; text-align:center;'>{h['vorm']}</div>", unsafe_allow_html=True)
