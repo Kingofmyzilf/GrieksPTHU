@@ -1057,6 +1057,27 @@ def leerpad_status(levels, drempel=LEERPAD_DREMPEL):
         vorige_voltooid = voltooid
     return status
 
+# Vaste volgorde voor grammaticale invoer (overal dezelfde dropdown-opties).
+NAAMVAL_OPTIES = ["Nom", "Gen", "Dat", "Acc"]
+GESLACHT_OPTIES = ["M", "V", "O"]
+GETAL_OPTIES = ["Ev", "Mv"]
+
+def leerpad_kaart_volgorde(sampled):
+    """Bouwt de Leerpad-oefenkaarten met oplopende moeilijkheid: nieuwe woorden eerst als flashcard
+    (Leer: zie het antwoord, klik 'Volgende' als je klaar bent) + een eerste meerkeuze; woorden in
+    training via meerkeuze; en pas bij een stevige streak via typen."""
+    kaarten = []
+    for w in sampled:
+        s = int(w.get('streak', 0))
+        if s <= 0:
+            kaarten.append((w, '1'))   # flashcard / leren
+            kaarten.append((w, '2'))   # meteen een eerste meerkeuze
+        elif s <= 7:
+            kaarten.append((w, '2'))   # meerkeuze
+        else:
+            kaarten.append((w, '4'))   # typen
+    return kaarten
+
 # --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
 _STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
 
@@ -1567,6 +1588,7 @@ def main():
                     _ontgrendeld = [l for l in _levels if l['ontgrendeld']]
                     _voltooid_n = sum(1 for l in _levels if l['voltooid'])
                     st.caption(f"🏁 {_voltooid_n}/{len(_levels)} levels voltooid · een woord telt als 'af' bij streak ≥ {LEERPAD_DREMPEL}.")
+                    st.caption("🧭 In het Leerpad bepaalt de app de oefenvorm: nieuwe woorden eerst als **flashcard**, daarna **meerkeuze**, en bij een stevige streak **typen**.")
 
                     if _ontgrendeld:
                         _huidig = next((l for l in _levels if l['ontgrendeld'] and not l['voltooid']), _ontgrendeld[-1])
@@ -1748,7 +1770,10 @@ def main():
                             else: st.session_state.vocab_sessie_verzen = {}; st.session_state.vocab_cluster_strongs = {}
 
                             st.session_state.modus_actief = modus_id
-                            if modus_id == "3":
+                            if keuze == "🎮 Leerpad (levels)":
+                                # Leerpad bepaalt zelf de oefenvorm: flashcard → meerkeuze → typen (oplopend).
+                                st.session_state.sessie_lijst = leerpad_kaart_volgorde(sampled)
+                            elif modus_id == "3":
                                 st.session_state.sessie_lijst = [(w, "3_mc") for w in sampled] + [(w, "3_typ") for w in sampled]
                                 st.session_state.mix_combo = {w['grieks']: False for w in sampled}
                             else: st.session_state.sessie_lijst = [(w, modus_id) for w in sampled]
@@ -1941,7 +1966,14 @@ def main():
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Vertaling:").lower().strip()
                             vorm_getoetst = is_mastery and heeft_vormen
-                            p_vorm = st.text_input("Vorm (bijv. nom ev m):").lower().strip() if vorm_getoetst else huidige_parsing.lower().strip()
+                            if vorm_getoetst:
+                                _vc1, _vc2, _vc3 = st.columns(3)
+                                _nv = _vc1.selectbox("Naamval", [""] + NAAMVAL_OPTIES, key=f"mvorm_nv_{item.get('grieks')}")
+                                _gt = _vc2.selectbox("Getal", [""] + GETAL_OPTIES, key=f"mvorm_gt_{item.get('grieks')}")
+                                _gs = _vc3.selectbox("Geslacht", [""] + GESLACHT_OPTIES, key=f"mvorm_gs_{item.get('grieks')}")
+                                p_vorm = f"{_nv} {_gt} {_gs}".lower().strip()
+                            else:
+                                p_vorm = huidige_parsing.lower().strip()
 
                             if st.form_submit_button("Check Antwoord"):
                                 registreer_oefening(item)
@@ -3312,6 +3344,7 @@ def main():
                             _ontgr_s = [l for l in _lv_s if l['ontgrendeld']]
                             _vol_s = sum(1 for l in _lv_s if l['voltooid'])
                             st.caption(f"🏁 {_vol_s}/{len(_lv_s)} werkwoorden voltooid · een vorm telt als 'af' bij streak ≥ 5.")
+                            st.caption("🧭 Oplopend: het Leerpad geeft **meerkeuze** zolang je streak laag is en **typen** zodra je vorderingen maakt. Tip: gebruik voor een gloednieuw werkwoord eerst de modus **🧠 Leer (flashcards)**.")
                             if _ontgr_s:
                                 _huidig_s = next((l for l in _lv_s if l['ontgrendeld'] and not l['voltooid']), _ontgr_s[-1])
                                 _labels_s = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgr_s]
@@ -3389,7 +3422,10 @@ def main():
                             if doel_vormen:
                                 sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts)
                                 m_id = "2" if "Mix" in stam_modus else ("3" if "Typen" in stam_modus else "1")
-                                if m_id == "2": st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled[::2]] + [(v, "Typen") for v in sampled[1::2]]
+                                if is_stam_leerpad:
+                                    # Leerpad: oplopend — meerkeuze zolang de streak nog laag is, daarna typen.
+                                    st.session_state.stam_sessie_lijst = [(v, "MC" if int(v.get('streak', 0)) <= 7 else "Typen") for v in sampled]
+                                elif m_id == "2": st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled[::2]] + [(v, "Typen") for v in sampled[1::2]]
                                 elif m_id == "3": st.session_state.stam_sessie_lijst = [(v, "Typen") for v in sampled]
                                 else: st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled]
                                 laad_volgend_stam_woord(); st.rerun()
