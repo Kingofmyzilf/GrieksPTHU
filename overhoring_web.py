@@ -1638,6 +1638,12 @@ def main():
             spring_naar_tab(st.session_state.dagblok_spring)
             st.session_state.dagblok_spring = None
 
+        # Eenvoud-modus: standaard alleen de basis-opties; aan te zetten in ℹ️ Uitleg & Hulp.
+        _geav = bool(st.session_state.get('ui_geavanceerd',
+                     (st.session_state.get('ui_prefs') or {}).get('geavanceerd', False)))
+        if not _geav:
+            st.info("🧭 Je zit in de **eenvoudige modus** — alleen het belangrijkste is zichtbaar. Zet *‘Geavanceerde opties tonen’* aan in het **ℹ️ Uitleg & Hulp**-tabblad voor alle mogelijkheden.")
+
        # ==========================================
         # TAB 1: WOORDENSCHAT
         # ==========================================
@@ -1651,10 +1657,14 @@ def main():
                 _prefs = st.session_state.get('ui_prefs', {}) or {}
 
                 _modus_opts = ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"]
-                _modus_idx = _modus_opts.index(_prefs['modus']) if _prefs.get('modus') in _modus_opts else 0
-                modus = st.radio("Modus:", _modus_opts, index=_modus_idx)
+                if _geav:
+                    _modus_idx = _modus_opts.index(_prefs['modus']) if _prefs.get('modus') in _modus_opts else 0
+                    modus = st.radio("Modus:", _modus_opts, index=_modus_idx)
+                else:
+                    modus = "2. MC"  # eenvoudige modus: het Leerpad kiest zelf de oefenvorm
 
-                _keuze_opts = ["Lessen", "🎮 Leerpad (levels)", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
+                _alle_keuze = ["Lessen", "🎮 Leerpad (levels)", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
+                _keuze_opts = _alle_keuze if _geav else ["🎮 Leerpad (levels)", "Mijn verwarwoorden"]
                 _keuze_idx = _keuze_opts.index(_prefs['keuze']) if _prefs.get('keuze') in _keuze_opts else 0
                 keuze = st.selectbox("Oefening:", _keuze_opts, index=_keuze_idx)
                 doel = []
@@ -1750,19 +1760,29 @@ def main():
                             st.markdown(f"{_ico} **Level {l['index']}** · {l['titel']} — {l['klaar']}/{l['totaal']}")
 
                 st.write("---")
-                # Wens 6: alle extra opties achter een uitklap-menu zodat het scherm niet meteen vol staat.
-                with st.expander("⚙️ Extra instellingen", expanded=False):
-                    optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context", value=_prefs.get('optie_context', False))
-                    optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", value=_prefs.get('optie_cluster_vocab', False))
-                    optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=_prefs.get('optie_kleur_nv_vocab', True))
-                    optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=_prefs.get('optie_nieuw_mee_vocab', True))
-                    optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=_prefs.get('optie_verwarparen', True), help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
-                    optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=_prefs.get('optie_mastery_context', False), help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
-                    optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=_prefs.get('optie_audio', True), help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
-
-                _stijl_opts = ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"]
-                _stijl_idx = _stijl_opts.index(_prefs['oefen_stijl']) if _prefs.get('oefen_stijl') in _stijl_opts else 0
-                oefen_stijl = st.radio("Sessie opbouw:", _stijl_opts, index=_stijl_idx)
+                if _geav:
+                    # Wens 6: alle extra opties achter een uitklap-menu zodat het scherm niet meteen vol staat.
+                    with st.expander("⚙️ Extra instellingen", expanded=False):
+                        optie_context = st.checkbox("📖 Toon woorden áltijd in Bijbelcontext", key="optie_context", value=_prefs.get('optie_context', False))
+                        optie_cluster = st.checkbox("🛡️ Groep kaartenbak-selectie rondom gedeelde Bijbelverzen", key="optie_cluster_vocab", value=_prefs.get('optie_cluster_vocab', False))
+                        optie_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="optie_kleur_nv_vocab", value=_prefs.get('optie_kleur_nv_vocab', True))
+                        optie_nieuw_mee = st.checkbox("🌱 Nieuwe woorden mee-oefenen (Instroom)", key="optie_nieuw_mee_vocab", value=_prefs.get('optie_nieuw_mee_vocab', True))
+                        optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=_prefs.get('optie_verwarparen', True), help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
+                        optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=_prefs.get('optie_mastery_context', False), help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
+                        optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=_prefs.get('optie_audio', True), help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
+                    _stijl_opts = ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"]
+                    _stijl_idx = _stijl_opts.index(_prefs['oefen_stijl']) if _prefs.get('oefen_stijl') in _stijl_opts else 0
+                    oefen_stijl = st.radio("Sessie opbouw:", _stijl_opts, index=_stijl_idx)
+                else:
+                    # eenvoudige modus: nette standaardwaarden, opties niet tonen
+                    optie_context = _prefs.get('optie_context', False)
+                    optie_cluster = _prefs.get('optie_cluster_vocab', False)
+                    optie_kleur_nv = _prefs.get('optie_kleur_nv_vocab', True)
+                    optie_nieuw_mee = _prefs.get('optie_nieuw_mee_vocab', True)
+                    optie_verwar = _prefs.get('optie_verwarparen', True)
+                    optie_mastery_context = _prefs.get('optie_mastery_context', False)
+                    optie_audio = _prefs.get('optie_audio', True)
+                    oefen_stijl = "🤖 Aanbevolen Mix"
 
                 # Wens 7: onthoud de actuele keuzes in-memory; ze worden meegeschreven bij de eerstvolgende
                 # cloud-opslag (Start Sessie, einde sessie of uitloggen).
@@ -3135,7 +3155,8 @@ def main():
                     sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
-                stam_modus = st.radio("Modus:", ["📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"], horizontal=True)
+                _stam_modi = ["📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"] if _geav else ["🧠 Leer (flashcards)", "🔢 MC"]
+                stam_modus = st.radio("Modus:", _stam_modi, horizontal=True)
                 st.write("---")
 
                 if "Werkwoordpaspoort" in stam_modus:
@@ -3481,7 +3502,7 @@ def main():
                 else:
                     c1, c2 = st.columns([1, 2])
                     with c1:
-                        bron_keuze = st.selectbox("Oefening:", ["🎮 Leerpad (levels)", "📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"])
+                        bron_keuze = st.selectbox("Oefening:", ["🎮 Leerpad (levels)", "📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"] if _geav else ["🎮 Leerpad (levels)"])
                         gekozen_stam_lessen = []; gefilterde_ww_pool = []
                         is_stam_leerpad = False
                         lp_stam_aantal = 0
@@ -3534,12 +3555,16 @@ def main():
                             st.caption(f"Gevonden unieke stammen: {len(strongs_in_tekst)}")
                             gefilterde_ww_pool = [w for w in stamtijden_db if str(w.get('strong_nummer', '')).replace('G', '') in strongs_in_tekst]
 
-                        oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
-                        stam_negeer_gate = st.checkbox(
-                            "🔓 Negeer vergrendeling (oefen ook stamtijden waarvan het basiswoord nog niet op streak 5 staat)",
-                            key="stam_negeer_gate",
-                            help="Normaal ontgrendel je de stamtijden van een werkwoord pas als je het basiswoord al kent (vocab-streak ≥ 5), en elke volgende tijd als de vorige zit. Zet dit aan om meteen met alle stamtijden te oefenen."
-                        )
+                        if _geav:
+                            oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
+                            stam_negeer_gate = st.checkbox(
+                                "🔓 Negeer vergrendeling (oefen ook stamtijden waarvan het basiswoord nog niet op streak 5 staat)",
+                                key="stam_negeer_gate",
+                                help="Normaal ontgrendel je de stamtijden van een werkwoord pas als je het basiswoord al kent (vocab-streak ≥ 5), en elke volgende tijd als de vorige zit. Zet dit aan om meteen met alle stamtijden te oefenen."
+                            )
+                        else:
+                            oefen_stijl = "🤖 Automatische Gated Mix"
+                            stam_negeer_gate = False
                         custom_counts = None
                         if oefen_stijl == "🎛️ Zelf Fasen Samenstellen" and gefilterde_ww_pool:
                             custom_counts = {
@@ -3729,15 +3754,16 @@ def main():
                 
                 with c1:
                     # --- DE NIEUWE LEER-SPOOR FILTER ---
+                    _struct_sporen = [
+                        "🎮 Leerpad (levels)",
+                        "Alles gemixt",
+                        "Alleen Voorzetsels",
+                        "Voegwoorden & Partikels",
+                        "Voornaamwoorden (Pronomina)"
+                    ] if _geav else ["🎮 Leerpad (levels)"]
                     struct_filter = st.selectbox(
                         "1. Kies leer-spoor:",
-                        [
-                            "🎮 Leerpad (levels)",
-                            "Alles gemixt",
-                            "Alleen Voorzetsels",
-                            "Voegwoorden & Partikels",
-                            "Voornaamwoorden (Pronomina)"
-                        ],
+                        _struct_sporen,
                         key="struct_filter_box"
                     )
 
@@ -4682,6 +4708,25 @@ def main():
         # ==========================================
         with menu[8]:
             st.subheader("ℹ️ Handboek & Achterliggende Logica")
+
+            # --- Eenvoud-/geavanceerd-schakelaar ---
+            st.markdown("### 🧭 Weergave-modus")
+            _prefs_ui = st.session_state.get('ui_prefs')
+            if not isinstance(_prefs_ui, dict):
+                _prefs_ui = {}; st.session_state.ui_prefs = _prefs_ui
+            _geav_nu = st.toggle(
+                "Geavanceerde opties tonen",
+                value=bool(_prefs_ui.get('geavanceerd', False)),
+                key="ui_geavanceerd",
+                help="Uit = eenvoudige modus: per onderdeel alleen het Leerpad en de kern. Aan = alle oefenvormen, filters en instellingen. Je keuze wordt onthouden."
+            )
+            if bool(_prefs_ui.get('geavanceerd', False)) != _geav_nu:
+                _prefs_ui['geavanceerd'] = _geav_nu
+                trigger_save(forceer=True)
+                st.rerun()
+            st.caption("Eenvoudig = rustige start (Leerpad + kern). Geavanceerd = alles: knelpunten, mastery, bijbelcontext, zelf samenstellen, koude herkenning, enz.")
+            st.write("---")
+
             st.markdown("### 📱 De App installeren als PWA (Beginscherm)")
             st.info("Je kunt deze webapplicatie opslaan op je telefoon. Hij opent dan razendsnel in full-screen zonder afleidende adresbalk.")
             st.markdown("* **iPhone (Safari):** Tik onderin op de deel-knop (vierkantje met pijltje omhoog) → *'Zet op beginscherm'*\n* **Android (Chrome):** Tik rechtsboven op de drie puntjes → *'Toevoegen aan startscherm'*")
@@ -4903,13 +4948,17 @@ def main():
 
             st.write("---")
             st.markdown("### 📋 Overige onderdelen")
-            st.caption("Deze doe je in hun eigen tabblad; vink hier af wat je vandaag hebt gedaan.")
-            for _soort, _emoji, _label in [('struct', '🧱', 'Structuurwoorden'), ('stam', '⏳', 'Stamtijden'), ('verzen', '📝', 'Verzen ontleden')]:
+            st.caption("Ga met één klik naar het onderdeel; als je klaar bent kom je hier terug en vink je af.")
+            for _soort, _emoji, _label, _tab in [('struct', '🧱', 'Structuurwoorden', 'Structuurwoorden'),
+                                                 ('stam', '⏳', 'Stamtijden', 'Stamtijden'),
+                                                 ('verzen', '📝', 'Verzen ontleden', 'Leesteksten')]:
                 _gedaan = int(_lg.get(_soort, 0)); _doel = int(_cfg[_soort])
-                cc1, cc2 = st.columns([4, 1])
+                cc1, cc2, cc3 = st.columns([3, 1, 1])
                 with cc1:
                     st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
-                if cc2.button("✓ +1", key=f"dagdoel_plus_{_soort}"):
+                if cc2.button("Ga →", key=f"dagdoel_ga_{_soort}"):
+                    st.session_state.dagblok_spring = _tab; st.rerun()
+                if cc3.button("✓ +1", key=f"dagdoel_plus_{_soort}"):
                     dagdoel_plus(_soort); trigger_save(forceer=True); st.rerun()
 
             with st.expander("⚙️ Mijn dagelijkse doelen instellen"):
