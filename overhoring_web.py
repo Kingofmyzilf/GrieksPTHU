@@ -1167,6 +1167,67 @@ def bouw_dagblok(alle_data, verwar_stats, cfg):
     paren = bouw_verwar_paren(alle_data, verwar_stats)[:max(0, cfg.get('verwar', 0))]
     return kaarten, paren
 
+def _scaffold_kaarten(sampled):
+    """Zet gesamplede items om in (item, sub_modus)-kaarten: nieuw → Leer+MC, training → MC, sterk → Typen."""
+    kaarten = []
+    for v in sampled:
+        _s = int(v.get('streak', 0))
+        if _s <= 0:
+            kaarten.append((v, "Leer")); kaarten.append((v, "MC"))
+        elif _s <= 7:
+            kaarten.append((v, "MC"))
+        else:
+            kaarten.append((v, "Typen"))
+    return kaarten
+
+def dagblok_arm_stam():
+    """Zet het stamtijden-Leerpad (huidige level) klaar zodat het meteen speelt bij openen van het tabblad."""
+    db = laad_stamtijden_db()
+    if not db:
+        return
+    levels = stam_level_status(bouw_stam_levels(db), st.session_state.stam_stats)
+    ontgr = [l for l in levels if l['ontgrendeld']]
+    if not ontgr:
+        return
+    cur = next((l for l in levels if l['ontgrendeld'] and not l['voltooid']), ontgr[-1])
+    w = cur['verb']
+    doel = []
+    for t in _STAM_TIJDEN:
+        vorm = w.get('stamtijden', {}).get(t)
+        if not vorm or vorm == "-":
+            continue
+        vid = f"{w['praesens']}_{vorm}"
+        s = st.session_state.stam_stats.get(vid, {'g': 0, 'f': 0, 'streak': 0})
+        doel.append({"basis": w, "vraag_vorm": {"tijd_diathese": t, "vorm": vorm},
+                     "score_goed": s.get('g', 0), "score_fout": s.get('f', 0), "streak": s.get('streak', 0), "vid": vid})
+    if not doel:
+        return
+    st.session_state.gestrafte_woorden_stam = set()
+    st.session_state.stam_sessie_lijst = _scaffold_kaarten(kies_gefaseerde_oefensessie(doel, 'stam'))
+    laad_volgend_stam_woord()
+
+def dagblok_arm_struct():
+    """Zet het structuurwoorden-Leerpad (huidige level) klaar zodat het meteen speelt bij openen."""
+    db = laad_structuurwoorden_db()
+    if not db:
+        return
+    levels = struct_level_status(bouw_struct_levels(db), st.session_state.struct_stats)
+    ontgr = [l for l in levels if l['ontgrendeld']]
+    if not ontgr:
+        return
+    cur = next((l for l in levels if l['ontgrendeld'] and not l['voltooid']), ontgr[-1])
+    doel = []
+    for idx, w in cur['items']:
+        vid = f"{w['grieks']}_{idx}"
+        s = st.session_state.struct_stats.get(vid) or st.session_state.struct_stats.get(w['grieks']) or {'g': 0, 'f': 0, 'streak': 0}
+        w2 = dict(w); w2['vid'] = vid; w2['streak'] = s.get('streak', 0); w2['score_goed'] = s.get('g', 0); w2['score_fout'] = s.get('f', 0)
+        doel.append(w2)
+    if not doel:
+        return
+    st.session_state.gestrafte_woorden_struct = set()
+    st.session_state.struct_sessie_lijst = _scaffold_kaarten(kies_gefaseerde_oefensessie(doel, module='struct'))
+    laad_volgend_struct_woord()
+
 def dagkalender_html(dag_stats, log):
     """5-weekse heatmap-kalender: kleurintensiteit = hoeveel je die dag oefende, plus gekleurde
     stipjes voor de onderdelen die je die dag deed (woorden/stamtijden/structuur/verzen)."""
@@ -3383,7 +3444,8 @@ def main():
                     sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
-                _stam_modi = ["📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"] if _geav else ["🧠 Leer (flashcards)", "🔢 MC"]
+                _stam_modi = (["🎮 Leerpad (levels)", "📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"]
+                              if _geav else ["🎮 Leerpad (levels)", "🧠 Leer (flashcards)"])
                 stam_modus = st.radio("Modus:", _stam_modi, horizontal=True)
                 st.write("---")
 
@@ -3730,7 +3792,11 @@ def main():
                 else:
                     c1, c2 = st.columns([1, 2])
                     with c1:
-                        bron_keuze = st.selectbox("Oefening:", ["🎮 Leerpad (levels)", "📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"] if _geav else ["🎮 Leerpad (levels)"])
+                        # Leerpad is nu een eigen modus-bolletje; in de andere modi kies je hier de bron.
+                        if "Leerpad" in stam_modus:
+                            bron_keuze = "🎮 Leerpad (levels)"
+                        else:
+                            bron_keuze = st.selectbox("Oefening:", ["📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"])
                         gekozen_stam_lessen = []; gefilterde_ww_pool = []
                         is_stam_leerpad = False
                         lp_stam_aantal = 0
@@ -5196,15 +5262,18 @@ def main():
                     st.session_state.dagblok_paar_wacht = _paren
                     st.session_state.sessie_lijst = _kaarten
                     laad_volgend_woord()
+                    # Zet ook stamtijden + structuurwoorden kant-en-klaar (openen meteen bij het tabblad).
+                    dagblok_arm_stam()
+                    dagblok_arm_struct()
                     st.session_state.dagblok_spring = "Woordenschat"
-                    st.success("✅ Je woord-dagblok staat klaar in het 🚀 Woordenschat-tabblad. Klik daar bovenaan op om te beginnen.")
+                    st.success("✅ Alles staat klaar! Loop de oefen-tabbladen van links naar rechts af.")
                     st.rerun()
 
             st.info("👉 **Loop de tabbladen van links naar rechts af:**\n\n"
                     "1. 🚀 **Woordenschat** — je woord-dagblok staat meteen klaar (woorden → moeilijke → verwarparen).\n"
-                    "2. 🎓 **Actief Beheersen** — oefen een rijtje.\n"
-                    "3. ⏳ **Stamtijden** — klik op **Start** (het Leerpad staat al klaar).\n"
-                    "4. 🧱 **Structuurwoorden** — klik op **Start** (het Leerpad staat al klaar).\n"
+                    "2. 🎓 **Actief Beheersen** — het Leerpad opent meteen bij het huidige rijtje.\n"
+                    "3. ⏳ **Stamtijden** — staat kant-en-klaar in het Leerpad.\n"
+                    "4. 🧱 **Structuurwoorden** — staat kant-en-klaar in het Leerpad.\n"
                     "5. 📝 **Leesteksten** — kies een tekst en ontleed een paar verzen.\n\n"
                     "Kom daarna hier terug en vink je onderdelen af — dan kleurt je kalender vol. 🎨")
 
