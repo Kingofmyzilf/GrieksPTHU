@@ -1199,12 +1199,12 @@ def dagkalender_html(dag_stats, log):
         for sl, kl, _naam in onderdelen:
             _val = lg.get(sl)
             if _val is True or (isinstance(_val, (int, float)) and _val > 0):
-                stip += f"<span style='display:inline-block;width:6px;height:6px;border-radius:50%;background:{kl};margin:0 1px'></span>"
+                stip += f"<span style='display:inline-block;width:11px;height:11px;border-radius:50%;background:{kl};margin:0 2px'></span>"
         bg = "#1a1d22" if toekomst else _bg(n)
-        cellen += (f"<div style='background:{bg};border:{rand};border-radius:6px;height:46px;padding:3px;"
-                   f"display:flex;flex-direction:column;justify-content:space-between;opacity:{'0.35' if toekomst else '1'}'>"
-                   f"<div style='font-size:10px;color:#cbd3dd;text-align:right'>{ts.day}</div>"
-                   f"<div style='text-align:center;min-height:8px'>{stip}</div></div>")
+        cellen += (f"<div style='background:{bg};border:{rand};border-radius:8px;height:66px;padding:5px;"
+                   f"display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;opacity:{'0.35' if toekomst else '1'}'>"
+                   f"<div style='font-size:22px;font-weight:800;color:#ffffff;line-height:1;text-align:center'>{ts.day}</div>"
+                   f"<div style='text-align:center;min-height:11px'>{stip}</div></div>")
     legenda = " &nbsp; ".join(f"<span style='color:{kl}'>●</span> {naam}" for _sl, kl, naam in onderdelen)
     return (f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px'>{kop}</div>"
             f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px'>{cellen}</div>"
