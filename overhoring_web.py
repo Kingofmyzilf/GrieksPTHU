@@ -2785,213 +2785,214 @@ def main():
 
             st.write("---")
 
-            # --- DE LEKKENDE EMMER ---
-            lekkende_woorden = [w for w in st.session_state.data if 16 <= int(w.get('streak', 0)) <= 17]
-            if lekkende_woorden:
-                st.warning(f"🪣 **De Lekkende Emmer:** Je hebt momenteel **{len(lekkende_woorden)} woorden** die balanceren op het randje van je langetermijngeheugen (Streak 16 of 17). Eén foutje en ze vallen terug naar 'In Training'. Ga naar *Tabblad 1* en kies *'Knelpunten'* om deze te stutten!")
-            else:
-                st.success("🛡️ **Geen Lekkende Emmer:** Al jouw beheerste woorden staan momenteel stevig in de steigers (Streak 18+).")
+            with st.expander("📉 Gedetailleerde voortgang per onderdeel (uitklappen)", expanded=False):
+                # --- DE LEKKENDE EMMER ---
+                lekkende_woorden = [w for w in st.session_state.data if 16 <= int(w.get('streak', 0)) <= 17]
+                if lekkende_woorden:
+                    st.warning(f"🪣 **De Lekkende Emmer:** Je hebt momenteel **{len(lekkende_woorden)} woorden** die balanceren op het randje van je langetermijngeheugen (Streak 16 of 17). Eén foutje en ze vallen terug naar 'In Training'. Ga naar *Tabblad 1* en kies *'Knelpunten'* om deze te stutten!")
+                else:
+                    st.success("🛡️ **Geen Lekkende Emmer:** Al jouw beheerste woorden staan momenteel stevig in de steigers (Streak 18+).")
 
-            st.write("---")
+                st.write("---")
 
-            # --- VOORTGANG PER VAK ---
-            st.markdown("### 🏛️ Voortgang per Verplicht Onderdeel")
-            st.caption("Norm: Een item telt als 'Beheerst' zodra het een universele streak van 16 of hoger heeft bereikt.")
+                # --- VOORTGANG PER VAK ---
+                st.markdown("### 🏛️ Voortgang per Verplicht Onderdeel")
+                st.caption("Norm: Een item telt als 'Beheerst' zodra het een universele streak van 16 of hoger heeft bereikt.")
 
-            v_g1 = [w for w in vocab_db if 1 <= w.get('les', 0) <= 6]
-            v_g2 = [w for w in vocab_db if 7 <= w.get('les', 0) <= 12]
-            v_g3 = [w for w in vocab_db if 13 <= w.get('les', 0) <= 14]
+                v_g1 = [w for w in vocab_db if 1 <= w.get('les', 0) <= 6]
+                v_g2 = [w for w in vocab_db if 7 <= w.get('les', 0) <= 12]
+                v_g3 = [w for w in vocab_db if 13 <= w.get('les', 0) <= 14]
 
-            def tel_vocab_beh(lijst):
-                return sum(1 for w in lijst if vocab_streaks.get(w.get('grieks', w.get('praesens', '')), 0) >= 16)
+                def tel_vocab_beh(lijst):
+                    return sum(1 for w in lijst if vocab_streaks.get(w.get('grieks', w.get('praesens', '')), 0) >= 16)
 
-            v_g1_beh, v_g2_beh, v_g3_beh = tel_vocab_beh(v_g1), tel_vocab_beh(v_g2), tel_vocab_beh(v_g3)
+                v_g1_beh, v_g2_beh, v_g3_beh = tel_vocab_beh(v_g1), tel_vocab_beh(v_g2), tel_vocab_beh(v_g3)
 
-            def tel_paradigma_items(vak_key):
-                tot = 0; beh = 0
-                if actief_db and vak_key in actief_db:
-                    for cat, subcats in actief_db[vak_key].items():
-                        for sub, items in subcats.items():
-                            for item in items:
-                                tot += 1
-                                if st.session_state.actief_stats.get(item['id'], {}).get('streak', 0) >= 16:
-                                    beh += 1
-                return tot, beh
+                def tel_paradigma_items(vak_key):
+                    tot = 0; beh = 0
+                    if actief_db and vak_key in actief_db:
+                        for cat, subcats in actief_db[vak_key].items():
+                            for sub, items in subcats.items():
+                                for item in items:
+                                    tot += 1
+                                    if st.session_state.actief_stats.get(item['id'], {}).get('streak', 0) >= 16:
+                                        beh += 1
+                    return tot, beh
 
-            p_g1_tot, p_g1_beh = tel_paradigma_items("Grieks 1")
-            p_g2_tot, p_g2_beh = tel_paradigma_items("Grieks 2")
-            p_g3_tot, p_g3_beh = tel_paradigma_items("Grieks 3")
+                p_g1_tot, p_g1_beh = tel_paradigma_items("Grieks 1")
+                p_g2_tot, p_g2_beh = tel_paradigma_items("Grieks 2")
+                p_g3_tot, p_g3_beh = tel_paradigma_items("Grieks 3")
 
-            c_g1, c_g2, c_g3 = st.columns(3)
-            with c_g1:
-                st.markdown("#### 📘 Grieks 1")
-                toon_meting("Woordenschat (Les 1–6)", v_g1_beh, len(v_g1))
-                st.write("")
-                toon_meting("Paradigma's / Rijtjes", p_g1_beh, p_g1_tot)
+                c_g1, c_g2, c_g3 = st.columns(3)
+                with c_g1:
+                    st.markdown("#### 📘 Grieks 1")
+                    toon_meting("Woordenschat (Les 1–6)", v_g1_beh, len(v_g1))
+                    st.write("")
+                    toon_meting("Paradigma's / Rijtjes", p_g1_beh, p_g1_tot)
 
-            with c_g2:
-                st.markdown("#### 📗 Grieks 2")
-                toon_meting("Woordenschat (Les 7–12)", v_g2_beh, len(v_g2))
-                st.write("")
-                toon_meting("Paradigma's / Rijtjes", p_g2_beh, p_g2_tot)
+                with c_g2:
+                    st.markdown("#### 📗 Grieks 2")
+                    toon_meting("Woordenschat (Les 7–12)", v_g2_beh, len(v_g2))
+                    st.write("")
+                    toon_meting("Paradigma's / Rijtjes", p_g2_beh, p_g2_tot)
 
-            with c_g3:
-                st.markdown("#### 📙 Grieks 3")
-                toon_meting("Woordenschat (Les 13–14)", v_g3_beh, len(v_g3))
-                st.write("")
-                toon_meting("Paradigma's / Rijtjes", p_g3_beh, p_g3_tot)
+                with c_g3:
+                    st.markdown("#### 📙 Grieks 3")
+                    toon_meting("Woordenschat (Les 13–14)", v_g3_beh, len(v_g3))
+                    st.write("")
+                    toon_meting("Paradigma's / Rijtjes", p_g3_beh, p_g3_tot)
 
-            st.write("---")
+                st.write("---")
 
-            # --- DE MORFOLOGISCHE HORIZON (Interactieve Studieplanner 2.1) ---
-            st.markdown("### 🧭 De Morfologische Horizon (Interactieve Studieplanner)")
-            st.caption("Analyseer de wiskundige verhouding tussen doelniveau, dagelijks oefenritme en persoonlijke focus om een haalbare planning te maken.")
+                # --- DE MORFOLOGISCHE HORIZON (Interactieve Studieplanner 2.1) ---
+                st.markdown("### 🧭 De Morfologische Horizon (Interactieve Studieplanner)")
+                st.caption("Analyseer de wiskundige verhouding tussen doelniveau, dagelijks oefenritme en persoonlijke focus om een haalbare planning te maken.")
 
-            fc_c1, fc_c2 = st.columns([1.1, 1.9])
+                fc_c1, fc_c2 = st.columns([1.1, 1.9])
             
-            with fc_c1:
-                st.write("**1. Kies je tentamengroep:**")
-                sim_doel_groep = st.selectbox(
-                    "Onderdeel:", 
-                    ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"], 
-                    label_visibility="collapsed"
-                )
+                with fc_c1:
+                    st.write("**1. Kies je tentamengroep:**")
+                    sim_doel_groep = st.selectbox(
+                        "Onderdeel:", 
+                        ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"], 
+                        label_visibility="collapsed"
+                    )
                 
-                # De gecorrigeerde, strikte controle op de groepsnaam
-                if "Grieks 1" in sim_doel_groep: fc_pool = v_g1
-                elif "Grieks 2" in sim_doel_groep: fc_pool = v_g2
-                else: fc_pool = v_g3
+                    # De gecorrigeerde, strikte controle op de groepsnaam
+                    if "Grieks 1" in sim_doel_groep: fc_pool = v_g1
+                    elif "Grieks 2" in sim_doel_groep: fc_pool = v_g2
+                    else: fc_pool = v_g3
 
-                sub_g, sub_f = 0, 0
-                if st.session_state.get('data'):
-                    gekozen_lessen = [1,2,3,4,5,6] if "Grieks 1" in sim_doel_groep else ([7,8,9,10,11,12] if "Grieks 2" in sim_doel_groep else [13,14])
-                    for w in st.session_state.data:
-                        if veilig_les_nummer(w) in gekozen_lessen:
-                            try: sub_g += int(w.get('score_goed', 0))
-                            except (ValueError, TypeError): pass
-                            try: sub_f += int(w.get('score_fout', 0))
-                            except (ValueError, TypeError): pass
+                    sub_g, sub_f = 0, 0
+                    if st.session_state.get('data'):
+                        gekozen_lessen = [1,2,3,4,5,6] if "Grieks 1" in sim_doel_groep else ([7,8,9,10,11,12] if "Grieks 2" in sim_doel_groep else [13,14])
+                        for w in st.session_state.data:
+                            if veilig_les_nummer(w) in gekozen_lessen:
+                                try: sub_g += int(w.get('score_goed', 0))
+                                except (ValueError, TypeError): pass
+                                try: sub_f += int(w.get('score_fout', 0))
+                                except (ValueError, TypeError): pass
 
-                echte_hist_acc = int((sub_g / (sub_g + sub_f)) * 100) if (sub_g + sub_f) > 0 else 78
-                echte_hist_acc = max(50, min(100, echte_hist_acc))
+                    echte_hist_acc = int((sub_g / (sub_g + sub_f)) * 100) if (sub_g + sub_f) > 0 else 78
+                    echte_hist_acc = max(50, min(100, echte_hist_acc))
 
-                st.write("**2. Bepaal je parameters:**")
-                sim_doel_streak = st.slider("Gewenste Kennis-diepte (Streak):", min_value=2, max_value=30, value=16, help="16 = Beheerst (Standaard PThU norm). 8 = Voldoende om passief te herkennen in een tekst. 30 = Vloeiende Mastery.")
-                sim_dag_vocab = st.slider("Woorden oefenen per dag:", min_value=5, max_value=100, value=30, step=5)
-                sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
+                    st.write("**2. Bepaal je parameters:**")
+                    sim_doel_streak = st.slider("Gewenste Kennis-diepte (Streak):", min_value=2, max_value=30, value=16, help="16 = Beheerst (Standaard PThU norm). 8 = Voldoende om passief te herkennen in een tekst. 30 = Vloeiende Mastery.")
+                    sim_dag_vocab = st.slider("Woorden oefenen per dag:", min_value=5, max_value=100, value=30, step=5)
+                    sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
 
-            with fc_c2:
-                # --- LIVE TELLING PER CATEGORIE VOOR DE GEKOZEN GROEP ---
-                fase_telling = {'Nieuw': 0, 'Training': 0, 'Beheerst': 0, 'Mastery': 0}
-                actuele_dict = {w['grieks']: w for w in st.session_state.get('data', []) if isinstance(w, dict) and 'grieks' in w}
+                with fc_c2:
+                    # --- LIVE TELLING PER CATEGORIE VOOR DE GEKOZEN GROEP ---
+                    fase_telling = {'Nieuw': 0, 'Training': 0, 'Beheerst': 0, 'Mastery': 0}
+                    actuele_dict = {w['grieks']: w for w in st.session_state.get('data', []) if isinstance(w, dict) and 'grieks' in w}
                 
-                for w in fc_pool:
-                    key = w.get('grieks', '')
-                    live_w = actuele_dict.get(key, {})
-                    try: strk = int(live_w.get('streak', 0))
-                    except (ValueError, TypeError): strk = 0
+                    for w in fc_pool:
+                        key = w.get('grieks', '')
+                        live_w = actuele_dict.get(key, {})
+                        try: strk = int(live_w.get('streak', 0))
+                        except (ValueError, TypeError): strk = 0
                         
-                    if strk == 0: fase_telling['Nieuw'] += 1
-                    elif 1 <= strk <= 15: fase_telling['Training'] += 1
-                    elif 16 <= strk <= 29: fase_telling['Beheerst'] += 1
-                    else: fase_telling['Mastery'] += 1
+                        if strk == 0: fase_telling['Nieuw'] += 1
+                        elif 1 <= strk <= 15: fase_telling['Training'] += 1
+                        elif 16 <= strk <= 29: fase_telling['Beheerst'] += 1
+                        else: fase_telling['Mastery'] += 1
 
-                label_groep = f"{sim_doel_groep.split(' ')[1]} {sim_doel_groep.split(' ')[2]}"
-                st.write(f"**Huidige verdeling van {label_groep}:**")
+                    label_groep = f"{sim_doel_groep.split(' ')[1]} {sim_doel_groep.split(' ')[2]}"
+                    st.write(f"**Huidige verdeling van {label_groep}:**")
                 
-                c_f1, c_f2, c_f3, c_f4 = st.columns(4)
-                c_f1.metric("Nieuw (0)", fase_telling['Nieuw'])
-                c_f2.metric("In Training (1–15)", fase_telling['Training'])
-                c_f3.metric("Beheerst (16–29)", fase_telling['Beheerst'])
-                c_f4.metric("Mastery (30+)", fase_telling['Mastery'])
+                    c_f1, c_f2, c_f3, c_f4 = st.columns(4)
+                    c_f1.metric("Nieuw (0)", fase_telling['Nieuw'])
+                    c_f2.metric("In Training (1–15)", fase_telling['Training'])
+                    c_f3.metric("Beheerst (16–29)", fase_telling['Beheerst'])
+                    c_f4.metric("Mastery (30+)", fase_telling['Mastery'])
                 
-                st.write("") # Visuele ademruimte
+                    st.write("") # Visuele ademruimte
 
-                prognose = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=sim_acc_override)
+                    prognose = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=sim_acc_override)
                 
-                if prognose and prognose.get("schuld", 0) == 0:
-                    st.success(f"✓ **Doel al bereikt!** Alle woorden binnen deze selectie hebben de door jou ingestelde drempelwaarde van **streak {sim_doel_streak}** al behaald.")
-                elif prognose:
-                    min_per_dag = max(3, int(sim_dag_vocab * 0.22))
+                    if prognose and prognose.get("schuld", 0) == 0:
+                        st.success(f"✓ **Doel al bereikt!** Alle woorden binnen deze selectie hebben de door jou ingestelde drempelwaarde van **streak {sim_doel_streak}** al behaald.")
+                    elif prognose:
+                        min_per_dag = max(3, int(sim_dag_vocab * 0.22))
                     
-                    st.markdown(f"""
-                    <div style="background-color: #1a1a1a; padding: 22px; border-radius: 12px; border-left: 6px solid #33ccff; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                        <div style="font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Verwachte afrondingsdatum</div>
-                        <div style="font-size: 34px; font-weight: 800; color: #33ccff; margin: 4px 0 10px 0;">{prognose['einddatum']}</div>
-                        <div style="font-size: 15px; color: #ddd; margin-bottom: 16px;">Doorlooptijd: <strong>{prognose['dagen']} dagen</strong> bij circa {min_per_dag} minuten studie per dag.</div>
-                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #333; padding-top: 14px;">
-                            <div>
-                                <span style="font-size: 20px; font-weight: bold; color: #fff;">{prognose['schuld']} pt</span><br>
-                                <span style="font-size: 12px; color: #aaa;">Totale Streak-schuld</span>
-                            </div>
-                            <div>
-                                <span style="font-size: 20px; font-weight: bold; color: #f6c23e;">~{prognose['netto_winst']} pt</span><br>
-                                <span style="font-size: 12px; color: #aaa;">Netto winst / oefening</span>
-                            </div>
-                            <div>
-                                <span style="font-size: 20px; font-weight: bold; color: #28a745;">{sim_acc_override}%</span><br>
-                                <span style="font-size: 12px; color: #aaa;">Ingevoerde Focus</span>
+                        st.markdown(f"""
+                        <div style="background-color: #1a1a1a; padding: 22px; border-radius: 12px; border-left: 6px solid #33ccff; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                            <div style="font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px;">Verwachte afrondingsdatum</div>
+                            <div style="font-size: 34px; font-weight: 800; color: #33ccff; margin: 4px 0 10px 0;">{prognose['einddatum']}</div>
+                            <div style="font-size: 15px; color: #ddd; margin-bottom: 16px;">Doorlooptijd: <strong>{prognose['dagen']} dagen</strong> bij circa {min_per_dag} minuten studie per dag.</div>
+                            <div style="display: flex; justify-content: space-between; border-top: 1px solid #333; padding-top: 14px;">
+                                <div>
+                                    <span style="font-size: 20px; font-weight: bold; color: #fff;">{prognose['schuld']} pt</span><br>
+                                    <span style="font-size: 12px; color: #aaa;">Totale Streak-schuld</span>
+                                </div>
+                                <div>
+                                    <span style="font-size: 20px; font-weight: bold; color: #f6c23e;">~{prognose['netto_winst']} pt</span><br>
+                                    <span style="font-size: 12px; color: #aaa;">Netto winst / oefening</span>
+                                </div>
+                                <div>
+                                    <span style="font-size: 20px; font-weight: bold; color: #28a745;">{sim_acc_override}%</span><br>
+                                    <span style="font-size: 12px; color: #aaa;">Ingevoerde Focus</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                        """, unsafe_allow_html=True)
                     
-                    # --- GECOMBINEERD DIDACTISCH ADVIESPANEEL ---
-                    st.write("") # Visuele ademruimte
+                        # --- GECOMBINEERD DIDACTISCH ADVIESPANEEL ---
+                        st.write("") # Visuele ademruimte
                     
-                    advies_box = "**💡 Strategische knoppen voor jouw planning:**\n\n"
+                        advies_box = "**💡 Strategische knoppen voor jouw planning:**\n\n"
                     
-                    # Hefboom 1: De Modus-keuze (Jouw nieuwe inzicht)
-                    advies_box += "1. **Kies de Typ-modus:** Dit model rekent met een standaard mix-sessie. Omdat actieve reproductie bij *Typen* (+3 streak-punten) een aanzienlijk zwaarder beroep doet op je geheugen dan herkenning bij *Meerkeuze* (+1 punt), beloont de motor dit: overschakelen naar de Typ-modus verkort de berekende doorlooptijd in de praktijk fors.\n"
+                        # Hefboom 1: De Modus-keuze (Jouw nieuwe inzicht)
+                        advies_box += "1. **Kies de Typ-modus:** Dit model rekent met een standaard mix-sessie. Omdat actieve reproductie bij *Typen* (+3 streak-punten) een aanzienlijk zwaarder beroep doet op je geheugen dan herkenning bij *Meerkeuze* (+1 punt), beloont de motor dit: overschakelen naar de Typ-modus verkort de berekende doorlooptijd in de praktijk fors.\n"
                     
-                    # Hefboom 2: De Accuratesse-hefboom
-                    winst_bij_plus5 = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=min(100, sim_acc_override + 5))
-                    if winst_bij_plus5:
-                        dagen_bespaard = prognose["dagen"] - winst_bij_plus5["dagen"]
-                        if dagen_bespaard > 1 and sim_acc_override < 95:
-                            advies_box += f"2. **Hefboom op Focus:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijvoorbeeld door bij twijfel de hint te openen in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** doorlooptijd."
+                        # Hefboom 2: De Accuratesse-hefboom
+                        winst_bij_plus5 = bereken_studietijd_forecast(fc_pool, 'vocab', doel_streak=sim_doel_streak, dagelijkse_oefeningen=sim_dag_vocab, sim_accuratesse=min(100, sim_acc_override + 5))
+                        if winst_bij_plus5:
+                            dagen_bespaard = prognose["dagen"] - winst_bij_plus5["dagen"]
+                            if dagen_bespaard > 1 and sim_acc_override < 95:
+                                advies_box += f"2. **Hefboom op Focus:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijvoorbeeld door bij twijfel de hint te openen in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** doorlooptijd."
                             
-                    st.info(advies_box)
+                        st.info(advies_box)
 
-            st.write("---")
+                st.write("---")
 
-            # --- DE STAMTIJDEN SLUIS ---
-            st.markdown("### ⏳ De Stamtijden-Sluis")
-            tot_stam_ww = len(stamtijden_db) if stamtijden_db else 0
-            ontgrendeld_stam_ww = sum(1 for w in stamtijden_db if vocab_streaks.get(w['praesens'], 0) >= 5) if stamtijden_db else 0
+                # --- DE STAMTIJDEN SLUIS ---
+                st.markdown("### ⏳ De Stamtijden-Sluis")
+                tot_stam_ww = len(stamtijden_db) if stamtijden_db else 0
+                ontgrendeld_stam_ww = sum(1 for w in stamtijden_db if vocab_streaks.get(w['praesens'], 0) >= 5) if stamtijden_db else 0
 
-            c_sluis1, c_sluis2 = st.columns([2, 1])
-            with c_sluis1:
-                st.write("Werkwoorden waarvan de stamtijden-training is ontgrendeld (vereist een Vocab-streak van ≥ 5):")
-                toon_meting("Ontgrendelde Stam-funderingen", ontgrendeld_stam_ww, tot_stam_ww)
-            with c_sluis2:
-                nog_te_gaan = tot_stam_ww - ontgrendeld_stam_ww
-                st.info(f"🔒 Nog **{nog_te_gaan}** werkwoorden te ontgrendelen via het Woorden-tabblad.")
+                c_sluis1, c_sluis2 = st.columns([2, 1])
+                with c_sluis1:
+                    st.write("Werkwoorden waarvan de stamtijden-training is ontgrendeld (vereist een Vocab-streak van ≥ 5):")
+                    toon_meting("Ontgrendelde Stam-funderingen", ontgrendeld_stam_ww, tot_stam_ww)
+                with c_sluis2:
+                    nog_te_gaan = tot_stam_ww - ontgrendeld_stam_ww
+                    st.info(f"🔒 Nog **{nog_te_gaan}** werkwoorden te ontgrendelen via het Woorden-tabblad.")
 
-            st.write("---")
+                st.write("---")
 
-            # --- FASERING LEERLIJNEN GRAFIEK ---
-            st.markdown("### 📈 Fasering Leerlijnen")
+                # --- FASERING LEERLIJNEN GRAFIEK ---
+                st.markdown("### 📈 Fasering Leerlijnen")
             
-            df_plot = pd.DataFrame({
-                'Module': ['Vocabulaire', 'Stamtijden', 'Structuurwoorden'],
-                'Nieuw (0)': [stats_vocab['Nieuw'], stats_stam['Nieuw'], stats_str['Nieuw']],
-                'In Training (1-15)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']],
-                'Beheerst (16-29)': [stats_vocab['Beheerst'], stats_stam['Beheerst'], stats_str['Beheerst']],
-                'Mastery (30+)': [stats_vocab['Mastery'], stats_stam['Mastery'], stats_str['Mastery']]
-            }).set_index('Module')
-            try:
-                st.bar_chart(
-                    df_plot,
-                    color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'],
-                    stack=True,
-                    height=340,
-                )
-            except TypeError:
-                # oudere Streamlit zonder 'stack'-parameter: stapelt standaard al
-                st.bar_chart(df_plot, color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'], height=340)
+                df_plot = pd.DataFrame({
+                    'Module': ['Vocabulaire', 'Stamtijden', 'Structuurwoorden'],
+                    'Nieuw (0)': [stats_vocab['Nieuw'], stats_stam['Nieuw'], stats_str['Nieuw']],
+                    'In Training (1-15)': [stats_vocab['In Training'], stats_stam['In Training'], stats_str['In Training']],
+                    'Beheerst (16-29)': [stats_vocab['Beheerst'], stats_stam['Beheerst'], stats_str['Beheerst']],
+                    'Mastery (30+)': [stats_vocab['Mastery'], stats_stam['Mastery'], stats_str['Mastery']]
+                }).set_index('Module')
+                try:
+                    st.bar_chart(
+                        df_plot,
+                        color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'],
+                        stack=True,
+                        height=340,
+                    )
+                except TypeError:
+                    # oudere Streamlit zonder 'stack'-parameter: stapelt standaard al
+                    st.bar_chart(df_plot, color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'], height=340)
             
-            st.write("---")
+                st.write("---")
 
             # --- JOUW OEFENRITME (kalender-heatmap) ---
             st.subheader("📅 Jouw oefenritme")
@@ -3013,43 +3014,6 @@ def main():
                 st.metric("Totaal geoefend (All-time)", sum(st.session_state.dag_stats.values()))
             else:
                 st.caption("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
-
-            st.write("---")
-
-            # --- HARDNEKKIGE PROBLEEMWOORDEN (LEECHES) ---
-            st.subheader("🐛 Hardnekkige probleemwoorden")
-            st.caption("Woorden die je al meerdere keren hebt geoefend maar die telkens blijven haperen — hoge fout-verhouding én lage streak. Dit zijn je beste kandidaten voor gericht oefenen.")
-
-            leeches = []
-            if st.session_state.data:
-                for w in st.session_state.data:
-                    g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
-                    totaal = g + f
-                    # leech-criterium: minstens 3 pogingen, minstens 2 fouten, nog niet 'in training' ontstegen
-                    if totaal >= 3 and f >= 2 and s <= 3:
-                        ratio = f / totaal
-                        if ratio >= 0.4:
-                            leeches.append((ratio, f, w))
-            leeches.sort(key=lambda x: (x[0], x[1]), reverse=True)
-
-            if leeches:
-                st.warning(f"Je hebt **{len(leeches)}** hardnekkige woorden. Kies in *Tabblad 1 → 'Knelpunten (Gericht Oefenen)'* dezelfde lessen om ze gericht te stutten.")
-                leech_rijen = []
-                for ratio, f, w in leeches[:25]:
-                    leech_rijen.append({
-                        "Grieks": w.get('grieks', ''),
-                        "Betekenis": str(w.get('nederlands', ''))[:35],
-                        "Les": w.get('les', ''),
-                        "Goed": int(w.get('score_goed', 0)),
-                        "Fout": int(w.get('score_fout', 0)),
-                        "Streak": int(w.get('streak', 0)),
-                        "Fout-%": f"{int(ratio*100)}%",
-                    })
-                st.dataframe(pd.DataFrame(leech_rijen), use_container_width=True, hide_index=True)
-                if len(leeches) > 25:
-                    st.caption(f"(Top 25 van {len(leeches)} getoond, gesorteerd op hardnekkigheid.)")
-            else:
-                st.success("🎉 Geen hardnekkige probleemwoorden — niets blijft structureel haperen. Sterk!")
 
             st.write("---")
 
@@ -3139,6 +3103,43 @@ def main():
             else:
                 st.success("🎉 Je hebt op dit moment geen structurele aartsrivalen. Alles loopt op rolletjes!")
                 
+            st.write("---")
+
+            # --- HARDNEKKIGE PROBLEEMWOORDEN (LEECHES) ---
+            st.subheader("🐛 Hardnekkige probleemwoorden")
+            st.caption("Woorden die je al meerdere keren hebt geoefend maar die telkens blijven haperen — hoge fout-verhouding én lage streak. Dit zijn je beste kandidaten voor gericht oefenen.")
+
+            leeches = []
+            if st.session_state.data:
+                for w in st.session_state.data:
+                    g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
+                    totaal = g + f
+                    # leech-criterium: minstens 3 pogingen, minstens 2 fouten, nog niet 'in training' ontstegen
+                    if totaal >= 3 and f >= 2 and s <= 3:
+                        ratio = f / totaal
+                        if ratio >= 0.4:
+                            leeches.append((ratio, f, w))
+            leeches.sort(key=lambda x: (x[0], x[1]), reverse=True)
+
+            if leeches:
+                st.warning(f"Je hebt **{len(leeches)}** hardnekkige woorden. Kies in *Tabblad 1 → 'Knelpunten (Gericht Oefenen)'* dezelfde lessen om ze gericht te stutten.")
+                leech_rijen = []
+                for ratio, f, w in leeches[:25]:
+                    leech_rijen.append({
+                        "Grieks": w.get('grieks', ''),
+                        "Betekenis": str(w.get('nederlands', ''))[:35],
+                        "Les": w.get('les', ''),
+                        "Goed": int(w.get('score_goed', 0)),
+                        "Fout": int(w.get('score_fout', 0)),
+                        "Streak": int(w.get('streak', 0)),
+                        "Fout-%": f"{int(ratio*100)}%",
+                    })
+                st.dataframe(pd.DataFrame(leech_rijen), use_container_width=True, hide_index=True)
+                if len(leeches) > 25:
+                    st.caption(f"(Top 25 van {len(leeches)} getoond, gesorteerd op hardnekkigheid.)")
+            else:
+                st.success("🎉 Geen hardnekkige probleemwoorden — niets blijft structureel haperen. Sterk!")
+
             st.write("---")
 
             # --- EXPORTEREN ---
