@@ -984,6 +984,10 @@ def badge_definities(m):
     add("stam_start", "⏳", "Stamtijd-starter", "Je eerste stamtijd-vorm beheerst (streak ≥ 16).", sb >= 1)
     trap("stamvorm", "🏺", "Stamtijden", "stamtijd-vormen beheerst", sb, [10, 40, 100])
 
+    sc = int(m.get('struct_beheerst', 0))
+    add("struct_start", "🧱", "Structuur-starter", "Je eerste structuurwoord beheerst (streak ≥ 16).", sc >= 1)
+    trap("structw", "🏗️", "Structuurwoorden", "structuurwoorden beheerst", sc, [10, 40, 90])
+
     niv = int(m.get('niveau', 0))
     if niv >= 1:
         trap("rang", "🎖️", "Rang", "leerpad-niveau bereikt", niv, [5, 10, 20, 35, 50])
@@ -1051,6 +1055,104 @@ def leerpad_status(levels, drempel=LEERPAD_DREMPEL):
         status.append({**lv, "klaar": klaar, "totaal": totaal,
                        "voltooid": voltooid, "ontgrendeld": vorige_voltooid})
         vorige_voltooid = voltooid
+    return status
+
+# --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
+_STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
+
+def bereken_xp_stam(stam_stats):
+    """XP voor de stamtijden-rang, puur opbouwend uit stam_stats."""
+    xp = 0
+    for _vid, s in (stam_stats or {}).items():
+        xp += int(s.get('g', 0)) * 8
+        strk = int(s.get('streak', 0))
+        if strk >= 5: xp += 8
+        if strk >= 16: xp += 20
+    return xp
+
+def _stam_vormen(w):
+    return [v for v in (w.get('stamtijden', {}).get(t) for t in _STAM_TIJDEN) if v and v != "-"]
+
+def bouw_stam_levels(stamtijden_db):
+    """Elk werkwoord = één level (al zijn stamtijden), in les-volgorde, frequentst eerst."""
+    ww = [w for w in stamtijden_db if isinstance(w, dict) and w.get('praesens')]
+    ww.sort(key=lambda w: (w.get('les', 0) or 0, -int(w.get('frequentie', 0)), w.get('praesens', '')))
+    return [{"index": i + 1, "titel": f"Les {w.get('les', '?')} · {w['praesens']}", "verb": w} for i, w in enumerate(ww)]
+
+def stam_level_status(levels, stam_stats, drempel=5):
+    """Per werkwoord-level: hoeveel vormen 'af' (streak≥drempel), voltooid, ontgrendeld."""
+    status = []
+    vorige = True
+    for lv in levels:
+        w = lv["verb"]
+        vormen = _stam_vormen(w)
+        totaal = len(vormen)
+        klaar = sum(1 for v in vormen if int(stam_stats.get(f"{w['praesens']}_{v}", {}).get('streak', 0)) >= drempel)
+        voltooid = totaal > 0 and klaar == totaal
+        status.append({**lv, "klaar": klaar, "totaal": totaal, "voltooid": voltooid, "ontgrendeld": vorige})
+        vorige = voltooid
+    return status
+
+def stam_herhaalvormen(stamtijden_db, stam_stats, huidige_praesens, aantal):
+    """Kies 'aantal' al-geoefende stamtijd-vormen van ANDERE werkwoorden (laagste streak eerst),
+    zodat een Leerpad-sessie af en toe oude stof ophaalt."""
+    if aantal <= 0:
+        return []
+    kand = []
+    for w in stamtijden_db:
+        if w.get('praesens') == huidige_praesens:
+            continue
+        for t in _STAM_TIJDEN:
+            v = w.get('stamtijden', {}).get(t)
+            if not v or v == "-":
+                continue
+            vid = f"{w['praesens']}_{v}"
+            s = stam_stats.get(vid)
+            if s and (int(s.get('g', 0)) > 0 or int(s.get('f', 0)) > 0 or int(s.get('streak', 0)) > 0):
+                kand.append({"basis": w, "vraag_vorm": {"tijd_diathese": t, "vorm": v},
+                             "score_goed": s.get('g', 0), "score_fout": s.get('f', 0),
+                             "streak": s.get('streak', 0), "vid": vid})
+    kand.sort(key=lambda x: int(x["streak"]))
+    return kand[:aantal]
+
+# --- LEERPAD voor STRUCTUURWOORDEN (chunks, per categorie gegroepeerd) ---
+def bereken_xp_struct(struct_stats):
+    """XP voor de structuurwoorden-rang (benaderend, puur opbouwend)."""
+    xp = 0
+    for _k, s in (struct_stats or {}).items():
+        if not isinstance(s, dict):
+            continue
+        xp += int(s.get('g', 0)) * 8
+        strk = int(s.get('streak', 0))
+        if strk >= 5: xp += 8
+        if strk >= 16: xp += 20
+    return xp
+
+def _struct_streak(struct_stats, grieks, idx):
+    s = struct_stats.get(f"{grieks}_{idx}") or struct_stats.get(grieks) or {}
+    return int(s.get('streak', 0)) if isinstance(s, dict) else 0
+
+def bouw_struct_levels(struct_db, chunk=6):
+    """Deelt de structuurwoorden op in kleine levels (in DB-volgorde, per categorie gegroepeerd)."""
+    geordend = sorted(list(enumerate(struct_db)), key=lambda p: (str(p[1].get('categorie', '')), p[0]))
+    levels = []
+    for n, start in enumerate(range(0, len(geordend), chunk)):
+        brok = geordend[start:start + chunk]
+        cats = [w.get('categorie', '') for _i, w in brok]
+        lab = max(set(cats), key=cats.count) if cats else "Structuurwoorden"
+        levels.append({"index": n + 1, "titel": lab, "items": brok})
+    return levels
+
+def struct_level_status(levels, struct_stats, drempel=5):
+    """Per level: hoeveel woorden 'af' (streak≥drempel), voltooid, ontgrendeld."""
+    status = []
+    vorige = True
+    for lv in levels:
+        totaal = len(lv["items"])
+        klaar = sum(1 for idx, w in lv["items"] if _struct_streak(struct_stats, w['grieks'], idx) >= drempel)
+        voltooid = totaal > 0 and klaar == totaal
+        status.append({**lv, "klaar": klaar, "totaal": totaal, "voltooid": voltooid, "ontgrendeld": vorige})
+        vorige = voltooid
     return status
 
 # --- DATABASE FUNCTIES ---
@@ -2222,6 +2324,7 @@ def main():
                 'verwar_opgelost': int((st.session_state.get('badges') or {}).get('_verwar_opgelost', 0)),
                 'niveau': _niv_info['niveau'],
                 'stam_beheerst': stats_stam['Beheerst'] + stats_stam['Mastery'],
+                'struct_beheerst': stats_str['Beheerst'] + stats_str['Mastery'],
             }
             _badges = badge_definities(_badge_stats)
             if not isinstance(st.session_state.get('badges'), dict):
@@ -3156,14 +3259,43 @@ def main():
                 else:
                     c1, c2 = st.columns([1, 2])
                     with c1:
-                        bron_keuze = st.radio("Oefenbron:", ["📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"], horizontal=True)
+                        bron_keuze = st.radio("Oefenbron:", ["🎮 Leerpad (levels)", "📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"], horizontal=True)
                         gekozen_stam_lessen = []; gefilterde_ww_pool = []
-                        
-                        if bron_keuze == "📚 Uit geselecteerde lessen":
+                        is_stam_leerpad = False
+                        lp_stam_aantal = 0
+
+                        if bron_keuze == "🎮 Leerpad (levels)":
+                            is_stam_leerpad = True
+                            _xp_s = bereken_xp_stam(st.session_state.stam_stats)
+                            _niv_s = niveau_van_xp(_xp_s)
+                            st.markdown(f"#### 🎮 Stamtijden — niveau {_niv_s['niveau']} · {_niv_s['titel']}")
+                            st.progress(_niv_s['xp_in_niveau'] / max(1, _niv_s['xp_voor_volgend']))
+                            st.caption(f"⭐ {_niv_s['xp_totaal']} XP — nog {_niv_s['xp_voor_volgend'] - _niv_s['xp_in_niveau']} XP tot niveau {_niv_s['niveau'] + 1}.")
+                            _lv_s = stam_level_status(bouw_stam_levels(stamtijden_db), st.session_state.stam_stats)
+                            _ontgr_s = [l for l in _lv_s if l['ontgrendeld']]
+                            _vol_s = sum(1 for l in _lv_s if l['voltooid'])
+                            st.caption(f"🏁 {_vol_s}/{len(_lv_s)} werkwoorden voltooid · een vorm telt als 'af' bij streak ≥ 5.")
+                            if _ontgr_s:
+                                _huidig_s = next((l for l in _lv_s if l['ontgrendeld'] and not l['voltooid']), _ontgr_s[-1])
+                                _labels_s = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgr_s]
+                                _sel_s = st.selectbox("Kies een ontgrendeld werkwoord:", _labels_s,
+                                                      index=_ontgr_s.index(_huidig_s) if _huidig_s in _ontgr_s else 0)
+                                gefilterde_ww_pool = [_ontgr_s[_labels_s.index(_sel_s)]['verb']]
+                                _slot_s = next((l for l in _lv_s if not l['ontgrendeld']), None)
+                                if _slot_s:
+                                    st.caption(f"🔒 Hierna: Level {_slot_s['index']} — {_slot_s['titel']}.")
+                            lp_stam_aantal = {"1 oude vorm (aanrader)": 1, "Kleine herhaalronde (4)": 4, "Alleen dit werkwoord": 0}[
+                                st.selectbox("🔁 Oude stof meenemen:", ["1 oude vorm (aanrader)", "Kleine herhaalronde (4)", "Alleen dit werkwoord"], index=0, key="lp_stam_herhaal")]
+                            with st.expander("🗺️ Toon het hele pad", expanded=False):
+                                for l in _lv_s:
+                                    _ico = "✅" if l['voltooid'] else ("▶️" if l['ontgrendeld'] else "🔒")
+                                    st.markdown(f"{_ico} **Level {l['index']}** · {l['titel']} — {l['klaar']}/{l['totaal']}")
+
+                        elif bron_keuze == "📚 Uit geselecteerde lessen":
                             alle_lessen_stam = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
                             gekozen_stam_lessen = st.multiselect("Kies les(sen):", alle_lessen_stam, default=alle_lessen_stam[:1])
                             gefilterde_ww_pool = [w for w in stamtijden_db if w.get('les', 0) in gekozen_stam_lessen]
-                            
+
                         elif bron_keuze == "📖 Uit een Bijbeltekst":
                             b_lijst = sorted(list(set(k.split(" ")[0] for k in bijbel_db.keys() if " " in k)))
                             p_boek = st.selectbox("Kies Bijbelboek:", b_lijst if b_lijst else ["Mattheus"])
@@ -3197,19 +3329,25 @@ def main():
                             doel_vormen = []
                             tijden_volgorde = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
 
+                            gate_uit = stam_negeer_gate or is_stam_leerpad
                             for w in gefilterde_ww_pool:
                                 p_streak = st.session_state.vocab_stats.get(w['praesens'], {}).get('streak', 0)
-                                if not stam_negeer_gate and p_streak < 5: continue
+                                if not gate_uit and p_streak < 5: continue
 
-                                vorige_streak = 999 if stam_negeer_gate else p_streak
+                                vorige_streak = 999 if gate_uit else p_streak
                                 for t_d in tijden_volgorde:
                                     if not (vorm := w.get('stamtijden', {}).get(t_d)): continue
                                     vid = f"{w['praesens']}_{vorm}"
                                     stats = st.session_state.stam_stats.get(vid, {'g':0, 'f':0, 'streak':0})
-                                    if stam_negeer_gate or vorige_streak >= 5:
+                                    if gate_uit or vorige_streak >= 5:
                                         doel_vormen.append({"basis": w, "vraag_vorm": {"tijd_diathese": t_d, "vorm": vorm}, "score_goed": stats.get('g',0), "score_fout": stats.get('f',0), "streak": stats.get('streak',0), "vid": vid})
-                                        vorige_streak = 999 if stam_negeer_gate else stats.get('streak', 0)
+                                        vorige_streak = 999 if gate_uit else stats.get('streak', 0)
                                     else: break
+
+                            # Leerpad: haal af en toe oude stamtijd-vormen op (laagste streak eerst).
+                            if is_stam_leerpad and lp_stam_aantal > 0 and gefilterde_ww_pool:
+                                doel_vormen += stam_herhaalvormen(stamtijden_db, st.session_state.stam_stats,
+                                                                  gefilterde_ww_pool[0].get('praesens'), lp_stam_aantal)
 
                             if doel_vormen:
                                 sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts)
@@ -3349,25 +3487,56 @@ def main():
                 with c1:
                     # --- DE NIEUWE LEER-SPOOR FILTER ---
                     struct_filter = st.selectbox(
-                        "1. Kies leer-spoor:", 
+                        "1. Kies leer-spoor:",
                         [
-                            "Alles gemixt", 
-                            "Alleen Voorzetsels", 
-                            "Voegwoorden & Partikels", 
+                            "🎮 Leerpad (levels)",
+                            "Alles gemixt",
+                            "Alleen Voorzetsels",
+                            "Voegwoorden & Partikels",
                             "Voornaamwoorden (Pronomina)"
                         ],
                         key="struct_filter_box"
                     )
-                    
+
+                    is_struct_leerpad = False
+                    struct_leerpad_indices = set()
+                    if struct_filter == "🎮 Leerpad (levels)":
+                        is_struct_leerpad = True
+                        _xp_st = bereken_xp_struct(st.session_state.struct_stats)
+                        _niv_st = niveau_van_xp(_xp_st)
+                        st.markdown(f"**🎮 Niveau {_niv_st['niveau']} · {_niv_st['titel']}** — {_niv_st['xp_totaal']} XP")
+                        st.progress(_niv_st['xp_in_niveau'] / max(1, _niv_st['xp_voor_volgend']))
+                        _lv_st = struct_level_status(bouw_struct_levels(struct_db), st.session_state.struct_stats)
+                        _ontgr_st = [l for l in _lv_st if l['ontgrendeld']]
+                        _vol_st = sum(1 for l in _lv_st if l['voltooid'])
+                        st.caption(f"🏁 {_vol_st}/{len(_lv_st)} levels voltooid · woord 'af' bij streak ≥ 5.")
+                        if _ontgr_st:
+                            _huidig_st = next((l for l in _lv_st if l['ontgrendeld'] and not l['voltooid']), _ontgr_st[-1])
+                            _labels_st = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgr_st]
+                            _sel_st = st.selectbox("Kies een ontgrendeld level:", _labels_st,
+                                                   index=_ontgr_st.index(_huidig_st) if _huidig_st in _ontgr_st else 0)
+                            _gekozen_lv_st = _ontgr_st[_labels_st.index(_sel_st)]
+                            struct_leerpad_indices = {idx for idx, _w in _gekozen_lv_st['items']}
+                            with st.expander("📖 Leer eerst dit rijtje", expanded=False):
+                                for _idx, _w in _gekozen_lv_st['items']:
+                                    st.markdown(f"- **{_w['grieks']}** — {_w.get('betekenis','')}  \n  <span style='color:#888;font-size:12px;'>{_w.get('categorie','')} · {_w.get('eigenschap','')}</span>", unsafe_allow_html=True)
+                            st.caption("💡 Tip: tijdens het oefenen zie je de woorden ook in een echte Bijbelzin (met naamval-kleuren).")
+                            _slot_st = next((l for l in _lv_st if not l['ontgrendeld']), None)
+                            if _slot_st:
+                                st.caption(f"🔒 Hierna: Level {_slot_st['index']} — {_slot_st['titel']}.")
+
                     struct_modus = st.radio("2. Oefenvorm:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="struct_modus_radio")
-                    
+
                     if st.button("Start Sessie", key="btn_start_struct", type="primary"):
                         st.session_state.gestrafte_woorden_struct = set()
                         doel_vormen = []
-                        
+
                         for idx_w, w in enumerate(struct_db):
                             cat_str = w.get('categorie', '')
-                            
+
+                            # Leerpad: alleen de woorden van het gekozen level
+                            if is_struct_leerpad and idx_w not in struct_leerpad_indices: continue
+
                             # Toepassing van de door de student gekozen filter
                             if struct_filter == "Alleen Voorzetsels" and "Voorzetsel" not in cat_str: continue
                             if struct_filter == "Voegwoorden & Partikels" and "Voegwoord" not in cat_str and "Partikel" not in cat_str: continue
