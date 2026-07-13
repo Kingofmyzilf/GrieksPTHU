@@ -1428,6 +1428,7 @@ if st.session_state.get('paar_feedback') is None: st.session_state.paar_feedback
 if st.session_state.get('paar_klaar') is None: st.session_state.paar_klaar = False
 if st.session_state.get('paar_solved') is None: st.session_state.paar_solved = {'A': False, 'B': False}
 if st.session_state.get('paar_solved_voor') is None: st.session_state.paar_solved_voor = None
+if st.session_state.get('paar_overtik') is None: st.session_state.paar_overtik = False
 if st.session_state.get('save_teller') is None: st.session_state.save_teller = 0
 if st.session_state.get('sessie_net_klaar') is None: st.session_state.sessie_net_klaar = False
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
@@ -1816,77 +1817,100 @@ def main():
                         {"success": st.success, "warning": st.warning}.get(_fb["type"], st.error)(_fb["msg"])
                         st.session_state.paar_feedback = None
 
-                    def _woord_hint(_w):
-                        _delen = [d for d in [_w.get('lexeem_info', '') or _w.get('grieks_info', ''), _w.get('fonetisch', '')] if d]
-                        _ez = f"{_w.get('anker', '')} {_w.get('beeld', _w.get('associatie', _w.get('opmerking', '')))}".strip()
-                        if _ez: _delen.append(_ez)
-                        return " | ".join(_delen)
-
-                    # Zodra je een fout hebt gemaakt op dit paar: hint van de nog-open woorden erbij.
-                    if int(st.session_state.get('paar_fout', 0)) >= 1:
-                        for _w, _k in [(wA, 'A'), (wB, 'B')]:
-                            if not solved[_k]:
-                                _h = _woord_hint(_w)
-                                if _h:
-                                    st.info(f"💡 **{_w['grieks']}**: {_h}")
-
-                    with st.form(f"paar_form_{wA['grieks']}_{wB['grieks']}", clear_on_submit=True):
-                        if solved['A']:
-                            st.success(f"✓ {wA['grieks']} = {wA['nederlands']}"); _inA = None
-                        else:
-                            _inA = st.text_input(f"Betekenis van {wA['grieks']}:")
-                        if solved['B']:
-                            st.success(f"✓ {wB['grieks']} = {wB['nederlands']}"); _inB = None
-                        else:
-                            _inB = st.text_input(f"Betekenis van {wB['grieks']}:")
-                        _sub = st.form_submit_button("Controleer", type="primary")
-
-                    if _sub:
-                        registreer_oefening()
-                        _fout_deze = False
-                        if not solved['A']:
-                            if check_betekenis(_inA or "", wA.get('nederlands', '')):
-                                solved['A'] = True
+                    if st.session_state.get('paar_overtik'):
+                        # Na 2 fouten: overtypen om te verankeren (telt niet voor de streak).
+                        st.warning("⚠️ Overtikken: typ beide betekenissen exact over om verder te gaan. Dit telt niet voor je streak.")
+                        st.info(f"**{wA['grieks']}** = {wA['nederlands']}  ·  **{wB['grieks']}** = {wB['nederlands']}")
+                        forceer_focus()
+                        with st.form(f"paar_ov_{wA['grieks']}_{wB['grieks']}", clear_on_submit=True):
+                            _ovA = st.text_input(f"Typ de betekenis van {wA['grieks']} over:")
+                            _ovB = st.text_input(f"Typ de betekenis van {wB['grieks']} over:")
+                            _ovsub = st.form_submit_button("Bevestig", type="primary")
+                        if _ovsub:
+                            registreer_oefening()
+                            if check_betekenis(_ovA or "", wA.get('nederlands', '')) and check_betekenis(_ovB or "", wB.get('nederlands', '')):
+                                _lijst = st.session_state.get('paar_lijst', [])
+                                _lijst.append((wA, wB))  # komt later nog een keer terug
+                                st.session_state.paar_huidig = _lijst.pop(0) if _lijst else None
+                                st.session_state.paar_fout = 0
+                                st.session_state.paar_overtik = False
+                                st.session_state.paar_solved_voor = None
+                                if st.session_state.paar_huidig is None:
+                                    st.session_state.paar_klaar = True
+                                st.session_state.paar_feedback = {"type": "success", "msg": "Genoteerd! Dit paar komt straks nog terug."}
+                                trigger_save(); st.rerun()
                             else:
-                                _fout_deze = True; wA['score_fout'] = int(wA.get('score_fout', 0)) + 1
-                        if not solved['B']:
-                            if check_betekenis(_inB or "", wB.get('nederlands', '')):
-                                solved['B'] = True
-                            else:
-                                _fout_deze = True; wB['score_fout'] = int(wB.get('score_fout', 0)) + 1
-                        if _fout_deze:
-                            st.session_state.paar_fout = int(st.session_state.get('paar_fout', 0)) + 1
+                                st.error("Nog niet exact overgetypt — kijk goed naar de betekenissen hierboven.")
+                    else:
+                        def _woord_hint(_w):
+                            _delen = [d for d in [_w.get('lexeem_info', '') or _w.get('grieks_info', ''), _w.get('fonetisch', '')] if d]
+                            _ez = f"{_w.get('anker', '')} {_w.get('beeld', _w.get('associatie', _w.get('opmerking', '')))}".strip()
+                            if _ez: _delen.append(_ez)
+                            return " | ".join(_delen)
 
-                        _lijst = st.session_state.get('paar_lijst', [])
-                        if solved['A'] and solved['B']:
-                            if int(st.session_state.get('paar_fout', 0)) == 0:
-                                for _w in (wA, wB):
-                                    _w['score_goed'] = int(_w.get('score_goed', 0)) + 1
-                                    _w['streak'] = int(_w.get('streak', 0)) + 1
-                                verzwak_verwarring(wA['grieks']); verzwak_verwarring(wB['grieks'])
-                            st.session_state.paar_feedback = {"type": "success", "msg": f"✓ Allebei goed! **{wA['grieks']}** = {wA['nederlands']} · **{wB['grieks']}** = {wB['nederlands']}"}
-                            st.session_state.paar_huidig = _lijst.pop(0) if _lijst else None
-                            st.session_state.paar_fout = 0; st.session_state.paar_solved_voor = None
-                            if st.session_state.paar_huidig is None:
-                                st.session_state.paar_klaar = True
-                            trigger_save(); st.rerun()
-                        elif int(st.session_state.get('paar_fout', 0)) >= 2:
-                            st.session_state.paar_feedback = {"type": "error", "msg": f"Het was: **{wA['grieks']}** = {wA['nederlands']} · **{wB['grieks']}** = {wB['nederlands']}"}
-                            _lijst.append((wA, wB))
-                            st.session_state.paar_huidig = _lijst.pop(0) if _lijst else None
-                            st.session_state.paar_fout = 0; st.session_state.paar_solved_voor = None
-                            if st.session_state.paar_huidig is None:
-                                st.session_state.paar_klaar = True
-                            trigger_save(); st.rerun()
-                        else:
-                            _rest = [w['grieks'] for w, k in [(wA, 'A'), (wB, 'B')] if not solved[k]]
-                            st.session_state.paar_feedback = {"type": "warning", "msg": f"Nog te doen: {', '.join(_rest)} — bekijk de hint."}
-                            st.rerun()
+                        # Zodra je een fout hebt gemaakt op dit paar: hint van de nog-open woorden erbij.
+                        if int(st.session_state.get('paar_fout', 0)) >= 1:
+                            for _w, _k in [(wA, 'A'), (wB, 'B')]:
+                                if not solved[_k]:
+                                    _h = _woord_hint(_w)
+                                    if _h:
+                                        st.info(f"💡 **{_w['grieks']}**: {_h}")
+
+                        with st.form(f"paar_form_{wA['grieks']}_{wB['grieks']}", clear_on_submit=True):
+                            if solved['A']:
+                                st.success(f"✓ {wA['grieks']} = {wA['nederlands']}"); _inA = None
+                            else:
+                                _inA = st.text_input(f"Betekenis van {wA['grieks']}:")
+                            if solved['B']:
+                                st.success(f"✓ {wB['grieks']} = {wB['nederlands']}"); _inB = None
+                            else:
+                                _inB = st.text_input(f"Betekenis van {wB['grieks']}:")
+                            _sub = st.form_submit_button("Controleer", type="primary")
+
+                        if _sub:
+                            registreer_oefening()
+                            _fout_deze = False
+                            if not solved['A']:
+                                if check_betekenis(_inA or "", wA.get('nederlands', '')):
+                                    solved['A'] = True
+                                else:
+                                    _fout_deze = True; wA['score_fout'] = int(wA.get('score_fout', 0)) + 1
+                            if not solved['B']:
+                                if check_betekenis(_inB or "", wB.get('nederlands', '')):
+                                    solved['B'] = True
+                                else:
+                                    _fout_deze = True; wB['score_fout'] = int(wB.get('score_fout', 0)) + 1
+                            if _fout_deze:
+                                st.session_state.paar_fout = int(st.session_state.get('paar_fout', 0)) + 1
+
+                            _lijst = st.session_state.get('paar_lijst', [])
+                            if solved['A'] and solved['B']:
+                                if int(st.session_state.get('paar_fout', 0)) == 0:
+                                    for _w in (wA, wB):
+                                        _w['score_goed'] = int(_w.get('score_goed', 0)) + 1
+                                        _w['streak'] = int(_w.get('streak', 0)) + 1
+                                    verzwak_verwarring(wA['grieks']); verzwak_verwarring(wB['grieks'])
+                                st.session_state.paar_feedback = {"type": "success", "msg": f"✓ Allebei goed! **{wA['grieks']}** = {wA['nederlands']} · **{wB['grieks']}** = {wB['nederlands']}"}
+                                st.session_state.paar_huidig = _lijst.pop(0) if _lijst else None
+                                st.session_state.paar_fout = 0; st.session_state.paar_solved_voor = None
+                                if st.session_state.paar_huidig is None:
+                                    st.session_state.paar_klaar = True
+                                trigger_save(); st.rerun()
+                            elif int(st.session_state.get('paar_fout', 0)) >= 2:
+                                # Na 2 fouten: eerst overtypen (geen streak), dan komt het paar later terug.
+                                st.session_state.paar_feedback = {"type": "error", "msg": f"Het was: **{wA['grieks']}** = {wA['nederlands']} · **{wB['grieks']}** = {wB['nederlands']}. Typ het even over."}
+                                st.session_state.paar_overtik = True
+                                trigger_save(); st.rerun()
+                            else:
+                                _rest = [w['grieks'] for w, k in [(wA, 'A'), (wB, 'B')] if not solved[k]]
+                                st.session_state.paar_feedback = {"type": "warning", "msg": f"Nog te doen: {', '.join(_rest)} — bekijk de hint."}
+                                st.rerun()
 
                     st.write("---")
                     st.caption(f"Nog {len(st.session_state.get('paar_lijst', []))} paar te gaan.")
                     if st.button("⏹️ Stop paar-sessie"):
-                        st.session_state.paar_huidig = None; st.session_state.paar_lijst = []; st.session_state.paar_klaar = False
+                        st.session_state.paar_huidig = None; st.session_state.paar_lijst = []
+                        st.session_state.paar_klaar = False; st.session_state.paar_overtik = False
                         st.rerun()
 
                 elif st.session_state.get('paar_klaar'):
@@ -3881,8 +3905,9 @@ def main():
                                         st.session_state.struct_fouten += 1; huidige_streak = st.session_state.struct_stats[vid]['streak']
                                         if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
                                             st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_struct.add(vid)
-                                            st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik')); st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
-                                            st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{keuze_cat} | {keuze_eig} | {keuze_bet}*. Het was: {fout_msg_volledig}."}; trigger_save(); laad_volgend_struct_woord()
+                                            # In MC blijven: toon het antwoord en doe deze vraag meteen nog een keer als meerkeuze.
+                                            st.session_state.struct_sessie_lijst.insert(0, (huidig, sub_modus))
+                                            st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{keuze_cat} | {keuze_eig} | {keuze_bet}*. Het was: {fout_msg_volledig}. Klik hem nu nog één keer goed aan."}; trigger_save(); laad_volgend_struct_woord()
                                         else: st.session_state.struct_stats[vid]['f'] += 1; st.session_state.struct_feedback = {"type": "warning", "msg": "De correcte delen zijn vastgezet. Probeer de overgebleven velden opnieuw!"}
                                     st.rerun()
 
