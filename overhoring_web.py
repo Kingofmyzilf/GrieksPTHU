@@ -1062,6 +1062,22 @@ NAAMVAL_OPTIES = ["Nom", "Gen", "Dat", "Acc"]
 GESLACHT_OPTIES = ["M", "V", "O"]
 GETAL_OPTIES = ["Ev", "Mv"]
 
+def sorteer_grammaticaal(opties):
+    """Zet grammaticale MC-opties in vaste didactische volgorde: naamval (Nom, Gen, Dat, Acc, Voc),
+    dan getal (Ev, Mv), dan geslacht/persoon (M, V, O, 1e, 2e, 3e). Niet-grammaticale termen komen
+    daarna, alfabetisch. Zo staan de keuzes altijd in dezelfde volgorde i.p.v. gehusseld."""
+    _nv = {"nom": 0, "nominativus": 0, "gen": 1, "genitivus": 1, "dat": 2, "dativus": 2,
+           "acc": 3, "accusativus": 3, "voc": 4, "vocativus": 4}
+    _gt = {"ev": 0, "mv": 1}
+    _gs = {"m": 0, "v": 1, "o": 2, "1e": 3, "2e": 4, "3e": 5}
+    def _sleutel(opt):
+        toks = re.findall(r"[a-zà-ÿ0-9]+", str(opt).lower())
+        r_nv = min([_nv[t] for t in toks if t in _nv], default=9)
+        r_gt = min([_gt[t] for t in toks if t in _gt], default=9)
+        r_gs = min([_gs[t] for t in toks if t in _gs], default=9)
+        return (0 if r_nv < 9 else 1, r_nv, r_gt, r_gs, str(opt).lower())
+    return sorted(opties, key=_sleutel)
+
 def leerpad_kaart_volgorde(sampled):
     """Bouwt de Leerpad-oefenkaarten met oplopende moeilijkheid: nieuwe woorden eerst als flashcard
     (Leer: zie het antwoord, klik 'Volgende' als je klaar bent) + een eerste meerkeuze; woorden in
@@ -3423,8 +3439,18 @@ def main():
                                 sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts)
                                 m_id = "2" if "Mix" in stam_modus else ("3" if "Typen" in stam_modus else "1")
                                 if is_stam_leerpad:
-                                    # Leerpad: oplopend — meerkeuze zolang de streak nog laag is, daarna typen.
-                                    st.session_state.stam_sessie_lijst = [(v, "MC" if int(v.get('streak', 0)) <= 7 else "Typen") for v in sampled]
+                                    # Leerpad: oplopend — nieuwe vorm eerst als flashcard (Leer), dan
+                                    # meerkeuze zolang de streak laag is, en pas daarna typen.
+                                    _stam_kaarten = []
+                                    for v in sampled:
+                                        _s = int(v.get('streak', 0))
+                                        if _s <= 0:
+                                            _stam_kaarten.append((v, "Leer")); _stam_kaarten.append((v, "MC"))
+                                        elif _s <= 7:
+                                            _stam_kaarten.append((v, "MC"))
+                                        else:
+                                            _stam_kaarten.append((v, "Typen"))
+                                    st.session_state.stam_sessie_lijst = _stam_kaarten
                                 elif m_id == "2": st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled[::2]] + [(v, "Typen") for v in sampled[1::2]]
                                 elif m_id == "3": st.session_state.stam_sessie_lijst = [(v, "Typen") for v in sampled]
                                 else: st.session_state.stam_sessie_lijst = [(v, "MC") for v in sampled]
@@ -3470,7 +3496,14 @@ def main():
                                 st.caption("Identificeer deze stamtijd:")
                                 st.markdown(f"<div class='grieks-woord'>{huidig['vraag_vorm']['vorm']}</div>", unsafe_allow_html=True)
 
-                            if sub_modus == 'overtik':
+                            if sub_modus == "Leer":
+                                st.info("🧠 Leer-kaart — bekijk de vorm en het antwoord, en klik op Volgende als je 'm kent.")
+                                st.markdown(f"**Antwoord:** {fout_msg}")
+                                st.markdown(uitleg_regel)
+                                if st.button("Volgende", key="stam_leer_next", type="primary"):
+                                    laad_volgend_stam_woord(); st.rerun()
+
+                            elif sub_modus == 'overtik':
                                 st.warning("⚠️ Overtikken: Je had deze vorm fout. Vul de correcte gegevens exact in.")
                                 st.info(f"Het juiste antwoord is: {fout_msg}"); st.markdown(uitleg_regel)
                                 p_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
@@ -3813,8 +3846,9 @@ def main():
                                     # Pronomina of Voegwoorden pakken de unieke parsing-termen van soortgenoten
                                     poule_e = sorted(list(set([w['eigenschap'] for w in struct_db if is_genoot(w['categorie'], fam) and w['eigenschap'] != correct_eig])))
                                     st.session_state.struct_opties_eig = [correct_eig] + rnd.sample(poule_e, min(3, len(poule_e)))
-                                
-                                rnd.shuffle(st.session_state.struct_opties_eig)
+
+                                # Vaste didactische volgorde i.p.v. shuffle (Nom, Gen, Dat, Acc → ev/mv → M/V/O).
+                                st.session_state.struct_opties_eig = sorteer_grammaticaal(st.session_state.struct_opties_eig)
                                 
                                 # Vraag 3 (Betekenis): STRIKT VERTALINGEN VAN SOORTGENOTEN
                                 poule_b = list(set([w['betekenis'] for w in struct_db if is_genoot(w['categorie'], fam) and w['betekenis'] != correct_bet]))
