@@ -2993,10 +2993,9 @@ def main():
             
             st.write("---")
 
-            # --- JOUW OEFENRITME ---
-            st.subheader("📅 Jouw Oefenritme (Laatste 14 dagen)")
+            # --- JOUW OEFENRITME (kalender-heatmap) ---
+            st.subheader("📅 Jouw oefenritme")
 
-            # Vandaag in één oogopslag (gebruikt bestaande dag_stats + huidige fase-verdeling; geen extra opslag)
             vandaag_str = str(datetime.now().date())
             vandaag_aantal = int(st.session_state.dag_stats.get(vandaag_str, 0)) if st.session_state.dag_stats else 0
             beheerst_nu = stats_vocab['Beheerst'] + stats_vocab['Mastery']
@@ -3008,28 +3007,13 @@ def main():
             if vandaag_aantal == 0:
                 st.caption("Nog niets geoefend vandaag — een korte sessie houdt je streaks vers.")
 
+            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
+                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
             if st.session_state.dag_stats:
-                df_dagen = pd.DataFrame(list(st.session_state.dag_stats.items()), columns=['Datum', 'Aantal'])
-                df_dagen['Datum'] = pd.to_datetime(df_dagen['Datum'])
-                vandaag_dt = datetime.now().date()
-                vandaag_pd = pd.to_datetime(vandaag_dt).normalize()
-                start_datum = vandaag_pd - pd.Timedelta(days=13)
-
-                df_dagen = df_dagen[df_dagen['Datum'] >= start_datum]
-                alle_dagen = pd.date_range(start=start_datum, end=vandaag_pd)
-                df_dagen = df_dagen.set_index('Datum').reindex(alle_dagen, fill_value=0).reset_index()
-                df_dagen.columns = ['Datum', 'Aantal']
-                df_dagen['Dag'] = df_dagen['Datum'].dt.strftime('%d-%m')
-
-                st.bar_chart(
-                    df_dagen.set_index('Dag')['Aantal'],
-                    color='#28a745',
-                    height=260,
-                )
                 st.metric("Totaal geoefend (All-time)", sum(st.session_state.dag_stats.values()))
             else:
-                st.info("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
-            
+                st.caption("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
+
             st.write("---")
 
             # --- HARDNEKKIGE PROBLEEMWOORDEN (LEECHES) ---
