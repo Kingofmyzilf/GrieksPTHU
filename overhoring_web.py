@@ -1456,7 +1456,7 @@ def laad_gebruiker_data(naam):
 def opslaan_naar_cloud():
     if not st.session_state.get('last_user'): return
     try:
-        df = conn.read(ttl=0)
+        df = conn.read(ttl=10)  # korte cache dempt lees-bursts (quota = 60 leesverzoeken/min)
         if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
         if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
         df_andere = df[df['gebruikersnaam'] != st.session_state.last_user]
@@ -1495,7 +1495,15 @@ def opslaan_naar_cloud():
         except Exception:
             pass
     except Exception as e:
-        st.error(f"⚠️ Fout bij cloud-opslag: {e}")
+        # 429/quota: niet dramatisch — je voortgang staat veilig in het geheugen en wordt straks
+        # opnieuw geprobeerd. Toon een rustige melding i.p.v. een grote rode foutbalk.
+        _msg = str(e)
+        if "429" in _msg or "RESOURCE_EXHAUSTED" in _msg or "Quota" in _msg:
+            try: st.toast("⏳ Even te druk met opslaan — je voortgang wordt zo automatisch opgeslagen.", icon="⏳")
+            except Exception: pass
+        else:
+            try: st.toast(f"⚠️ Opslaan lukte niet: {_msg[:80]}", icon="⚠️")
+            except Exception: pass
 
 def trigger_save(forceer=False):
     if not st.session_state.get('last_user') or not st.session_state.get('data'): return
@@ -1837,6 +1845,7 @@ def main():
                     'optie_kleur_nv_vocab': optie_kleur_nv, 'optie_nieuw_mee_vocab': optie_nieuw_mee,
                     'optie_verwarparen': optie_verwar, 'optie_mastery_context': optie_mastery_context,
                     'optie_audio': optie_audio,
+                    'geavanceerd': _geav,  # niet overschrijven: de eenvoud/geavanceerd-keuze behouden
                 }
 
                 custom_counts = None
@@ -2951,7 +2960,8 @@ def main():
             # --- COMPETITIE DASHBOARD ---
             st.subheader("🏆 Competitie Dashboard (Laatste 14 dagen)")
             try:
-                df_global = conn.read(ttl=0)
+                # 5 min cachen: dit tabblad rendert bij ELKE rerun, dus ttl=0 vrat het lees-quotum op.
+                df_global = conn.read(ttl=300)
                 if 'gebruikersnaam' in df_global.columns and 'dag_stats' in df_global.columns:
                     comp_data = []
                     start_compare = datetime.now().date() - pd.Timedelta(days=13)
@@ -3728,6 +3738,7 @@ def main():
                                     registreer_oefening()
                                     if (t_gram == correct_gram) and (normaliseer_accent(naar_grieks_transliteratie(t_prae)) == normaliseer_accent(correct_praesens)) and check_betekenis(t_bete, correct_betekenis):
                                         if st.session_state.stam_fouten == 0 and vid not in st.session_state.gestrafte_woorden_stam: st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
+                                        dagdoel_plus('stam')
                                         s_msg = f"✓ Goed! {fout_msg}\n\n{uitleg_regel}"
                                         if vid in st.session_state.gestrafte_woorden_stam: s_msg += "\n\n*(Geen streak-punten wegens eerdere fout)*"
                                         st.session_state.stam_feedback = {"type": "success", "msg": s_msg}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
@@ -3769,6 +3780,7 @@ def main():
                                         
                                         if st.session_state.stam_mc_solved["gram"] and st.session_state.stam_mc_solved["praesens"]:
                                             if st.session_state.stam_fouten == 0 and vid not in st.session_state.gestrafte_woorden_stam: st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
+                                            dagdoel_plus('stam')
                                             s_msg = f"✓ Goed! {fout_msg}\n\n{uitleg_regel}"
                                             if vid in st.session_state.gestrafte_woorden_stam: s_msg += "\n\n*(Geen streak-punten wegens eerdere fout)*"
                                             st.session_state.stam_feedback = {"type": "success", "msg": s_msg}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
@@ -4006,8 +4018,9 @@ def main():
                                 if st.form_submit_button("Check Antwoord"):
                                     registreer_oefening()
                                     if (gekozen_cat == correct_cat) and (p_eig == correct_eig) and check_betekenis(p_bet, correct_bet):
-                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct: 
+                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct:
                                             st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
+                                        dagdoel_plus('struct')
                                         success_msg = f"✓ Goed! {fout_msg_volledig}"
                                         if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
                                         st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
@@ -4080,8 +4093,9 @@ def main():
                                     if (keuze_bet == correct_bet): st.session_state.struct_mc_solved["bet"] = True
                                     
                                     if st.session_state.struct_mc_solved["cat"] and st.session_state.struct_mc_solved["eig"] and st.session_state.struct_mc_solved["bet"]:
-                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct: 
+                                        if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct:
                                             st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
+                                        dagdoel_plus('struct')
                                         success_msg = f"✓ Goed! {fout_msg_volledig}"
                                         if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
                                         st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord()
@@ -4356,7 +4370,7 @@ def main():
                                         if st.button("Controleer Analyse", key=f"chk_{idx}"):
                                             registreer_oefening(basis)
                                             if check_betekenis(t_inp, basis['nederlands']) and check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info']):
-                                                basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save(); st.success(f"✓ Volledig correct! ({w['parsing_info']})")
+                                                basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; dagdoel_plus('verzen'); trigger_save(); st.success(f"✓ Volledig correct! ({w['parsing_info']})")
                                             else:
                                                 basis['streak'] = max(0, int(basis.get('streak', 0)) - 2); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Onjuist. Officiële data: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
                                                 
@@ -4766,8 +4780,9 @@ def main():
                 help="Uit = eenvoudige modus: per onderdeel alleen het Leerpad en de kern. Aan = alle oefenvormen, filters en instellingen. Je keuze wordt onthouden."
             )
             if bool(_prefs_ui.get('geavanceerd', False)) != _geav_nu:
+                # Alleen in-memory bijwerken (geen directe cloud-write → spaart lees-quotum);
+                # wordt meegeschreven bij de eerstvolgende gewone opslag of bij uitloggen.
                 _prefs_ui['geavanceerd'] = _geav_nu
-                trigger_save(forceer=True)
                 st.rerun()
             st.caption("Eenvoudig = rustige start (Leerpad + kern). Geavanceerd = alles: knelpunten, mastery, bijbelcontext, zelf samenstellen, koude herkenning, enz.")
             st.write("---")
