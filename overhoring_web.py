@@ -4550,37 +4550,37 @@ def main():
             st.write("---")
             st.markdown("""
             ## 🏛️ De Didactische Architectuur
-            Deze applicatie is ontworpen om de grens over te steken van *domweg rijtjes stampen* naar **morfologisch inzicht**. Hieronder lees je hoe de AI-motor onder de motorkap functioneert[cite: 5].
+            Deze applicatie is ontworpen om de grens over te steken van *domweg rijtjes stampen* naar **morfologisch inzicht**. Hieronder lees je hoe de AI-motor onder de motorkap functioneert.
 
             ### 1. De Leermotor: Spaced Repetition
-            Elk item in de app heeft een 'Universele Streak'. Hoe vaker je iets achter elkaar goed beantwoordt, hoe hoger de streak en hoe groter de tijdsinterval tot de volgende overhoring[cite: 5].
-            * **Streak 0 (Nieuw):** Woorden die je nog moet funderen[cite: 5].
-            * **Streak 1–15 (In Training):** De intensieve inslijp-fase[cite: 5].
-            * **Streak 16–29 (Beheerst):** Kennis is geland; de app test je nu nog maar sporadisch om wegglijden te voorkomen[cite: 5].
-            * **Streak 30+ (Mastery):** Het ultieme doel[cite: 5]. Het losse woord verdwijnt[cite: 5]. De app zoekt via het Strong-nummer een **authentieke Bijbelzin uit het Nieuwe Testament** en vraagt je het woord live in zijn theologische context te vertalen[cite: 5]!
+            Elk item in de app heeft een 'Universele Streak'. Hoe vaker je iets achter elkaar goed beantwoordt, hoe hoger de streak en hoe groter de tijdsinterval tot de volgende overhoring.
+            * **Streak 0 (Nieuw):** Woorden die je nog moet funderen.
+            * **Streak 1–15 (In Training):** De intensieve inslijp-fase.
+            * **Streak 16–29 (Beheerst):** Kennis is geland; de app test je nu nog maar sporadisch om wegglijden te voorkomen.
+            * **Streak 30+ (Mastery):** Het ultieme doel. Het losse woord verdwijnt. De app zoekt via het Strong-nummer een **authentieke Bijbelzin uit het Nieuwe Testament** en vraagt je het woord live in zijn theologische context te vertalen!
 
             ### 2. Nakijken: Slagvrij & Synoniem-tolerant
-            * **Levenshtein-afstand:** Typ je per ongeluk `weliswar` i.p.v. `weliswaar`? De wiskundige motor telt het aantal 'foute bewerkingen' en keurt kleine typefouten bij langere woorden gewoon goed[cite: 5].
-            * **Slashes en Komma's:** Antwoorden in de database zoals `zien / kijken` worden door de app op de achtergrond opgesplitst als twee losse, 100% geldige antwoorden[cite: 5].
-            * **Haakjes:** Alles wat in de database tussen `()`, `[]` of `{}` staat (bijv. context-uitleg) filtert de nakijk-engine netjes weg[cite: 5].
+            * **Levenshtein-afstand:** Typ je per ongeluk `weliswar` i.p.v. `weliswaar`? De wiskundige motor telt het aantal 'foute bewerkingen' en keurt kleine typefouten bij langere woorden gewoon goed.
+            * **Slashes en Komma's:** Antwoorden in de database zoals `zien / kijken` worden door de app op de achtergrond opgesplitst als twee losse, 100% geldige antwoorden.
+            * **Haakjes:** Alles wat in de database tussen `()`, `[]` of `{}` staat (bijv. context-uitleg) filtert de nakijk-engine netjes weg.
 
             ### 3. De Harde Hand: Het Strafbankje
-            Leren vanuit je *kortetermijngeheugen* levert schijn-kennis op[cite: 5]. Daarom hanteert de app twee ijzeren regels[cite: 5]:
-            1. **Strafwerk:** Maak je bij een woord 2x een fout (of 1x een fout terwijl het woord al op 'Beheerst' stond)? Dan incasseer je **-2 streak-punten** én dwingt de app je het antwoord direct foutloos over te tikken[cite: 5].
-            2. **Het Strafbankje:** Het foute woord wordt op de achtergrond op een virtueel strafbankje gezet[cite: 5]. Wanneer het woord aan het eind van je sessie ter herhaling langskomt en je doet het dán goed, krijg je je welverdiende vinkje, maar **0 streak-punten**[cite: 5]. De app weigert je langetermijn-score te verhogen voor een antwoord dat je 3 minuten geleden hebt overgetypt[cite: 5].
+            Leren vanuit je *kortetermijngeheugen* levert schijn-kennis op. Daarom hanteert de app twee ijzeren regels:
+            1. **Strafwerk:** Maak je bij een woord 2x een fout (of 1x een fout terwijl het woord al op 'Beheerst' stond)? Dan incasseer je **-2 streak-punten** én dwingt de app je het antwoord direct foutloos over te tikken.
+            2. **Het Strafbankje:** Het foute woord wordt op de achtergrond op een virtueel strafbankje gezet. Wanneer het woord aan het eind van je sessie ter herhaling langskomt en je doet het dán goed, krijg je je welverdiende vinkje, maar **0 streak-punten**. De app weigert je langetermijn-score te verhogen voor een antwoord dat je 3 minuten geleden hebt overgetypt.
 
             ### 4. Tabblad 5 (Stamtijden): Scaffolding & Klankwetten
-            * **Vrij Studeren (Paspoort):** Via Modus 0 kun je de 'Mental Map' van een werkwoord opvragen[cite: 5]. Je ziet de 6 stamtijden in hun vaste Griekse raamwerk, de taalkundige stamwortel en de fonetische formule[cite: 5].
-            * **De Steigers (Scaffolding):** De trainingsmodus overhoort je autonoom[cite: 5]. Je start op 0[cite: 5]. Pas als het *Praesens* in je algemene woordenschat-lijst op streak 5 staat, opent de sluis naar dit tabblad en mag je het *Futurum* oefenen[cite: 5].
-            * **De 5 Klankklassen:** Het Grieks is wiskunde[cite: 5]. De app traint je op de 5 grote stam-botsingen met de Sigma (σ)[cite: 5]:
-              1. *Labialen (π, β, φ):* versmelten met σ tot een **ψ** (*βλέπω → βλέψω*)[cite: 5].
-              2. *Gutturalen (κ, γ, χ):* versmelten met σ tot een **ξ** (*ἄγω → ἄξω*)[cite: 5].
-              3. *Dentalen (τ, δ, θ, ζ):* vallen simpelweg weg voor de σ (*πείθω → πείσω*)[cite: 5].
-              4. *Contracta (α, ε, ο):* de stamklinker ondergaat compensatorische rekking (*ποιέω → ποιήσω*)[cite: 5].
-              5. *Liquidae (λ, μ, ν, ρ):* haten de sigma en trekken samen tot een circumflexus (*μένω → μενῶ*)[cite: 5].
+            * **Vrij Studeren (Paspoort):** Via Modus 0 kun je de 'Mental Map' van een werkwoord opvragen. Je ziet de 6 stamtijden in hun vaste Griekse raamwerk, de taalkundige stamwortel en de fonetische formule.
+            * **De Steigers (Scaffolding):** De trainingsmodus overhoort je autonoom. Je start op 0. Pas als het *Praesens* in je algemene woordenschat-lijst op streak 5 staat, opent de sluis naar dit tabblad en mag je het *Futurum* oefenen.
+            * **De 5 Klankklassen:** Het Grieks is wiskunde. De app traint je op de 5 grote stam-botsingen met de Sigma (σ):
+              1. *Labialen (π, β, φ):* versmelten met σ tot een **ψ** (*βλέπω → βλέψω*).
+              2. *Gutturalen (κ, γ, χ):* versmelten met σ tot een **ξ** (*ἄγω → ἄξω*).
+              3. *Dentalen (τ, δ, θ, ζ):* vallen simpelweg weg voor de σ (*πείθω → πείσω*).
+              4. *Contracta (α, ε, ο):* de stamklinker ondergaat compensatorische rekking (*ποιέω → ποιήσω*).
+              5. *Liquidae (λ, μ, ν, ρ):* haten de sigma en trekken samen tot een circumflexus (*μένω → μενῶ*).
 
             ---
-            *Ontwikkeld voor theologische exegese aan de PThU. Vragen of suggesties? Mail naar:* **jtimmer@students.pthu.nl**[cite: 5]
+            *Ontwikkeld voor Grieks Premaster PTHU. Vragen of suggesties? Mail naar:* **jtimmer@students.pthu.nl**
             """)
 
         # ==========================================
