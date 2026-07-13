@@ -1167,6 +1167,49 @@ def bouw_dagblok(alle_data, verwar_stats, cfg):
     paren = bouw_verwar_paren(alle_data, verwar_stats)[:max(0, cfg.get('verwar', 0))]
     return kaarten, paren
 
+def dagkalender_html(dag_stats, log):
+    """5-weekse heatmap-kalender: kleurintensiteit = hoeveel je die dag oefende, plus gekleurde
+    stipjes voor de onderdelen die je die dag deed (woorden/stamtijden/structuur/verzen)."""
+    try:
+        v = pd.Timestamp(datetime.now().date())
+    except Exception:
+        return ""
+    start = v - pd.Timedelta(days=int(v.weekday()) + 28)  # maandag, 4 weken terug
+    onderdelen = [("woordblok", "#33ccff", "woorden"), ("stam", "#b07be0", "stamtijden"),
+                  ("struct", "#f6923c", "structuur"), ("verzen", "#3fb27f", "verzen")]
+    dag_stats = dag_stats or {}
+    log = log if isinstance(log, dict) else {}
+    def _bg(n):
+        if n <= 0: return "#2a2f36"
+        if n < 5: return "#16432c"
+        if n < 15: return "#1f7a4d"
+        if n < 30: return "#2aa866"
+        return "#39d17f"
+    kop = "".join(f"<div style='text-align:center;font-size:11px;color:#8a93a0'>{d}</div>"
+                  for d in ["ma", "di", "wo", "do", "vr", "za", "zo"])
+    cellen = ""
+    for i in range(35):
+        ts = start + pd.Timedelta(days=i)
+        key = str(ts.date())
+        n = int(dag_stats.get(key, 0))
+        lg = log.get(key, {}) if isinstance(log.get(key, {}), dict) else {}
+        toekomst = ts.date() > v.date()
+        rand = "2px solid #f6c23e" if key == str(v.date()) else "1px solid rgba(255,255,255,.06)"
+        stip = ""
+        for sl, kl, _naam in onderdelen:
+            _val = lg.get(sl)
+            if _val is True or (isinstance(_val, (int, float)) and _val > 0):
+                stip += f"<span style='display:inline-block;width:6px;height:6px;border-radius:50%;background:{kl};margin:0 1px'></span>"
+        bg = "#1a1d22" if toekomst else _bg(n)
+        cellen += (f"<div style='background:{bg};border:{rand};border-radius:6px;height:46px;padding:3px;"
+                   f"display:flex;flex-direction:column;justify-content:space-between;opacity:{'0.35' if toekomst else '1'}'>"
+                   f"<div style='font-size:10px;color:#cbd3dd;text-align:right'>{ts.day}</div>"
+                   f"<div style='text-align:center;min-height:8px'>{stip}</div></div>")
+    legenda = " &nbsp; ".join(f"<span style='color:{kl}'>●</span> {naam}" for _sl, kl, naam in onderdelen)
+    return (f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px'>{kop}</div>"
+            f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px'>{cellen}</div>"
+            f"<div style='font-size:11px;color:#9aa3af;margin-top:8px'>{legenda} &nbsp;·&nbsp; fellere groen = meer geoefend</div>")
+
 # --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
 _STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
 
@@ -1622,9 +1665,11 @@ def main():
                         except Exception as e: st.error(f"Fout: {e}")
 
     if st.session_state.data:
-        _alle_tabs = st.tabs(["🎯 Dagelijks doel", "🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
-        menu_dagdoel = _alle_tabs[0]        # Dagelijks doel staat vooraan → hier begin je bij het inloggen
-        menu = _alle_tabs[1:]              # menu[0..9] blijven exact als voorheen (Woordenschat … productie)
+        # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
+        _tabs = st.tabs(["🎯 Dagelijks doel", "🚀 Woordenschat", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📊 Voortgang", "📖 Lijst", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
+        menu_dagdoel = _tabs[0]
+        # Interne indices (menu[0..9]) blijven exact hetzelfde; alleen de weergavevolgorde verandert.
+        menu = [_tabs[1], _tabs[7], _tabs[6], _tabs[2], _tabs[3], _tabs[4], _tabs[5], _tabs[8], _tabs[9], _tabs[10]]
 
         # Dagblok: automatisch naar het juiste tabblad springen (Streamlit heeft geen eigen tab-switch).
         if st.session_state.get('dagblok_bezig'):
@@ -4914,7 +4959,7 @@ def main():
         # ==========================================
         with menu_dagdoel:
             st.subheader("🎯 Dagelijks doel")
-            st.caption("Stel je dagelijkse portie in. Het woord-dagblok (woorden → moeilijke woorden → verwarparen) speel je in één keer achter elkaar; de rest doe je in het eigen tabblad en vink je hier af.")
+            st.caption("Je vaste dagelijkse ronde. Zet je dagblok klaar en loop de tabbladen van links naar rechts af — je kalender kleurt vol naarmate je meer doet.")
             _cfg = dagdoel_config()
             _lg = dagdoel_log_vandaag()
 
@@ -4923,10 +4968,14 @@ def main():
             c_top2.metric("Woord-dagblok vandaag", "✅ klaar" if _lg.get('woordblok') else "nog niet")
             c_top3.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
 
+            st.markdown("#### 📅 Jouw oefenkalender")
+            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
+                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
+
             st.write("---")
-            st.markdown("### ▶️ Woord-dagblok (achter elkaar)")
-            st.caption(f"Oefent achter elkaar: **{_cfg['woorden']} woorden** · **{_cfg['knelpunt']} moeilijke woorden** · **{_cfg['verwar']} verwarparen**. Het blok opent in het 🚀 Woordenschat-tabblad.")
-            if st.button("▶️ Start woord-dagblok", type="primary", key="dagblok_start"):
+            st.markdown("### ▶️ Zet je dagblok klaar")
+            st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['knelpunt']} moeilijke · {_cfg['verwar']} verwarparen · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['verzen']} verzen**.")
+            if st.button("▶️ Zet woord-dagblok klaar", type="primary", key="dagblok_start"):
                 _kaarten, _paren = bouw_dagblok(st.session_state.data, st.session_state.get('verwar_stats', {}), _cfg)
                 if not _kaarten and not _paren:
                     st.warning("Geen woorden/paren beschikbaar voor het dagblok. Stel je doelen hoger in of oefen eerst wat woorden.")
@@ -4943,22 +4992,28 @@ def main():
                     st.session_state.dagblok_paar_wacht = _paren
                     st.session_state.sessie_lijst = _kaarten
                     laad_volgend_woord()
-                    st.session_state.dagblok_spring = "Woordenschat"  # spring automatisch naar de oefening
+                    st.session_state.dagblok_spring = "Woordenschat"
+                    st.success("✅ Je woord-dagblok staat klaar in het 🚀 Woordenschat-tabblad. Klik daar bovenaan op om te beginnen.")
                     st.rerun()
 
+            st.info("👉 **Loop de tabbladen van links naar rechts af:**\n\n"
+                    "1. 🚀 **Woordenschat** — je woord-dagblok staat meteen klaar (woorden → moeilijke → verwarparen).\n"
+                    "2. 🎓 **Actief Beheersen** — oefen een rijtje.\n"
+                    "3. ⏳ **Stamtijden** — klik op **Start** (het Leerpad staat al klaar).\n"
+                    "4. 🧱 **Structuurwoorden** — klik op **Start** (het Leerpad staat al klaar).\n"
+                    "5. 📝 **Leesteksten** — kies een tekst en ontleed een paar verzen.\n\n"
+                    "Kom daarna hier terug en vink je onderdelen af — dan kleurt je kalender vol. 🎨")
+
             st.write("---")
-            st.markdown("### 📋 Overige onderdelen")
-            st.caption("Ga met één klik naar het onderdeel; als je klaar bent kom je hier terug en vink je af.")
-            for _soort, _emoji, _label, _tab in [('struct', '🧱', 'Structuurwoorden', 'Structuurwoorden'),
-                                                 ('stam', '⏳', 'Stamtijden', 'Stamtijden'),
-                                                 ('verzen', '📝', 'Verzen ontleden', 'Leesteksten')]:
+            st.markdown("### ✅ Afvinken wat je vandaag deed")
+            for _soort, _emoji, _label in [('struct', '🧱', 'Structuurwoorden'),
+                                           ('stam', '⏳', 'Stamtijden'),
+                                           ('verzen', '📝', 'Verzen ontleden')]:
                 _gedaan = int(_lg.get(_soort, 0)); _doel = int(_cfg[_soort])
-                cc1, cc2, cc3 = st.columns([3, 1, 1])
+                cc1, cc2 = st.columns([4, 1])
                 with cc1:
                     st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
-                if cc2.button("Ga →", key=f"dagdoel_ga_{_soort}"):
-                    st.session_state.dagblok_spring = _tab; st.rerun()
-                if cc3.button("✓ +1", key=f"dagdoel_plus_{_soort}"):
+                if cc2.button("✓ +1", key=f"dagdoel_plus_{_soort}"):
                     dagdoel_plus(_soort); trigger_save(forceer=True); st.rerun()
 
             with st.expander("⚙️ Mijn dagelijkse doelen instellen"):
