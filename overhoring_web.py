@@ -3244,61 +3244,123 @@ def main():
                                 st.error(f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*")
 
                 elif "Leerpad" in actief_modus:
-                    # === LEERPAD: paradigma's als levels, rustig opbouwend (bekijken → reproduceren) ===
+                    # === LEERPAD: elke cel individueel leren (flashcard → meerkeuze → typen), en pas
+                    # het HELE rijtje ('grote cel') zodra alle cellen streak 20+ hebben. ===
                     _af_levels = actief_level_status(bouw_actief_levels(actief_db), st.session_state.actief_stats)
                     _af_niv = niveau_van_xp(bereken_xp_actief(st.session_state.actief_stats))
                     _af_vol = sum(1 for l in _af_levels if l['voltooid'])
                     st.markdown(f"#### 🎮 Niveau {_af_niv['niveau']} · {_af_niv['titel']} — {_af_niv['xp_totaal']} XP")
                     st.progress(_af_niv['xp_in_niveau'] / max(1, _af_niv['xp_voor_volgend']))
                     _af_aanbev = next((l for l in _af_levels if l['ontgrendeld'] and not l['voltooid']), None)
-                    _tip = f" · aanbevolen: **{_af_aanbev['titel']}**" if _af_aanbev else ""
-                    st.caption(f"🏁 {_af_vol}/{len(_af_levels)} paradigma's beheerst{_tip}. Kies hierboven een paradigma en werk het af.")
+                    st.caption(f"🏁 {_af_vol}/{len(_af_levels)} paradigma's beheerst" + (f" · aanbevolen: **{_af_aanbev['titel']}**" if _af_aanbev else "") + ". Kies hierboven een paradigma.")
 
-                    _ids_h = [c.get('id') for c in huidig_paradigma if c.get('id')]
-                    _klaar_h = sum(1 for i in _ids_h if int((st.session_state.actief_stats.get(i) or {}).get('streak', 0)) >= 16)
-                    st.markdown(f"### {gekozen_sub}  ({_klaar_h}/{len(_ids_h)} cellen beheerst)")
+                    cells = [c for c in huidig_paradigma if c.get('id')]
+                    def _cstreak(_c): return int((st.session_state.actief_stats.get(_c['id']) or {}).get('streak', 0))
+                    _klaar20 = sum(1 for c in cells if _cstreak(c) >= 20)
+                    st.markdown(f"### {gekozen_sub}  ({_klaar20}/{len(cells)} cellen op streak 20+)")
 
-                    with st.expander("📖 Stap 1 — bekijk het rijtje", expanded=(_klaar_h < len(_ids_h))):
-                        for item in huidig_paradigma:
-                            st.markdown(f"- **{item['label']}** — {item.get('stam','')}:blue[{item.get('uitgang','')}]"
-                                        + (f"  \n  <span style='color:#888;font-size:12px'>{item.get('toelichting','')}</span>" if item.get('toelichting') else ""),
-                                        unsafe_allow_html=True)
+                    with st.expander("📖 Bekijk het rijtje", expanded=(_klaar20 == 0)):
+                        for c in cells:
+                            st.markdown(f"- **{c['label']}** — {c.get('stam','')}:blue[{c.get('uitgang','')}]")
 
-                    st.markdown("**Stap 2 — reproduceer het volledige rijtje (typen):**")
-                    _lp_key = f"{gekozen_niv}|{gekozen_cat}|{gekozen_sub}"
-                    if st.session_state.get('actief_lp_key') != _lp_key:
-                        st.session_state.actief_lp_state = {item['id']: {"correct": False, "value": ""} for item in huidig_paradigma}
-                        st.session_state.actief_lp_key = _lp_key
-                    _lpcols = st.columns(2); _lpinp = {}
-                    for _i, item in enumerate(huidig_paradigma):
-                        with _lpcols[_i % 2]:
-                            _s = st.session_state.actief_lp_state.get(item['id'], {"correct": False, "value": ""})
-                            if _s["correct"]:
-                                st.success(f"**{item['label']}:** {item['vorm']}")
-                            else:
-                                _lpinp[item['id']] = st.text_input(f"**{item['label']}**", value=_s["value"], key=f"lp_{item['id']}")
-                    if not all(s["correct"] for s in st.session_state.actief_lp_state.values()):
-                        if st.button("Nakijken", type="primary", key="lp_nakijk"):
-                            for item in huidig_paradigma:
-                                iid = item['id']
-                                if not st.session_state.actief_lp_state[iid]["correct"]:
-                                    _ok = normaliseer_accent(naar_grieks_transliteratie(_lpinp.get(iid, ""))) == normaliseer_accent(item['vorm'])
-                                    if _ok:
-                                        st.session_state.actief_lp_state[iid] = {"correct": True, "value": item['vorm']}
-                                    else:
-                                        st.session_state.actief_lp_state[iid]["value"] = ""
-                            st.rerun()
-                    else:
-                        if st.session_state.get('actief_lp_gemarkeerd') != _lp_key:
-                            markeer_actief_paradigma(huidig_paradigma)
-                            registreer_oefening(); trigger_save(forceer=True)
-                            st.session_state.actief_lp_gemarkeerd = _lp_key
+                    if st.session_state.get('af_feedback'):
+                        _fb = st.session_state.af_feedback
+                        {"success": st.success, "warning": st.warning}.get(_fb["type"], st.error)(_fb["msg"])
+                        st.session_state.af_feedback = None
+
+                    def _af_score(_cid, _delta, _goed):
+                        _rec = st.session_state.actief_stats.setdefault(_cid, {'g': 0, 'f': 0, 'streak': 0})
+                        if _goed: _rec['g'] = int(_rec.get('g', 0)) + 1
+                        else: _rec['f'] = int(_rec.get('f', 0)) + 1
+                        _rec['streak'] = max(0, int(_rec.get('streak', 0)) + _delta)
+
+                    _pkey = f"{gekozen_niv}|{gekozen_cat}|{gekozen_sub}"
+
+                    if cells and all(_cstreak(c) >= 20 for c in cells):
+                        # MEESTERPROEF: het hele rijtje in één keer reproduceren.
+                        st.success("💪 Alle cellen op streak 20+ — meesterproef: reproduceer het hele rijtje.")
+                        if st.session_state.get('actief_lp_key') != _pkey:
+                            st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}
+                            st.session_state.actief_lp_key = _pkey
+                        _cols = st.columns(2); _inp = {}
+                        for _i, c in enumerate(cells):
+                            with _cols[_i % 2]:
+                                _s = st.session_state.actief_lp_state.get(c['id'], {"correct": False, "value": ""})
+                                if _s["correct"]: st.success(f"**{c['label']}:** {c['vorm']}")
+                                else: _inp[c['id']] = st.text_input(f"**{c['label']}**", value=_s["value"], key=f"lpm_{c['id']}")
+                        if not all(s["correct"] for s in st.session_state.actief_lp_state.values()):
+                            if st.button("Nakijken", type="primary", key="lpm_nakijk"):
+                                for c in cells:
+                                    if not st.session_state.actief_lp_state[c['id']]["correct"]:
+                                        if normaliseer_accent(naar_grieks_transliteratie(_inp.get(c['id'], ""))) == normaliseer_accent(c['vorm']):
+                                            st.session_state.actief_lp_state[c['id']] = {"correct": True, "value": c['vorm']}
+                                        else: st.session_state.actief_lp_state[c['id']]["value"] = ""
+                                st.rerun()
+                        else:
+                            st.success("🏆 Volledig foutloos — dit paradigma zit écht vast!")
                             st.balloons()
-                        st.success("🏆 Paradigma beheerst! Het telt nu mee in je voortgang; het volgende paradigma is vrij.")
-                        if st.button("🔄 Reset dit rijtje", key="lp_reset"):
-                            st.session_state.actief_lp_state = {item['id']: {"correct": False, "value": ""} for item in huidig_paradigma}
-                            st.session_state.actief_lp_gemarkeerd = None
-                            st.rerun()
+                            if st.button("🔄 Opnieuw", key="lpm_reset"):
+                                st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}; st.rerun()
+                    else:
+                        # PER-CEL SCAFFOLD: bouw een rij kaarten op basis van de streak per cel.
+                        def _bouw_q():
+                            _q = []
+                            for c in cells:
+                                s = _cstreak(c)
+                                if s >= 20: continue
+                                if s <= 0: _q.append((c['id'], 'Leer')); _q.append((c['id'], 'MC'))
+                                elif s <= 9: _q.append((c['id'], 'MC'))
+                                else: _q.append((c['id'], 'Typen'))
+                            return _q
+                        if st.session_state.get('af_qkey') != _pkey or not st.session_state.get('af_q'):
+                            st.session_state.af_q = _bouw_q()
+                            st.session_state.af_qkey = _pkey
+                            st.session_state.af_opties = None
+                        _q = st.session_state.af_q
+                        if not _q:
+                            st.info("Geen cellen te oefenen in dit paradigma.")
+                        else:
+                            cid, sub = _q[0]
+                            cell = next((c for c in cells if c['id'] == cid), cells[0])
+                            _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen'}.get(sub, sub)
+                            st.caption(f"{_slabel} · streak {_cstreak(cell)} · nog {len(_q)} kaart(en) in de rij")
+                            st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']}</div>", unsafe_allow_html=True)
+
+                            def _volgende(requeue=False):
+                                if requeue and _q: _q.append(_q[0])
+                                if _q: _q.pop(0)
+                                st.session_state.af_opties = None
+
+                            if sub == 'Leer':
+                                st.info(f"**Antwoord:** {cell.get('stam','')}**{cell.get('uitgang','')}** = **{cell['vorm']}**"
+                                        + (f"  \n_{cell.get('toelichting','')}_" if cell.get('toelichting') else ""))
+                                if st.button("Volgende", type="primary", key=f"afl_{cid}"):
+                                    _volgende(); st.rerun()
+                            elif sub == 'MC':
+                                if not st.session_state.get('af_opties'):
+                                    _pool = list({c['vorm'] for c in cells if c['vorm'] != cell['vorm']})
+                                    r_engine.shuffle(_pool)
+                                    _opts = [cell['vorm']] + _pool[:3]
+                                    r_engine.shuffle(_opts)
+                                    st.session_state.af_opties = _opts
+                                _mcols = st.columns(2)
+                                for _oi, _opt in enumerate(st.session_state.af_opties):
+                                    if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}"):
+                                        if _opt == cell['vorm']:
+                                            _af_score(cid, 2, True); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
+                                        else:
+                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ Het was: **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
+                                        trigger_save(); st.rerun()
+                            else:  # Typen
+                                forceer_focus()
+                                with st.form(f"aft_{cid}", clear_on_submit=True):
+                                    _in = st.text_input("Typ de vorm (Latijnse toetsen mag):")
+                                    if st.form_submit_button("Controleer", type="primary"):
+                                        if normaliseer_accent(naar_grieks_transliteratie(_in)) == normaliseer_accent(cell['vorm']):
+                                            _af_score(cid, 4, True); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
+                                        else:
+                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ Het was: **{cell['vorm']}**"}; _volgende(requeue=True)
+                                        trigger_save(); st.rerun()
 
                     with st.expander("🗺️ Alle paradigma-levels"):
                         for l in _af_levels:
@@ -5114,10 +5176,6 @@ def main():
             c_top2.metric("Woord-dagblok vandaag", "✅ klaar" if _lg.get('woordblok') else "nog niet")
             c_top3.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
 
-            st.markdown("#### 📅 Jouw oefenkalender")
-            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
-                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
-
             st.write("---")
             st.markdown("### ▶️ Zet je dagblok klaar")
             st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['knelpunt']} moeilijke · {_cfg['verwar']} verwarparen · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['verzen']} verzen**.")
@@ -5177,6 +5235,11 @@ def main():
                         _d = {}; st.session_state.dagdoel = _d
                     _d['config'] = _nw
                     trigger_save(forceer=True); st.success("Doelen opgeslagen!"); st.rerun()
+
+            st.write("---")
+            st.markdown("#### 📅 Jouw oefenkalender")
+            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
+                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
