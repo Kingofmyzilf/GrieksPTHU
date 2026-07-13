@@ -1308,6 +1308,54 @@ def struct_level_status(levels, struct_stats, drempel=5):
         vorige = voltooid
     return status
 
+# --- LEERPAD voor ACTIEF BEHEERSEN (elk paradigma/rijtje = één level) ---
+def bouw_actief_levels(actief_db):
+    """Elk paradigma (rijtje) = één level, in vaste volgorde over niveaus → categorieën → rijtjes."""
+    levels = []
+    idx = 0
+    for niv in actief_db.keys():
+        for cat in actief_db[niv].keys():
+            for sub in actief_db[niv][cat].keys():
+                cellen = actief_db[niv][cat][sub]
+                ids = [c.get('id') for c in cellen if isinstance(c, dict) and c.get('id')]
+                idx += 1
+                levels.append({"index": idx, "niveau": niv, "categorie": cat, "sub": sub,
+                               "titel": f"{niv} · {sub}", "ids": ids})
+    return levels
+
+def actief_level_status(levels, actief_stats, drempel=16):
+    status = []
+    vorige = True
+    for lv in levels:
+        totaal = len(lv["ids"])
+        klaar = sum(1 for i in lv["ids"] if int((actief_stats.get(i) or {}).get('streak', 0)) >= drempel)
+        voltooid = totaal > 0 and klaar == totaal
+        status.append({**lv, "klaar": klaar, "totaal": totaal, "voltooid": voltooid, "ontgrendeld": vorige})
+        vorige = voltooid
+    return status
+
+def bereken_xp_actief(actief_stats):
+    xp = 0
+    for _i, s in (actief_stats or {}).items():
+        if isinstance(s, dict):
+            xp += int(s.get('g', 0)) * 5
+            if int(s.get('streak', 0)) >= 16:
+                xp += 15
+    return xp
+
+def markeer_actief_paradigma(cellen):
+    """Zet de cellen van een paradigma op 'beheerst' (streak 16) na een foutloos rooster + telt g op."""
+    ast = st.session_state.get('actief_stats')
+    if not isinstance(ast, dict):
+        ast = {}; st.session_state.actief_stats = ast
+    for c in cellen:
+        cid = c.get('id')
+        if not cid:
+            continue
+        rec = ast.setdefault(cid, {'g': 0, 'f': 0, 'streak': 0})
+        rec['g'] = int(rec.get('g', 0)) + 1
+        rec['streak'] = max(int(rec.get('streak', 0)), 16)
+
 # --- DATABASE FUNCTIES ---
 @st.cache_data
 def laad_actief_beheersen_db():
@@ -1413,7 +1461,7 @@ def laad_gebruiker_data(naam):
 
         if user_row.empty:
             st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}; st.session_state.prod_stats = {}
-            st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}; st.session_state.dagdoel = {}
+            st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}; st.session_state.dagdoel = {}; st.session_state.actief_stats = {}
             df_andere = df[df['gebruikersnaam'] != naam]
             nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -1438,6 +1486,7 @@ def laad_gebruiker_data(naam):
             st.session_state.ui_prefs = reassemble_chunks('ui_prefs', 'ui_chunks')
             st.session_state.badges = reassemble_chunks('badges', 'bd_chunks')
             st.session_state.dagdoel = reassemble_chunks('dagdoel', 'dd_chunks')
+            st.session_state.actief_stats = reassemble_chunks('actief_stats', 'af_chunks')
 
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
@@ -1478,15 +1527,16 @@ def opslaan_naar_cloud():
         ui_ch, ui_count = get_chunks(st.session_state.get('ui_prefs', {}), 'ui_prefs')
         bd_ch, bd_count = get_chunks(st.session_state.get('badges', {}), 'badges')
         dd_ch, dd_count = get_chunks(st.session_state.get('dagdoel', {}), 'dagdoel')
+        af_ch, af_count = get_chunks(st.session_state.get('actief_stats', {}), 'actief_stats')
 
         nieuwe_rij_dict = {
             'gebruikersnaam': st.session_state.last_user,
             'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count, 'pr_chunks': pr_count,
-            'vw_chunks': vw_count, 'ui_chunks': ui_count, 'bd_chunks': bd_count, 'dd_chunks': dd_count
+            'vw_chunks': vw_count, 'ui_chunks': ui_count, 'bd_chunks': bd_count, 'dd_chunks': dd_count, 'af_chunks': af_count
         }
         nieuwe_rij_dict.update(v_ch); nieuwe_rij_dict.update(g_ch); nieuwe_rij_dict.update(st_ch)
         nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch); nieuwe_rij_dict.update(pr_ch)
-        nieuwe_rij_dict.update(vw_ch); nieuwe_rij_dict.update(ui_ch); nieuwe_rij_dict.update(bd_ch); nieuwe_rij_dict.update(dd_ch)
+        nieuwe_rij_dict.update(vw_ch); nieuwe_rij_dict.update(ui_ch); nieuwe_rij_dict.update(bd_ch); nieuwe_rij_dict.update(dd_ch); nieuwe_rij_dict.update(af_ch)
         
         nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -1545,6 +1595,7 @@ if st.session_state.get('verwar_stats') is None: st.session_state.verwar_stats =
 if st.session_state.get('ui_prefs') is None: st.session_state.ui_prefs = {}
 if st.session_state.get('badges') is None: st.session_state.badges = {}
 if st.session_state.get('dagdoel') is None: st.session_state.dagdoel = {}
+if st.session_state.get('actief_stats') is None: st.session_state.actief_stats = {}
 if st.session_state.get('dagblok_actief') is None: st.session_state.dagblok_actief = False
 if st.session_state.get('dagblok_paar_wacht') is None: st.session_state.dagblok_paar_wacht = None
 if st.session_state.get('dagblok_bezig') is None: st.session_state.dagblok_bezig = False
@@ -3067,11 +3118,9 @@ def main():
 
                 st.subheader("📝 Paradigma's: Analyseren & Reproduceren")
 
-                actief_modus = st.radio(
-                    "Kies je leervorm:", 
-                    ["📖 0. Paradigma-paspoort (Bestuderen)", "🎯 1. Focus op Uitgangen", "📝 2. Volledig Tentamenrooster", "⚡ 3. Flashcards (Zwakke plekken)"], 
-                    horizontal=True
-                )
+                _af_modi = (["🎮 Leerpad (levels)", "📖 0. Paradigma-paspoort (Bestuderen)", "🎯 1. Focus op Uitgangen", "📝 2. Volledig Tentamenrooster", "⚡ 3. Flashcards (Zwakke plekken)"]
+                            if _geav else ["🎮 Leerpad (levels)", "📖 0. Paradigma-paspoort (Bestuderen)"])
+                actief_modus = st.radio("Kies je leervorm:", _af_modi, horizontal=True)
                 st.write("---")
 
                 niveaus = list(actief_db.keys())
@@ -3193,6 +3242,68 @@ def main():
                             else:
                                 stam = huidig_fc.get("stam", ""); uitgang = huidig_fc.get("uitgang", ""); toelichting = huidig_fc.get("toelichting", "")
                                 st.error(f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*")
+
+                elif "Leerpad" in actief_modus:
+                    # === LEERPAD: paradigma's als levels, rustig opbouwend (bekijken → reproduceren) ===
+                    _af_levels = actief_level_status(bouw_actief_levels(actief_db), st.session_state.actief_stats)
+                    _af_niv = niveau_van_xp(bereken_xp_actief(st.session_state.actief_stats))
+                    _af_vol = sum(1 for l in _af_levels if l['voltooid'])
+                    st.markdown(f"#### 🎮 Niveau {_af_niv['niveau']} · {_af_niv['titel']} — {_af_niv['xp_totaal']} XP")
+                    st.progress(_af_niv['xp_in_niveau'] / max(1, _af_niv['xp_voor_volgend']))
+                    _af_aanbev = next((l for l in _af_levels if l['ontgrendeld'] and not l['voltooid']), None)
+                    _tip = f" · aanbevolen: **{_af_aanbev['titel']}**" if _af_aanbev else ""
+                    st.caption(f"🏁 {_af_vol}/{len(_af_levels)} paradigma's beheerst{_tip}. Kies hierboven een paradigma en werk het af.")
+
+                    _ids_h = [c.get('id') for c in huidig_paradigma if c.get('id')]
+                    _klaar_h = sum(1 for i in _ids_h if int((st.session_state.actief_stats.get(i) or {}).get('streak', 0)) >= 16)
+                    st.markdown(f"### {gekozen_sub}  ({_klaar_h}/{len(_ids_h)} cellen beheerst)")
+
+                    with st.expander("📖 Stap 1 — bekijk het rijtje", expanded=(_klaar_h < len(_ids_h))):
+                        for item in huidig_paradigma:
+                            st.markdown(f"- **{item['label']}** — {item.get('stam','')}:blue[{item.get('uitgang','')}]"
+                                        + (f"  \n  <span style='color:#888;font-size:12px'>{item.get('toelichting','')}</span>" if item.get('toelichting') else ""),
+                                        unsafe_allow_html=True)
+
+                    st.markdown("**Stap 2 — reproduceer het volledige rijtje (typen):**")
+                    _lp_key = f"{gekozen_niv}|{gekozen_cat}|{gekozen_sub}"
+                    if st.session_state.get('actief_lp_key') != _lp_key:
+                        st.session_state.actief_lp_state = {item['id']: {"correct": False, "value": ""} for item in huidig_paradigma}
+                        st.session_state.actief_lp_key = _lp_key
+                    _lpcols = st.columns(2); _lpinp = {}
+                    for _i, item in enumerate(huidig_paradigma):
+                        with _lpcols[_i % 2]:
+                            _s = st.session_state.actief_lp_state.get(item['id'], {"correct": False, "value": ""})
+                            if _s["correct"]:
+                                st.success(f"**{item['label']}:** {item['vorm']}")
+                            else:
+                                _lpinp[item['id']] = st.text_input(f"**{item['label']}**", value=_s["value"], key=f"lp_{item['id']}")
+                    if not all(s["correct"] for s in st.session_state.actief_lp_state.values()):
+                        if st.button("Nakijken", type="primary", key="lp_nakijk"):
+                            for item in huidig_paradigma:
+                                iid = item['id']
+                                if not st.session_state.actief_lp_state[iid]["correct"]:
+                                    _ok = normaliseer_accent(naar_grieks_transliteratie(_lpinp.get(iid, ""))) == normaliseer_accent(item['vorm'])
+                                    if _ok:
+                                        st.session_state.actief_lp_state[iid] = {"correct": True, "value": item['vorm']}
+                                    else:
+                                        st.session_state.actief_lp_state[iid]["value"] = ""
+                            st.rerun()
+                    else:
+                        if st.session_state.get('actief_lp_gemarkeerd') != _lp_key:
+                            markeer_actief_paradigma(huidig_paradigma)
+                            registreer_oefening(); trigger_save(forceer=True)
+                            st.session_state.actief_lp_gemarkeerd = _lp_key
+                            st.balloons()
+                        st.success("🏆 Paradigma beheerst! Het telt nu mee in je voortgang; het volgende paradigma is vrij.")
+                        if st.button("🔄 Reset dit rijtje", key="lp_reset"):
+                            st.session_state.actief_lp_state = {item['id']: {"correct": False, "value": ""} for item in huidig_paradigma}
+                            st.session_state.actief_lp_gemarkeerd = None
+                            st.rerun()
+
+                    with st.expander("🗺️ Alle paradigma-levels"):
+                        for l in _af_levels:
+                            _ico = "✅" if l['voltooid'] else ("▶️" if l['ontgrendeld'] else "🔒")
+                            st.markdown(f"{_ico} **{l['index']}.** {l['titel']} — {l['klaar']}/{l['totaal']}")
 
         # ==========================================
         # TAB 5: STAMTIJDEN
