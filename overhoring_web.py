@@ -1094,6 +1094,66 @@ def leerpad_kaart_volgorde(sampled):
             kaarten.append((w, '4'))   # typen
     return kaarten
 
+# --- DAGELIJKS DOEL ---
+DAGDOEL_STANDAARD = {'woorden': 10, 'verwar': 3, 'knelpunt': 5, 'struct': 5, 'stam': 5, 'verzen': 2}
+
+def dagdoel_config():
+    cfg = (st.session_state.get('dagdoel') or {}).get('config') or {}
+    return {k: int(cfg.get(k, v)) for k, v in DAGDOEL_STANDAARD.items()}
+
+def _vandaag_str():
+    try:
+        return str(datetime.now().date())
+    except Exception:
+        return ""
+
+def dagdoel_log_vandaag():
+    d = st.session_state.get('dagdoel')
+    if not isinstance(d, dict):
+        d = {}
+        st.session_state.dagdoel = d
+    return d.setdefault('log', {}).setdefault(_vandaag_str(), {})
+
+def dagdoel_plus(soort, n=1):
+    lg = dagdoel_log_vandaag()
+    lg[soort] = int(lg.get(soort, 0)) + n
+
+def dagdoel_woordblok_af():
+    dagdoel_log_vandaag()['woordblok'] = True
+
+def dagdoel_streak():
+    """Opeenvolgende dagen tot vandaag waarop het woord-dagblok is afgerond."""
+    log = (st.session_state.get('dagdoel') or {}).get('log', {})
+    streak = 0
+    try:
+        cur = pd.Timestamp(datetime.now().date())
+        while log.get(str(cur.date()), {}).get('woordblok'):
+            streak += 1
+            cur -= pd.Timedelta(days=1)
+    except Exception:
+        pass
+    return streak
+
+def bouw_dagblok(alle_data, verwar_stats, cfg):
+    """Bouwt het woord-dagblok: knelpunten + due/nieuwe woorden (oplopend flashcard→MC→typen),
+    plus de verwarparen die als paar-oefening áchter de woorden komen."""
+    knel = []
+    for w in alle_data:
+        if not isinstance(w, dict):
+            continue
+        g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
+        if f > 0 or (g > 0 and s <= 3):
+            knel.append(w)
+    knel.sort(key=lambda w: int(w.get('score_fout', 0)), reverse=True)
+    knel = knel[:max(0, cfg.get('knelpunt', 0))]
+    sampled = kies_gefaseerde_oefensessie(alle_data, module='vocab', totale_db=alle_data)
+    knel_ids = {id(k) for k in knel}
+    woorden = [w for w in sampled if id(w) not in knel_ids][:max(0, cfg.get('woorden', 0))]
+    combined = woorden + knel
+    kaarten = leerpad_kaart_volgorde(combined)
+    paren = bouw_verwar_paren(alle_data, verwar_stats)[:max(0, cfg.get('verwar', 0))]
+    return kaarten, paren
+
 # --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
 _STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
 
@@ -1297,7 +1357,7 @@ def laad_gebruiker_data(naam):
 
         if user_row.empty:
             st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}; st.session_state.prod_stats = {}
-            st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}
+            st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}; st.session_state.dagdoel = {}
             df_andere = df[df['gebruikersnaam'] != naam]
             nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam}])
             conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -1321,6 +1381,7 @@ def laad_gebruiker_data(naam):
             st.session_state.verwar_stats = reassemble_chunks('verwar_stats', 'vw_chunks')
             st.session_state.ui_prefs = reassemble_chunks('ui_prefs', 'ui_chunks')
             st.session_state.badges = reassemble_chunks('badges', 'bd_chunks')
+            st.session_state.dagdoel = reassemble_chunks('dagdoel', 'dd_chunks')
 
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
@@ -1360,15 +1421,16 @@ def opslaan_naar_cloud():
         vw_ch, vw_count = get_chunks(st.session_state.get('verwar_stats', {}), 'verwar_stats')
         ui_ch, ui_count = get_chunks(st.session_state.get('ui_prefs', {}), 'ui_prefs')
         bd_ch, bd_count = get_chunks(st.session_state.get('badges', {}), 'badges')
+        dd_ch, dd_count = get_chunks(st.session_state.get('dagdoel', {}), 'dagdoel')
 
         nieuwe_rij_dict = {
             'gebruikersnaam': st.session_state.last_user,
             'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count, 'pr_chunks': pr_count,
-            'vw_chunks': vw_count, 'ui_chunks': ui_count, 'bd_chunks': bd_count
+            'vw_chunks': vw_count, 'ui_chunks': ui_count, 'bd_chunks': bd_count, 'dd_chunks': dd_count
         }
         nieuwe_rij_dict.update(v_ch); nieuwe_rij_dict.update(g_ch); nieuwe_rij_dict.update(st_ch)
         nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch); nieuwe_rij_dict.update(pr_ch)
-        nieuwe_rij_dict.update(vw_ch); nieuwe_rij_dict.update(ui_ch); nieuwe_rij_dict.update(bd_ch)
+        nieuwe_rij_dict.update(vw_ch); nieuwe_rij_dict.update(ui_ch); nieuwe_rij_dict.update(bd_ch); nieuwe_rij_dict.update(dd_ch)
         
         nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
         conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
@@ -1418,6 +1480,9 @@ if st.session_state.get('prod_stats') is None: st.session_state.prod_stats = {}
 if st.session_state.get('verwar_stats') is None: st.session_state.verwar_stats = {}
 if st.session_state.get('ui_prefs') is None: st.session_state.ui_prefs = {}
 if st.session_state.get('badges') is None: st.session_state.badges = {}
+if st.session_state.get('dagdoel') is None: st.session_state.dagdoel = {}
+if st.session_state.get('dagblok_actief') is None: st.session_state.dagblok_actief = False
+if st.session_state.get('dagblok_paar_wacht') is None: st.session_state.dagblok_paar_wacht = None
 if st.session_state.get('sessie_goed') is None: st.session_state.sessie_goed = {}
 if st.session_state.get('sessie_fout') is None: st.session_state.sessie_fout = {}
 if st.session_state.get('sessie_verwar_kandidaten') is None: st.session_state.sessie_verwar_kandidaten = {}
@@ -1441,6 +1506,25 @@ def laad_volgend_woord():
         st.session_state.huidig_item = volgend[0]
         st.session_state.huidige_sub_modus = volgend[1]
     else:
+        # Dagblok: als het woord-deel klaar is, markeer het en ga (indien er paren zijn) naadloos
+        # door naar de verwarparen-oefening.
+        if st.session_state.get('dagblok_actief'):
+            st.session_state.dagblok_actief = False
+            dagdoel_woordblok_af()
+            _paren = st.session_state.get('dagblok_paar_wacht') or []
+            st.session_state.dagblok_paar_wacht = None
+            if _paren:
+                st.session_state.paar_lijst = _paren
+                st.session_state.paar_klaar = False
+                st.session_state.paar_overtik = False
+                st.session_state.paar_solved_voor = None
+                st.session_state.paar_fout = 0
+                st.session_state.paar_huidig = _paren.pop(0)
+                st.session_state.huidig_item = None; st.session_state.huidige_sub_modus = None
+                st.session_state.fouten_huidig_woord = 0
+                st.session_state.huidige_opties = []; st.session_state.huidige_vorm_data = None
+                trigger_save(forceer=True)
+                return
         # sessie liep leeg: markeer als 'net klaar' als er daadwerkelijk geoefend was
         if st.session_state.get('huidig_item') is not None:
             st.session_state.sessie_net_klaar = True
@@ -1523,7 +1607,7 @@ def main():
                         except Exception as e: st.error(f"Fout: {e}")
 
     if st.session_state.data:
-        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
+        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)", "🎯 Dagelijks doel"])
 
        # ==========================================
         # TAB 1: WOORDENSCHAT
@@ -4734,6 +4818,69 @@ def main():
                                 else:
                                     st.session_state.prod_opties = None
                                     prod_verwerk(keuze == correct_grieks)
+
+        # ==========================================
+        # TAB 11: DAGELIJKS DOEL
+        # ==========================================
+        with menu[10]:
+            st.subheader("🎯 Dagelijks doel")
+            st.caption("Stel je dagelijkse portie in. Het woord-dagblok (woorden → moeilijke woorden → verwarparen) speel je in één keer achter elkaar; de rest doe je in het eigen tabblad en vink je hier af.")
+            _cfg = dagdoel_config()
+            _lg = dagdoel_log_vandaag()
+
+            c_top1, c_top2, c_top3 = st.columns(3)
+            c_top1.metric("🔥 Dagblok-streak", f"{dagdoel_streak()} dagen")
+            c_top2.metric("Woord-dagblok vandaag", "✅ klaar" if _lg.get('woordblok') else "nog niet")
+            c_top3.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
+
+            st.write("---")
+            st.markdown("### ▶️ Woord-dagblok (achter elkaar)")
+            st.caption(f"Oefent achter elkaar: **{_cfg['woorden']} woorden** · **{_cfg['knelpunt']} moeilijke woorden** · **{_cfg['verwar']} verwarparen**. Het blok opent in het 🚀 Woordenschat-tabblad.")
+            if st.button("▶️ Start woord-dagblok", type="primary", key="dagblok_start"):
+                _kaarten, _paren = bouw_dagblok(st.session_state.data, st.session_state.get('verwar_stats', {}), _cfg)
+                if not _kaarten and not _paren:
+                    st.warning("Geen woorden/paren beschikbaar voor het dagblok. Stel je doelen hoger in of oefen eerst wat woorden.")
+                else:
+                    st.session_state.gestrafte_woorden_vocab = set()
+                    _sessie_reset_samenvatting()
+                    st.session_state.sessie_net_klaar = False
+                    st.session_state._ballonnen_getoond = False
+                    st.session_state.paar_huidig = None; st.session_state.paar_klaar = False
+                    st.session_state.vocab_sessie_verzen = {}; st.session_state.vocab_cluster_strongs = {}
+                    st.session_state.modus_actief = "dagblok"
+                    st.session_state.dagblok_actief = True
+                    st.session_state.dagblok_paar_wacht = _paren
+                    st.session_state.sessie_lijst = _kaarten
+                    laad_volgend_woord()
+                    st.success("Je dagblok staat klaar! Ga naar het **🚀 Woordenschat**-tabblad om te beginnen.")
+                    st.rerun()
+
+            st.write("---")
+            st.markdown("### 📋 Overige onderdelen")
+            st.caption("Deze doe je in hun eigen tabblad; vink hier af wat je vandaag hebt gedaan.")
+            for _soort, _emoji, _label in [('struct', '🧱', 'Structuurwoorden'), ('stam', '⏳', 'Stamtijden'), ('verzen', '📝', 'Verzen ontleden')]:
+                _gedaan = int(_lg.get(_soort, 0)); _doel = int(_cfg[_soort])
+                cc1, cc2 = st.columns([4, 1])
+                with cc1:
+                    st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
+                if cc2.button("✓ +1", key=f"dagdoel_plus_{_soort}"):
+                    dagdoel_plus(_soort); trigger_save(forceer=True); st.rerun()
+
+            with st.expander("⚙️ Mijn dagelijkse doelen instellen"):
+                _nw = {
+                    'woorden': st.slider("Woorden", 0, 40, _cfg['woorden'], key="dd_woorden"),
+                    'knelpunt': st.slider("Moeilijke woorden", 0, 20, _cfg['knelpunt'], key="dd_knelpunt"),
+                    'verwar': st.slider("Verwarparen", 0, 15, _cfg['verwar'], key="dd_verwar"),
+                    'struct': st.slider("Structuurwoorden", 0, 20, _cfg['struct'], key="dd_struct"),
+                    'stam': st.slider("Stamtijden", 0, 20, _cfg['stam'], key="dd_stam"),
+                    'verzen': st.slider("Verzen ontleden", 0, 10, _cfg['verzen'], key="dd_verzen"),
+                }
+                if st.button("💾 Doelen opslaan", key="dd_save"):
+                    _d = st.session_state.get('dagdoel')
+                    if not isinstance(_d, dict):
+                        _d = {}; st.session_state.dagdoel = _d
+                    _d['config'] = _nw
+                    trigger_save(forceer=True); st.success("Doelen opgeslagen!"); st.rerun()
 
 
 if __name__ == "__main__":
