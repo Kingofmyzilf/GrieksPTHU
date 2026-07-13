@@ -2950,7 +2950,7 @@ def main():
                     sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
-                stam_modus = st.radio("Kies je activiteit:", ["📖 Werkwoordpaspoort (vrij studeren)", "🧠 Leer (flashcards)", "🔢 MC Overhoring", "🔀 Mix (MC + Typen)", "⌨️ Typen (herleiden)", "🔎 Herkennen (koud)"], horizontal=True)
+                stam_modus = st.radio("Modus:", ["📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"], horizontal=True)
                 st.write("---")
 
                 if "Werkwoordpaspoort" in stam_modus:
@@ -3296,7 +3296,7 @@ def main():
                 else:
                     c1, c2 = st.columns([1, 2])
                     with c1:
-                        bron_keuze = st.radio("Oefenbron:", ["🎮 Leerpad (levels)", "📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"], horizontal=True)
+                        bron_keuze = st.selectbox("Oefening:", ["🎮 Leerpad (levels)", "📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"])
                         gekozen_stam_lessen = []; gefilterde_ww_pool = []
                         is_stam_leerpad = False
                         lp_stam_aantal = 0
