@@ -3168,15 +3168,14 @@ def main():
                 actief_modus = st.radio("Kies je leervorm:", _af_modi, horizontal=True)
                 st.write("---")
 
-                niveaus = list(actief_db.keys())
-                gekozen_niv = st.selectbox("Niveau / Boek:", niveaus)
-                
-                categorieen = list(actief_db[gekozen_niv].keys())
-                gekozen_cat = st.selectbox("Categorie:", categorieen)
-                
-                subcats = list(actief_db[gekozen_niv][gekozen_cat].keys())
-                gekozen_sub = st.selectbox("Paradigma:", subcats)
-                
+                with st.expander("📂 Kies niveau · categorie · paradigma", expanded=False):
+                    niveaus = list(actief_db.keys())
+                    gekozen_niv = st.selectbox("Niveau / Boek:", niveaus)
+                    categorieen = list(actief_db[gekozen_niv].keys())
+                    gekozen_cat = st.selectbox("Categorie:", categorieen)
+                    subcats = list(actief_db[gekozen_niv][gekozen_cat].keys())
+                    gekozen_sub = st.selectbox("Paradigma:", subcats)
+
                 huidig_paradigma = actief_db[gekozen_niv][gekozen_cat][gekozen_sub]
                 st.write("---")
 
@@ -3377,7 +3376,11 @@ def main():
                                 st.session_state.af_opties = None
 
                             if sub == 'Leer':
-                                st.info(f"**Antwoord:** {cell.get('stam','')}**{cell.get('uitgang','')}** = **{cell['vorm']}**"
+                                if cell.get('uitgang'):
+                                    _antw = f"{cell.get('stam','')}**{cell['uitgang']}** = **{cell['vorm']}**"
+                                else:
+                                    _antw = f"**{cell['vorm']}**"
+                                st.info(f"**{cell['label']}** → {_antw}"
                                         + (f"  \n_{cell.get('toelichting','')}_" if cell.get('toelichting') else ""))
                                 if st.button("Volgende", type="primary", key=f"afl_{cid}"):
                                     _volgende(); st.rerun()
@@ -3394,7 +3397,7 @@ def main():
                                         if _opt == cell['vorm']:
                                             _af_score(cid, 2, True); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ Het was: **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
+                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {cell['label']} = **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
                             else:  # Typen
                                 forceer_focus()
@@ -3404,7 +3407,7 @@ def main():
                                         if normaliseer_accent(naar_grieks_transliteratie(_in)) == normaliseer_accent(cell['vorm']):
                                             _af_score(cid, 4, True); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ Het was: **{cell['vorm']}**"}; _volgende(requeue=True)
+                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
 
                     with st.expander("🗺️ Alle paradigma-levels"):
