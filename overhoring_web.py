@@ -3879,7 +3879,20 @@ def main():
                         if doel_vormen:
                             sampled = kies_gefaseerde_oefensessie(doel_vormen, module='struct')
                             modus_id = str(struct_modus[0])
-                            if modus_id == "2": st.session_state.struct_sessie_lijst = [(v, "MC") for v in sampled] + [(v, "Typen") for v in sampled]
+                            if is_struct_leerpad:
+                                # Leerpad: oplopend per woord — nieuw eerst flashcard (Leer) + meerkeuze,
+                                # daarna meerkeuze, en bij een stevige streak typen.
+                                _struct_kaarten = []
+                                for v in sampled:
+                                    _s = int(v.get('streak', 0))
+                                    if _s <= 0:
+                                        _struct_kaarten.append((v, "Leer")); _struct_kaarten.append((v, "MC"))
+                                    elif _s <= 7:
+                                        _struct_kaarten.append((v, "MC"))
+                                    else:
+                                        _struct_kaarten.append((v, "Typen"))
+                                st.session_state.struct_sessie_lijst = _struct_kaarten
+                            elif modus_id == "2": st.session_state.struct_sessie_lijst = [(v, "MC") for v in sampled] + [(v, "Typen") for v in sampled]
                             elif modus_id == "3": st.session_state.struct_sessie_lijst = [(v, "Typen") for v in sampled]
                             else: st.session_state.struct_sessie_lijst = [(v, "MC") for v in sampled]
                             laad_volgend_struct_woord()
@@ -3989,8 +4002,15 @@ def main():
                             st.markdown(f"<div class='grieks-woord'>{toon_naam}</div>", unsafe_allow_html=True)
                             st.caption("Identificeer dit structuurwoord.")
 
+                        # --- MODUS 0: LEER-KAART (flashcard, alleen in het Leerpad) ---
+                        if sub_modus == "Leer":
+                            st.info("🧠 Leer-kaart — bekijk het woord en het antwoord, en klik op Volgende als je 't kent.")
+                            st.markdown(f"**Antwoord:** {fout_msg_volledig}")
+                            if st.button("Volgende", key=f"struct_leer_next_{w_id_clean}", type="primary"):
+                                laad_volgend_struct_woord(); st.rerun()
+
                         # --- MODUS 1: OVERTIKKEN ---
-                        if sub_modus == 'overtik':
+                        elif sub_modus == 'overtik':
                             st.warning("⚠️ Overtikken: Je had dit woord zojuist onjuist. Vul de correcte gegevens exact in om de verbinding te herstellen.")
                             st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
                             forceer_focus()
