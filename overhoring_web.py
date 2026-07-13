@@ -4688,6 +4688,22 @@ def main():
               4. *Contracta (α, ε, ο):* de stamklinker ondergaat compensatorische rekking (*ποιέω → ποιήσω*).
               5. *Liquidae (λ, μ, ν, ρ):* haten de sigma en trekken samen tot een circumflexus (*μένω → μενῶ*).
 
+            ### 5. Hoe stelt de app je oefensessie samen?
+            Bij *"Aanbevolen Mix"* en in het **Leerpad** kies je de woorden niet zelf — de app stelt elke sessie (± 10 kaarten) slim samen. Dit gebeurt er, op volgorde:
+
+            1. **Fase bepalen** — elk woord valt op basis van je streak in een fase: 🌱 Nieuw (0) · 🐣 Prille start (1–3) · 🏃 In training (4–15) · 🛡️ Beheerst (16–29) · 🏆 Mastery (30+).
+            2. **Prioriteren** — wat de meeste aandacht nodig heeft, komt eerst:
+               * **Teruggevallen woorden** (ooit gekend, nu terug op 0) gaan vóór op gloednieuwe.
+               * Een **worstel-bonus** tilt foutgevoelige woorden omhoog; een stevige streak dempt de urgentie.
+               * **Lang niet gedaan** telt zwaarder, zodat oude stof terugkomt.
+               * Er is een **rem op nieuwe woorden** (± 2 per sessie), zodat je niet wordt overspoeld.
+            3. **Herhaling meemengen** — er komt altijd minstens **één oud/overdue woord** mee (in het Leerpad instelbaar: 1, 5 of 10 — oudste datum eerst). Zo blijft eerder geleerde stof vers.
+            4. **Verwar-partners erbij** — woorden die qua **vorm op elkaar lijken** (look-alikes) of die **jij aantoonbaar door elkaar haalt**, komen in dezelfde sessie mee, zodat je ze naast elkaar leert onderscheiden. Nooit gloednieuwe woorden — alleen wat je al eens hebt gezien. Een verwarpaar valt vanzelf weg zodra je beide woorden weer beheerst.
+            5. **Oefenvorm laten meegroeien** (Leerpad) — de app kiest zelf de moeilijkheid per woord: 🌱 nieuw → **flashcard + meerkeuze**, 🏃 in training → **meerkeuze**, 🛡️ sterk → **typen**. Twee keer fout? Dan eerst **overtypen** (telt niet mee) en het woord komt later terug.
+
+            ### 6. Dagelijks doel
+            In het **🎯 Dagelijks doel**-tabblad stel je je dagelijkse portie in. Het **woord-dagblok** speelt de woord-achtige onderdelen naadloos achter elkaar af: je woorden → moeilijke woorden → verwarparen. De app houdt je **dagblok-streak** bij (opeenvolgende dagen dat je het afmaakt); structuurwoorden, stamtijden en verzen vink je zelf af.
+
             ---
             *Ontwikkeld voor Grieks Premaster PTHU. Vragen of suggesties? Mail naar:* **jtimmer@students.pthu.nl**
             """)
