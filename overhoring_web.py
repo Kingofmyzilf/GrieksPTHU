@@ -4015,8 +4015,9 @@ def main():
                                             st.session_state.stam_fouten += 1
                                             if huidige_streak >= 16 or st.session_state.stam_fouten >= 2:
                                                 st.session_state.stam_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_stam.add(vid)
-                                                st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik')); st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
-                                                st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg}.\n\n{uitleg_regel}"}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
+                                                # In MC blijven: toon het antwoord en doe dezelfde vraag meteen nog een keer als meerkeuze.
+                                                st.session_state.stam_sessie_lijst.insert(0, (huidig, sub_modus))
+                                                st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg}.\n\n{uitleg_regel}\n\nKlik hem nu nog één keer goed aan."}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                             else: st.session_state.stam_stats[vid]['f'] += 1; st.session_state.stam_feedback = {"type": "warning", "msg": f"Eén van je keuzes is onjuist!\n\n{uitleg_regel}"}
                                             st.rerun()
 
