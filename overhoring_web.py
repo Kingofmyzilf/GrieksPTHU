@@ -99,6 +99,19 @@ def forceer_focus():
         """, height=0
     )
 
+def spring_naar_tab(zoekterm):
+    """Klikt via JS het tabblad aan waarvan de titel 'zoekterm' bevat (Streamlit kan niet zelf
+    programmatisch van tab wisselen). Gebruikt voor het dagblok: automatisch naar de oefening."""
+    veilig = json.dumps(str(zoekterm))
+    components.html(
+        "<script>(function(){var d=window.parent.document;"
+        "function k(){var t=d.querySelectorAll('button[role=\"tab\"]');"
+        "for(var i=0;i<t.length;i++){if((t[i].innerText||'').indexOf(" + veilig + ")>-1){t[i].click();return true;}}"
+        "return false;}"
+        "if(!k()){setTimeout(k,250);setTimeout(k,600);}})();</script>",
+        height=0,
+    )
+
 def audio_knop(fonetisch, key=""):
     """Spreekt de Erasmiaanse transliteratie uit via de browser (Web Speech API).
     We gebruiken bewust de fonetische spelling (bv. 'logos', 'houtos') i.p.v. het Griekse
@@ -1483,6 +1496,8 @@ if st.session_state.get('badges') is None: st.session_state.badges = {}
 if st.session_state.get('dagdoel') is None: st.session_state.dagdoel = {}
 if st.session_state.get('dagblok_actief') is None: st.session_state.dagblok_actief = False
 if st.session_state.get('dagblok_paar_wacht') is None: st.session_state.dagblok_paar_wacht = None
+if st.session_state.get('dagblok_bezig') is None: st.session_state.dagblok_bezig = False
+if st.session_state.get('dagblok_spring') is None: st.session_state.dagblok_spring = None
 if st.session_state.get('sessie_goed') is None: st.session_state.sessie_goed = {}
 if st.session_state.get('sessie_fout') is None: st.session_state.sessie_fout = {}
 if st.session_state.get('sessie_verwar_kandidaten') is None: st.session_state.sessie_verwar_kandidaten = {}
@@ -1607,7 +1622,21 @@ def main():
                         except Exception as e: st.error(f"Fout: {e}")
 
     if st.session_state.data:
-        menu = st.tabs(["🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)", "🎯 Dagelijks doel"])
+        _alle_tabs = st.tabs(["🎯 Dagelijks doel", "🚀 Woordenschat", "📖 Lijst", "📊 Voortgang", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
+        menu_dagdoel = _alle_tabs[0]        # Dagelijks doel staat vooraan → hier begin je bij het inloggen
+        menu = _alle_tabs[1:]              # menu[0..9] blijven exact als voorheen (Woordenschat … productie)
+
+        # Dagblok: automatisch naar het juiste tabblad springen (Streamlit heeft geen eigen tab-switch).
+        if st.session_state.get('dagblok_bezig'):
+            _dagblok_klaar = (not st.session_state.get('huidig_item') and not st.session_state.get('paar_huidig')
+                              and not st.session_state.get('sessie_lijst') and not st.session_state.get('paar_lijst')
+                              and not st.session_state.get('dagblok_actief'))
+            if _dagblok_klaar:
+                st.session_state.dagblok_bezig = False
+                st.session_state.dagblok_spring = "Dagelijks doel"
+        if st.session_state.get('dagblok_spring'):
+            spring_naar_tab(st.session_state.dagblok_spring)
+            st.session_state.dagblok_spring = None
 
        # ==========================================
         # TAB 1: WOORDENSCHAT
@@ -4838,7 +4867,7 @@ def main():
         # ==========================================
         # TAB 11: DAGELIJKS DOEL
         # ==========================================
-        with menu[10]:
+        with menu_dagdoel:
             st.subheader("🎯 Dagelijks doel")
             st.caption("Stel je dagelijkse portie in. Het woord-dagblok (woorden → moeilijke woorden → verwarparen) speel je in één keer achter elkaar; de rest doe je in het eigen tabblad en vink je hier af.")
             _cfg = dagdoel_config()
@@ -4865,10 +4894,11 @@ def main():
                     st.session_state.vocab_sessie_verzen = {}; st.session_state.vocab_cluster_strongs = {}
                     st.session_state.modus_actief = "dagblok"
                     st.session_state.dagblok_actief = True
+                    st.session_state.dagblok_bezig = True
                     st.session_state.dagblok_paar_wacht = _paren
                     st.session_state.sessie_lijst = _kaarten
                     laad_volgend_woord()
-                    st.success("Je dagblok staat klaar! Ga naar het **🚀 Woordenschat**-tabblad om te beginnen.")
+                    st.session_state.dagblok_spring = "Woordenschat"  # spring automatisch naar de oefening
                     st.rerun()
 
             st.write("---")
