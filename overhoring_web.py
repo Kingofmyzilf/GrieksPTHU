@@ -876,6 +876,65 @@ def verzamel_verwarwoorden(alle_data, verwar_stats):
                 gekozen[verward] = w_v
     return list(gekozen.values())
 
+def verwar_paren_lijst(alle_data, verwar_stats):
+    """Unieke (ongeordende) verwarparen met teller + datum — voor het overzicht én de paar-oefening."""
+    idx = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
+    seen = {}
+    for a, entry in (verwar_stats or {}).items():
+        for b, rec in (entry or {}).items():
+            if int(rec.get('n', 0)) <= 0 or a not in idx or b not in idx:
+                continue
+            key = tuple(sorted((a, b)))
+            n = int(rec.get('n', 0)); laatst = str(rec.get('laatst', ''))
+            if key in seen:
+                seen[key]['n'] += n
+                seen[key]['laatst'] = max(seen[key]['laatst'], laatst)
+            else:
+                seen[key] = {'a': key[0], 'b': key[1], 'n': n, 'laatst': laatst}
+    paren = list(seen.values())
+    for p in paren:
+        p['a_ned'] = str(idx[p['a']].get('nederlands', ''))
+        p['b_ned'] = str(idx[p['b']].get('nederlands', ''))
+        p['a_streak'] = int(idx[p['a']].get('streak', 0))
+        p['b_streak'] = int(idx[p['b']].get('streak', 0))
+    paren.sort(key=lambda p: (p['n'], p['laatst']), reverse=True)
+    return paren
+
+def voeg_eigen_verwar_toe(sampled, alle_data, verwar_stats, max_extra=3):
+    """Trekt bij woorden in de sessie de eigen-verwarde partners (uit verwar_stats) erbij, zolang het
+    paar nog actief is — zo blijf je ze samen zien tot je ze allebei beheerst (en het paar wegvalt)."""
+    if not verwar_stats:
+        return sampled
+    idx = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
+    in_sessie = {w.get('grieks') for w in sampled if isinstance(w, dict)}
+    toegevoegd = []
+    for w in list(sampled):
+        if len(toegevoegd) >= max_extra:
+            break
+        for pg, rec in (verwar_stats.get(w.get('grieks', ''), {}) or {}).items():
+            if len(toegevoegd) >= max_extra:
+                break
+            if int(rec.get('n', 0)) <= 0 or pg in in_sessie:
+                continue
+            pw = idx.get(pg)
+            if pw:
+                toegevoegd.append(pw)
+                in_sessie.add(pg)
+    if toegevoegd:
+        sampled = sampled + toegevoegd
+        r_engine.shuffle(sampled)
+    return sampled
+
+def bouw_verwar_paren(alle_data, verwar_stats):
+    """Lijst van (woordA, woordB)-paren voor de paar-oefening, meest-verward eerst."""
+    idx = {w.get('grieks'): w for w in alle_data if isinstance(w, dict) and w.get('grieks')}
+    paren = []
+    for p in verwar_paren_lijst(alle_data, verwar_stats):
+        wa, wb = idx.get(p['a']), idx.get(p['b'])
+        if wa and wb:
+            paren.append((wa, wb))
+    return paren
+
 # --- BADGES / ACHIEVEMENTS ---
 def badge_definities(m):
     """Bouwt de lijst met badges op basis van samengevatte statistieken (m). Puur afgeleid van
@@ -1223,6 +1282,11 @@ if st.session_state.get('badges') is None: st.session_state.badges = {}
 if st.session_state.get('sessie_goed') is None: st.session_state.sessie_goed = {}
 if st.session_state.get('sessie_fout') is None: st.session_state.sessie_fout = {}
 if st.session_state.get('sessie_verwar_kandidaten') is None: st.session_state.sessie_verwar_kandidaten = {}
+if st.session_state.get('paar_lijst') is None: st.session_state.paar_lijst = []
+if st.session_state.get('paar_huidig') is None: st.session_state.paar_huidig = None
+if st.session_state.get('paar_fout') is None: st.session_state.paar_fout = 0
+if st.session_state.get('paar_feedback') is None: st.session_state.paar_feedback = None
+if st.session_state.get('paar_klaar') is None: st.session_state.paar_klaar = False
 if st.session_state.get('save_teller') is None: st.session_state.save_teller = 0
 if st.session_state.get('sessie_net_klaar') is None: st.session_state.sessie_net_klaar = False
 if st.session_state.gestrafte_woorden_vocab is None: st.session_state.gestrafte_woorden_vocab = set()
@@ -1488,6 +1552,21 @@ def main():
                         _sessie_reset_samenvatting()
                         st.session_state.sessie_net_klaar = False
                         st.session_state._ballonnen_getoond = False
+
+                        # Mijn verwarwoorden → paar-oefening: beide woorden tegelijk, beide antwoorden goed.
+                        if keuze == "Mijn verwarwoorden":
+                            _paren = bouw_verwar_paren(st.session_state.data, st.session_state.get('verwar_stats', {}))
+                            if _paren:
+                                r_engine.shuffle(_paren)
+                                st.session_state.paar_lijst = _paren
+                                st.session_state.paar_klaar = False
+                                st.session_state.huidig_item = None
+                                st.session_state.sessie_lijst = []
+                                st.session_state.paar_huidig = st.session_state.paar_lijst.pop(0)
+                                st.session_state.paar_fout = 0
+                                st.session_state.paar_feedback = None
+                                st.rerun()
+
                         modus_id = str(modus[0])
                         
                         is_lang_geleden = ("Lang niet gedaan" in keuze)
@@ -1511,6 +1590,11 @@ def main():
                         if sampled and st.session_state.get('optie_verwarparen', True):
                             sampled = voeg_verwar_twins_toe(
                                 sampled, st.session_state.data, laad_verwarparen_db(), max_twins=3
+                            )
+                            # Ook je EIGEN verwarparen (uit verwar_stats) blijven meekomen bij het
+                            # betreffende woord, tot je ze allebei beheerst.
+                            sampled = voeg_eigen_verwar_toe(
+                                sampled, st.session_state.data, st.session_state.get('verwar_stats', {}), max_extra=3
                             )
 
                         # Leerpad: neem oude stof mee (langst niet geoefend, oudste datum eerst).
@@ -1568,7 +1652,69 @@ def main():
                     else: st.warning("⚠️ Geen knelpunten of oefenwoorden gevonden in de geselecteerde lessen.")
 
             with col2:
-                if st.session_state.huidig_item:
+                if st.session_state.get('paar_huidig'):
+                    # === VERWARPAREN-OEFENING: beide woorden tegelijk, beide betekenissen goed ===
+                    wA, wB = st.session_state.paar_huidig
+                    st.caption("🧩 Verwarparen — geef van BEIDE woorden de betekenis. Zo zie je ze naast elkaar en leer je ze onderscheiden.")
+                    _pc1, _pc2 = st.columns(2)
+                    _pc1.markdown(f"<div class='grieks-woord' style='font-size:40px;'>{wA['grieks']}</div>", unsafe_allow_html=True)
+                    _pc2.markdown(f"<div class='grieks-woord' style='font-size:40px;'>{wB['grieks']}</div>", unsafe_allow_html=True)
+
+                    if st.session_state.get('paar_feedback'):
+                        _fb = st.session_state.paar_feedback
+                        {"success": st.success, "warning": st.warning}.get(_fb["type"], st.error)(_fb["msg"])
+                        st.session_state.paar_feedback = None
+
+                    with st.form(f"paar_form_{wA['grieks']}_{wB['grieks']}", clear_on_submit=True):
+                        _inA = st.text_input(f"Betekenis van {wA['grieks']}:")
+                        _inB = st.text_input(f"Betekenis van {wB['grieks']}:")
+                        _sub = st.form_submit_button("Controleer beide", type="primary")
+                    if _sub:
+                        registreer_oefening(wA); registreer_oefening(wB)
+                        _okA = check_betekenis(_inA, wA.get('nederlands', ''))
+                        _okB = check_betekenis(_inB, wB.get('nederlands', ''))
+                        _lijst = st.session_state.get('paar_lijst', [])
+                        if _okA and _okB:
+                            if int(st.session_state.get('paar_fout', 0)) == 0:
+                                for _w in (wA, wB):
+                                    _w['score_goed'] = int(_w.get('score_goed', 0)) + 1
+                                    _w['streak'] = int(_w.get('streak', 0)) + 1
+                                verzwak_verwarring(wA['grieks']); verzwak_verwarring(wB['grieks'])
+                            st.session_state.paar_feedback = {"type": "success", "msg": f"✓ Allebei goed! **{wA['grieks']}** = {wA['nederlands']} · **{wB['grieks']}** = {wB['nederlands']}"}
+                            st.session_state.paar_huidig = _lijst.pop(0) if _lijst else None
+                            st.session_state.paar_fout = 0
+                            if st.session_state.paar_huidig is None:
+                                st.session_state.paar_klaar = True
+                            trigger_save(); st.rerun()
+                        else:
+                            st.session_state.paar_fout = int(st.session_state.get('paar_fout', 0)) + 1
+                            for _w in (wA, wB):
+                                _w['score_fout'] = int(_w.get('score_fout', 0)) + 1
+                            _dA = "✓" if _okA else "✗"; _dB = "✓" if _okB else "✗"
+                            if st.session_state.paar_fout >= 2:
+                                st.session_state.paar_feedback = {"type": "error", "msg": f"Het was: **{wA['grieks']}** = {wA['nederlands']} · **{wB['grieks']}** = {wB['nederlands']}"}
+                                _lijst.append((wA, wB))  # nog een keer terug in de wachtrij
+                                st.session_state.paar_huidig = _lijst.pop(0) if _lijst else None
+                                st.session_state.paar_fout = 0
+                                if st.session_state.paar_huidig is None:
+                                    st.session_state.paar_klaar = True
+                                trigger_save()
+                            else:
+                                st.session_state.paar_feedback = {"type": "warning", "msg": f"{_dA} {wA['grieks']} · {_dB} {wB['grieks']} — probeer het nog eens."}
+                            st.rerun()
+
+                    st.write("---")
+                    st.caption(f"Nog {len(st.session_state.get('paar_lijst', []))} paar te gaan.")
+                    if st.button("⏹️ Stop paar-sessie"):
+                        st.session_state.paar_huidig = None; st.session_state.paar_lijst = []; st.session_state.paar_klaar = False
+                        st.rerun()
+
+                elif st.session_state.get('paar_klaar'):
+                    st.balloons()
+                    st.success("🎉 Verwar-paren afgerond! Goed bezig met discrimineren. Paren die je weer beheerst, verdwijnen vanzelf uit je lijst.")
+                    st.session_state.paar_klaar = False
+
+                elif st.session_state.huidig_item:
                     item = st.session_state.huidig_item
                     huidige_sub_modus = st.session_state.huidige_sub_modus
                     # Mastery-in-context (Bijbelzin + vormvragen) alleen als de gebruiker dat aanvinkt;
@@ -1923,9 +2069,27 @@ def main():
         # ==========================================
         with menu[1]: 
             st.subheader("📖 Database & Lijsten")
-            weergave = st.selectbox("Wat wil je bekijken?", ["Vocabulaire", "Actief Beheersen (Rijtjes)", "Stamtijden", "Structuurwoorden"])
-            
-            if weergave == "Vocabulaire" and st.session_state.data:
+            weergave = st.selectbox("Wat wil je bekijken?", ["Vocabulaire", "🧩 Mijn verwarwoorden", "Actief Beheersen (Rijtjes)", "Stamtijden", "Structuurwoorden"])
+
+            if weergave == "🧩 Mijn verwarwoorden":
+                _paren = verwar_paren_lijst(st.session_state.data or [], st.session_state.get('verwar_stats', {}))
+                st.caption("Woordparen die je met elkaar hebt verward (door jou bevestigd). Een paar verdwijnt zodra je beide woorden weer beheerst (streak ≥ 16).")
+                if _paren:
+                    _rijen = []
+                    for p in _paren:
+                        _rijen.append({
+                            "Woord A": p['a'], "betekenis A": p['a_ned'][:30],
+                            "Woord B": p['b'], "betekenis B": p['b_ned'][:30],
+                            "Keer verward": p['n'],
+                            "Streak A/B": f"{p['a_streak']}/{p['b_streak']}",
+                            "Laatst": p['laatst'] or "—",
+                        })
+                    st.dataframe(pd.DataFrame(_rijen), use_container_width=True, hide_index=True)
+                    st.caption(f"Totaal **{len(_paren)}** actieve verwarparen. Oefen ze gericht via *Tabblad 1 → Oefening → Mijn verwarwoorden*.")
+                else:
+                    st.info("Nog geen verwarparen. Die ontstaan als je in een sessie twee woorden door elkaar haalt en dat in de eindsamenvatting bevestigt.")
+
+            elif weergave == "Vocabulaire" and st.session_state.data:
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                 les_filter = st.selectbox("Bekijk les:", alle_lessen)
                 df_vocab = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
