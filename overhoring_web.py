@@ -2586,7 +2586,18 @@ def main():
 
                             st.session_state.huidige_opties = [correct_optie] + afleiders[:3]
                             rnd.shuffle(st.session_state.huidige_opties)
-                        
+
+                            # Onthoud bij welk Grieks woord elke afleider-betekenis hoort, zodat we bij
+                            # een foute klik meteen kunnen tonen "die betekenis hoort bij X" (ook als je
+                            # X nog nooit oefende) en X als verwar-kandidaat kunnen aanbieden.
+                            _ned_bron = {}
+                            for _w in st.session_state.data:
+                                _nb = str(_w.get('nederlands', '')).strip()
+                                if _nb and _nb not in _ned_bron:
+                                    _ned_bron[_nb] = {'grieks': _w.get('grieks', ''), 'nederlands': _nb}
+                            st.session_state.huidige_optie_bron = {
+                                _opt: _ned_bron.get(_opt) for _opt in st.session_state.huidige_opties if _opt != correct_optie}
+
                         cols = st.columns(2)
                         for idx, optie in enumerate(st.session_state.huidige_opties):
                             if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
@@ -2617,6 +2628,19 @@ def main():
                                     # Kandidaten worden onthouden voor de eindsamenvatting (zelf bevestigen).
                                     _sessie_noteer_fout(item, optie)
                                     _verwar_note = bouw_verwar_melding(item, optie, st.session_state.data, laad_verwarparen_db())
+
+                                    # Toon expliciet welk woord bij de aangeklikte (foute) betekenis hoort —
+                                    # ook als dat woord nog niet geoefend is — en bied het aan de eind-
+                                    # samenvatting aan als verwar-kandidaat (zelf te bevestigen).
+                                    _bron = (st.session_state.get('huidige_optie_bron') or {}).get(optie)
+                                    if _bron and _bron.get('grieks') and _bron.get('grieks') != item.get('grieks'):
+                                        _bg = _bron['grieks']; _bn = str(_bron.get('nederlands', ''))
+                                        _onthoud_verwar_kandidaten(item.get('grieks', ''), str(item.get('nederlands', '')), optie, {_bg: _bn})
+                                        _extra = f"\n\n👉 *“{optie}”* is de betekenis van **{_bg}** ({_bn[:30]})."
+                                        if not _verwar_note:
+                                            _verwar_note = "\n\n⚠️ **Let op — mogelijk verward:**"
+                                        if _extra not in _verwar_note:
+                                            _verwar_note += _extra
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
