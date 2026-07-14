@@ -1436,6 +1436,98 @@ def bereken_xp_actief(actief_stats):
                 xp += 15
     return xp
 
+# --- COMPETITIE: metrics per gebruiker reconstrueren uit de Sheet ---
+def _row_reassemble(row, prefix, count_col):
+    """Reconstrueer een gechunkte JSON-dict uit één df-rij (voor het competitie-dashboard)."""
+    try:
+        if count_col in row and not pd.isna(row.get(count_col)):
+            n = int(row[count_col])
+            s = "".join(str(row[f"{prefix}_{i}"]) for i in range(n)
+                        if f"{prefix}_{i}" in row and not pd.isna(row.get(f"{prefix}_{i}")))
+        else:
+            s = str(row.get(prefix, '{}'))
+        return veilige_json_load(s) or {}
+    except Exception:
+        return {}
+
+def _streak_uit_entry(v):
+    """Streak uit een stats-entry; ondersteunt zowel 'streak' als de oude m1-m4-telling."""
+    if 'm4' in v or 'm1' in v:
+        return int(v.get('m2', 0)) * 1 + int(v.get('m3', 0)) * 2 + int(v.get('m4', 0)) * 4
+    return int(v.get('streak', 0))
+
+def _vocab_xp_uit_stats(vocab_stats):
+    """Zelfde formule als bereken_xp, maar rechtstreeks uit een vocab_stats-dict."""
+    xp = 0
+    for _k, v in (vocab_stats or {}).items():
+        if not isinstance(v, dict):
+            continue
+        xp += int(v.get('g', 0)) * 10
+        s = _streak_uit_entry(v)
+        if s >= 5: xp += 10
+        if s >= 16: xp += 25
+        if s >= 30: xp += 50
+    return xp
+
+def _beheerst_telling(d, drempel=16):
+    """(pogingen, beheerst) uit een g/f/streak-dict."""
+    pog = beh = 0
+    for _k, v in (d or {}).items():
+        if not isinstance(v, dict):
+            continue
+        pog += int(v.get('g', 0)) + int(v.get('f', 0))
+        if _streak_uit_entry(v) >= drempel:
+            beh += 1
+    return pog, beh
+
+def bereken_gebruiker_metrics(row, vandaag=None):
+    """Reconstrueer één gebruikersrij tot competitie-metrics (all-time niveau + weekactiviteit)."""
+    if vandaag is None:
+        vandaag = datetime.now().date()
+    naam = str(row.get('gebruikersnaam', 'Anoniem')).split('_')[0] or 'Anoniem'
+    vocab = _row_reassemble(row, 'vocab_stats', 'v_chunks')
+    stam = _row_reassemble(row, 'stam_stats', 'st_chunks')
+    struct = _row_reassemble(row, 'struct_stats', 'sr_chunks')
+    actief = _row_reassemble(row, 'actief_stats', 'af_chunks')
+    dag = _row_reassemble(row, 'dag_stats', 'd_chunks')
+    badges = _row_reassemble(row, 'badges', 'bd_chunks')
+
+    xp = (_vocab_xp_uit_stats(vocab) + bereken_xp_stam(stam)
+          + bereken_xp_struct(struct) + bereken_xp_actief(actief))
+    niv = niveau_van_xp(xp)
+
+    w_pog, w_beh = _beheerst_telling(vocab)
+    s_pog, s_beh = _beheerst_telling(stam)
+    r_pog, r_beh = _beheerst_telling(struct)
+    a_pog, a_beh = _beheerst_telling(actief)
+
+    week = tot = 0
+    week_start = vandaag - pd.Timedelta(days=6)
+    for d_str, aantal in (dag or {}).items():
+        try:
+            n = int(aantal)
+            tot += n
+            d_dt = datetime.strptime(str(d_str), '%Y-%m-%d').date()
+            if week_start <= d_dt <= vandaag:
+                week += n
+        except Exception:
+            pass
+
+    badge_count = len([k for k in (badges or {}).keys() if not str(k).startswith('_')])
+    ond = {
+        "woorden": {"pog": w_pog, "beh": w_beh},
+        "actief": {"pog": a_pog, "beh": a_beh},
+        "stam": {"pog": s_pog, "beh": s_beh},
+        "struct": {"pog": r_pog, "beh": r_beh},
+    }
+    _labels = {"woorden": "📘 Woorden", "actief": "🎓 Actief", "stam": "⏳ Stamtijden", "struct": "🧱 Structuur"}
+    gedaan = [_labels[k] for k in ["woorden", "actief", "stam", "struct"] if ond[k]["pog"] > 0]
+    return {
+        "naam": naam, "xp": xp, "niveau": niv["niveau"], "titel": niv["titel"],
+        "week": week, "totaal": tot, "badges": badge_count,
+        "onderdelen": ond, "gedaan": gedaan,
+    }
+
 def markeer_actief_paradigma(cellen):
     """Zet de cellen van een paradigma op 'beheerst' (streak 16) na een foutloos rooster + telt g op."""
     ast = st.session_state.get('actief_stats')
@@ -3053,52 +3145,104 @@ def main():
             st.write("---")
 
             # --- COMPETITIE DASHBOARD ---
-            st.subheader("🏆 Competitie Dashboard (Laatste 14 dagen)")
+            st.subheader("🏆 Competitie Dashboard")
+            st.caption("Meet je met de groep — **deze week** (wie oefent het hardst?) én **all-time** (wie staat op het hoogste niveau?). Filter op onderdeel om te zien wie waar sterk in is.")
             try:
                 # 5 min cachen: dit tabblad rendert bij ELKE rerun, dus ttl=0 vrat het lees-quotum op.
                 df_global = conn.read(ttl=300)
-                if 'gebruikersnaam' in df_global.columns and 'dag_stats' in df_global.columns:
-                    comp_data = []
-                    start_compare = datetime.now().date() - pd.Timedelta(days=13)
-                    
-                    for idx, row in df_global.iterrows():
-                        g_naam = row.get('gebruikersnaam', 'Anoniem').split('_')[0] 
-                        if not g_naam: continue
+                if 'gebruikersnaam' in df_global.columns:
+                    eigen_naam = st.session_state.last_user.split('_')[0]
+                    _alle = []
+                    for _idx, row in df_global.iterrows():
+                        if not str(row.get('gebruikersnaam', '')):
+                            continue
                         try:
-                            if 'd_chunks' in row and not pd.isna(row['d_chunks']):
-                                count = int(row['d_chunks'])
-                                s = "".join([str(row[f"dag_stats_{i}"]) for i in range(count) if f"dag_stats_{i}" in row])
-                                d_stats_raw = veilige_json_load(s)
+                            _alle.append(bereken_gebruiker_metrics(row))
+                        except Exception:
+                            pass
+                    # ontdubbel op naam: houd het profiel met de meeste XP aan
+                    _per_naam = {}
+                    for _m in _alle:
+                        if _m['naam'] not in _per_naam or _m['xp'] > _per_naam[_m['naam']]['xp']:
+                            _per_naam[_m['naam']] = _m
+                    metrics = list(_per_naam.values())
+
+                    def _mknaam(m):
+                        return ("👉 " if m['naam'] == eigen_naam else "") + m['naam']
+
+                    def _podium(lijst, waarde_fn, sub_label):
+                        top = lijst[:3]
+                        if not top:
+                            return
+                        med = ["🥇", "🥈", "🥉"]
+                        cols = st.columns(len(top))
+                        for i, (c, m) in enumerate(zip(cols, top)):
+                            ik = (m['naam'] == eigen_naam)
+                            c.markdown(
+                                f"<div style='text-align:center;padding:6px;border-radius:12px;"
+                                f"background:{'rgba(51,204,255,.12)' if ik else 'transparent'}'>"
+                                f"<div style='font-size:34px'>{med[i]}</div>"
+                                f"<div style='font-weight:700;font-size:17px'>{_mknaam(m)}</div>"
+                                f"<div style='color:#33ccff;font-size:22px;font-weight:800'>{waarde_fn(m)}</div>"
+                                f"<div style='opacity:.65;font-size:12px'>{sub_label}</div></div>",
+                                unsafe_allow_html=True)
+
+                    if metrics:
+                        tab_week, tab_all = st.tabs(["📅 Deze week", "🏆 All-time (niveau)"])
+
+                        with tab_week:
+                            st.caption("Wie oefende de afgelopen 7 dagen het meest?")
+                            wl = sorted([m for m in metrics if m['week'] > 0], key=lambda m: m['week'], reverse=True)
+                            if wl:
+                                _podium(wl, lambda m: m['week'], "items deze week")
+                                st.write("")
+                                st.dataframe(pd.DataFrame([
+                                    {"#": i, "Speler": _mknaam(m), "Deze week": m['week'],
+                                     "Niveau": m['niveau'], "Rang": m['titel']}
+                                    for i, m in enumerate(wl, 1)]), width='stretch', hide_index=True)
                             else:
-                                d_stats_raw = veilige_json_load(str(row.get('dag_stats', '{}')))
-                        except: d_stats_raw = {}
-                        
-                        tot_14 = 0
-                        for d_str, aantal in d_stats_raw.items():
-                            try:
-                                d_dt = datetime.strptime(d_str, '%Y-%m-%d').date()
-                                if start_compare <= d_dt <= datetime.now().date(): tot_14 += int(aantal)
-                            except: pass
-                        if tot_14 > 0: comp_data.append({"Gebruiker": g_naam, "Geoefende Items": tot_14})
-                    
-                    if comp_data:
-                        df_comp = pd.DataFrame(comp_data).groupby('Gebruiker').sum().reset_index()
-                        df_comp = df_comp.sort_values(by="Geoefende Items", ascending=False).reset_index(drop=True)
-                        df_comp.index += 1
-                        
-                        eigen_naam = st.session_state.last_user.split('_')[0]
-                        andere_gebruikers = df_comp[df_comp['Gebruiker'] != eigen_naam]
-                        hoogste_score = df_comp['Geoefende Items'].max() if not df_comp.empty else 0
-                        gemiddelde_anderen = int(andere_gebruikers['Geoefende Items'].mean()) if not andere_gebruikers.empty else 0
-                        
-                        c1, c2, c3 = st.columns(3)
-                        c1.metric("Hoogste score in groep", hoogste_score)
-                        c2.metric("Gemiddelde van de rest", gemiddelde_anderen)
-                        
-                        user_rank = df_comp[df_comp['Gebruiker'] == eigen_naam].index
-                        if len(user_rank) > 0: c3.metric("Jouw Positie", f"#{user_rank[0]} van de {len(df_comp)}")
-                        
-                        st.dataframe(df_comp, width='stretch')
+                                st.info("Nog niemand heeft deze week geoefend — wees de eerste! 💪")
+
+                        with tab_all:
+                            _ond_opties = {
+                                "🏅 Totaal (niveau + XP)": None,
+                                "📘 Woorden": "woorden",
+                                "🎓 Actief Beheersen": "actief",
+                                "⏳ Stamtijden": "stam",
+                                "🧱 Structuurwoorden": "struct",
+                            }
+                            _keuze = st.selectbox("Waarop vergelijken?", list(_ond_opties.keys()), key="comp_onderdeel")
+                            _ond = _ond_opties[_keuze]
+                            if _ond is None:
+                                al = sorted(metrics, key=lambda m: m['xp'], reverse=True)
+                                _podium(al, lambda m: f"Lvl {m['niveau']}", "niveau")
+                                st.write("")
+                                st.dataframe(pd.DataFrame([
+                                    {"#": i, "Speler": _mknaam(m), "Niveau": m['niveau'], "Rang": m['titel'],
+                                     "XP": m['xp'], "🏅 Badges": m['badges'],
+                                     "Actief in": " · ".join(m['gedaan']) or "—"}
+                                    for i, m in enumerate(al, 1)]), width='stretch', hide_index=True)
+                            else:
+                                al = sorted(metrics, key=lambda m: (m['onderdelen'][_ond]['beh'], m['onderdelen'][_ond]['pog']), reverse=True)
+                                _podium(al, lambda m: m['onderdelen'][_ond]['beh'], "beheerst")
+                                st.write("")
+                                st.dataframe(pd.DataFrame([
+                                    {"#": i, "Speler": _mknaam(m), "Beheerst": m['onderdelen'][_ond]['beh'],
+                                     "Pogingen": m['onderdelen'][_ond]['pog'],
+                                     "Niveau": m['niveau'], "Rang": m['titel']}
+                                    for i, m in enumerate(al, 1)]), width='stretch', hide_index=True)
+
+                        _mij = next((m for m in metrics if m['naam'] == eigen_naam), None)
+                        if _mij:
+                            _all_sorted = sorted(metrics, key=lambda m: m['xp'], reverse=True)
+                            _pos = [m['naam'] for m in _all_sorted].index(eigen_naam) + 1
+                            st.success(
+                                f"👉 Jij bent **{eigen_naam}** — Niveau **{_mij['niveau']}** ({_mij['titel']}), "
+                                f"**{_mij['xp']} XP**, plek **#{_pos} van {len(metrics)}** all-time · 🏅 {_mij['badges']} badges.")
+                    else:
+                        st.caption("Nog geen groepsdata om mee te vergelijken.")
+                else:
+                    st.caption("Nog geen groepsdata om mee te vergelijken.")
             except Exception:
                 st.caption("Kon de competitiegegevens momenteel niet synchroniseren.")
             
