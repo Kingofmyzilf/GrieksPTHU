@@ -185,6 +185,19 @@ def normaliseer_accent(woord):
         return w.strip()
     return ""
 
+def grieks_vorm_ok(typed, correct):
+    """Tolerante vergelijking van een Griekse vorm: accenten/leestekens genegeerd, Latijnse óf Griekse
+    invoer, en elk deel van een 'x / y'-vorm (gescheiden door / , of ;) telt als goed."""
+    t_lat = normaliseer_accent(naar_grieks_transliteratie(str(typed)))
+    t_gr = normaliseer_accent(str(typed))
+    if not t_lat and not t_gr:
+        return False
+    for deel in re.split(r'[\/,;]', str(correct)):
+        d = normaliseer_accent(deel.strip())
+        if d and (d == t_lat or d == t_gr):
+            return True
+    return False
+
 def deconstrueer_stamtijd_live(vorm, tijd_diathese):
     if not vorm or vorm in ["n.v.t.", "---", "-"]: return "", ""
     v_schoon = vorm.strip()
@@ -1108,7 +1121,7 @@ def leerpad_kaart_volgorde(sampled):
     return kaarten
 
 # --- DAGELIJKS DOEL ---
-DAGDOEL_STANDAARD = {'woorden': 10, 'verwar': 3, 'knelpunt': 5, 'struct': 5, 'stam': 5, 'verzen': 2}
+DAGDOEL_STANDAARD = {'woorden': 10, 'verwar': 3, 'knelpunt': 5, 'actief': 5, 'stam': 5, 'struct': 5, 'verzen': 2}
 
 def dagdoel_config():
     cfg = (st.session_state.get('dagdoel') or {}).get('config') or {}
@@ -3337,7 +3350,7 @@ def main():
                             if st.button("Nakijken", type="primary", key="lpm_nakijk"):
                                 for c in cells:
                                     if not st.session_state.actief_lp_state[c['id']]["correct"]:
-                                        if normaliseer_accent(naar_grieks_transliteratie(_inp.get(c['id'], ""))) == normaliseer_accent(c['vorm']):
+                                        if grieks_vorm_ok(_inp.get(c['id'], ""), c['vorm']):
                                             st.session_state.actief_lp_state[c['id']] = {"correct": True, "value": c['vorm']}
                                         else: st.session_state.actief_lp_state[c['id']]["value"] = ""
                                 st.rerun()
@@ -3396,7 +3409,7 @@ def main():
                                 for _oi, _opt in enumerate(st.session_state.af_opties):
                                     if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}"):
                                         if _opt == cell['vorm']:
-                                            _af_score(cid, 2, True); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
+                                            _af_score(cid, 2, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
                                             _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {cell['label']} = **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
@@ -3405,8 +3418,8 @@ def main():
                                 with st.form(f"aft_{cid}", clear_on_submit=True):
                                     _in = st.text_input("Typ de vorm (Latijnse toetsen mag):")
                                     if st.form_submit_button("Controleer", type="primary"):
-                                        if normaliseer_accent(naar_grieks_transliteratie(_in)) == normaliseer_accent(cell['vorm']):
-                                            _af_score(cid, 4, True); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
+                                        if grieks_vorm_ok(_in, cell['vorm']):
+                                            _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
                                             _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
@@ -5267,24 +5280,23 @@ def main():
                     "Kom daarna hier terug en vink je onderdelen af — dan kleurt je kalender vol. 🎨")
 
             st.write("---")
-            st.markdown("### ✅ Afvinken wat je vandaag deed")
-            for _soort, _emoji, _label in [('struct', '🧱', 'Structuurwoorden'),
+            st.markdown("### ✅ Voortgang overige onderdelen")
+            st.caption("Deze tellen automatisch mee zodra je een goed antwoord geeft in dat tabblad.")
+            for _soort, _emoji, _label in [('actief', '🎓', 'Actief Beheersen'),
                                            ('stam', '⏳', 'Stamtijden'),
+                                           ('struct', '🧱', 'Structuurwoorden'),
                                            ('verzen', '📝', 'Verzen ontleden')]:
                 _gedaan = int(_lg.get(_soort, 0)); _doel = int(_cfg[_soort])
-                cc1, cc2 = st.columns([4, 1])
-                with cc1:
-                    st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
-                if cc2.button("✓ +1", key=f"dagdoel_plus_{_soort}"):
-                    dagdoel_plus(_soort); trigger_save(forceer=True); st.rerun()
+                st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
 
             with st.expander("⚙️ Mijn dagelijkse doelen instellen"):
                 _nw = {
                     'woorden': st.slider("Woorden", 0, 40, _cfg['woorden'], key="dd_woorden"),
                     'knelpunt': st.slider("Moeilijke woorden", 0, 20, _cfg['knelpunt'], key="dd_knelpunt"),
                     'verwar': st.slider("Verwarparen", 0, 15, _cfg['verwar'], key="dd_verwar"),
-                    'struct': st.slider("Structuurwoorden", 0, 20, _cfg['struct'], key="dd_struct"),
+                    'actief': st.slider("Actief Beheersen (cellen)", 0, 30, _cfg['actief'], key="dd_actief"),
                     'stam': st.slider("Stamtijden", 0, 20, _cfg['stam'], key="dd_stam"),
+                    'struct': st.slider("Structuurwoorden", 0, 20, _cfg['struct'], key="dd_struct"),
                     'verzen': st.slider("Verzen ontleden", 0, 10, _cfg['verzen'], key="dd_verzen"),
                 }
                 if st.button("💾 Doelen opslaan", key="dd_save"):
