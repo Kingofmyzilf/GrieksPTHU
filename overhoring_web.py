@@ -529,6 +529,15 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         except:
             return 9999
 
+    def _fout_dagen_geleden(x):
+        d_str = str(x.get('laatst_fout', '') or '').strip()
+        if not d_str:
+            return None
+        try:
+            return (vandaag_d - datetime.strptime(d_str, '%Y-%m-%d').date()).days
+        except Exception:
+            return None
+
     def struggle_bonus(x):
         # Lichte, schema-vrije 'worstel-score': hardnekkig-foute woorden komen eerder terug.
         # Uitgedrukt in dag-equivalenten zodat het naadloos optelt bij 'dagen geleden'.
@@ -542,6 +551,11 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         if streak == 0 and f > 0:
             bonus += 4                               # recent teruggevallen / net fout: extra prioriteit
         bonus -= min(streak, 10) * 0.3               # stevige streak dempt de urgentie licht
+        # Spaced repetition op fouten: wat je gisteren/eergisteren fout had, krijgt een flinke
+        # voorrang-boost bij je volgende sessie (zolang het nog niet beheerst is).
+        fdg = _fout_dagen_geleden(x)
+        if fdg is not None and 1 <= fdg <= 3 and streak < 16:
+            bonus += (12 if fdg <= 2 else 6)
         return max(0, bonus)
 
     # Hoogste effectieve 'ouderdom' eerst (oud + worstelend bovenaan, vers + solide onderaan).
@@ -849,12 +863,17 @@ def _sessie_noteer_goed(item):
     d[item.get('grieks', '')] = str(item.get('nederlands', ''))
 
 def _sessie_noteer_fout(item, antwoord):
-    """Registreert (in-memory) dat dit woord in de huidige sessie fout ging, met het gegeven antwoord."""
+    """Registreert (in-memory) dat dit woord in de huidige sessie fout ging, met het gegeven antwoord.
+    Stempelt ook de fout-datum (voor spaced repetition: gisteren-fout komt morgen weer bovenaan)."""
     d = st.session_state.get('sessie_fout')
     if not isinstance(d, dict):
         d = {}
         st.session_state.sessie_fout = d
     d[item.get('grieks', '')] = {"nederlands": str(item.get('nederlands', '')), "antwoord": str(antwoord)}
+    try:
+        item['laatst_fout'] = str(datetime.now().date())
+    except Exception:
+        pass
 
 def _sessie_reset_samenvatting():
     """Leegt de sessie-accumulatoren voor de eindsamenvatting."""
@@ -1572,6 +1591,7 @@ def laad_gebruiker_data(naam):
             r['score_goed'] = stats.get('g', 0)
             r['score_fout'] = stats.get('f', 0)
             r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
+            r['laatst_fout'] = stats.get('lf', "")
             if 'lexeem_info' not in r or not r['lexeem_info']: r['lexeem_info'] = r.get('grieks_info', '')
         return basis
     except Exception: return None
@@ -1634,9 +1654,11 @@ def trigger_save(forceer=False):
     nieuwe_vocab_stats = {}
     for word in st.session_state.data:
         s = int(word.get('streak', 0)); g = int(word.get('score_goed', 0)); f = int(word.get('score_fout', 0)); l = word.get('laatst_geoefend', "")
+        lf = word.get('laatst_fout', "")
         if s > 0 or g > 0 or f > 0 or l != "":
             entry = {'streak': s, 'g': g, 'f': f}
             if l: entry['laatst_geoefend'] = l
+            if lf: entry['lf'] = lf
             nieuwe_vocab_stats[word['grieks']] = entry
 
     st.session_state.vocab_stats = nieuwe_vocab_stats
