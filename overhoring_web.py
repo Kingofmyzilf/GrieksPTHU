@@ -2871,7 +2871,13 @@ def main():
                         + stats_stam['Beheerst'] + stats_stam['Mastery']
                         + stats_str['Beheerst'] + stats_str['Mastery'])
             _mast_tot = stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery']
-            _niv_info = niveau_van_xp(bereken_xp(st.session_state.data))
+            # Niveau over ALLE onderdelen samen (woorden + stamtijden + structuur + actief),
+            # net als in het competitie-dashboard — zodat "Niveau" overal hetzelfde betekent.
+            _xp_totaal = (bereken_xp(st.session_state.data)
+                          + bereken_xp_stam(st.session_state.get('stam_stats', {}))
+                          + bereken_xp_struct(st.session_state.get('struct_stats', {}))
+                          + bereken_xp_actief(st.session_state.get('actief_stats', {})))
+            _niv_info = niveau_van_xp(_xp_totaal)
             _badge_stats = {
                 'beoordelingen': tot_g + tot_f,
                 'oefendagen': _oefendagen,
@@ -2899,7 +2905,7 @@ def main():
                 st.session_state.badges[_bid] = _vandaag
 
             # Altijd zichtbaar (motiverend), rest achter een dropdown:
-            st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP)")
+            st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP, over alle onderdelen)")
             with st.expander("🏅 Bekijk al je badges", expanded=False):
                 st.caption("Verzamel badges door te oefenen, woorden te beheersen, verwarringen op te lossen en niveaus te halen. Behaalde badges staan bovenaan.")
                 _gesorteerd = sorted(_badges, key=lambda b: (not b['behaald']))
