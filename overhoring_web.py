@@ -5225,6 +5225,24 @@ def main():
         with menu[8]:
             st.subheader("ℹ️ Handboek & Achterliggende Logica")
 
+            # --- Downloadbare instructie-PowerPoint ---
+            _ppt_pad = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Instructie_GrieksPTHU.pptx")
+            if os.path.exists(_ppt_pad):
+                try:
+                    with open(_ppt_pad, "rb") as _pf:
+                        _ppt_bytes = _pf.read()
+                    st.markdown("### 📥 Uitgebreide instructie (PowerPoint)")
+                    st.caption("Een complete rondleiding door de app — één dia per tabblad met precies wat je er ziet en wat er gebeurt. Handig als naslag of om te delen.")
+                    st.download_button(
+                        "📥 Download de instructie-PowerPoint",
+                        data=_ppt_bytes,
+                        file_name="Instructie_GrieksPTHU.pptx",
+                        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    )
+                    st.write("---")
+                except Exception:
+                    pass
+
             # --- Eenvoud-/geavanceerd-schakelaar ---
             st.markdown("### 🧭 Weergave-modus")
             _prefs_ui = st.session_state.get('ui_prefs')
