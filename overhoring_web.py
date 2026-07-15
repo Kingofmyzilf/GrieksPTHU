@@ -3330,10 +3330,10 @@ def main():
                 if 'gebruikersnaam' in df_global.columns:
                     eigen_naam = st.session_state.last_user.split('_')[0]
                     try:
-                        _vandaag_str = str(datetime.now().date())
+                        _comp_vandaag = str(datetime.now().date())
                     except Exception:
-                        _vandaag_str = ""
-                    _alle = competitie_metrics_cached(df_global, _vandaag_str)
+                        _comp_vandaag = ""
+                    _alle = competitie_metrics_cached(df_global, _comp_vandaag)
                     # ontdubbel op naam: houd het profiel met de meeste XP aan
                     _per_naam = {}
                     for _m in _alle:
