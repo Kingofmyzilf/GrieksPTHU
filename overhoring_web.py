@@ -525,6 +525,19 @@ def registreer_oefening(item=None):
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
 
+def _herhaal_interval(streak):
+    """Spaced-repetition-interval (in dagen) op basis van de streak: hoe beter je een woord kent,
+    hoe langer het wegblijft. Een woord is 'due' zodra er minstens dit aantal dagen voorbij is
+    sinds je het laatst oefende. Zo komt beheerste stof niet onnodig vaak terug en nieuwe/zwakke
+    stof juist snel."""
+    s = int(streak)
+    if s <= 1: return 0     # nieuw / net begonnen → elke sessie
+    if s <= 3: return 1     # ~dagelijks
+    if s <= 7: return 2
+    if s <= 15: return 4
+    if s <= 29: return 10   # beheerst → ~anderhalve week rust
+    return 25               # mastery → ~maandelijks opfrissen
+
 def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieuw=2, sorteer_oudste_eerst=False, verbied_nieuwe_woorden=False, totale_db=None):
     nieuw_herstel, nieuw_vers, incubatie, training, beheerst, mastery = [], [], [], [], [], []
     
@@ -584,9 +597,15 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
             bonus += (12 if fdg <= 2 else 6)
         return max(0, bonus)
 
-    # Hoogste effectieve 'ouderdom' eerst (oud + worstelend bovenaan, vers + solide onderaan).
+    def _overdue(x):
+        # Hoeveel dagen het woord al 'due' is: dagen sinds laatst geoefend minus het
+        # spaced-repetition-interval voor zijn streak. Positief = achterstallig (moet terugkomen),
+        # negatief = nog netjes op schema (mag even rusten en zakt zo onderaan de rij).
+        return dagen_geleden(x) - _herhaal_interval(krijg_streak(x, module))
+
+    # Achterstallige + worstelende woorden bovenaan; woorden die nog op schema liggen onderaan.
     def sorteer_key(x):
-        return -(dagen_geleden(x) + struggle_bonus(x))
+        return -(_overdue(x) + struggle_bonus(x))
 
     incubatie.sort(key=sorteer_key); training.sort(key=sorteer_key); beheerst.sort(key=sorteer_key); mastery.sort(key=sorteer_key)
     
@@ -1473,38 +1492,12 @@ def bereken_xp_actief(actief_stats):
                 xp += 15
     return xp
 
-# --- COMPETITIE: metrics per gebruiker reconstrueren uit de Sheet ---
-def _row_reassemble(row, prefix, count_col):
-    """Reconstrueer een gechunkte JSON-dict uit één df-rij (voor het competitie-dashboard)."""
-    try:
-        if count_col in row and not pd.isna(row.get(count_col)):
-            n = int(row[count_col])
-            s = "".join(str(row[f"{prefix}_{i}"]) for i in range(n)
-                        if f"{prefix}_{i}" in row and not pd.isna(row.get(f"{prefix}_{i}")))
-        else:
-            s = str(row.get(prefix, '{}'))
-        return veilige_json_load(s) or {}
-    except Exception:
-        return {}
-
+# --- COMPETITIE: samenvatting per gebruiker (voor het Scorebord-tabblad) ---
 def _streak_uit_entry(v):
     """Streak uit een stats-entry; ondersteunt zowel 'streak' als de oude m1-m4-telling."""
     if 'm4' in v or 'm1' in v:
         return int(v.get('m2', 0)) * 1 + int(v.get('m3', 0)) * 2 + int(v.get('m4', 0)) * 4
     return int(v.get('streak', 0))
-
-def _vocab_xp_uit_stats(vocab_stats):
-    """Zelfde formule als bereken_xp, maar rechtstreeks uit een vocab_stats-dict."""
-    xp = 0
-    for _k, v in (vocab_stats or {}).items():
-        if not isinstance(v, dict):
-            continue
-        xp += int(v.get('g', 0)) * 10
-        s = _streak_uit_entry(v)
-        if s >= 5: xp += 10
-        if s >= 16: xp += 25
-        if s >= 30: xp += 50
-    return xp
 
 def _beheerst_telling(d, drempel=16):
     """(pogingen, beheerst) uit een g/f/streak-dict."""
@@ -1516,73 +1509,6 @@ def _beheerst_telling(d, drempel=16):
         if _streak_uit_entry(v) >= drempel:
             beh += 1
     return pog, beh
-
-def bereken_gebruiker_metrics(row, vandaag=None):
-    """Reconstrueer één gebruikersrij tot competitie-metrics (all-time niveau + weekactiviteit)."""
-    if vandaag is None:
-        vandaag = datetime.now().date()
-    naam = str(row.get('gebruikersnaam', 'Anoniem')).split('_')[0] or 'Anoniem'
-    vocab = _row_reassemble(row, 'vocab_stats', 'v_chunks')
-    stam = _row_reassemble(row, 'stam_stats', 'st_chunks')
-    struct = _row_reassemble(row, 'struct_stats', 'sr_chunks')
-    actief = _row_reassemble(row, 'actief_stats', 'af_chunks')
-    dag = _row_reassemble(row, 'dag_stats', 'd_chunks')
-    badges = _row_reassemble(row, 'badges', 'bd_chunks')
-
-    xp = (_vocab_xp_uit_stats(vocab) + bereken_xp_stam(stam)
-          + bereken_xp_struct(struct) + bereken_xp_actief(actief))
-    niv = niveau_van_xp(xp)
-
-    w_pog, w_beh = _beheerst_telling(vocab)
-    s_pog, s_beh = _beheerst_telling(stam)
-    r_pog, r_beh = _beheerst_telling(struct)
-    a_pog, a_beh = _beheerst_telling(actief)
-
-    week = tot = 0
-    week_start = vandaag - pd.Timedelta(days=6)
-    for d_str, aantal in (dag or {}).items():
-        try:
-            n = int(aantal)
-            tot += n
-            d_dt = datetime.strptime(str(d_str), '%Y-%m-%d').date()
-            if week_start <= d_dt <= vandaag:
-                week += n
-        except Exception:
-            pass
-
-    badge_count = len([k for k in (badges or {}).keys() if not str(k).startswith('_')])
-    ond = {
-        "woorden": {"pog": w_pog, "beh": w_beh},
-        "actief": {"pog": a_pog, "beh": a_beh},
-        "stam": {"pog": s_pog, "beh": s_beh},
-        "struct": {"pog": r_pog, "beh": r_beh},
-    }
-    _labels = {"woorden": "📘 Woorden", "actief": "🎓 Actief", "stam": "⏳ Stamtijden", "struct": "🧱 Structuur"}
-    gedaan = [_labels[k] for k in ["woorden", "actief", "stam", "struct"] if ond[k]["pog"] > 0]
-    return {
-        "naam": naam, "xp": xp, "niveau": niv["niveau"], "titel": niv["titel"],
-        "week": week, "totaal": tot, "badges": badge_count,
-        "onderdelen": ond, "gedaan": gedaan,
-    }
-
-@st.cache_data(ttl=300, show_spinner=False)
-def competitie_metrics_cached(df_global, vandaag_str):
-    """Reconstrueert de competitie-metrics voor ALLE gebruikers, maar gecached: dit tabblad rendert
-    bij elke rerun, en zonder cache werd elke gebruiker (6 gechunkte JSON-kolommen) telkens opnieuw
-    geparsed — ook als je in een heel ander tabblad bezig bent. Ververst elke 5 min / bij daggrens."""
-    try:
-        vandaag = datetime.strptime(vandaag_str, '%Y-%m-%d').date()
-    except Exception:
-        vandaag = None
-    out = []
-    for _idx, row in df_global.iterrows():
-        if not str(row.get('gebruikersnaam', '')):
-            continue
-        try:
-            out.append(bereken_gebruiker_metrics(row, vandaag=vandaag))
-        except Exception:
-            pass
-    return out
 
 def _struct_stat_lookup(struct_stats, w, idx):
     """Structuurwoord-stat ophalen met dezelfde sleutel als bij het opslaan (`grieks_index`),
@@ -1838,33 +1764,6 @@ def laad_gebruiker_data(naam):
         # (en de gebruiker weet dat zijn voortgang NIET is aangeraakt).
         st.session_state.laad_fout = str(_e)
         return None
-
-# --- VOLLEDIGE PROFIEL-BACKUP (los vangnet naast de cloud) ---
-_PROFIEL_DICTS = ['vocab_stats', 'gram_stats', 'prod_stats', 'stam_stats', 'struct_stats',
-                  'dag_stats', 'verwar_stats', 'ui_prefs', 'badges', 'dagdoel', 'actief_stats']
-
-def profiel_backup_json():
-    """Bundelt alle voortgang uit het geheugen tot één JSON-back-up."""
-    payload = {"app": "GrieksPTHU", "versie": 1,
-               "gebruiker": st.session_state.get('last_user', ''),
-               "stats": {k: (st.session_state.get(k) or {}) for k in _PROFIEL_DICTS}}
-    return json.dumps(payload, ensure_ascii=False, indent=1)
-
-def profiel_herstel(payload):
-    """Zet een back-up terug in het geheugen + op de woordenlijst. Retourneert (ok, melding)."""
-    if not isinstance(payload, dict) or payload.get('app') != 'GrieksPTHU' or not isinstance(payload.get('stats'), dict):
-        return False, "Dit lijkt geen geldig GrieksPTHU-backupbestand."
-    stats = payload['stats']
-    for k in _PROFIEL_DICTS:
-        if isinstance(stats.get(k), dict):
-            st.session_state[k] = stats[k]
-    vs = st.session_state.get('vocab_stats') or {}
-    for r in (st.session_state.get('data') or []):
-        s = vs.get(r.get('grieks', ''), {})
-        r['streak'] = int(s.get('streak', 0))
-        r['score_goed'] = int(s.get('g', 0)); r['score_fout'] = int(s.get('f', 0))
-        r['laatst_geoefend'] = s.get('laatst_geoefend', ''); r['laatst_fout'] = s.get('lf', '')
-    return True, f"Hersteld uit de back-up van '{str(payload.get('gebruiker', '?')).split('_')[0]}'."
 
 def _ws_naam(naam):
     """Werkbladnaam (tab) voor één gebruiker. Elke student z'n eigen tab → een opslag van de één
@@ -3600,36 +3499,8 @@ def main():
 
             st.write("---")
 
-            # --- EXPORTEREN & BACK-UP ---
-            st.subheader("💾 Exporteer & back-up")
-
-            st.markdown("**🛟 Volledige back-up (aanrader)**")
-            st.caption("Download je complete profiel — álle voortgang — als één bestand. Zo heb je altijd zelf een kopie, los van de cloud. Bewaar 'm af en toe.")
-            st.download_button(
-                label="💾 Download mijn volledige profiel (back-up)",
-                data=profiel_backup_json().encode('utf-8'),
-                file_name=f"grieks_profiel_{str(st.session_state.get('last_user', 'ik')).split('_')[0]}.json",
-                mime="application/json",
-            )
-            with st.expander("↩️ Profiel herstellen uit een back-up"):
-                st.warning("Let op: dit **vervangt** je huidige voortgang door die uit het bestand.")
-                _prof_up = st.file_uploader("Kies een back-upbestand (.json)", type=['json'], key="profiel_upload")
-                _prof_ok = st.checkbox("Ja, ik weet het zeker — vervang mijn huidige voortgang.", key="profiel_bevestig")
-                if _prof_up is not None and _prof_ok and st.button("↩️ Herstel nu", key="profiel_herstel_knop"):
-                    try:
-                        _payload = json.load(_prof_up)
-                        _ok, _msg = profiel_herstel(_payload)
-                        if _ok:
-                            trigger_save(forceer=True)
-                            st.success("✅ " + _msg + " Je voortgang is teruggezet en opgeslagen.")
-                            st.rerun()
-                        else:
-                            st.error("❌ " + _msg)
-                    except Exception:
-                        st.error("❌ Kon het bestand niet lezen — is het een geldig .json-backupbestand?")
-
-            st.write("---")
-            st.markdown("**📄 Losse CSV-export (alleen woordenschat)**")
+            # --- EXPORTEREN ---
+            st.subheader("💾 Exporteer je data")
             df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend']]
             csv = df_export.to_csv(index=False).encode('utf-8')
             st.download_button(label="📥 Download woordenschat als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
