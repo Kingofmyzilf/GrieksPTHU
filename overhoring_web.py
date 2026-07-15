@@ -300,6 +300,21 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
             if p_get and p_get != "N.v.t." and gt_map.get(p_get, "") not in info: return False
     return True
 
+@st.cache_data(show_spinner=False)
+def _bijbel_strong_index(_bijbel_db):
+    """Index strong-nummer → lijst van vers-referenties (in db-volgorde). Wordt één keer opgebouwd
+    en gecached; zonder deze index scande zoek_context_zin bij elk getoond woord de héle NT-database
+    lineair. De db is een singleton, dus het onderstreepte argument hoeft niet gehasht te worden."""
+    idx = {}
+    for ref, zin in (_bijbel_db or {}).items():
+        gezien = set()
+        for w in zin:
+            s = str(w.get('strong', ''))
+            if s and s not in gezien:
+                gezien.add(s)
+                idx.setdefault(s, []).append(ref)
+    return idx
+
 def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None, kleur_aan=True, co_doel_strongs=None):
     if not strong_nr or not bijbel_db: return None
     if co_doel_strongs is None: co_doel_strongs = set()
@@ -318,8 +333,12 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
         keuze = (vastgezet_vers_ref, bijbel_db[vastgezet_vers_ref])
     else:
         beste_zin = None; fallback_zin = None
-        
-        for ref, zin in bijbel_db.items():
+
+        # Alleen de verzen die dit strong-nummer bevatten (via de gecachte index) i.p.v. de hele NT.
+        for ref in _bijbel_strong_index(bijbel_db).get(str(strong_nr), []):
+            zin = bijbel_db.get(ref)
+            if not zin:
+                continue
             if strikte_dekking and bekende_vocab:
                 lex_items = [w for w in zin if w.get('strong')]
                 if len(lex_items) < 3 or any((str(w['strong']) not in bekende_vocab and str(w['strong']) != str(strong_nr)) for w in lex_items):
@@ -415,9 +434,16 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
 def veilige_json_load(data_str):
     s = str(data_str).strip()
     if not s or s.lower() == 'nan': return {}
-    s = s.replace('“', '"').replace('”', '"').replace("'", '"')
-    try: return json.loads(s)
-    except: return {}
+    # Eerst als ÉCHTE JSON proberen — zo blijven apostrofs in waarden (bv. "'s avonds") heel.
+    try:
+        return json.loads(s)
+    except Exception:
+        pass
+    # Terugval voor oude/afwijkende data met slimme aanhalingstekens of enkele quotes.
+    try:
+        return json.loads(s.replace('“', '"').replace('”', '"').replace("'", '"'))
+    except Exception:
+        return {}
 
 # --- ALGORITMES & TRACKING ---
 def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dagelijkse_oefeningen=30, sim_accuratesse=None):
@@ -1746,11 +1772,12 @@ def laad_gebruiker_data(naam):
         else: return None
 
         if user_row.empty:
+            # Nieuwe gebruiker: alleen in het geheugen initialiseren. We schrijven hier bewust GEEN
+            # lege rij naar de Sheet — die wordt pas bij de eerste echte opslag aangemaakt. Zo kan een
+            # tijdelijke leesfout (waardoor je bestaande rij even 'niet gevonden' lijkt) nooit je
+            # opgebouwde voortgang overschrijven bij het inloggen.
             st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}; st.session_state.prod_stats = {}
             st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}; st.session_state.dagdoel = {}; st.session_state.actief_stats = {}
-            df_andere = df[df['gebruikersnaam'] != naam]
-            nieuwe_rij = pd.DataFrame([{'gebruikersnaam': naam}])
-            conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
         else:
             row = user_row.iloc[0]
             def reassemble_chunks(prefix, count_col):
@@ -1786,8 +1813,13 @@ def laad_gebruiker_data(naam):
             r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
             r['laatst_fout'] = stats.get('lf', "")
             if 'lexeem_info' not in r or not r['lexeem_info']: r['lexeem_info'] = r.get('grieks_info', '')
+        st.session_state.laad_fout = None  # succesvol geladen
         return basis
-    except Exception: return None
+    except Exception as _e:
+        # Niet stil None teruggeven: onthoud dat het laden misging, zodat de login-UI het meldt
+        # (en de gebruiker weet dat zijn voortgang NIET is aangeraakt).
+        st.session_state.laad_fout = str(_e)
+        return None
 
 def opslaan_naar_cloud():
     if not st.session_state.get('last_user'): return
@@ -1975,6 +2007,9 @@ def main():
 
     with st.sidebar:
         if st.session_state.data is None:
+            if st.session_state.get('laad_fout'):
+                st.error("⚠️ Kon je gegevens nu even niet laden (mogelijk te druk of geen verbinding). "
+                         "Je voortgang is **niet** gewijzigd — wacht een halve minuut en log opnieuw in.")
             st.header("👤 Inloggen")
             st.caption("ℹ️ Kies een unieke naam en code (bijv. 'zomer2026').")
             col_u, col_p = st.columns(2)
