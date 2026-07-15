@@ -1528,6 +1528,29 @@ def bereken_gebruiker_metrics(row, vandaag=None):
         "onderdelen": ond, "gedaan": gedaan,
     }
 
+def _struct_stat_lookup(struct_stats, w, idx):
+    """Structuurwoord-stat ophalen met dezelfde sleutel als bij het opslaan (`grieks_index`),
+    met terugval op de kale grieks-sleutel voor oude data. Zonder deze terugval lazen de
+    voortgang- en aartsrivalen-overzichten op de verkeerde sleutel en bleef alles op 0 staan."""
+    g = w.get('grieks', '')
+    ss = struct_stats or {}
+    return ss.get(f"{g}_{idx}") or ss.get(g) or {'g': 0, 'f': 0, 'streak': 0}
+
+def _actief_noteer(cid, goed):
+    """Werk actief_stats bij voor één paradigma-cel. Gebruikt door ALLE Actief-modi (focus,
+    tentamenrooster, flashcards), zodat oefening buiten het Leerpad ook meetelt en wordt bewaard."""
+    if not cid:
+        return
+    if not isinstance(st.session_state.get('actief_stats'), dict):
+        st.session_state.actief_stats = {}
+    rec = st.session_state.actief_stats.setdefault(cid, {'g': 0, 'f': 0, 'streak': 0})
+    if goed:
+        rec['g'] = int(rec.get('g', 0)) + 1
+        rec['streak'] = int(rec.get('streak', 0)) + 1
+    else:
+        rec['f'] = int(rec.get('f', 0)) + 1
+        rec['streak'] = max(0, int(rec.get('streak', 0)) - 1)
+
 def _kolom_index(idx, totaal):
     """Kolom-major indeling voor paradigma-roosters: eerste helft (ev-rijtje) links, tweede helft
     (mv-rijtje) rechts, elk in standaardvolgorde (Nom, Gen, Dat, Acc). Zo loopt tabben netjes
@@ -1536,7 +1559,9 @@ def _kolom_index(idx, totaal):
     return 0 if idx < helft else 1
 
 def markeer_actief_paradigma(cellen):
-    """Zet de cellen van een paradigma op 'beheerst' (streak 16) na een foutloos rooster + telt g op."""
+    """Zet de cellen van een paradigma op 'beheerst' (streak ≥16) na een foutloos rooster.
+    Telt zelf géén 'g' op — dat gebeurt al per opgeloste cel via _actief_noteer, anders zou
+    het volledige rooster dubbel tellen."""
     ast = st.session_state.get('actief_stats')
     if not isinstance(ast, dict):
         ast = {}; st.session_state.actief_stats = ast
@@ -1545,7 +1570,6 @@ def markeer_actief_paradigma(cellen):
         if not cid:
             continue
         rec = ast.setdefault(cid, {'g': 0, 'f': 0, 'streak': 0})
-        rec['g'] = int(rec.get('g', 0)) + 1
         rec['streak'] = max(int(rec.get('streak', 0)), 16)
 
 # --- DATABASE FUNCTIES ---
@@ -2505,6 +2529,7 @@ def main():
                                     _verwar_note = bouw_verwar_melding(item, inp, st.session_state.data, laad_verwarparen_db())
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
                                         st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg_volledig}{_verwar_note}"}
@@ -2650,6 +2675,7 @@ def main():
                                             _verwar_note += _extra
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
                                         st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}{_verwar_note}"}
@@ -2776,8 +2802,8 @@ def main():
                 struct_db = laad_structuurwoorden_db()
                 if struct_db:
                     str_lijst = []
-                    for w in struct_db:
-                        s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
+                    for idx_w, w in enumerate(struct_db):
+                        s = _struct_stat_lookup(st.session_state.struct_stats, w, idx_w)
                         str_lijst.append({"Woord": w['grieks'], "Categorie": w['categorie'], "Eigenschap": w['eigenschap'], "Betekenis": w['betekenis'], "Streak": s['streak'], "Goed": s['g'], "Fout": s['f']})
                     st.dataframe(pd.DataFrame(str_lijst), width='stretch')
         
@@ -2838,8 +2864,8 @@ def main():
             stats_str = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
             tot_goed_st, tot_fout_st = 0, 0
             if str_db:
-                for w in str_db:
-                    s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
+                for idx_w, w in enumerate(str_db):
+                    s = _struct_stat_lookup(st.session_state.struct_stats, w, idx_w)
                     tot_goed_st += s.get('g', 0); tot_fout_st += s.get('f', 0)
                     strk_st = s.get('streak', 0)
                     if strk_st >= 30: stats_str['Mastery'] += 1
@@ -3304,8 +3330,8 @@ def main():
                             nemesissen.append({"Type": "Stamtijd", "Item": vorm, "Betekenis": f"{t_d} van {w['praesens']}", "Fout-ratio": f / (g + f), "Fouten": f})
 
             if str_db:
-                for w in str_db:
-                    s = st.session_state.struct_stats.get(w['grieks'], {'g': 0, 'f': 0, 'streak': 0})
+                for idx_w, w in enumerate(str_db):
+                    s = _struct_stat_lookup(st.session_state.struct_stats, w, idx_w)
                     g, f = s.get('g', 0), s.get('f', 0)
                     if (g + f) >= 3 and f > 0:
                         nemesissen.append({"Type": "Structuur", "Item": w['grieks'], "Betekenis": w['betekenis'], "Fout-ratio": f / (g + f), "Fouten": f})
@@ -3434,15 +3460,17 @@ def main():
                                 verwacht = normaliseer_accent(item.get("uitgang", ""))
                                 ingevuld = normaliseer_accent(naar_grieks_transliteratie(inputs[item["id"]]))
                                 stam = item.get("stam", "")
-                                
-                                if verwacht == ingevuld or (verwacht == "" and ingevuld == ""): score += 1
+                                _goed = (verwacht == ingevuld or (verwacht == "" and ingevuld == ""))
+                                _actief_noteer(item.get("id"), _goed)
+                                if _goed: score += 1
                                 else: fouten.append(f"**{item['label']}:** Verwacht: `{stam}` + `{item.get('uitgang', '')}`, jij typte: `{stam}` + `{ingevuld}`")
-                            
+
                             if score == len(huidig_paradigma):
                                 st.success(f"🎉 Perfect! Je hebt alle {score} uitgangen correct!"); st.balloons()
                             else:
                                 st.error(f"Je had er {score} van de {len(huidig_paradigma)} goed. Kijk naar je fouten:")
                                 for f in fouten: st.write("-", f)
+                            trigger_save()
 
                 elif "2." in actief_modus:
                     st.markdown(f"### {gekozen_sub} (Tentamen)")
@@ -3473,7 +3501,14 @@ def main():
                                     verwacht = normaliseer_accent(item["vorm"])
                                     if ingevuld == verwacht:
                                         st.session_state.tent_state[i_id]["correct"] = True; st.session_state.tent_state[i_id]["value"] = item["vorm"]
-                                    else: st.session_state.tent_state[i_id]["value"] = "" 
+                                        _actief_noteer(i_id, True)
+                                    else:
+                                        st.session_state.tent_state[i_id]["value"] = ""
+                                        _actief_noteer(i_id, False)
+                            # Volledig foutloos rooster → paradigma als beheerst markeren.
+                            if all(s["correct"] for s in st.session_state.tent_state.values()):
+                                markeer_actief_paradigma(huidig_paradigma)
+                            trigger_save()
                             st.rerun()
                     else:
                         st.success("🏆 Geweldig! Je hebt het volledige paradigma foutloos gereproduceerd!")
@@ -3483,8 +3518,7 @@ def main():
                 elif "3." in actief_modus:
                     st.markdown(f"### ⚡ Flashcards ({gekozen_sub})")
                     st.write("Overhoor willekeurige losse vormen uit dit paradigma om je snelheid te trainen.")
-                    
-                    # --- DE DADER IS HIER WEGGESNEDEN (import random is foetsie!) ---
+
                     if "flash_huidig" not in st.session_state or st.session_state.get("flash_para_id") != gekozen_sub:
                         st.session_state.flash_para_id = gekozen_sub
                         st.session_state.flash_huidig = r_engine.choice(huidig_paradigma)
@@ -3498,9 +3532,11 @@ def main():
                             verwacht = normaliseer_accent(huidig_fc["vorm"])
                             ingevuld = normaliseer_accent(naar_grieks_transliteratie(fc_in))
                             if verwacht == ingevuld:
+                                _actief_noteer(huidig_fc.get("id"), True); trigger_save()
                                 st.success(f"✓ Goed! Het was inderdaad **{huidig_fc['vorm']}**.")
                                 st.session_state.flash_huidig = r_engine.choice(huidig_paradigma)
                             else:
+                                _actief_noteer(huidig_fc.get("id"), False); trigger_save()
                                 stam = huidig_fc.get("stam", ""); uitgang = huidig_fc.get("uitgang", ""); toelichting = huidig_fc.get("toelichting", "")
                                 st.error(f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*")
 
@@ -4188,6 +4224,7 @@ def main():
                                     else:
                                         st.session_state.stam_fouten += 1
                                         if huidige_streak >= 16 or st.session_state.stam_fouten >= 2:
+                                            st.session_state.stam_stats[vid]['f'] += 1
                                             st.session_state.stam_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_stam.add(vid)
                                             st.session_state.stam_sessie_lijst.insert(0, (huidig, 'overtik')); st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
                                             st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg}.\n\n{uitleg_regel}"}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
@@ -4230,6 +4267,7 @@ def main():
                                         else:
                                             st.session_state.stam_fouten += 1
                                             if huidige_streak >= 16 or st.session_state.stam_fouten >= 2:
+                                                st.session_state.stam_stats[vid]['f'] += 1
                                                 st.session_state.stam_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_stam.add(vid)
                                                 # In MC blijven: toon het antwoord en doe dezelfde vraag meteen nog een keer als meerkeuze.
                                                 st.session_state.stam_sessie_lijst.insert(0, (huidig, sub_modus))
@@ -4491,6 +4529,7 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1; huidige_streak = st.session_state.struct_stats[vid]['streak']
                                         if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
+                                            st.session_state.struct_stats[vid]['f'] += 1
                                             st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_struct.add(vid)
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, 'overtik')); st.session_state.struct_sessie_lijst.append((huidig, sub_modus))
                                             st.session_state.struct_feedback = {"type": "error", "msg": f"✗ Helaas. Jij dacht: *{gekozen_cat} | {p_eig} | {p_bet}*. Het was: {fout_msg_volledig}."}; trigger_save(); laad_volgend_struct_woord()
@@ -4566,6 +4605,7 @@ def main():
                                     else:
                                         st.session_state.struct_fouten += 1; huidige_streak = st.session_state.struct_stats[vid]['streak']
                                         if huidige_streak >= 16 or st.session_state.struct_fouten >= 2:
+                                            st.session_state.struct_stats[vid]['f'] += 1
                                             st.session_state.struct_stats[vid]['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_struct.add(vid)
                                             # In MC blijven: toon het antwoord en doe deze vraag meteen nog een keer als meerkeuze.
                                             st.session_state.struct_sessie_lijst.insert(0, (huidig, sub_modus))
@@ -5116,6 +5156,18 @@ def main():
                                 stt["goed"] += 1
                             stt["feedback"] = {"type": "success" if goed else "error", "msg": banner}
                             stt["idx"] = r_engine.randrange(len(opgaven))
+                            # Duurzame voortgang per contractie-soort (overleeft herladen én niveauwissel,
+                            # i.t.t. de sessie-teller hierboven). Wordt getoond in de Voortgang-modus.
+                            if not isinstance(st.session_state.get('gram_stats'), dict):
+                                st.session_state.gram_stats = {}
+                            _gk = f"contr::{soort}"
+                            _gs = st.session_state.gram_stats.setdefault(_gk, {"g": 0, "f": 0, "streak": 0})
+                            if goed:
+                                _gs["g"] = int(_gs.get("g", 0)) + 1
+                                _gs["streak"] = int(_gs.get("streak", 0)) + 1
+                            else:
+                                _gs["f"] = int(_gs.get("f", 0)) + 1
+                                _gs["streak"] = 0
                             registreer_oefening()
                             trigger_save()
                             st.rerun()
@@ -5201,27 +5253,29 @@ def main():
                 # MODUS: VOORTGANG
                 # ==========================================================
                 else:
-                    st.markdown("### 📊 Jouw grammatica-voortgang per onderwerp")
-                    st.caption("Deze telling gebruikt je oefenmomenten in dit tabblad. Vanaf 3 correcte herkenningen op rij = 'op weg', vanaf 8 = 'beheerst'.")
+                    # --- Contractietrainer: echte, duurzame voortgang per soort ---
+                    st.markdown("### 🔀 Contractietrainer-voortgang")
+                    st.caption("Je oefeningen in de Contractietrainer tellen hier mee. Vanaf 3 goed op rij = 'op weg', vanaf 8 = 'beheerst'.")
+                    _contr_soorten = ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)", "Augment (verleden tijd)"]
+                    _gstats = st.session_state.get('gram_stats') or {}
+                    _crijen = []
+                    for _cs in _contr_soorten:
+                        _s = _gstats.get(f"contr::{_cs}", {})
+                        _strk = int(_s.get("streak", 0))
+                        if _strk >= 8: _st = "🟢 Beheerst"
+                        elif _strk >= 3: _st = "🟡 Op weg"
+                        elif _strk >= 1 or int(_s.get("g", 0)) or int(_s.get("f", 0)): _st = "🟠 Begonnen"
+                        else: _st = "⚪ Nog niet"
+                        _crijen.append({"Oefenstof": _cs, "Streak": _strk, "Goed": int(_s.get("g", 0)), "Fout": int(_s.get("f", 0)), "Status": _st})
+                    st.dataframe(pd.DataFrame(_crijen), use_container_width=True, hide_index=True)
+                    st.write("---")
+
+                    st.markdown("### 📖 Onderwerpen in het handboek")
+                    st.caption("Dit zijn de onderwerpen die je via 📖 Bestuderen kunt doornemen. De zelftoets met voortgang zit in de 🔀 Contractietrainer hierboven.")
                     rijen = []
                     for g in sorted(items.keys(), key=lambda x: int(x)):
-                        s = st.session_state.gram_stats.get(g, {})
-                        streak = int(s.get("streak", 0))
-                        if streak >= 8: status = "🟢 Beheerst"
-                        elif streak >= 3: status = "🟡 Op weg"
-                        elif streak >= 1 or int(s.get("g", 0)) or int(s.get("f", 0)): status = "🟠 Begonnen"
-                        else: status = "⚪ Nog niet"
-                        rijen.append({"Onderwerp": f"G{g} · {items[g]['titel']}", "Thema": items[g]["thema"],
-                                      "Streak": streak, "Goed": int(s.get("g", 0)), "Fout": int(s.get("f", 0)), "Status": status})
+                        rijen.append({"Onderwerp": f"G{g} · {items[g]['titel']}", "Thema": items[g]["thema"]})
                     df_gram = pd.DataFrame(rijen)
-                    beheerst = sum(1 for r in rijen if "Beheerst" in r["Status"])
-                    totaal = len(rijen)
-                    m1, m2, m3 = st.columns(3)
-                    m1.metric("Beheerst", f"{beheerst}/{totaal}")
-                    m2.metric("Op weg", sum(1 for r in rijen if "Op weg" in r["Status"]))
-                    m3.metric("Voortgang", f"{int(100*beheerst/totaal) if totaal else 0}%")
-                    st.progress(beheerst / totaal if totaal else 0)
-                    st.write("---")
                     tf = st.selectbox("Toon thema:", ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"], key="voortgang_thema")
                     toon_df = df_gram if tf == "Alle thema's" else df_gram[df_gram["Thema"] == tf]
                     st.dataframe(toon_df, use_container_width=True, hide_index=True)
