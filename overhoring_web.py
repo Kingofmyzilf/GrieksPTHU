@@ -1041,6 +1041,8 @@ def badge_definities(m):
 # --- LEERPAD (levels + XP, Duolingo-stijl) ---
 LEERPAD_CHUNK = 7      # aantal woorden per level
 LEERPAD_DREMPEL = 5    # streak waarop een woord binnen het pad als 'af' telt
+LEERPAD_TYP_STREAK = 3 # vanaf deze streak oefen je het woord door te TYPEN; moet < LEERPAD_DREMPEL
+                       # blijven, anders is een level 'af' vóórdat de typ-fase ooit begint.
 
 def bereken_xp(alle_data):
     """XP is puur opbouwend (kan niet dalen): elke goede beurt telt, plus bonus per mijlpaal."""
@@ -1133,7 +1135,7 @@ def leerpad_kaart_volgorde(sampled):
         if s <= 0:
             kaarten.append((w, '1'))   # flashcard / leren
             kaarten.append((w, '2'))   # meteen een eerste meerkeuze
-        elif s <= 7:
+        elif s < LEERPAD_TYP_STREAK:
             kaarten.append((w, '2'))   # meerkeuze
         else:
             kaarten.append((w, '4'))   # typen
@@ -1206,7 +1208,7 @@ def _scaffold_kaarten(sampled):
         _s = int(v.get('streak', 0))
         if _s <= 0:
             kaarten.append((v, "Leer")); kaarten.append((v, "MC"))
-        elif _s <= 7:
+        elif _s < LEERPAD_TYP_STREAK:
             kaarten.append((v, "MC"))
         else:
             kaarten.append((v, "Typen"))
@@ -4142,7 +4144,7 @@ def main():
                                         _s = int(v.get('streak', 0))
                                         if _s <= 0:
                                             _stam_kaarten.append((v, "Leer")); _stam_kaarten.append((v, "MC"))
-                                        elif _s <= 7:
+                                        elif _s < LEERPAD_TYP_STREAK:
                                             _stam_kaarten.append((v, "MC"))
                                         else:
                                             _stam_kaarten.append((v, "Typen"))
@@ -4369,7 +4371,7 @@ def main():
                                     _s = int(v.get('streak', 0))
                                     if _s <= 0:
                                         _struct_kaarten.append((v, "Leer")); _struct_kaarten.append((v, "MC"))
-                                    elif _s <= 7:
+                                    elif _s < LEERPAD_TYP_STREAK:
                                         _struct_kaarten.append((v, "MC"))
                                     else:
                                         _struct_kaarten.append((v, "Typen"))
