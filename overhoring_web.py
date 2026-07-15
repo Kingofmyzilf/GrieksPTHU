@@ -1566,6 +1566,46 @@ def _struct_stat_lookup(struct_stats, w, idx):
     ss = struct_stats or {}
     return ss.get(f"{g}_{idx}") or ss.get(g) or {'g': 0, 'f': 0, 'streak': 0}
 
+@st.cache_data(show_spinner=False)
+def voortgang_kernstats(cache_key, _data, _stam_stats, _stamtijden_db, _struct_stats, _struct_db):
+    """Zware fase-tellingen voor het Voortgang-dashboard, gecached. Het Voortgang-tabblad draait
+    (net als alle tabs) bij ELKE rerun; zonder cache telde dit de hele database opnieuw bij elk
+    antwoord in een ander tabblad. De onderstreepte params worden NIET gehasht (Streamlit-conventie);
+    alleen `cache_key` (gebruiker + handmatige versie) stuurt de herberekening. De versie wijzigt
+    uitsluitend als de student op 'Ververs' drukt → tijdens het oefenen wordt er nooit herberekend."""
+    sv = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
+    tgv = tfv = bekende_freq = totale_freq = 0
+    vocab_streaks = {}
+    for w in (_data or []):
+        g = w.get('grieks', ''); strk = int(w.get('streak', 0)); vocab_streaks[g] = strk
+        freq = int(w.get('frequentie', w.get('frequentie_nt', 1))); totale_freq += freq
+        tgv += int(w.get('score_goed', 0)); tfv += int(w.get('score_fout', 0))
+        if strk >= 30: sv['Mastery'] += 1; bekende_freq += freq
+        elif strk >= 16: sv['Beheerst'] += 1; bekende_freq += freq
+        elif strk >= 1: sv['In Training'] += 1
+        else: sv['Nieuw'] += 1
+    ss = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}; tgs = tfs = 0
+    for w in (_stamtijden_db or []):
+        for t_d, vorm in w.get('stamtijden', {}).items():
+            s = (_stam_stats or {}).get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
+            tgs += s.get('g', 0); tfs += s.get('f', 0); k = s.get('streak', 0)
+            if k >= 30: ss['Mastery'] += 1
+            elif k >= 16: ss['Beheerst'] += 1
+            elif k >= 1: ss['In Training'] += 1
+            else: ss['Nieuw'] += 1
+    sr = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}; tgr = tfr = 0
+    for idx_w, w in enumerate(_struct_db or []):
+        s = _struct_stat_lookup(_struct_stats, w, idx_w)
+        tgr += s.get('g', 0); tfr += s.get('f', 0); k = s.get('streak', 0)
+        if k >= 30: sr['Mastery'] += 1
+        elif k >= 16: sr['Beheerst'] += 1
+        elif k >= 1: sr['In Training'] += 1
+        else: sr['Nieuw'] += 1
+    return {'stats_vocab': sv, 'tot_goed_v': tgv, 'tot_fout_v': tfv, 'vocab_streaks': vocab_streaks,
+            'bekende_freq': bekende_freq, 'totale_freq': totale_freq,
+            'stats_stam': ss, 'tot_goed_s': tgs, 'tot_fout_s': tfs,
+            'stats_str': sr, 'tot_goed_st': tgr, 'tot_fout_st': tfr}
+
 def _actief_noteer(cid, goed):
     """Werk actief_stats bij voor één paradigma-cel. Gebruikt door ALLE Actief-modi (focus,
     tentamenrooster, flashcards), zodat oefening buiten het Leerpad ook meetelt en wordt bewaard."""
@@ -2864,52 +2904,26 @@ def main():
                 st.markdown(f"**{label}** (`{beheerst}/{totaal}` — **{pct}%**)")
                 st.progress(beheerst / totaal if totaal > 0 else 0.0)
 
-            # --- STATISTIEKEN BEREKENEN ---
-            stats_vocab = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
-            tot_goed_v, tot_fout_v = 0, 0
-            vocab_streaks = {} 
-            bekende_freq = 0
-            totale_freq = 0
-
-            if st.session_state.data:
-                for w in st.session_state.data:
-                    grieks_woord = w.get('grieks', '')
-                    strk = int(w.get('streak', 0))
-                    vocab_streaks[grieks_woord] = strk
-                    
-                    freq = int(w.get('frequentie', w.get('frequentie_nt', 1)))
-                    totale_freq += freq
-                    
-                    tot_goed_v += int(w.get('score_goed', 0)); tot_fout_v += int(w.get('score_fout', 0))
-                    if strk >= 30: stats_vocab['Mastery'] += 1; bekende_freq += freq
-                    elif strk >= 16: stats_vocab['Beheerst'] += 1; bekende_freq += freq
-                    elif strk >= 1: stats_vocab['In Training'] += 1
-                    else: stats_vocab['Nieuw'] += 1
-
-            stats_stam = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
-            tot_goed_s, tot_fout_s = 0, 0
-            if stamtijden_db:
-                for w in stamtijden_db:
-                    for t_d, vorm in w.get('stamtijden', {}).items():
-                        s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
-                        tot_goed_s += s.get('g', 0); tot_fout_s += s.get('f', 0)
-                        strk_s = s.get('streak', 0)
-                        if strk_s >= 30: stats_stam['Mastery'] += 1
-                        elif strk_s >= 16: stats_stam['Beheerst'] += 1
-                        elif strk_s >= 1: stats_stam['In Training'] += 1
-                        else: stats_stam['Nieuw'] += 1
-
-            stats_str = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
-            tot_goed_st, tot_fout_st = 0, 0
-            if str_db:
-                for idx_w, w in enumerate(str_db):
-                    s = _struct_stat_lookup(st.session_state.struct_stats, w, idx_w)
-                    tot_goed_st += s.get('g', 0); tot_fout_st += s.get('f', 0)
-                    strk_st = s.get('streak', 0)
-                    if strk_st >= 30: stats_str['Mastery'] += 1
-                    elif strk_st >= 16: stats_str['Beheerst'] += 1
-                    elif strk_st >= 1: stats_str['In Training'] += 1
-                    else: stats_str['Nieuw'] += 1
+            # --- STATISTIEKEN BEREKENEN (gecached: alleen herberekend bij een druk op 'Ververs') ---
+            if 'vg_laatst' not in st.session_state:
+                try: st.session_state.vg_laatst = datetime.now().strftime('%d-%m %H:%M')
+                except Exception: st.session_state.vg_laatst = ""
+            _vg_versie = int(st.session_state.get('vg_versie', 0))
+            _vg_ck = f"{st.session_state.get('last_user', '')}|{_vg_versie}"
+            _cvg1, _cvg2 = st.columns([3, 1])
+            _cvg1.caption(f"📊 De cijfers hieronder worden **alleen bijgewerkt als je op Ververs drukt** — zo blijft de app snel tijdens het oefenen. Laatst bijgewerkt: {st.session_state.get('vg_laatst') or '—'}.")
+            if _cvg2.button("🔄 Ververs", key="vg_ververs"):
+                st.session_state.vg_versie = _vg_versie + 1
+                try: st.session_state.vg_laatst = datetime.now().strftime('%d-%m %H:%M')
+                except Exception: pass
+                st.rerun()
+            _vg = voortgang_kernstats(_vg_ck, st.session_state.data,
+                                      st.session_state.get('stam_stats', {}), stamtijden_db,
+                                      st.session_state.get('struct_stats', {}), str_db)
+            stats_vocab = _vg['stats_vocab']; tot_goed_v = _vg['tot_goed_v']; tot_fout_v = _vg['tot_fout_v']
+            vocab_streaks = _vg['vocab_streaks']; bekende_freq = _vg['bekende_freq']; totale_freq = _vg['totale_freq']
+            stats_stam = _vg['stats_stam']; tot_goed_s = _vg['tot_goed_s']; tot_fout_s = _vg['tot_fout_s']
+            stats_str = _vg['stats_str']; tot_goed_st = _vg['tot_goed_st']; tot_fout_st = _vg['tot_fout_st']
 
             # --- TOP METRICS & BAROMETER ---
             c_met1, c_met2, c_met3, c_met4 = st.columns(4)
