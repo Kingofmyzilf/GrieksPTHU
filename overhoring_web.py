@@ -1761,25 +1761,38 @@ def laad_bijbel_db():
 
 def laad_gebruiker_data(naam):
     try:
-        df = conn.read(ttl=0) 
-        if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
-        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
-        
-        user_row = df[df['gebruikersnaam'] == naam]
         bestand = "basis_woorden_verrijkt.json" if os.path.exists("basis_woorden_verrijkt.json") else "basis_woorden.json"
-        if os.path.exists(bestand):
-            with open(bestand, "r", encoding="utf-8") as f: basis = json.load(f)
-        else: return None
+        if not os.path.exists(bestand): return None
+        with open(bestand, "r", encoding="utf-8") as f: basis = json.load(f)
 
-        if user_row.empty:
-            # Nieuwe gebruiker: alleen in het geheugen initialiseren. We schrijven hier bewust GEEN
-            # lege rij naar de Sheet — die wordt pas bij de eerste echte opslag aangemaakt. Zo kan een
-            # tijdelijke leesfout (waardoor je bestaande rij even 'niet gevonden' lijkt) nooit je
-            # opgebouwde voortgang overschrijven bij het inloggen.
+        ws = _ws_naam(naam)
+        row = None
+        migreren = False
+        # 1) Eigen tabblad (per gebruiker → geen kruis-overschrijving).
+        try:
+            dfu = conn.read(worksheet=ws, ttl=0)
+            if dfu is not None and not getattr(dfu, 'empty', True):
+                if 'gebruikersnaam' in dfu.columns:
+                    _r = dfu[dfu['gebruikersnaam'] == naam]
+                    row = _r.iloc[0] if not _r.empty else dfu.iloc[0]
+                else:
+                    row = dfu.iloc[0]
+        except Exception:
+            row = None
+        # 2) Terugval: oud gedeeld werkblad. Gevonden → gebruiken én migreren naar de eigen tab.
+        if row is None:
+            df = conn.read(ttl=0)
+            if 'gebruikersnaam' in df.columns:
+                _r = df[df['gebruikersnaam'] == naam]
+                if not _r.empty:
+                    row = _r.iloc[0]; migreren = True
+
+        if row is None:
+            # Nieuwe gebruiker: alleen in het geheugen initialiseren; de eigen tab ontstaat bij de
+            # eerste echte opslag. Zo kan een tijdelijke leesfout nooit je voortgang overschrijven.
             st.session_state.vocab_stats = {}; st.session_state.gram_stats = {}; st.session_state.stam_stats = {}; st.session_state.struct_stats = {}; st.session_state.dag_stats = {}; st.session_state.prod_stats = {}
             st.session_state.verwar_stats = {}; st.session_state.ui_prefs = {}; st.session_state.badges = {}; st.session_state.dagdoel = {}; st.session_state.actief_stats = {}
         else:
-            row = user_row.iloc[0]
             def reassemble_chunks(prefix, count_col):
                 if count_col in row and not pd.isna(row[count_col]):
                     try:
@@ -1814,6 +1827,11 @@ def laad_gebruiker_data(naam):
             r['laatst_fout'] = stats.get('lf', "")
             if 'lexeem_info' not in r or not r['lexeem_info']: r['lexeem_info'] = r.get('grieks_info', '')
         st.session_state.laad_fout = None  # succesvol geladen
+        # Migratie: stond je data nog in het oude gedeelde werkblad, zet 'm nu over naar je eigen tab.
+        if migreren:
+            st.session_state.last_user = naam
+            try: opslaan_naar_cloud()
+            except Exception: pass
         return basis
     except Exception as _e:
         # Niet stil None teruggeven: onthoud dat het laden misging, zodat de login-UI het meldt
@@ -1848,44 +1866,129 @@ def profiel_herstel(payload):
         r['laatst_geoefend'] = s.get('laatst_geoefend', ''); r['laatst_fout'] = s.get('lf', '')
     return True, f"Hersteld uit de back-up van '{str(payload.get('gebruiker', '?')).split('_')[0]}'."
 
+def _ws_naam(naam):
+    """Werkbladnaam (tab) voor één gebruiker. Elke student z'n eigen tab → een opslag van de één
+    kan die van een ander nooit overschrijven."""
+    schoon = re.sub(r'[^0-9A-Za-z_]', '_', str(naam or ''))
+    return ("u_" + schoon)[:95]
+
+def _bouw_rij_dict():
+    """Zet alle voortgang uit het geheugen om in één (gechunkte) rij, klaar voor de Sheet."""
+    def get_chunks(data_dict, prefix, max_len=40000):
+        s = json.dumps(data_dict, ensure_ascii=False)
+        chunks = [s[i:i+max_len] for i in range(0, len(s), max_len)]
+        return {f"{prefix}_{i}": c for i, c in enumerate(chunks)}, len(chunks)
+    specs = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
+             ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
+             ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
+             ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks')]
+    rij = {'gebruikersnaam': st.session_state.last_user}
+    for dictkey, countcol in specs:
+        ch, n = get_chunks(st.session_state.get(dictkey, {}) or {}, dictkey)
+        rij.update(ch); rij[countcol] = n
+    return rij
+
+def _opslaan_legacy(rij):
+    """Laatste terugval: schrijf naar het oude gedeelde 'Woordenlijst'-werkblad (huidige methode)."""
+    df = conn.read(ttl=10)
+    if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
+    df_andere = df[df['gebruikersnaam'] != st.session_state.last_user]
+    conn.update(data=pd.concat([df_andere, pd.DataFrame([rij])], ignore_index=True))
+
+def _eigen_samenvatting():
+    """Bondige samenvatting van de eigen voortgang voor het gedeelde Scorebord-tabblad."""
+    data = st.session_state.get('data') or []
+    stam = st.session_state.get('stam_stats', {}) or {}
+    struct = st.session_state.get('struct_stats', {}) or {}
+    actief = st.session_state.get('actief_stats', {}) or {}
+    xp = bereken_xp(data) + bereken_xp_stam(stam) + bereken_xp_struct(struct) + bereken_xp_actief(actief)
+    niv = niveau_van_xp(xp)
+    w_beh = sum(1 for w in data if int(w.get('streak', 0)) >= 16)
+    w_pog = sum(int(w.get('score_goed', 0)) + int(w.get('score_fout', 0)) for w in data)
+    s_pog, s_beh = _beheerst_telling(stam); r_pog, r_beh = _beheerst_telling(struct); a_pog, a_beh = _beheerst_telling(actief)
+    dag = st.session_state.get('dag_stats') or {}
+    week = tot = 0
+    try:
+        vandaag = datetime.now().date(); wk = vandaag - pd.Timedelta(days=6)
+    except Exception:
+        vandaag = None; wk = None
+    for ds, n in dag.items():
+        try:
+            n = int(n); tot += n
+            if vandaag is not None:
+                d = datetime.strptime(str(ds), '%Y-%m-%d').date()
+                if wk <= d <= vandaag: week += n
+        except Exception:
+            pass
+    badges = len([k for k in (st.session_state.get('badges') or {}) if not str(k).startswith('_')])
+    return {'gebruiker': str(st.session_state.last_user).split('_')[0], 'xp': xp,
+            'niveau': niv['niveau'], 'titel': niv['titel'], 'week': week, 'totaal': tot, 'badges': badges,
+            'w_beh': w_beh, 'w_pog': w_pog, 'a_beh': a_beh, 'a_pog': a_pog,
+            's_beh': s_beh, 's_pog': s_pog, 'r_beh': r_beh, 'r_pog': r_pog}
+
+def _update_scorebord():
+    """Werk het gedeelde 'Scorebord'-tabblad bij met alleen de eigen samenvatting (voor de competitie).
+    Bevat geen echte voortgangsdata; een botsing hier kost hooguit een verouderd ranglijst-getal."""
+    sm = _eigen_samenvatting()
+    try:
+        df = conn.read(worksheet="Scorebord", ttl=0)
+    except Exception:
+        df = None
+    if df is None or 'gebruiker' not in getattr(df, 'columns', []):
+        df = pd.DataFrame(columns=list(sm.keys()))
+    df = df[df['gebruiker'] != sm['gebruiker']]
+    nieuw = pd.concat([df, pd.DataFrame([sm])], ignore_index=True)
+    try:
+        conn.update(worksheet="Scorebord", data=nieuw)
+    except Exception:
+        conn.create(worksheet="Scorebord", data=nieuw)
+
+@st.cache_data(ttl=300, show_spinner=False)
+def lees_scorebord(cache_key):
+    """Lees het Scorebord-tabblad en bouw de competitie-metrics. Gecached (5 min) zodat de
+    competitie-tab het niet bij elke rerun opnieuw ophaalt."""
+    try:
+        df = conn.read(worksheet="Scorebord", ttl=0)
+    except Exception:
+        return []
+    if df is None or 'gebruiker' not in getattr(df, 'columns', []):
+        return []
+    _labels = {'woorden': '📘 Woorden', 'actief': '🎓 Actief', 'stam': '⏳ Stamtijden', 'struct': '🧱 Structuur'}
+    out = []
+    for _, r in df.iterrows():
+        naam = str(r.get('gebruiker', '')).strip()
+        if not naam:
+            continue
+        def _i(k):
+            try: return int(float(r.get(k, 0)))
+            except Exception: return 0
+        ond = {'woorden': {'beh': _i('w_beh'), 'pog': _i('w_pog')}, 'actief': {'beh': _i('a_beh'), 'pog': _i('a_pog')},
+               'stam': {'beh': _i('s_beh'), 'pog': _i('s_pog')}, 'struct': {'beh': _i('r_beh'), 'pog': _i('r_pog')}}
+        gedaan = [_labels[k] for k in ['woorden', 'actief', 'stam', 'struct'] if ond[k]['pog'] > 0]
+        out.append({'naam': naam, 'xp': _i('xp'), 'niveau': _i('niveau'), 'titel': str(r.get('titel', '')),
+                    'week': _i('week'), 'totaal': _i('totaal'), 'badges': _i('badges'),
+                    'onderdelen': ond, 'gedaan': gedaan})
+    return out
+
 def opslaan_naar_cloud():
     if not st.session_state.get('last_user'): return
     try:
-        df = conn.read(ttl=10)  # korte cache dempt lees-bursts (quota = 60 leesverzoeken/min)
-        if 'gebruikersnaam' not in df.columns: df['gebruikersnaam'] = ""
-        if 'dag_stats' not in df.columns: df['dag_stats'] = "{}"
-        df_andere = df[df['gebruikersnaam'] != st.session_state.last_user]
-        
-        def get_chunks(data_dict, prefix, max_len=40000):
-            s = json.dumps(data_dict, ensure_ascii=False)
-            chunks = [s[i:i+max_len] for i in range(0, len(s), max_len)]
-            res = {}
-            for idx, chunk in enumerate(chunks): res[f"{prefix}_{idx}"] = chunk
-            return res, len(chunks)
-        
-        v_ch, v_count = get_chunks(st.session_state.get('vocab_stats', {}), 'vocab_stats')
-        g_ch, g_count = get_chunks(st.session_state.get('gram_stats', {}), 'gram_stats')
-        pr_ch, pr_count = get_chunks(st.session_state.get('prod_stats', {}), 'prod_stats')
-        st_ch, st_count = get_chunks(st.session_state.get('stam_stats', {}), 'stam_stats')
-        sr_ch, sr_count = get_chunks(st.session_state.get('struct_stats', {}), 'struct_stats')
-        d_ch, d_count = get_chunks(st.session_state.get('dag_stats', {}), 'dag_stats')
-        vw_ch, vw_count = get_chunks(st.session_state.get('verwar_stats', {}), 'verwar_stats')
-        ui_ch, ui_count = get_chunks(st.session_state.get('ui_prefs', {}), 'ui_prefs')
-        bd_ch, bd_count = get_chunks(st.session_state.get('badges', {}), 'badges')
-        dd_ch, dd_count = get_chunks(st.session_state.get('dagdoel', {}), 'dagdoel')
-        af_ch, af_count = get_chunks(st.session_state.get('actief_stats', {}), 'actief_stats')
-
-        nieuwe_rij_dict = {
-            'gebruikersnaam': st.session_state.last_user,
-            'v_chunks': v_count, 'g_chunks': g_count, 'st_chunks': st_count, 'sr_chunks': sr_count, 'd_chunks': d_count, 'pr_chunks': pr_count,
-            'vw_chunks': vw_count, 'ui_chunks': ui_count, 'bd_chunks': bd_count, 'dd_chunks': dd_count, 'af_chunks': af_count
-        }
-        nieuwe_rij_dict.update(v_ch); nieuwe_rij_dict.update(g_ch); nieuwe_rij_dict.update(st_ch)
-        nieuwe_rij_dict.update(sr_ch); nieuwe_rij_dict.update(d_ch); nieuwe_rij_dict.update(pr_ch)
-        nieuwe_rij_dict.update(vw_ch); nieuwe_rij_dict.update(ui_ch); nieuwe_rij_dict.update(bd_ch); nieuwe_rij_dict.update(dd_ch); nieuwe_rij_dict.update(af_ch)
-        
-        nieuwe_rij = pd.DataFrame([nieuwe_rij_dict])
-        conn.update(data=pd.concat([df_andere, nieuwe_rij], ignore_index=True))
+        rij = _bouw_rij_dict()
+        df_row = pd.DataFrame([rij])
+        ws = _ws_naam(st.session_state.last_user)
+        # Schrijf naar het EIGEN tabblad (geen kruis-overschrijving). Bestaat de tab nog niet →
+        # aanmaken. Lukt beide niet → terugval op de oude gedeelde methode (app blijft werken).
+        try:
+            conn.update(worksheet=ws, data=df_row)
+        except Exception:
+            try:
+                conn.create(worksheet=ws, data=df_row)
+            except Exception:
+                _opslaan_legacy(rij)
+        try:
+            _update_scorebord()
+        except Exception:
+            pass
         try:
             st.toast("💾 Voortgang opgeslagen", icon="✅")
         except Exception:
@@ -3325,15 +3428,10 @@ def main():
             st.subheader("🏆 Competitie Dashboard")
             st.caption("Meet je met de groep — **deze week** (wie oefent het hardst?) én **all-time** (wie staat op het hoogste niveau?). Filter op onderdeel om te zien wie waar sterk in is.")
             try:
-                # 5 min cachen: dit tabblad rendert bij ELKE rerun, dus ttl=0 vrat het lees-quotum op.
-                df_global = conn.read(ttl=300)
-                if 'gebruikersnaam' in df_global.columns:
-                    eigen_naam = st.session_state.last_user.split('_')[0]
-                    try:
-                        _comp_vandaag = str(datetime.now().date())
-                    except Exception:
-                        _comp_vandaag = ""
-                    _alle = competitie_metrics_cached(df_global, _comp_vandaag)
+                # Leest het gedeelde 'Scorebord'-tabblad (samenvattingen per persoon), 5 min gecached.
+                _alle = lees_scorebord("scorebord")
+                eigen_naam = str(st.session_state.last_user).split('_')[0]
+                if _alle:
                     # ontdubbel op naam: houd het profiel met de meeste XP aan
                     _per_naam = {}
                     for _m in _alle:
@@ -3414,9 +3512,7 @@ def main():
                                 f"👉 Jij bent **{eigen_naam}** — Niveau **{_mij['niveau']}** ({_mij['titel']}), "
                                 f"**{_mij['xp']} XP**, plek **#{_pos} van {len(metrics)}** all-time · 🏅 {_mij['badges']} badges.")
                     else:
-                        st.caption("Nog geen groepsdata om mee te vergelijken.")
-                else:
-                    st.caption("Nog geen groepsdata om mee te vergelijken.")
+                        st.caption("Nog geen groepsdata om mee te vergelijken. Het scorebord vult zich zodra er is geoefend.")
             except Exception:
                 st.caption("Kon de competitiegegevens momenteel niet synchroniseren.")
             
