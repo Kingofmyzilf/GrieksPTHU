@@ -1530,6 +1530,25 @@ def bereken_gebruiker_metrics(row, vandaag=None):
         "onderdelen": ond, "gedaan": gedaan,
     }
 
+@st.cache_data(ttl=300, show_spinner=False)
+def competitie_metrics_cached(df_global, vandaag_str):
+    """Reconstrueert de competitie-metrics voor ALLE gebruikers, maar gecached: dit tabblad rendert
+    bij elke rerun, en zonder cache werd elke gebruiker (6 gechunkte JSON-kolommen) telkens opnieuw
+    geparsed — ook als je in een heel ander tabblad bezig bent. Ververst elke 5 min / bij daggrens."""
+    try:
+        vandaag = datetime.strptime(vandaag_str, '%Y-%m-%d').date()
+    except Exception:
+        vandaag = None
+    out = []
+    for _idx, row in df_global.iterrows():
+        if not str(row.get('gebruikersnaam', '')):
+            continue
+        try:
+            out.append(bereken_gebruiker_metrics(row, vandaag=vandaag))
+        except Exception:
+            pass
+    return out
+
 def _struct_stat_lookup(struct_stats, w, idx):
     """Structuurwoord-stat ophalen met dezelfde sleutel als bij het opslaan (`grieks_index`),
     met terugval op de kale grieks-sleutel voor oude data. Zonder deze terugval lazen de
@@ -3217,14 +3236,11 @@ def main():
                 df_global = conn.read(ttl=300)
                 if 'gebruikersnaam' in df_global.columns:
                     eigen_naam = st.session_state.last_user.split('_')[0]
-                    _alle = []
-                    for _idx, row in df_global.iterrows():
-                        if not str(row.get('gebruikersnaam', '')):
-                            continue
-                        try:
-                            _alle.append(bereken_gebruiker_metrics(row))
-                        except Exception:
-                            pass
+                    try:
+                        _vandaag_str = str(datetime.now().date())
+                    except Exception:
+                        _vandaag_str = ""
+                    _alle = competitie_metrics_cached(df_global, _vandaag_str)
                     # ontdubbel op naam: houd het profiel met de meeste XP aan
                     _per_naam = {}
                     for _m in _alle:
@@ -3507,10 +3523,11 @@ def main():
                                     else:
                                         st.session_state.tent_state[i_id]["value"] = ""
                                         _actief_noteer(i_id, False)
-                            # Volledig foutloos rooster → paradigma als beheerst markeren.
-                            if all(s["correct"] for s in st.session_state.tent_state.values()):
+                            # Volledig foutloos rooster → paradigma als beheerst markeren + zeker opslaan.
+                            _tent_klaar = all(s["correct"] for s in st.session_state.tent_state.values())
+                            if _tent_klaar:
                                 markeer_actief_paradigma(huidig_paradigma)
-                            trigger_save()
+                            trigger_save(forceer=_tent_klaar)
                             st.rerun()
                     else:
                         st.success("🏆 Geweldig! Je hebt het volledige paradigma foutloos gereproduceerd!")
@@ -5475,6 +5492,7 @@ def main():
                             else:
                                 st.session_state.prod_huidig = None
                                 st.session_state.prod_feedback["msg"] += "  \n\n🏁 Sessie klaar!"
+                                trigger_save(forceer=True)  # sessie klaar: laatste antwoorden zeker bewaren
                             st.rerun()
 
                         if invoer_type.startswith("⌨️"):
