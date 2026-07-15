@@ -1821,6 +1821,33 @@ def laad_gebruiker_data(naam):
         st.session_state.laad_fout = str(_e)
         return None
 
+# --- VOLLEDIGE PROFIEL-BACKUP (los vangnet naast de cloud) ---
+_PROFIEL_DICTS = ['vocab_stats', 'gram_stats', 'prod_stats', 'stam_stats', 'struct_stats',
+                  'dag_stats', 'verwar_stats', 'ui_prefs', 'badges', 'dagdoel', 'actief_stats']
+
+def profiel_backup_json():
+    """Bundelt alle voortgang uit het geheugen tot één JSON-back-up."""
+    payload = {"app": "GrieksPTHU", "versie": 1,
+               "gebruiker": st.session_state.get('last_user', ''),
+               "stats": {k: (st.session_state.get(k) or {}) for k in _PROFIEL_DICTS}}
+    return json.dumps(payload, ensure_ascii=False, indent=1)
+
+def profiel_herstel(payload):
+    """Zet een back-up terug in het geheugen + op de woordenlijst. Retourneert (ok, melding)."""
+    if not isinstance(payload, dict) or payload.get('app') != 'GrieksPTHU' or not isinstance(payload.get('stats'), dict):
+        return False, "Dit lijkt geen geldig GrieksPTHU-backupbestand."
+    stats = payload['stats']
+    for k in _PROFIEL_DICTS:
+        if isinstance(stats.get(k), dict):
+            st.session_state[k] = stats[k]
+    vs = st.session_state.get('vocab_stats') or {}
+    for r in (st.session_state.get('data') or []):
+        s = vs.get(r.get('grieks', ''), {})
+        r['streak'] = int(s.get('streak', 0))
+        r['score_goed'] = int(s.get('g', 0)); r['score_fout'] = int(s.get('f', 0))
+        r['laatst_geoefend'] = s.get('laatst_geoefend', ''); r['laatst_fout'] = s.get('lf', '')
+    return True, f"Hersteld uit de back-up van '{str(payload.get('gebruiker', '?')).split('_')[0]}'."
+
 def opslaan_naar_cloud():
     if not st.session_state.get('last_user'): return
     try:
@@ -3468,11 +3495,39 @@ def main():
 
             st.write("---")
 
-            # --- EXPORTEREN ---
-            st.subheader("💾 Exporteer je data")
+            # --- EXPORTEREN & BACK-UP ---
+            st.subheader("💾 Exporteer & back-up")
+
+            st.markdown("**🛟 Volledige back-up (aanrader)**")
+            st.caption("Download je complete profiel — álle voortgang — als één bestand. Zo heb je altijd zelf een kopie, los van de cloud. Bewaar 'm af en toe.")
+            st.download_button(
+                label="💾 Download mijn volledige profiel (back-up)",
+                data=profiel_backup_json().encode('utf-8'),
+                file_name=f"grieks_profiel_{str(st.session_state.get('last_user', 'ik')).split('_')[0]}.json",
+                mime="application/json",
+            )
+            with st.expander("↩️ Profiel herstellen uit een back-up"):
+                st.warning("Let op: dit **vervangt** je huidige voortgang door die uit het bestand.")
+                _prof_up = st.file_uploader("Kies een back-upbestand (.json)", type=['json'], key="profiel_upload")
+                _prof_ok = st.checkbox("Ja, ik weet het zeker — vervang mijn huidige voortgang.", key="profiel_bevestig")
+                if _prof_up is not None and _prof_ok and st.button("↩️ Herstel nu", key="profiel_herstel_knop"):
+                    try:
+                        _payload = json.load(_prof_up)
+                        _ok, _msg = profiel_herstel(_payload)
+                        if _ok:
+                            trigger_save(forceer=True)
+                            st.success("✅ " + _msg + " Je voortgang is teruggezet en opgeslagen.")
+                            st.rerun()
+                        else:
+                            st.error("❌ " + _msg)
+                    except Exception:
+                        st.error("❌ Kon het bestand niet lezen — is het een geldig .json-backupbestand?")
+
+            st.write("---")
+            st.markdown("**📄 Losse CSV-export (alleen woordenschat)**")
             df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend']]
             csv = df_export.to_csv(index=False).encode('utf-8')
-            st.download_button(label="📥 Download Data als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
+            st.download_button(label="📥 Download woordenschat als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
             
         # ==========================================
         # TAB 4: ACTIEF BEHEERSEN (PARADIGMA'S)
