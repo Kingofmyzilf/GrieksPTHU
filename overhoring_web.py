@@ -1528,6 +1528,13 @@ def bereken_gebruiker_metrics(row, vandaag=None):
         "onderdelen": ond, "gedaan": gedaan,
     }
 
+def _kolom_index(idx, totaal):
+    """Kolom-major indeling voor paradigma-roosters: eerste helft (ev-rijtje) links, tweede helft
+    (mv-rijtje) rechts, elk in standaardvolgorde (Nom, Gen, Dat, Acc). Zo loopt tabben netjes
+    Nom ev → Gen ev → Dat ev → Acc ev in de linkerkolom, daarna het mv-rijtje rechts."""
+    helft = (int(totaal) + 1) // 2
+    return 0 if idx < helft else 1
+
 def markeer_actief_paradigma(cellen):
     """Zet de cellen van een paradigma op 'beheerst' (streak 16) na een foutloos rooster + telt g op."""
     ast = st.session_state.get('actief_stats')
@@ -3395,7 +3402,7 @@ def main():
                     
                     cols = st.columns(2)
                     for idx, item in enumerate(huidig_paradigma):
-                        with cols[idx % 2]:
+                        with cols[_kolom_index(idx, len(huidig_paradigma))]:
                             stam_html = item.get("stam", "")
                             uitgang_html = f"<span style='color:#33ccff'>{item.get('uitgang', '')}</span>"
                             toelichting = item.get("toelichting", "")
@@ -3414,7 +3421,7 @@ def main():
                         cols = st.columns(2)
                         for idx, item in enumerate(huidig_paradigma):
                             stam = item.get("stam", "")
-                            with cols[idx % 2]:
+                            with cols[_kolom_index(idx, len(huidig_paradigma))]:
                                 st.markdown(f"**{item['label']}**")
                                 c_stam, c_in = st.columns([1, 2])
                                 c_stam.markdown(f"<div style='font-size:22px; text-align:right; padding-top:4px;'>{stam} + </div>", unsafe_allow_html=True)
@@ -3450,7 +3457,7 @@ def main():
                     huidige_inputs = {}
                     
                     for idx, item in enumerate(huidig_paradigma):
-                        with cols[idx % 2]:
+                        with cols[_kolom_index(idx, len(huidig_paradigma))]:
                             i_id = item["id"]
                             state = st.session_state.tent_state.get(i_id, {"correct": False, "value": ""})
                             if state["correct"]: st.success(f"**{item['label']}:** {item['vorm']}")
@@ -3538,7 +3545,7 @@ def main():
                             st.session_state.actief_lp_key = _pkey
                         _cols = st.columns(2); _inp = {}
                         for _i, c in enumerate(cells):
-                            with _cols[_i % 2]:
+                            with _cols[_kolom_index(_i, len(cells))]:
                                 _s = st.session_state.actief_lp_state.get(c['id'], {"correct": False, "value": ""})
                                 if _s["correct"]: st.success(f"**{c['label']}:** {c['vorm']}")
                                 else: _inp[c['id']] = st.text_input(f"**{c['label']}**", value=_s["value"], key=f"lpm_{c['id']}")
