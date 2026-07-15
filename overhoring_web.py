@@ -1930,23 +1930,27 @@ def _update_scorebord():
     """Werk het gedeelde 'Scorebord'-tabblad bij met alleen de eigen samenvatting (voor de competitie).
     Bevat geen echte voortgangsdata; een botsing hier kost hooguit een verouderd ranglijst-getal."""
     sm = _eigen_samenvatting()
+    bestaat = True
     try:
         df = conn.read(worksheet="Scorebord", ttl=0)
     except Exception:
         df = None
+        bestaat = False  # tab bestaat waarschijnlijk nog niet → aanmaken i.p.v. updaten
     if df is None or 'gebruiker' not in getattr(df, 'columns', []):
         df = pd.DataFrame(columns=list(sm.keys()))
     df = df[df['gebruiker'] != sm['gebruiker']]
     nieuw = pd.concat([df, pd.DataFrame([sm])], ignore_index=True)
-    try:
-        conn.update(worksheet="Scorebord", data=nieuw)
-    except Exception:
-        conn.create(worksheet="Scorebord", data=nieuw)
+    if bestaat:
+        try: conn.update(worksheet="Scorebord", data=nieuw)
+        except Exception: conn.create(worksheet="Scorebord", data=nieuw)
+    else:
+        try: conn.create(worksheet="Scorebord", data=nieuw)
+        except Exception: conn.update(worksheet="Scorebord", data=nieuw)
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=120, show_spinner=False)
 def lees_scorebord(cache_key):
-    """Lees het Scorebord-tabblad en bouw de competitie-metrics. Gecached (5 min) zodat de
-    competitie-tab het niet bij elke rerun opnieuw ophaalt."""
+    """Lees het Scorebord-tabblad en bouw de competitie-metrics. Gecached (2 min) zodat de
+    competitie-tab het niet bij elke rerun opnieuw ophaalt; met 'Ververs' direct te verversen."""
     try:
         df = conn.read(worksheet="Scorebord", ttl=0)
     except Exception:
@@ -3427,8 +3431,13 @@ def main():
             # --- COMPETITIE DASHBOARD ---
             st.subheader("🏆 Competitie Dashboard")
             st.caption("Meet je met de groep — **deze week** (wie oefent het hardst?) én **all-time** (wie staat op het hoogste niveau?). Filter op onderdeel om te zien wie waar sterk in is.")
+            _ccol1, _ccol2 = st.columns([3, 1])
+            _ccol1.caption("Het scorebord ververst automatisch elke ~2 minuten. Klik op *Ververs* voor de allerlaatste stand. Klasgenoten verschijnen zodra zij een keer hebben geoefend en opgeslagen.")
+            if _ccol2.button("🔄 Ververs", key="comp_ververs"):
+                lees_scorebord.clear()
+                st.rerun()
             try:
-                # Leest het gedeelde 'Scorebord'-tabblad (samenvattingen per persoon), 5 min gecached.
+                # Leest het gedeelde 'Scorebord'-tabblad (samenvattingen per persoon), 2 min gecached.
                 _alle = lees_scorebord("scorebord")
                 eigen_naam = str(st.session_state.last_user).split('_')[0]
                 if _alle:
