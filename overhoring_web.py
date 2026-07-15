@@ -1228,7 +1228,7 @@ def dagblok_arm_stam():
     doel = []
     for t in _STAM_TIJDEN:
         vorm = w.get('stamtijden', {}).get(t)
-        if not vorm or vorm == "-":
+        if not _stam_vorm_ok(vorm):
             continue
         vid = f"{w['praesens']}_{vorm}"
         s = st.session_state.stam_stats.get(vid, {'g': 0, 'f': 0, 'streak': 0})
@@ -1308,6 +1308,15 @@ def dagkalender_html(dag_stats, log):
 # --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
 _STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
 
+def _stam_vorm_ok(v):
+    """True als een stamtijd-vorm écht bestaat. Niet elk werkwoord heeft elke stamtijd
+    (bv. ἔρχομαι heeft geen aoristus passief / perfectum medium); die staan in de data als
+    leeg, '-', '---' of 'n.v.t.' en moeten NIET geoefend worden."""
+    s = str(v or "").strip()
+    if not s or s in ("n.v.t.", "-", "--", "---"):
+        return False
+    return any(ch.isalpha() for ch in s)  # alleen streepjes/gedachtestreepjes = geen echte vorm
+
 def bereken_xp_stam(stam_stats):
     """XP voor de stamtijden-rang, puur opbouwend uit stam_stats."""
     xp = 0
@@ -1319,7 +1328,7 @@ def bereken_xp_stam(stam_stats):
     return xp
 
 def _stam_vormen(w):
-    return [v for v in (w.get('stamtijden', {}).get(t) for t in _STAM_TIJDEN) if v and v != "-"]
+    return [v for v in (w.get('stamtijden', {}).get(t) for t in _STAM_TIJDEN) if _stam_vorm_ok(v)]
 
 def bouw_stam_levels(stamtijden_db):
     """Elk werkwoord = één level (al zijn stamtijden), in les-volgorde, frequentst eerst."""
@@ -1352,7 +1361,7 @@ def stam_herhaalvormen(stamtijden_db, stam_stats, huidige_praesens, aantal):
             continue
         for t in _STAM_TIJDEN:
             v = w.get('stamtijden', {}).get(t)
-            if not v or v == "-":
+            if not _stam_vorm_ok(v):
                 continue
             vid = f"{w['praesens']}_{v}"
             s = stam_stats.get(vid)
@@ -3784,7 +3793,7 @@ def main():
 
                         def _maak_kaart(w, tijd):
                             vorm = w['praesens'] if tijd == "Praesens" else w.get('stamtijden', {}).get(tijd)
-                            return {"basis": w, "tijd": tijd, "vorm": vorm} if vorm and vorm != "-" else None
+                            return {"basis": w, "tijd": tijd, "vorm": vorm} if (tijd == "Praesens" or _stam_vorm_ok(vorm)) else None
 
                         gekozen_ww = None
                         if groep.startswith("🔤"):
@@ -3936,7 +3945,7 @@ def main():
                         for w in kh_pool:
                             for t_d in alle_tijden:
                                 vorm = w.get('stamtijden', {}).get(t_d)
-                                if vorm and vorm != "-":
+                                if _stam_vorm_ok(vorm):
                                     kh_items.append({"basis": w, "tijd": t_d, "vorm": vorm})
 
                         st.caption(f"Beschikbare vormen om te herkennen: **{len(kh_items)}**")
@@ -4145,7 +4154,7 @@ def main():
 
                                 vorige_streak = 999 if gate_uit else p_streak
                                 for t_d in tijden_volgorde:
-                                    if not (vorm := w.get('stamtijden', {}).get(t_d)): continue
+                                    if not _stam_vorm_ok(vorm := w.get('stamtijden', {}).get(t_d)): continue
                                     vid = f"{w['praesens']}_{vorm}"
                                     stats = st.session_state.stam_stats.get(vid, {'g':0, 'f':0, 'streak':0})
                                     if gate_uit or vorige_streak >= 5:
@@ -4476,9 +4485,11 @@ def main():
                                                 is_doel = any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties)
 
                                                 if is_doel:
-                                                    # HIER IS DE SPOILER WEGGESNEDEN:
+                                                    # Doelwoord: neutrale (witte) tekst — NIET de naamval-kleur,
+                                                    # anders verklapt de kleur de gevraagde naamval. Alleen het
+                                                    # gele kader markeert dat dit het te toetsen woord is.
                                                     t_tip = "❓ [Dit woord wordt getoetst]"
-                                                    w_style = f"color: {txt_col}; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
+                                                    w_style = "color: #ffffff; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
                                                 else:
                                                     v_nl = sub_w.get('vertaling_nl', '')
                                                     v_bsb = sub_w.get('vertaling_bsb', '')
