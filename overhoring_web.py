@@ -2420,8 +2420,9 @@ def main():
                     if st.session_state.feedback:
                         if st.session_state.feedback["type"] == "success": st.success(st.session_state.feedback["msg"])
                         elif st.session_state.feedback["type"] == "warning": st.warning(st.session_state.feedback["msg"])
+                        elif st.session_state.feedback["type"] == "info": st.info(st.session_state.feedback["msg"])
                         else: st.error(st.session_state.feedback["msg"])
-                        st.session_state.feedback = None 
+                        st.session_state.feedback = None
 
                     zin_data = None
                     is_context_gewenst = (is_mastery and huidige_sub_modus != '1') or st.session_state.get('optie_context', False) or st.session_state.get('optie_cluster_vocab', False)
@@ -2706,10 +2707,17 @@ def main():
                                         st.session_state.feedback = {"type": "warning", "msg": f"Onjuist. Bekijk de hint!{_verwar_note}"}
                                     st.rerun()
 
+                    if huidige_sub_modus in ['2', '3_mc', '4', '3_typ']:
+                        if st.button("🤔 Ik weet het niet — toon het antwoord", key=f"weetniet_{item.get('grieks')}"):
+                            st.session_state.feedback = {"type": "info", "msg": f"💡 **{item.get('grieks')}** = {correct_antw}. Geen punten afgetrokken — je krijgt dit woord straks nog een keer."}
+                            st.session_state.sessie_lijst.append((item, huidige_sub_modus))
+                            laad_volgend_woord(); st.rerun()
+
                     if huidige_sub_modus != 'overtik':
                         st.write("---")
+                        _resterend = len(st.session_state.get('sessie_lijst') or [])
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
-                        st.caption(f"Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst: {item.get('laatst_geoefend', 'Nooit')}")
+                        st.caption(f"🔢 Nog {_resterend} te gaan | Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst: {item.get('laatst_geoefend', 'Nooit')}")
 
                 elif st.session_state.get('sessie_net_klaar'):
                     if not st.session_state.get('_ballonnen_getoond'):
@@ -4297,7 +4305,7 @@ def main():
                             if sub_modus != 'overtik':
                                 st.write("---")
                                 fn = 'Nieuw' if huidige_streak==0 else ('In Training' if huidige_streak<=15 else ('Beheerst' if huidige_streak<=29 else 'Mastery'))
-                                st.caption(f"Fase: {fn} | Autonome Streak: {huidige_streak} | Goed/Fout: {st.session_state.stam_stats[vid].get('g',0)}/{st.session_state.stam_stats[vid].get('f',0)}")
+                                st.caption(f"🔢 Nog {len(st.session_state.get('stam_sessie_lijst') or [])} te gaan | Fase: {fn} | Streak: {huidige_streak} | Goed/Fout: {st.session_state.stam_stats[vid].get('g',0)}/{st.session_state.stam_stats[vid].get('f',0)}")
 
        # ==========================================
         # TAB 6: STRUCTUURWOORDEN & SYNTAXIS
@@ -4635,7 +4643,7 @@ def main():
                         if sub_modus != 'overtik':
                             st.write("---")
                             f_naam = 'Nieuw' if st.session_state.struct_stats[vid].get('streak', 0)==0 else ('In Training' if st.session_state.struct_stats[vid].get('streak', 0)<=15 else ('Beheerst' if st.session_state.struct_stats[vid].get('streak', 0)<=29 else 'Mastery'))
-                            st.caption(f"Fase: {f_naam} | Autonome Streak: {st.session_state.struct_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.struct_stats[vid].get('g', 0)}/{st.session_state.struct_stats[vid].get('f', 0)}")
+                            st.caption(f"🔢 Nog {len(st.session_state.get('struct_sessie_lijst') or [])} te gaan | Fase: {f_naam} | Streak: {st.session_state.struct_stats[vid].get('streak', 0)} | Goed/Fout: {st.session_state.struct_stats[vid].get('g', 0)}/{st.session_state.struct_stats[vid].get('f', 0)}")
                             
         # ==========================================
         # TAB 7: LEESTEKSTEN
@@ -4852,7 +4860,7 @@ def main():
                                                 basis['streak'] = int(basis.get('streak', 0)) + 1; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save()
                                                 st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
                                             else: 
-                                                basis['streak'] = max(0, int(basis.get('streak', 0)) - 2); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save()
+                                                basis['streak'] = max(0, int(basis.get('streak', 0)) - 1); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save()
                                                 st.error(f"✗ Fout. Het was: {basis['nederlands']}")
                                     
                                 elif "3." in tekst_modus: 
@@ -4862,7 +4870,7 @@ def main():
                                         if st.form_submit_button("Check"):
                                             registreer_oefening(basis)
                                             if check_betekenis(inp, basis['nederlands']): basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save(); st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
-                                            else: basis['streak'] = max(0, int(basis.get('streak', 0)) - 2); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Fout. Het is: {basis['nederlands']}")
+                                            else: basis['streak'] = max(0, int(basis.get('streak', 0)) - 1); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Fout. Het is: {basis['nederlands']}")
                                             
                                 elif "4." in tekst_modus:
                                     if not in_scope: st.success(f"*(Buiten scope voor {master_niveau})* **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
@@ -4895,7 +4903,7 @@ def main():
                                             if check_betekenis(t_inp, basis['nederlands']) and check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info']):
                                                 basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; dagdoel_plus('verzen'); trigger_save(); st.success(f"✓ Volledig correct! ({w['parsing_info']})")
                                             else:
-                                                basis['streak'] = max(0, int(basis.get('streak', 0)) - 2); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Onjuist. Officiële data: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
+                                                basis['streak'] = max(0, int(basis.get('streak', 0)) - 1); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Net niet. Het juiste antwoord: {w['parsing_info']} | Betekenis: {basis['nederlands']}")
                                                 
                     st.write("---")
                     st.write("### ✍️ Zinsvertaling")
