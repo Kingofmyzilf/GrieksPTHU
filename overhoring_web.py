@@ -1566,12 +1566,13 @@ def _struct_stat_lookup(struct_stats, w, idx):
     ss = struct_stats or {}
     return ss.get(f"{g}_{idx}") or ss.get(g) or {'g': 0, 'f': 0, 'streak': 0}
 
-@st.cache_data(ttl=6 * 3600, show_spinner=False)
+@st.cache_data(show_spinner=False)
 def voortgang_kernstats(cache_key, _data, _stam_stats, _stamtijden_db, _struct_stats, _struct_db):
     """Zware fase-tellingen voor het Voortgang-dashboard, gecached. Het Voortgang-tabblad draait
     (net als alle tabs) bij ELKE rerun; zonder cache telde dit de hele database opnieuw bij elk
     antwoord in een ander tabblad. De onderstreepte params worden NIET gehasht (Streamlit-conventie);
-    alleen `cache_key` (gebruiker + 6-uurs-bucket) stuurt de herberekening → hooguit elke 6 uur."""
+    alleen `cache_key` (gebruiker + handmatige versie) stuurt de herberekening. De versie wijzigt
+    uitsluitend als de student op 'Ververs' drukt → tijdens het oefenen wordt er nooit herberekend."""
     sv = {'Nieuw': 0, 'In Training': 0, 'Beheerst': 0, 'Mastery': 0}
     tgv = tfv = bekende_freq = totale_freq = 0
     vocab_streaks = {}
@@ -2903,14 +2904,18 @@ def main():
                 st.markdown(f"**{label}** (`{beheerst}/{totaal}` — **{pct}%**)")
                 st.progress(beheerst / totaal if totaal > 0 else 0.0)
 
-            # --- STATISTIEKEN BEREKENEN (gecached: hooguit elke 6 uur herberekend) ---
-            _VG_UUR = 6
-            _vg_bucket = int(datetime.now().timestamp() // (_VG_UUR * 3600))
-            _vg_ck = f"{st.session_state.get('last_user', '')}|{_vg_bucket}"
+            # --- STATISTIEKEN BEREKENEN (gecached: alleen herberekend bij een druk op 'Ververs') ---
+            if 'vg_laatst' not in st.session_state:
+                try: st.session_state.vg_laatst = datetime.now().strftime('%d-%m %H:%M')
+                except Exception: st.session_state.vg_laatst = ""
+            _vg_versie = int(st.session_state.get('vg_versie', 0))
+            _vg_ck = f"{st.session_state.get('last_user', '')}|{_vg_versie}"
             _cvg1, _cvg2 = st.columns([3, 1])
-            _cvg1.caption(f"📊 De cijfers hieronder worden om de app snel te houden **hooguit elke {_VG_UUR} uur** herberekend — dus vlak na het oefenen kunnen ze nog iets achterlopen. Klik op *Ververs nu* voor de actuele stand.")
-            if _cvg2.button("🔄 Ververs nu", key="vg_ververs"):
-                voortgang_kernstats.clear()
+            _cvg1.caption(f"📊 De cijfers hieronder worden **alleen bijgewerkt als je op Ververs drukt** — zo blijft de app snel tijdens het oefenen. Laatst bijgewerkt: {st.session_state.get('vg_laatst') or '—'}.")
+            if _cvg2.button("🔄 Ververs", key="vg_ververs"):
+                st.session_state.vg_versie = _vg_versie + 1
+                try: st.session_state.vg_laatst = datetime.now().strftime('%d-%m %H:%M')
+                except Exception: pass
                 st.rerun()
             _vg = voortgang_kernstats(_vg_ck, st.session_state.data,
                                       st.session_state.get('stam_stats', {}), stamtijden_db,
