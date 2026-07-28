@@ -1873,7 +1873,7 @@ def lees_scorebord(cache_key):
                     'onderdelen': ond, 'gedaan': gedaan})
     return out
 
-def opslaan_naar_cloud():
+def opslaan_naar_cloud(update_scorebord=True):
     if not st.session_state.get('last_user'): return
     try:
         rij = _bouw_rij_dict()
@@ -1888,10 +1888,11 @@ def opslaan_naar_cloud():
                 conn.create(worksheet=ws, data=df_row)
             except Exception:
                 _opslaan_legacy(rij)
-        try:
-            _update_scorebord()
-        except Exception:
-            pass
+        if update_scorebord:
+            try:
+                _update_scorebord()
+            except Exception:
+                pass
         try:
             st.toast("💾 Voortgang opgeslagen", icon="✅")
         except Exception:
@@ -1928,7 +1929,9 @@ def trigger_save(forceer=False):
     st.session_state.save_teller = st.session_state.get('save_teller', 0) + 1
     if forceer or st.session_state.save_teller >= 5:
         st.session_state.save_teller = 0
-        opslaan_naar_cloud()
+        # Het scorebord (competitie) alleen bijwerken bij een geforceerde opslag (einde sessie /
+        # uitloggen), niet elke 5 beurten — zo blijft de reguliere opslag licht (alleen je eigen tab).
+        opslaan_naar_cloud(update_scorebord=forceer)
 
 # --- INITIALISATIE ---
 for key in ['data', 'sessie_lijst', 'huidig_item', 'huidige_sub_modus', 'huidige_vorm_data', 'feedback', 
