@@ -1117,6 +1117,29 @@ def bouw_verwar_paren(alle_data, verwar_stats):
             paren.append((wa, wb))
     return paren
 
+def bouw_lookalike_paren(poule, twins_map):
+    """(woordA, woordB)-paren van spelling-gelijkende woorden binnen de selectie, voor de paar-oefening
+    ('Gelijkende woorden'): je krijgt twee lijkende woorden naast elkaar en geeft van allebei de betekenis."""
+    if not twins_map:
+        return []
+    idx = {w.get('grieks'): w for w in poule if isinstance(w, dict) and w.get('grieks')}
+    seen = set()
+    paren = []
+    for w in poule:
+        if not isinstance(w, dict):
+            continue
+        g = w.get('grieks', '')
+        for tg in (twins_map.get(g) or []):
+            wb = idx.get(tg)
+            if not wb:
+                continue
+            sleutel = tuple(sorted([g, tg]))
+            if sleutel in seen:
+                continue
+            seen.add(sleutel)
+            paren.append((w, wb))
+    return paren
+
 # --- BADGES / ACHIEVEMENTS ---
 def badge_definities(m):
     """Bouwt de lijst met badges op basis van samengevatte statistieken (m). Puur afgeleid van
@@ -2388,19 +2411,23 @@ def main():
                         st.session_state.sessie_net_klaar = False
                         st.session_state._ballonnen_getoond = False
 
-                        # Mijn verwarwoorden → paar-oefening: beide woorden tegelijk, beide antwoorden goed.
+                        # Mijn verwarwoorden én Gelijkende woorden → paar-oefening: twee (lijkende) woorden
+                        # tegelijk, van allebei de betekenis geven, per deel goedgekeurd.
+                        _paar_bron = None
                         if keuze == "Mijn verwarwoorden":
-                            _paren = bouw_verwar_paren(st.session_state.data, st.session_state.get('verwar_stats', {}))
-                            if _paren:
-                                r_engine.shuffle(_paren)
-                                st.session_state.paar_lijst = _paren
-                                st.session_state.paar_klaar = False
-                                st.session_state.huidig_item = None
-                                st.session_state.sessie_lijst = []
-                                st.session_state.paar_huidig = st.session_state.paar_lijst.pop(0)
-                                st.session_state.paar_fout = 0
-                                st.session_state.paar_feedback = None
-                                st.rerun()
+                            _paar_bron = bouw_verwar_paren(st.session_state.data, st.session_state.get('verwar_stats', {}))
+                        elif "Gelijkende woorden" in keuze:
+                            _paar_bron = bouw_lookalike_paren(doel, laad_verwarparen_db())
+                        if _paar_bron:
+                            r_engine.shuffle(_paar_bron)
+                            st.session_state.paar_lijst = _paar_bron
+                            st.session_state.paar_klaar = False
+                            st.session_state.huidig_item = None
+                            st.session_state.sessie_lijst = []
+                            st.session_state.paar_huidig = st.session_state.paar_lijst.pop(0)
+                            st.session_state.paar_fout = 0
+                            st.session_state.paar_feedback = None
+                            st.rerun()
 
                         modus_id = str(modus[0])
                         
