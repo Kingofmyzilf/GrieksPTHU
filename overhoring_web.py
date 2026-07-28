@@ -339,8 +339,9 @@ def _ontleed_dims(info):
         return _ontleed_deel_correct(dim, info) != "—"
     dims = [("woordsoort", "Woordsoort", ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord"])]
     if t in ("ww", "ptc"):
-        if _heeft("tijd"): dims.append(("tijd", "Tijd", ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"]))
+        # Vaste werkwoord-volgorde: Wijs → Tijd → Diathese → (Persoon/Getal onderaan).
         if _heeft("wijs"): dims.append(("wijs", "Wijs", ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium"]))
+        if _heeft("tijd"): dims.append(("tijd", "Tijd", ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"]))
         if _heeft("diathese"): dims.append(("diathese", "Diathese", ["Actief", "Medium", "Passief"]))
     if _heeft("naamval"): dims.append(("naamval", "Naamval", ["Nom", "Gen", "Dat", "Acc", "Voc"]))
     if _heeft("geslacht"): dims.append(("geslacht", "Geslacht", ["M", "V", "O"]))
@@ -5868,6 +5869,7 @@ def main():
                     st.session_state.ontl_kleur = {}
                     st.session_state.ontl_fase = 'woordsoort'
                     st.session_state.ontl_feedback = None
+                    st.session_state.ontl_topfb = None
                     st.session_state.ontl_geteld = set()
                     st.session_state.ontl_geen = False
 
@@ -5916,6 +5918,11 @@ def main():
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontl_ref}</div>"
                                 f"<div style='font-size:26px;padding:12px 4px;line-height:1.6'>{_html.strip()}</div>", unsafe_allow_html=True)
 
+                    # Vaste balk met de uitslag van het vorige woord (wat goed was + wat het woord is).
+                    _tfb = st.session_state.get('ontl_topfb')
+                    if _tfb:
+                        {"success": st.success, "info": st.info}.get(_tfb.get('type'), st.info)(_tfb.get('msg', ''))
+
                     _rondes = {'woordsoort': '1/4 · Woordsoort van elk woord', 'znw': '2/4 · Naamwoorden ontleden',
                                'ww': '3/4 · Werkwoorden ontleden', 'vertalen': '4/4 · Vertalen', 'klaar': 'Klaar'}
                     if _fase != 'klaar':
@@ -5948,6 +5955,7 @@ def main():
                             if _eerste_keer() and _kz is not None:
                                 _tel_deel('woordsoort', _ok); _markeer_geteld()
                             if _ok:
+                                st.session_state.ontl_topfb = {"type": "success", "msg": f"✅ **{_w.get('grieks','')}** — {_ontleed_deel_correct('woordsoort', _info)}"}
                                 st.session_state.ontl_pos += 1
                                 st.session_state.ontl_feedback = None
                                 if st.session_state.ontl_pos >= len(_lijst):
@@ -5986,6 +5994,7 @@ def main():
                             if _alle_goed:
                                 _nv = _ontleed_deel_correct('naamval', _info)
                                 st.session_state.ontl_kleur[_hidx] = _ONTLEED_KLEUR.get(_nv, "#20c997")
+                                st.session_state.ontl_topfb = {"type": "success", "msg": f"✅ **{_w.get('grieks','')}** — {_info}"}
                                 st.session_state.ontl_pos += 1
                                 st.session_state.ontl_feedback = None
                                 if st.session_state.ontl_pos >= len(_lijst):
@@ -6001,6 +6010,7 @@ def main():
                                 _markeer_geteld()
                             _nv = _ontleed_deel_correct('naamval', _info)
                             st.session_state.ontl_kleur[_hidx] = _ONTLEED_KLEUR.get(_nv, "#20c997")
+                            st.session_state.ontl_topfb = {"type": "info", "msg": f"👁️ **{_w.get('grieks','')}** — {_info}"}
                             st.session_state.ontl_pos += 1
                             st.session_state.ontl_feedback = None
                             if st.session_state.ontl_pos >= len(_lijst):
@@ -6012,16 +6022,18 @@ def main():
                         _vorm = _info.split(' - ', 1)[1] if ' - ' in _info else _info
                         st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         st.caption(f"Vorm: *{_vorm}* — houd rekening met naamval/tijd in je vertaling.")
-                        _vin = st.text_input("Vertaling van dit woord:", key=f"ontl_vt_{st.session_state.ontl_ref}_{_pos}")
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
-                        _cA, _cB = st.columns(2)
-                        if _cA.button("✓ Check", key=f"ontl_vcheck_{_pos}", type="primary"):
+                        with st.form(f"ontl_vform_{st.session_state.ontl_ref}_{_pos}", clear_on_submit=True):
+                            _vin = st.text_input("Vertaling van dit woord:")
+                            _vsub = st.form_submit_button("✓ Check", type="primary")  # Enter werkt binnen een form
+                        if _vsub:
                             _vok = check_betekenis(_vin or "", _w.get('vertaling_nl', ''))
                             if _eerste_keer() and (_vin or "").strip():
                                 _tel_deel('vertaling', _vok); _markeer_geteld()
                             if _vok:
+                                st.session_state.ontl_topfb = {"type": "success", "msg": f"✅ **{_w.get('grieks','')}** = {_w.get('vertaling_nl','')}"}
                                 st.session_state.ontl_pos += 1
                                 st.session_state.ontl_feedback = None
                                 if st.session_state.ontl_pos >= len(_lijst):
@@ -6030,14 +6042,14 @@ def main():
                             else:
                                 st.session_state.ontl_feedback = [f"❌ Het is o.a. *{str(_w.get('vertaling_nl','')).split(',')[0]}*. Probeer opnieuw of klik 'Toon'."]
                             st.rerun()
-                        if _cB.button("👁️ Toon", key=f"ontl_vtoon_{_pos}"):
+                        if st.button("👁️ Toon", key=f"ontl_vtoon_{_pos}"):
                             if _eerste_keer():
                                 _tel_deel('vertaling', False); _markeer_geteld()
+                            st.session_state.ontl_topfb = {"type": "info", "msg": f"👁️ **{_w.get('grieks','')}** = {_w.get('vertaling_nl','')}"}
                             st.session_state.ontl_feedback = None
                             st.session_state.ontl_pos += 1
                             if st.session_state.ontl_pos >= len(_lijst):
                                 _ontl_advance()
-                            st.info(f"**{_w.get('grieks','')}** = {_w.get('vertaling_nl','')}")
                             st.rerun()
 
                     else:  # klaar
