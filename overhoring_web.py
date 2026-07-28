@@ -369,7 +369,7 @@ def _ontleed_deel_correct(dim, info):
     """De correcte waarde voor een dimensie (voor 'Toon antwoord' en het inkleuren)."""
     info = info or ""
     tabel = {
-        "woordsoort": ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord"],
+        "woordsoort": ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel"],
         "naamval": ["Nom", "Gen", "Dat", "Acc", "Voc"],
         "tijd": ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"],
         "wijs": ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium"],
@@ -391,6 +391,28 @@ def _ontleed_deel_correct(dim, info):
         if "ev" in info: return "Ev"
         return "—"
     return "—"
+
+_ONTLEED_WS_OPTS = ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel"]
+
+def _ontleed_dims_zonder_ws(info):
+    """De ontleed-dimensies zonder de Woordsoort-rij (die wordt in ronde 1 al gedaan)."""
+    return [d for d in _ontleed_dims(info) if d[0] != "woordsoort"]
+
+def _ontleed_in_scope(info, niveau):
+    """Valt dit woord binnen de tentamenstof van het gekozen niveau? (parsing_info-gebaseerd,
+    zelfde geest als de Masterclass in Leesteksten). Bepaalt of een woord in ronde 2 ontleed wordt."""
+    info = info or ""
+    is_ww = "Werkwoord" in info
+    if niveau == "Grieks 3":
+        return True
+    if niveau == "Grieks 2":
+        if is_ww and any(x in info for x in ["Conjunctivus", "Optativus"]):
+            return False
+        return True
+    # Grieks 1: werkwoorden alleen actief-indicatief-achtig (geen participium/conj./opt.)
+    if is_ww:
+        return ("Actief" in info) and not any(x in info for x in ["Participium", "Conjunctivus", "Optativus"])
+    return True
 
 @st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
@@ -5776,68 +5798,94 @@ def main():
         # ==========================================
         with menu[10]:
             st.subheader("🔎 Ontleden")
-            st.caption("Ontleed woord voor woord een Bijbelvers waarin je alle woorden al kent — net als op het tentamen. Kies per onderdeel de juiste waarde; de zin kleurt mee met de naamvallen (Nom · Gen · Dat · Acc · Voc).")
+            st.caption("Ontleed een Bijbelvers in vier rondes — net als op het tentamen: **1)** woordsoort van elk woord, **2)** naamwoorden ontleden, **3)** werkwoorden ontleden, **4)** vertalen. De zin kleurt mee met de naamvallen (Nom · Gen · Dat · Acc · Voc).")
             _obdb = laad_bijbel_db()
             if not _obdb:
                 st.info("De Bijbeltekst-database is niet beschikbaar.")
             else:
-                _oc1, _oc2, _oc3, _oc4 = st.columns([1.5, 1, 1, 1])
-                _odrempel = _oc1.slider("Ontleed woorden die je kent (min. streak):", 1, 30,
+                _oc1, _oc2, _oc3, _oc4 = st.columns([1.2, 1.3, 1, 1])
+                _oniveau = _oc1.selectbox("Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
+                                          index=["Grieks 1", "Grieks 2", "Grieks 3"].index(st.session_state.get('ontl_niveau', 'Grieks 2')),
+                                          key="ontl_niveau_sel", help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus/participium).")
+                st.session_state.ontl_niveau = _oniveau
+                _odrempel = _oc2.slider("Ontleed woorden die je kent (min. streak):", 1, 30,
                                         int(st.session_state.get('ontl_drempel', 5)), key="ontl_drempel_slider")
                 st.session_state.ontl_drempel = _odrempel
-                _osteun = _oc2.toggle("💡 Vertaalhulp", value=bool(st.session_state.get('ontl_steun', True)), key="ontl_steun_toggle")
+                _osteun = _oc3.toggle("💡 Hulp", value=bool(st.session_state.get('ontl_steun', True)), key="ontl_steun_toggle")
                 st.session_state.ontl_steun = _osteun
-                _overtaal = _oc3.toggle("📝 Ook vertalen", value=bool(st.session_state.get('ontl_vertaal', False)), key="ontl_vertaal_toggle",
-                                        help="Naast ontleden ook per woord de betekenis typen.")
-                st.session_state.ontl_vertaal = _overtaal
 
                 def _nieuw_ontleed_vers():
                     _ss = {str(w['strong']): int(w.get('streak', 0)) for w in (st.session_state.get('data') or []) if w.get('strong')}
+                    _niv = st.session_state.get('ontl_niveau', 'Grieks 2')
                     kandidaten = []
                     for ref, zin in _obdb.items():
                         if ref in (st.session_state.get('ontl_gezien') or []):
                             continue
-                        lex = [w for w in zin if w.get('strong')]
+                        lex = [i for i, w in enumerate(zin) if w.get('strong')]
                         if len(lex) < 3:
                             continue
-                        if any(_ss.get(str(w['strong']), 0) < 1 for w in lex):
+                        if any(_ss.get(str(zin[i]['strong']), 0) < 1 for i in lex):
                             continue  # hele zin moet bekend zijn
-                        targets = [i for i, w in enumerate(zin)
-                                   if _ontleed_type(w.get('parsing_info', '')) and _ss.get(str(w.get('strong')), 0) >= _odrempel]
-                        if targets:
-                            kandidaten.append((ref, zin, targets))
+                        def _tgt(i):
+                            w = zin[i]
+                            return _ss.get(str(w.get('strong')), 0) >= _odrempel and _ontleed_in_scope(w.get('parsing_info', ''), _niv)
+                        znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
+                        ww = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) in ('ww', 'ptc') and _tgt(i)]
+                        if znw or ww:
+                            kandidaten.append((ref, zin, lex, znw, ww))
                     if not kandidaten:
                         st.session_state.ontl_ref = None
                         st.session_state.ontl_geen = True
                         return
                     r_engine.shuffle(kandidaten)
-                    ref, zin, targets = kandidaten[0]
+                    ref, zin, lex, znw, ww = kandidaten[0]
                     _gz = st.session_state.get('ontl_gezien') or []
                     _gz.append(ref); st.session_state.ontl_gezien = _gz[-40:]
                     st.session_state.ontl_ref = ref
                     st.session_state.ontl_zin = zin
-                    st.session_state.ontl_targets = targets
+                    st.session_state.ontl_lex = lex
+                    st.session_state.ontl_znw = znw
+                    st.session_state.ontl_ww = ww
                     st.session_state.ontl_pos = 0
                     st.session_state.ontl_kleur = {}
-                    st.session_state.ontl_fase = 'ontleden'
+                    st.session_state.ontl_fase = 'woordsoort'
                     st.session_state.ontl_feedback = None
-                    st.session_state.ontl_geteld = set()  # per woord maar één keer meetellen
+                    st.session_state.ontl_geteld = set()
                     st.session_state.ontl_geen = False
 
                 if _oc4.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
                     _nieuw_ontleed_vers(); st.rerun()
 
                 if st.session_state.get('ontl_geen'):
-                    st.warning(f"Geen verzen gevonden waarin je álle woorden kent én minstens één woord met streak ≥ {_odrempel}. Zet de drempel lager of oefen eerst meer woorden.")
+                    st.warning(f"Geen verzen gevonden waarin je álle woorden kent én minstens één te ontleden woord met streak ≥ {_odrempel} (niveau {_oniveau}). Zet de drempel lager, kies een ander niveau, of oefen eerst meer woorden.")
                 elif not st.session_state.get('ontl_ref'):
                     st.info("Klik op **🎲 Nieuw vers** om te beginnen.")
                 else:
                     _zin = st.session_state.ontl_zin
-                    _targets = st.session_state.ontl_targets
+                    _fase = st.session_state.ontl_fase
                     _kleur = st.session_state.get('ontl_kleur', {})
                     _pos = st.session_state.ontl_pos
-                    _hidx = _targets[_pos] if _pos < len(_targets) else -1
+                    _lijst = {'woordsoort': st.session_state.ontl_lex, 'znw': st.session_state.ontl_znw,
+                              'ww': st.session_state.ontl_ww, 'vertalen': st.session_state.ontl_lex}.get(_fase, [])
+                    _hidx = _lijst[_pos] if _pos < len(_lijst) else -1
 
+                    def _ontl_advance():
+                        # naar de volgende ronde met inhoud
+                        volgorde = ['woordsoort', 'znw', 'ww', 'vertalen', 'klaar']
+                        lijsten = {'woordsoort': st.session_state.ontl_lex, 'znw': st.session_state.ontl_znw,
+                                   'ww': st.session_state.ontl_ww, 'vertalen': st.session_state.ontl_lex}
+                        _i = volgorde.index(st.session_state.ontl_fase)
+                        for _f in volgorde[_i + 1:]:
+                            if _f == 'klaar' or lijsten.get(_f):
+                                st.session_state.ontl_fase = _f
+                                st.session_state.ontl_pos = 0
+                                st.session_state.ontl_feedback = None
+                                if _f == 'klaar':
+                                    dagdoel_plus('verzen')
+                                return
+                        st.session_state.ontl_fase = 'klaar'
+
+                    # --- gekleurde zin ---
                     _html = ""
                     for i, w in enumerate(_zin):
                         g = w.get('grieks', ''); interp = w.get('interpunctie', '')
@@ -5849,103 +5897,142 @@ def main():
                             _html += f"<span style='color:#8a8a8a'>{g}</span>{interp} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontl_ref}</div>"
                                 f"<div style='font-size:26px;padding:12px 4px;line-height:1.6'>{_html.strip()}</div>", unsafe_allow_html=True)
-                    st.progress(min(_pos, len(_targets)) / max(1, len(_targets)),
-                                text=f"Woord {min(_pos + 1, len(_targets))} van {len(_targets)}")
 
-                    if st.session_state.ontl_fase == 'ontleden':
+                    _rondes = {'woordsoort': '1/4 · Woordsoort van elk woord', 'znw': '2/4 · Naamwoorden ontleden',
+                               'ww': '3/4 · Werkwoorden ontleden', 'vertalen': '4/4 · Vertalen', 'klaar': 'Klaar'}
+                    if _fase != 'klaar':
+                        st.progress(min(_pos, len(_lijst)) / max(1, len(_lijst)),
+                                    text=f"Ronde {_rondes.get(_fase, '')} — {min(_pos + 1, len(_lijst))} van {len(_lijst)}")
+
+                    def _tel_deel(_dim, _goed):
+                        _rec = st.session_state.ontleed_stats.setdefault(_dim, {'g': 0, 'f': 0})
+                        _rec['g' if _goed else 'f'] = int(_rec.get('g' if _goed else 'f', 0)) + 1
+
+                    def _eerste_keer():
+                        _sleutel = (_fase, _hidx)
+                        _gt = st.session_state.get('ontl_geteld') or set()
+                        return _sleutel not in _gt
+
+                    def _markeer_geteld():
+                        _gt = st.session_state.get('ontl_geteld') or set()
+                        _gt.add((_fase, _hidx)); st.session_state.ontl_geteld = _gt
+
+                    if _fase == 'woordsoort':
                         _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
                         st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
-                        _dims = _ontleed_dims(_info)
+                        _kz = st.radio("Woordsoort:", _ONTLEED_WS_OPTS, index=None, horizontal=True,
+                                       key=f"ontl_ws_{st.session_state.ontl_ref}_{_pos}")
+                        if st.session_state.get('ontl_feedback'):
+                            for _line in st.session_state.ontl_feedback:
+                                st.markdown(_line)
+                        if st.button("✓ Check", key=f"ontl_wscheck_{_pos}", type="primary"):
+                            _ok = _ontleed_deel_ok('woordsoort', _kz, _info)
+                            if _eerste_keer() and _kz is not None:
+                                _tel_deel('woordsoort', _ok); _markeer_geteld()
+                            if _ok:
+                                st.session_state.ontl_pos += 1
+                                st.session_state.ontl_feedback = None
+                                if st.session_state.ontl_pos >= len(_lijst):
+                                    _ontl_advance()
+                                trigger_save()
+                            else:
+                                st.session_state.ontl_feedback = [f"❌ Juist is **{_ontleed_deel_correct('woordsoort', _info)}**."]
+                            st.rerun()
+
+                    elif _fase in ('znw', 'ww'):
+                        _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
+                        st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
+                        _dims = _ontleed_dims_zonder_ws(_info)
                         _keuzes = {}
                         for _key, _label, _opts in _dims:
                             _keuzes[_key] = st.radio(_label, _opts, index=None, horizontal=True,
-                                                     key=f"ontl_{_key}_{st.session_state.ontl_ref}_{_pos}")
-                        _vert_in = None
-                        if _overtaal:
-                            _vert_in = st.text_input("Vertaling van dit woord:", key=f"ontl_wvert_{st.session_state.ontl_ref}_{_pos}")
+                                                     key=f"ontl_{_key}_{st.session_state.ontl_ref}_{_fase}_{_pos}")
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
                         _cA, _cB = st.columns(2)
-                        if _cA.button("✓ Check antwoord", key=f"ontl_check_{_pos}", type="primary"):
-                            _res = []; _alle_goed = True
-                            # Elk woord telt maar ÉÉN keer mee voor de statistiek (eerste poging),
-                            # zodat je score niet oploopt door na een fout nog een keer te checken.
-                            _telt_mee = _pos not in (st.session_state.get('ontl_geteld') or set())
+                        if _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
+                            _res = []; _alle_goed = True; _eerste = _eerste_keer()
                             for _key, _label, _opts in _dims:
                                 _kz = _keuzes.get(_key)
                                 _ok = _ontleed_deel_ok(_key, _kz, _info)
-                                if _telt_mee and _kz is not None:
-                                    _rec = st.session_state.ontleed_stats.setdefault(_key, {'g': 0, 'f': 0})
-                                    _rec['g' if _ok else 'f'] = int(_rec.get('g' if _ok else 'f', 0)) + 1
+                                if _eerste and _kz is not None:
+                                    _tel_deel(_key, _ok)
                                 if _ok:
                                     _res.append(f"- ✅ **{_label}:** {_kz}")
                                 else:
                                     _alle_goed = False
                                     _res.append(f"- ❌ **{_label}:** juist is **{_ontleed_deel_correct(_key, _info)}**")
-                            if _overtaal:
-                                _vok = check_betekenis(_vert_in or "", _w.get('vertaling_nl', ''))
-                                if _telt_mee and (_vert_in or "").strip():
-                                    _rv = st.session_state.ontleed_stats.setdefault('vertaling', {'g': 0, 'f': 0})
-                                    _rv['g' if _vok else 'f'] = int(_rv.get('g' if _vok else 'f', 0)) + 1
-                                if _vok:
-                                    _res.append(f"- ✅ **Vertaling:** {_vert_in}")
-                                else:
-                                    _alle_goed = False
-                                    _res.append(f"- ❌ **Vertaling:** het is o.a. *{str(_w.get('vertaling_nl','')).split(',')[0]}*")
-                            if _telt_mee:
-                                _gt = st.session_state.get('ontl_geteld') or set(); _gt.add(_pos); st.session_state.ontl_geteld = _gt
+                            if _eerste:
+                                _markeer_geteld()
                             if _alle_goed:
                                 _nv = _ontleed_deel_correct('naamval', _info)
                                 st.session_state.ontl_kleur[_hidx] = _ONTLEED_KLEUR.get(_nv, "#20c997")
                                 st.session_state.ontl_pos += 1
                                 st.session_state.ontl_feedback = None
-                                if st.session_state.ontl_pos >= len(_targets):
-                                    st.session_state.ontl_fase = 'vertalen'
-                                    dagdoel_plus('verzen')
+                                if st.session_state.ontl_pos >= len(_lijst):
+                                    _ontl_advance()
                                 trigger_save()
                             else:
                                 st.session_state.ontl_feedback = _res
                             st.rerun()
-                        if _cB.button("👁️ Toon antwoord", key=f"ontl_toon_{_pos}"):
+                        if _cB.button("👁️ Toon antwoord", key=f"ontl_toon_{_fase}_{_pos}"):
+                            if _eerste_keer():
+                                for _key, _label, _opts in _dims:
+                                    _tel_deel(_key, False)
+                                _markeer_geteld()
                             _nv = _ontleed_deel_correct('naamval', _info)
                             st.session_state.ontl_kleur[_hidx] = _ONTLEED_KLEUR.get(_nv, "#20c997")
-                            # Opgegeven → als 'nog niet gehaald' meetellen (één keer), zodat 'Toon antwoord' geen gratis punten geeft.
-                            if _pos not in (st.session_state.get('ontl_geteld') or set()):
-                                for _key, _label, _opts in _dims:
-                                    _rec = st.session_state.ontleed_stats.setdefault(_key, {'g': 0, 'f': 0})
-                                    _rec['f'] = int(_rec.get('f', 0)) + 1
-                                _gt = st.session_state.get('ontl_geteld') or set(); _gt.add(_pos); st.session_state.ontl_geteld = _gt
                             st.session_state.ontl_pos += 1
                             st.session_state.ontl_feedback = None
-                            if st.session_state.ontl_pos >= len(_targets):
-                                st.session_state.ontl_fase = 'vertalen'
+                            if st.session_state.ontl_pos >= len(_lijst):
+                                _ontl_advance()
                             st.rerun()
-                        if _osteun:
-                            with st.expander("💡 Vertaalhulp: naamvallen & vormen", expanded=False):
-                                for _c in ["Nom", "Gen", "Dat", "Acc", "Voc"]:
-                                    st.markdown("- " + _ONTLEED_STEUN[_c])
-                                for _t in ["Praesens", "Aoristus", "Perfectum", "Participium", "Passief", "Medium"]:
-                                    st.markdown("- " + _ONTLEED_STEUN[_t])
-                    else:
-                        st.success("✅ Hele zin ontleed! Bekijk de betekenissen en vertaal de zin.")
-                        with st.expander("📖 Woordbetekenissen (glosses)", expanded=True):
-                            for w in _zin:
-                                if not w.get('strong'):
-                                    continue
-                                _nl = w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')
-                                st.markdown(f"- **{w.get('grieks','')}** — {str(_nl)[:45]}")
-                            if _osteun:
-                                _cases = {_ontleed_deel_correct('naamval', _zin[i].get('parsing_info', '')) for i in _targets}
-                                for _c in ["Gen", "Dat", "Acc", "Nom", "Voc"]:
-                                    if _c in _cases and _c in _ONTLEED_STEUN:
-                                        st.caption("💡 " + _ONTLEED_STEUN[_c])
-                        st.text_area("Jouw vertaling van de zin:", key=f"ontl_vert_{st.session_state.ontl_ref}")
-                        if st.button("Toon woord-voor-woord (ter controle)", key="ontl_toonvert"):
-                            _model = " · ".join(str(w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')).split(',')[0] for w in _zin if w.get('strong'))
-                            st.info(f"**Glosse-vertaling:** {_model}")
+
+                    elif _fase == 'vertalen':
+                        _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
+                        _vorm = _info.split(' - ', 1)[1] if ' - ' in _info else _info
+                        st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
+                        st.caption(f"Vorm: *{_vorm}* — houd rekening met naamval/tijd in je vertaling.")
+                        _vin = st.text_input("Vertaling van dit woord:", key=f"ontl_vt_{st.session_state.ontl_ref}_{_pos}")
+                        if st.session_state.get('ontl_feedback'):
+                            for _line in st.session_state.ontl_feedback:
+                                st.markdown(_line)
+                        _cA, _cB = st.columns(2)
+                        if _cA.button("✓ Check", key=f"ontl_vcheck_{_pos}", type="primary"):
+                            _vok = check_betekenis(_vin or "", _w.get('vertaling_nl', ''))
+                            if _eerste_keer() and (_vin or "").strip():
+                                _tel_deel('vertaling', _vok); _markeer_geteld()
+                            if _vok:
+                                st.session_state.ontl_pos += 1
+                                st.session_state.ontl_feedback = None
+                                if st.session_state.ontl_pos >= len(_lijst):
+                                    _ontl_advance()
+                                trigger_save()
+                            else:
+                                st.session_state.ontl_feedback = [f"❌ Het is o.a. *{str(_w.get('vertaling_nl','')).split(',')[0]}*. Probeer opnieuw of klik 'Toon'."]
+                            st.rerun()
+                        if _cB.button("👁️ Toon", key=f"ontl_vtoon_{_pos}"):
+                            if _eerste_keer():
+                                _tel_deel('vertaling', False); _markeer_geteld()
+                            st.session_state.ontl_feedback = None
+                            st.session_state.ontl_pos += 1
+                            if st.session_state.ontl_pos >= len(_lijst):
+                                _ontl_advance()
+                            st.info(f"**{_w.get('grieks','')}** = {_w.get('vertaling_nl','')}")
+                            st.rerun()
+
+                    else:  # klaar
+                        st.success("🎉 Hele vers ontleed én vertaald! Goed gedaan.")
                         if st.button("➡️ Volgend vers", key="ontl_volgend", type="primary"):
                             _nieuw_ontleed_vers(); st.rerun()
+
+                    if _osteun and _fase in ('znw', 'ww', 'vertalen'):
+                        with st.expander("💡 Vertaalhulp: naamvallen & vormen", expanded=False):
+                            for _c in ["Nom", "Gen", "Dat", "Acc", "Voc"]:
+                                st.markdown("- " + _ONTLEED_STEUN[_c])
+                            for _t in ["Praesens", "Aoristus", "Perfectum", "Participium", "Passief", "Medium"]:
+                                st.markdown("- " + _ONTLEED_STEUN[_t])
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
         # ==========================================
