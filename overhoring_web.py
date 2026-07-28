@@ -2204,10 +2204,10 @@ def main():
                     else:
                         doel = []
 
-                    # Oude stof meenemen: standaard 1 woord (oudste datum eerst), of af en toe een hele ronde.
+                    # Oude stof meenemen: standaard een kleine herhaalronde (min. 5 oude woorden erbij).
                     _lp_opts = {
-                        "1 oud woord meenemen (aanrader)": 1,
-                        "Kleine herhaalronde (5 oude woorden)": 5,
+                        "Kleine herhaalronde (5 oude woorden) (aanrader)": 5,
+                        "1 oud woord meenemen": 1,
                         "Grote herhaalronde (10 oude woorden)": 10,
                         "Alleen dit level": 0,
                     }
@@ -3639,22 +3639,30 @@ def main():
                         st.session_state.flash_para_id = gekozen_sub
                         st.session_state.flash_huidig = r_engine.choice(huidig_paradigma)
                     
+                    # Feedback van de vórige kaart tonen (bovenaan), dan pas de nieuwe vraag.
+                    if st.session_state.get('fc_feedback'):
+                        _fb = st.session_state.fc_feedback
+                        {"success": st.success, "error": st.error}.get(_fb["type"], st.info)(_fb["msg"])
+                        st.session_state.fc_feedback = None
+
                     huidig_fc = st.session_state.flash_huidig
                     st.info(f"Vertaal naar het Grieks: **{gekozen_cat} - {huidig_fc['label']}**")
-                    
+
                     with st.form("fc_form", clear_on_submit=True):
                         fc_in = st.text_input("Griekse vorm:")
                         if st.form_submit_button("Controleer"):
                             verwacht = normaliseer_accent(huidig_fc["vorm"])
                             ingevuld = normaliseer_accent(naar_grieks_transliteratie(fc_in))
                             if verwacht == ingevuld:
-                                _actief_noteer(huidig_fc.get("id"), True); trigger_save()
-                                st.success(f"✓ Goed! Het was inderdaad **{huidig_fc['vorm']}**.")
-                                st.session_state.flash_huidig = r_engine.choice(huidig_paradigma)
+                                _actief_noteer(huidig_fc.get("id"), True)
+                                st.session_state.fc_feedback = {"type": "success", "msg": f"✓ Goed! Het was inderdaad **{huidig_fc['vorm']}**."}
                             else:
-                                _actief_noteer(huidig_fc.get("id"), False); trigger_save()
+                                _actief_noteer(huidig_fc.get("id"), False)
                                 stam = huidig_fc.get("stam", ""); uitgang = huidig_fc.get("uitgang", ""); toelichting = huidig_fc.get("toelichting", "")
-                                st.error(f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*")
+                                st.session_state.fc_feedback = {"type": "error", "msg": f"✗ Fout. Verwacht: **{huidig_fc['vorm']}** (Stam: `{stam}` + Uitgang: `{uitgang}`).\n\n*Tip: {toelichting}*"}
+                            # Nieuwe kaart klaarzetten en hertekenen — zo blijven vraag en antwoord in sync.
+                            st.session_state.flash_huidig = r_engine.choice(huidig_paradigma)
+                            trigger_save(); st.rerun()
 
                 elif "Leerpad" in actief_modus:
                     # === LEERPAD: elke cel individueel leren (flashcard → meerkeuze → typen), en pas
