@@ -3347,9 +3347,27 @@ def main():
                     echte_hist_acc = int((sub_g / (sub_g + sub_f)) * 100) if (sub_g + sub_f) > 0 else 78
                     echte_hist_acc = max(50, min(100, echte_hist_acc))
 
+                    # Dynamisch tempo: gemiddeld aantal geoefende items per dag over de afgelopen 2 weken.
+                    _recent_pace = 0
+                    _ds_pace = st.session_state.get('dag_stats') or {}
+                    if _ds_pace:
+                        try:
+                            _vd = datetime.now().date(); _grens14 = _vd - pd.Timedelta(days=13)
+                            _rtot = 0
+                            for _d, _n in _ds_pace.items():
+                                try:
+                                    _dd = datetime.strptime(str(_d), '%Y-%m-%d').date()
+                                    if _grens14 <= _dd <= _vd: _rtot += int(_n)
+                                except Exception: pass
+                            _recent_pace = int(round(_rtot / 14))
+                        except Exception: _recent_pace = 0
+                    _pace_default = min(100, max(5, _recent_pace)) if _recent_pace else 30
+
                     st.write("**2. Bepaal je parameters:**")
                     sim_doel_streak = st.slider("Gewenste Kennis-diepte (Streak):", min_value=2, max_value=30, value=16, help="16 = Beheerst (Standaard PThU norm). 8 = Voldoende om passief te herkennen in een tekst. 30 = Vloeiende Mastery.")
-                    sim_dag_vocab = st.slider("Woorden oefenen per dag:", min_value=5, max_value=100, value=30, step=5)
+                    if _recent_pace:
+                        st.caption(f"⚡ Je tempo van de afgelopen 2 weken: **~{_recent_pace} items/dag** (de schuif staat daarop; pas gerust aan).")
+                    sim_dag_vocab = st.slider("Woorden oefenen per dag:", min_value=5, max_value=100, value=_pace_default, step=5)
                     sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
 
                 with fc_c2:
