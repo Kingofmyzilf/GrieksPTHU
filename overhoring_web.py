@@ -601,6 +601,31 @@ def _render_gramtabel_html(rows, kolom_target=None, mark_row=None, mark_col=None
         return _render_gramtabel_html(rows)  # kolom niet gevonden → toch de hele tabel tonen
     return html
 
+def _pref_keuze(widget_fn, label, opties, key, default=None, **kw):
+    """radio/selectbox met keuze onthouden in ui_prefs (over sessies heen), met veilige terugval."""
+    p = st.session_state.get('ui_prefs')
+    if not isinstance(p, dict):
+        p = {}; st.session_state.ui_prefs = p
+    opties = list(opties)
+    d = default if default is not None else (opties[0] if opties else None)
+    v = p.get(key, d)
+    try:
+        idx = opties.index(v)
+    except (ValueError, TypeError):
+        idx = 0
+    keuze = widget_fn(label, opties, index=idx, **kw)
+    p[key] = keuze
+    return keuze
+
+def _pref_bool(widget_fn, label, key, default=False, **kw):
+    """checkbox/toggle met stand onthouden in ui_prefs (over sessies heen)."""
+    p = st.session_state.get('ui_prefs')
+    if not isinstance(p, dict):
+        p = {}; st.session_state.ui_prefs = p
+    val = widget_fn(label, value=bool(p.get(key, default)), **kw)
+    p[key] = bool(val)
+    return val
+
 @st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
     """Index strong-nummer → lijst van vers-referenties (in db-volgorde). Wordt één keer opgebouwd
@@ -2575,15 +2600,20 @@ def main():
                     oefen_stijl = "🤖 Aanbevolen Mix"
 
                 # Wens 7: onthoud de actuele keuzes in-memory; ze worden meegeschreven bij de eerstvolgende
-                # cloud-opslag (Start Sessie, einde sessie of uitloggen).
-                st.session_state.ui_prefs = {
+                # cloud-opslag. BELANGRIJK: bijwerken (merge), niet de hele dict vervangen — anders wissen
+                # we de instellingen van álle andere tabbladen (die ook in ui_prefs worden bewaard).
+                _ui_now = st.session_state.get('ui_prefs')
+                if not isinstance(_ui_now, dict):
+                    _ui_now = {}
+                _ui_now.update({
                     'modus': modus, 'keuze': keuze, 'lessen': gekozen, 'oefen_stijl': oefen_stijl,
                     'optie_context': optie_context, 'optie_cluster_vocab': optie_cluster,
                     'optie_kleur_nv_vocab': optie_kleur_nv, 'optie_nieuw_mee_vocab': optie_nieuw_mee,
                     'optie_verwarparen': optie_verwar, 'optie_mastery_context': optie_mastery_context,
                     'optie_audio': optie_audio,
-                    'geavanceerd': _geav,  # niet overschrijven: de eenvoud/geavanceerd-keuze behouden
-                }
+                    'geavanceerd': _geav,
+                })
+                st.session_state.ui_prefs = _ui_now
 
                 custom_counts = None
                 if oefen_stijl == "🎛️ Zelf Samenstellen" and doel:
@@ -3889,7 +3919,7 @@ def main():
 
                 _af_modi = (["🎮 Leerpad (levels)", "📖 0. Paradigma-paspoort (Bestuderen)", "🎯 1. Focus op Uitgangen", "📝 2. Volledig Tentamenrooster", "⚡ 3. Flashcards (Zwakke plekken)"]
                             if _geav else ["🎮 Leerpad (levels)", "📖 0. Paradigma-paspoort (Bestuderen)"])
-                actief_modus = st.radio("Kies je leervorm:", _af_modi, horizontal=True)
+                actief_modus = _pref_keuze(st.radio, "Kies je leervorm:", _af_modi, 'actief_modus', horizontal=True)
                 st.write("---")
 
                 with st.expander("📂 Kies niveau · categorie · paradigma", expanded=False):
@@ -4176,7 +4206,7 @@ def main():
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
                 _stam_modi = (["🎮 Leerpad (levels)", "📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"]
                               if _geav else ["🎮 Leerpad (levels)", "🧠 Leer (flashcards)"])
-                stam_modus = st.radio("Modus:", _stam_modi, horizontal=True)
+                stam_modus = _pref_keuze(st.radio, "Modus:", _stam_modi, 'stam_modus', horizontal=True)
                 st.write("---")
 
                 if "Werkwoordpaspoort" in stam_modus:
@@ -4790,11 +4820,8 @@ def main():
                         "Voegwoorden & Partikels",
                         "Voornaamwoorden (Pronomina)"
                     ] if _geav else ["🎮 Leerpad (levels)"]
-                    struct_filter = st.selectbox(
-                        "1. Kies leer-spoor:",
-                        _struct_sporen,
-                        key="struct_filter_box"
-                    )
+                    struct_filter = _pref_keuze(st.selectbox, "1. Kies leer-spoor:", _struct_sporen,
+                                                'struct_spoor', key="struct_filter_box")
 
                     is_struct_leerpad = False
                     struct_leerpad_indices = set()
@@ -4823,7 +4850,7 @@ def main():
                             if _slot_st:
                                 st.caption(f"🔒 Hierna: Level {_slot_st['index']} — {_slot_st['titel']}.")
 
-                    struct_modus = st.radio("2. Oefenvorm:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], key="struct_modus_radio")
+                    struct_modus = _pref_keuze(st.radio, "2. Oefenvorm:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], 'struct_oefenvorm', key="struct_modus_radio")
 
                     if st.button("Start Sessie", key="btn_start_struct", type="primary"):
                         st.session_state.gestrafte_woorden_struct = set()
@@ -4901,7 +4928,7 @@ def main():
                         extra_casus_hint = ""
                         doel_nv = huidig.get('eigenschap', '') 
 
-                        struct_kleur_nv = st.checkbox("🎨 Markeer Naamvallen in zin (Kleur)", key="struct_global_kleur_nv")
+                        struct_kleur_nv = _pref_bool(st.checkbox, "🎨 Markeer Naamvallen in zin (Kleur)", 'struct_kleur_nv_pref', default=False, key="struct_global_kleur_nv")
                         
                         if bijbel_db:
                             for ref, zin in bijbel_db.items():
@@ -5129,14 +5156,14 @@ def main():
                         if s_ww.get('les', 0) in gekozen:
                             for td, v in s_ww['stamtijden'].items(): actieve_stam_vormen[normaliseer_accent(v)] = {"tijd_diathese": td, "praesens": s_ww['praesens'], "betekenis": s_ww['betekenis']}
                 with top_c2:
-                    tekst_modus = st.radio("2. Oefenmethode:", ["1. Lees & Spiek (Geen vragen)", "2. Vertaal (Meerkeuze)", "3. Vertaal (Typen)", "4. Masterclass (Ontleden)"])
+                    tekst_modus = _pref_keuze(st.radio, "2. Oefenmethode:", ["1. Lees & Spiek (Geen vragen)", "2. Vertaal (Meerkeuze)", "3. Vertaal (Typen)", "4. Masterclass (Ontleden)"], 'lees_methode')
 
                 st.write("---")
                 vis_c1, vis_c2, vis_c3, vis_c4 = st.columns(4)
                 with vis_c1: kleur_naamvallen = st.checkbox("🎨 Markeer Naamvallen (Kleur)")
                 with vis_c2: kleur_voegwoorden = st.checkbox("🔗 Markeer Voegwoorden (Geel)")
                 with vis_c3: kleur_stamtijden = st.checkbox("⚛️ Markeer Stamtijden (Paars)")
-                with vis_c4: master_niveau = st.selectbox("Niveau Masterclass:", ["Grieks 1", "Grieks 2", "Grieks 3"])
+                with vis_c4: master_niveau = _pref_keuze(st.selectbox, "Niveau Masterclass:", ["Grieks 1", "Grieks 2", "Grieks 3"], 'lees_niveau')
 
                 st.write("---")
                 st.markdown("### 3. Selecteer een Bijbeltekst")
@@ -5896,11 +5923,9 @@ def main():
                 with pc1:
                     alle_lessen_p = sorted(list(set(veilig_les_nummer(w) for w in prod_db)))
                     gekozen_p = st.multiselect("Kies lessen:", alle_lessen_p, default=alle_lessen_p[:2] if alle_lessen_p else [], key="prod_lessen")
-                    invoer_type = st.radio(
-                        "Invoer:",
+                    invoer_type = _pref_keuze(st.radio, "Invoer:",
                         ["⌨️ Typen (Latijnse toetsen → Grieks)", "🔢 Meerkeuze (kies de juiste Griekse vorm)"],
-                        key="prod_invoer"
-                    )
+                        'prod_invoer_pref', key="prod_invoer")
                     with st.expander("⌨️ Spiekbrief: Griekse letters typen"):
                         st.markdown("`a`=α `b`=β `g`=γ `d`=δ `e`=ε `z`=ζ `h`=η `q`=θ `i`=ι `k`=κ `l`=λ `m`=μ `n`=ν `c`=ξ `o`=ο `p`=π `r`=ρ `s`=σ/ς `t`=τ `u`=υ `f`=φ `x`=χ `y`=ψ `w`=ω")
                         st.caption("Accenten en spiritus hoeven niet: er wordt accent-ongevoelig nagekeken.")
