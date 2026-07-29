@@ -304,21 +304,41 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
 _ONTLEED_KLEUR = {"Nom": "#33ccff", "Gen": "#28a745", "Dat": "#6f42c1", "Acc": "#dc3545", "Voc": "#fd7e14"}
 _ONTLEED_GES = {"M": "mannelijk", "V": "vrouwelijk", "O": "onzijdig"}
 _ONTLEED_STEUN = {
-    "Nom": "**Nominativus** — onderwerp (of naamwoordelijk deel): meestal 'de/het …' als onderwerp.",
-    "Gen": "**Genitivus** — bezit/herkomst: vaak 'van …' (soms 'dan' bij vergelijking).",
-    "Dat": "**Dativus** — meewerkend/instrument: 'aan/voor …' of 'met/door …'.",
-    "Acc": "**Accusativus** — lijdend voorwerp: het object; ook richting ('naar') of tijdsduur.",
+    # Naamvallen — functie + vertaling (uit 'functies van naamvallen')
+    "Nom": "**Nominativus** — onderwerp of naamwoordelijk deel van het gezegde: 'de/het …'.",
+    "Gen": "**Genitivus** — bijvoeglijke bepaling (zegt iets over een naamwoord): vaak 'van …'.",
+    "Dat": "**Dativus** — meewerkend voorwerp ('aan/voor …') óf bijwoordelijke bepaling ('met/door …').",
+    "Acc": "**Accusativus** — lijdend voorwerp (object); ook bijw. bepaling van tijdsduur/lengte.",
     "Voc": "**Vocativus** — aanspreekvorm: 'o …!'.",
-    "Praesens": "**Praesens** — heden / duurzame handeling: 'ik doe / ben aan het doen'.",
-    "Imperfectum": "**Imperfectum** — duur/herhaling in verleden: 'ik was aan het doen / deed telkens'.",
-    "Aoristus": "**Aoristus** — eenmalige voltooide handeling in verleden: 'ik deed'.",
-    "Perfectum": "**Perfectum** — voltooid met blijvend gevolg: 'ik heb gedaan (en het geldt nog)'.",
+    # Tempora — aspect + Nederlandse tijd (uit 'aspecten tempora')
+    "Praesens": "**Praesens** — onvoltooid/duratief in het heden → **o.t.t.** (kan verteltijd zijn: praesens historicum → o.v.t.).",
+    "Imperfectum": "**Imperfectum** — onvoltooid/duratief/herhaald in verleden of achtergrond → **o.v.t.**",
+    "Futurum": "**Futurum** — toekomst → 'zal/zullen …'.",
+    "Aoristus": "**Aoristus** — voltooid/punctueel/eenmalig in verleden → **o.v.t.** (soms ingressief of gnomisch → o.t.t.).",
+    "Perfectum": "**Perfectum** — verleden met resultaat in het heden → **v.t.t.** (nadruk kan op verleden (o.v.t.) of heden (o.t.t.) liggen).",
+    "Plusquamperfectum": "**Plusquamperfectum** — verder verleden met resultaat in verleden → **v.v.t.**",
+    # Diathese
+    "Actief": "**Actief** — onderwerp doet de handeling.",
     "Passief": "**Passief** — onderwerp ondergáát de handeling: 'wordt/werd ge…'.",
-    "Medium": "**Medium** — handeling terug op onderwerp zelf / in eigen belang.",
-    "Participium": "**Participium** — deelwoord, vaak als bijzin: 'terwijl/nadat/omdat …' (in gen. = losse genitivus).",
-    "Infinitivus": "**Infinitivus** — 'te doen / het doen' (vaak als onderwerp/object of doel).",
-    "Conjunctivus": "**Conjunctivus** — aansporing/doel/mogelijkheid: 'laten we …', 'opdat …'.",
+    "Medium": "**Medium** — handeling terug op het onderwerp zelf / in eigen belang ('(voor) zichzelf').",
+    # Wijzen / constructies
+    "Participium": "**Participium** — deelwoord; vertaal vaak met een bijzin ('terwijl/nadat/omdat …'). Participium in de genitief + naamwoord in de genitief = **genitivus absolutus** (bijzin, ingeleid door voegwoord).",
+    "Infinitivus": "**Infinitivus** — 'te doen / het doen'. Gesubstantiveerd + voorzetsel wordt een bijzin: διά+acc='omdat', εἰς+acc='om te/zodat', ἐν+dat='terwijl/toen', πρό+gen='voordat', μετά+acc='nadat', πρός+acc='om te'.",
+    "Conjunctivus": "**Conjunctivus** — aansporing/doel/mogelijkheid: 'laten we …' (adhortativus), 'opdat …' (finalis, na ἵνα/ὅπως/ὡς), verbod met μή. Met ἄν: generalis/futuralis.",
     "Imperativus": "**Imperativus** — gebiedende wijs: 'doe!'.",
+    "Optativus": "**Optativus** — wens of (met ἄν) mogelijkheid: 'moge …' / 'zou(den) kunnen/willen'.",
+    "Indicativus": "**Indicativus** — de 'gewone' mededelende wijs.",
+}
+
+# Vertaling per tempus+diathese van het participium (nom. mann. ev.), uit G38.
+_ONTLEED_PTC_VERT = {
+    ("Praesens", "Actief"): "λύων → 'losmakend'",
+    ("Futurum", "Actief"): "λύσων → 'zullende losmaken'",
+    ("Aoristus", "Actief"): "λύσας → 'losmakend' / 'hebbende losgemaakt'",
+    ("Perfectum", "Actief"): "λελυκώς → 'hebbende losgemaakt'",
+    ("Praesens", "Medium"): "λυόμενος → '(voor) zichzelf losmakend' / 'wordende losgemaakt'",
+    ("Aoristus", "Passief"): "λυθείς → 'wordende/zijnde losgemaakt'",
+    ("Futurum", "Passief"): "λυθησόμενος → 'zullende losgemaakt worden'",
 }
 
 def _ontleed_type(info):
@@ -329,6 +349,27 @@ def _ontleed_type(info):
     if any(x in info for x in ["Zelfst.", "Bijv.", "Voornaamwoord"]):
         return "naam"
     return None
+
+def _ontleed_vertaalhulp(info):
+    """Alleen de relevante vertaalregels voor dit woord: naamval-functie, óf (bij een werkwoord)
+    wijs/tijd/diathese (+ voorbeeld-vertaling van het participium)."""
+    info = info or ""
+    regels = []
+    nv = _ontleed_deel_correct('naamval', info)
+    if "Werkwoord" in info:
+        for dim in ('wijs', 'tijd', 'diathese'):
+            w = _ontleed_deel_correct(dim, info)
+            if w in _ONTLEED_STEUN and _ONTLEED_STEUN[w] not in regels:
+                regels.append(_ONTLEED_STEUN[w])
+        if "Participium" in info:
+            _v = _ONTLEED_PTC_VERT.get((_ontleed_deel_correct('tijd', info), _ontleed_deel_correct('diathese', info)))
+            if _v:
+                regels.append(f"**Voorbeeld (participium):** {_v}")
+            if nv in _ONTLEED_STEUN:
+                regels.append(_ONTLEED_STEUN[nv])
+    elif nv in _ONTLEED_STEUN:
+        regels.append(_ONTLEED_STEUN[nv])
+    return regels
 
 def _ontleed_dims(info):
     """(key, label, opties) per te ontleden dimensie — INFO-gestuurd: alleen dimensies die dit woord
@@ -6295,6 +6336,9 @@ def main():
                         _vorm = _info.split(' - ', 1)[1] if ' - ' in _info else _info
                         st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         st.caption(f"Vorm: *{_vorm}* — houd rekening met naamval/tijd in je vertaling.")
+                        if _osteun:
+                            for _r in _ontleed_vertaalhulp(_info):
+                                st.caption("💡 " + _r)
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
@@ -6339,6 +6383,13 @@ def main():
                                     continue
                                 _nl = w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')
                                 st.markdown(f"- **{w.get('grieks','')}** — {_nl}")
+                        if _osteun:
+                            with st.expander("💡 Hoe vertaal je de vormen in deze zin?", expanded=False):
+                                _gezien_r = []
+                                for _i2 in (st.session_state.ontl_znw + st.session_state.ontl_ww):
+                                    for _r in _ontleed_vertaalhulp(_zin[_i2].get('parsing_info', '')):
+                                        if _r not in _gezien_r:
+                                            _gezien_r.append(_r); st.markdown("- " + _r)
                         st.text_area("Jouw vertaling van de hele zin:", key=f"ontl_zin_{st.session_state.ontl_ref}", height=90)
                         if st.button("👁️ Toon modelvertaling", key="ontl_zintoon"):
                             _en = " ".join(str(w.get('vertaling_bsb', '')) for w in _zin if w.get('strong') and w.get('vertaling_bsb'))
@@ -6354,11 +6405,12 @@ def main():
                         if st.button("➡️ Volgend vers", key="ontl_volgend", type="primary"):
                             _nieuw_ontleed_vers(); st.rerun()
 
-                    if _osteun and _fase in ('znw', 'ww', 'vertalen'):
-                        with st.expander("💡 Vertaalhulp: naamvallen & vormen", expanded=False):
+                    if _osteun and _fase in ('znw', 'ww'):
+                        with st.expander("💡 Vertaalhulp: naamvallen & vormen (volledig overzicht)", expanded=False):
                             for _c in ["Nom", "Gen", "Dat", "Acc", "Voc"]:
                                 st.markdown("- " + _ONTLEED_STEUN[_c])
-                            for _t in ["Praesens", "Aoristus", "Perfectum", "Participium", "Passief", "Medium"]:
+                            for _t in ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum",
+                                       "Participium", "Infinitivus", "Conjunctivus", "Optativus", "Imperativus", "Actief", "Medium", "Passief"]:
                                 st.markdown("- " + _ONTLEED_STEUN[_t])
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
