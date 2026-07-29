@@ -2478,22 +2478,13 @@ def main():
 
     if st.session_state.data:
         # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
-        _tabs = st.tabs(["🎯 Dagelijks doel", "🚀 Woordenschat", "🎓 Actief Beheersen", "⏳ Stamtijden", "🧱 Structuurwoorden", "📝 Leesteksten", "📊 Voortgang", "📖 Lijst", "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)", "🔎 Ontleden"])
-        menu_dagdoel = _tabs[0]
-        # Interne indices (menu[0..9]) blijven exact hetzelfde; alleen de weergavevolgorde verandert.
-        menu = [_tabs[1], _tabs[7], _tabs[6], _tabs[2], _tabs[3], _tabs[4], _tabs[5], _tabs[8], _tabs[9], _tabs[10], _tabs[11]]
-
-        # Dagblok: automatisch naar het juiste tabblad springen (Streamlit heeft geen eigen tab-switch).
-        if st.session_state.get('dagblok_bezig'):
-            _dagblok_klaar = (not st.session_state.get('huidig_item') and not st.session_state.get('paar_huidig')
-                              and not st.session_state.get('sessie_lijst') and not st.session_state.get('paar_lijst')
-                              and not st.session_state.get('dagblok_actief'))
-            if _dagblok_klaar:
-                st.session_state.dagblok_bezig = False
-                st.session_state.dagblok_spring = "Dagelijks doel"
-        if st.session_state.get('dagblok_spring'):
-            spring_naar_tab(st.session_state.dagblok_spring)
-            st.session_state.dagblok_spring = None
+        # Weergavevolgorde van de tabbladen (Dagelijks doel zit nu ín Voortgang).
+        _tabs = st.tabs(["🚀 Woordenschat", "🔎 Ontleden", "🎓 Actief Beheersen", "⏳ Stamtijden", "📝 Leesteksten",
+                         "🧱 Structuurwoorden", "📊 Voortgang", "📖 Lijst", "📐 Grammatica", "ℹ️ Uitleg & Hulp",
+                         "✍️ NL → Grieks (productie)"])
+        # menu[i] = het content-blok zoals het in de code staat; hier gekoppeld aan de juiste tab-positie.
+        # 0=Woorden 1=Lijst 2=Voortgang 3=Actief 4=Stam 5=Struct 6=Leesteksten 7=Grammatica 8=Uitleg 9=NL→Grieks 10=Ontleden
+        menu = [_tabs[0], _tabs[7], _tabs[6], _tabs[2], _tabs[3], _tabs[5], _tabs[4], _tabs[8], _tabs[9], _tabs[10], _tabs[1]]
 
         # Eenvoud-modus: standaard alleen de basis-opties; aan te zetten in ℹ️ Uitleg & Hulp.
         _geav = bool(st.session_state.get('ui_geavanceerd',
@@ -6190,18 +6181,26 @@ def main():
                                 return
                         st.session_state.ontl_fase = 'klaar'
 
-                    # --- gekleurde zin ---
+                    # --- gekleurde zin --- (in de vertaalrondes hover je over elk woord voor de glosse)
+                    _hover = _fase in ('vertalen', 'zin')
                     _html = ""
                     for i, w in enumerate(_zin):
                         g = w.get('grieks', ''); interp = w.get('interpunctie', '')
                         if i in _kleur:
-                            _html += f"<span style='color:{_kleur[i]};font-weight:700'>{g}</span>{interp} "
+                            _stijl = f"color:{_kleur[i]};font-weight:700"
                         elif i == _hidx:
-                            _html += f"<span style='background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;padding:0 3px;border-radius:4px'>{g}</span>{interp} "
+                            _stijl = "background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;padding:0 3px;border-radius:4px"
                         else:
-                            _html += f"<span style='color:#8a8a8a'>{g}</span>{interp} "
+                            _stijl = "color:#8a8a8a"
+                        if _hover and w.get('strong'):
+                            _tt = (str(w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')) + "  ·  " + str(w.get('parsing_info', ''))).replace("'", "&#39;").replace('"', "&quot;")
+                            _html += f"<span class='mobile-tooltip' tabindex='0' style='{_stijl}'>{g}<span class='tooltiptext'>{_tt}</span></span>{interp} "
+                        else:
+                            _html += f"<span style='{_stijl}'>{g}</span>{interp} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontl_ref}</div>"
                                 f"<div style='font-size:26px;padding:12px 4px;line-height:1.6'>{_html.strip()}</div>", unsafe_allow_html=True)
+                    if _hover:
+                        st.caption("💡 Hover (of tik) over een woord voor de betekenis en ontleding.")
 
                     # Vaste balk met de uitslag van het vorige woord (wat goed was + wat het woord is).
                     _tfb = st.session_state.get('ontl_topfb')
@@ -6415,11 +6414,11 @@ def main():
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
         # ==========================================
-        # TAB 11: DAGELIJKS DOEL
+        # DAGELIJKS DOEL — ondergebracht onderaan de Voortgang-tab
         # ==========================================
-        with menu_dagdoel:
+        with menu[2]:
+            st.write("---")
             st.subheader("🎯 Dagelijks doel")
-            st.caption("Je vaste dagelijkse ronde. Zet je dagblok klaar en loop de tabbladen van links naar rechts af — je kalender kleurt vol naarmate je meer doet.")
             _cfg = dagdoel_config()
             _lg = dagdoel_log_vandaag()
 
@@ -6427,41 +6426,7 @@ def main():
             c_top1.metric("🔥 Dagblok-streak", f"{dagdoel_streak()} dagen")
             c_top2.metric("Woord-dagblok vandaag", "✅ klaar" if _lg.get('woordblok') else "nog niet")
             c_top3.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
-
-            st.write("---")
-            st.markdown("### ▶️ Zet je dagblok klaar")
-            st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['knelpunt']} moeilijke · {_cfg['verwar']} verwarparen · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['verzen']} verzen**.")
-            if st.button("▶️ Zet woord-dagblok klaar", type="primary", key="dagblok_start"):
-                _kaarten, _paren = bouw_dagblok(st.session_state.data, st.session_state.get('verwar_stats', {}), _cfg)
-                if not _kaarten and not _paren:
-                    st.warning("Geen woorden/paren beschikbaar voor het dagblok. Stel je doelen hoger in of oefen eerst wat woorden.")
-                else:
-                    st.session_state.gestrafte_woorden_vocab = set()
-                    _sessie_reset_samenvatting()
-                    st.session_state.sessie_net_klaar = False
-                    st.session_state._ballonnen_getoond = False
-                    st.session_state.paar_huidig = None; st.session_state.paar_klaar = False
-                    st.session_state.vocab_sessie_verzen = {}; st.session_state.vocab_cluster_strongs = {}
-                    st.session_state.modus_actief = "dagblok"
-                    st.session_state.dagblok_actief = True
-                    st.session_state.dagblok_bezig = True
-                    st.session_state.dagblok_paar_wacht = _paren
-                    st.session_state.sessie_lijst = _kaarten
-                    laad_volgend_woord()
-                    # Zet ook stamtijden + structuurwoorden kant-en-klaar (openen meteen bij het tabblad).
-                    dagblok_arm_stam()
-                    dagblok_arm_struct()
-                    st.session_state.dagblok_spring = "Woordenschat"
-                    st.success("✅ Alles staat klaar! Loop de oefen-tabbladen van links naar rechts af.")
-                    st.rerun()
-
-            st.info("👉 **Loop de tabbladen van links naar rechts af:**\n\n"
-                    "1. 🚀 **Woordenschat** — je woord-dagblok staat meteen klaar (woorden → moeilijke → verwarparen).\n"
-                    "2. 🎓 **Actief Beheersen** — het Leerpad opent meteen bij het huidige rijtje.\n"
-                    "3. ⏳ **Stamtijden** — staat kant-en-klaar in het Leerpad.\n"
-                    "4. 🧱 **Structuurwoorden** — staat kant-en-klaar in het Leerpad.\n"
-                    "5. 📝 **Leesteksten** — kies een tekst en ontleed een paar verzen.\n\n"
-                    "Kom daarna hier terug en vink je onderdelen af — dan kleurt je kalender vol. 🎨")
+            st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['knelpunt']} moeilijke · {_cfg['verwar']} verwarparen · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['verzen']} verzen**. Alles telt automatisch mee zodra je goed antwoordt in het betreffende tabblad.")
 
             st.write("---")
             st.markdown("### ✅ Voortgang overige onderdelen")
