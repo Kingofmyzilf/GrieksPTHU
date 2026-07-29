@@ -1732,14 +1732,19 @@ def dagkalender_html(dag_stats, log):
             if _val is True or (isinstance(_val, (int, float)) and _val > 0):
                 stip += f"<span style='display:inline-block;width:11px;height:11px;border-radius:50%;background:{kl};margin:0 2px'></span>"
         bg = "#1a1d22" if toekomst else _bg(n)
-        cellen += (f"<div style='background:{bg};border:{rand};border-radius:8px;height:66px;padding:5px;"
-                   f"display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;opacity:{'0.35' if toekomst else '1'}'>"
-                   f"<div style='font-size:22px;font-weight:800;color:#ffffff;line-height:1;text-align:center'>{ts.day}</div>"
+        # aantal geoefende items groot in het midden; datum klein in de hoek; stipjes onderaan
+        aantal = (f"<div style='font-size:20px;font-weight:800;color:#ffffff;line-height:1;text-align:center'>{n}</div>"
+                  if (n > 0 and not toekomst)
+                  else "<div style='font-size:20px;line-height:1;color:#4b525c'>·</div>")
+        cellen += (f"<div style='background:{bg};border:{rand};border-radius:8px;height:66px;padding:4px;position:relative;"
+                   f"display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:{'0.35' if toekomst else '1'}'>"
+                   f"<div style='position:absolute;top:3px;left:5px;font-size:10px;font-weight:600;color:#aeb6c0;line-height:1'>{ts.day}</div>"
+                   f"{aantal}"
                    f"<div style='text-align:center;min-height:11px'>{stip}</div></div>")
     legenda = " &nbsp; ".join(f"<span style='color:{kl}'>●</span> {naam}" for _sl, kl, naam in onderdelen)
     return (f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px'>{kop}</div>"
             f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px'>{cellen}</div>"
-            f"<div style='font-size:11px;color:#9aa3af;margin-top:8px'>{legenda} &nbsp;·&nbsp; fellere groen = meer geoefend</div>")
+            f"<div style='font-size:11px;color:#9aa3af;margin-top:8px'>Groot getal = aantal geoefende items die dag · fellere groen = meer · {legenda}</div>")
 
 # --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
 _STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
@@ -3030,6 +3035,7 @@ def main():
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                         if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
                                         elif huidige_sub_modus == '3_typ': item['streak'] = int(item.get('streak', 0)) + (2 if st.session_state.mix_combo.get(item['grieks'], False) else 1)
+                                        dagdoel_plus('woorden')
                                     vier_fase_overgang(_oude_streak, int(item.get('streak', 0)), item.get('grieks', ''))
                                     if st.session_state.fouten_huidig_woord == 0:
                                         verzwak_verwarring(item.get('grieks', ''))
@@ -3175,6 +3181,7 @@ def main():
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
                                         if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
                                         elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
+                                        dagdoel_plus('woorden')
                                     vier_fase_overgang(_oude_streak_mc, int(item.get('streak', 0)), item.get('grieks', ''))
                                     if st.session_state.fouten_huidig_woord == 0:
                                         verzwak_verwarring(item.get('grieks', ''))
@@ -4120,6 +4127,17 @@ def main():
 
                     cells = [c for c in huidig_paradigma if c.get('id')]
                     def _cstreak(_c): return int((st.session_state.actief_stats.get(_c['id']) or {}).get('streak', 0))
+                    # Index van ALLE cellen over álle paradigma's — nodig om al beheerste rijtjes
+                    # als retentie-herhaling terug te laten komen (blijft er zo goed in zitten).
+                    _alle_cel_idx = {}   # id -> cel
+                    _alle_cel_sib = {}   # id -> [vormen in eigen paradigma] (voor MC-afleiders)
+                    for _nvv in actief_db.values():
+                        for _catt in _nvv.values():
+                            for _para in _catt.values():
+                                _vv = [x['vorm'] for x in _para if x.get('id')]
+                                for x in _para:
+                                    if x.get('id'):
+                                        _alle_cel_idx[x['id']] = x; _alle_cel_sib[x['id']] = _vv
                     _klaar20 = sum(1 for c in cells if _cstreak(c) >= 20)
                     st.markdown(f"### {gekozen_sub}  ({_klaar20}/{len(cells)} cellen op streak 20+)")
 
@@ -4175,6 +4193,22 @@ def main():
                                 if s <= 0: _q.append((c['id'], 'Leer')); _q.append((c['id'], 'MC'))
                                 elif s <= 9: _q.append((c['id'], 'MC'))
                                 else: _q.append((c['id'], 'Typen'))
+                            # Retentie: meng een paar al beheerste cellen uit ándere paradigma's erdoorheen,
+                            # zodat oude stof erin blijft zitten.
+                            _huidige_ids = {c['id'] for c in cells}
+                            _beheerst = [cid for cid in _alle_cel_idx
+                                         if cid not in _huidige_ids
+                                         and int((st.session_state.actief_stats.get(cid) or {}).get('streak', 0)) >= 20]
+                            if _beheerst and _q:
+                                _n = min(3, len(_beheerst))
+                                _herhaal = r_engine.sample(_beheerst, _n)
+                                _stap = max(1, len(_q) // (_n + 1))
+                                for _i, _rid in enumerate(_herhaal):
+                                    _q.insert(min(len(_q), _stap * (_i + 1) + _i), (_rid, 'Herhaal'))
+                            elif _beheerst:
+                                # Niets nieuws meer te leren in dit rijtje → puur herhaal-modus van oude stof.
+                                _n = min(8, len(_beheerst))
+                                _q = [(rid, 'Herhaal') for rid in r_engine.sample(_beheerst, _n)]
                             return _q
                         if st.session_state.get('af_qkey') != _pkey or not st.session_state.get('af_q'):
                             st.session_state.af_q = _bouw_q()
@@ -4185,9 +4219,13 @@ def main():
                             st.info("Geen cellen te oefenen in dit paradigma.")
                         else:
                             cid, sub = _q[0]
-                            cell = next((c for c in cells if c['id'] == cid), cells[0])
-                            _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen'}.get(sub, sub)
+                            cell = _alle_cel_idx.get(cid) or next((c for c in cells if c['id'] == cid), None)
+                            if cell is None:
+                                _q.pop(0); st.rerun()
+                            _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen', 'Herhaal': '🔁 Herhaling (oude stof)'}.get(sub, sub)
                             st.caption(f"{_slabel} · streak {_cstreak(cell)} · nog {len(_q)} kaart(en) in de rij")
+                            if sub == 'Herhaal':
+                                st.caption("↩️ Even ophalen zodat het erin blijft zitten.")
                             st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']}</div>", unsafe_allow_html=True)
 
                             def _volgende(requeue=False):
@@ -4206,7 +4244,7 @@ def main():
                                     _volgende(); st.rerun()
                             elif sub == 'MC':
                                 if not st.session_state.get('af_opties'):
-                                    _pool = list({c['vorm'] for c in cells if c['vorm'] != cell['vorm']})
+                                    _pool = list({v for v in _alle_cel_sib.get(cid, [c['vorm'] for c in cells]) if v != cell['vorm']})
                                     r_engine.shuffle(_pool)
                                     _opts = [cell['vorm']] + _pool[:3]
                                     r_engine.shuffle(_opts)
@@ -6436,16 +6474,16 @@ def main():
             _cfg = dagdoel_config()
             _lg = dagdoel_log_vandaag()
 
-            c_top1, c_top2, c_top3 = st.columns(3)
+            c_top1, c_top2 = st.columns(2)
             c_top1.metric("🔥 Dagblok-streak", f"{dagdoel_streak()} dagen")
-            c_top2.metric("Woord-dagblok vandaag", "✅ klaar" if _lg.get('woordblok') else "nog niet")
-            c_top3.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
-            st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['knelpunt']} moeilijke · {_cfg['verwar']} verwarparen · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['verzen']} verzen**. Alles telt automatisch mee zodra je goed antwoordt in het betreffende tabblad.")
+            c_top2.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
+            st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['actief']} actief-cellen · {_cfg['verzen']} verzen**. Alles telt automatisch mee zodra je goed antwoordt in het betreffende tabblad.")
 
             st.write("---")
-            st.markdown("### ✅ Voortgang overige onderdelen")
+            st.markdown("### ✅ Voortgang onderdelen vandaag")
             st.caption("Deze tellen automatisch mee zodra je een goed antwoord geeft in dat tabblad.")
-            for _soort, _emoji, _label in [('actief', '🎓', 'Actief Beheersen'),
+            for _soort, _emoji, _label in [('woorden', '🚀', 'Woorden'),
+                                           ('actief', '🎓', 'Actief Beheersen'),
                                            ('stam', '⏳', 'Stamtijden'),
                                            ('struct', '🧱', 'Structuurwoorden'),
                                            ('verzen', '📝', 'Verzen ontleden')]:
@@ -6468,11 +6506,6 @@ def main():
                         _d = {}; st.session_state.dagdoel = _d
                     _d['config'] = _nw
                     trigger_save(forceer=True); st.success("Doelen opgeslagen!"); st.rerun()
-
-            st.write("---")
-            st.markdown("#### 📅 Jouw oefenkalender")
-            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
-                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
