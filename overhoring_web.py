@@ -5986,18 +5986,36 @@ def main():
                 st.info("De Bijbeltekst-database is niet beschikbaar.")
             else:
                 _oc1, _oc2, _oc3, _oc4, _oc5 = st.columns([1.3, 1.3, 0.9, 1.0, 1.0])
+                # Instellingen onthouden over sessies heen via ui_prefs (wordt bij opslag meegeschreven).
+                _oprefs = st.session_state.get('ui_prefs')
+                if not isinstance(_oprefs, dict):
+                    _oprefs = {}; st.session_state.ui_prefs = _oprefs
+                _niv_def = _oprefs.get('ontl_niveau', 'Grieks 2')
+                if _niv_def not in ["Grieks 1", "Grieks 2", "Grieks 3"]:
+                    _niv_def = 'Grieks 2'
                 _oniveau = _oc1.selectbox("Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
-                                          index=["Grieks 1", "Grieks 2", "Grieks 3"].index(st.session_state.get('ontl_niveau', 'Grieks 2')),
+                                          index=["Grieks 1", "Grieks 2", "Grieks 3"].index(_niv_def),
                                           key="ontl_niveau_sel", help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus/participium).")
-                st.session_state.ontl_niveau = _oniveau
+                st.session_state.ontl_niveau = _oniveau; _oprefs['ontl_niveau'] = _oniveau
                 _odrempel = _oc2.slider("Ontleed woorden die je kent (min. streak):", 1, 30,
-                                        int(st.session_state.get('ontl_drempel', 5)), key="ontl_drempel_slider")
-                st.session_state.ontl_drempel = _odrempel
-                _osteun = _oc3.toggle("💡 Hulp", value=bool(st.session_state.get('ontl_steun', True)), key="ontl_steun_toggle")
-                st.session_state.ontl_steun = _osteun
-                _obasis = _oc4.toggle("🔑 Basiswoord", value=bool(st.session_state.get('ontl_basis', False)), key="ontl_basis_toggle",
+                                        int(_oprefs.get('ontl_drempel', 5)), key="ontl_drempel_slider")
+                st.session_state.ontl_drempel = _odrempel; _oprefs['ontl_drempel'] = _odrempel
+                _osteun = _oc3.toggle("💡 Hulp", value=bool(_oprefs.get('ontl_steun', True)), key="ontl_steun_toggle")
+                st.session_state.ontl_steun = _osteun; _oprefs['ontl_steun'] = _osteun
+                _obasis = _oc4.toggle("🔑 Basiswoord", value=bool(_oprefs.get('ontl_basis', False)), key="ontl_basis_toggle",
                                       help="Toon bij elk woord de woordenboekvorm (basiswoord), zonder de betekenis.")
-                st.session_state.ontl_basis = _obasis
+                st.session_state.ontl_basis = _obasis; _oprefs['ontl_basis'] = _obasis
+
+                # Rondes overslaan (keuze wordt onthouden).
+                _ronde_opts = {"Woordsoort": "woordsoort", "Naamwoorden ontleden": "znw",
+                               "Werkwoorden ontleden": "ww", "Woord-voor-woord vertalen": "vertalen",
+                               "Hele zin vertalen": "zin"}
+                _skip_default = [lab for lab, f in _ronde_opts.items() if f in (_oprefs.get('ontl_skip') or [])]
+                _skip_sel = st.multiselect("Rondes overslaan (optioneel):", list(_ronde_opts.keys()),
+                                           default=_skip_default, key="ontl_skip_sel")
+                _skip_fasen = [_ronde_opts[lab] for lab in _skip_sel]
+                st.session_state.ontl_skip_fasen = _skip_fasen
+                _oprefs['ontl_skip'] = _skip_fasen
 
                 def _nieuw_ontleed_vers():
                     _ss = {str(w['strong']): int(w.get('streak', 0)) for w in (st.session_state.get('data') or []) if w.get('strong')}
@@ -6033,7 +6051,14 @@ def main():
                     st.session_state.ontl_ww = ww
                     st.session_state.ontl_pos = 0
                     st.session_state.ontl_kleur = {}
-                    st.session_state.ontl_fase = 'woordsoort'
+                    # Eerste ronde = eerste niet-overgeslagen ronde met inhoud.
+                    _skip = set(st.session_state.get('ontl_skip_fasen') or [])
+                    _lijsten0 = {'woordsoort': lex, 'znw': znw, 'ww': ww, 'vertalen': lex, 'zin': True}
+                    _start = 'klaar'
+                    for _f in ['woordsoort', 'znw', 'ww', 'vertalen', 'zin']:
+                        if _f not in _skip and _lijsten0.get(_f):
+                            _start = _f; break
+                    st.session_state.ontl_fase = _start
                     st.session_state.ontl_feedback = None
                     st.session_state.ontl_topfb = None
                     st.session_state.ontl_zin_model = None
@@ -6057,12 +6082,15 @@ def main():
                     _hidx = _lijst[_pos] if _pos < len(_lijst) else -1
 
                     def _ontl_advance():
-                        # naar de volgende ronde met inhoud ('zin' en 'klaar' altijd tonen)
+                        # naar de volgende ronde met inhoud die niet is overgeslagen ('zin'/'klaar' altijd)
                         volgorde = ['woordsoort', 'znw', 'ww', 'vertalen', 'zin', 'klaar']
                         lijsten = {'woordsoort': st.session_state.ontl_lex, 'znw': st.session_state.ontl_znw,
                                    'ww': st.session_state.ontl_ww, 'vertalen': st.session_state.ontl_lex}
+                        _skip = set(st.session_state.get('ontl_skip_fasen') or [])
                         _i = volgorde.index(st.session_state.ontl_fase)
                         for _f in volgorde[_i + 1:]:
+                            if _f in _skip:
+                                continue
                             if _f in ('zin', 'klaar') or lijsten.get(_f):
                                 st.session_state.ontl_fase = _f
                                 st.session_state.ontl_pos = 0
@@ -6155,22 +6183,22 @@ def main():
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
-                            # Hulp bij een fout: toon het bijbehorende rijtje (declinatie/vervoeging).
-                            _gtab = laad_gramtabellen()
-                            if _gtab:
-                                _vwoord = next((v for v in (st.session_state.get('data') or [])
-                                                if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
-                                _lemma = str(_vwoord.get('grieks', '')) if _vwoord else ""
-                                _ginfo = str(_vwoord.get('grieks_info', '')) if _vwoord else ""
-                                _tips = [t for t in _ontleed_tip_tabellen(_info, _lemma, _ginfo) if t in _gtab]
-                                if _tips:
-                                    with st.expander("📋 Hulp — bekijk het rijtje", expanded=False):
-                                        _alle_tab = list(_gtab.keys())
-                                        _tabkeuze = st.selectbox("Tabel:", _alle_tab, index=_alle_tab.index(_tips[0]),
-                                                                 key=f"ontl_tab_{_fase}_{_pos}")
-                                        _ktarget = _noun_g6_target(_ginfo) if _tabkeuze == "G6 Naamwoorden" else None
-                                        st.caption("De uitgangen zijn oranje gemarkeerd." + (" Alleen jouw kolom wordt getoond." if _ktarget else ""))
-                                        st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, []), _ktarget), unsafe_allow_html=True)
+                        # Altijd beschikbaar: het bijbehorende rijtje om te spieken (uitgeklapt na een fout).
+                        _gtab = laad_gramtabellen()
+                        if _gtab:
+                            _vwoord = next((v for v in (st.session_state.get('data') or [])
+                                            if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
+                            _lemma = str(_vwoord.get('grieks', '')) if _vwoord else ""
+                            _ginfo = str(_vwoord.get('grieks_info', '')) if _vwoord else ""
+                            _tips = [t for t in _ontleed_tip_tabellen(_info, _lemma, _ginfo) if t in _gtab]
+                            if _tips:
+                                with st.expander("📋 Bekijk het rijtje (spieken)", expanded=bool(st.session_state.get('ontl_feedback'))):
+                                    _alle_tab = list(_gtab.keys())
+                                    _tabkeuze = st.selectbox("Tabel:", _alle_tab, index=_alle_tab.index(_tips[0]),
+                                                             key=f"ontl_tab_{_fase}_{_pos}")
+                                    _ktarget = _noun_g6_target(_ginfo) if _tabkeuze == "G6 Naamwoorden" else None
+                                    st.caption("De uitgangen zijn oranje gemarkeerd." + (" Alleen jouw kolom wordt getoond." if _ktarget else ""))
+                                    st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, []), _ktarget), unsafe_allow_html=True)
                         _cA, _cB = st.columns(2)
                         if _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
                             _res = []; _alle_goed = True; _eerste = _eerste_keer()
