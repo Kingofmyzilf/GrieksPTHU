@@ -4102,7 +4102,21 @@ def main():
                     st.markdown(f"#### 🎮 Niveau {_af_niv['niveau']} · {_af_niv['titel']} — {_af_niv['xp_totaal']} XP")
                     st.progress(_af_niv['xp_in_niveau'] / max(1, _af_niv['xp_voor_volgend']))
                     _af_aanbev = next((l for l in _af_levels if l['ontgrendeld'] and not l['voltooid']), None)
-                    st.caption(f"🏁 {_af_vol}/{len(_af_levels)} paradigma's beheerst" + (f" · aanbevolen: **{_af_aanbev['titel']}**" if _af_aanbev else "") + ". Kies hierboven een paradigma.")
+                    st.caption(f"🏁 {_af_vol}/{len(_af_levels)} paradigma's beheerst.")
+
+                    # Automatisch doorlopen: pak steeds vanzelf het eerstvolgende nog niet beheerste
+                    # paradigma, zodat je lekker kunt doorleren zonder telkens te selecteren.
+                    _af_auto = _pref_bool(st.toggle, "▶️ Automatisch doorlopen naar het volgende paradigma", 'actief_auto', default=True)
+                    if _af_auto:
+                        if _af_aanbev:
+                            gekozen_niv = _af_aanbev['niveau']; gekozen_cat = _af_aanbev['categorie']; gekozen_sub = _af_aanbev['sub']
+                            huidig_paradigma = actief_db[gekozen_niv][gekozen_cat][gekozen_sub]
+                            st.info(f"▶️ Bezig met **{gekozen_sub}** ({gekozen_niv}). Zodra dit rijtje beheerst is, gaat de app vanzelf door naar het volgende.")
+                        else:
+                            st.success("🎉 Alle paradigma's beheerst! Zet 'Automatisch doorlopen' uit om er zelf een te herhalen.")
+                            huidig_paradigma = []
+                    else:
+                        st.caption(f"Handmatig — kies hierboven een paradigma." + (f" (aanbevolen: **{_af_aanbev['titel']}**)" if _af_aanbev else ""))
 
                     cells = [c for c in huidig_paradigma if c.get('id')]
                     def _cstreak(_c): return int((st.session_state.actief_stats.get(_c['id']) or {}).get('streak', 0))
