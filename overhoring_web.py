@@ -464,6 +464,11 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
     elif "Bijv." in info:
         tabs += ["G14 Adjectiva", "G34 Adj 3e Decl", "G30 Trappen"]
     elif "Voornaamwoord" in info:
+        # Kies de juiste voornaamwoord-tabel op basis van het subtype in parsing_info.
+        if "Relative" in info: tabs.append("G21 Relativum")
+        elif "Demonstrative" in info: tabs.append("G19 Demonstrativa")
+        elif "Interrogative" in info: tabs.append("G25 Interrogativum")
+        elif "Reflexive" in info: tabs.append("G22 Reflexiva")
         tabs += ["G19 Demonstrativa", "G21 Relativum", "G22 Reflexiva", "G25 Interrogativum", "G37 Correlativa"]
     else:  # zelfstandig naamwoord: kies de declinatie uit de woordenboekvorm (grieks_info)
         _decl = _noun_declinatie(grieks_info)
@@ -476,23 +481,102 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
             _seen.add(t); _uit.append(t)
     return _uit
 
-def _render_gramtabel_html(rows):
-    """Render een paradigma-tabel (lijst van rijen) als compacte HTML-tabel."""
+_GRIEKS_RE = re.compile(r'[Ͱ-Ͽἀ-῿]')
+
+def _is_grieks(s):
+    return bool(_GRIEKS_RE.search(str(s)))
+
+def _strip_acc(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', str(s)) if unicodedata.category(c) != 'Mn')
+
+def _stam_lengte(vormen):
+    """Lengte van de gemeenschappelijke stam binnen één declinatie-/vervoegingskolom
+    (accent-ongevoelig), zodat we de uitgang erna kunnen inkleuren."""
+    vg = [str(v) for v in vormen if v and _is_grieks(v)]
+    if len(vg) < 2:
+        return 0
+    stripped = [_strip_acc(v) for v in vg]
+    p = stripped[0]
+    for s in stripped[1:]:
+        while p and not s.startswith(p):
+            p = p[:-1]
+    return len(p)
+
+def _kleur_vorm(vorm, stamlen):
+    """Kleur de uitgang (alles na de gemeenschappelijke stam) van een Griekse vorm."""
+    vorm = str(vorm)
+    if stamlen and _is_grieks(vorm) and len(vorm) > stamlen:
+        return f"{vorm[:stamlen]}<span style='color:#ff9d5c;font-weight:800'>{vorm[stamlen:]}</span>"
+    return vorm
+
+def _noun_g6_target(grieks_info):
+    """(genus-woord, nom-uitgang) om binnen G6 de relevante kolom te vinden, uit de woordenboekvorm."""
+    gi = str(grieks_info or "")
+    delen = [d.strip() for d in gi.replace(';', ',').split(',') if d.strip()]
+    if len(delen) < 2:
+        return None
+    nom = _strip_acc(delen[0]); art = _strip_acc(delen[-1]) if len(delen) >= 3 else ""
+    genus = {"ο": "Mannelijk", "η": "Vrouwelijk", "το": "Onzijdig"}.get(art, "")
+    if not genus:
+        return None
+    for e in ["ους", "ουν", "ος", "ον", "ης", "ας", "η", "α"]:
+        if nom.endswith(e):
+            return (genus, e)
+    return None
+
+def _render_gramtabel_html(rows, kolom_target=None):
+    """Render een paradigma-tabel met gekleurde uitgangen. Als kolom_target=(genus, uitgang) is
+    opgegeven (voor naamwoorden), toont hij alleen de bijpassende kolom i.p.v. de hele tabel."""
     if not rows:
         return ""
-    h = "<div style='overflow-x:auto'><table style='border-collapse:collapse;font-size:15px'>"
+    # In blokken splitsen op lege rijen (sommige sheets stapelen meerdere tabellen).
+    blokken = []; cur = []
     for r in rows:
         if not any(str(c).strip() for c in r):
-            h += "<tr><td style='height:8px'></td></tr>"
-            continue
-        h += "<tr>"
-        for j, c in enumerate(r):
-            _st = "padding:3px 10px;border:1px solid #444;"
-            if j == 0:
-                _st += "font-weight:700;color:#f6c23e;"
-            h += f"<td style='{_st}'>{c}</td>"
-        h += "</tr>"
-    return h + "</table></div>"
+            if cur:
+                blokken.append(cur); cur = []
+        else:
+            cur.append(r)
+    if cur:
+        blokken.append(cur)
+
+    def _vind_kolom(header):
+        if not kolom_target:
+            return None
+        _gen, _uit = kolom_target
+        for c in range(1, len(header)):
+            hc = _strip_acc(header[c]).lower()
+            if _gen.lower() in hc and f"-{_uit}" in hc:
+                return c
+        return None
+
+    _cel = "padding:3px 10px;border:1px solid #444;"
+    _lbl = _cel + "font-weight:700;color:#f6c23e;"
+    html = "<div style='overflow-x:auto'>"; getoond = False
+    for blok in blokken:
+        header = blok[0]
+        doel_c = _vind_kolom(header)
+        if kolom_target and doel_c is None:
+            continue  # dit sub-blok bevat de gezochte kolom niet
+        cols = [doel_c] if doel_c else list(range(1, len(header)))
+        stam = {c: _stam_lengte([blok[i][c] if c < len(blok[i]) else "" for i in range(1, len(blok))]) for c in cols}
+        html += "<table style='border-collapse:collapse;font-size:15px;margin-bottom:10px'>"
+        html += f"<tr><td style='{_lbl}'>{header[0] if header else ''}</td>"
+        for c in cols:
+            html += f"<td style='{_cel}font-weight:700'>{header[c] if c < len(header) else ''}</td>"
+        html += "</tr>"
+        for i in range(1, len(blok)):
+            rij = blok[i]
+            html += f"<tr><td style='{_lbl}'>{rij[0] if rij else ''}</td>"
+            for c in cols:
+                v = rij[c] if c < len(rij) else ""
+                html += f"<td style='{_cel}'>{_kleur_vorm(v, stam[c])}</td>"
+            html += "</tr>"
+        html += "</table>"; getoond = True
+    html += "</div>"
+    if kolom_target and not getoond:
+        return _render_gramtabel_html(rows)  # kolom niet gevonden → toch de hele tabel tonen
+    return html
 
 @st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
@@ -6084,7 +6168,9 @@ def main():
                                         _alle_tab = list(_gtab.keys())
                                         _tabkeuze = st.selectbox("Tabel:", _alle_tab, index=_alle_tab.index(_tips[0]),
                                                                  key=f"ontl_tab_{_fase}_{_pos}")
-                                        st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, [])), unsafe_allow_html=True)
+                                        _ktarget = _noun_g6_target(_ginfo) if _tabkeuze == "G6 Naamwoorden" else None
+                                        st.caption("De uitgangen zijn oranje gemarkeerd." + (" Alleen jouw kolom wordt getoond." if _ktarget else ""))
+                                        st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, []), _ktarget), unsafe_allow_html=True)
                         _cA, _cB = st.columns(2)
                         if _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
                             _res = []; _alle_goed = True; _eerste = _eerste_keer()
