@@ -601,29 +601,30 @@ def _render_gramtabel_html(rows, kolom_target=None, mark_row=None, mark_col=None
         return _render_gramtabel_html(rows)  # kolom niet gevonden → toch de hele tabel tonen
     return html
 
-def _pref_keuze(widget_fn, label, opties, key, default=None, **kw):
-    """radio/selectbox met keuze onthouden in ui_prefs (over sessies heen), met veilige terugval."""
+def _pref_keuze(widget_fn, label, opties, pref_key, default=None, **kw):
+    """radio/selectbox met keuze onthouden in ui_prefs (over sessies heen), met veilige terugval.
+    pref_key = de ui_prefs-sleutel; een eventuele widget-`key=` gaat via **kw (mag niet botsen)."""
     p = st.session_state.get('ui_prefs')
     if not isinstance(p, dict):
         p = {}; st.session_state.ui_prefs = p
     opties = list(opties)
     d = default if default is not None else (opties[0] if opties else None)
-    v = p.get(key, d)
+    v = p.get(pref_key, d)
     try:
         idx = opties.index(v)
     except (ValueError, TypeError):
         idx = 0
     keuze = widget_fn(label, opties, index=idx, **kw)
-    p[key] = keuze
+    p[pref_key] = keuze
     return keuze
 
-def _pref_bool(widget_fn, label, key, default=False, **kw):
+def _pref_bool(widget_fn, label, pref_key, default=False, **kw):
     """checkbox/toggle met stand onthouden in ui_prefs (over sessies heen)."""
     p = st.session_state.get('ui_prefs')
     if not isinstance(p, dict):
         p = {}; st.session_state.ui_prefs = p
-    val = widget_fn(label, value=bool(p.get(key, default)), **kw)
-    p[key] = bool(val)
+    val = widget_fn(label, value=bool(p.get(pref_key, default)), **kw)
+    p[pref_key] = bool(val)
     return val
 
 @st.cache_data(show_spinner=False)
