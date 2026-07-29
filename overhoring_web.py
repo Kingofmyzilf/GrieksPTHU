@@ -5901,7 +5901,7 @@ def main():
             if not _obdb:
                 st.info("De Bijbeltekst-database is niet beschikbaar.")
             else:
-                _oc1, _oc2, _oc3, _oc4 = st.columns([1.2, 1.3, 1, 1])
+                _oc1, _oc2, _oc3, _oc4, _oc5 = st.columns([1.3, 1.3, 0.9, 1.0, 1.0])
                 _oniveau = _oc1.selectbox("Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
                                           index=["Grieks 1", "Grieks 2", "Grieks 3"].index(st.session_state.get('ontl_niveau', 'Grieks 2')),
                                           key="ontl_niveau_sel", help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus/participium).")
@@ -5911,6 +5911,9 @@ def main():
                 st.session_state.ontl_drempel = _odrempel
                 _osteun = _oc3.toggle("💡 Hulp", value=bool(st.session_state.get('ontl_steun', True)), key="ontl_steun_toggle")
                 st.session_state.ontl_steun = _osteun
+                _obasis = _oc4.toggle("🔑 Basiswoord", value=bool(st.session_state.get('ontl_basis', False)), key="ontl_basis_toggle",
+                                      help="Toon bij elk woord de woordenboekvorm (basiswoord), zonder de betekenis.")
+                st.session_state.ontl_basis = _obasis
 
                 def _nieuw_ontleed_vers():
                     _ss = {str(w['strong']): int(w.get('streak', 0)) for w in (st.session_state.get('data') or []) if w.get('strong')}
@@ -5953,7 +5956,7 @@ def main():
                     st.session_state.ontl_geteld = set()
                     st.session_state.ontl_geen = False
 
-                if _oc4.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
+                if _oc5.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
                     _nieuw_ontleed_vers(); st.rerun()
 
                 if st.session_state.get('ontl_geen'):
@@ -6002,6 +6005,15 @@ def main():
                     _tfb = st.session_state.get('ontl_topfb')
                     if _tfb:
                         {"success": st.success, "info": st.info}.get(_tfb.get('type'), st.info)(_tfb.get('msg', ''))
+
+                    # Basiswoord-hulp: toon de woordenboekvorm bij het huidige woord (zonder betekenis).
+                    if _obasis and _hidx >= 0 and _fase in ('woordsoort', 'znw', 'ww', 'vertalen'):
+                        _bw = next((v for v in (st.session_state.get('data') or [])
+                                    if str(v.get('strong')) == str(_zin[_hidx].get('strong')) and v.get('strong')), None)
+                        if _bw:
+                            _blem = str(_bw.get('grieks', '')); _bgi = str(_bw.get('grieks_info', '')).strip()
+                            _btxt = f"🔑 Basiswoord: **{_blem}**" + (f" — {_bgi}" if _bgi and _bgi != _blem else "")
+                            st.caption(_btxt)
 
                     _rondes = {'woordsoort': '1/5 · Woordsoort van elk woord', 'znw': '2/5 · Naamwoorden ontleden',
                                'ww': '3/5 · Werkwoorden ontleden', 'vertalen': '4/5 · Woord voor woord vertalen',
