@@ -424,7 +424,21 @@ def laad_gramtabellen():
     except Exception:
         return {}
 
-def _ontleed_tip_tabellen(info, lemma=""):
+def _noun_declinatie(grieks_info):
+    """Declinatie-tabel van een naamwoord uit de woordenboekvorm (bv. 'θεός, -οῦ, ὁ').
+    De genitief-uitgang verraadt de declinatie: -ου = 2e, -ης/-ας = 1e, -ος = 3e, -εως = 3e klinker."""
+    gi = normaliseer_accent(str(grieks_info or ""))
+    delen = [d.strip().lstrip('-') for d in gi.replace(';', ',').split(',') if d.strip()]
+    if len(delen) < 2:
+        return None
+    gen = delen[1]
+    if gen.endswith('εως'):
+        return "G33 3e Decl (Klinker)"
+    if gen.endswith('ος') and not gen.endswith('ους'):
+        return "G29 3e Declinatie"
+    return "G6 Naamwoorden"  # 1e/2e declinatie (gen -ου / -ης / -ας)
+
+def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
     """Welke paradigma-tabel(len) horen (vermoedelijk) bij dit woord — beste gok eerst."""
     info = info or ""
     lemma = normaliseer_accent(lemma or "")
@@ -451,7 +465,10 @@ def _ontleed_tip_tabellen(info, lemma=""):
         tabs += ["G14 Adjectiva", "G34 Adj 3e Decl", "G30 Trappen"]
     elif "Voornaamwoord" in info:
         tabs += ["G19 Demonstrativa", "G21 Relativum", "G22 Reflexiva", "G25 Interrogativum", "G37 Correlativa"]
-    else:
+    else:  # zelfstandig naamwoord: kies de declinatie uit de woordenboekvorm (grieks_info)
+        _decl = _noun_declinatie(grieks_info)
+        if _decl:
+            tabs.append(_decl)
         tabs += ["G6 Naamwoorden", "G29 3e Declinatie", "G33 3e Decl (Klinker)"]
     _seen = set(); _uit = []
     for t in tabs:
@@ -6045,9 +6062,11 @@ def main():
                             # Hulp bij een fout: toon het bijbehorende rijtje (declinatie/vervoeging).
                             _gtab = laad_gramtabellen()
                             if _gtab:
-                                _lemma = next((str(v.get('grieks', '')) for v in (st.session_state.get('data') or [])
-                                               if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), "")
-                                _tips = [t for t in _ontleed_tip_tabellen(_info, _lemma) if t in _gtab]
+                                _vwoord = next((v for v in (st.session_state.get('data') or [])
+                                                if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
+                                _lemma = str(_vwoord.get('grieks', '')) if _vwoord else ""
+                                _ginfo = str(_vwoord.get('grieks_info', '')) if _vwoord else ""
+                                _tips = [t for t in _ontleed_tip_tabellen(_info, _lemma, _ginfo) if t in _gtab]
                                 if _tips:
                                     with st.expander("📋 Hulp — bekijk het rijtje", expanded=False):
                                         _alle_tab = list(_gtab.keys())
