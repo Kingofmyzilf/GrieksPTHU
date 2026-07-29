@@ -524,9 +524,25 @@ def _noun_g6_target(grieks_info):
             return (genus, e)
     return None
 
-def _render_gramtabel_html(rows, kolom_target=None):
+def _ontleed_doelcel(info):
+    """(rij-label, kolom-zoekterm) van de specifieke vorm in een paradigma-tabel, uit parsing_info.
+    Naamwoord/participium → rij 'Nom sg' + kolom geslacht; werkwoord → rij '1 sg' + kolom tijd."""
+    info = info or ""
+    getal = 'pl' if 'mv' in info else 'sg'
+    nv = _ontleed_deel_correct('naamval', info)
+    if nv != '—':
+        ges = {'M': 'mannelijk', 'V': 'vrouwelijk', 'O': 'onzijdig'}.get(_ontleed_deel_correct('geslacht', info), '')
+        return (f"{nv} {getal}".lower(), ges)
+    pers = _ontleed_deel_correct('persoon', info)
+    if pers != '—':
+        tijd = _ontleed_deel_correct('tijd', info)
+        return (f"{pers[0]} {getal}".lower(), tijd.lower() if tijd != '—' else '')
+    return (None, None)
+
+def _render_gramtabel_html(rows, kolom_target=None, mark_row=None, mark_col=None):
     """Render een paradigma-tabel met gekleurde uitgangen. Als kolom_target=(genus, uitgang) is
-    opgegeven (voor naamwoorden), toont hij alleen de bijpassende kolom i.p.v. de hele tabel."""
+    opgegeven (voor naamwoorden), toont hij alleen de bijpassende kolom. mark_row/mark_col markeren
+    het exacte vakje van de gevraagde vorm (met een pijltje + gouden kader)."""
     if not rows:
         return ""
     # In blokken splitsen op lege rijen (sommige sheets stapelen meerdere tabellen).
@@ -567,10 +583,17 @@ def _render_gramtabel_html(rows, kolom_target=None):
         html += "</tr>"
         for i in range(1, len(blok)):
             rij = blok[i]
-            html += f"<tr><td style='{_lbl}'>{rij[0] if rij else ''}</td>"
+            _rij0 = str(rij[0]) if rij else ""
+            _is_mrow = bool(mark_row) and mark_row in _strip_acc(_rij0).lower()
+            _lbl_i = _lbl + ("background:rgba(255,215,0,.18);" if _is_mrow else "")
+            html += f"<tr><td style='{_lbl_i}'>{('▶ ' if _is_mrow else '') + _rij0}</td>"
             for c in cols:
                 v = rij[c] if c < len(rij) else ""
-                html += f"<td style='{_cel}'>{_kleur_vorm(v, stam[c])}</td>"
+                _hc = _strip_acc(header[c]).lower() if c < len(header) else ""
+                _is_mcol = (mark_col == '' ) or (bool(mark_col) and mark_col in _hc)
+                _highlight = _is_mrow and _is_mcol and bool(mark_row)
+                _cs = _cel + ("background:rgba(255,215,0,.28);border:2px solid #ffd700;" if _highlight else "")
+                html += f"<td style='{_cs}'>{_kleur_vorm(v, stam[c])}</td>"
             html += "</tr>"
         html += "</table>"; getoond = True
     html += "</div>"
@@ -6197,8 +6220,9 @@ def main():
                                     _tabkeuze = st.selectbox("Tabel:", _alle_tab, index=_alle_tab.index(_tips[0]),
                                                              key=f"ontl_tab_{_fase}_{_pos}")
                                     _ktarget = _noun_g6_target(_ginfo) if _tabkeuze == "G6 Naamwoorden" else None
-                                    st.caption("De uitgangen zijn oranje gemarkeerd." + (" Alleen jouw kolom wordt getoond." if _ktarget else ""))
-                                    st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, []), _ktarget), unsafe_allow_html=True)
+                                    _mrow, _mcol = _ontleed_doelcel(_info)
+                                    st.caption("De uitgangen zijn oranje; jouw vorm heeft een ▶ en een gouden kader." + (" Alleen jouw kolom wordt getoond." if _ktarget else ""))
+                                    st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, []), _ktarget, _mrow, _mcol), unsafe_allow_html=True)
                         _cA, _cB = st.columns(2)
                         if _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
                             _res = []; _alle_goed = True; _eerste = _eerste_keer()
