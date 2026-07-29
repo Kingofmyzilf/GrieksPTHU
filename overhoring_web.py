@@ -416,6 +416,68 @@ def _ontleed_in_scope(info, niveau):
     return True
 
 @st.cache_data(show_spinner=False)
+def laad_gramtabellen():
+    """Paradigma-tabellen uit de slides (grammatica_tabellen.json) — voor de 'toon het rijtje'-hulp."""
+    try:
+        with open("grammatica_tabellen.json", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def _ontleed_tip_tabellen(info, lemma=""):
+    """Welke paradigma-tabel(len) horen (vermoedelijk) bij dit woord — beste gok eerst."""
+    info = info or ""
+    lemma = normaliseer_accent(lemma or "")
+    tabs = []
+    if "Werkwoord" in info:
+        if lemma == "ειμι":
+            tabs.append("G12 Werkwoord Zijn")
+        if "Participium" in info:
+            if "Aoristus" in info: tabs.append("G39 Part Aoristus")
+            elif "Passief" in info: tabs.append("G40 Part Passief")
+            else: tabs.append("G38 Part Praesens")
+        if "Conjunctivus" in info: tabs.append("G44 Coniunctivus")
+        if "Optativus" in info: tabs.append("G45 Optativus")
+        if "Imperativus" in info: tabs.append("G46 Imperativus")
+        if "Aoristus" in info and "Passief" in info: tabs.append("G35 Aoristus Passief")
+        if "Perfectum" in info and ("Medium" in info or "Passief" in info): tabs.append("G36 Perfectum Med")
+        elif "Perfectum" in info: tabs.append("G18 Perfectum")
+        if "Aoristus" in info: tabs += ["G15 Aoristus", "G24 Aoristus II"]
+        if "Passief" in info: tabs.append("G26 Passivum")
+        if any(t in info for t in ["Praesens", "Imperfectum", "Futurum"]): tabs.append("G9-G10 Werkwoorden")
+        if lemma.endswith("μι") and lemma != "ειμι": tabs.append("G43 Mi-Werkwoorden")
+        tabs.append("G50 Stamtijden")
+    elif "Bijv." in info:
+        tabs += ["G14 Adjectiva", "G34 Adj 3e Decl", "G30 Trappen"]
+    elif "Voornaamwoord" in info:
+        tabs += ["G19 Demonstrativa", "G21 Relativum", "G22 Reflexiva", "G25 Interrogativum", "G37 Correlativa"]
+    else:
+        tabs += ["G6 Naamwoorden", "G29 3e Declinatie", "G33 3e Decl (Klinker)"]
+    _seen = set(); _uit = []
+    for t in tabs:
+        if t not in _seen:
+            _seen.add(t); _uit.append(t)
+    return _uit
+
+def _render_gramtabel_html(rows):
+    """Render een paradigma-tabel (lijst van rijen) als compacte HTML-tabel."""
+    if not rows:
+        return ""
+    h = "<div style='overflow-x:auto'><table style='border-collapse:collapse;font-size:15px'>"
+    for r in rows:
+        if not any(str(c).strip() for c in r):
+            h += "<tr><td style='height:8px'></td></tr>"
+            continue
+        h += "<tr>"
+        for j, c in enumerate(r):
+            _st = "padding:3px 10px;border:1px solid #444;"
+            if j == 0:
+                _st += "font-weight:700;color:#f6c23e;"
+            h += f"<td style='{_st}'>{c}</td>"
+        h += "</tr>"
+    return h + "</table></div>"
+
+@st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
     """Index strong-nummer → lijst van vers-referenties (in db-volgorde). Wordt één keer opgebouwd
     en gecached; zonder deze index scande zoek_context_zin bij elk getoond woord de héle NT-database
@@ -5980,6 +6042,18 @@ def main():
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
+                            # Hulp bij een fout: toon het bijbehorende rijtje (declinatie/vervoeging).
+                            _gtab = laad_gramtabellen()
+                            if _gtab:
+                                _lemma = next((str(v.get('grieks', '')) for v in (st.session_state.get('data') or [])
+                                               if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), "")
+                                _tips = [t for t in _ontleed_tip_tabellen(_info, _lemma) if t in _gtab]
+                                if _tips:
+                                    with st.expander("📋 Hulp — bekijk het rijtje", expanded=False):
+                                        _alle_tab = list(_gtab.keys())
+                                        _tabkeuze = st.selectbox("Tabel:", _alle_tab, index=_alle_tab.index(_tips[0]),
+                                                                 key=f"ontl_tab_{_fase}_{_pos}")
+                                        st.markdown(_render_gramtabel_html(_gtab.get(_tabkeuze, [])), unsafe_allow_html=True)
                         _cA, _cB = st.columns(2)
                         if _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
                             _res = []; _alle_goed = True; _eerste = _eerste_keer()
