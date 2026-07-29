@@ -5870,6 +5870,7 @@ def main():
                     st.session_state.ontl_fase = 'woordsoort'
                     st.session_state.ontl_feedback = None
                     st.session_state.ontl_topfb = None
+                    st.session_state.ontl_zin_model = None
                     st.session_state.ontl_geteld = set()
                     st.session_state.ontl_geen = False
 
@@ -5890,17 +5891,17 @@ def main():
                     _hidx = _lijst[_pos] if _pos < len(_lijst) else -1
 
                     def _ontl_advance():
-                        # naar de volgende ronde met inhoud
-                        volgorde = ['woordsoort', 'znw', 'ww', 'vertalen', 'klaar']
+                        # naar de volgende ronde met inhoud ('zin' en 'klaar' altijd tonen)
+                        volgorde = ['woordsoort', 'znw', 'ww', 'vertalen', 'zin', 'klaar']
                         lijsten = {'woordsoort': st.session_state.ontl_lex, 'znw': st.session_state.ontl_znw,
                                    'ww': st.session_state.ontl_ww, 'vertalen': st.session_state.ontl_lex}
                         _i = volgorde.index(st.session_state.ontl_fase)
                         for _f in volgorde[_i + 1:]:
-                            if _f == 'klaar' or lijsten.get(_f):
+                            if _f in ('zin', 'klaar') or lijsten.get(_f):
                                 st.session_state.ontl_fase = _f
                                 st.session_state.ontl_pos = 0
                                 st.session_state.ontl_feedback = None
-                                if _f == 'klaar':
+                                if _f == 'zin':
                                     dagdoel_plus('verzen')
                                 return
                         st.session_state.ontl_fase = 'klaar'
@@ -5923,11 +5924,14 @@ def main():
                     if _tfb:
                         {"success": st.success, "info": st.info}.get(_tfb.get('type'), st.info)(_tfb.get('msg', ''))
 
-                    _rondes = {'woordsoort': '1/4 · Woordsoort van elk woord', 'znw': '2/4 · Naamwoorden ontleden',
-                               'ww': '3/4 · Werkwoorden ontleden', 'vertalen': '4/4 · Vertalen', 'klaar': 'Klaar'}
-                    if _fase != 'klaar':
+                    _rondes = {'woordsoort': '1/5 · Woordsoort van elk woord', 'znw': '2/5 · Naamwoorden ontleden',
+                               'ww': '3/5 · Werkwoorden ontleden', 'vertalen': '4/5 · Woord voor woord vertalen',
+                               'zin': '5/5 · Hele zin vertalen', 'klaar': 'Klaar'}
+                    if _fase not in ('zin', 'klaar'):
                         st.progress(min(_pos, len(_lijst)) / max(1, len(_lijst)),
                                     text=f"Ronde {_rondes.get(_fase, '')} — {min(_pos + 1, len(_lijst))} van {len(_lijst)}")
+                    elif _fase == 'zin':
+                        st.caption(f"Ronde {_rondes['zin']}")
 
                     def _tel_deel(_dim, _goed):
                         _rec = st.session_state.ontleed_stats.setdefault(_dim, {'g': 0, 'f': 0})
@@ -6033,6 +6037,12 @@ def main():
                             if _eerste_keer() and (_vin or "").strip():
                                 _tel_deel('vertaling', _vok); _markeer_geteld()
                             if _vok:
+                                # Goede vertaling telt POSITIEF mee voor de woord-streak (nooit aftrek in deze tab).
+                                _vw = next((v for v in (st.session_state.get('data') or [])
+                                            if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
+                                if _vw is not None:
+                                    _vw['streak'] = int(_vw.get('streak', 0)) + 1
+                                    _vw['score_goed'] = int(_vw.get('score_goed', 0)) + 1
                                 st.session_state.ontl_topfb = {"type": "success", "msg": f"✅ **{_w.get('grieks','')}** = {_w.get('vertaling_nl','')}"}
                                 st.session_state.ontl_pos += 1
                                 st.session_state.ontl_feedback = None
@@ -6051,6 +6061,24 @@ def main():
                             if st.session_state.ontl_pos >= len(_lijst):
                                 _ontl_advance()
                             st.rerun()
+
+                    elif _fase == 'zin':
+                        st.success("✅ Alles ontleed! Vertaal nu de **hele zin** — kies per woord de best passende betekenis.")
+                        with st.expander("📖 Alle woorden met betekenis (kies de beste glosse)", expanded=True):
+                            for w in _zin:
+                                if not w.get('strong'):
+                                    continue
+                                _nl = w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')
+                                st.markdown(f"- **{w.get('grieks','')}** — {_nl}")
+                        st.text_area("Jouw vertaling van de hele zin:", key=f"ontl_zin_{st.session_state.ontl_ref}", height=90)
+                        if st.button("👁️ Toon modelvertaling", key="ontl_zintoon"):
+                            _en = " ".join(str(w.get('vertaling_bsb', '')) for w in _zin if w.get('strong') and w.get('vertaling_bsb'))
+                            st.session_state.ontl_zin_model = _en.strip() or "(geen Engelse vertaling beschikbaar)"
+                        if st.session_state.get('ontl_zin_model'):
+                            st.info(f"**Engelse vertaling (BSB, ter controle):**\n\n{st.session_state.ontl_zin_model}")
+                        if st.button("➡️ Volgend vers", key="ontl_volgend_zin", type="primary"):
+                            st.session_state.ontl_zin_model = None
+                            _nieuw_ontleed_vers(); st.rerun()
 
                     else:  # klaar
                         st.success("🎉 Hele vers ontleed én vertaald! Goed gedaan.")
