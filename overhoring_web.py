@@ -163,6 +163,20 @@ def audio_knop(fonetisch, key=""):
         """, height=44
     )
 
+def fonetisch_uit_translit(tekst):
+    """Maakt van de academische transliteratie (Iēsou, Christou, huiou) een leesregel die een
+    Nederlandse/Engelse/Duitse TTS-stem zo Erasmiaans mogelijk uitspreekt: macrons/streepjes weg
+    (ē→e, ō→o) en 'ch' → 'kh' zodat de χ niet als het Engelse 'ch' (church) klinkt."""
+    s = unicodedata.normalize('NFD', str(tekst or ''))
+    s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')  # macrons + accenten weg
+    return s.replace('ch', 'kh').replace('Ch', 'Kh')
+
+def bijbelzin_fonetisch(zin):
+    """Fonetische leesregel voor een hele Bijbelzin (lijst van woord-dicts met 'transliteratie')."""
+    delen = [fonetisch_uit_translit(w.get('transliteratie', '')) for w in (zin or [])
+             if str(w.get('transliteratie', '') or '').strip()]
+    return " ".join(delen).strip()
+
 def veilig_les_nummer(item):
     try: return int(item.get('les', 1))
     except: return 1
@@ -1225,7 +1239,7 @@ def bijbel_boek_index(_bijbel_db):
 @st.cache_data(show_spinner=False)
 def bijbel_vorm_index(_bijbel_db):
     """Index: genormaliseerde Griekse vorm → lijst van unieke ontledingen die die vorm in het NT
-    kan zijn. Elk item: (grieks-zoals-geschreven, parsing_info, strong, voorbeeld-ref, aantal keer).
+    kan zijn. Elk item: (grieks, parsing_info, strong, voorbeeld-ref, aantal keer, transliteratie).
     Voor de Zoeken-functie: typ een vorm en zie meteen alle mogelijke ontledingen."""
     idx = {}
     for ref, zin in (_bijbel_db or {}).items():
@@ -1237,14 +1251,14 @@ def bijbel_vorm_index(_bijbel_db):
             sub = idx.setdefault(key, {})
             pk = (w.get('parsing_info', '') or '', str(w.get('strong', '') or ''))
             if pk in sub:
-                _g, _r, _n = sub[pk]
-                sub[pk] = (_g, _r, _n + 1)
+                _g, _r, _n, _tr = sub[pk]
+                sub[pk] = (_g, _r, _n + 1, _tr)
             else:
-                sub[pk] = (g, ref, 1)
+                sub[pk] = (g, ref, 1, str(w.get('transliteratie', '') or ''))
     # per vorm omzetten naar een lijst, meest voorkomende ontleding eerst
     uit = {}
     for key, sub in idx.items():
-        rijen = [(g, pi, strong, ref, n) for (pi, strong), (g, ref, n) in sub.items()]
+        rijen = [(g, pi, strong, ref, n, tr) for (pi, strong), (g, ref, n, tr) in sub.items()]
         rijen.sort(key=lambda r: r[4], reverse=True)
         uit[key] = rijen
     return uit
@@ -6977,9 +6991,10 @@ def main():
                         _toon = _res[0][0]
                         st.markdown(f"<div style='font-size:40px;font-weight:800;color:#33ccff;text-align:center;padding:4px 0'>{_toon}</div>",
                                     unsafe_allow_html=True)
+                        audio_knop(fonetisch_uit_translit(_res[0][5]), key="ontlzoek")
                         _mv = "vorm" if len(_res) == 1 else "mogelijke ontledingen"
                         st.caption(f"**{len(_res)}** {_mv} in het NT — meest voorkomende bovenaan.")
-                        for _zi, (_g, _pi, _strong, _ref, _n) in enumerate(_res):
+                        for _zi, (_g, _pi, _strong, _ref, _n, _tr) in enumerate(_res):
                             _bw = _vocab.get(str(_strong))
                             _lemma = str(_bw.get('grieks', '')) if _bw else ""
                             _ginfo = str(_bw.get('grieks_info', '') or _lemma) if _bw else ""
@@ -7166,6 +7181,9 @@ def main():
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontlw_ref}</div>"
                                 f"<div style='font-size:19px;padding:6px 4px;line-height:1.6'>{_ctx.strip()}</div>",
                                 unsafe_allow_html=True)
+                    # Uitspraak: eerst het woord zelf, dan de hele zin eromheen.
+                    _wfon = fonetisch_uit_translit(_ww.get('transliteratie', ''))
+                    audio_knop((_wfon + ". " + bijbelzin_fonetisch(_wzin)).strip(". "), key="ontlwoord")
                     st.caption(f"🔑 Basiswoord: **{_wginfo}**")
 
                     # Alles in één keer: ontleden én vertalen op hetzelfde scherm.
@@ -7473,6 +7491,8 @@ def main():
                             _html += f"<span style='{_stijl}'>{g}</span>{interp} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontl_ref}</div>"
                                 f"<div style='font-size:26px;padding:12px 4px;line-height:1.6'>{_html.strip()}</div>", unsafe_allow_html=True)
+                    # Uitspraak van de hele zin (Erasmiaans, via de fonetische transliteratie).
+                    audio_knop(bijbelzin_fonetisch(_zin), key="ontlzin")
                     if _hover:
                         st.caption("💡 Hover (of tik) over een woord voor de betekenis en ontleding.")
 
