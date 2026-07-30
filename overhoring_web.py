@@ -198,9 +198,31 @@ def grieks_vorm_ok(typed, correct):
             return True
     return False
 
-def deconstrueer_stamtijd_live(vorm, tijd_diathese):
+def deconstrueer_stamtijd_live(vorm, tijd_diathese, praesens=None):
+    """Splitst een stamtijdvorm in (stam, uitgang).
+
+    Mét de praesensvorm erbij wordt de stamgrens bepaald door de échte overeenkomst met de
+    praesensstam (na aftrek van het augment) — dat is veel betrouwbaarder dan achteraan een
+    uitgang wegknippen. Zonder praesens (of als de stammen niet op elkaar lijken, zoals bij
+    suppletie) valt hij terug op de oude uitgangenlijst."""
     if not vorm or vorm in ["n.v.t.", "---", "-"]: return "", ""
-    v_schoon = vorm.strip()
+    # BELANGRIJK: een deel van de data staat in NFD (losse accenttekens). Zonder deze normalisatie
+    # mislukt elke vergelijking met de NFC-uitgangen hieronder en krijg je een onzinnige opsplitsing.
+    v_schoon = unicodedata.normalize('NFC', str(vorm).strip())
+    if praesens:
+        try:
+            v_nfc = v_schoon
+            vk, pk = _opb_kaal(v_nfc), _opb_kaal(praesens)
+            rest, _aug = _opb_zonder_augment(vk, pk)
+            pstam = pk[:-4] if pk.endswith("ομαι") else (pk[:-1] if pk.endswith("ω") else pk)
+            n = _opb_prefix_len(rest, pstam)
+            # Alleen gebruiken als de stam echt herkenbaar is én er een uitgang overblijft.
+            if n >= 2 and len(vk) == len(v_nfc):
+                grens = (len(vk) - len(rest)) + n
+                if 0 < grens < len(v_nfc):
+                    return v_nfc[:grens], v_nfc[grens:]
+        except Exception:
+            pass
     if tijd_diathese == "Futurum Actief/Medium": uitgangen = ["θήσομαι", "ήσομαι", "σομαι", "οῦμαι", "ομαι", "σω", "ψω", "ξω", "ῶ", "ω"]
     elif tijd_diathese == "Aoristus Actief/Medium": uitgangen = ["σάμην", "άμην", "όμην", "σα", "ψα", "ξα", "ον", "αν", "ην", "α", "ν"]
     elif tijd_diathese == "Aoristus Passief": uitgangen = ["θην", "ην"]
@@ -209,6 +231,7 @@ def deconstrueer_stamtijd_live(vorm, tijd_diathese):
     else: return v_schoon, ""
 
     for u in uitgangen:
+        u = unicodedata.normalize('NFC', u)
         if v_schoon.endswith(u):
             knip = len(v_schoon) - len(u)
             stam = v_schoon[:knip]
@@ -370,6 +393,320 @@ def _ontleed_vertaalhulp(info):
     elif nv in _ONTLEED_STEUN:
         regels.append(_ONTLEED_STEUN[nv])
     return regels
+
+# ==========================================================================================
+# OPBOUW & SAMENTREKKINGEN — legt bij élke vorm uit wat er met de klanken gebeurd is
+# (verba contracta volgens G20, σ-samensmelting, augment, 3e-declinatie-stam).
+# Uitgangspunt: liever zwijgen dan iets beweren dat niet klopt. Elke bewering wordt eerst
+# getoetst aan de vorm zelf (staat de verlengde klinker/de ψ/ξ er ook echt?).
+# ==========================================================================================
+
+# Accenten strippen MAAR de iota subscriptum (U+0345) behouden — ᾳ ≠ α in de G20-tabel.
+_OPB_ACCENTEN = {'́', '̀', '͂', '̓', '̔', '̈', '̄', '̆'}
+
+def _opb_norm(s):
+    """Kleine letters, accenten/spiritus weg, maar de iota subscriptum blijft staan."""
+    s = unicodedata.normalize('NFD', str(s or '').strip().lower())
+    s = ''.join(c for c in s if c not in _OPB_ACCENTEN)
+    return unicodedata.normalize('NFC', s).replace('(ν)', '').strip()
+
+def _opb_kaal(s):
+    """Álle diakritiek weg, ook de iota subscriptum — voor stam-vergelijkingen."""
+    s = unicodedata.normalize('NFD', str(s or '').strip().lower())
+    return ''.join(c for c in s if unicodedata.category(c) != 'Mn')
+
+# G20 Verba contracta — de volledige samentrekkingstabel, inclusief de η-kolom.
+G20_CONTRACTA = {
+    'ε': [("ε + ε", "ει"), ("ε + ει", "ει"), ("ε + η", "η"), ("ε + ο", "ου"), ("ε + ου", "ου"), ("ε + ω", "ω")],
+    'α': [("α + ε", "α"), ("α + ει", "ᾳ"), ("α + η", "ᾳ"), ("α + ο", "ω"), ("α + ου", "ω"), ("α + ω", "ω")],
+    'ο': [("ο + ε", "ου"), ("ο + ει", "οι"), ("ο + η", "οι"), ("ο + ο", "ου"), ("ο + ου", "ου"), ("ο + ω", "ω")],
+    'η': [("η + ε", "η"), ("η + ει", "ῃ"), ("η + η", "ῃ"), ("η + ο", "ω"), ("η + ου", "ω"), ("η + ω", "ω")],
+}
+# De infinitief laat de vier stammen mooi naast elkaar zien.
+G20_INFINITIEF = {'α': "τιμα + εν → τιμᾶν", 'ε': "φιλε + εν → φιλεῖν",
+                  'ο': "δηλο + εν → δηλοῦν", 'η': "ζη + εν → ζῆν"}
+# Werkwoorden op -άω die tóch naar η samentrekken.
+_ETA_CONTRACTA = {"ζαω", "πειναω", "διψαω", "χραομαι"}
+
+_OPB_VOORVOEGSELS = ["προσ", "παρα", "περι", "κατα", "μετα", "ἀνα", "ἀπο", "ἐπι", "ὑπερ", "ὑπο",
+                     "δια", "συν", "ἐκ", "ἐν", "εἰς", "προ", "ἀντι", "ἀμφι", "ἀφ", "ἀπ", "ἐξ",
+                     "καθ", "μεθ", "παρ", "ἐπ", "ὑπ", "ἀν", "συγ", "συμ", "ἐγ", "ἐμ"]
+_OPB_TIJD_MET_AUGMENT = ("Imperfectum", "Aoristus", "Plusquamperfectum")
+
+def _opb_prefix_len(a, b):
+    n = 0
+    while n < len(a) and n < len(b) and a[n] == b[n]:
+        n += 1
+    return n
+
+def _opb_split_voorvoegsel(lemma_kaal):
+    """(voorvoegsel, rest) als het lemma met een voorzetsel-voorvoegsel begint."""
+    for p in sorted(_OPB_VOORVOEGSELS, key=len, reverse=True):
+        pk = _opb_kaal(p)
+        if lemma_kaal.startswith(pk) and len(lemma_kaal) > len(pk) + 2:
+            return pk, lemma_kaal[len(pk):]
+    return "", lemma_kaal
+
+def opb_contracta_stamklinker(lemma):
+    """'α'/'ε'/'ο'/'η' als dit lemma een verbum contractum is, anders None."""
+    lk = _opb_kaal(lemma)
+    if not lk.endswith("ω") and not lk.endswith("ομαι"):
+        return None
+    if lk in _ETA_CONTRACTA:
+        return 'η'
+    kern = lk[:-4] + "ω" if lk.endswith("ομαι") else lk
+    if kern.endswith("αω"): return 'α'
+    if kern.endswith("εω"): return 'ε'
+    if kern.endswith("οω"): return 'ο'
+    return None
+
+def _opb_zonder_augment(vormk, lemmak):
+    """Haalt (indien herkenbaar) het augment van een vorm af → (rest, uitleg|None)."""
+    vf, lf = vormk, lemmak
+    pre_l, rest_l = _opb_split_voorvoegsel(lf)
+    if pre_l:
+        # Samengesteld werkwoord: het augment zit ná het voorvoegsel (ἀπο + ἐ + θαν → ἀπέθανον).
+        kand = [pre_l] + ([pre_l[:-1]] if len(pre_l) > 2 and pre_l[-1] in "οαε" else [])
+        for pv in kand:
+            if pv and vf.startswith(pv):
+                staart = vf[len(pv):]
+                if staart.startswith("ε") and not rest_l.startswith("ε"):
+                    return pv + staart[1:], (f"samengesteld werkwoord: het augment **ε-** staat *ná* het "
+                                             f"voorvoegsel (**{pre_l}-** + **ἐ-** + stam)")
+                if staart and rest_l and staart[0] in "ηω" and rest_l[0] in "αεο":
+                    return pv + rest_l[0] + staart[1:], (f"samengesteld werkwoord: de beginklinker van de stam is "
+                                                         f"verlengd als augment (**{rest_l[0]} → {staart[0]}**), "
+                                                         f"ná het voorvoegsel **{pre_l}-**")
+    if vf.startswith("ε") and not lf.startswith("ε"):
+        return vf[1:], "de **ε-** vooraan is het augment van de verleden tijd"
+    for van, naar in (("αι", "ῃ"), ("ει", "ῃ"), ("αυ", "ηυ"), ("α", "η"), ("ε", "η"), ("ο", "ω")):
+        if lf.startswith(van) and vf.startswith(_opb_kaal(naar)):
+            return van + vf[len(_opb_kaal(naar)):], f"de beginklinker is verlengd als augment: **{van} → {naar}**"
+    return vf, None
+
+def opb_analyse_contractie(vorm, lemma, parsing_info=""):
+    """(stamklinker, [passende G20-combo's], losse_uitleg) voor een verbum contractum."""
+    sk = opb_contracta_stamklinker(lemma)
+    if not sk:
+        return None, [], None
+    info = parsing_info or ""
+    tijd = next((t for t in ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum",
+                             "Plusquamperfectum"] if t in info), "")
+    lk = _opb_kaal(lemma)
+    stam = lk[:-1] if lk.endswith("ω") else (lk[:-4] if lk.endswith("ομαι") else lk)
+    stam_zk = stam[:-1] if stam and stam[-1] in "αεοη" else stam
+    vkaal = _opb_kaal(vorm)
+    rest_k, _aug = _opb_zonder_augment(vkaal, lk)
+    if tijd and tijd not in ("Praesens", "Imperfectum"):
+        # Buiten de praesensstam trekt er niets samen: de stamklinker rékt. Alleen beweren als die
+        # verlengde klinker er ook echt staat (anders: eigen stam/suppletie). Géén stamklinker
+        # teruggeven, want dan zou de G20-tabel getoond worden terwijl die hier niet speelt.
+        lang = {'α': 'η', 'ε': 'η', 'ο': 'ω', 'η': 'η'}[sk]
+        kort = 'α' if sk == 'η' else sk
+        if not rest_k.startswith(stam_zk + lang):
+            return None, [], None
+        return None, [], (f"Hier trekt niets samen: buiten praesens/imperfectum **rekt** de stamklinker in de "
+                          f"{tijd.lower()} (**{kort} → {lang}**), zoals *ποιέω → ποιήσω*.")
+    n = _opb_prefix_len(rest_k, stam_zk)
+    if n < max(1, len(stam_zk) - 1):
+        return sk, [], None  # stam matcht niet → niets beweren
+    staart = _opb_norm(vorm)[len(vkaal) - len(rest_k) + n:] if len(vkaal) >= len(rest_k) else _opb_norm(vorm)[n:]
+    langste = max((len(u) for _c, u in G20_CONTRACTA[sk] if staart.startswith(u)), default=0)
+    treffers = [c for c, u in G20_CONTRACTA[sk] if staart.startswith(u) and len(u) == langste] if langste else []
+    return sk, treffers, None
+
+_OPB_SIGMA = [
+    ("labialen", "ψ", "π/β/φ + σ versmelt tot **ψ**", "πβφ"),
+    ("gutturalen", "ξ", "κ/γ/χ + σ versmelt tot **ξ**", "κγχ"),
+    ("dentalen", "σ", "τ/δ/θ/ζ **vallen weg** vóór de σ", "τδθζ"),
+    ("liquidae", "—", "λ/μ/ν/ρ stoten de σ af", "λμνρ"),
+]
+
+def opb_analyse_sigma(vorm, lemma, parsing_info=""):
+    """Verklaart een ψ/ξ/σ (of het ontbreken daarvan) op de stamgrens — alleen als dat klopt."""
+    info = parsing_info or ""
+    if not any(t in info for t in ("Futurum", "Aoristus")):
+        return None
+    lk, vk = _opb_kaal(lemma), _opb_kaal(vorm)
+    stam = lk[:-1] if lk.endswith("ω") else (lk[:-4] if lk.endswith("ομαι") else lk)
+    if not stam:
+        return None
+    # Bij een verbum contractum hoort de stamklinker niet bij de botsende medeklinker (δοκέω → δοκ + σ).
+    kandidaten = [stam] + ([stam[:-1]] if stam[-1] in "αεο" and len(stam) > 2 else [])
+    rest, _aug = _opb_zonder_augment(vk, lk)
+    for st in kandidaten:
+        n = _opb_prefix_len(rest, st)
+        if n < max(1, len(st) - 1):
+            continue
+        # De botsende medeklinker: het eerste stamteken dat de vorm niet overnam (βάλλω: λ),
+        # of — als de stam helemaal meeging — het laatste stamteken zelf (μένω → μενῶ: ν).
+        slot = st[n] if n < len(st) else (st[-1] if st else "")
+        na = rest[n:n + 1]
+        for naam, uit, regel, letters in _OPB_SIGMA:
+            if not slot or slot not in letters:
+                continue
+            if naam == "liquidae":
+                # Alleen het futurum trekt samen; een aoristus II heeft met de σ niets te maken.
+                if "Futurum" not in info or na not in ("ω", "ο", "ε"):
+                    continue
+                if opb_contracta_stamklinker(lemma):
+                    continue  # contracta vormen hun futurum met rekking + σ (καλέω → καλέσω)
+                if rest[n - 1:n] not in ("λ", "μ", "ν", "ρ"):
+                    continue  # de vloeiklank moet er ook echt staan (πίνω → πίομαι heeft geen ν)
+                return (f"**Vloeiklank-futurum ({slot}):** {regel}; de stam krijgt een **-ε-** die samentrekt "
+                        f"volgens G20 (*ε + ω → ῶ*) — vandaar de circumflexus.")
+            if uit != "—" and na == uit:
+                return f"**σ-samensmelting ({naam}):** {regel} — *{slot} + σ → {uit}*."
+            if naam == "dentalen" and na == "σ":
+                return f"**σ-samensmelting (dentalen):** {regel} — *{slot} + σ → σ*."
+    return None
+
+def opb_analyse_augment(vorm, lemma, parsing_info=""):
+    info = parsing_info or ""
+    if not any(t in info for t in _OPB_TIJD_MET_AUGMENT):
+        return None
+    # Het augment staat ALLEEN in de indicativus; een aoristus-imperativus/-infinitivus/-participium
+    # heeft er geen (προσένεγκον is dus géén augmentvorm).
+    if "Indicativus" not in info:
+        return None
+    _rest, uitleg = _opb_zonder_augment(_opb_kaal(vorm), _opb_kaal(lemma))
+    return f"**Augment:** {uitleg}." if uitleg else None
+
+def opb_analyse_reduplicatie(vorm, lemma, parsing_info=""):
+    """Het perfectum verdubbelt de beginmedeklinker met -ε- (λύω → λέλυκα). Alleen beweren
+    als die verdubbeling er ook echt staat."""
+    if "Perfectum" not in (parsing_info or ""):
+        return None
+    vk, lk = _opb_kaal(vorm), _opb_kaal(lemma)
+    _pre, kern = _opb_split_voorvoegsel(lk)
+    vkern = vk[len(_pre):] if _pre and vk.startswith(_pre) else vk
+    if len(vkern) < 3 or not kern:
+        return None
+    c = kern[0]
+    if c in "αεηιοωυ":
+        return None
+    # φ/θ/χ redupliceren met hun 'harde' tegenhanger (φιλέω → πεφίληκα).
+    hard = {"φ": "π", "θ": "τ", "χ": "κ"}.get(c, c)
+    if vkern[0] in (c, hard) and vkern[1] == "ε" and vkern[2:3] == c:
+        return (f"**Reduplicatie:** het perfectum verdubbelt de beginmedeklinker met **-ε-** "
+                f"(**{vkern[0]}ε-** + stam), zoals *λύω → λέλυκα*.")
+    return None
+
+def opb_analyse_naamwoord(vorm, grieks_info="", parsing_info=""):
+    """Bij een 3e-declinatie-naamwoord: de échte stam staat in de genitivus (νύξ → νυκτ-),
+    wat de 'rare' nominativus verklaart."""
+    if "Werkwoord" in (parsing_info or ""):
+        return None
+    ruw = [d.strip() for d in str(grieks_info or "").replace(';', ',').split(',') if d.strip()]
+    if len(ruw) < 2:
+        return None
+    nom, gen = ruw[0], ruw[1]
+    if gen.startswith('-') or gen.startswith('‑'):
+        return None  # afgekorte genitivus ('-ατος') geeft geen betrouwbare stam → zwijgen
+    gk, nk = _opb_kaal(gen), _opb_kaal(nom)
+    if not gk.endswith("ος") or gk.endswith("ους"):
+        return None  # 1e/2e declinatie: geen stamwissel om uit te leggen
+    if _opb_prefix_len(gk, nk) < 2:
+        return None
+    stam = gen[:-2] if len(gen) > 2 else gen
+    stam_k = _opb_kaal(stam)
+    if not stam_k or stam_k == nk:
+        return None
+    if stam_k.endswith("ντ"):
+        hint = " — **ντ** valt weg vóór de σ, met **compensatorische rekking** van de klinker ervoor"
+    elif stam_k.endswith(("τ", "δ", "θ")):
+        hint = " — de **τ/δ/θ** valt weg vóór de σ van de uitgang en aan het woordeinde"
+    elif stam_k.endswith(("κ", "γ", "χ")):
+        hint = " — in de nominativus versmelt **κ/γ/χ + σ** tot **ξ**"
+    elif stam_k.endswith(("π", "β", "φ")):
+        hint = " — in de nominativus versmelt **π/β/φ + σ** tot **ψ**"
+    else:
+        hint = ""
+    return (f"**3e declinatie:** de echte stam zie je in de genitivus: **{stam}-** "
+            f"(nom. *{nom}*, gen. *{gen}*){hint}.")
+
+def opbouw_regels(vorm, lemma="", parsing_info="", grieks_info=""):
+    """(regels, stamklinker, treffers) — alle klankwetten die aantoonbaar op deze vorm slaan."""
+    regels = []
+    nw = opb_analyse_naamwoord(vorm, grieks_info, parsing_info)
+    if nw:
+        regels.append(nw)
+    aug = opb_analyse_augment(vorm, lemma, parsing_info)
+    if aug:
+        regels.append(aug)
+    red = opb_analyse_reduplicatie(vorm, lemma, parsing_info)
+    if red:
+        regels.append(red)
+    sig = opb_analyse_sigma(vorm, lemma, parsing_info)
+    if sig:
+        regels.append(sig)
+    sk, treffers, los = opb_analyse_contractie(vorm, lemma, parsing_info)
+    if los:
+        regels.append(los)
+    elif sk and treffers:
+        _uit = next(u for c, u in G20_CONTRACTA[sk] if c == treffers[0])
+        regels.append(f"**Verbum contractum (stam op -{sk}):** hier trekt **{' of '.join(treffers)}** samen tot **{_uit}**.")
+    elif sk:
+        regels.append(f"**Verbum contractum (stam op -{sk}):** de stamklinker **{sk}** versmelt met de uitgang "
+                      f"(zie de regels hieronder).")
+    return regels, sk, treffers
+
+def g20_tabel_html(stamklinker, treffers=None):
+    """De G20-kolom van deze stamklinker, met de toepasselijke regel(s) gemarkeerd."""
+    if stamklinker not in G20_CONTRACTA:
+        return ""
+    treffers = set(treffers or [])
+    rijen = ""
+    for combo, uit in G20_CONTRACTA[stamklinker]:
+        raak = combo in treffers
+        stijl = ("background:rgba(255,215,0,.28);border:2px solid #ffd700;font-weight:800;"
+                 if raak else "border:1px solid #444;")
+        rijen += (f"<tr><td style='padding:3px 12px;{stijl}'>{'▶ ' if raak else ''}{combo}</td>"
+                  f"<td style='padding:3px 12px;{stijl}'>&gt; <span style='color:#ff9d5c;font-weight:800'>{uit}</span></td></tr>")
+    inf = G20_INFINITIEF.get(stamklinker, "")
+    return (f"<div style='overflow-x:auto'><table style='border-collapse:collapse;font-size:16px'>"
+            f"<tr><td colspan='2' style='padding:4px 12px;border:1px solid #444;background:#2b6f8a;"
+            f"font-weight:700;color:#fff'>G20 · stam op -{stamklinker}</td></tr>{rijen}</table></div>"
+            + (f"<div style='font-size:12px;color:#9aa3af;margin-top:6px'>Infinitivus: <b>{inf}</b> "
+               f"&nbsp;·&nbsp; de η in de derde regel is die van de coniunctivus.</div>" if inf else ""))
+
+_STAM_PSEUDO_INFO = {
+    "Futurum Actief/Medium": "Werkwoord - Futurum Indicativus Actief - 1e pers. ev",
+    "Aoristus Actief/Medium": "Werkwoord - Aoristus Indicativus Actief - 1e pers. ev",
+    "Aoristus Passief": "Werkwoord - Aoristus Indicativus Passief - 1e pers. ev",
+    "Perfectum Actief": "Werkwoord - Perfectum Indicativus Actief - 1e pers. ev",
+    "Perfectum Medium/Passief": "Werkwoord - Perfectum Indicativus Medium - 1e pers. ev",
+}
+
+def stamtijd_opbouw_regels(vorm, tijd_diathese, basis):
+    """Uitleg bij één stamtijdvorm, afgeleid uit de vórm zelf (augment/reduplicatie, σ-samensmelting,
+    klinkerrekking) in plaats van uit de opgeslagen vuistregel — die klopt niet bij elk werkwoord.
+    Bij echte suppletie valt hij terug op de toelichting uit de database."""
+    praesens = str((basis or {}).get('praesens', ''))
+    info = _STAM_PSEUDO_INFO.get(tijd_diathese, "Werkwoord - Indicativus Actief")
+    regels, _sk, _tr = opbouw_regels(vorm, praesens, info)
+    morf = (basis or {}).get('morfologie', {}) or {}
+    if morf.get('memoriseren_vereist'):
+        _t = str((morf.get('mutatieregel') or {}).get('toelichting', '')).strip()
+        regels.append(("⚠️ " if _t.startswith("Suppletie") else "⚠️ **Suppletie:** ")
+                      + (_t or "Deze stamtijd komt van een andere stam — puur memoriseren."))
+    elif not regels:
+        regels.append("Deze vorm volgt geen aparte klankwet — stam + uitgang, gewoon inprenten.")
+    return regels
+
+def toon_opbouw_hulp(vorm, lemma="", parsing_info="", grieks_info="", sleutel="", uitgeklapt=False):
+    """Rendert (indien er iets te melden valt) de samentrekkings-/klankwethulp bij deze vorm.
+    Geeft True terug als er iets getoond is."""
+    regels, sk, treffers = opbouw_regels(vorm, lemma, parsing_info, grieks_info)
+    if not regels and not sk:
+        return False
+    with st.expander("🔗 Zo is deze vorm opgebouwd (samentrekkingen & klankwetten)", expanded=uitgeklapt):
+        for r in regels:
+            st.markdown("- " + r)
+        if sk:
+            st.markdown(g20_tabel_html(sk, treffers), unsafe_allow_html=True)
+            st.caption("Oranje = het resultaat van de samentrekking; het gouden vakje is de regel die hier speelt.")
+    return True
 
 def _ontleed_dims(info):
     """(key, label, opties) per te ontleden dimensie — INFO-gestuurd: alleen dimensies die dit woord
@@ -4330,14 +4667,21 @@ def main():
                                 with g_cols[idx % 3]:
                                     st.markdown(f"<div class='grid-label'>{titel}</div>", unsafe_allow_html=True)
                                     if svorm != "-":
-                                        dstam, duit = deconstrueer_stamtijd_live(svorm, t_diathese)
+                                        dstam, duit = deconstrueer_stamtijd_live(svorm, t_diathese, w['praesens'])
                                         gekleurd_html = f"{dstam}<span style='color:#33ccff'>{duit}</span>" if duit else svorm
                                     else: gekleurd_html = "-"
                                     st.markdown(f"<div style='font-size:22px; font-weight:bold; color:#fff; background-color:#222; padding:10px; border-radius:6px; text-align:center; margin-bottom:15px;'>{gekleurd_html}</div>", unsafe_allow_html=True)
-                            
-                            st.markdown("#### ⚙️ De Klankwet achter dit raamwerk")
-                            if morf.get('memoriseren_vereist'): st.error(f"**Suppletie-werkwoord:** {regel.get('toelichting', 'Puur memoriseren.')}")
-                            else: st.success(f"**Formule:** `{regel.get('formule', 'Stam + σ')}`\n\n**Uitleg:** {regel.get('toelichting', '')}")
+
+                            st.markdown("#### ⚙️ Wat er per stamtijd met de klanken gebeurt")
+                            st.caption("Per vorm afgeleid uit de vorm zélf: augment, reduplicatie, σ-samensmelting of klinkerrekking.")
+                            for _titel, _sv, _td in st_grid[1:]:
+                                if not _stam_vorm_ok(_sv):
+                                    continue
+                                _ds2, _du2 = deconstrueer_stamtijd_live(_sv, _td, w['praesens'])
+                                _kop = f"{_ds2}**{_du2}**" if _du2 else f"**{_sv}**"
+                                st.markdown(f"**{_titel}** · {_kop}")
+                                for _r in stamtijd_opbouw_regels(_sv, _td, w):
+                                    st.markdown("  - " + _r)
 
                 elif "flashcards" in stam_modus:
                     # === LEER-MODUS: rustige flashcards, vorm -> (zelf benoemen) -> antwoord tonen ===
@@ -4420,15 +4764,18 @@ def main():
                                 with _cols_ov[_i % 3]:
                                     st.markdown(f"<div class='grid-label'>{_lab}</div>", unsafe_allow_html=True)
                                     if _v and _v != "-":
-                                        _ds, _du = deconstrueer_stamtijd_live(_v, _td)
+                                        _ds, _du = deconstrueer_stamtijd_live(_v, _td, _b['praesens'])
                                         _hh = f"{_ds}<span style='color:#33ccff'>{_du}</span>" if _du else _v
                                     else:
                                         _hh = "-"
                                     st.markdown(f"<div style='font-size:20px;font-weight:bold;color:#fff;background:#222;padding:8px;border-radius:6px;text-align:center;margin-bottom:12px;'>{_hh}</div>", unsafe_allow_html=True)
-                            if _morf.get("memoriseren_vereist"):
-                                st.warning(f"🔥 **Onregelmatig (suppletie):** {_regel.get('toelichting', 'Puur memoriseren.')}")
-                            else:
-                                st.info(f"💡 **Klankwet ({_morf.get('klasse', 'regelmatig')}):** {_regel.get('formule', '')} — {_regel.get('toelichting', '')}")
+                            with st.expander("⚙️ Wat er per stamtijd met de klanken gebeurt", expanded=False):
+                                for _lab, _v, _td in _grid[1:]:
+                                    if not _stam_vorm_ok(_v):
+                                        continue
+                                    st.markdown(f"**{_lab}** · {_v}")
+                                    for _r in stamtijd_opbouw_regels(_v, _td, _b):
+                                        st.markdown("  - " + _r)
                             if st.button("▶️ Ik heb het bekeken — start met oefenen", type="primary", use_container_width=True, key="fc_go"):
                                 st.session_state.stam_fc_overzicht = False
                                 st.rerun()
@@ -4443,13 +4790,14 @@ def main():
                                 if h["tijd"] == "Praesens":
                                     st.success(f"**Praesens** van **{basis['praesens']}** — *{basis['betekenis']}*")
                                 else:
-                                    dstam, duit = deconstrueer_stamtijd_live(h["vorm"], h["tijd"])
+                                    dstam, duit = deconstrueer_stamtijd_live(h["vorm"], h["tijd"], basis['praesens'])
                                     _vh = f"**{dstam}**:blue[**{duit}**]" if duit else f"**{h['vorm']}**"
                                     st.success(f"{_vh}\n\n**{h['tijd']}** van **{basis['praesens']}** — *{basis['betekenis']}*")
-                                if morf.get("memoriseren_vereist"):
+                                if h["tijd"] != "Praesens":
+                                    st.info("💡 **Zo is deze vorm opgebouwd:**\n\n"
+                                            + "\n".join("- " + _r for _r in stamtijd_opbouw_regels(h["vorm"], h["tijd"], basis)))
+                                elif morf.get("memoriseren_vereist"):
                                     st.warning(f"🔥 **Onregelmatig (suppletie):** {regel.get('toelichting', 'Puur memoriseren.')}")
-                                else:
-                                    st.info(f"💡 **Klankwet ({morf.get('klasse', 'regelmatig')}):** {regel.get('formule', '')} — {regel.get('toelichting', '')}")
 
                                 _adv = None
                                 cok, cno = st.columns(2)
@@ -4775,17 +5123,18 @@ def main():
                             correct_praesens = huidig['basis']['praesens']
                             correct_betekenis = huidig['basis']['betekenis']
                             
-                            dstam, duit = deconstrueer_stamtijd_live(huidig['vraag_vorm']['vorm'], correct_gram)
-                            
-                            # OPLOSSING 1: Native Streamlit markdown-kleurcode :blue[...] in plaats van HTML
+                            # Stam/uitgang bepalen mét de praesensvorm als anker (betrouwbaar), en de
+                            # klankwet-uitleg afleiden uit de vorm zelf in plaats van uit een vuistregel
+                            # die per werkwoord niet altijd klopt.
+                            dstam, duit = deconstrueer_stamtijd_live(huidig['vraag_vorm']['vorm'], correct_gram, correct_praesens)
+
+                            # Native Streamlit markdown-kleurcode :blue[...] in plaats van HTML
                             gekleurde_vorm_html = f"**{dstam}**:blue[**{duit}**]" if duit else f"**{huidig['vraag_vorm']['vorm']}**"
                             fout_msg = f"{gekleurde_vorm_html} — {correct_gram} van **{correct_praesens}** — **{correct_betekenis}**"
-                            
-                            # OPLOSSING 2: Voorkomen dat 'Suppletie' dubbel wordt geprint
+
                             morf = huidig['basis'].get('morfologie', {}); regel = morf.get('mutatieregel', {})
-                            toelichting_txt = regel.get('toelichting', 'Puur memoriseren.')
-                            prefix_sup = "⚠️ " if toelichting_txt.startswith("Suppletie") else "⚠️ **Suppletie:** "
-                            uitleg_regel = f"{prefix_sup}{toelichting_txt}" if morf.get('memoriseren_vereist') else f"💡 **Klankwet ({morf.get('klasse', 'regelmatig')}):** {regel.get('formule','')} — *{regel.get('toelichting','')}*"
+                            _stam_regels = stamtijd_opbouw_regels(huidig['vraag_vorm']['vorm'], correct_gram, huidig['basis'])
+                            uitleg_regel = "💡 **Zo is deze vorm opgebouwd:**\n\n" + "\n".join("- " + _r for _r in _stam_regels)
                             
                             huidige_streak = huidig.get('streak', 0)
                             if huidige_streak >= 30:
@@ -5475,6 +5824,27 @@ def main():
                                                 with c1: p_pers = st.selectbox("Persoon", ["", "N.v.t.", "1e pers.", "2e pers.", "3e pers."], key=f"ps_{idx}")
                                                 with c2: p_get = st.selectbox("Getal", ["", "N.v.t.", "ev", "mv"], key=f"gt_ww_{idx}")
                                                 
+                                        # Dezelfde hulp als in de Ontleden-tab: klankwetten/samentrekkingen + het rijtje.
+                                        _lt_lemma = str(basis.get('grieks', ''))
+                                        _lt_ginfo = str(basis.get('grieks_info', '')) or _lt_lemma
+                                        toon_opbouw_hulp(w.get('grieks', ''), _lt_lemma, w.get('parsing_info', ''),
+                                                         _lt_ginfo, uitgeklapt=False)
+                                        _lt_tab = laad_gramtabellen()
+                                        if _lt_tab:
+                                            _lt_tips = [t for t in _ontleed_tip_tabellen(w.get('parsing_info', ''), _lt_lemma, _lt_ginfo) if t in _lt_tab]
+                                            if _lt_tips:
+                                                with st.expander("📋 Bekijk het rijtje (spieken)", expanded=False):
+                                                    _lt_alle = list(_lt_tab.keys())
+                                                    _lt_keus = st.selectbox("Tabel:", _lt_alle, index=_lt_alle.index(_lt_tips[0]),
+                                                                            key=f"lt_tab_{idx}")
+                                                    _lt_kt = _noun_g6_target(_lt_ginfo) if _lt_keus == "G6 Naamwoorden" else None
+                                                    _lt_mr, _lt_mc = _ontleed_doelcel(w.get('parsing_info', ''))
+                                                    st.caption("De uitgangen zijn oranje; jouw vorm heeft een ▶ en een gouden kader.")
+                                                    st.markdown(_render_gramtabel_html(_lt_tab.get(_lt_keus, []), _lt_kt, _lt_mr, _lt_mc),
+                                                                unsafe_allow_html=True)
+                                        for _lt_r in _ontleed_vertaalhulp(w.get('parsing_info', '')):
+                                            st.caption("💡 " + _lt_r)
+
                                         if st.button("Controleer Analyse", key=f"chk_{idx}"):
                                             registreer_oefening(basis)
                                             if check_betekenis(t_inp, basis['nederlands']) and check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info']):
@@ -6113,10 +6483,251 @@ def main():
         # ==========================================
         with menu[10]:
             st.subheader("🔎 Ontleden")
-            st.caption("Ontleed een Bijbelvers in vier rondes — net als op het tentamen: **1)** woordsoort van elk woord, **2)** naamwoorden ontleden, **3)** werkwoorden ontleden, **4)** vertalen. De zin kleurt mee met de naamvallen (Nom · Gen · Dat · Acc · Voc).")
+            _ONTL_MODI = ["📖 Zin ontleden", "🔤 Losse woorden ontleden", "📜 Hele tekst ontleden"]
+            _ontl_modus = _pref_keuze(st.radio, "Wat wil je ontleden?", _ONTL_MODI, 'ontl_modus', horizontal=True)
+            if _ontl_modus.startswith("📖"):
+                st.caption("Ontleed een Bijbelvers in vijf rondes — net als op het tentamen: **1)** woordsoort van elk woord, **2)** naamwoorden ontleden, **3)** werkwoorden ontleden, **4)** woord voor woord vertalen, **5)** de hele zin. De zin kleurt mee met de naamvallen (Nom · Gen · Dat · Acc · Voc).")
+            elif _ontl_modus.startswith("🔤"):
+                st.caption("Losse woorden uit de lessen die jij kiest, steeds in een echt Bijbelvers. Je ontleedt het woord volledig en vertaalt het — met de samentrekkingsregels en het juiste rijtje als hulp.")
+            else:
+                st.caption("Werk een hele passage door: kies boek, hoofdstuk en verzen, en ontleed vers na vers met dezelfde vijf rondes.")
             _obdb = laad_bijbel_db()
             if not _obdb:
                 st.info("De Bijbeltekst-database is niet beschikbaar.")
+
+            # ==================================================================
+            # SUB-MODUS: LOSSE WOORDEN ONTLEDEN
+            # ==================================================================
+            elif _ontl_modus.startswith("🔤"):
+                _wprefs = st.session_state.get('ui_prefs')
+                if not isinstance(_wprefs, dict):
+                    _wprefs = {}; st.session_state.ui_prefs = _wprefs
+
+                _alle_lessen = sorted({veilig_les_nummer(i) for i in (st.session_state.get('data') or [])})
+                _wc1, _wc2 = st.columns([2, 1])
+                _wles_alles = _wc2.toggle("Alle lessen", value=bool(_wprefs.get('ontlw_alles', True)), key="ontlw_alles_t")
+                _wprefs['ontlw_alles'] = _wles_alles
+                if _wles_alles:
+                    _wc1.caption("Woorden mogen uit **alle lessen** komen.")
+                    _wlessen = set(_alle_lessen)
+                else:
+                    _vorige = [l for l in (_wprefs.get('ontlw_lessen') or []) if l in _alle_lessen]
+                    _wsel = _wc1.multiselect("Uit welke lessen?", _alle_lessen,
+                                             default=_vorige or _alle_lessen[:1], key="ontlw_lessen_ms")
+                    _wprefs['ontlw_lessen'] = list(_wsel)
+                    _wlessen = set(_wsel)
+
+                _wd1, _wd2, _wd3, _wd4 = st.columns([1.2, 1.1, 1.1, 0.9])
+                _wsoort = _pref_keuze(_wd1.radio, "Welke woorden?", ["Allebei", "Naamwoorden", "Werkwoorden"],
+                                      'ontlw_soort', horizontal=True)
+                _wniveau = _pref_keuze(_wd2.selectbox, "Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
+                                       'ontlw_niveau', default='Grieks 2',
+                                       help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus).")
+                _wbekend = _wd3.toggle("Alleen woorden die ik ken", value=bool(_wprefs.get('ontlw_bekend', True)),
+                                       key="ontlw_bekend_t")
+                _wprefs['ontlw_bekend'] = _wbekend
+                _wdrempel = int(_wprefs.get('ontlw_drempel', 3))
+                if _wbekend:
+                    _wdrempel = _wd3.slider("Min. streak:", 1, 30, _wdrempel, key="ontlw_drempel_s")
+                    _wprefs['ontlw_drempel'] = _wdrempel
+                _wsteun = _wd4.toggle("💡 Hulp", value=bool(_wprefs.get('ontlw_steun', True)), key="ontlw_steun_t")
+                _wprefs['ontlw_steun'] = _wsteun
+
+                def _nieuw_ontleed_woord():
+                    """Zoekt een woord uit de gekozen lessen op in een echt Bijbelvers."""
+                    _sidx = _bijbel_strong_index(_obdb)
+                    _wtypes = {"Naamwoorden": {"naam"}, "Werkwoorden": {"ww", "ptc"}}.get(_wsoort, {"naam", "ww", "ptc"})
+                    _poule = []
+                    for v in (st.session_state.get('data') or []):
+                        if not v.get('strong') or veilig_les_nummer(v) not in _wlessen:
+                            continue
+                        if _wbekend and int(v.get('streak', 0)) < _wdrempel:
+                            continue
+                        _poule.append(v)
+                    if not _poule:
+                        st.session_state.ontlw_geen = ("Geen woorden gevonden met deze filters. Kies meer lessen, "
+                                                       "zet de streak-drempel lager of vink 'Alleen woorden die ik ken' uit.")
+                        st.session_state.ontlw_ref = None
+                        return
+                    _recent = st.session_state.get('ontlw_gezien') or []
+                    _poule.sort(key=lambda v: (str(v.get('strong')) in _recent, r_engine.random()))
+                    for v in _poule[:120]:
+                        _refs = list(_sidx.get(str(v.get('strong')), []))
+                        if not _refs:
+                            continue
+                        r_engine.shuffle(_refs)
+                        for ref in _refs[:25]:
+                            zin = _obdb.get(ref) or []
+                            for i, w in enumerate(zin):
+                                if str(w.get('strong', '')) != str(v.get('strong')):
+                                    continue
+                                _info = w.get('parsing_info', '')
+                                if _ontleed_type(_info) not in _wtypes:
+                                    continue
+                                if not _ontleed_in_scope(_info, _wniveau):
+                                    continue
+                                st.session_state.ontlw_ref = ref
+                                st.session_state.ontlw_zin = zin
+                                st.session_state.ontlw_idx = i
+                                st.session_state.ontlw_basis = v
+                                st.session_state.ontlw_fase = 'ontleed'
+                                st.session_state.ontlw_fb = None
+                                st.session_state.ontlw_geteld = False
+                                st.session_state.ontlw_geen = None
+                                _rc = (st.session_state.get('ontlw_gezien') or []) + [str(v.get('strong'))]
+                                st.session_state.ontlw_gezien = _rc[-30:]
+                                return
+                    st.session_state.ontlw_geen = ("Geen Bijbelvers gevonden met een passende vorm van deze woorden "
+                                                   "(let op het niveau en het woordsoort-filter).")
+                    st.session_state.ontlw_ref = None
+
+                if _wd4.button("🎲 Nieuw woord", key="ontlw_nieuw", type="primary"):
+                    _nieuw_ontleed_woord(); st.rerun()
+
+                if st.session_state.get('ontlw_geen'):
+                    st.warning(st.session_state.ontlw_geen)
+                elif not st.session_state.get('ontlw_ref'):
+                    st.info("Klik op **🎲 Nieuw woord** om te beginnen.")
+                else:
+                    _wzin = st.session_state.ontlw_zin
+                    _wi = st.session_state.ontlw_idx
+                    _ww = _wzin[_wi]
+                    _winfo = _ww.get('parsing_info', '')
+                    _wbasis = st.session_state.get('ontlw_basis') or {}
+                    _wlemma = str(_wbasis.get('grieks', ''))
+                    _wginfo = str(_wbasis.get('grieks_info', '')) or _wlemma
+
+                    if st.session_state.get('ontlw_topfb'):
+                        _t = st.session_state.ontlw_topfb
+                        {"success": st.success, "info": st.info}.get(_t.get('type'), st.info)(_t.get('msg', ''))
+                        st.session_state.ontlw_topfb = None
+
+                    st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
+                                f"padding:6px 0'>{_ww.get('grieks','')}</div>", unsafe_allow_html=True)
+
+                    # De zin eromheen als context (het doelwoord licht op).
+                    _ctx = ""
+                    for _j, _cw in enumerate(_wzin):
+                        _g = _cw.get('grieks', ''); _ip = _cw.get('interpunctie', '')
+                        if _j == _wi:
+                            _ctx += (f"<span style='background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;"
+                                     f"padding:0 3px;border-radius:4px;font-weight:700'>{_g}</span>{_ip} ")
+                        else:
+                            _tt = (str(_cw.get('vertaling_nl', '') or _cw.get('vertaling_bsb', ''))).replace("'", "&#39;").replace('"', "&quot;")
+                            if _cw.get('strong') and _tt:
+                                _ctx += f"<span class='mobile-tooltip' tabindex='0' style='color:#8a8a8a'>{_g}<span class='tooltiptext'>{_tt}</span></span>{_ip} "
+                            else:
+                                _ctx += f"<span style='color:#8a8a8a'>{_g}</span>{_ip} "
+                    st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontlw_ref}</div>"
+                                f"<div style='font-size:19px;padding:6px 4px;line-height:1.6'>{_ctx.strip()}</div>",
+                                unsafe_allow_html=True)
+                    st.caption(f"🔑 Basiswoord: **{_wginfo}**")
+
+                    _wfase = st.session_state.get('ontlw_fase', 'ontleed')
+
+                    if _wfase == 'ontleed':
+                        _wdims = _ontleed_dims(_winfo)
+                        _wkeuzes = {}
+                        for _k, _lab, _opts in _wdims:
+                            _wkeuzes[_k] = st.radio(_lab, _opts, index=None, horizontal=True,
+                                                    key=f"ontlw_{_k}_{st.session_state.ontlw_ref}_{_wi}")
+                        if st.session_state.get('ontlw_fb'):
+                            for _r in st.session_state.ontlw_fb:
+                                st.markdown(_r)
+                        _wa, _wb = st.columns(2)
+                        if _wa.button("✓ Check antwoord", key="ontlw_check", type="primary"):
+                            _res = []; _goed = True
+                            _eerste = not st.session_state.get('ontlw_geteld')
+                            for _k, _lab, _opts in _wdims:
+                                _ok = _ontleed_deel_ok(_k, _wkeuzes.get(_k), _winfo)
+                                if _eerste and _wkeuzes.get(_k) is not None:
+                                    _rec = st.session_state.ontleed_stats.setdefault(_k, {'g': 0, 'f': 0})
+                                    _rec['g' if _ok else 'f'] = int(_rec.get('g' if _ok else 'f', 0)) + 1
+                                if _ok:
+                                    _res.append(f"- ✅ **{_lab}:** {_wkeuzes.get(_k)}")
+                                else:
+                                    _goed = False
+                                    _res.append(f"- ❌ **{_lab}:** juist is **{_ontleed_deel_correct(_k, _winfo)}**")
+                            st.session_state.ontlw_geteld = True
+                            if _goed:
+                                st.session_state.ontlw_topfb = {"type": "success", "msg": f"✅ **{_ww.get('grieks','')}** — {_winfo}"}
+                                st.session_state.ontlw_fase = 'vertaal'
+                                st.session_state.ontlw_fb = None
+                                trigger_save()
+                            else:
+                                st.session_state.ontlw_fb = _res
+                            st.rerun()
+                        if _wb.button("👁️ Toon antwoord", key="ontlw_toon"):
+                            if not st.session_state.get('ontlw_geteld'):
+                                for _k, _lab, _opts in _wdims:
+                                    _rec = st.session_state.ontleed_stats.setdefault(_k, {'g': 0, 'f': 0})
+                                    _rec['f'] = int(_rec.get('f', 0)) + 1
+                                st.session_state.ontlw_geteld = True
+                            st.session_state.ontlw_topfb = {"type": "info", "msg": f"👁️ **{_ww.get('grieks','')}** — {_winfo}"}
+                            st.session_state.ontlw_fase = 'vertaal'
+                            st.session_state.ontlw_fb = None
+                            st.rerun()
+
+                    elif _wfase == 'vertaal':
+                        st.caption(f"Vorm: *{_winfo.split(' - ', 1)[1] if ' - ' in _winfo else _winfo}* — vertaal het woord zoals het hier staat.")
+                        if _wsteun:
+                            for _r in _ontleed_vertaalhulp(_winfo):
+                                st.caption("💡 " + _r)
+                        if st.session_state.get('ontlw_fb'):
+                            for _r in st.session_state.ontlw_fb:
+                                st.markdown(_r)
+                        with st.form(f"ontlw_vf_{st.session_state.ontlw_ref}_{_wi}", clear_on_submit=True):
+                            _wv = st.text_input("Vertaling van dit woord:")
+                            _wvs = st.form_submit_button("✓ Check", type="primary")
+                        if _wvs:
+                            _doel = _ww.get('vertaling_nl', '') or _wbasis.get('nederlands', '')
+                            if check_betekenis(_wv or "", _doel) or check_betekenis(_wv or "", _wbasis.get('nederlands', '')):
+                                _rec = st.session_state.ontleed_stats.setdefault('vertaling', {'g': 0, 'f': 0})
+                                _rec['g'] = int(_rec.get('g', 0)) + 1
+                                # Goed antwoord telt positief mee voor de woord-streak (nooit aftrek hier).
+                                _wbasis['streak'] = int(_wbasis.get('streak', 0)) + 1
+                                _wbasis['score_goed'] = int(_wbasis.get('score_goed', 0)) + 1
+                                # Elke 3 volledig afgeronde woorden telt als één 'vers' voor het dagdoel.
+                                _tl = int(st.session_state.get('ontlw_teller', 0)) + 1
+                                st.session_state.ontlw_teller = _tl
+                                if _tl % 3 == 0:
+                                    dagdoel_plus('verzen')
+                                st.session_state.ontlw_topfb = {"type": "success", "msg": f"✅ **{_ww.get('grieks','')}** = {_doel}"}
+                                st.session_state.ontlw_fb = None
+                                trigger_save()
+                                _nieuw_ontleed_woord()
+                            else:
+                                _rec = st.session_state.ontleed_stats.setdefault('vertaling', {'g': 0, 'f': 0})
+                                _rec['f'] = int(_rec.get('f', 0)) + 1
+                                st.session_state.ontlw_fb = [f"❌ Het is o.a. *{str(_doel).split(',')[0]}*. Probeer opnieuw of klik 'Toon'."]
+                            st.rerun()
+                        _wt1, _wt2 = st.columns(2)
+                        if _wt1.button("👁️ Toon vertaling", key="ontlw_vtoon"):
+                            st.session_state.ontlw_topfb = {"type": "info",
+                                                            "msg": f"👁️ **{_ww.get('grieks','')}** = {_ww.get('vertaling_nl','') or _wbasis.get('nederlands','')}"}
+                            st.session_state.ontlw_fb = None
+                            _nieuw_ontleed_woord(); st.rerun()
+                        if _wt2.button("➡️ Volgend woord", key="ontlw_next"):
+                            _nieuw_ontleed_woord(); st.rerun()
+
+                    # --- HULP: het juiste rijtje én de samentrekkingsregels ---
+                    if _wsteun:
+                        toon_opbouw_hulp(_ww.get('grieks', ''), _wlemma, _winfo, _wginfo,
+                                         uitgeklapt=bool(st.session_state.get('ontlw_fb')))
+                        _wtab = laad_gramtabellen()
+                        if _wtab:
+                            _wtips = [t for t in _ontleed_tip_tabellen(_winfo, _wlemma, _wginfo) if t in _wtab]
+                            if _wtips:
+                                with st.expander("📋 Bekijk het rijtje (spieken)", expanded=False):
+                                    _walle = list(_wtab.keys())
+                                    _wkeus = st.selectbox("Tabel:", _walle, index=_walle.index(_wtips[0]), key="ontlw_tabkeuze")
+                                    _wkt = _noun_g6_target(_wginfo) if _wkeus == "G6 Naamwoorden" else None
+                                    _wmr, _wmc = _ontleed_doelcel(_winfo)
+                                    st.caption("De uitgangen zijn oranje; jouw vorm heeft een ▶ en een gouden kader.")
+                                    st.markdown(_render_gramtabel_html(_wtab.get(_wkeus, []), _wkt, _wmr, _wmc),
+                                                unsafe_allow_html=True)
+                    st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
+
             else:
                 _oc1, _oc2, _oc3, _oc4, _oc5 = st.columns([1.3, 1.3, 0.9, 1.0, 1.0])
                 # Instellingen onthouden over sessies heen via ui_prefs (wordt bij opslag meegeschreven).
@@ -6150,33 +6761,19 @@ def main():
                 st.session_state.ontl_skip_fasen = _skip_fasen
                 _oprefs['ontl_skip'] = _skip_fasen
 
-                def _nieuw_ontleed_vers():
+                def _zet_ontleed_vers(ref, zin, alleen_bekend=True):
+                    """Zet één vers klaar voor de vijf rondes (gedeeld door zin- en tekstmodus)."""
                     _ss = {str(w['strong']): int(w.get('streak', 0)) for w in (st.session_state.get('data') or []) if w.get('strong')}
                     _niv = st.session_state.get('ontl_niveau', 'Grieks 2')
-                    kandidaten = []
-                    for ref, zin in _obdb.items():
-                        if ref in (st.session_state.get('ontl_gezien') or []):
-                            continue
-                        lex = [i for i, w in enumerate(zin) if w.get('strong')]
-                        if len(lex) < 3:
-                            continue
-                        if any(_ss.get(str(zin[i]['strong']), 0) < 1 for i in lex):
-                            continue  # hele zin moet bekend zijn
-                        def _tgt(i):
-                            w = zin[i]
-                            return _ss.get(str(w.get('strong')), 0) >= _odrempel and _ontleed_in_scope(w.get('parsing_info', ''), _niv)
-                        znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
-                        ww = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) in ('ww', 'ptc') and _tgt(i)]
-                        if znw or ww:
-                            kandidaten.append((ref, zin, lex, znw, ww))
-                    if not kandidaten:
-                        st.session_state.ontl_ref = None
-                        st.session_state.ontl_geen = True
-                        return
-                    r_engine.shuffle(kandidaten)
-                    ref, zin, lex, znw, ww = kandidaten[0]
-                    _gz = st.session_state.get('ontl_gezien') or []
-                    _gz.append(ref); st.session_state.ontl_gezien = _gz[-40:]
+                    lex = [i for i, w in enumerate(zin) if w.get('strong')]
+
+                    def _tgt(i):
+                        w = zin[i]
+                        if alleen_bekend and _ss.get(str(w.get('strong')), 0) < _odrempel:
+                            return False
+                        return _ontleed_in_scope(w.get('parsing_info', ''), _niv)
+                    znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
+                    ww = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) in ('ww', 'ptc') and _tgt(i)]
                     st.session_state.ontl_ref = ref
                     st.session_state.ontl_zin = zin
                     st.session_state.ontl_lex = lex
@@ -6198,13 +6795,98 @@ def main():
                     st.session_state.ontl_geteld = set()
                     st.session_state.ontl_geen = False
 
-                if _oc5.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
+                def _nieuw_ontleed_vers():
+                    # Tekstmodus: werk de gekozen passage vers voor vers af.
+                    _rij = st.session_state.get('ontl_wachtrij') or []
+                    if _rij:
+                        _ref = _rij.pop(0)
+                        st.session_state.ontl_wachtrij = _rij
+                        _zin = _obdb.get(_ref) or []
+                        if _zin:
+                            _zet_ontleed_vers(_ref, _zin, alleen_bekend=False)
+                            return
+                    if st.session_state.get('ontl_tekst_actief'):
+                        # De passage is uit → afronden in plaats van een willekeurig vers pakken.
+                        st.session_state.ontl_tekst_actief = False
+                        st.session_state.ontl_ref = None
+                        st.session_state.ontl_klaar_tekst = True
+                        return
+                    _ss = {str(w['strong']): int(w.get('streak', 0)) for w in (st.session_state.get('data') or []) if w.get('strong')}
+                    _niv = st.session_state.get('ontl_niveau', 'Grieks 2')
+                    kandidaten = []
+                    for ref, zin in _obdb.items():
+                        if ref in (st.session_state.get('ontl_gezien') or []):
+                            continue
+                        lex = [i for i, w in enumerate(zin) if w.get('strong')]
+                        if len(lex) < 3:
+                            continue
+                        if any(_ss.get(str(zin[i]['strong']), 0) < 1 for i in lex):
+                            continue  # hele zin moet bekend zijn
+                        def _tgt(i):
+                            w = zin[i]
+                            return _ss.get(str(w.get('strong')), 0) >= _odrempel and _ontleed_in_scope(w.get('parsing_info', ''), _niv)
+                        znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
+                        ww = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) in ('ww', 'ptc') and _tgt(i)]
+                        if znw or ww:
+                            kandidaten.append((ref, zin))
+                    if not kandidaten:
+                        st.session_state.ontl_ref = None
+                        st.session_state.ontl_geen = True
+                        return
+                    r_engine.shuffle(kandidaten)
+                    ref, zin = kandidaten[0]
+                    _gz = st.session_state.get('ontl_gezien') or []
+                    _gz.append(ref); st.session_state.ontl_gezien = _gz[-40:]
+                    _zet_ontleed_vers(ref, zin, alleen_bekend=True)
+
+                # --- TEKSTMODUS: kies een passage en werk die vers voor vers af ---
+                if _ontl_modus.startswith("📜"):
+                    st.write("---")
+                    _tparsed = {}
+                    for _ref in _obdb.keys():
+                        _m = re.match(r"^(.+)\s+(\d+):(\d+[a-zA-Z]?)$", _ref)
+                        if not _m:
+                            continue
+                        _b, _h, _v = _m.group(1), _m.group(2), _m.group(3)
+                        _tparsed.setdefault(_b, {}).setdefault(_h, []).append(
+                            (int(re.sub(r"\D", "", _v) or 0), _v, _ref))
+                    if _tparsed:
+                        _tb, _th, _tv = st.columns([1.2, 0.8, 2])
+                        _boek = _tb.selectbox("Boek:", list(_tparsed.keys()), key="ontl_t_boek")
+                        _hfd = sorted(_tparsed[_boek].keys(), key=lambda x: int(x) if str(x).isdigit() else 0)
+                        _hoofd = _th.selectbox("Hoofdstuk:", _hfd, key="ontl_t_hfd")
+                        _vlijst = sorted(_tparsed[_boek][_hoofd], key=lambda x: x[0])
+                        _vopts = [v[1] for v in _vlijst]
+                        _vkeuze = _tv.multiselect("Vers(zen):", _vopts, default=_vopts[:3], key="ontl_t_verzen")
+                        _tk1, _tk2 = st.columns([1, 3])
+                        if _tk1.button("▶️ Start deze tekst", key="ontl_t_start", type="primary"):
+                            _refs = [v[2] for v in _vlijst if v[1] in _vkeuze]
+                            if not _refs:
+                                st.warning("Kies eerst minstens één vers.")
+                            else:
+                                st.session_state.ontl_wachtrij = _refs
+                                st.session_state.ontl_tekst_totaal = len(_refs)
+                                st.session_state.ontl_tekst_actief = True
+                                st.session_state.ontl_klaar_tekst = False
+                                _nieuw_ontleed_vers(); st.rerun()
+                        _restant = len(st.session_state.get('ontl_wachtrij') or [])
+                        _tot = int(st.session_state.get('ontl_tekst_totaal', 0))
+                        if st.session_state.get('ontl_tekst_actief') and _tot:
+                            _tk2.progress((_tot - _restant) / _tot,
+                                          text=f"Vers {_tot - _restant} van {_tot} in deze passage")
+                    if st.session_state.get('ontl_klaar_tekst'):
+                        st.success("🎉 Hele passage ontleed! Kies hierboven een nieuwe tekst.")
+                    st.write("---")
+                elif _oc5.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
+                    st.session_state.ontl_wachtrij = []
+                    st.session_state.ontl_tekst_actief = False
                     _nieuw_ontleed_vers(); st.rerun()
 
                 if st.session_state.get('ontl_geen'):
                     st.warning(f"Geen verzen gevonden waarin je álle woorden kent én minstens één te ontleden woord met streak ≥ {_odrempel} (niveau {_oniveau}). Zet de drempel lager, kies een ander niveau, of oefen eerst meer woorden.")
                 elif not st.session_state.get('ontl_ref'):
-                    st.info("Klik op **🎲 Nieuw vers** om te beginnen.")
+                    st.info("Kies hierboven een tekst en klik op **▶️ Start deze tekst**."
+                            if _ontl_modus.startswith("📜") else "Klik op **🎲 Nieuw vers** om te beginnen.")
                 else:
                     _zin = st.session_state.ontl_zin
                     _fase = st.session_state.ontl_fase
@@ -6326,11 +7008,15 @@ def main():
                                 st.markdown(_line)
                         # Altijd beschikbaar: het bijbehorende rijtje om te spieken (uitgeklapt na een fout).
                         _gtab = laad_gramtabellen()
+                        _vwoord = next((v for v in (st.session_state.get('data') or [])
+                                        if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
+                        _lemma = str(_vwoord.get('grieks', '')) if _vwoord else ""
+                        _ginfo = str(_vwoord.get('grieks_info', '')) if _vwoord else ""
+                        if _osteun:
+                            # Samentrekkingen/klankwetten van déze vorm (G20, σ-samensmelting, augment).
+                            toon_opbouw_hulp(_w.get('grieks', ''), _lemma, _info, _ginfo,
+                                             uitgeklapt=bool(st.session_state.get('ontl_feedback')))
                         if _gtab:
-                            _vwoord = next((v for v in (st.session_state.get('data') or [])
-                                            if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
-                            _lemma = str(_vwoord.get('grieks', '')) if _vwoord else ""
-                            _ginfo = str(_vwoord.get('grieks_info', '')) if _vwoord else ""
                             _tips = [t for t in _ontleed_tip_tabellen(_info, _lemma, _ginfo) if t in _gtab]
                             if _tips:
                                 with st.expander("📋 Bekijk het rijtje (spieken)", expanded=bool(st.session_state.get('ontl_feedback'))):
@@ -6390,6 +7076,10 @@ def main():
                         if _osteun:
                             for _r in _ontleed_vertaalhulp(_info):
                                 st.caption("💡 " + _r)
+                            _vw0 = next((v for v in (st.session_state.get('data') or [])
+                                         if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
+                            toon_opbouw_hulp(_w.get('grieks', ''), str(_vw0.get('grieks', '')) if _vw0 else "",
+                                             _info, str(_vw0.get('grieks_info', '')) if _vw0 else "")
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
