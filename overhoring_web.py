@@ -11,6 +11,24 @@ import unicodedata
 import difflib
 from datetime import datetime
 
+# De app draait in de cloud op UTC-servers, terwijl de gebruiker in Nederland zit. Zonder deze
+# omzetting liep alles 1-2 uur achter: 'vandaag' klapte te laat om, oefeningen van net na
+# middernacht werden op de vorige dag geboekt en de dag-streak kon daardoor breken.
+try:
+    from zoneinfo import ZoneInfo
+    _TIJDZONE = ZoneInfo("Europe/Amsterdam")
+except Exception:
+    _TIJDZONE = None
+
+def _nu():
+    """Huidige datum/tijd in de Nederlandse tijdzone (zonder tzinfo, zodat rekenen simpel blijft)."""
+    if _TIJDZONE is not None:
+        try:
+            return datetime.now(_TIJDZONE).replace(tzinfo=None)
+        except Exception:
+            pass
+    return datetime.now()
+
 try:
     import fitz  # PyMuPDF: rendert de grammatica-slides
     FITZ_BESCHIKBAAR = True
@@ -625,6 +643,59 @@ def opb_analyse_naamwoord(vorm, grieks_info="", parsing_info=""):
     return (f"**3e declinatie:** de echte stam zie je in de genitivus: **{stam}-** "
             f"(nom. *{nom}*, gen. *{gen}*){hint}.")
 
+def opbouw_formule(vorm, lemma="", parsing_info=""):
+    """Bouwt de vorm zichtbaar op met plustekens, zoals in de slides:
+    'ἐ + πε + φαν + μεθα  >  ἐπεφαμμεθα'.
+
+    Alleen de onderdelen die we aantoonbaar kunnen herkennen (voorvoegsel, augment, reduplicatie,
+    stam, uitgang). Lukt dat niet, dan geven we niets terug in plaats van iets te verzinnen."""
+    if not lemma or "Werkwoord" not in (parsing_info or ""):
+        return None
+    v_nfc = unicodedata.normalize('NFC', str(vorm).strip())
+    vk, lk = _opb_kaal(v_nfc), _opb_kaal(lemma)
+    if len(vk) != len(v_nfc) or len(vk) < 3:
+        return None
+    delen = []            # (tekst, label)
+    pos = 0
+
+    pre, kern = _opb_split_voorvoegsel(lk)
+    if pre and vk.startswith(pre[:len(pre) - 1] if pre[-1] in "οαε" else pre):
+        _p = pre if vk.startswith(pre) else pre[:len(pre) - 1]
+        delen.append((v_nfc[:len(_p)], "voorvoegsel")); pos = len(_p)
+    else:
+        kern = lk
+
+    rest_na_pre = vk[pos:]
+    _rest, aug_uitleg = _opb_zonder_augment(vk, lk)
+    if aug_uitleg and 'augment' in aug_uitleg and rest_na_pre.startswith("ε") and not kern.startswith("ε"):
+        delen.append((v_nfc[pos:pos + 1], "augment")); pos += 1
+        rest_na_pre = vk[pos:]
+
+    # reduplicatie van het perfectum (C + ε)
+    if "Perfectum" in parsing_info and len(rest_na_pre) > 3 and kern:
+        c = kern[0]
+        hard = {"φ": "π", "θ": "τ", "χ": "κ"}.get(c, c)
+        if rest_na_pre[0] in (c, hard) and rest_na_pre[1] == "ε" and rest_na_pre[2:3] == c:
+            delen.append((v_nfc[pos:pos + 2], "reduplicatie")); pos += 2
+            rest_na_pre = vk[pos:]
+
+    # stam: zo ver als de vorm met de lemmastam meeloopt
+    lemstam = kern[:-1] if kern.endswith("ω") else (kern[:-4] if kern.endswith("ομαι") else kern)
+    n = _opb_prefix_len(rest_na_pre, lemstam)
+    if n < 2:
+        return None                      # stam niet herkenbaar (bv. suppletie) → niets beweren
+    delen.append((v_nfc[pos:pos + n], "stam")); pos += n
+    if pos >= len(v_nfc):
+        return None                      # geen uitgang over → weinig te tonen
+    delen.append((v_nfc[pos:], "uitgang"))
+
+    if len(delen) < 2:
+        return None
+    # Platte markdown (geen HTML): zo werkt de regel ook binnen een opsomming of st.info.
+    _stukken = " + ".join(f"**{t}**" for t, _lab in delen)
+    _benoemd = " + ".join(lab for _t, lab in delen)
+    return f"**Opbouw:** {_stukken} → **{v_nfc}**  ({_benoemd})"
+
 def opbouw_regels(vorm, lemma="", parsing_info="", grieks_info=""):
     """(regels, stamklinker, treffers) — alle klankwetten die aantoonbaar op deze vorm slaan."""
     regels = []
@@ -685,6 +756,9 @@ def stamtijd_opbouw_regels(vorm, tijd_diathese, basis):
     praesens = str((basis or {}).get('praesens', ''))
     info = _STAM_PSEUDO_INFO.get(tijd_diathese, "Werkwoord - Indicativus Actief")
     regels, _sk, _tr = opbouw_regels(vorm, praesens, info)
+    _f = opbouw_formule(vorm, praesens, info)
+    if _f:
+        regels.insert(0, _f)
     morf = (basis or {}).get('morfologie', {}) or {}
     if morf.get('memoriseren_vereist'):
         _t = str((morf.get('mutatieregel') or {}).get('toelichting', '')).strip()
@@ -715,6 +789,9 @@ def toon_rijtje_hulp(parsing_info, lemma="", grieks_info="", sleutel="", uitgekl
         return False
     tips = [t for t in _ontleed_tip_tabellen(parsing_info, lemma, grieks_info) if t in tabellen]
     if not tips:
+        # Van sommige woordsoorten (bv. ἐγώ, σύ, αὐτός) staat er geen rijtje in de slides.
+        # Dat eerlijk melden is beter dan een tabel van een ánder woord tonen.
+        st.caption("📋 Van dit woord staat geen rijtje in de grammatica-tabellen — het heeft een eigen, vaste vervoeging.")
         return False
     with st.expander("📋 Bekijk het rijtje (spieken)", expanded=uitgeklapt):
         alle = list(tabellen.keys())
@@ -733,6 +810,9 @@ def toon_opbouw_hulp(vorm, lemma="", parsing_info="", grieks_info="", sleutel=""
     if not regels and not sk:
         return False
     with st.expander("🔗 Zo is deze vorm opgebouwd (samentrekkingen & klankwetten)", expanded=uitgeklapt):
+        _formule = opbouw_formule(vorm, lemma, parsing_info)
+        if _formule:
+            st.markdown(_formule)
         for r in regels:
             st.markdown("- " + r)
         if sk:
@@ -872,14 +952,26 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
         if lemma.endswith("μι") and lemma != "ειμι": tabs.append("G43 Mi-Werkwoorden")
         tabs.append("G50 Stamtijden")
     elif "Bijv." in info:
-        tabs += ["G14 Adjectiva", "G34 Adj 3e Decl", "G30 Trappen"]
+        # 1e/2e declinatie (μικρός, -ά, -όν) of 3e declinatie (πᾶς, ἀληθής)? Dat verraadt de
+        # uitgang van het lemma: alleen -ος volgt het μικρός-rijtje.
+        if lemma.endswith("ος"):
+            tabs += ["G14 Adjectiva", "G34 Adj 3e Decl"]
+        elif lemma.endswith(("ης", "ες", "υς", "ας", "ς")):
+            tabs += ["G34 Adj 3e Decl", "G14 Adjectiva"]
+        else:
+            tabs += ["G14 Adjectiva", "G34 Adj 3e Decl"]
+        tabs.append("G30 Trappen")
     elif "Voornaamwoord" in info:
-        # Kies de juiste voornaamwoord-tabel op basis van het subtype in parsing_info.
+        # Kies de tabel op het subtype uit parsing_info. Let op de volgorde: 'Personal / Relative'
+        # bevat óók 'Personal', dus de specifieke subtypes moeten eerst gecontroleerd worden.
+        # Voor persoonlijke/bezittelijke en reciproke voornaamwoorden (ἐγώ, σύ, αὐτός, ἀλλήλων)
+        # bestaat er GEEN rijtje in de slides. Dan liever niets tonen dan een tabel van een ander
+        # woordsoort — eerder kreeg ἐγώ het demonstrativa-rijtje (οὗτος) te zien.
         if "Relative" in info: tabs.append("G21 Relativum")
         elif "Demonstrative" in info: tabs.append("G19 Demonstrativa")
-        elif "Interrogative" in info: tabs.append("G25 Interrogativum")
+        elif "Interrogative" in info or "Indefinite" in info: tabs.append("G25 Interrogativum")
         elif "Reflexive" in info: tabs.append("G22 Reflexiva")
-        tabs += ["G19 Demonstrativa", "G21 Relativum", "G22 Reflexiva", "G25 Interrogativum", "G37 Correlativa"]
+        elif "Correlative" in info: tabs.append("G37 Correlativa")
     else:  # zelfstandig naamwoord: kies de declinatie uit de woordenboekvorm (grieks_info)
         _decl = _noun_declinatie(grieks_info)
         if _decl:
@@ -1264,7 +1356,7 @@ def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dageli
     benodigde_dagen = math.ceil(totale_schuld / netto_punten_per_dag)
     
     try:
-        eind_datum = datetime.now() + pd.Timedelta(days=benodigde_dagen)
+        eind_datum = _nu() + pd.Timedelta(days=benodigde_dagen)
         datum_str = eind_datum.strftime("%d-%m-%Y")
     except Exception:
         datum_str = f"+{benodigde_dagen} dagen"
@@ -1278,7 +1370,7 @@ def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dageli
     }
     
 def registreer_oefening(item=None):
-    vandaag = str(datetime.now().date())
+    vandaag = str(_nu().date())
     if 'dag_stats' not in st.session_state: st.session_state.dag_stats = {}
     st.session_state.dag_stats[vandaag] = st.session_state.dag_stats.get(vandaag, 0) + 1
     if item is not None: item['laatst_geoefend'] = vandaag
@@ -1347,7 +1439,7 @@ def kies_gefaseerde_oefensessie(doel_lijst, module, custom_counts=None, max_nieu
         elif 16 <= s <= 29: beheerst.append(item)
         else: mastery.append(item)
     
-    vandaag_d = datetime.now().date()
+    vandaag_d = _nu().date()
 
     def dagen_geleden(x):
         d_str = x.get('laatst_geoefend', '')
@@ -1619,7 +1711,7 @@ def registreer_verwarring(getoond_grieks, verward_grieks):
         vs = {}
         st.session_state.verwar_stats = vs
     try:
-        vandaag = str(datetime.now().date())
+        vandaag = str(_nu().date())
     except Exception:
         vandaag = ""
     entry = vs.setdefault(getoond_grieks, {})
@@ -1706,7 +1798,7 @@ def _sessie_noteer_fout(item, antwoord):
         st.session_state.sessie_fout = d
     d[item.get('grieks', '')] = {"nederlands": str(item.get('nederlands', '')), "antwoord": str(antwoord)}
     try:
-        item['laatst_fout'] = str(datetime.now().date())
+        item['laatst_fout'] = str(_nu().date())
     except Exception:
         pass
 
@@ -2008,7 +2100,7 @@ def dagdoel_config():
 
 def _vandaag_str():
     try:
-        return str(datetime.now().date())
+        return str(_nu().date())
     except Exception:
         return ""
 
@@ -2043,7 +2135,7 @@ def dagdoel_streak():
 
     streak = 0
     try:
-        cur = pd.Timestamp(datetime.now().date())
+        cur = pd.Timestamp(_nu().date())
         if not _geoefend(str(cur.date())):
             cur -= pd.Timedelta(days=1)  # vandaag nog niets: kijk of de reeks t/m gisteren loopt
         while _geoefend(str(cur.date())):
@@ -2138,7 +2230,7 @@ def dagkalender_html(dag_stats, log):
     """5-weekse heatmap-kalender: kleurintensiteit = hoeveel je die dag oefende, plus gekleurde
     stipjes voor de onderdelen die je die dag deed (woorden/stamtijden/structuur/verzen)."""
     try:
-        v = pd.Timestamp(datetime.now().date())
+        v = pd.Timestamp(_nu().date())
     except Exception:
         return ""
     start = v - pd.Timedelta(days=int(v.weekday()) + 28)  # maandag, 4 weken terug
@@ -2730,7 +2822,7 @@ def _eigen_samenvatting():
     dag = st.session_state.get('dag_stats') or {}
     week = tot = 0
     try:
-        vandaag = datetime.now().date(); wk = vandaag - pd.Timedelta(days=6)
+        vandaag = _nu().date(); wk = vandaag - pd.Timedelta(days=6)
     except Exception:
         vandaag = None; wk = None
     for ds, n in dag.items():
@@ -3250,18 +3342,29 @@ def main():
                         is_lang_geleden = ("Lang niet gedaan" in keuze)
                         is_knelpunten = ("Knelpunten" in keuze)
                         is_puur_typen = (modus_id == "4")
-                        
+                        is_leerpad = (keuze == "🎮 Leerpad (levels)")
+
                         # Bij knelpunten vriest de instroom van gloednieuwe woorden dicht:
                         mag_geen_nieuw = is_lang_geleden or is_knelpunten or is_puur_typen or (not optie_nieuw_mee)
-                        
-                        sampled = kies_gefaseerde_oefensessie(
-                            doel, 
-                            module='vocab', 
-                            custom_counts=custom_counts, 
-                            sorteer_oudste_eerst=is_lang_geleden, 
-                            verbied_nieuwe_woorden=mag_geen_nieuw,
-                            totale_db=st.session_state.data
-                        )
+
+                        if is_leerpad:
+                            # In het Leerpad IS het level de lesstof: alle woorden van dit level die nog
+                            # niet 'af' zijn horen erin, ongeacht de instroom-filters. Anders bleef je
+                            # (zoals bij level 38) eindeloos dezelfde herhaalwoorden zien zonder ooit de
+                            # nieuwe woorden van je level te krijgen.
+                            _nog_te_doen = [w for w in doel if int(w.get('streak', 0)) < LEERPAD_DREMPEL]
+                            _al_af = [w for w in doel if int(w.get('streak', 0)) >= LEERPAD_DREMPEL]
+                            r_engine.shuffle(_nog_te_doen)
+                            sampled = _nog_te_doen or list(_al_af)   # level helemaal af? dan opfrissen
+                        else:
+                            sampled = kies_gefaseerde_oefensessie(
+                                doel,
+                                module='vocab',
+                                custom_counts=custom_counts,
+                                sorteer_oudste_eerst=is_lang_geleden,
+                                verbied_nieuwe_woorden=mag_geen_nieuw,
+                                totale_db=st.session_state.data
+                            )
 
                         # Verwar-twins van gekozen woorden erbij trekken (alleen al-geoefende woorden),
                         # zodat look-alikes in dezelfde sessie naast elkaar geoefend worden.
@@ -3932,7 +4035,7 @@ def main():
 
             # --- STATISTIEKEN BEREKENEN (gecached: alleen herberekend bij een druk op 'Ververs') ---
             if 'vg_laatst' not in st.session_state:
-                try: st.session_state.vg_laatst = datetime.now().strftime('%d-%m %H:%M')
+                try: st.session_state.vg_laatst = _nu().strftime('%d-%m %H:%M')
                 except Exception: st.session_state.vg_laatst = ""
             _vg_versie = int(st.session_state.get('vg_versie', 0))
             _vg_ck = f"{st.session_state.get('last_user', '')}|{_vg_versie}"
@@ -3940,7 +4043,12 @@ def main():
             _cvg1.caption(f"📊 De cijfers hieronder worden **alleen bijgewerkt als je op Ververs drukt** — zo blijft de app snel tijdens het oefenen. Laatst bijgewerkt: {st.session_state.get('vg_laatst') or '—'}.")
             if _cvg2.button("🔄 Ververs", key="vg_ververs"):
                 st.session_state.vg_versie = _vg_versie + 1
-                try: st.session_state.vg_laatst = datetime.now().strftime('%d-%m %H:%M')
+                # De cache echt leeggooien. De versieteller begint bij elke nieuwe browsersessie
+                # weer op 0, terwijl de cache op de server blijft staan; zonder dit kreeg je na
+                # een herlaadactie gewoon de oude cijfers terug — vandaar dat de knop 'niets deed'.
+                try: voortgang_kernstats.clear()
+                except Exception: pass
+                try: st.session_state.vg_laatst = _nu().strftime('%d-%m %H:%M')
                 except Exception: pass
                 st.rerun()
             _vg = voortgang_kernstats(_vg_ck, st.session_state.data,
@@ -3971,7 +4079,7 @@ def main():
             _oefendagen = len(_dagen_set)
             _dagstreak = 0
             try:
-                _cur = pd.Timestamp(datetime.now().date())
+                _cur = pd.Timestamp(_nu().date())
                 while str(_cur.date()) in _dagen_set:
                     _dagstreak += 1
                     _cur -= pd.Timedelta(days=1)
@@ -4009,7 +4117,7 @@ def main():
             _behaald_nu = {b['id'] for b in _badges if b['behaald']}
             _nieuw = _behaald_nu - _reeds
             try:
-                _vandaag = str(datetime.now().date())
+                _vandaag = str(_nu().date())
             except Exception:
                 _vandaag = ""
             for _bid in _nieuw:
@@ -4164,7 +4272,7 @@ def main():
                     _ds_pace = st.session_state.get('dag_stats') or {}
                     if _ds_pace:
                         try:
-                            _vd = datetime.now().date(); _grens14 = _vd - pd.Timedelta(days=13)
+                            _vd = _nu().date(); _grens14 = _vd - pd.Timedelta(days=13)
                             _rtot = 0
                             for _d, _n in _ds_pace.items():
                                 try:
@@ -4298,7 +4406,7 @@ def main():
             # --- JOUW OEFENRITME (kalender-heatmap) ---
             st.subheader("📅 Jouw oefenritme")
 
-            vandaag_str = str(datetime.now().date())
+            vandaag_str = str(_nu().date())
             vandaag_aantal = int(st.session_state.dag_stats.get(vandaag_str, 0)) if st.session_state.dag_stats else 0
             beheerst_nu = stats_vocab['Beheerst'] + stats_vocab['Mastery']
             in_training_nu = stats_vocab['In Training']
@@ -7295,6 +7403,7 @@ def main():
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
+                        forceer_focus()   # cursor staat meteen in het typveld, zo kun je doortikken
                         with st.form(f"ontl_vform_{st.session_state.ontl_ref}_{_pos}", clear_on_submit=True):
                             _vin = st.text_input("Vertaling van dit woord:")
                             _vsub = st.form_submit_button("✓ Check", type="primary")  # Enter werkt binnen een form
