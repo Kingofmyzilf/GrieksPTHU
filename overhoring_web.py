@@ -451,6 +451,58 @@ _OPB_VOORVOEGSELS = ["προσ", "παρα", "περι", "κατα", "μετα",
                      "καθ", "μεθ", "παρ", "ἐπ", "ὑπ", "ἀν", "συγ", "συμ", "ἐγ", "ἐμ"]
 _OPB_TIJD_MET_AUGMENT = ("Imperfectum", "Aoristus", "Plusquamperfectum")
 
+# Voorzetsel-voorvoegsels met hun weergave en kernbetekenis, voor de woordopbouw bij de
+# woordenschat (samengestelde woorden). Sleutels zijn accent-loos (zoals _opb_kaal ze maakt).
+_VOORZETSEL_INFO = {
+    "απο": ("ἀπό", "van(af), weg"), "απ": ("ἀπό", "van(af), weg"), "αφ": ("ἀπό", "van(af), weg"),
+    "εκ": ("ἐκ", "uit"), "εξ": ("ἐκ", "uit"),
+    "εισ": ("εἰς", "in, naar"),
+    "εν": ("ἐν", "in"), "εγ": ("ἐν", "in"), "εμ": ("ἐν", "in"),
+    "προσ": ("πρός", "naar…toe, bij"),
+    "προ": ("πρό", "voor(af)"),
+    "παρα": ("παρά", "naast, langs, bij"), "παρ": ("παρά", "naast, langs, bij"),
+    "περι": ("περί", "rondom, over"),
+    "κατα": ("κατά", "neer, tegen, volgens"), "καθ": ("κατά", "neer, tegen, volgens"),
+    "μετα": ("μετά", "met, na"), "μεθ": ("μετά", "met, na"),
+    "ανα": ("ἀνά", "omhoog, opnieuw"),
+    "επι": ("ἐπί", "op, bij, tegen"), "επ": ("ἐπί", "op, bij, tegen"), "εφ": ("ἐπί", "op, bij, tegen"),
+    "υπερ": ("ὑπέρ", "boven, voor"),
+    "υπο": ("ὑπό", "onder"), "υπ": ("ὑπό", "onder"), "υφ": ("ὑπό", "onder"),
+    "δια": ("διά", "door(heen), uiteen"),
+    "συν": ("σύν", "samen, met"), "συγ": ("σύν", "samen, met"), "συμ": ("σύν", "samen, met"),
+    "αντι": ("ἀντί", "tegen(over), in plaats van"),
+    "αμφι": ("ἀμφί", "aan beide kanten"),
+}
+
+def woord_opbouw(lemma):
+    """Ontleedt een woordenboekvorm in voorzetsel-voorvoegsel + grondwoord — MAAR alleen als dat
+    grondwoord zelf ook in de woordenlijst staat (bv. εἰσέρχομαι = εἰς + ἔρχομαι). Zo zie je het
+    verband met een woord dat je al kent, zonder dat de app een etymologie verzint.
+
+    Geeft een dict {voorzetsel, betekenis, grondwoord} terug, of None."""
+    lk = _opb_kaal(lemma)
+    if len(lk) < 5:
+        return None
+    data = st.session_state.get('data') or []
+    idx = st.session_state.get('_lemma_kaal_idx')
+    if not isinstance(idx, dict) or idx.get('_n') != len(data):
+        idx = {'_n': len(data)}
+        for w in data:
+            g = str(w.get('grieks', '') or '')
+            if g:
+                idx.setdefault(_opb_kaal(g), g)
+        st.session_state._lemma_kaal_idx = idx
+    for p in sorted(_VOORZETSEL_INFO, key=len, reverse=True):
+        if not lk.startswith(p) or len(lk) - len(p) < 3:
+            continue
+        rest = lk[len(p):]
+        # Het grondwoord moet exact een ander bekend woord zijn (geen verzonnen stam).
+        grond = idx.get(rest)
+        if grond and _opb_kaal(grond) != lk:
+            weer, bet = _VOORZETSEL_INFO[p]
+            return {"voorzetsel": weer, "betekenis": bet, "grondwoord": grond}
+    return None
+
 def _opb_prefix_len(a, b):
     n = 0
     while n < len(a) and n < len(b) and a[n] == b[n]:
@@ -3301,6 +3353,7 @@ def main():
                         optie_verwar = st.checkbox("⚠️ Verwarwoorden er samen bij trekken (discrimineren)", key="optie_verwarparen", value=_prefs.get('optie_verwarparen', True), help="Als een gekozen woord een look-alike heeft die je al eens hebt geoefend, komt die twin in dezelfde sessie mee — zo leer je ze onderscheiden. Voegt nooit nieuwe woorden toe.")
                         optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=_prefs.get('optie_mastery_context', False), help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
                         optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=_prefs.get('optie_audio', True), help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
+                        optie_opbouw = st.checkbox("🔗 Toon woordopbouw (samenstellingen)", key="optie_opbouw_vocab", value=_prefs.get('optie_opbouw_vocab', False), help="Toont bij samengestelde woorden het voorzetsel + het grondwoord dat je al kent, bv. εἰσέρχομαι = εἰς + ἔρχομαι. Zo zie je de verbanden sneller.")
                     _stijl_opts = ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"]
                     _stijl_idx = _stijl_opts.index(_prefs['oefen_stijl']) if _prefs.get('oefen_stijl') in _stijl_opts else 0
                     oefen_stijl = st.radio("Sessie opbouw:", _stijl_opts, index=_stijl_idx)
@@ -3313,6 +3366,7 @@ def main():
                     optie_verwar = _prefs.get('optie_verwarparen', True)
                     optie_mastery_context = _prefs.get('optie_mastery_context', False)
                     optie_audio = _prefs.get('optie_audio', True)
+                    optie_opbouw = _prefs.get('optie_opbouw_vocab', False)
                     oefen_stijl = "🤖 Aanbevolen Mix"
 
                 # Wens 7: onthoud de actuele keuzes in-memory; ze worden meegeschreven bij de eerstvolgende
@@ -3326,7 +3380,7 @@ def main():
                     'optie_context': optie_context, 'optie_cluster_vocab': optie_cluster,
                     'optie_kleur_nv_vocab': optie_kleur_nv, 'optie_nieuw_mee_vocab': optie_nieuw_mee,
                     'optie_verwarparen': optie_verwar, 'optie_mastery_context': optie_mastery_context,
-                    'optie_audio': optie_audio,
+                    'optie_audio': optie_audio, 'optie_opbouw_vocab': optie_opbouw,
                     'geavanceerd': _geav,
                 })
                 if _geav:
@@ -3692,6 +3746,14 @@ def main():
 
                     if st.session_state.get('optie_audio', True):
                         audio_knop(item.get('fonetisch', ''), key="vocab")
+
+                    # Woordopbouw: bij een samengesteld woord het voorzetsel + grondwoord tonen,
+                    # zodat je het verband met een woord dat je al kent snel ziet.
+                    if st.session_state.get('optie_opbouw_vocab', False):
+                        _ob = woord_opbouw(item.get('grieks', ''))
+                        if _ob:
+                            st.caption(f"🔗 Opbouw: **{_ob['voorzetsel']}** (*{_ob['betekenis']}*) + "
+                                       f"**{_ob['grondwoord']}** → **{item.get('grieks','')}**")
 
                     correct_antw = str(item.get('nederlands', ''))
                     fout_msg_volledig = f"**{item.get('grieks')}** ({extra_info}) — {item.get('fonetisch', '')} — **{correct_antw}**"
@@ -6897,6 +6959,8 @@ def main():
                                         placeholder="bv. λόγον, ἔλυσεν, of logon / elusen",
                                         help="Latijnse letters worden omgezet naar Grieks (logos → λόγος, q=θ, c=ξ, w=ω, h=η, y=ψ). Accenten hoef je niet in te typen.")
                     _zsub = st.form_submit_button("🔍 Zoek", type="primary")
+                st.caption("⌨️ Typ Grieks in gewone letters: **logos → λόγος**. Bijzondere tekens: "
+                           "θ=q · ξ=c · χ=x · ψ=y · ω=w · η=h · φ=f. Accenten hoef je niet in te typen.")
                 if _zsub and (_zq or "").strip():
                     st.session_state.ontl_zoek_term = _zq.strip()
 
