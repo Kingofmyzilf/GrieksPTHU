@@ -886,21 +886,19 @@ def _ontleed_deel_correct(dim, info):
         return "—"
     return "—"
 
-_ONTLEED_WS_OPTS = ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel", "Tussenwerpsel"]
+_ONTLEED_WS_OPTS = ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel"]
 
 def _woordsoort_van(info):
     """Canonieke woordsoort uit parsing_info (of '—' als echt onbepaald).
 
-    Vangt ook de afwijkende koppen in de NT-data op, die anders een onwinbare '—' gaven:
-    'Hebrew Word' (ἀμήν, ἀλληλουϊά) → Tussenwerpsel; 'Tussenwerpsel' (ἰδού, οὐαί) → Tussenwerpsel;
-    'IntPrtcl' (μήτι, οὐχί) en 'Indec' (ἄν) → Partikel."""
+    Vangt ook de afwijkende koppen in de NT-data op, die anders een onwinbare '—' gaven. Op
+    verzoek vallen die allemaal onder 'Partikel': 'Hebrew Word' (ἀμήν, ἀλληλουϊά),
+    'Tussenwerpsel' (ἰδού, οὐαί), 'IntPrtcl' (μήτι, οὐχί) en 'Indec' (ἄν)."""
     info = info or ""
     for w in _ONTLEED_WS_OPTS:
         if w in info:
             return w
-    if "Hebrew Word" in info:
-        return "Tussenwerpsel"
-    if "IntPrtcl" in info or "Indec" in info:
+    if any(k in info for k in ("Hebrew Word", "Tussenwerpsel", "IntPrtcl", "Indec")):
         return "Partikel"
     return "—"
 
@@ -1171,6 +1169,33 @@ def bijbel_boek_index(_bijbel_db):
         for c in parsed[b]:
             parsed[b][c].sort(key=lambda x: x[0])
     return parsed
+
+@st.cache_data(show_spinner=False)
+def bijbel_vorm_index(_bijbel_db):
+    """Index: genormaliseerde Griekse vorm → lijst van unieke ontledingen die die vorm in het NT
+    kan zijn. Elk item: (grieks-zoals-geschreven, parsing_info, strong, voorbeeld-ref, aantal keer).
+    Voor de Zoeken-functie: typ een vorm en zie meteen alle mogelijke ontledingen."""
+    idx = {}
+    for ref, zin in (_bijbel_db or {}).items():
+        for w in zin:
+            g = str(w.get('grieks', '') or '')
+            key = normaliseer_accent(g)
+            if not key:
+                continue
+            sub = idx.setdefault(key, {})
+            pk = (w.get('parsing_info', '') or '', str(w.get('strong', '') or ''))
+            if pk in sub:
+                _g, _r, _n = sub[pk]
+                sub[pk] = (_g, _r, _n + 1)
+            else:
+                sub[pk] = (g, ref, 1)
+    # per vorm omzetten naar een lijst, meest voorkomende ontleding eerst
+    uit = {}
+    for key, sub in idx.items():
+        rijen = [(g, pi, strong, ref, n) for (pi, strong), (g, ref, n) in sub.items()]
+        rijen.sort(key=lambda r: r[4], reverse=True)
+        uit[key] = rijen
+    return uit
 
 @st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
@@ -6849,17 +6874,67 @@ def main():
         # ==========================================
         with menu[10]:
             st.subheader("🔎 Ontleden")
-            _ONTL_MODI = ["📖 Zin ontleden", "🔤 Losse woorden ontleden", "📜 Hele tekst ontleden"]
+            _ONTL_MODI = ["📖 Zin ontleden", "🔤 Losse woorden ontleden", "📜 Hele tekst ontleden", "🔍 Zoeken"]
             _ontl_modus = _pref_keuze(st.radio, "Wat wil je ontleden?", _ONTL_MODI, 'ontl_modus', horizontal=True)
             if _ontl_modus.startswith("📖"):
                 st.caption("Ontleed een Bijbelvers in vijf rondes — net als op het tentamen: **1)** woordsoort van elk woord, **2)** naamwoorden ontleden, **3)** werkwoorden ontleden, **4)** woord voor woord vertalen, **5)** de hele zin. De zin kleurt mee met de naamvallen (Nom · Gen · Dat · Acc · Voc).")
             elif _ontl_modus.startswith("🔤"):
                 st.caption("Losse woorden uit de lessen die jij kiest, steeds in een echt Bijbelvers. Je ontleedt het woord volledig en vertaalt het — met de samentrekkingsregels en het juiste rijtje als hulp.")
+            elif _ontl_modus.startswith("🔍"):
+                st.caption("Typ een Griekse vorm (mét of zonder accenten, of in gewone letters) en zie álle ontledingen die die vorm in het Nieuwe Testament kan hebben — met basiswoord, betekenis, opbouw en het juiste rijtje.")
             else:
                 st.caption("Werk een hele passage door: kies boek, hoofdstuk en verzen, en ontleed vers na vers met dezelfde vijf rondes.")
             _obdb = laad_bijbel_db()
             if not _obdb:
                 st.info("De Bijbeltekst-database is niet beschikbaar.")
+
+            # ==================================================================
+            # SUB-MODUS: ZOEKEN (opzoeken welke ontledingen een vorm kan hebben)
+            # ==================================================================
+            elif _ontl_modus.startswith("🔍"):
+                with st.form("ontl_zoek_form"):
+                    _zq = st.text_input("Zoek een Griekse vorm:", key="ontl_zoek_in",
+                                        placeholder="bv. λόγον, ἔλυσεν, of logon / elusen",
+                                        help="Latijnse letters worden omgezet naar Grieks (logos → λόγος, q=θ, c=ξ, w=ω, h=η, y=ψ). Accenten hoef je niet in te typen.")
+                    _zsub = st.form_submit_button("🔍 Zoek", type="primary")
+                if _zsub and (_zq or "").strip():
+                    st.session_state.ontl_zoek_term = _zq.strip()
+
+                _term = st.session_state.get('ontl_zoek_term', '')
+                if _term:
+                    _vidx = bijbel_vorm_index(_obdb)
+                    _key = normaliseer_accent(naar_grieks_transliteratie(_term))
+                    _res = _vidx.get(_key) or _vidx.get(normaliseer_accent(_term)) or []
+                    _vocab = {str(v.get('strong')): v for v in (st.session_state.get('data') or []) if v.get('strong')}
+                    if not _res:
+                        st.warning(f"Geen vorm **{_term}** gevonden in het Nieuwe Testament. Controleer de spelling "
+                                   "(je mag ook in gewone letters typen, bv. *anthrwpos*).")
+                    else:
+                        _toon = _res[0][0]
+                        st.markdown(f"<div style='font-size:40px;font-weight:800;color:#33ccff;text-align:center;padding:4px 0'>{_toon}</div>",
+                                    unsafe_allow_html=True)
+                        _mv = "vorm" if len(_res) == 1 else "mogelijke ontledingen"
+                        st.caption(f"**{len(_res)}** {_mv} in het NT — meest voorkomende bovenaan.")
+                        for _zi, (_g, _pi, _strong, _ref, _n) in enumerate(_res):
+                            _bw = _vocab.get(str(_strong))
+                            _lemma = str(_bw.get('grieks', '')) if _bw else ""
+                            _ginfo = str(_bw.get('grieks_info', '') or _lemma) if _bw else ""
+                            _bet = str(_bw.get('nederlands', '')) if _bw else ""
+                            _ws = _woordsoort_van(_pi)
+                            with st.container():
+                                st.markdown(f"#### {_zi + 1}. {_ws if _ws != '—' else 'Vorm'} — {_pi or '(geen ontleding)'}")
+                                _regelinfo = []
+                                if _lemma:
+                                    _regelinfo.append(f"🔑 Basiswoord: **{_ginfo or _lemma}**")
+                                if _bet:
+                                    _regelinfo.append(f"betekenis: *{_bet}*")
+                                _regelinfo.append(f"komt **{_n}×** voor · bv. {_ref}")
+                                st.caption(" · ".join(_regelinfo))
+                                toon_opbouw_hulp(_g, _lemma, _pi, _ginfo, sleutel=f"zoek_{_zi}")
+                                toon_rijtje_hulp(_pi, _lemma, _ginfo, sleutel=f"zoek_{_zi}")
+                                st.write("")
+                else:
+                    st.info("Typ hierboven een woord en klik op **🔍 Zoek**.")
 
             # ==================================================================
             # SUB-MODUS: LOSSE WOORDEN ONTLEDEN
@@ -6907,11 +6982,35 @@ def main():
                 _wsteun = _wd4.toggle("💡 Hulp", value=bool(_wprefs.get('ontlw_steun', True)), key="ontlw_steun_t")
                 _wprefs['ontlw_steun'] = _wsteun
 
+                # Werkwoordsvorm-filter: alleen zichtbaar als je werkwoorden oefent. Zo kun je gericht
+                # bv. alleen participia of alleen de aoristus oefenen.
+                _WIJZEN = ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium"]
+                _TIJDEN = ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"]
+                _wwijs, _wtijd = [], []
+                if "Werkwoord" in _wsoorten:
+                    with st.expander("⚙️ Alleen bepaalde werkwoordsvormen (optioneel)", expanded=False):
+                        st.caption("Laat leeg = alle vormen. Vink aan om je alleen op bepaalde wijzen of tijden te richten.")
+                        _wvw = [x for x in (_wprefs.get('ontlw_wijs') or []) if x in _WIJZEN]
+                        _wvt = [x for x in (_wprefs.get('ontlw_tijd') or []) if x in _TIJDEN]
+                        _wwijs = st.multiselect("Wijs:", _WIJZEN, default=_wvw, key="ontlw_wijs_ms")
+                        _wtijd = st.multiselect("Tijd:", _TIJDEN, default=_wvt, key="ontlw_tijd_ms")
+                        _wprefs['ontlw_wijs'] = list(_wwijs)
+                        _wprefs['ontlw_tijd'] = list(_wtijd)
+
                 def _wsoort_match(info):
-                    """Hoort deze vorm bij een van de gekozen woordsoorten? (op basis van parsing_info)"""
+                    """Hoort deze vorm bij een van de gekozen woordsoorten? En, bij een werkwoord, ook
+                    bij de gekozen wijs/tijd (indien daarop gefilterd)?"""
+                    info = info or ""
                     _merk = {"Zelfst. nw.": "Zelfst.", "Bijv. nw.": "Bijv.", "Voornaamwoord": "Voornaamwoord",
                              "Lidwoord": "Lidwoord", "Werkwoord": "Werkwoord"}
-                    return any(_merk[s] in (info or "") for s in _wsoorten)
+                    if not any(_merk[s] in info for s in _wsoorten):
+                        return False
+                    if "Werkwoord" in info:
+                        if _wwijs and not any(w in info for w in _wwijs):
+                            return False
+                        if _wtijd and not any(t in info for t in _wtijd):
+                            return False
+                    return True
 
                 def _nieuw_ontleed_woord():
                     """Zoekt een woord uit de gekozen lessen op in een echt Bijbelvers."""
@@ -6958,8 +7057,9 @@ def main():
                                 _rc = (st.session_state.get('ontlw_gezien') or []) + [str(v.get('strong'))]
                                 st.session_state.ontlw_gezien = _rc[-30:]
                                 return
+                    _extra = " Je werkwoordsvorm-filter (wijs/tijd) is misschien te smal." if (_wwijs or _wtijd) else ""
                     st.session_state.ontlw_geen = ("Geen Bijbelvers gevonden met een passende vorm van deze woorden "
-                                                   "(let op het niveau en het woordsoort-filter).")
+                                                   "(let op het niveau en de filters)." + _extra)
                     st.session_state.ontlw_ref = None
 
                 if _wd4.button("🎲 Nieuw woord", key="ontlw_nieuw", type="primary"):
