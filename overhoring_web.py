@@ -2566,25 +2566,37 @@ def laad_gebruiker_data(naam):
             if dfu is not None and not getattr(dfu, 'empty', True):
                 if 'gebruikersnaam' in dfu.columns:
                     _r = dfu[dfu['gebruikersnaam'] == naam]
-                    # GEEN terugval op de eerste rij: staat er een andere naam in, dan is dit
-                    # niet jouw data en zou opslaan die van iemand anders overschrijven.
+                    if _r.empty:
+                        # Verdraagzame vergelijking: dit tabblad is al van jou alleen (u_<naam>),
+                        # dus kleine verschillen in hoofdletters of spaties mogen niet betekenen
+                        # dat je niet meer bij je eigen voortgang kunt. Een écht andere naam wél.
+                        _doel = str(naam).strip().lower()
+                        _r = dfu[dfu['gebruikersnaam'].astype(str).str.strip().str.lower() == _doel]
                     row = _r.iloc[0] if not _r.empty else None
                 else:
                     row = dfu.iloc[0]
-        except Exception as _e:
-            # Onderscheid tussen "tabblad bestaat nog niet" (normaal bij een nieuwe gebruiker) en
-            # een échte leesfout (quota/timeout). Bij dat laatste NIET doorgaan als 'nieuwe gebruiker',
-            # want dan zou de eerstvolgende opslag je bestaande voortgang met leegte overschrijven.
-            _naam_fout = type(_e).__name__.lower()
-            if 'worksheetnotfound' not in _naam_fout and 'notfound' not in _naam_fout:
-                st.session_state.laad_fout = ("De verbinding met de cloud lukte niet. Probeer het zo nog eens — "
-                                              "je voortgang staat veilig opgeslagen en wordt niet overschreven.")
-                return None
+            _eigen_read_ok = True
+        except Exception:
+            # Hier weten we nog NIET of het tabblad simpelweg niet bestaat (normaal bij een nieuwe
+            # gebruiker) of dat de verbinding hapert. Dat verschil is cruciaal: bij een leesfout
+            # doorgaan als 'nieuwe gebruiker' zou je bestaande voortgang met leegte overschrijven.
+            # We stellen de beslissing uit tot na de leesactie hieronder, die als test dient.
             row = None
-        # 2) Terugval: oud gedeeld werkblad. Gevonden → gebruiken én migreren naar de eigen tab.
+            _eigen_read_ok = False
+
+        # 2) Terugval: oud gedeeld werkblad. Deze leesactie is tegelijk de proef of de verbinding
+        #    het überhaupt doet. Lukt die wél, dan bestond je eigen tabblad gewoon nog niet.
         if row is None:
-            df = conn.read(ttl=0)
-            if 'gebruikersnaam' in df.columns:
+            try:
+                df = conn.read(ttl=0)
+            except Exception:
+                if not _eigen_read_ok:
+                    # Beide leesacties mislukt → het is de verbinding, niet een ontbrekend tabblad.
+                    st.session_state.laad_fout = ("De verbinding met de cloud lukte even niet. Je voortgang is "
+                                                  "NIET gewijzigd — wacht een halve minuut en log opnieuw in.")
+                    return None
+                df = None
+            if df is not None and 'gebruikersnaam' in getattr(df, 'columns', []):
                 _r = df[df['gebruikersnaam'] == naam]
                 if not _r.empty:
                     row = _r.iloc[0]; migreren = True
@@ -2598,21 +2610,38 @@ def laad_gebruiker_data(naam):
             def reassemble_chunks(prefix, count_col):
                 """Zet de in stukken opgeslagen JSON weer in elkaar.
 
-                Belangrijk: als er wél chunks zijn maar het weer samenstellen mislukt, geven we
-                GEEN leeg dict terug. Dat zou de app laten denken dat je nog niets hebt gedaan,
-                waarna de eerstvolgende opslag die leegte definitief maakt. Liever de laadfout
-                laten zien en de sessie afbreken."""
-                if count_col in row and not pd.isna(row[count_col]):
+                Een leeg resultaat is een geldige uitkomst: categorieën waarin je nog niets hebt
+                gedaan staan als '{}' opgeslagen, en lege cellen komen als NaN terug. Alleen als er
+                écht inhoud staat die niet te lezen is, breken we af (dan zou doorgaan met een lege
+                staat je voortgang bij de eerstvolgende opslag overschrijven)."""
+                if count_col not in row or pd.isna(row[count_col]):
+                    return veilige_json_load(row.get(prefix, '{}'))
+                try:
                     count = int(float(row[count_col]))   # cel kan als '3.0' terugkomen
-                    ontbrekend = [i for i in range(count) if f"{prefix}_{i}" not in row]
-                    if ontbrekend:
-                        raise ValueError(f"chunk-kolom(men) ontbreken voor {prefix}: {ontbrekend}")
-                    s = "".join([str(row[f"{prefix}_{i}"]) for i in range(count)])
-                    uit = veilige_json_load(s)
-                    if count > 0 and s.strip() and not uit:
-                        raise ValueError(f"kon {prefix} niet ontcijferen ({len(s)} tekens)")
-                    return uit
-                return veilige_json_load(row.get(prefix, '{}'))
+                except (TypeError, ValueError):
+                    count = 0
+                delen = []
+                for i in range(count):
+                    kol = f"{prefix}_{i}"
+                    if kol not in row:
+                        continue
+                    cel = row[kol]
+                    try:
+                        if cel is None or pd.isna(cel):
+                            continue
+                    except (TypeError, ValueError):
+                        pass
+                    tekst = str(cel)
+                    if tekst.strip().lower() == 'nan':
+                        continue
+                    delen.append(tekst)
+                s = "".join(delen).strip()
+                if len(s) <= 2:
+                    return {}            # leeg, '{}' of '[]' → gewoon nog niets gedaan
+                uit = veilige_json_load(s)
+                if not uit:
+                    raise ValueError(f"kon {prefix} niet ontcijferen ({len(s)} tekens)")
+                return uit
 
             st.session_state.vocab_stats = reassemble_chunks('vocab_stats', 'v_chunks')
             st.session_state.gram_stats = reassemble_chunks('gram_stats', 'g_chunks')
