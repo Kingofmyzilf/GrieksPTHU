@@ -694,6 +694,19 @@ def stamtijd_opbouw_regels(vorm, tijd_diathese, basis):
         regels.append("Deze vorm volgt geen aparte klankwet — stam + uitgang, gewoon inprenten.")
     return regels
 
+def toon_vertaalhulp(parsing_info, sleutel="", uitgeklapt=False):
+    """Vertaalregels voor déze vorm — ALTIJD achter een uitklapmenu.
+
+    De tekst noemt de naamval/tijd bij naam ('Genitivus — bijvoeglijke bepaling …') en zou het
+    antwoord dus weggeven als hij open zou staan terwijl je die vraag nog moet beantwoorden."""
+    regels = _ontleed_vertaalhulp(parsing_info)
+    if not regels:
+        return False
+    with st.expander("💡 Hoe vertaal je deze vorm? (verklapt de ontleding)", expanded=uitgeklapt):
+        for r in regels:
+            st.markdown("- " + r)
+    return True
+
 def toon_rijtje_hulp(parsing_info, lemma="", grieks_info="", sleutel="", uitgeklapt=False):
     """Spiek-expander met de paradigma-tabel(len) die bij deze vorm horen, met het exacte vakje
     gemarkeerd. Geeft True terug als er iets getoond is."""
@@ -1023,6 +1036,30 @@ def _pref_bool(widget_fn, label, pref_key, default=False, **kw):
     val = widget_fn(label, value=bool(p.get(pref_key, default)), **kw)
     p[pref_key] = bool(val)
     return val
+
+@st.cache_data(show_spinner=False)
+def bijbel_boek_index(_bijbel_db):
+    """boek → hoofdstuk → [(volgnr, vers, referentie)] uit de vers-referenties.
+
+    Gecached: dit ontleedt ~8.000 referenties met regex. Streamlit rendert álle tabbladen bij
+    elke rerun, dus zonder cache draaide dit bij iedere klik ergens in de app opnieuw."""
+    parsed = {}
+    for ref in (_bijbel_db or {}).keys():
+        match = re.match(r"^(.+)\s+(\d+):(\d+[a-zA-Z]?)$", ref)
+        if match:
+            b, c, v = match.group(1), match.group(2), match.group(3)
+        else:
+            parts = ref.split(" ")
+            if len(parts) >= 2 and ":" in parts[-1]:
+                cv = parts[-1].split(":"); b, c, v = " ".join(parts[:-1]), cv[0], cv[1]
+            else:
+                b, c, v = ref, "1", "1"
+        _cijfers = re.sub(r"\D", "", v)
+        parsed.setdefault(b, {}).setdefault(c, []).append((int(_cijfers) if _cijfers.isdigit() else 0, v, ref))
+    for b in parsed:
+        for c in parsed[b]:
+            parsed[b][c].sort(key=lambda x: x[0])
+    return parsed
 
 @st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
@@ -1673,44 +1710,6 @@ def _sessie_noteer_fout(item, antwoord):
     except Exception:
         pass
 
-def boek_later(item, streak_delta=0, goed=0, fout=0):
-    """Zet een punten-mutatie in de wachtrij in plaats van hem meteen door te voeren.
-
-    Zo verandert je streak niet zichtbaar tijdens het oefenen — je ziet aan het eind van de
-    sessie in één keer hoeveel goed en fout ging, en dán pas gaat het de teller in. Vangnet:
-    de wachtrij wordt óók verwerkt bij stoppen, bij het starten van een nieuwe sessie en
-    automatisch zodra er veel in staat, zodat er nooit veel verloren kan gaan."""
-    g = item.get('grieks', '')
-    if not g:
-        return
-    b = st.session_state.get('boek_wachtrij')
-    if not isinstance(b, dict):
-        b = {}; st.session_state.boek_wachtrij = b
-    e = b.setdefault(g, {'streak': 0, 'goed': 0, 'fout': 0})
-    e['streak'] += int(streak_delta); e['goed'] += int(goed); e['fout'] += int(fout)
-    if len(b) >= 15:                    # vangnet tegen verlies bij een crash/afsluiten
-        boek_wachtrij_verwerken(opslaan=True)
-
-def boek_wachtrij_verwerken(opslaan=True):
-    """Verwerkt alle uitgestelde punten in één keer en leegt de wachtrij."""
-    b = st.session_state.get('boek_wachtrij')
-    if not isinstance(b, dict) or not b:
-        return 0
-    idx = {w.get('grieks'): w for w in (st.session_state.get('data') or []) if isinstance(w, dict)}
-    aantal = 0
-    for g, e in b.items():
-        w = idx.get(g)
-        if w is None:
-            continue
-        w['streak'] = max(0, int(w.get('streak', 0)) + int(e.get('streak', 0)))
-        w['score_goed'] = int(w.get('score_goed', 0)) + int(e.get('goed', 0))
-        w['score_fout'] = int(w.get('score_fout', 0)) + int(e.get('fout', 0))
-        aantal += 1
-    st.session_state.boek_wachtrij = {}
-    if opslaan:
-        trigger_save(forceer=True)
-    return aantal
-
 def _sessie_reset_samenvatting():
     """Leegt de sessie-accumulatoren voor de eindsamenvatting."""
     st.session_state.sessie_goed = {}
@@ -2307,6 +2306,36 @@ def bouw_actief_levels(actief_db):
 
 ACTIEF_BEHEERST = 16   # streak waarop een cel als 'beheerst' geldt (één bron van waarheid)
 
+def migreer_actief_ids(actief_db, stats):
+    """Verhuist bestaande voortgang naar de nieuwe, unieke cel-ids.
+
+    Vroeger viel een Griekse paradigmanaam ('-η (κώμη)') uit het id weg, waardoor κώμη, θύρα en
+    ἄκανθα exact dezelfde cel-ids deelden en hun streaks door elkaar liepen. Elke cel heeft nu een
+    eigen id; het vorige id staat in de database als 'oud_id'.
+
+    Waar één oud id door meerdere paradigma's werd gedeeld, gaat de voortgang naar het EERSTE
+    paradigma. De andere beginnen bewust op nul: die heb je nooit apart geoefend, en juist daarom
+    wil je ze nu wél los kunnen oefenen."""
+    if not isinstance(stats, dict) or stats.get('_ids_v2'):
+        return 0
+    doel = {}   # oud_id -> eerste nieuwe id (in databasevolgorde)
+    for _cats in (actief_db or {}).values():
+        for _paras in _cats.values():
+            for _cellen in _paras.values():
+                for _c in _cellen:
+                    _oud = _c.get('oud_id')
+                    if _oud and _oud not in doel:
+                        doel[_oud] = _c.get('id')
+    verhuisd = 0
+    for oud, nieuw in doel.items():
+        if oud in stats and nieuw and nieuw not in stats:
+            stats[nieuw] = stats[oud]
+            verhuisd += 1
+    for oud in doel:
+        stats.pop(oud, None)
+    stats['_ids_v2'] = True
+    return verhuisd
+
 def actief_level_status(levels, actief_stats, drempel=ACTIEF_BEHEERST):
     status = []
     vorige = True
@@ -2598,6 +2627,12 @@ def laad_gebruiker_data(naam):
             st.session_state.actief_stats = reassemble_chunks('actief_stats', 'af_chunks')
             st.session_state.ontleed_stats = reassemble_chunks('ontleed_stats', 'on_chunks')
 
+        # Eenmalige verhuizing naar de nieuwe, unieke cel-ids van Actief Beheersen.
+        try:
+            migreer_actief_ids(laad_actief_db(), st.session_state.actief_stats)
+        except Exception:
+            pass   # nooit het inloggen laten stranden op een migratie
+
         for r in basis:
             stats = st.session_state.vocab_stats.get(r['grieks'], {})
             if 'm4' in stats or 'm1' in stats:
@@ -2864,16 +2899,13 @@ def laad_volgend_woord():
                 st.session_state.huidig_item = None; st.session_state.huidige_sub_modus = None
                 st.session_state.fouten_huidig_woord = 0
                 st.session_state.huidige_opties = []; st.session_state.huidige_vorm_data = None
-                boek_wachtrij_verwerken(opslaan=False)
                 trigger_save(forceer=True)
                 return
         # sessie liep leeg: markeer als 'net klaar' als er daadwerkelijk geoefend was
         if st.session_state.get('huidig_item') is not None:
             st.session_state.sessie_net_klaar = True
         st.session_state.huidig_item = None; st.session_state.huidige_sub_modus = None
-        # Einde sessie: nu pas alle punten van deze sessie in één keer bijschrijven.
-        boek_wachtrij_verwerken(opslaan=False)
-        trigger_save(forceer=True)
+        trigger_save(forceer=True)  # einde sessie: laatste antwoorden zeker wegschrijven
     st.session_state.fouten_huidig_woord = 0
     st.session_state.huidige_opties = []; st.session_state.huidige_vorm_data = None
 
@@ -3161,8 +3193,7 @@ def main():
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         # Vangnet: punten van een eventueel afgebroken vorige sessie alsnog boeken
-                        boek_wachtrij_verwerken(opslaan=False)
-                        # Eindsamenvatting-accumulatoren voor de nieuwe sessie leegmaken
+                                # Eindsamenvatting-accumulatoren voor de nieuwe sessie leegmaken
                         _sessie_reset_samenvatting()
                         st.session_state.sessie_net_klaar = False
                         st.session_state._ballonnen_getoond = False
@@ -3524,8 +3555,9 @@ def main():
                                 if vertaling_correct and vorm_correct:
                                     _oude_streak = int(item.get('streak', 0))
                                     if st.session_state.fouten_huidig_woord == 0 and item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
-                                        _pt = 3 if huidige_sub_modus == '4' else ((2 if st.session_state.mix_combo.get(item['grieks'], False) else 1) if huidige_sub_modus == '3_typ' else 0)
-                                        boek_later(item, streak_delta=_pt, goed=1)
+                                        item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                        if huidige_sub_modus == '4': item['streak'] = int(item.get('streak', 0)) + 3
+                                        elif huidige_sub_modus == '3_typ': item['streak'] = int(item.get('streak', 0)) + (2 if st.session_state.mix_combo.get(item['grieks'], False) else 1)
                                         dagdoel_plus('woorden')
                                     vier_fase_overgang(_oude_streak, int(item.get('streak', 0)), item.get('grieks', ''))
                                     if st.session_state.fouten_huidig_woord == 0:
@@ -3533,7 +3565,7 @@ def main():
                                     _sessie_noteer_goed(item)
 
                                     success_msg = f"✓ Goed! **{huidige_vorm}** = {correct_antw}"
-                                    if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
+                                    if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten: je zag het antwoord al eerder bij dit woord)*"
                                     elif zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
                                     
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
@@ -3542,7 +3574,7 @@ def main():
                                 elif vertaling_correct and not vorm_correct:
                                     # Genuanceerde opvang: vertaling wél snappen, grammaticale duiding afwijken
                                     st.session_state.fouten_huidig_woord += 1
-                                    boek_later(item, fout=1)
+                                    item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                     st.session_state.feedback = {
                                         "type": "warning", 
                                         "msg": f"Inhoudelijk juist (**{inp}**)! Je grammaticale ontleding (*{p_vorm if p_vorm else 'leeg'}*) afweek echter van de officiële duiding: **{huidige_parsing}**."
@@ -3561,12 +3593,13 @@ def main():
                                     _verwar_note = bouw_verwar_melding(item, inp, st.session_state.data, laad_verwarparen_db())
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
-                                        boek_later(item, streak_delta=-2, fout=1); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
                                         st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg_volledig}{_verwar_note}"}
                                         trigger_save(); laad_volgend_woord()
                                     else:
-                                        boek_later(item, fout=1)
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         st.session_state.feedback = {"type": "warning", "msg": f"Bijna! Bekijk de hint.{_verwar_note}"}
                                     st.rerun()
                     else:
@@ -3668,8 +3701,9 @@ def main():
                                 if optie == correct_optie:
                                     _oude_streak_mc = int(item.get('streak', 0))
                                     if st.session_state.fouten_huidig_woord == 0 and item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
-                                        if huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
-                                        boek_later(item, streak_delta=(1 if huidige_sub_modus == '2' else 0), goed=1)
+                                        item['score_goed'] = int(item.get('score_goed', 0)) + 1
+                                        if huidige_sub_modus == '2': item['streak'] = int(item.get('streak', 0)) + 1
+                                        elif huidige_sub_modus == '3_mc': st.session_state.mix_combo[item['grieks']] = True
                                         dagdoel_plus('woorden')
                                     vier_fase_overgang(_oude_streak_mc, int(item.get('streak', 0)), item.get('grieks', ''))
                                     if st.session_state.fouten_huidig_woord == 0:
@@ -3677,7 +3711,7 @@ def main():
                                     _sessie_noteer_goed(item)
 
                                     success_msg = f"✓ Juist! {fout_msg_volledig}"
-                                    if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
+                                    if item['grieks'] in st.session_state.gestrafte_woorden_vocab: success_msg += " *(Geen streak-punten: je zag het antwoord al eerder bij dit woord)*"
                                     elif zin_data: success_msg += f"\n\n📖 **{zin_data['ref']}**: {zin_data['grieks_puur']}\n\n🇬🇧 *{zin_data['engels_puur']}*"
                                         
                                     st.session_state.feedback = {"type": "success", "msg": success_msg}
@@ -3706,18 +3740,19 @@ def main():
                                             _verwar_note += _extra
 
                                     if huidige_streak >= 16 or st.session_state.fouten_huidig_woord >= 2:
-                                        boek_later(item, streak_delta=-2, fout=1); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
+                                        item['streak'] = max(0, huidige_streak - 2); st.session_state.gestrafte_woorden_vocab.add(item['grieks'])
                                         st.session_state.sessie_lijst.insert(0, (item, 'overtik')); st.session_state.sessie_lijst.append((item, huidige_sub_modus))
                                         st.session_state.feedback = {"type": "error", "msg": f"✗ Fout. Je koos '{optie}'. Het was: {fout_msg_volledig}{_verwar_note}"}
                                         trigger_save(); laad_volgend_woord()
                                     else:
-                                        boek_later(item, fout=1)
+                                        item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                         st.session_state.feedback = {"type": "warning", "msg": f"Onjuist. Bekijk de hint!{_verwar_note}"}
                                     st.rerun()
 
                     if huidige_sub_modus in ['2', '3_mc', '4', '3_typ']:
                         if st.button("🤔 Ik weet het niet — toon het antwoord", key=f"weetniet_{item.get('grieks')}"):
-                            st.session_state.feedback = {"type": "info", "msg": f"💡 **{item.get('grieks')}** = {correct_antw}. Geen punten afgetrokken — je krijgt dit woord straks nog een keer."}
+                            st.session_state.feedback = {"type": "info", "msg": f"💡 **{item.get('grieks')}** = {correct_antw}. Geen aftrek, maar ook geen streak-punten meer voor dit woord — je krijgt hem straks nog een keer, puur om hem echt op te halen."}
                             # Wel markeren als 'gestraft': het antwoord is getoond, dus als de kaart
                             # straks terugkomt levert hij geen volledige streak-punten meer op.
                             st.session_state.gestrafte_woorden_vocab.add(item.get('grieks'))
@@ -3728,10 +3763,7 @@ def main():
                         st.write("---")
                         _resterend = len(st.session_state.get('sessie_lijst') or [])
                         fase = 'Nieuw' if int(item.get('streak', 0))==0 else ('In Training' if int(item.get('streak', 0))<=15 else ('Beheerst' if int(item.get('streak', 0))<=29 else 'Mastery'))
-                        # Bewust géén live streak/score meer: die worden pas aan het eind van de
-                        # sessie in één keer bijgeschreven, zodat je er tijdens het oefenen niet
-                        # steeds mee bezig bent. De stand zie je op het tabblad 📊 Voortgang.
-                        st.caption(f"🔢 Nog {_resterend} te gaan | Fase: {fase} | Laatst geoefend: {item.get('laatst_geoefend', 'Nooit')}")
+                        st.caption(f"🔢 Nog {_resterend} te gaan | Fase: {fase} | Streak: {item.get('streak', 0)} | Goed/Fout: {item.get('score_goed', 0)}/{item.get('score_fout', 0)} | Laatst: {item.get('laatst_geoefend', 'Nooit')}")
 
                 elif st.session_state.get('sessie_net_klaar'):
                     if not st.session_state.get('_ballonnen_getoond'):
@@ -3744,9 +3776,6 @@ def main():
                     _s_kand = st.session_state.get('sessie_verwar_kandidaten') or {}
                     _fout_griekse = set(_s_fout.keys())
                     _goed_only = {g: n for g, n in _s_goed.items() if g not in _fout_griekse}
-
-                    st.caption(f"📥 **{len(_goed_only)} goed** en **{len(_s_fout)} fout** zijn zojuist in één keer "
-                               f"bijgeschreven bij je voortgang. Je nieuwe standen zie je op het tabblad **📊 Voortgang**.")
 
                     _c_ok, _c_no = st.columns(2)
                     with _c_ok:
@@ -5649,7 +5678,7 @@ def main():
                                             st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
                                         dagdoel_plus('struct')
                                         success_msg = f"✓ Goed! {fout_msg_volledig}"
-                                        if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
+                                        if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten: je zag het antwoord al eerder bij dit woord)*"
                                         st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord(); st.rerun()
                                     else:
                                         st.session_state.struct_fouten += 1; huidige_streak = st.session_state.struct_stats[vid]['streak']
@@ -5725,7 +5754,7 @@ def main():
                                             st.session_state.struct_stats[vid]['g'] += 1; st.session_state.struct_stats[vid]['streak'] += 1
                                         dagdoel_plus('struct')
                                         success_msg = f"✓ Goed! {fout_msg_volledig}"
-                                        if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten wegens eerdere fout)*"
+                                        if vid in st.session_state.gestrafte_woorden_struct: success_msg += " *(Geen streak-punten: je zag het antwoord al eerder bij dit woord)*"
                                         st.session_state.struct_feedback = {"type": "success", "msg": success_msg}; trigger_save(); laad_volgend_struct_woord()
                                     else:
                                         st.session_state.struct_fouten += 1; huidige_streak = st.session_state.struct_stats[vid]['streak']
@@ -5780,18 +5809,7 @@ def main():
                 )
                 
                 if lees_modus == "Kies specifiek(e) vers(zen)":
-                    parsed_db = {}
-                    for ref in bijbel_db.keys():
-                        match = re.match(r"^(.+)\s+(\d+):(\d+[a-zA-Z]?)$", ref)
-                        if match: b, c, v = match.group(1), match.group(2), match.group(3)
-                        else:
-                            parts = ref.split(" ")
-                            if len(parts) >= 2 and ":" in parts[-1]: cv = parts[-1].split(":"); b, c, v = " ".join(parts[:-1]), cv[0], cv[1]
-                            else: b, c, v = ref, "1", "1"
-                        if b not in parsed_db: parsed_db[b] = {}
-                        if c not in parsed_db[b]: parsed_db[b][c] = []
-                        v_sort = int(re.sub(r"\D", "", v)) if re.sub(r"\D", "", v).isdigit() else 0
-                        parsed_db[b][c].append((v_sort, v, ref))
+                    parsed_db = bijbel_boek_index(bijbel_db)   # gecached: scheelt ~8.000 regex-matches per rerun
                     
                     col_b, col_c, col_v = st.columns(3)
                     with col_b: gekozen_boek = st.selectbox("Boek:", list(parsed_db.keys()))
@@ -6006,8 +6024,7 @@ def main():
                                                          _lt_ginfo, uitgeklapt=False)
                                         toon_rijtje_hulp(w.get('parsing_info', ''), _lt_lemma, _lt_ginfo,
                                                          sleutel=f"lt_{idx}", uitgeklapt=False)
-                                        for _lt_r in _ontleed_vertaalhulp(w.get('parsing_info', '')):
-                                            st.caption("💡 " + _lt_r)
+                                        toon_vertaalhulp(w.get('parsing_info', ''), sleutel=f"lt_{idx}")
 
                                         if st.button("Controleer Analyse", key=f"chk_{idx}"):
                                             registreer_oefening(basis)
@@ -6902,8 +6919,7 @@ def main():
                         _nieuw_ontleed_woord(); st.rerun()
 
                     if _wsteun:
-                        for _r in _ontleed_vertaalhulp(_winfo):
-                            st.caption("💡 " + _r)
+                        toon_vertaalhulp(_winfo, sleutel="ontlw")
 
                     # --- HULP: het juiste rijtje én de samentrekkingsregels ---
                     if _wsteun:
@@ -7027,14 +7043,7 @@ def main():
                 # --- TEKSTMODUS: kies een passage en werk die vers voor vers af ---
                 if _ontl_modus.startswith("📜"):
                     st.write("---")
-                    _tparsed = {}
-                    for _ref in _obdb.keys():
-                        _m = re.match(r"^(.+)\s+(\d+):(\d+[a-zA-Z]?)$", _ref)
-                        if not _m:
-                            continue
-                        _b, _h, _v = _m.group(1), _m.group(2), _m.group(3)
-                        _tparsed.setdefault(_b, {}).setdefault(_h, []).append(
-                            (int(re.sub(r"\D", "", _v) or 0), _v, _ref))
+                    _tparsed = bijbel_boek_index(_obdb)   # gecached
                     if _tparsed:
                         _tb, _th, _tv = st.columns([1.2, 0.8, 2])
                         _boek = _tb.selectbox("Boek:", list(_tparsed.keys()), key="ontl_t_boek")
@@ -7249,8 +7258,7 @@ def main():
                         st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         st.caption(f"Vorm: *{_vorm}* — houd rekening met naamval/tijd in je vertaling.")
                         if _osteun:
-                            for _r in _ontleed_vertaalhulp(_info):
-                                st.caption("💡 " + _r)
+                            toon_vertaalhulp(_info, sleutel=f"ontl_vert_{_pos}")
                             _vw0 = next((v for v in (st.session_state.get('data') or [])
                                          if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
                             toon_opbouw_hulp(_w.get('grieks', ''), str(_vw0.get('grieks', '')) if _vw0 else "",
