@@ -844,7 +844,9 @@ def _ontleed_deel_ok(dim, keuze, info):
     info = info or ""
     if not keuze:
         return False
-    if dim in ("woordsoort", "naamval", "tijd", "wijs", "persoon"):
+    if dim == "woordsoort":
+        return keuze == _woordsoort_van(info)   # via de mapping, zodat ἀμήν e.d. ook kloppen
+    if dim in ("naamval", "tijd", "wijs", "persoon"):
         return keuze in info
     if dim == "geslacht":
         return _ONTLEED_GES.get(keuze, keuze) in info
@@ -859,8 +861,9 @@ def _ontleed_deel_ok(dim, keuze, info):
 def _ontleed_deel_correct(dim, info):
     """De correcte waarde voor een dimensie (voor 'Toon antwoord' en het inkleuren)."""
     info = info or ""
+    if dim == "woordsoort":
+        return _woordsoort_van(info)
     tabel = {
-        "woordsoort": ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel"],
         "naamval": ["Nom", "Gen", "Dat", "Acc", "Voc"],
         "tijd": ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"],
         "wijs": ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium"],
@@ -883,7 +886,23 @@ def _ontleed_deel_correct(dim, info):
         return "—"
     return "—"
 
-_ONTLEED_WS_OPTS = ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel"]
+_ONTLEED_WS_OPTS = ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel", "Tussenwerpsel"]
+
+def _woordsoort_van(info):
+    """Canonieke woordsoort uit parsing_info (of '—' als echt onbepaald).
+
+    Vangt ook de afwijkende koppen in de NT-data op, die anders een onwinbare '—' gaven:
+    'Hebrew Word' (ἀμήν, ἀλληλουϊά) → Tussenwerpsel; 'Tussenwerpsel' (ἰδού, οὐαί) → Tussenwerpsel;
+    'IntPrtcl' (μήτι, οὐχί) en 'Indec' (ἄν) → Partikel."""
+    info = info or ""
+    for w in _ONTLEED_WS_OPTS:
+        if w in info:
+            return w
+    if "Hebrew Word" in info:
+        return "Tussenwerpsel"
+    if "IntPrtcl" in info or "Indec" in info:
+        return "Partikel"
+    return "—"
 
 def _ontleed_dims_zonder_ws(info):
     """De ontleed-dimensies zonder de Woordsoort-rij (die wordt in ronde 1 al gedaan)."""
@@ -7134,16 +7153,20 @@ def main():
                         return _ontleed_in_scope(w.get('parsing_info', ''), _niv)
                     znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
                     ww = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) in ('ww', 'ptc') and _tgt(i)]
+                    # Woordsoort-ronde: alleen woorden waarvan we de woordsoort echt kunnen bepalen,
+                    # zodat er nooit een onwinbare vraag ('juist is —') tussen zit.
+                    ws = [i for i in lex if _woordsoort_van(zin[i].get('parsing_info', '')) != "—"]
                     st.session_state.ontl_ref = ref
                     st.session_state.ontl_zin = zin
                     st.session_state.ontl_lex = lex
+                    st.session_state.ontl_ws = ws
                     st.session_state.ontl_znw = znw
                     st.session_state.ontl_ww = ww
                     st.session_state.ontl_pos = 0
                     st.session_state.ontl_kleur = {}
                     # Eerste ronde = eerste niet-overgeslagen ronde met inhoud.
                     _skip = set(st.session_state.get('ontl_skip_fasen') or [])
-                    _lijsten0 = {'woordsoort': lex, 'znw': znw, 'ww': ww, 'vertalen': lex, 'zin': True}
+                    _lijsten0 = {'woordsoort': ws, 'znw': znw, 'ww': ww, 'vertalen': lex, 'zin': True}
                     _start = 'klaar'
                     for _f in ['woordsoort', 'znw', 'ww', 'vertalen', 'zin']:
                         if _f not in _skip and _lijsten0.get(_f):
@@ -7245,14 +7268,14 @@ def main():
                     _fase = st.session_state.ontl_fase
                     _kleur = st.session_state.get('ontl_kleur', {})
                     _pos = st.session_state.ontl_pos
-                    _lijst = {'woordsoort': st.session_state.ontl_lex, 'znw': st.session_state.ontl_znw,
+                    _lijst = {'woordsoort': st.session_state.get('ontl_ws', st.session_state.ontl_lex), 'znw': st.session_state.ontl_znw,
                               'ww': st.session_state.ontl_ww, 'vertalen': st.session_state.ontl_lex}.get(_fase, [])
                     _hidx = _lijst[_pos] if _pos < len(_lijst) else -1
 
                     def _ontl_advance():
                         # naar de volgende ronde met inhoud die niet is overgeslagen ('zin'/'klaar' altijd)
                         volgorde = ['woordsoort', 'znw', 'ww', 'vertalen', 'zin', 'klaar']
-                        lijsten = {'woordsoort': st.session_state.ontl_lex, 'znw': st.session_state.ontl_znw,
+                        lijsten = {'woordsoort': st.session_state.get('ontl_ws', st.session_state.ontl_lex), 'znw': st.session_state.ontl_znw,
                                    'ww': st.session_state.ontl_ww, 'vertalen': st.session_state.ontl_lex}
                         _skip = set(st.session_state.get('ontl_skip_fasen') or [])
                         _i = volgorde.index(st.session_state.ontl_fase)
