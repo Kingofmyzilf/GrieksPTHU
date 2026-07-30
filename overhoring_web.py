@@ -3228,9 +3228,18 @@ def main():
                         "Grote herhaalronde (10 oude woorden)": 10,
                         "Alleen dit level": 0,
                     }
-                    _lp_keuze = st.selectbox("🔁 Oude stof meenemen:", list(_lp_opts.keys()), index=0,
-                                             help="Naast de woorden van dit level worden ook je langst-niet-geoefende woorden meegenomen (oudste datum eerst), zodat je oude stof niet vergeet.")
+                    _lp_c1, _lp_c2 = st.columns(2)
+                    _lp_keuze = _lp_c1.selectbox("🔁 Oude stof meenemen:", list(_lp_opts.keys()), index=0,
+                                                 help="Naast de woorden van dit level worden ook je langst-niet-geoefende woorden meegenomen (oudste datum eerst), zodat je oude stof niet vergeet.")
                     lp_herhaal_aantal = _lp_opts[_lp_keuze]
+                    # Hoeveel gloednieuwe woorden je per sessie aandurft. Woorden waar je al mee
+                    # bezig bent komen áltijd mee — die wil je juist afmaken.
+                    lp_nieuw_max = _lp_c2.slider("🌱 Nieuwe woorden per sessie:", 1, 7,
+                                                 int(_prefs.get('lp_nieuw_max', 3)), key="lp_nieuw_max_s",
+                                                 help="Alleen woorden die je nog nooit hebt gezien. Woorden waar je al aan begonnen bent tellen hier niet in mee.")
+                    _prefs_nu = st.session_state.get('ui_prefs')
+                    if isinstance(_prefs_nu, dict):
+                        _prefs_nu['lp_nieuw_max'] = int(lp_nieuw_max)
 
                     with st.expander("🗺️ Toon het hele pad", expanded=False):
                         for l in _levels:
@@ -3348,14 +3357,27 @@ def main():
                         mag_geen_nieuw = is_lang_geleden or is_knelpunten or is_puur_typen or (not optie_nieuw_mee)
 
                         if is_leerpad:
-                            # In het Leerpad IS het level de lesstof: alle woorden van dit level die nog
-                            # niet 'af' zijn horen erin, ongeacht de instroom-filters. Anders bleef je
-                            # (zoals bij level 38) eindeloos dezelfde herhaalwoorden zien zonder ooit de
-                            # nieuwe woorden van je level te krijgen.
-                            _nog_te_doen = [w for w in doel if int(w.get('streak', 0)) < LEERPAD_DREMPEL]
+                            # In het Leerpad IS het level de lesstof, dus de instroom-filters gelden hier
+                            # niet (anders krijg je nooit de nieuwe woorden van je level). Wél gedoseerd:
+                            # woorden waar je al mee bezig bent komen allemaal mee — die wil je afmaken —
+                            # maar gloednieuwe woorden alleen tot het ingestelde maximum, zodat een
+                            # sessie behapbaar blijft.
+                            def _is_nieuw(w):
+                                return (int(w.get('streak', 0)) == 0 and int(w.get('score_goed', 0)) == 0
+                                        and int(w.get('score_fout', 0)) == 0
+                                        and not str(w.get('laatst_geoefend', '') or '').strip())
+                            _bezig = [w for w in doel if int(w.get('streak', 0)) < LEERPAD_DREMPEL and not _is_nieuw(w)]
+                            _nieuw = [w for w in doel if _is_nieuw(w)]
                             _al_af = [w for w in doel if int(w.get('streak', 0)) >= LEERPAD_DREMPEL]
-                            r_engine.shuffle(_nog_te_doen)
-                            sampled = _nog_te_doen or list(_al_af)   # level helemaal af? dan opfrissen
+                            r_engine.shuffle(_bezig); r_engine.shuffle(_nieuw)
+                            sampled = _bezig + _nieuw[:max(1, int(lp_nieuw_max))]
+                            if not sampled:
+                                sampled = list(_al_af)          # level helemaal af? dan opfrissen
+                            elif _nieuw:
+                                _rest = len(_nieuw) - max(1, int(lp_nieuw_max))
+                                if _rest > 0:
+                                    st.caption(f"🌱 {min(len(_nieuw), int(lp_nieuw_max))} nieuwe woorden deze sessie; "
+                                               f"nog {_rest} nieuw in dit level voor een volgende ronde.")
                         else:
                             sampled = kies_gefaseerde_oefensessie(
                                 doel,
