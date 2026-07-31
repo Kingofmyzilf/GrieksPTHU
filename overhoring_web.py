@@ -1423,6 +1423,30 @@ def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing
         st.caption("Engelse vertaling per plek (BSB). Alle vindplaatsen zie je in de **🔍 Zoeken**-modus.")
     return True
 
+def biblehub_vers_url(ref):
+    """https://biblehub.com/interlinear/<boek>/<hfd>-<vers>.htm voor een referentie als 'Matthew 1:1'."""
+    m = re.match(r"^(.*?)\s+(\d+):(\d+)", str(ref or ""))
+    if not m:
+        return None
+    boek = m.group(1).strip().lower().replace(" ", "_")
+    return f"https://biblehub.com/interlinear/{boek}/{m.group(2)}-{m.group(3)}.htm"
+
+def biblehub_woord_url(strong):
+    """https://biblehub.com/greek/<strong>.htm — de lexicon-pagina van dit woord."""
+    s = re.sub(r"\D", "", str(strong or ""))
+    return f"https://biblehub.com/greek/{s}.htm" if s else None
+
+def biblehub_regel(ref="", strong=""):
+    """Markdown-regel met doorklik-links naar BibleHub (interlinear van het vers + lexicon van het woord)."""
+    delen = []
+    _vu = biblehub_vers_url(ref)
+    if _vu:
+        delen.append(f"[interlinear van dit vers]({_vu})")
+    _wu = biblehub_woord_url(strong)
+    if _wu:
+        delen.append(f"[lexicon van dit woord]({_wu})")
+    return ("🔗 Op BibleHub: " + " · ".join(delen)) if delen else ""
+
 def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None, kleur_aan=True, co_doel_strongs=None):
     if not strong_nr or not bijbel_db: return None
     if co_doel_strongs is None: co_doel_strongs = set()
@@ -7153,6 +7177,9 @@ def main():
                                 if _bet:
                                     _regelinfo.append(f"betekenis: *{_bet}*")
                                 _regelinfo.append(f"komt **{_n}×** voor · bv. {_ref}")
+                                _lu = biblehub_woord_url(_strong)
+                                if _lu:
+                                    _regelinfo.append(f"[📖 BibleHub-lexicon]({_lu})")
                                 st.caption(" · ".join(_regelinfo))
                                 toon_opbouw_hulp(_g, _lemma, _pi, _ginfo, sleutel=f"zoek_{_zi}")
                                 toon_rijtje_hulp(_pi, _lemma, _ginfo, sleutel=f"zoek_{_zi}")
@@ -7176,9 +7203,12 @@ def main():
                                     for _r in _regels_per_tijd(_pt):
                                         st.markdown(_r)
                             with st.expander(f"📍 Alle {len(_vp)} vindplaatsen in het NT"):
+                                st.caption("Klik op een vers voor de interlinear op BibleHub.")
                                 for _ref2, _g2, _pi2, _en2 in _vp[:300]:
                                     _en_s = f" — *{_en2}*" if _en2 else ""
-                                    st.markdown(f"**{_ref2}** · {_g2}{_en_s}")
+                                    _ru = biblehub_vers_url(_ref2)
+                                    _ref_md = f"[{_ref2}]({_ru})" if _ru else f"**{_ref2}**"
+                                    st.markdown(f"{_ref_md} · {_g2}{_en_s}")
                                 if len(_vp) > 300:
                                     st.caption(f"… en nog {len(_vp) - 300} meer (eerste 300 getoond).")
                 else:
@@ -7472,6 +7502,9 @@ def main():
                                          uitgeklapt=bool(st.session_state.get('ontlw_fb')))
                         toon_engels_diagram(_ww.get('grieks', ''), _obdb, sleutel="ontlw",
                                             strong=_ww.get('strong'), parsing_info=_winfo)
+                        _bhw = biblehub_regel(st.session_state.ontlw_ref, _ww.get('strong'))
+                        if _bhw:
+                            st.caption(_bhw)
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
             else:
@@ -7940,6 +7973,9 @@ def main():
                                                  sleutel=f"ontl_{_fase}_{_pos}", uitgeklapt=False)
                             toon_engels_diagram(_hw.get('grieks', ''), _obdb, sleutel=f"ontl_{_fase}_{_pos}",
                                                 strong=_hw.get('strong'), parsing_info=_hinfo)
+                            _bh = biblehub_regel(st.session_state.ontl_ref, _hw.get('strong'))
+                            if _bh:
+                                st.caption(_bh)
                         elif _fase == 'zin':
                             # Bij de hele zin: alle ontlede woorden met hun eigen rijtje op een rij.
                             with st.expander("📋 De rijtjes van de woorden in deze zin", expanded=False):
