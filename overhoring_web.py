@@ -2986,6 +2986,31 @@ def laad_stamtijden_db():
         with open("stamtijden.json", "r", encoding="utf-8") as f: return json.load(f)
     return None
 
+@st.cache_data(show_spinner=False)
+def stamtijd_vormen_set():
+    """Alle (genormaliseerde) stamtijd-vormen uit de database — voor het inkleuren van stamtijden."""
+    s = set()
+    for w in (laad_stamtijden_db() or []):
+        for _td, vorm in (w.get('stamtijden') or {}).items():
+            if _stam_vorm_ok(vorm):
+                s.add(normaliseer_accent(vorm))
+    return s
+
+def ontleed_kleur_stijl(info, grieks, kleur_nv, kleur_vw, kleur_st, stamset):
+    """CSS-stijl voor het inkleuren van een woord (naamval/voegwoord/stamtijd), of None. Wordt
+    NIET op het doelwoord toegepast — dat regelt de aanroeper, zodat de kleur het antwoord niet
+    verraadt."""
+    info = info or ""
+    if kleur_nv:
+        nv = _ontleed_deel_correct('naamval', info)
+        if nv in _ONTLEED_KLEUR:
+            return f"color:{_ONTLEED_KLEUR[nv]};font-weight:600"
+    if kleur_vw and ("Voegwoord" in info or "Voegw" in info):
+        return "background:#ffd700;color:#000;padding:0 3px;border-radius:4px"
+    if kleur_st and stamset and normaliseer_accent(grieks) in stamset:
+        return "color:#d63384;font-weight:600"
+    return None
+
 @st.cache_data
 def laad_structuurwoorden_db():
     if os.path.exists("structuurwoorden.json"):
@@ -7702,6 +7727,15 @@ def main():
                                       help="Toon bij elk woord de woordenboekvorm (basiswoord), zonder de betekenis.")
                 st.session_state.ontl_basis = _obasis; _oprefs['ontl_basis'] = _obasis
 
+                # Kleur-schuifjes (zoals in Leesteksten) — het doelwoord kleurt nooit mee, anders
+                # verraadt de kleur het antwoord.
+                _kc1, _kc2, _kc3 = st.columns(3)
+                _kl_nv = _kc1.toggle("🎨 Kleur naamvallen", value=bool(_oprefs.get('ontl_kl_nv', False)), key="ontl_kl_nv_t",
+                                     help="Kleurt de andere woorden op naamval. Het woord dat je ontleedt blijft ongekleurd.")
+                _kl_vw = _kc2.toggle("🔗 Kleur voegwoorden", value=bool(_oprefs.get('ontl_kl_vw', False)), key="ontl_kl_vw_t")
+                _kl_st = _kc3.toggle("⚛️ Kleur stamtijden", value=bool(_oprefs.get('ontl_kl_st', False)), key="ontl_kl_st_t")
+                _oprefs['ontl_kl_nv'] = _kl_nv; _oprefs['ontl_kl_vw'] = _kl_vw; _oprefs['ontl_kl_st'] = _kl_st
+
                 # Welke rondes wil je doen? Positief neergezet (leeg = alle rondes) — net als overal.
                 _ronde_opts = {"Woordsoort": "woordsoort", "Naamwoorden ontleden": "znw",
                                "Werkwoorden ontleden": "ww", "Woord-voor-woord vertalen": "vertalen",
@@ -7893,15 +7927,18 @@ def main():
 
                     # --- gekleurde zin --- (in de vertaalrondes hover je over elk woord voor de glosse)
                     _hover = _fase in ('vertalen', 'zin')
+                    _kl_nv = bool(_oprefs.get('ontl_kl_nv')); _kl_vw = bool(_oprefs.get('ontl_kl_vw')); _kl_st = bool(_oprefs.get('ontl_kl_st'))
+                    _stamset = stamtijd_vormen_set() if _kl_st else set()
                     _html = ""
                     for i, w in enumerate(_zin):
                         g = w.get('grieks', ''); interp = w.get('interpunctie', '')
-                        if i in _kleur:
-                            _stijl = f"color:{_kleur[i]};font-weight:700"
-                        elif i == _hidx:
+                        if i == _hidx:
+                            # Het doelwoord: nooit inkleuren (verraadt het antwoord), alleen markeren.
                             _stijl = "background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;padding:0 3px;border-radius:4px"
+                        elif i in _kleur:
+                            _stijl = f"color:{_kleur[i]};font-weight:700"
                         else:
-                            _stijl = "color:#8a8a8a"
+                            _stijl = ontleed_kleur_stijl(w.get('parsing_info', ''), g, _kl_nv, _kl_vw, _kl_st, _stamset) or "color:#8a8a8a"
                         if _hover and w.get('strong'):
                             _tt = (str(w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')) + "  ·  " + str(w.get('parsing_info', ''))).replace("'", "&#39;").replace('"', "&quot;")
                             _html += f"<span class='mobile-tooltip' tabindex='0' style='{_stijl}'>{g}<span class='tooltiptext'>{_tt}</span></span>{interp} "
@@ -7909,6 +7946,15 @@ def main():
                             _html += f"<span style='{_stijl}'>{g}</span>{interp} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontl_ref}</div>"
                                 f"<div style='font-size:26px;padding:12px 4px;line-height:1.6'>{_html.strip()}</div>", unsafe_allow_html=True)
+                    if _kl_nv or _kl_vw or _kl_st:
+                        _leg = []
+                        if _kl_nv:
+                            _leg.append(" · ".join(f"<span style='color:{_ONTLEED_KLEUR[c]}'>{c}</span>"
+                                                   for c in ["Nom", "Gen", "Dat", "Acc", "Voc"]))
+                        if _kl_vw: _leg.append("<span style='background:#ffd700;color:#000;padding:0 3px;border-radius:3px'>voegwoord</span>")
+                        if _kl_st: _leg.append("<span style='color:#d63384'>stamtijd</span>")
+                        st.markdown("<div style='font-size:12px;color:#9aa3af'>🎨 " + " &nbsp;|&nbsp; ".join(_leg)
+                                    + " &nbsp;·&nbsp; het te ontleden woord blijft ongekleurd</div>", unsafe_allow_html=True)
                     # Uitspraak van de hele zin (Erasmiaans, via de fonetische transliteratie).
                     audio_knop(bijbelzin_fonetisch(_zin), key="ontlzin")
                     if _hover:
