@@ -709,6 +709,114 @@ def opb_analyse_naamwoord(vorm, grieks_info="", parsing_info=""):
     return (f"**3e declinatie:** de echte stam zie je in de genitivus: **{stam}-** "
             f"(nom. *{nom}*, gen. *{gen}*){hint}.")
 
+# ============================================================================================
+# MORFOLOGISCHE ONTLEDER — splitst een vorm in (augment) + stam + uitgang, voor 'kleur uitgangen'
+# en de opbouw-uitleg. Conservatief: alleen betrouwbare splitsingen (1e/2e declinatie, thematische
+# werkwoorden). 3e declinatie / onregelmatig / voornaamwoorden → None (geen valse splitsing).
+# ============================================================================================
+# Standaard naamwoorduitgangen per verbuigingsklasse (accent-loos), per (naamval, getal).
+_NAAM_UITG = {
+    "o_mv": {("nom","ev"):["ος"],("gen","ev"):["ου"],("dat","ev"):["ω"],("acc","ev"):["ον"],("voc","ev"):["ε"],
+             ("nom","mv"):["οι"],("gen","mv"):["ων"],("dat","mv"):["οις"],("acc","mv"):["ους"],("voc","mv"):["οι"]},
+    "o_o":  {("nom","ev"):["ον"],("gen","ev"):["ου"],("dat","ev"):["ω"],("acc","ev"):["ον"],("voc","ev"):["ον"],
+             ("nom","mv"):["α"],("gen","mv"):["ων"],("dat","mv"):["οις"],("acc","mv"):["α"],("voc","mv"):["α"]},
+    "a_eta":{("nom","ev"):["η"],("gen","ev"):["ης"],("dat","ev"):["η"],("acc","ev"):["ην"],("voc","ev"):["η"],
+             ("nom","mv"):["αι"],("gen","mv"):["ων"],("dat","mv"):["αις"],("acc","mv"):["ας"],("voc","mv"):["αι"]},
+    "a_alpha":{("nom","ev"):["α"],("gen","ev"):["ας"],("dat","ev"):["α"],("acc","ev"):["αν"],("voc","ev"):["α"],
+               ("nom","mv"):["αι"],("gen","mv"):["ων"],("dat","mv"):["αις"],("acc","mv"):["ας"],("voc","mv"):["αι"]},
+    "a_impuur":{("nom","ev"):["α"],("gen","ev"):["ης"],("dat","ev"):["η"],("acc","ev"):["αν"],("voc","ev"):["α"],
+                ("nom","mv"):["αι"],("gen","mv"):["ων"],("dat","mv"):["αις"],("acc","mv"):["ας"],("voc","mv"):["αι"]},
+    "a_ees":{("nom","ev"):["ης"],("gen","ev"):["ου"],("dat","ev"):["η"],("acc","ev"):["ην"],("voc","ev"):["α","η"],
+             ("nom","mv"):["αι"],("gen","mv"):["ων"],("dat","mv"):["αις"],("acc","mv"):["ας"],("voc","mv"):["αι"]},
+    "a_aas":{("nom","ev"):["ας"],("gen","ev"):["ου"],("dat","ev"):["α"],("acc","ev"):["αν"],("voc","ev"):["α"],
+             ("nom","mv"):["αι"],("gen","mv"):["ων"],("dat","mv"):["αις"],("acc","mv"):["ας"],("voc","mv"):["αι"]},
+}
+_WW_UITG = ["θησονται","θησεται","θησομαι","θησαν","θητε","θημεν","θηναι","θεντες","θεντος","θεντα","θεις","θεισα","θεν","θην","θης","θῃ","θη",
+            "κασιν","καμεν","κατε","κασι","κοτες","κοτος","κως","κας","κε","κα",
+            "σαμεθα","σαμεν","σαντων","σαντες","σαντος","σαντα","σασιν","σασα","σατε","σας","σαι","σεν","σε","σα","σω","σεις","σει","σομεν","σετε","σουσιν","σουσι","σῃς","σῃ",
+            "ωμεθα","ωνται","ωμεν","ωσιν","ωσι","ηται","ησθε","ωμαι","ητε","ῃς","ῃ","οιμι","οις","οι",
+            "ομεθα","εσθε","ονται","εται","ομαι","ομην","οντο","ετο","ου",
+            "ομεν","ετε","ουσιν","ουσι","οντες","οντος","οντα","οντων","ουσα","ουσης",
+            "εις","ει","εν","ες","ον","ω","ειν","μαι","σθε","ται","το","θι","τω","σον"]
+
+def _naam_klasse(grieks_info, geslacht):
+    gi = _opb_kaal(grieks_info)
+    delen = [d.strip().lstrip('-').lstrip('‑') for d in gi.replace(';', ',').split(',') if d.strip()]
+    if len(delen) < 2:
+        return None
+    nom, gen = delen[0], delen[1]
+    if gen.endswith("ου"):
+        if geslacht == "O" or nom.endswith("ον"): return "o_o"
+        if nom.endswith("ης"): return "a_ees"
+        if nom.endswith("ας"): return "a_aas"
+        return "o_mv"
+    if gen.endswith("ης"):
+        return "a_impuur" if nom.endswith("α") else "a_eta"
+    if gen.endswith("ας"):
+        return "a_alpha"
+    return None
+
+def _splits_naamwoord(grieks, grieks_info, info):
+    nv = next((k.lower() for k in ("Nom","Gen","Dat","Acc","Voc") if k in info), None)
+    getal = "mv" if "mv" in info else ("ev" if "ev" in info else None)
+    ges = "M" if "mannelijk" in info else ("V" if "vrouwelijk" in info else ("O" if "onzijdig" in info else None))
+    if not nv or not getal:
+        return None
+    kl = _naam_klasse(grieks_info, ges)
+    if not kl:
+        return None
+    for u in sorted(_NAAM_UITG[kl].get((nv, getal), []), key=len, reverse=True):
+        gk = _opb_kaal(grieks)
+        if gk.endswith(u) and len(gk) - len(u) >= 2:
+            n = len(grieks) - len(u)   # accent-loos en met accent even lang (geen combining chars)
+            return [(grieks[:n], "stam"), (grieks[n:], "uitgang")]
+    return None
+
+def _splits_werkwoord(grieks, lemma, info):
+    gk, lk = _opb_kaal(grieks), _opb_kaal(lemma)
+    if len(gk) != len(grieks) or len(gk) < 4:
+        return None   # combining chars → posities kloppen niet; sla over
+    aug = 0
+    verleden = any(t in info for t in ("Imperfectum", "Aoristus", "Plusquamperfectum"))
+    if verleden and not _opb_split_voorvoegsel(lk)[0]:
+        l0 = lk[0] if lk else ""
+        if gk.startswith("ε") and l0 != "ε": aug = 1
+        elif gk.startswith("η") and l0 in ("α", "ε"): aug = 1
+        elif gk.startswith("ω") and l0 == "ο": aug = 1
+        elif gk.startswith("ηυ") and l0 in ("α", "ε"): aug = 2
+    for u in sorted(_WW_UITG, key=len, reverse=True):
+        if gk.endswith(u):
+            stamlen = len(gk) - len(u)
+            if stamlen - aug >= 2:
+                delen = []
+                if aug: delen.append((grieks[:aug], "augment"))
+                delen.append((grieks[aug:stamlen], "stam"))
+                delen.append((grieks[stamlen:], "uitgang"))
+                return delen
+    return None
+
+def ontleed_segmenten(grieks, lemma="", grieks_info="", parsing_info=""):
+    """Splitst een vorm in [(deel, soort)] met soort ∈ {augment, stam, uitgang} — of None als er
+    geen betrouwbare splitsing is (3e declinatie, onregelmatige/athematische werkwoorden, vnw)."""
+    info = parsing_info or ""
+    g = unicodedata.normalize('NFC', str(grieks or ""))
+    if not g:
+        return None
+    if "Werkwoord" in info:
+        return _splits_werkwoord(g, lemma, info)
+    if "Zelfst." in info or "Bijv." in info:
+        return _splits_naamwoord(g, grieks_info, info)
+    return None
+
+_SEGMENT_KLEUR = {"augment": "#56b4e9", "stam": "#e8eaed", "uitgang": "#ff9d5c"}
+
+def kleur_uitgangen_html(grieks, lemma="", grieks_info="", parsing_info="", basis_stijl=""):
+    """HTML van een woord met gekleurde stam/uitgang/augment — of None als er geen splitsing is."""
+    seg = ontleed_segmenten(grieks, lemma, grieks_info, parsing_info)
+    if not seg:
+        return None
+    return "".join(f"<span style='color:{_SEGMENT_KLEUR.get(s, '#e8eaed')};font-weight:700'>{t}</span>" for t, s in seg)
+
 def opbouw_formule(vorm, lemma="", parsing_info=""):
     """Bouwt de vorm zichtbaar op met plustekens, zoals in de slides:
     'ἐ + πε + φαν + μεθα  >  ἐπεφαμμεθα'.
@@ -927,15 +1035,20 @@ def toon_opbouw_hulp(vorm, lemma="", parsing_info="", grieks_info="", sleutel=""
     Geeft True terug als er iets getoond is."""
     regels, sk, treffers = opbouw_regels(vorm, lemma, parsing_info, grieks_info)
     _stamregel, _stamextra = stamtijd_opbouw(lemma, parsing_info)
-    if not regels and not sk and not _stamregel:
+    _seg = ontleed_segmenten(vorm, lemma, grieks_info, parsing_info)   # stam + uitgang
+    if not regels and not sk and not _stamregel and not _seg:
         return False
     with st.expander("🔗 Zo is deze vorm opgebouwd (samentrekkingen & klankwetten)", expanded=uitgeklapt):
         if _stamregel:
             st.markdown(_stamregel)
             if _stamextra:
                 st.markdown("- " + _stamextra)
+        if _seg:
+            _stukken = " + ".join(f"**{t}**" for t, _s in _seg)
+            _labels = " + ".join(s for _t, s in _seg)
+            st.markdown(f"**Opbouw:** {_stukken} → **{vorm}**  ({_labels})")
         _formule = opbouw_formule(vorm, lemma, parsing_info)
-        if _formule:
+        if _formule and not _seg:
             st.markdown(_formule)
         for r in regels:
             st.markdown("- " + r)
@@ -7514,12 +7627,14 @@ def main():
 
                 # Kleur-schuifjes voor de contextzin (zoals in Leesteksten) — het doelwoord blijft
                 # ongekleurd, anders verraadt de kleur het antwoord.
-                _wkc1, _wkc2, _wkc3 = st.columns(3)
+                _wkc1, _wkc2, _wkc3, _wkc4 = st.columns(4)
                 _wkl_nv = _wkc1.toggle("🎨 Kleur naamvallen", value=bool(_wprefs.get('ontlw_kl_nv', False)), key="ontlw_kl_nv_t",
                                        help="Kleurt de andere woorden in de zin op naamval. Het woord dat je ontleedt blijft ongekleurd.")
                 _wkl_vw = _wkc2.toggle("🔗 Kleur voegwoorden", value=bool(_wprefs.get('ontlw_kl_vw', False)), key="ontlw_kl_vw_t")
                 _wkl_st = _wkc3.toggle("⚛️ Kleur stamtijden", value=bool(_wprefs.get('ontlw_kl_st', False)), key="ontlw_kl_st_t")
-                _wprefs['ontlw_kl_nv'] = _wkl_nv; _wprefs['ontlw_kl_vw'] = _wkl_vw; _wprefs['ontlw_kl_st'] = _wkl_st
+                _wkl_ug = _wkc4.toggle("🌈 Kleur uitgangen", value=bool(_wprefs.get('ontlw_kl_ug', False)), key="ontlw_kl_ug_t",
+                                       help="Splitst elk woord in stam + uitgang (en augment) met eigen kleuren — óók het doelwoord.")
+                _wprefs['ontlw_kl_nv'] = _wkl_nv; _wprefs['ontlw_kl_vw'] = _wkl_vw; _wprefs['ontlw_kl_st'] = _wkl_st; _wprefs['ontlw_kl_ug'] = _wkl_ug
 
                 # Werkwoordsvorm-filter: alleen zichtbaar als je werkwoorden oefent. Zo kun je gericht
                 # bv. alleen participia of alleen de aoristus oefenen.
@@ -7622,37 +7737,47 @@ def main():
                         {"success": st.success, "info": st.info}.get(_t.get('type'), st.info)(_t.get('msg', ''))
                         st.session_state.ontlw_topfb = None
 
+                    # Groot doelwoord — met 'kleur uitgangen' de stam/uitgang gesplitst.
+                    _wug_html = kleur_uitgangen_html(_ww.get('grieks', ''), _wlemma, _wginfo, _winfo) if _wkl_ug else None
                     st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
-                                f"padding:6px 0'>{_ww.get('grieks','')}</div>", unsafe_allow_html=True)
+                                f"padding:6px 0'>{_wug_html or _ww.get('grieks','')}</div>", unsafe_allow_html=True)
 
                     # De zin eromheen als context (het doelwoord licht op). Kleur-schuifjes kleuren
-                    # de ándere woorden; het doelwoord blijft ongekleurd, anders verraadt het het antwoord.
+                    # de ándere woorden op naamval; 'kleur uitgangen' mag ook op het doelwoord.
                     _wstamset = stamtijd_vormen_set() if _wkl_st else set()
+                    _wvocab_bs = {str(v.get('strong')): v for v in (st.session_state.get('data') or []) if v.get('strong')} if _wkl_ug else {}
                     _ctx = ""
                     for _j, _cw in enumerate(_wzin):
                         _g = _cw.get('grieks', ''); _ip = _cw.get('interpunctie', '')
+                        _cseg = None
+                        if _wkl_ug:
+                            _cbw = _wvocab_bs.get(str(_cw.get('strong')))
+                            _cseg = kleur_uitgangen_html(_g, _cbw.get('grieks', '') if _cbw else '',
+                                                         _cbw.get('grieks_info', '') if _cbw else '', _cw.get('parsing_info', ''))
                         if _j == _wi:
                             _ctx += (f"<span style='background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;"
-                                     f"padding:0 3px;border-radius:4px;font-weight:700'>{_g}</span>{_ip} ")
+                                     f"padding:0 3px;border-radius:4px;font-weight:700'>{_cseg or _g}</span>{_ip} ")
                         else:
-                            _cstijl = ontleed_kleur_stijl(_cw.get('parsing_info', ''), _g, _wkl_nv, _wkl_vw, _wkl_st, _wstamset) or "color:#8a8a8a"
+                            _cstijl = "" if _cseg else (ontleed_kleur_stijl(_cw.get('parsing_info', ''), _g, _wkl_nv, _wkl_vw, _wkl_st, _wstamset) or "color:#8a8a8a")
                             _tt = (str(_cw.get('vertaling_nl', '') or _cw.get('vertaling_bsb', ''))).replace("'", "&#39;").replace('"', "&quot;")
                             if _cw.get('strong') and _tt:
-                                _ctx += f"<span class='mobile-tooltip' tabindex='0' style='{_cstijl}'>{_g}<span class='tooltiptext'>{_tt}</span></span>{_ip} "
+                                _ctx += f"<span class='mobile-tooltip' tabindex='0' style='{_cstijl}'>{_cseg or _g}<span class='tooltiptext'>{_tt}</span></span>{_ip} "
                             else:
-                                _ctx += f"<span style='{_cstijl}'>{_g}</span>{_ip} "
+                                _ctx += f"<span style='{_cstijl}'>{_cseg or _g}</span>{_ip} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontlw_ref}</div>"
                                 f"<div style='font-size:19px;padding:6px 4px;line-height:1.6'>{_ctx.strip()}</div>",
                                 unsafe_allow_html=True)
-                    if _wkl_nv or _wkl_vw or _wkl_st:
+                    if _wkl_nv or _wkl_vw or _wkl_st or _wkl_ug:
                         _wleg = []
                         if _wkl_nv:
                             _wleg.append(" · ".join(f"<span style='color:{_ONTLEED_KLEUR[c]}'>{c}</span>"
                                                     for c in ["Nom", "Gen", "Dat", "Acc", "Voc"]))
                         if _wkl_vw: _wleg.append("<span style='background:#ffd700;color:#000;padding:0 3px;border-radius:3px'>voegwoord</span>")
                         if _wkl_st: _wleg.append("<span style='color:#d63384'>stamtijd</span>")
-                        st.markdown("<div style='font-size:12px;color:#9aa3af'>🎨 " + " &nbsp;|&nbsp; ".join(_wleg)
-                                    + " &nbsp;·&nbsp; het te ontleden woord blijft ongekleurd</div>", unsafe_allow_html=True)
+                        if _wkl_ug: _wleg.append("<span style='color:#56b4e9'>augment</span> <span style='color:#e8eaed'>stam</span> <span style='color:#ff9d5c'>uitgang</span>")
+                        _wstaart = "" if _wkl_ug else " &nbsp;·&nbsp; het te ontleden woord blijft ongekleurd"
+                        st.markdown("<div style='font-size:12px;color:#9aa3af'>🎨 " + " &nbsp;|&nbsp; ".join(_wleg) + _wstaart + "</div>",
+                                    unsafe_allow_html=True)
                     # Uitspraak: eerst het woord zelf, dan de hele zin eromheen.
                     _wfon = fonetisch_uit_translit(_ww.get('transliteratie', ''))
                     audio_knop((_wfon + ". " + bijbelzin_fonetisch(_wzin)).strip(". "), key="ontlwoord")
@@ -7808,12 +7933,14 @@ def main():
 
                 # Kleur-schuifjes (zoals in Leesteksten) — het doelwoord kleurt nooit mee, anders
                 # verraadt de kleur het antwoord.
-                _kc1, _kc2, _kc3 = st.columns(3)
+                _kc1, _kc2, _kc3, _kc4 = st.columns(4)
                 _kl_nv = _kc1.toggle("🎨 Kleur naamvallen", value=bool(_oprefs.get('ontl_kl_nv', False)), key="ontl_kl_nv_t",
                                      help="Kleurt de andere woorden op naamval. Het woord dat je ontleedt blijft ongekleurd.")
                 _kl_vw = _kc2.toggle("🔗 Kleur voegwoorden", value=bool(_oprefs.get('ontl_kl_vw', False)), key="ontl_kl_vw_t")
                 _kl_st = _kc3.toggle("⚛️ Kleur stamtijden", value=bool(_oprefs.get('ontl_kl_st', False)), key="ontl_kl_st_t")
-                _oprefs['ontl_kl_nv'] = _kl_nv; _oprefs['ontl_kl_vw'] = _kl_vw; _oprefs['ontl_kl_st'] = _kl_st
+                _kl_ug = _kc4.toggle("🌈 Kleur uitgangen", value=bool(_oprefs.get('ontl_kl_ug', False)), key="ontl_kl_ug_t",
+                                     help="Splitst elk woord in stam + uitgang (en augment) met eigen kleuren — óók het doelwoord, dat helpt bij herleiden.")
+                _oprefs['ontl_kl_nv'] = _kl_nv; _oprefs['ontl_kl_vw'] = _kl_vw; _oprefs['ontl_kl_st'] = _kl_st; _oprefs['ontl_kl_ug'] = _kl_ug
 
                 # Welke rondes wil je doen? Positief neergezet (leeg = alle rondes) — net als overal.
                 _ronde_opts = {"Woordsoort": "woordsoort", "Naamwoorden ontleden": "znw",
@@ -8006,34 +8133,48 @@ def main():
 
                     # --- gekleurde zin --- (in de vertaalrondes hover je over elk woord voor de glosse)
                     _hover = _fase in ('vertalen', 'zin')
-                    _kl_nv = bool(_oprefs.get('ontl_kl_nv')); _kl_vw = bool(_oprefs.get('ontl_kl_vw')); _kl_st = bool(_oprefs.get('ontl_kl_st'))
+                    _kl_nv = bool(_oprefs.get('ontl_kl_nv')); _kl_vw = bool(_oprefs.get('ontl_kl_vw'))
+                    _kl_st = bool(_oprefs.get('ontl_kl_st')); _kl_ug = bool(_oprefs.get('ontl_kl_ug'))
                     _stamset = stamtijd_vormen_set() if _kl_st else set()
+                    _vocab_bs = {str(v.get('strong')): v for v in (st.session_state.get('data') or []) if v.get('strong')} if _kl_ug else {}
                     _html = ""
                     for i, w in enumerate(_zin):
                         g = w.get('grieks', ''); interp = w.get('interpunctie', '')
+                        # 'Kleur uitgangen' mag ook op het doelwoord (helpt onderscheiden).
+                        _seg = None
+                        if _kl_ug:
+                            _bw = _vocab_bs.get(str(w.get('strong')))
+                            _seg = kleur_uitgangen_html(g, _bw.get('grieks', '') if _bw else '',
+                                                        _bw.get('grieks_info', '') if _bw else '', w.get('parsing_info', ''))
                         if i == _hidx:
-                            # Het doelwoord: nooit inkleuren (verraadt het antwoord), alleen markeren.
                             _stijl = "background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;padding:0 3px;border-radius:4px"
+                            _inhoud = _seg or g
+                        elif _seg:
+                            _stijl = ""; _inhoud = _seg
                         elif i in _kleur:
-                            _stijl = f"color:{_kleur[i]};font-weight:700"
+                            _stijl = f"color:{_kleur[i]};font-weight:700"; _inhoud = g
                         else:
+                            # 'Kleur uitgangen' onderdrukt de naamval-kleuring niet, maar heeft voorrang waar er een splitsing is.
                             _stijl = ontleed_kleur_stijl(w.get('parsing_info', ''), g, _kl_nv, _kl_vw, _kl_st, _stamset) or "color:#8a8a8a"
+                            _inhoud = g
                         if _hover and w.get('strong'):
                             _tt = (str(w.get('vertaling_nl', '') or w.get('vertaling_bsb', '')) + "  ·  " + str(w.get('parsing_info', ''))).replace("'", "&#39;").replace('"', "&quot;")
-                            _html += f"<span class='mobile-tooltip' tabindex='0' style='{_stijl}'>{g}<span class='tooltiptext'>{_tt}</span></span>{interp} "
+                            _html += f"<span class='mobile-tooltip' tabindex='0' style='{_stijl}'>{_inhoud}<span class='tooltiptext'>{_tt}</span></span>{interp} "
                         else:
-                            _html += f"<span style='{_stijl}'>{g}</span>{interp} "
+                            _html += f"<span style='{_stijl}'>{_inhoud}</span>{interp} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontl_ref}</div>"
                                 f"<div style='font-size:26px;padding:12px 4px;line-height:1.6'>{_html.strip()}</div>", unsafe_allow_html=True)
-                    if _kl_nv or _kl_vw or _kl_st:
+                    if _kl_nv or _kl_vw or _kl_st or _kl_ug:
                         _leg = []
                         if _kl_nv:
                             _leg.append(" · ".join(f"<span style='color:{_ONTLEED_KLEUR[c]}'>{c}</span>"
                                                    for c in ["Nom", "Gen", "Dat", "Acc", "Voc"]))
                         if _kl_vw: _leg.append("<span style='background:#ffd700;color:#000;padding:0 3px;border-radius:3px'>voegwoord</span>")
                         if _kl_st: _leg.append("<span style='color:#d63384'>stamtijd</span>")
-                        st.markdown("<div style='font-size:12px;color:#9aa3af'>🎨 " + " &nbsp;|&nbsp; ".join(_leg)
-                                    + " &nbsp;·&nbsp; het te ontleden woord blijft ongekleurd</div>", unsafe_allow_html=True)
+                        if _kl_ug: _leg.append("<span style='color:#56b4e9'>augment</span> <span style='color:#e8eaed'>stam</span> <span style='color:#ff9d5c'>uitgang</span>")
+                        _staart = "" if _kl_ug else " &nbsp;·&nbsp; het te ontleden woord blijft ongekleurd"
+                        st.markdown("<div style='font-size:12px;color:#9aa3af'>🎨 " + " &nbsp;|&nbsp; ".join(_leg) + _staart + "</div>",
+                                    unsafe_allow_html=True)
                     # Uitspraak van de hele zin (Erasmiaans, via de fonetische transliteratie).
                     audio_knop(bijbelzin_fonetisch(_zin), key="ontlzin")
                     if _hover:
