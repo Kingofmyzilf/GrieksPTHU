@@ -1367,6 +1367,21 @@ def cirkeldiagram_html(paren, grootte=170):
             f"background:conic-gradient({', '.join(segs)})'></div>"
             f"<div style='min-width:180px'>{''.join(legenda)}</div></div>")
 
+def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", uitgeklapt=False):
+    """Uitklapbaar cirkeldiagram: hoe wordt déze vorm in het NT in het Engels (BSB) vertaald?
+    Geeft True terug als er iets getoond is (alleen bij ≥2 verschillende vertalingen)."""
+    import collections as _coll
+    if not grieks_vorm or not bijbel_db:
+        return False
+    _vp = zoek_vindplaatsen(bijbel_db, normaliseer_accent(grieks_vorm))
+    _gloss = _coll.Counter(v[3].strip() for v in _vp if v[3].strip())
+    if len(_gloss) < 2:
+        return False
+    with st.expander(f"🇬🇧 Zo wordt deze vorm in het Engels vertaald ({len(_vp)} vindplaatsen)", expanded=uitgeklapt):
+        st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+        st.caption("Engelse vertaling per plek (BSB). Uitklap met alle vindplaatsen zit in de **🔍 Zoeken**-modus.")
+    return True
+
 def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None, kleur_aan=True, co_doel_strongs=None):
     if not strong_nr or not bijbel_db: return None
     if co_doel_strongs is None: co_doel_strongs = set()
@@ -7291,21 +7306,35 @@ def main():
                     audio_knop((_wfon + ". " + bijbelzin_fonetisch(_wzin)).strip(". "), key="ontlwoord")
                     st.caption(f"🔑 Basiswoord: **{_wginfo}**")
 
-                    # Alles in één keer: ontleden én vertalen op hetzelfde scherm.
+                    # Stapsgewijs ontleden (bolletjes buiten het formulier, zodat de volgende rij pas
+                    # verschijnt als je iets aanklikt — anders verraadt bv. de naamval-rij al een
+                    # participium). Pas als alles ingevuld is, komt de vertaling erbij.
                     _wdims = _ontleed_dims(_winfo)
                     _wsleutel = f"{st.session_state.ontlw_ref}_{_wi}"
-                    with st.form(f"ontlw_form_{_wsleutel}", clear_on_submit=False):
-                        _wkeuzes = {}
-                        for _k, _lab, _opts in _wdims:
-                            _wkeuzes[_k] = st.radio(_lab, _opts, index=None, horizontal=True,
-                                                    key=f"ontlw_{_k}_{_wsleutel}")
-                        _wv = st.text_input("Woordenboekvertaling:", key=f"ontlw_vert_{_wsleutel}",
-                                            help="De betekenis zoals die in je woordenlijst staat — dus de vorm van het basiswoord. "
-                                                 "Dit veld wordt automatisch nagekeken.")
-                        _wvz = st.text_input("En zoals het hier in de zin staat (optioneel):", key=f"ontlw_zin_{_wsleutel}",
-                                             help="Bijvoorbeeld 'aan de mens' bij een dativus. Dit kan de app niet automatisch "
-                                                  "nakijken — je krijgt na het checken het antwoord te zien en beoordeelt zelf.")
-                        _wsub = st.form_submit_button("✓ Check alles", type="primary")
+                    def _wrk(_k):
+                        return f"ontlw_{_k}_{_wsleutel}"
+                    _wbeantwoord = 0
+                    for _k, _lab, _opts in _wdims:
+                        if st.session_state.get(_wrk(_k)) is not None:
+                            _wbeantwoord += 1
+                        else:
+                            break
+                    _wkeuzes = {}
+                    for _k, _lab, _opts in _wdims[:min(len(_wdims), _wbeantwoord + 1)]:
+                        _wkeuzes[_k] = st.radio(_lab, _opts, index=None, horizontal=True, key=_wrk(_k))
+                    _wklaar = (_wbeantwoord >= len(_wdims))
+                    _wv = ""; _wvz = ""; _wsub = False
+                    if not _wklaar:
+                        st.caption("↓ Vul in; de volgende regel verschijnt zodra je iets aanklikt.")
+                    else:
+                        with st.form(f"ontlw_form_{_wsleutel}", clear_on_submit=False):
+                            _wv = st.text_input("Woordenboekvertaling:", key=f"ontlw_vert_{_wsleutel}",
+                                                help="De betekenis zoals die in je woordenlijst staat — dus de vorm van het basiswoord. "
+                                                     "Dit veld wordt automatisch nagekeken.")
+                            _wvz = st.text_input("En zoals het hier in de zin staat (optioneel):", key=f"ontlw_zin_{_wsleutel}",
+                                                 help="Bijvoorbeeld 'aan de mens' bij een dativus. Dit kan de app niet automatisch "
+                                                      "nakijken — je krijgt na het checken het antwoord te zien en beoordeelt zelf.")
+                            _wsub = st.form_submit_button("✓ Check alles", type="primary")
 
                     if st.session_state.get('ontlw_fb'):
                         for _r in st.session_state.ontlw_fb:
@@ -7392,6 +7421,7 @@ def main():
                                          uitgeklapt=bool(st.session_state.get('ontlw_fb')))
                         toon_rijtje_hulp(_winfo, _wlemma, _wginfo, sleutel="ontlw",
                                          uitgeklapt=bool(st.session_state.get('ontlw_fb')))
+                        toon_engels_diagram(_ww.get('grieks', ''), _obdb, sleutel="ontlw")
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
             else:
@@ -7858,6 +7888,7 @@ def main():
                                                  uitgeklapt=False)
                                 toon_rijtje_hulp(_hinfo, _hlemma, _hginfo,
                                                  sleutel=f"ontl_{_fase}_{_pos}", uitgeklapt=False)
+                            toon_engels_diagram(_hw.get('grieks', ''), _obdb, sleutel=f"ontl_{_fase}_{_pos}")
                         elif _fase == 'zin':
                             # Bij de hele zin: alle ontlede woorden met hun eigen rijtje op een rij.
                             with st.expander("📋 De rijtjes van de woorden in deze zin", expanded=False):
