@@ -676,38 +676,45 @@ def opb_analyse_reduplicatie(vorm, lemma, parsing_info=""):
                 f"(**{vkern[0]}ε-** + stam), zoals *λύω → λέλυκα*.")
     return None
 
-def opb_analyse_naamwoord(vorm, grieks_info="", parsing_info=""):
-    """Bij een 3e-declinatie-naamwoord: de échte stam staat in de genitivus (νύξ → νυκτ-),
-    wat de 'rare' nominativus verklaart."""
+def _naam3_klankhint(stam_k):
+    """De klankwet-toelichting op basis van de laatste medeklinker(s) van de 3e-declinatie-stam."""
+    if stam_k.endswith("ντ"):
+        return " — **ντ** valt weg vóór de σ, met **compensatorische rekking** van de klinker ervoor"
+    if stam_k.endswith(("τ", "δ", "θ")):
+        return " — de **τ/δ/θ** valt weg vóór de σ van de uitgang en aan het woordeinde"
+    if stam_k.endswith(("κ", "γ", "χ")):
+        return " — in de nominativus versmelt **κ/γ/χ + σ** tot **ξ**"
+    if stam_k.endswith(("π", "β", "φ")):
+        return " — in de nominativus versmelt **π/β/φ + σ** tot **ψ**"
+    return ""
+
+def opb_analyse_naamwoord(vorm, grieks_info="", parsing_info="", corpus_stam=""):
+    """Bij een 3e-declinatie-woord: de échte stam (νύξ → νυκτ-, πᾶς → παντ-) verklaart de 'rare'
+    nominativus. Stam uit de genitivus in grieks_info, of — als die er niet is — uit het corpus."""
     if "Werkwoord" in (parsing_info or ""):
         return None
     ruw = [d.strip() for d in str(grieks_info or "").replace(';', ',').split(',') if d.strip()]
-    if len(ruw) < 2:
-        return None
-    nom, gen = ruw[0], ruw[1]
-    if gen.startswith('-') or gen.startswith('‑'):
-        return None  # afgekorte genitivus ('-ατος') geeft geen betrouwbare stam → zwijgen
-    gk, nk = _opb_kaal(gen), _opb_kaal(nom)
-    if not gk.endswith("ος") or gk.endswith("ους"):
-        return None  # 1e/2e declinatie: geen stamwissel om uit te leggen
-    if _opb_prefix_len(gk, nk) < 2:
-        return None
-    stam = gen[:-2] if len(gen) > 2 else gen
-    stam_k = _opb_kaal(stam)
-    if not stam_k or stam_k == nk:
-        return None
-    if stam_k.endswith("ντ"):
-        hint = " — **ντ** valt weg vóór de σ, met **compensatorische rekking** van de klinker ervoor"
-    elif stam_k.endswith(("τ", "δ", "θ")):
-        hint = " — de **τ/δ/θ** valt weg vóór de σ van de uitgang en aan het woordeinde"
-    elif stam_k.endswith(("κ", "γ", "χ")):
-        hint = " — in de nominativus versmelt **κ/γ/χ + σ** tot **ξ**"
-    elif stam_k.endswith(("π", "β", "φ")):
-        hint = " — in de nominativus versmelt **π/β/φ + σ** tot **ψ**"
-    else:
-        hint = ""
-    return (f"**3e declinatie:** de echte stam zie je in de genitivus: **{stam}-** "
-            f"(nom. *{nom}*, gen. *{gen}*){hint}.")
+    nom = ruw[0] if ruw else ""
+    # 1) Stam uit de citatie-genitivus (voluit, niet afgekort) — de bestaande, precieze weg.
+    if len(ruw) >= 2 and not (ruw[1].startswith('-') or ruw[1].startswith('‑')):
+        gen = ruw[1]
+        gk, nk = _opb_kaal(gen), _opb_kaal(nom)
+        if gk.endswith("ος") and not gk.endswith("ους") and _opb_prefix_len(gk, nk) >= 2:
+            stam = gen[:-2] if len(gen) > 2 else gen
+            stam_k = _opb_kaal(stam)
+            if stam_k and stam_k != nk:
+                return (f"**3e declinatie:** de echte stam zie je in de genitivus: **{stam}-** "
+                        f"(nom. *{nom}*, gen. *{gen}*){_naam3_klankhint(stam_k)}.")
+    # 2) Geen bruikbare genitivus (adjectief/voornaamwoord): val terug op de corpus-stam, maar
+    #    alléén als de nominativus écht gefuseerd is (πᾶς←παντ) — zo blijft αὐτός e.d. buiten schot.
+    cs = _opb_kaal(corpus_stam or "")
+    if cs and len(cs) >= 2 and cs[-1] not in "αεηιουω" and nom:
+        nk = _opb_kaal(nom)
+        if not nk.startswith(cs):
+            hint = _naam3_klankhint(cs)
+            if hint:
+                return f"**3e declinatie:** de echte stam is **{cs}-** (nom. *{nom}*){hint}."
+    return None
 
 # ============================================================================================
 # MORFOLOGISCHE ONTLEDER — splitst een vorm in (augment) + stam + uitgang, voor 'kleur uitgangen'
@@ -841,9 +848,104 @@ def _splits_werkwoord(grieks, lemma, info):
                 return delen
     return None
 
-def ontleed_segmenten(grieks, lemma="", grieks_info="", parsing_info=""):
+# ---- Corpus-stam: voor woorden zonder bruikbare genitivus in grieks_info (bijv. naamwoorden,
+# voornaamwoorden, en 3e-declinatie zonder citatie-genitivus) leiden we de verbuigingsstam af uit
+# ÁLLE vormen in het NT. Per (strong, geslacht): strip de genitivus-uitgang, en vertrouw de stam
+# alleen als élke verbogen vorm netjes = stam + canonieke uitgang is. Onregelmatige/suppletieve
+# paradigma's (Ἰησοῦς, οὗτος) vallen zo vanzelf weg — geen valse splitsing.
+_CORPUS_UITG = {"ος","ου","ω","ον","ε","η","ης","ην","α","ας","αν","ι","ο",
+                "οι","ων","οις","ους","αι","αις","ες","υς","ις","εις"}
+_CORPUS_UITG_VALID = _CORPUS_UITG | {""}
+
+def _corpus_gen_stam(gen_kaal):
+    for e, cut in (("ους", 3), ("ου", 2), ("ος", 2), ("ης", 2), ("ας", 2), ("ως", 2)):
+        if gen_kaal.endswith(e):
+            return gen_kaal[:-cut]
+    return None
+
+def _corpus_nv_getal(info):
+    nv = next((k.lower() for k in ("Nom","Gen","Dat","Acc","Voc") if k in info), None)
+    return nv, ("mv" if "mv" in info else ("ev" if "ev" in info else None))
+
+def _corpus_geslacht(info):
+    return ("mannelijk" if "mannelijk" in info else
+            ("vrouwelijk" if "vrouwelijk" in info else ("onzijdig" if "onzijdig" in info else "")))
+
+def _is_nominaal(info):
+    return any(k in info for k in ("Zelfst.", "Bijv.", "Lidwoord", "Voornaamwoord"))
+
+@st.cache_resource
+def morf_stam_index(_bijbel_db):
+    """{(strong, geslacht): stam_kaal} — de verbuigingsstam per woord+geslacht, afgeleid uit de
+    NT-vormen. Alleen regelmatige paradigma's; onregelmatige (Ἰησοῦς, οὗτος) blijven eruit."""
+    from collections import defaultdict, Counter
+    gennen = defaultdict(Counter)   # (strong,ges) -> Counter(stam uit gen.ev)
+    allen = defaultdict(list)       # (strong,ges) -> [kaal-vorm]  (schuine vormen, ter controle)
+    for _ref, zin in (_bijbel_db or {}).items():
+        for w in zin:
+            info = w.get('parsing_info', '') or ''
+            if "Werkwoord" in info or not _is_nominaal(info):
+                continue
+            nv, getal = _corpus_nv_getal(info)
+            if not nv or not getal:
+                continue
+            strong = str(w.get('strong', '') or '').strip()
+            g = str(w.get('grieks', '') or '')
+            if not strong or not g:
+                continue
+            key = (strong, _corpus_geslacht(info))
+            gk = _opb_kaal(g)
+            if nv == "gen" and getal == "ev":
+                st_ = _corpus_gen_stam(gk)
+                if st_ and len(st_) >= 2:
+                    gennen[key][st_] += 1
+            # Niet meenemen in de controle: nom./voc.ev (kaal), dat.mv (sandhi) en de acc.ev van
+            # onzijdige woorden (die is gelijk aan de kale nominativus, bv. σῶμα, niet stam+uitgang).
+            _kaal_onz_acc = (nv == "acc" and getal == "ev" and _corpus_geslacht(info) == "onzijdig")
+            if (not (nv in ("nom", "voc") and getal == "ev")
+                    and not (nv == "dat" and getal == "mv") and not _kaal_onz_acc):
+                allen[key].append(gk)
+    tabel = {}
+    for key, teller in gennen.items():
+        stam = teller.most_common(1)[0][0]
+        if len(stam) < 2:
+            continue
+        if all(f.startswith(stam) and f[len(stam):] in _CORPUS_UITG_VALID for f in allen.get(key, [])):
+            tabel[key] = stam
+    return tabel
+
+def corpus_stam_van(strong, parsing_info):
+    """De verbuigingsstam voor dit woord+geslacht uit het corpus (of '' als onbekend/onbetrouwbaar)."""
+    if not strong:
+        return ""
+    try:
+        tabel = morf_stam_index(laad_bijbel_db())
+    except Exception:
+        return ""
+    ges = _corpus_geslacht(parsing_info or "")
+    return tabel.get((str(strong), ges)) or tabel.get((str(strong), "")) or ""
+
+def _splits_via_corpusstam(grieks, corpus_stam, info):
+    """Splits met de corpus-stam: stam + uitgang, alleen als de vorm exact op stam + een erkende
+    uitgang uitkomt. Reconstructie is per constructie exact; onregelmatige vormen vallen weg."""
+    if not corpus_stam or len(corpus_stam) < 2:
+        return None
+    nv, getal = _corpus_nv_getal(info)
+    if not nv or not getal:
+        return None
+    gk = _opb_kaal(grieks)
+    if len(gk) != len(grieks) or not gk.startswith(corpus_stam):
+        return None
+    rest = gk[len(corpus_stam):]
+    if not rest or rest not in _CORPUS_UITG:
+        return None
+    n = len(corpus_stam)
+    return [(grieks[:n], "stam"), (grieks[n:], "uitgang")]
+
+def ontleed_segmenten(grieks, lemma="", grieks_info="", parsing_info="", corpus_stam=""):
     """Splitst een vorm in [(deel, soort)] met soort ∈ {augment, stam, uitgang} — of None als er
-    geen betrouwbare splitsing is (3e declinatie, onregelmatige/athematische werkwoorden, vnw)."""
+    geen betrouwbare splitsing is (onregelmatige/athematische werkwoorden, suppletieve vnw).
+    corpus_stam (optioneel) = de uit het NT afgeleide verbuigingsstam, voor adjectieven/vnw/3e decl."""
     info = parsing_info or ""
     g = unicodedata.normalize('NFC', str(grieks or ""))
     if not g:
@@ -851,14 +953,20 @@ def ontleed_segmenten(grieks, lemma="", grieks_info="", parsing_info=""):
     if "Werkwoord" in info:
         return _splits_werkwoord(g, lemma, info)
     if "Zelfst." in info or "Bijv." in info:
-        return _splits_naamwoord(g, grieks_info, info)
+        r = _splits_naamwoord(g, grieks_info, info)
+        if r:
+            return r
+    # Adjectieven/voornaamwoorden/lidwoorden en 3e-declinatie zonder citatie-genitivus: corpus-stam.
+    if corpus_stam and _is_nominaal(info):
+        return _splits_via_corpusstam(g, corpus_stam, info)
     return None
 
 _SEGMENT_KLEUR = {"augment": "#56b4e9", "stam": "#e8eaed", "uitgang": "#ff9d5c"}
 
-def kleur_uitgangen_html(grieks, lemma="", grieks_info="", parsing_info="", basis_stijl=""):
+def kleur_uitgangen_html(grieks, lemma="", grieks_info="", parsing_info="", basis_stijl="", strong=None):
     """HTML van een woord met gekleurde stam/uitgang/augment — of None als er geen splitsing is."""
-    seg = ontleed_segmenten(grieks, lemma, grieks_info, parsing_info)
+    seg = ontleed_segmenten(grieks, lemma, grieks_info, parsing_info,
+                            corpus_stam=corpus_stam_van(strong, parsing_info))
     if not seg:
         return None
     return "".join(f"<span style='color:{_SEGMENT_KLEUR.get(s, '#e8eaed')};font-weight:700'>{t}</span>" for t, s in seg)
@@ -916,10 +1024,10 @@ def opbouw_formule(vorm, lemma="", parsing_info=""):
     _benoemd = " + ".join(lab for _t, lab in delen)
     return f"**Opbouw:** {_stukken} → **{v_nfc}**  ({_benoemd})"
 
-def opbouw_regels(vorm, lemma="", parsing_info="", grieks_info=""):
+def opbouw_regels(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
     """(regels, stamklinker, treffers) — alle klankwetten die aantoonbaar op deze vorm slaan."""
     regels = []
-    nw = opb_analyse_naamwoord(vorm, grieks_info, parsing_info)
+    nw = opb_analyse_naamwoord(vorm, grieks_info, parsing_info, corpus_stam)
     if nw:
         regels.append(nw)
     aug = opb_analyse_augment(vorm, lemma, parsing_info)
@@ -1076,12 +1184,13 @@ def stamtijd_opbouw(lemma, parsing_info):
         extra = "⚠️ " + (_t or "Onregelmatige stamtijd — puur memoriseren.")
     return regel, extra
 
-def toon_opbouw_hulp(vorm, lemma="", parsing_info="", grieks_info="", sleutel="", uitgeklapt=False):
+def toon_opbouw_hulp(vorm, lemma="", parsing_info="", grieks_info="", sleutel="", uitgeklapt=False, strong=None):
     """Rendert (indien er iets te melden valt) de samentrekkings-/klankwethulp bij deze vorm.
     Geeft True terug als er iets getoond is."""
-    regels, sk, treffers = opbouw_regels(vorm, lemma, parsing_info, grieks_info)
+    _cs = corpus_stam_van(strong, parsing_info)
+    regels, sk, treffers = opbouw_regels(vorm, lemma, parsing_info, grieks_info, corpus_stam=_cs)
     _stamregel, _stamextra = stamtijd_opbouw(lemma, parsing_info)
-    _seg = ontleed_segmenten(vorm, lemma, grieks_info, parsing_info)   # stam + uitgang
+    _seg = ontleed_segmenten(vorm, lemma, grieks_info, parsing_info, corpus_stam=_cs)   # stam + uitgang
     if not regels and not sk and not _stamregel and not _seg:
         return False
     with st.expander("🔗 Zo is deze vorm opgebouwd (samentrekkingen & klankwetten)", expanded=uitgeklapt):
@@ -6874,7 +6983,7 @@ def main():
                                         _lt_lemma = str(basis.get('grieks', ''))
                                         _lt_ginfo = str(basis.get('grieks_info', '')) or _lt_lemma
                                         toon_opbouw_hulp(w.get('grieks', ''), _lt_lemma, w.get('parsing_info', ''),
-                                                         _lt_ginfo, uitgeklapt=False)
+                                                         _lt_ginfo, uitgeklapt=False, strong=w.get('strong'))
                                         toon_rijtje_hulp(w.get('parsing_info', ''), _lt_lemma, _lt_ginfo,
                                                          sleutel=f"lt_{idx}", uitgeklapt=False)
                                         toon_vertaalhulp(w.get('parsing_info', ''), sleutel=f"lt_{idx}")
@@ -7611,7 +7720,7 @@ def main():
                                 # Hoe vertaal je déze vorm? (naamval-functie / wijs-tijd-diathese in het NL)
                                 for _vh in _ontleed_vertaalhulp(_pi):
                                     st.markdown("💡 " + _vh)
-                                toon_opbouw_hulp(_g, _lemma, _pi, _ginfo, sleutel=f"zoek_{_zi}")
+                                toon_opbouw_hulp(_g, _lemma, _pi, _ginfo, sleutel=f"zoek_{_zi}", strong=_strong)
                                 toon_rijtje_hulp(_pi, _lemma, _ginfo, sleutel=f"zoek_{_zi}")
                                 st.write("")
 
@@ -7817,7 +7926,7 @@ def main():
                         st.session_state.ontlw_topfb = None
 
                     # Groot doelwoord — met 'kleur uitgangen' de stam/uitgang gesplitst.
-                    _wug_html = kleur_uitgangen_html(_ww.get('grieks', ''), _wlemma, _wginfo, _winfo) if _wkl_ug else None
+                    _wug_html = kleur_uitgangen_html(_ww.get('grieks', ''), _wlemma, _wginfo, _winfo, strong=_ww.get('strong')) if _wkl_ug else None
                     st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
                                 f"padding:6px 0'>{_wug_html or _ww.get('grieks','')}</div>", unsafe_allow_html=True)
 
@@ -7832,7 +7941,8 @@ def main():
                         if _wkl_ug:
                             _cbw = _wvocab_bs.get(str(_cw.get('strong')))
                             _cseg = kleur_uitgangen_html(_g, _cbw.get('grieks', '') if _cbw else '',
-                                                         _cbw.get('grieks_info', '') if _cbw else '', _cw.get('parsing_info', ''))
+                                                         _cbw.get('grieks_info', '') if _cbw else '', _cw.get('parsing_info', ''),
+                                                         strong=_cw.get('strong'))
                         if _j == _wi:
                             _ctx += (f"<span style='background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;"
                                      f"padding:0 3px;border-radius:4px;font-weight:700'>{_cseg or _g}</span>{_ip} ")
@@ -7978,7 +8088,7 @@ def main():
                     # --- HULP: het juiste rijtje én de samentrekkingsregels ---
                     if _wsteun:
                         toon_opbouw_hulp(_ww.get('grieks', ''), _wlemma, _winfo, _wginfo,
-                                         uitgeklapt=bool(st.session_state.get('ontlw_fb')))
+                                         uitgeklapt=bool(st.session_state.get('ontlw_fb')), strong=_ww.get('strong'))
                         toon_rijtje_hulp(_winfo, _wlemma, _wginfo, sleutel="ontlw",
                                          uitgeklapt=bool(st.session_state.get('ontlw_fb')))
                         toon_engels_diagram(_ww.get('grieks', ''), _obdb, sleutel="ontlw",
@@ -8225,7 +8335,8 @@ def main():
                         if _kl_ug:
                             _bw = _vocab_bs.get(str(w.get('strong')))
                             _seg = kleur_uitgangen_html(g, _bw.get('grieks', '') if _bw else '',
-                                                        _bw.get('grieks_info', '') if _bw else '', w.get('parsing_info', ''))
+                                                        _bw.get('grieks_info', '') if _bw else '', w.get('parsing_info', ''),
+                                                        strong=w.get('strong'))
                         if i == _hidx:
                             _stijl = "background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;padding:0 3px;border-radius:4px"
                             _inhoud = _seg or g
@@ -8352,7 +8463,7 @@ def main():
                         if _osteun:
                             # Samentrekkingen/klankwetten van déze vorm (G20, σ-samensmelting, augment).
                             toon_opbouw_hulp(_w.get('grieks', ''), _lemma, _info, _ginfo,
-                                             uitgeklapt=bool(st.session_state.get('ontl_feedback')))
+                                             uitgeklapt=bool(st.session_state.get('ontl_feedback')), strong=_w.get('strong'))
                         toon_rijtje_hulp(_info, _lemma, _ginfo, sleutel=f"ontl_{_fase}_{_pos}",
                                          uitgeklapt=bool(st.session_state.get('ontl_feedback')))
                         _cA, _cB = st.columns(2)
@@ -8410,7 +8521,7 @@ def main():
                             _vw0 = next((v for v in (st.session_state.get('data') or [])
                                          if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
                             toon_opbouw_hulp(_w.get('grieks', ''), str(_vw0.get('grieks', '')) if _vw0 else "",
-                                             _info, str(_vw0.get('grieks_info', '')) if _vw0 else "")
+                                             _info, str(_vw0.get('grieks_info', '')) if _vw0 else "", strong=_w.get('strong'))
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
@@ -8491,7 +8602,7 @@ def main():
                             # in de andere rondes horen ze hier, zodat je overal kunt spieken.
                             if _fase not in ('znw', 'ww'):
                                 toon_opbouw_hulp(_hw.get('grieks', ''), _hlemma, _hinfo, _hginfo,
-                                                 uitgeklapt=False)
+                                                 uitgeklapt=False, strong=_hw.get('strong'))
                                 toon_rijtje_hulp(_hinfo, _hlemma, _hginfo,
                                                  sleutel=f"ontl_{_fase}_{_pos}", uitgeklapt=False)
                             toon_engels_diagram(_hw.get('grieks', ''), _obdb, sleutel=f"ontl_{_fase}_{_pos}",
