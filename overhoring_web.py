@@ -1356,6 +1356,39 @@ def bijbel_vorm_index(_bijbel_db):
     return uit
 
 @st.cache_data(show_spinner=False)
+def _zoek_vormen(_bijbel_db):
+    """(genormaliseerde vorm, weergavevorm-met-accenten, totaal aantal) voor de zoeksuggesties."""
+    out = []
+    for k, rijen in bijbel_vorm_index(_bijbel_db).items():
+        out.append((k, rijen[0][0], sum(r[4] for r in rijen)))
+    return out
+
+def zoek_suggesties(bijbel_db, term, maxn=8):
+    """Vergelijkbare Griekse vormen bij een (mogelijk verkeerd getypte) zoekterm: eerst vormen die
+    met de invoer beginnen, dan vormen op kleine typ-afstand. → lijst van weergavevormen."""
+    key = normaliseer_accent(naar_grieks_transliteratie(str(term or "")))
+    if len(key) < 2:
+        return []
+    prefix, dichtbij, gezien = [], [], set()
+    for k, disp, n in _zoek_vormen(bijbel_db):
+        if k == key or k in gezien:
+            continue
+        if k.startswith(key):
+            prefix.append((-n, disp)); gezien.add(k)
+        elif len(key) >= 3 and abs(len(k) - len(key)) <= 2:
+            d = levenshtein(k, key)
+            if d <= (1 if len(key) <= 4 else 2):
+                dichtbij.append((d, -n, disp)); gezien.add(k)
+    prefix.sort(); dichtbij.sort()
+    uit = [disp for _s, disp in prefix][:maxn]
+    for _d, _s, disp in dichtbij:
+        if len(uit) >= maxn:
+            break
+        if disp not in uit:
+            uit.append(disp)
+    return uit
+
+@st.cache_data(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
     """Index strong-nummer → lijst van vers-referenties (in db-volgorde). Wordt één keer opgebouwd
     en gecached; zonder deze index scande zoek_context_zin bij elk getoond woord de héle NT-database
@@ -7251,9 +7284,21 @@ def main():
                     _key = normaliseer_accent(naar_grieks_transliteratie(_term))
                     _res = _vidx.get(_key) or _vidx.get(normaliseer_accent(_term)) or []
                     _vocab = {str(v.get('strong')): v for v in (st.session_state.get('data') or []) if v.get('strong')}
+
+                    def _toon_suggesties(_sugs, _titel):
+                        if not _sugs:
+                            return
+                        st.caption(_titel)
+                        _scols = st.columns(min(4, len(_sugs)))
+                        for _si, _sug in enumerate(_sugs):
+                            if _scols[_si % len(_scols)].button(_sug, key=f"zoeksug_{_si}"):
+                                st.session_state.ontl_zoek_term = _sug
+                                st.rerun()
+
                     if not _res:
                         st.warning(f"Geen vorm **{_term}** gevonden in het Nieuwe Testament. Controleer de spelling "
                                    "(je mag ook in gewone letters typen, bv. *anthrwpos*).")
+                        _toon_suggesties(zoek_suggesties(_obdb, _term), "🔎 Bedoelde je misschien? Klik om te openen:")
                     else:
                         _toon = _res[0][0]
                         st.markdown(f"<div style='font-size:40px;font-weight:800;color:#33ccff;text-align:center;padding:4px 0'>{_toon}</div>",
@@ -7265,6 +7310,8 @@ def main():
                         if any(len(vorm_ontledingen(_obdb, _res[0][0], _r[2])) > 1 for _r in _res):
                             st.info("⚠️ Dit is een **dubbelzinnige vorm**: los van de zin zijn meerdere ontledingen "
                                     "mogelijk. In een echte tekst bepaalt de context (en soms het accent) welke het is.")
+                        with st.expander("🔎 Vergelijkbare vormen (andere spelling/accent)"):
+                            _toon_suggesties(zoek_suggesties(_obdb, _term), "Klik om te openen:")
                         for _zi, (_g, _pi, _strong, _ref, _n, _tr) in enumerate(_res):
                             _bw = _vocab.get(str(_strong))
                             _lemma = str(_bw.get('grieks', '')) if _bw else ""
