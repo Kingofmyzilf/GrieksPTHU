@@ -7619,54 +7619,55 @@ def main():
                 if not isinstance(_wprefs, dict):
                     _wprefs = {}; st.session_state.ui_prefs = _wprefs
 
-                _alle_lessen = sorted({veilig_les_nummer(i) for i in (st.session_state.get('data') or [])})
-                _wc1, _wc2 = st.columns([2, 1])
-                _wles_alles = _wc2.toggle("Alle lessen", value=bool(_wprefs.get('ontlw_alles', True)), key="ontlw_alles_t")
-                _wprefs['ontlw_alles'] = _wles_alles
-                if _wles_alles:
-                    _wc1.caption("Woorden mogen uit **alle lessen** komen.")
-                    _wlessen = set(_alle_lessen)
-                else:
-                    _vorige = [l for l in (_wprefs.get('ontlw_lessen') or []) if l in _alle_lessen]
-                    _wsel = _wc1.multiselect("Uit welke lessen?", _alle_lessen,
-                                             default=_vorige or _alle_lessen[:1], key="ontlw_lessen_ms")
-                    _wprefs['ontlw_lessen'] = list(_wsel)
-                    _wlessen = set(_wsel)
+                with st.expander("⚙️ Instellingen (lessen · woordsoorten · niveau · kleuren)", expanded=False):
+                    _alle_lessen = sorted({veilig_les_nummer(i) for i in (st.session_state.get('data') or [])})
+                    _wc1, _wc2 = st.columns([2, 1])
+                    _wles_alles = _wc2.toggle("Alle lessen", value=bool(_wprefs.get('ontlw_alles', True)), key="ontlw_alles_t")
+                    _wprefs['ontlw_alles'] = _wles_alles
+                    if _wles_alles:
+                        _wc1.caption("Woorden mogen uit **alle lessen** komen.")
+                        _wlessen = set(_alle_lessen)
+                    else:
+                        _vorige = [l for l in (_wprefs.get('ontlw_lessen') or []) if l in _alle_lessen]
+                        _wsel = _wc1.multiselect("Uit welke lessen?", _alle_lessen,
+                                                 default=_vorige or _alle_lessen[:1], key="ontlw_lessen_ms")
+                        _wprefs['ontlw_lessen'] = list(_wsel)
+                        _wlessen = set(_wsel)
 
-                _wd1, _wd2, _wd3, _wd4 = st.columns([1.7, 1.0, 1.1, 0.9])
-                # Alles wat verbogen of vervoegd wordt is oefenbaar — ook bijv. naamwoorden,
-                # voornaamwoorden en lidwoorden (die hebben allemaal naamval/getal/geslacht).
-                _WSOORTEN = ["Zelfst. nw.", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Werkwoord"]
-                _wvorige = [s for s in (_wprefs.get('ontlw_soorten') or []) if s in _WSOORTEN]
-                _wsoorten = _wd1.multiselect("Welke woordsoorten?", _WSOORTEN,
-                                             default=_wvorige or _WSOORTEN, key="ontlw_soorten_ms",
-                                             help="Alles wat verbogen of vervoegd wordt kun je ontleden.")
-                _wprefs['ontlw_soorten'] = list(_wsoorten)
-                if not _wsoorten:
-                    _wsoorten = list(_WSOORTEN)
-                _wniveau = _pref_keuze(_wd2.selectbox, "Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
-                                       'ontlw_niveau', default='Grieks 2',
-                                       help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus).")
-                _wbekend = _wd3.toggle("Alleen woorden die ik ken", value=bool(_wprefs.get('ontlw_bekend', True)),
-                                       key="ontlw_bekend_t")
-                _wprefs['ontlw_bekend'] = _wbekend
-                _wdrempel = int(_wprefs.get('ontlw_drempel', 3))
-                if _wbekend:
-                    _wdrempel = _wd3.slider("Min. streak:", 1, 30, _wdrempel, key="ontlw_drempel_s")
-                    _wprefs['ontlw_drempel'] = _wdrempel
-                _wsteun = _wd4.toggle("💡 Hulp", value=bool(_wprefs.get('ontlw_steun', True)), key="ontlw_steun_t")
-                _wprefs['ontlw_steun'] = _wsteun
+                    _wd1, _wd2, _wd3, _wd4 = st.columns([1.7, 1.0, 1.1, 0.9])
+                    # Alles wat verbogen of vervoegd wordt is oefenbaar — ook bijv. naamwoorden,
+                    # voornaamwoorden en lidwoorden (die hebben allemaal naamval/getal/geslacht).
+                    _WSOORTEN = ["Zelfst. nw.", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Werkwoord"]
+                    _wvorige = [s for s in (_wprefs.get('ontlw_soorten') or []) if s in _WSOORTEN]
+                    _wsoorten = _wd1.multiselect("Welke woordsoorten?", _WSOORTEN,
+                                                 default=_wvorige or _WSOORTEN, key="ontlw_soorten_ms",
+                                                 help="Alles wat verbogen of vervoegd wordt kun je ontleden.")
+                    _wprefs['ontlw_soorten'] = list(_wsoorten)
+                    if not _wsoorten:
+                        _wsoorten = list(_WSOORTEN)
+                    _wniveau = _pref_keuze(_wd2.selectbox, "Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
+                                           'ontlw_niveau', default='Grieks 2',
+                                           help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus).")
+                    _wbekend = _wd3.toggle("Alleen woorden die ik ken", value=bool(_wprefs.get('ontlw_bekend', True)),
+                                           key="ontlw_bekend_t")
+                    _wprefs['ontlw_bekend'] = _wbekend
+                    _wdrempel = int(_wprefs.get('ontlw_drempel', 3))
+                    if _wbekend:
+                        _wdrempel = _wd3.slider("Min. streak:", 1, 30, _wdrempel, key="ontlw_drempel_s")
+                        _wprefs['ontlw_drempel'] = _wdrempel
+                    _wsteun = _wd4.toggle("💡 Hulp", value=bool(_wprefs.get('ontlw_steun', True)), key="ontlw_steun_t")
+                    _wprefs['ontlw_steun'] = _wsteun
 
-                # Kleur-schuifjes voor de contextzin (zoals in Leesteksten) — het doelwoord blijft
-                # ongekleurd, anders verraadt de kleur het antwoord.
-                _wkc1, _wkc2, _wkc3, _wkc4 = st.columns(4)
-                _wkl_nv = _wkc1.toggle("🎨 Kleur naamvallen", value=bool(_wprefs.get('ontlw_kl_nv', False)), key="ontlw_kl_nv_t",
-                                       help="Kleurt de andere woorden in de zin op naamval. Het woord dat je ontleedt blijft ongekleurd.")
-                _wkl_vw = _wkc2.toggle("🔗 Kleur voegwoorden", value=bool(_wprefs.get('ontlw_kl_vw', False)), key="ontlw_kl_vw_t")
-                _wkl_st = _wkc3.toggle("⚛️ Kleur stamtijden", value=bool(_wprefs.get('ontlw_kl_st', False)), key="ontlw_kl_st_t")
-                _wkl_ug = _wkc4.toggle("🌈 Kleur uitgangen", value=bool(_wprefs.get('ontlw_kl_ug', False)), key="ontlw_kl_ug_t",
-                                       help="Splitst elk woord in stam + uitgang (en augment) met eigen kleuren — óók het doelwoord.")
-                _wprefs['ontlw_kl_nv'] = _wkl_nv; _wprefs['ontlw_kl_vw'] = _wkl_vw; _wprefs['ontlw_kl_st'] = _wkl_st; _wprefs['ontlw_kl_ug'] = _wkl_ug
+                    # Kleur-schuifjes voor de contextzin (zoals in Leesteksten) — het doelwoord blijft
+                    # ongekleurd, anders verraadt de kleur het antwoord.
+                    _wkc1, _wkc2, _wkc3, _wkc4 = st.columns(4)
+                    _wkl_nv = _wkc1.toggle("🎨 Kleur naamvallen", value=bool(_wprefs.get('ontlw_kl_nv', False)), key="ontlw_kl_nv_t",
+                                           help="Kleurt de andere woorden in de zin op naamval. Het woord dat je ontleedt blijft ongekleurd.")
+                    _wkl_vw = _wkc2.toggle("🔗 Kleur voegwoorden", value=bool(_wprefs.get('ontlw_kl_vw', False)), key="ontlw_kl_vw_t")
+                    _wkl_st = _wkc3.toggle("⚛️ Kleur stamtijden", value=bool(_wprefs.get('ontlw_kl_st', False)), key="ontlw_kl_st_t")
+                    _wkl_ug = _wkc4.toggle("🌈 Kleur uitgangen", value=bool(_wprefs.get('ontlw_kl_ug', False)), key="ontlw_kl_ug_t",
+                                           help="Splitst elk woord in stam + uitgang (en augment) met eigen kleuren — óók het doelwoord.")
+                    _wprefs['ontlw_kl_nv'] = _wkl_nv; _wprefs['ontlw_kl_vw'] = _wkl_vw; _wprefs['ontlw_kl_st'] = _wkl_st; _wprefs['ontlw_kl_ug'] = _wkl_ug
 
                 # Werkwoordsvorm-filter: alleen zichtbaar als je werkwoorden oefent. Zo kun je gericht
                 # bv. alleen participia of alleen de aoristus oefenen.
@@ -7942,66 +7943,67 @@ def main():
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
             else:
-                _oc1, _oc2, _oc3, _oc4, _oc5 = st.columns([1.3, 1.3, 0.9, 1.0, 1.0])
-                # Instellingen onthouden over sessies heen via ui_prefs (wordt bij opslag meegeschreven).
-                _oprefs = st.session_state.get('ui_prefs')
-                if not isinstance(_oprefs, dict):
-                    _oprefs = {}; st.session_state.ui_prefs = _oprefs
-                _niv_def = _oprefs.get('ontl_niveau', 'Grieks 2')
-                if _niv_def not in ["Grieks 1", "Grieks 2", "Grieks 3"]:
-                    _niv_def = 'Grieks 2'
-                _oniveau = _oc1.selectbox("Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
-                                          index=["Grieks 1", "Grieks 2", "Grieks 3"].index(_niv_def),
-                                          key="ontl_niveau_sel", help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus/participium).")
-                st.session_state.ontl_niveau = _oniveau; _oprefs['ontl_niveau'] = _oniveau
-                _odrempel = _oc2.slider("Ontleed woorden die je kent (min. streak):", 1, 30,
-                                        int(_oprefs.get('ontl_drempel', 5)), key="ontl_drempel_slider")
-                st.session_state.ontl_drempel = _odrempel; _oprefs['ontl_drempel'] = _odrempel
-                _osteun = _oc3.toggle("💡 Hulp", value=bool(_oprefs.get('ontl_steun', True)), key="ontl_steun_toggle")
-                st.session_state.ontl_steun = _osteun; _oprefs['ontl_steun'] = _osteun
-                _obasis = _oc4.toggle("🔑 Basiswoord", value=bool(_oprefs.get('ontl_basis', False)), key="ontl_basis_toggle",
-                                      help="Toon bij elk woord de woordenboekvorm (basiswoord), zonder de betekenis.")
-                st.session_state.ontl_basis = _obasis; _oprefs['ontl_basis'] = _obasis
+                with st.expander("⚙️ Instellingen (niveau · kleuren · rondes · lessen)", expanded=False):
+                    _oc1, _oc2, _oc3, _oc4, _oc5 = st.columns([1.3, 1.3, 0.9, 1.0, 1.0])
+                    # Instellingen onthouden over sessies heen via ui_prefs (wordt bij opslag meegeschreven).
+                    _oprefs = st.session_state.get('ui_prefs')
+                    if not isinstance(_oprefs, dict):
+                        _oprefs = {}; st.session_state.ui_prefs = _oprefs
+                    _niv_def = _oprefs.get('ontl_niveau', 'Grieks 2')
+                    if _niv_def not in ["Grieks 1", "Grieks 2", "Grieks 3"]:
+                        _niv_def = 'Grieks 2'
+                    _oniveau = _oc1.selectbox("Niveau:", ["Grieks 1", "Grieks 2", "Grieks 3"],
+                                              index=["Grieks 1", "Grieks 2", "Grieks 3"].index(_niv_def),
+                                              key="ontl_niveau_sel", help="Bepaalt welke vormen je hoeft te ontleden (bv. bij Grieks 1 geen conjunctivus/participium).")
+                    st.session_state.ontl_niveau = _oniveau; _oprefs['ontl_niveau'] = _oniveau
+                    _odrempel = _oc2.slider("Ontleed woorden die je kent (min. streak):", 1, 30,
+                                            int(_oprefs.get('ontl_drempel', 5)), key="ontl_drempel_slider")
+                    st.session_state.ontl_drempel = _odrempel; _oprefs['ontl_drempel'] = _odrempel
+                    _osteun = _oc3.toggle("💡 Hulp", value=bool(_oprefs.get('ontl_steun', True)), key="ontl_steun_toggle")
+                    st.session_state.ontl_steun = _osteun; _oprefs['ontl_steun'] = _osteun
+                    _obasis = _oc4.toggle("🔑 Basiswoord", value=bool(_oprefs.get('ontl_basis', False)), key="ontl_basis_toggle",
+                                          help="Toon bij elk woord de woordenboekvorm (basiswoord), zonder de betekenis.")
+                    st.session_state.ontl_basis = _obasis; _oprefs['ontl_basis'] = _obasis
 
-                # Kleur-schuifjes (zoals in Leesteksten) — het doelwoord kleurt nooit mee, anders
-                # verraadt de kleur het antwoord.
-                _kc1, _kc2, _kc3, _kc4 = st.columns(4)
-                _kl_nv = _kc1.toggle("🎨 Kleur naamvallen", value=bool(_oprefs.get('ontl_kl_nv', False)), key="ontl_kl_nv_t",
-                                     help="Kleurt de andere woorden op naamval. Het woord dat je ontleedt blijft ongekleurd.")
-                _kl_vw = _kc2.toggle("🔗 Kleur voegwoorden", value=bool(_oprefs.get('ontl_kl_vw', False)), key="ontl_kl_vw_t")
-                _kl_st = _kc3.toggle("⚛️ Kleur stamtijden", value=bool(_oprefs.get('ontl_kl_st', False)), key="ontl_kl_st_t")
-                _kl_ug = _kc4.toggle("🌈 Kleur uitgangen", value=bool(_oprefs.get('ontl_kl_ug', False)), key="ontl_kl_ug_t",
-                                     help="Splitst elk woord in stam + uitgang (en augment) met eigen kleuren — óók het doelwoord, dat helpt bij herleiden.")
-                _oprefs['ontl_kl_nv'] = _kl_nv; _oprefs['ontl_kl_vw'] = _kl_vw; _oprefs['ontl_kl_st'] = _kl_st; _oprefs['ontl_kl_ug'] = _kl_ug
+                    # Kleur-schuifjes (zoals in Leesteksten) — het doelwoord kleurt nooit mee, anders
+                    # verraadt de kleur het antwoord.
+                    _kc1, _kc2, _kc3, _kc4 = st.columns(4)
+                    _kl_nv = _kc1.toggle("🎨 Kleur naamvallen", value=bool(_oprefs.get('ontl_kl_nv', False)), key="ontl_kl_nv_t",
+                                         help="Kleurt de andere woorden op naamval. Het woord dat je ontleedt blijft ongekleurd.")
+                    _kl_vw = _kc2.toggle("🔗 Kleur voegwoorden", value=bool(_oprefs.get('ontl_kl_vw', False)), key="ontl_kl_vw_t")
+                    _kl_st = _kc3.toggle("⚛️ Kleur stamtijden", value=bool(_oprefs.get('ontl_kl_st', False)), key="ontl_kl_st_t")
+                    _kl_ug = _kc4.toggle("🌈 Kleur uitgangen", value=bool(_oprefs.get('ontl_kl_ug', False)), key="ontl_kl_ug_t",
+                                         help="Splitst elk woord in stam + uitgang (en augment) met eigen kleuren — óók het doelwoord, dat helpt bij herleiden.")
+                    _oprefs['ontl_kl_nv'] = _kl_nv; _oprefs['ontl_kl_vw'] = _kl_vw; _oprefs['ontl_kl_st'] = _kl_st; _oprefs['ontl_kl_ug'] = _kl_ug
 
-                # Welke rondes wil je doen? Positief neergezet (leeg = alle rondes) — net als overal.
-                _ronde_opts = {"Woordsoort": "woordsoort", "Naamwoorden ontleden": "znw",
-                               "Werkwoorden ontleden": "ww", "Woord-voor-woord vertalen": "vertalen",
-                               "Hele zin vertalen": "zin"}
-                _alle_fasen = list(_ronde_opts.values())
-                _do_default = [lab for lab, f in _ronde_opts.items() if f in (_oprefs.get('ontl_do') or [])]
-                _do_sel = st.multiselect("Welke rondes wil je doen? (leeg = alle rondes)", list(_ronde_opts.keys()),
-                                         default=_do_default, key="ontl_do_sel")
-                _do_fasen = [_ronde_opts[lab] for lab in _do_sel]
-                _oprefs['ontl_do'] = _do_fasen
-                # Intern werken we nog met 'over te slaan' fasen: alles wat je NIET koos (als je iets koos).
-                _skip_fasen = [f for f in _alle_fasen if f not in _do_fasen] if _do_fasen else []
-                st.session_state.ontl_skip_fasen = _skip_fasen
+                    # Welke rondes wil je doen? Positief neergezet (leeg = alle rondes) — net als overal.
+                    _ronde_opts = {"Woordsoort": "woordsoort", "Naamwoorden ontleden": "znw",
+                                   "Werkwoorden ontleden": "ww", "Woord-voor-woord vertalen": "vertalen",
+                                   "Hele zin vertalen": "zin"}
+                    _alle_fasen = list(_ronde_opts.values())
+                    _do_default = [lab for lab, f in _ronde_opts.items() if f in (_oprefs.get('ontl_do') or [])]
+                    _do_sel = st.multiselect("Welke rondes wil je doen? (leeg = alle rondes)", list(_ronde_opts.keys()),
+                                             default=_do_default, key="ontl_do_sel")
+                    _do_fasen = [_ronde_opts[lab] for lab in _do_sel]
+                    _oprefs['ontl_do'] = _do_fasen
+                    # Intern werken we nog met 'over te slaan' fasen: alles wat je NIET koos (als je iets koos).
+                    _skip_fasen = [f for f in _alle_fasen if f not in _do_fasen] if _do_fasen else []
+                    st.session_state.ontl_skip_fasen = _skip_fasen
 
-                # Op bepaalde lessen richten (net als bij 'Losse woorden ontleden').
-                _ol_all_lessen = sorted({veilig_les_nummer(i) for i in (st.session_state.get('data') or [])})
-                _olc1, _olc2 = st.columns([2, 1])
-                _ol_alles = _olc2.toggle("Alle lessen", value=bool(_oprefs.get('ontl_lessen_alles', True)), key="ontl_lessen_alles_t")
-                _oprefs['ontl_lessen_alles'] = _ol_alles
-                if _ol_alles:
-                    _olc1.caption("Te ontleden woorden mogen uit **alle lessen** komen.")
-                    _ontl_lessen = set(_ol_all_lessen)
-                else:
-                    _ol_vorige = [l for l in (_oprefs.get('ontl_lessen') or []) if l in _ol_all_lessen]
-                    _ol_sel = _olc1.multiselect("Richt op lessen:", _ol_all_lessen,
-                                                default=_ol_vorige or _ol_all_lessen[:1], key="ontl_lessen_ms")
-                    _oprefs['ontl_lessen'] = list(_ol_sel)
-                    _ontl_lessen = set(_ol_sel)
+                    # Op bepaalde lessen richten (net als bij 'Losse woorden ontleden').
+                    _ol_all_lessen = sorted({veilig_les_nummer(i) for i in (st.session_state.get('data') or [])})
+                    _olc1, _olc2 = st.columns([2, 1])
+                    _ol_alles = _olc2.toggle("Alle lessen", value=bool(_oprefs.get('ontl_lessen_alles', True)), key="ontl_lessen_alles_t")
+                    _oprefs['ontl_lessen_alles'] = _ol_alles
+                    if _ol_alles:
+                        _olc1.caption("Te ontleden woorden mogen uit **alle lessen** komen.")
+                        _ontl_lessen = set(_ol_all_lessen)
+                    else:
+                        _ol_vorige = [l for l in (_oprefs.get('ontl_lessen') or []) if l in _ol_all_lessen]
+                        _ol_sel = _olc1.multiselect("Richt op lessen:", _ol_all_lessen,
+                                                    default=_ol_vorige or _ol_all_lessen[:1], key="ontl_lessen_ms")
+                        _oprefs['ontl_lessen'] = list(_ol_sel)
+                        _ontl_lessen = set(_ol_sel)
                 # strong → lesnummer, om te ontleden woorden op les te kunnen filteren
                 _ontl_les_van = {str(w['strong']): veilig_les_nummer(w)
                                  for w in (st.session_state.get('data') or []) if w.get('strong')}
