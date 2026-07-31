@@ -1327,6 +1327,17 @@ def _bijbel_strong_index(_bijbel_db):
                 idx.setdefault(s, []).append(ref)
     return idx
 
+def bsb_glosse(en):
+    """De Engelse BSB-glosse, of '' als het een placeholder is (bv. 'vvv', '. . .', leeg of alleen
+    leestekens). Zo'n placeholder betekent dat de BSB dat woord in een zinsdeel vertaalt in plaats
+    van met één los Engels woord — die horen niet in de vertaling-verdeling thuis."""
+    s = str(en or "").strip()
+    if not s or s.lower() == "vvv":
+        return ""
+    if not re.search(r"[A-Za-z]", s):   # alleen puntjes/leestekens/cijfers → geen echte glosse
+        return ""
+    return s
+
 @st.cache_data(show_spinner=False)
 def zoek_vindplaatsen(_bijbel_db, norm_vorm):
     """Alle vindplaatsen van één (genormaliseerde) vorm in het NT: (ref, grieks, parsing_info,
@@ -1356,7 +1367,7 @@ def werkwoord_vertaling_per_tijd(_bijbel_db, strong):
             if "Werkwoord" not in info:
                 continue
             tijd = next((t for t in _TIJD_VOLGORDE if t in info), None)
-            en = str(w.get('vertaling_bsb', '') or '').strip()
+            en = bsb_glosse(w.get('vertaling_bsb', ''))
             if tijd and en:
                 per[tijd][en] += 1
     return {t: per[t] for t in _TIJD_VOLGORDE if per.get(t)}
@@ -1406,7 +1417,8 @@ def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing
     if not bijbel_db:
         return False
     _vp = zoek_vindplaatsen(bijbel_db, normaliseer_accent(grieks_vorm)) if grieks_vorm else []
-    _gloss = _coll.Counter(v[3].strip() for v in _vp if v[3].strip())
+    _gloss = _coll.Counter(g for g in (bsb_glosse(v[3]) for v in _vp) if g)
+    _zonder = len(_vp) - sum(_gloss.values())   # plekken zonder aparte Engelse glosse
     _is_ww = bool(strong) and "Werkwoord" in (parsing_info or "")
     _per_tijd = werkwoord_vertaling_per_tijd(bijbel_db, strong) if _is_ww else {}
     if len(_gloss) < 2 and not _per_tijd:
@@ -1416,6 +1428,9 @@ def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing
             if _per_tijd:
                 st.caption("Déze vorm:")
             st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+            if _zonder:
+                st.caption(f"ℹ️ {_zonder} van de {len(_vp)} plekken zijn in een zinsdeel vertaald "
+                           "(geen los Engels woord in de BSB).")
         if _per_tijd:
             st.markdown("**Per tijd — zo vertaalt de Bijbel de vormen van dit werkwoord:**")
             for _r in _regels_per_tijd(_per_tijd):
@@ -7190,10 +7205,14 @@ def main():
                         if _vp:
                             st.write("---")
                             import collections as _coll
-                            _gloss = _coll.Counter(v[3].strip() for v in _vp if v[3].strip())
+                            _gloss = _coll.Counter(g for g in (bsb_glosse(v[3]) for v in _vp) if g)
+                            _zonder = len(_vp) - sum(_gloss.values())
                             if len(_gloss) > 1:
                                 st.markdown("##### 🇬🇧 Zo wordt deze vorm in het Engels vertaald (BSB)")
                                 st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+                                if _zonder:
+                                    st.caption(f"ℹ️ {_zonder} van de {len(_vp)} plekken zijn in een zinsdeel vertaald "
+                                               "(geen los Engels woord in de BSB).")
                             # Werkwoord? Toon hoe de Bijbel álle tijden van dit werkwoord vertaalt.
                             _ww_strong = next((r[2] for r in _res if "Werkwoord" in r[1]), None)
                             if _ww_strong:
@@ -7205,7 +7224,8 @@ def main():
                             with st.expander(f"📍 Alle {len(_vp)} vindplaatsen in het NT"):
                                 st.caption("Klik op een vers voor de interlinear op BibleHub.")
                                 for _ref2, _g2, _pi2, _en2 in _vp[:300]:
-                                    _en_s = f" — *{_en2}*" if _en2 else ""
+                                    _en_c = bsb_glosse(_en2)
+                                    _en_s = f" — *{_en_c}*" if _en_c else " — *(in zinsdeel vertaald)*"
                                     _ru = biblehub_vers_url(_ref2)
                                     _ref_md = f"[{_ref2}]({_ru})" if _ru else f"**{_ref2}**"
                                     st.markdown(f"{_ref_md} · {_g2}{_en_s}")
