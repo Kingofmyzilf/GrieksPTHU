@@ -1339,6 +1339,37 @@ def zoek_vindplaatsen(_bijbel_db, norm_vorm):
                             str(w.get('vertaling_bsb', '') or '')))
     return uit
 
+_TIJD_VOLGORDE = ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum", "Plusquamperfectum"]
+
+@st.cache_data(show_spinner=False)
+def werkwoord_vertaling_per_tijd(_bijbel_db, strong):
+    """Voor één werkwoord (strong-nummer): per tijd een teller van de Engelse (BSB) vertalingen,
+    zodat je ziet hoe de Bijbel bv. de aoristus anders vertaalt dan het perfectum."""
+    import collections as _coll
+    per = _coll.defaultdict(_coll.Counter)
+    strong = str(strong)
+    for _ref, zin in (_bijbel_db or {}).items():
+        for w in zin:
+            if str(w.get('strong', '')) != strong:
+                continue
+            info = w.get('parsing_info', '') or ''
+            if "Werkwoord" not in info:
+                continue
+            tijd = next((t for t in _TIJD_VOLGORDE if t in info), None)
+            en = str(w.get('vertaling_bsb', '') or '').strip()
+            if tijd and en:
+                per[tijd][en] += 1
+    return {t: per[t] for t in _TIJD_VOLGORDE if per.get(t)}
+
+def _regels_per_tijd(per_tijd, max_glossen=4):
+    """Markdown-regels: per tijd de meest voorkomende Engelse vertalingen met aantallen."""
+    regels = []
+    for tijd, teller in per_tijd.items():
+        top = teller.most_common(max_glossen)
+        glossen = ", ".join(f"“{g}” ({n}×)" for g, n in top)
+        regels.append(f"- **{tijd}** ({sum(teller.values())}×): {glossen}")
+    return regels
+
 _PIE_KLEUREN = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
 
 def cirkeldiagram_html(paren, grootte=170):
@@ -1367,19 +1398,29 @@ def cirkeldiagram_html(paren, grootte=170):
             f"background:conic-gradient({', '.join(segs)})'></div>"
             f"<div style='min-width:180px'>{''.join(legenda)}</div></div>")
 
-def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", uitgeklapt=False):
-    """Uitklapbaar cirkeldiagram: hoe wordt déze vorm in het NT in het Engels (BSB) vertaald?
-    Geeft True terug als er iets getoond is (alleen bij ≥2 verschillende vertalingen)."""
+def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing_info="", uitgeklapt=False):
+    """Uitklapbaar overzicht: hoe wordt déze vorm in het NT in het Engels (BSB) vertaald? Bij een
+    werkwoord ook een uitsplitsing per tijd (zo leer je hoe de Bijbel de vormen vertaalt).
+    Geeft True terug als er iets te tonen viel."""
     import collections as _coll
-    if not grieks_vorm or not bijbel_db:
+    if not bijbel_db:
         return False
-    _vp = zoek_vindplaatsen(bijbel_db, normaliseer_accent(grieks_vorm))
+    _vp = zoek_vindplaatsen(bijbel_db, normaliseer_accent(grieks_vorm)) if grieks_vorm else []
     _gloss = _coll.Counter(v[3].strip() for v in _vp if v[3].strip())
-    if len(_gloss) < 2:
+    _is_ww = bool(strong) and "Werkwoord" in (parsing_info or "")
+    _per_tijd = werkwoord_vertaling_per_tijd(bijbel_db, strong) if _is_ww else {}
+    if len(_gloss) < 2 and not _per_tijd:
         return False
-    with st.expander(f"🇬🇧 Zo wordt deze vorm in het Engels vertaald ({len(_vp)} vindplaatsen)", expanded=uitgeklapt):
-        st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
-        st.caption("Engelse vertaling per plek (BSB). Uitklap met alle vindplaatsen zit in de **🔍 Zoeken**-modus.")
+    with st.expander(f"🇬🇧 Zo vertaalt de Bijbel deze vorm in het Engels ({len(_vp)} vindplaatsen)", expanded=uitgeklapt):
+        if len(_gloss) >= 2:
+            if _per_tijd:
+                st.caption("Déze vorm:")
+            st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+        if _per_tijd:
+            st.markdown("**Per tijd — zo vertaalt de Bijbel de vormen van dit werkwoord:**")
+            for _r in _regels_per_tijd(_per_tijd):
+                st.markdown(_r)
+        st.caption("Engelse vertaling per plek (BSB). Alle vindplaatsen zie je in de **🔍 Zoeken**-modus.")
     return True
 
 def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None, kleur_aan=True, co_doel_strongs=None):
@@ -7126,6 +7167,14 @@ def main():
                             if len(_gloss) > 1:
                                 st.markdown("##### 🇬🇧 Zo wordt deze vorm in het Engels vertaald (BSB)")
                                 st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+                            # Werkwoord? Toon hoe de Bijbel álle tijden van dit werkwoord vertaalt.
+                            _ww_strong = next((r[2] for r in _res if "Werkwoord" in r[1]), None)
+                            if _ww_strong:
+                                _pt = werkwoord_vertaling_per_tijd(_obdb, _ww_strong)
+                                if _pt:
+                                    st.markdown("##### ⏳ Per tijd — zo vertaalt de Bijbel de vormen van dit werkwoord")
+                                    for _r in _regels_per_tijd(_pt):
+                                        st.markdown(_r)
                             with st.expander(f"📍 Alle {len(_vp)} vindplaatsen in het NT"):
                                 for _ref2, _g2, _pi2, _en2 in _vp[:300]:
                                     _en_s = f" — *{_en2}*" if _en2 else ""
@@ -7421,7 +7470,8 @@ def main():
                                          uitgeklapt=bool(st.session_state.get('ontlw_fb')))
                         toon_rijtje_hulp(_winfo, _wlemma, _wginfo, sleutel="ontlw",
                                          uitgeklapt=bool(st.session_state.get('ontlw_fb')))
-                        toon_engels_diagram(_ww.get('grieks', ''), _obdb, sleutel="ontlw")
+                        toon_engels_diagram(_ww.get('grieks', ''), _obdb, sleutel="ontlw",
+                                            strong=_ww.get('strong'), parsing_info=_winfo)
                     st.caption("📊 Je ontleed-accuratesse per onderdeel vind je op het **📊 Voortgang**-tabblad.")
 
             else:
@@ -7888,7 +7938,8 @@ def main():
                                                  uitgeklapt=False)
                                 toon_rijtje_hulp(_hinfo, _hlemma, _hginfo,
                                                  sleutel=f"ontl_{_fase}_{_pos}", uitgeklapt=False)
-                            toon_engels_diagram(_hw.get('grieks', ''), _obdb, sleutel=f"ontl_{_fase}_{_pos}")
+                            toon_engels_diagram(_hw.get('grieks', ''), _obdb, sleutel=f"ontl_{_fase}_{_pos}",
+                                                strong=_hw.get('strong'), parsing_info=_hinfo)
                         elif _fase == 'zin':
                             # Bij de hele zin: alle ontlede woorden met hun eigen rijtje op een rij.
                             with st.expander("📋 De rijtjes van de woorden in deze zin", expanded=False):
