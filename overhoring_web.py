@@ -952,6 +952,47 @@ def _ontleed_deel_correct(dim, info):
         return "—"
     return "—"
 
+def vorm_ontledingen(bijbel_db, grieks_vorm, strong=None):
+    """Alle verschillende ontledingen (parsing_info) die deze exacte vorm in het NT heeft — dus alle
+    'mogelijke opties' bij een dubbelzinnige vorm. Optioneel beperkt tot één woord (strong)."""
+    rows = bijbel_vorm_index(bijbel_db).get(normaliseer_accent(grieks_vorm), [])
+    out = []
+    for _g, _pi, _strong, _ref, _n, _tr in rows:
+        if strong is not None and str(_strong) != str(strong):
+            continue
+        if _pi and _pi not in out:
+            out.append(_pi)
+    return out
+
+def alternatieve_ontleding(bijbel_db, grieks_vorm, strong, keuzes, correct_info, dims):
+    """Als de gegeven keuzes niet bij correct_info passen, maar wél volledig bij een ánder attested
+    ontleding van dezelfde vorm (zelfde woord), geef die alt parsing_info terug — anders None.
+
+    Zo weet de app: 'je antwoord beschrijft een echte, maar hier verkeerde, vorm van dit woord.'"""
+    if not strong or not grieks_vorm:
+        return None
+    beantwoord = [(k, keuzes.get(k)) for k, _lab, _opt in dims if keuzes.get(k) is not None]
+    if not beantwoord:
+        return None
+    for alt in vorm_ontledingen(bijbel_db, grieks_vorm, strong):
+        if alt == correct_info:
+            continue
+        if all(_ontleed_deel_ok(k, v, alt) for k, v in beantwoord):
+            return alt
+    return None
+
+def ambiguiteit_regel(bijbel_db, grieks_vorm, strong, keuzes, correct_info, dims):
+    """Waarschuwingsregel (of ''): jouw ontleding beschrijft een échte, maar hier verkeerde, vorm
+    van dit woord — de context bepaalt welke het is, dus je zou het verkeerd vertalen."""
+    alt = alternatieve_ontleding(bijbel_db, grieks_vorm, strong, keuzes, correct_info, dims)
+    if not alt:
+        return ""
+    _alt_v = alt.split(' - ', 1)[1] if ' - ' in alt else alt
+    _cor_v = correct_info.split(' - ', 1)[1] if ' - ' in correct_info else correct_info
+    return (f"- ⚠️ **Let op:** deze vorm **kán** ook *{_alt_v}* zijn — dan zou jouw ontleding kloppen! "
+            f"Maar in **déze zin** is het *{_cor_v}*. Zo'n vorm is dubbelzinnig; de context beslist. "
+            f"Met jouw keuze zou je het verkeerd vertalen.")
+
 _ONTLEED_WS_OPTS = ["Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Voornaamwoord", "Lidwoord", "Voegwoord", "Voorzetsel", "Bijwoord", "Partikel"]
 
 def _woordsoort_van(info):
@@ -7220,6 +7261,10 @@ def main():
                         audio_knop(fonetisch_uit_translit(_res[0][5]), key="ontlzoek")
                         _mv = "vorm" if len(_res) == 1 else "mogelijke ontledingen"
                         st.caption(f"**{len(_res)}** {_mv} in het NT — meest voorkomende bovenaan.")
+                        # Meerdere ontledingen van hetzelfde woord = dubbelzinnige vorm: de context beslist.
+                        if any(len(vorm_ontledingen(_obdb, _res[0][0], _r[2])) > 1 for _r in _res):
+                            st.info("⚠️ Dit is een **dubbelzinnige vorm**: los van de zin zijn meerdere ontledingen "
+                                    "mogelijk. In een echte tekst bepaalt de context (en soms het accent) welke het is.")
                         for _zi, (_g, _pi, _strong, _ref, _n, _tr) in enumerate(_res):
                             _bw = _vocab.get(str(_strong))
                             _lemma = str(_bw.get('grieks', '')) if _bw else ""
@@ -7549,6 +7594,10 @@ def main():
                             trigger_save()
                             _nieuw_ontleed_woord()
                         else:
+                            _amb = ambiguiteit_regel(_obdb, _ww.get('grieks', ''), _ww.get('strong'),
+                                                     _wkeuzes, _winfo, _wdims)
+                            if _amb:
+                                _res.append(_amb)
                             st.session_state.ontlw_fb = _res
                         st.rerun()
 
@@ -7938,6 +7987,10 @@ def main():
                                     _ontl_advance()
                                 trigger_save()
                             else:
+                                _amb = ambiguiteit_regel(_obdb, _w.get('grieks', ''), _w.get('strong'),
+                                                         _keuzes, _info, _dims)
+                                if _amb:
+                                    _res.append(_amb)
                                 st.session_state.ontl_feedback = _res
                             st.rerun()
                         if _cB.button("👁️ Toon antwoord", key=f"ontl_toon_{_fase}_{_pos}"):
