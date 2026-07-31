@@ -7454,6 +7454,15 @@ def main():
                 _wsteun = _wd4.toggle("💡 Hulp", value=bool(_wprefs.get('ontlw_steun', True)), key="ontlw_steun_t")
                 _wprefs['ontlw_steun'] = _wsteun
 
+                # Kleur-schuifjes voor de contextzin (zoals in Leesteksten) — het doelwoord blijft
+                # ongekleurd, anders verraadt de kleur het antwoord.
+                _wkc1, _wkc2, _wkc3 = st.columns(3)
+                _wkl_nv = _wkc1.toggle("🎨 Kleur naamvallen", value=bool(_wprefs.get('ontlw_kl_nv', False)), key="ontlw_kl_nv_t",
+                                       help="Kleurt de andere woorden in de zin op naamval. Het woord dat je ontleedt blijft ongekleurd.")
+                _wkl_vw = _wkc2.toggle("🔗 Kleur voegwoorden", value=bool(_wprefs.get('ontlw_kl_vw', False)), key="ontlw_kl_vw_t")
+                _wkl_st = _wkc3.toggle("⚛️ Kleur stamtijden", value=bool(_wprefs.get('ontlw_kl_st', False)), key="ontlw_kl_st_t")
+                _wprefs['ontlw_kl_nv'] = _wkl_nv; _wprefs['ontlw_kl_vw'] = _wkl_vw; _wprefs['ontlw_kl_st'] = _wkl_st
+
                 # Werkwoordsvorm-filter: alleen zichtbaar als je werkwoorden oefent. Zo kun je gericht
                 # bv. alleen participia of alleen de aoristus oefenen.
                 _WIJZEN = ["Indicativus", "Conjunctivus", "Optativus", "Imperativus", "Infinitivus", "Participium"]
@@ -7558,7 +7567,9 @@ def main():
                     st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
                                 f"padding:6px 0'>{_ww.get('grieks','')}</div>", unsafe_allow_html=True)
 
-                    # De zin eromheen als context (het doelwoord licht op).
+                    # De zin eromheen als context (het doelwoord licht op). Kleur-schuifjes kleuren
+                    # de ándere woorden; het doelwoord blijft ongekleurd, anders verraadt het het antwoord.
+                    _wstamset = stamtijd_vormen_set() if _wkl_st else set()
                     _ctx = ""
                     for _j, _cw in enumerate(_wzin):
                         _g = _cw.get('grieks', ''); _ip = _cw.get('interpunctie', '')
@@ -7566,14 +7577,24 @@ def main():
                             _ctx += (f"<span style='background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;"
                                      f"padding:0 3px;border-radius:4px;font-weight:700'>{_g}</span>{_ip} ")
                         else:
+                            _cstijl = ontleed_kleur_stijl(_cw.get('parsing_info', ''), _g, _wkl_nv, _wkl_vw, _wkl_st, _wstamset) or "color:#8a8a8a"
                             _tt = (str(_cw.get('vertaling_nl', '') or _cw.get('vertaling_bsb', ''))).replace("'", "&#39;").replace('"', "&quot;")
                             if _cw.get('strong') and _tt:
-                                _ctx += f"<span class='mobile-tooltip' tabindex='0' style='color:#8a8a8a'>{_g}<span class='tooltiptext'>{_tt}</span></span>{_ip} "
+                                _ctx += f"<span class='mobile-tooltip' tabindex='0' style='{_cstijl}'>{_g}<span class='tooltiptext'>{_tt}</span></span>{_ip} "
                             else:
-                                _ctx += f"<span style='color:#8a8a8a'>{_g}</span>{_ip} "
+                                _ctx += f"<span style='{_cstijl}'>{_g}</span>{_ip} "
                     st.markdown(f"<div style='font-size:13px;color:#f6c23e'>📖 {st.session_state.ontlw_ref}</div>"
                                 f"<div style='font-size:19px;padding:6px 4px;line-height:1.6'>{_ctx.strip()}</div>",
                                 unsafe_allow_html=True)
+                    if _wkl_nv or _wkl_vw or _wkl_st:
+                        _wleg = []
+                        if _wkl_nv:
+                            _wleg.append(" · ".join(f"<span style='color:{_ONTLEED_KLEUR[c]}'>{c}</span>"
+                                                    for c in ["Nom", "Gen", "Dat", "Acc", "Voc"]))
+                        if _wkl_vw: _wleg.append("<span style='background:#ffd700;color:#000;padding:0 3px;border-radius:3px'>voegwoord</span>")
+                        if _wkl_st: _wleg.append("<span style='color:#d63384'>stamtijd</span>")
+                        st.markdown("<div style='font-size:12px;color:#9aa3af'>🎨 " + " &nbsp;|&nbsp; ".join(_wleg)
+                                    + " &nbsp;·&nbsp; het te ontleden woord blijft ongekleurd</div>", unsafe_allow_html=True)
                     # Uitspraak: eerst het woord zelf, dan de hele zin eromheen.
                     _wfon = fonetisch_uit_translit(_ww.get('transliteratie', ''))
                     audio_knop((_wfon + ". " + bijbelzin_fonetisch(_wzin)).strip(". "), key="ontlwoord")
