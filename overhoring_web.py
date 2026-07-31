@@ -7311,16 +7311,39 @@ def main():
                                       help="Toon bij elk woord de woordenboekvorm (basiswoord), zonder de betekenis.")
                 st.session_state.ontl_basis = _obasis; _oprefs['ontl_basis'] = _obasis
 
-                # Rondes overslaan (keuze wordt onthouden).
+                # Welke rondes wil je doen? Positief neergezet (leeg = alle rondes) — net als overal.
                 _ronde_opts = {"Woordsoort": "woordsoort", "Naamwoorden ontleden": "znw",
                                "Werkwoorden ontleden": "ww", "Woord-voor-woord vertalen": "vertalen",
                                "Hele zin vertalen": "zin"}
-                _skip_default = [lab for lab, f in _ronde_opts.items() if f in (_oprefs.get('ontl_skip') or [])]
-                _skip_sel = st.multiselect("Rondes overslaan (optioneel):", list(_ronde_opts.keys()),
-                                           default=_skip_default, key="ontl_skip_sel")
-                _skip_fasen = [_ronde_opts[lab] for lab in _skip_sel]
+                _alle_fasen = list(_ronde_opts.values())
+                _do_default = [lab for lab, f in _ronde_opts.items() if f in (_oprefs.get('ontl_do') or [])]
+                _do_sel = st.multiselect("Welke rondes wil je doen? (leeg = alle rondes)", list(_ronde_opts.keys()),
+                                         default=_do_default, key="ontl_do_sel")
+                _do_fasen = [_ronde_opts[lab] for lab in _do_sel]
+                _oprefs['ontl_do'] = _do_fasen
+                # Intern werken we nog met 'over te slaan' fasen: alles wat je NIET koos (als je iets koos).
+                _skip_fasen = [f for f in _alle_fasen if f not in _do_fasen] if _do_fasen else []
                 st.session_state.ontl_skip_fasen = _skip_fasen
-                _oprefs['ontl_skip'] = _skip_fasen
+
+                # Op bepaalde lessen richten (net als bij 'Losse woorden ontleden').
+                _ol_all_lessen = sorted({veilig_les_nummer(i) for i in (st.session_state.get('data') or [])})
+                _olc1, _olc2 = st.columns([2, 1])
+                _ol_alles = _olc2.toggle("Alle lessen", value=bool(_oprefs.get('ontl_lessen_alles', True)), key="ontl_lessen_alles_t")
+                _oprefs['ontl_lessen_alles'] = _ol_alles
+                if _ol_alles:
+                    _olc1.caption("Te ontleden woorden mogen uit **alle lessen** komen.")
+                    _ontl_lessen = set(_ol_all_lessen)
+                else:
+                    _ol_vorige = [l for l in (_oprefs.get('ontl_lessen') or []) if l in _ol_all_lessen]
+                    _ol_sel = _olc1.multiselect("Richt op lessen:", _ol_all_lessen,
+                                                default=_ol_vorige or _ol_all_lessen[:1], key="ontl_lessen_ms")
+                    _oprefs['ontl_lessen'] = list(_ol_sel)
+                    _ontl_lessen = set(_ol_sel)
+                # strong → lesnummer, om te ontleden woorden op les te kunnen filteren
+                _ontl_les_van = {str(w['strong']): veilig_les_nummer(w)
+                                 for w in (st.session_state.get('data') or []) if w.get('strong')}
+                def _ontl_les_ok(w):
+                    return _ol_alles or _ontl_les_van.get(str(w.get('strong'))) in _ontl_lessen
 
                 def _zet_ontleed_vers(ref, zin, alleen_bekend=True):
                     """Zet één vers klaar voor de vijf rondes (gedeeld door zin- en tekstmodus)."""
@@ -7331,6 +7354,8 @@ def main():
                     def _tgt(i):
                         w = zin[i]
                         if alleen_bekend and _ss.get(str(w.get('strong')), 0) < _odrempel:
+                            return False
+                        if not _ontl_les_ok(w):
                             return False
                         return _ontleed_in_scope(w.get('parsing_info', ''), _niv)
                     znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
@@ -7389,7 +7414,8 @@ def main():
                             continue  # hele zin moet bekend zijn
                         def _tgt(i):
                             w = zin[i]
-                            return _ss.get(str(w.get('strong')), 0) >= _odrempel and _ontleed_in_scope(w.get('parsing_info', ''), _niv)
+                            return (_ss.get(str(w.get('strong')), 0) >= _odrempel and _ontl_les_ok(w)
+                                    and _ontleed_in_scope(w.get('parsing_info', ''), _niv))
                         znw = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) == 'naam' and _tgt(i)]
                         ww = [i for i in lex if _ontleed_type(zin[i].get('parsing_info', '')) in ('ww', 'ptc') and _tgt(i)]
                         if znw or ww:
@@ -7441,7 +7467,8 @@ def main():
                     _nieuw_ontleed_vers(); st.rerun()
 
                 if st.session_state.get('ontl_geen'):
-                    st.warning(f"Geen verzen gevonden waarin je álle woorden kent én minstens één te ontleden woord met streak ≥ {_odrempel} (niveau {_oniveau}). Zet de drempel lager, kies een ander niveau, of oefen eerst meer woorden.")
+                    _les_hint = "" if _ol_alles else " Je hebt de lessen beperkt — zet 'Alle lessen' aan of kies meer lessen."
+                    st.warning(f"Geen verzen gevonden waarin je álle woorden kent én minstens één te ontleden woord met streak ≥ {_odrempel} (niveau {_oniveau}). Zet de drempel lager, kies een ander niveau, of oefen eerst meer woorden.{_les_hint}")
                 elif not st.session_state.get('ontl_ref'):
                     st.info("Kies hierboven een tekst en klik op **▶️ Start deze tekst**."
                             if _ontl_modus.startswith("📜") else "Klik op **🎲 Nieuw vers** om te beginnen.")
@@ -7559,10 +7586,24 @@ def main():
                         _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
                         st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         _dims = _ontleed_dims_zonder_ws(_info)
-                        _keuzes = {}
+                        # Stapsgewijs tonen: de volgende rij verschijnt pas als je de vorige hebt
+                        # aangeklikt. Zo verraadt de rij Naamval/Geslacht niet meteen dat het een
+                        # participium is — die komt pas ná je Wijs-keuze. Bolletjes blijven.
+                        def _rk(_key):
+                            return f"ontl_{_key}_{st.session_state.ontl_ref}_{_fase}_{_pos}"
+                        _beantwoord = 0
                         for _key, _label, _opts in _dims:
-                            _keuzes[_key] = st.radio(_label, _opts, index=None, horizontal=True,
-                                                     key=f"ontl_{_key}_{st.session_state.ontl_ref}_{_fase}_{_pos}")
+                            if st.session_state.get(_rk(_key)) is not None:
+                                _beantwoord += 1
+                            else:
+                                break
+                        _toon_n = min(len(_dims), _beantwoord + 1)
+                        _keuzes = {}
+                        for _key, _label, _opts in _dims[:_toon_n]:
+                            _keuzes[_key] = st.radio(_label, _opts, index=None, horizontal=True, key=_rk(_key))
+                        _alles_ingevuld = (_beantwoord >= len(_dims))
+                        if not _alles_ingevuld:
+                            st.caption("↓ Vul in; de volgende regel verschijnt zodra je iets aanklikt.")
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
@@ -7578,7 +7619,7 @@ def main():
                         toon_rijtje_hulp(_info, _lemma, _ginfo, sleutel=f"ontl_{_fase}_{_pos}",
                                          uitgeklapt=bool(st.session_state.get('ontl_feedback')))
                         _cA, _cB = st.columns(2)
-                        if _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
+                        if _alles_ingevuld and _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
                             _res = []; _alle_goed = True; _eerste = _eerste_keer()
                             for _key, _label, _opts in _dims:
                                 _kz = _keuzes.get(_key)
