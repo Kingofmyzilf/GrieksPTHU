@@ -756,6 +756,52 @@ def _naam_klasse(grieks_info, geslacht):
         return "a_alpha"
     return None
 
+# 3e-declinatie-uitgangen (accent-loos), per (naamval, getal). Alleen de oblique vormen waar de
+# echte stam (uit de genitivus) schóón vooraan in het woord zit. Nominativus ev / vocativus en de
+# sandhi-vormen (dat. mv, στ+σι → ...) slaan we over: daar wisselt de stam, dus dan zwijgen we.
+_NAAM3_UITG = {
+    ("gen", "ev"): {"ος"}, ("dat", "ev"): {"ι"}, ("acc", "ev"): {"α"},
+    ("nom", "mv"): {"ες", "α"}, ("gen", "mv"): {"ων"}, ("acc", "mv"): {"ας", "α"},
+    ("dat", "mv"): {"σι", "σιν"},
+}
+
+def _naam3_stam_kaal(grieks_info):
+    """Leidt de accent-loze 3e-declinatie-stam af uit nominativus + genitivus in grieks_info
+    (bv. 'σῶμα, -τος' → 'σωματ', 'νύξ, νυκτός' → 'νυκτ'). De genitivus mag afgekort zijn: dan
+    plakken we hem met maximale overlap aan de nominativus. None als er geen schone stam is."""
+    ruw = [d.strip() for d in str(grieks_info or "").replace(';', ',').split(',') if d.strip()]
+    if len(ruw) < 2:
+        return None
+    nom, gen = ruw[0], ruw[1]
+    a = _opb_kaal(gen).lstrip('-').lstrip('‑')
+    if not a.endswith("ος") or a.endswith("ους"):
+        return None   # geen schone 3e-declinatie-genitivus (2e decl. -ου, contractum -ους, …)
+    if gen.strip().startswith('-') or gen.strip().startswith('‑'):
+        nomk = _opb_kaal(nom)
+        vol = None
+        for k in range(min(len(nomk), len(a)), 0, -1):
+            if nomk[-k:] == a[:k]:
+                vol = nomk + a[k:]; break
+        a = vol if vol is not None else nomk + a
+    stam = a[:-2]
+    return stam if len(stam) >= 2 else None
+
+def _splits_naamwoord_3e(grieks, grieks_info, nv, getal):
+    """3e declinatie: splits alleen als de vorm exact begint met de uit de genitivus afgeleide
+    stam én de rest een erkende 3e-declinatie-uitgang is. Zo blijft de splitsing altijd exact
+    reconstrueerbaar en vallen onregelmatige/sandhi-vormen vanzelf weg (geen valse splitsing)."""
+    stam_k = _naam3_stam_kaal(grieks_info)
+    if not stam_k:
+        return None
+    gk = _opb_kaal(grieks)
+    if len(gk) != len(grieks) or not gk.startswith(stam_k):
+        return None
+    rest = gk[len(stam_k):]
+    if rest not in _NAAM3_UITG.get((nv, getal), ()):
+        return None
+    n = len(stam_k)
+    return [(grieks[:n], "stam"), (grieks[n:], "uitgang")]
+
 def _splits_naamwoord(grieks, grieks_info, info):
     nv = next((k.lower() for k in ("Nom","Gen","Dat","Acc","Voc") if k in info), None)
     getal = "mv" if "mv" in info else ("ev" if "ev" in info else None)
@@ -763,14 +809,14 @@ def _splits_naamwoord(grieks, grieks_info, info):
     if not nv or not getal:
         return None
     kl = _naam_klasse(grieks_info, ges)
-    if not kl:
-        return None
-    for u in sorted(_NAAM_UITG[kl].get((nv, getal), []), key=len, reverse=True):
-        gk = _opb_kaal(grieks)
-        if gk.endswith(u) and len(gk) - len(u) >= 2:
-            n = len(grieks) - len(u)   # accent-loos en met accent even lang (geen combining chars)
-            return [(grieks[:n], "stam"), (grieks[n:], "uitgang")]
-    return None
+    if kl:
+        for u in sorted(_NAAM_UITG[kl].get((nv, getal), []), key=len, reverse=True):
+            gk = _opb_kaal(grieks)
+            if gk.endswith(u) and len(gk) - len(u) >= 2:
+                n = len(grieks) - len(u)   # accent-loos en met accent even lang (geen combining chars)
+                return [(grieks[:n], "stam"), (grieks[n:], "uitgang")]
+    # 1e/2e declinatie gaf niets → probeer 3e declinatie (stam uit de genitivus).
+    return _splits_naamwoord_3e(grieks, grieks_info, nv, getal)
 
 def _splits_werkwoord(grieks, lemma, info):
     gk, lk = _opb_kaal(grieks), _opb_kaal(lemma)
