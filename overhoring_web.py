@@ -7795,7 +7795,7 @@ def main():
                                                    "(let op het niveau en de filters)." + _extra)
                     st.session_state.ontlw_ref = None
 
-                if _wd4.button("🎲 Nieuw woord", key="ontlw_nieuw", type="primary"):
+                if st.button("🎲 Nieuw woord", key="ontlw_nieuw", type="primary"):
                     _nieuw_ontleed_woord(); st.rerun()
 
                 if st.session_state.get('ontlw_geen'):
@@ -7990,7 +7990,7 @@ def main():
 
             else:
                 with st.expander("⚙️ Instellingen (niveau · kleuren · rondes · lessen)", expanded=False):
-                    _oc1, _oc2, _oc3, _oc4, _oc5 = st.columns([1.3, 1.3, 0.9, 1.0, 1.0])
+                    _oc1, _oc2, _oc3, _oc4 = st.columns([1.3, 1.3, 0.9, 1.0])
                     # Instellingen onthouden over sessies heen via ui_prefs (wordt bij opslag meegeschreven).
                     _oprefs = st.session_state.get('ui_prefs')
                     if not isinstance(_oprefs, dict):
@@ -8172,7 +8172,7 @@ def main():
                     if st.session_state.get('ontl_klaar_tekst'):
                         st.success("🎉 Hele passage ontleed! Kies hierboven een nieuwe tekst.")
                     st.write("---")
-                elif _oc5.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
+                elif st.button("🎲 Nieuw vers", key="ontl_nieuw", type="primary"):
                     st.session_state.ontl_wachtrij = []
                     st.session_state.ontl_tekst_actief = False
                     _nieuw_ontleed_vers(); st.rerun()
