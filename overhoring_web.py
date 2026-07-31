@@ -861,7 +861,11 @@ def toon_rijtje_hulp(parsing_info, lemma="", grieks_info="", sleutel="", uitgekl
         return False
     with st.expander("📋 Bekijk het rijtje (spieken)", expanded=uitgeklapt):
         alle = list(tabellen.keys())
-        keuze = st.selectbox("Tabel:", alle, index=alle.index(tips[0]), key=f"rijtje_tab_{sleutel}")
+        # De key hangt óók van het woord af: anders houdt de keuzelijst (met een vaste key) de tabel
+        # van het vórige woord vast en wordt de juiste standaardtabel (index=) genegeerd — daardoor
+        # kreeg bv. een werkwoord de naamwoordentabel van het vorige woord te zien.
+        _wsig = re.sub(r'\W', '', (str(parsing_info)[:50] + str(lemma)))[:48]
+        keuze = st.selectbox("Tabel:", alle, index=alle.index(tips[0]), key=f"rijtje_tab_{sleutel}_{_wsig}")
         ktarget = _noun_g6_target(grieks_info) if keuze == "G6 Naamwoorden" else None
         mrow, mcol = _ontleed_doelcel(parsing_info)
         st.caption("De uitgangen zijn oranje; jouw vorm heeft een ▶ en een gouden kader."
@@ -869,13 +873,67 @@ def toon_rijtje_hulp(parsing_info, lemma="", grieks_info="", sleutel="", uitgekl
         st.markdown(_render_gramtabel_html(tabellen.get(keuze, []), ktarget, mrow, mcol), unsafe_allow_html=True)
     return True
 
+@st.cache_data(show_spinner=False)
+def _stam_index():
+    """Genormaliseerde praesens → stamtijden-database-entry."""
+    return {normaliseer_accent(v.get('praesens', '')): v for v in (laad_stamtijden_db() or []) if v.get('praesens')}
+
+def _stamtijd_sleutel(info):
+    """Welke stamtijd hoort bij deze werkwoordsvorm? (None = presentstam / het lemma zelf)."""
+    info = info or ""
+    if "Praesens" in info or "Imperfectum" in info:
+        return None
+    if "Aoristus" in info and "Passief" in info:
+        return "Aoristus Passief"
+    if "Aoristus" in info:
+        return "Aoristus Actief/Medium"
+    if "Futurum" in info:
+        return "Futurum Actief/Medium"
+    if "Perfectum" in info or "Plusquamperfectum" in info:
+        return "Perfectum Medium/Passief" if ("Medium" in info or "Passief" in info) else "Perfectum Actief"
+    return None
+
+_STAMTIJD_LABEL = {"Futurum Actief/Medium": "futurum", "Aoristus Actief/Medium": "aoristus",
+                   "Aoristus Passief": "aoristus passief", "Perfectum Actief": "perfectum",
+                   "Perfectum Medium/Passief": "perfectum medium/passief"}
+
+def stamtijd_opbouw(lemma, parsing_info):
+    """(regel, extra_uitleg) over de stamtijd waar een werkwoordsvorm van komt — of (None, None).
+
+    Zo zie je bv. dat ἐκλήθη hoort bij de aoristus passief ἐκλήθην van καλέω, i.p.v. te proberen de
+    onregelmatige stam uit het praesens af te leiden."""
+    if "Werkwoord" not in (parsing_info or "") or not lemma:
+        return None, None
+    sleutel = _stamtijd_sleutel(parsing_info)
+    if not sleutel:
+        return None, None
+    v = _stam_index().get(normaliseer_accent(lemma))
+    if not v:
+        return None, None
+    vorm = (v.get('stamtijden') or {}).get(sleutel)
+    if not _stam_vorm_ok(vorm):
+        return None, None
+    label = _STAMTIJD_LABEL.get(sleutel, sleutel.lower())
+    regel = f"📖 **Stamtijd:** deze vorm komt van de **{label}** van *{lemma}* — die luidt **{vorm}**."
+    extra = None
+    _morf = v.get('morfologie', {}) or {}
+    if _morf.get('memoriseren_vereist'):
+        _t = str((_morf.get('mutatieregel') or {}).get('toelichting', '')).strip()
+        extra = "⚠️ " + (_t or "Onregelmatige stamtijd — puur memoriseren.")
+    return regel, extra
+
 def toon_opbouw_hulp(vorm, lemma="", parsing_info="", grieks_info="", sleutel="", uitgeklapt=False):
     """Rendert (indien er iets te melden valt) de samentrekkings-/klankwethulp bij deze vorm.
     Geeft True terug als er iets getoond is."""
     regels, sk, treffers = opbouw_regels(vorm, lemma, parsing_info, grieks_info)
-    if not regels and not sk:
+    _stamregel, _stamextra = stamtijd_opbouw(lemma, parsing_info)
+    if not regels and not sk and not _stamregel:
         return False
     with st.expander("🔗 Zo is deze vorm opgebouwd (samentrekkingen & klankwetten)", expanded=uitgeklapt):
+        if _stamregel:
+            st.markdown(_stamregel)
+            if _stamextra:
+                st.markdown("- " + _stamextra)
         _formule = opbouw_formule(vorm, lemma, parsing_info)
         if _formule:
             st.markdown(_formule)
