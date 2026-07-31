@@ -1104,11 +1104,13 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
         # Persoonlijke voornaamwoorden: rijtjes uit Actief Beheersen (1e/2e) resp. de αὐτός-tabel (3e).
         elif "3e pers." in info: tabs.append("Persoonlijk vnw αὐτός (3e)")
         elif "1e pers." in info or "2e pers." in info: tabs.append("Persoonlijk vnw (ik/jij)")
-    else:  # zelfstandig naamwoord: kies de declinatie uit de woordenboekvorm (grieks_info)
+    elif "Zelfst." in info:  # zelfstandig naamwoord: declinatie uit de woordenboekvorm (grieks_info)
         _decl = _noun_declinatie(grieks_info)
         if _decl:
             tabs.append(_decl)
         tabs += ["G6 Naamwoorden", "G29 3e Declinatie", "G33 3e Decl (Klinker)"]
+    # Overige woordsoorten (voorzetsel, voegwoord, bijwoord, partikel, lidwoord) verbuigen niet
+    # of hebben geen rijtje in de slides → géén tabel (voorheen kreeg εἰς onterecht G6).
     _seen = set(); _uit = []
     for t in tabs:
         if t not in _seen:
@@ -1384,13 +1386,36 @@ def werkwoord_vertaling_per_tijd(_bijbel_db, strong):
                 per[tijd][en] += 1
     return {t: per[t] for t in _TIJD_VOLGORDE if per.get(t)}
 
+_NAAMVAL_VOLGORDE = [("Nom", "Nominativus"), ("Gen", "Genitivus"), ("Dat", "Dativus"),
+                     ("Acc", "Accusativus"), ("Voc", "Vocativus")]
+
+@st.cache_data(show_spinner=False)
+def naamwoord_vertaling_per_naamval(_bijbel_db, strong):
+    """Voor één naamwoord (strong-nummer): per naamval een teller van de Engelse (BSB) vertalingen,
+    zodat je ziet hoe de Bijbel de nominativus anders vertaalt dan bv. de genitivus of dativus."""
+    import collections as _coll
+    per = _coll.defaultdict(_coll.Counter)
+    strong = str(strong)
+    for _ref, zin in (_bijbel_db or {}).items():
+        for w in zin:
+            if str(w.get('strong', '')) != strong:
+                continue
+            info = w.get('parsing_info', '') or ''
+            if "Werkwoord" in info:      # werkwoorden (incl. participia) gaan via per-tijd
+                continue
+            nv = next((vol for kort, vol in _NAAMVAL_VOLGORDE if kort in info), None)
+            en = bsb_glosse(w.get('vertaling_bsb', ''))
+            if nv and en:
+                per[nv][en] += 1
+    return {vol: per[vol] for _k, vol in _NAAMVAL_VOLGORDE if per.get(vol)}
+
 def _regels_per_tijd(per_tijd, max_glossen=4):
-    """Markdown-regels: per tijd de meest voorkomende Engelse vertalingen met aantallen."""
+    """Markdown-regels: per tijd/naamval de meest voorkomende Engelse vertalingen met aantallen."""
     regels = []
-    for tijd, teller in per_tijd.items():
+    for sleutel, teller in per_tijd.items():
         top = tel_glossen(teller.elements())[:max_glossen]   # hoofdletter-ongevoelig samengevoegd
         glossen = ", ".join(f"“{g}” ({n}×)" for g, n in top)
-        regels.append(f"- **{tijd}** ({sum(teller.values())}×): {glossen}")
+        regels.append(f"- **{sleutel}** ({sum(teller.values())}×): {glossen}")
     return regels
 
 _PIE_KLEUREN = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
@@ -1433,11 +1458,12 @@ def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing
     _zonder = len(_vp) - sum(n for _l, n in _paren)   # plekken zonder aparte Engelse glosse
     _is_ww = bool(strong) and "Werkwoord" in (parsing_info or "")
     _per_tijd = werkwoord_vertaling_per_tijd(bijbel_db, strong) if _is_ww else {}
-    if len(_paren) < 2 and not _per_tijd:
+    _per_nv = naamwoord_vertaling_per_naamval(bijbel_db, strong) if (strong and not _is_ww) else {}
+    if len(_paren) < 2 and not _per_tijd and not _per_nv:
         return False
     with st.expander(f"🇬🇧 Zo vertaalt de Bijbel deze vorm in het Engels ({len(_vp)} vindplaatsen)", expanded=uitgeklapt):
         if len(_paren) >= 2:
-            if _per_tijd:
+            if _per_tijd or _per_nv:
                 st.caption("Déze vorm:")
             st.markdown(cirkeldiagram_html(_paren), unsafe_allow_html=True)
             if _zonder:
@@ -1446,6 +1472,10 @@ def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing
         if _per_tijd:
             st.markdown("**Per tijd — zo vertaalt de Bijbel de vormen van dit werkwoord:**")
             for _r in _regels_per_tijd(_per_tijd):
+                st.markdown(_r)
+        if _per_nv:
+            st.markdown("**Per naamval — zo vertaalt de Bijbel de vormen van dit woord:**")
+            for _r in _regels_per_tijd(_per_nv):
                 st.markdown(_r)
         st.caption("Engelse vertaling per plek (BSB). Alle vindplaatsen zie je in de **🔍 Zoeken**-modus.")
     return True
@@ -7212,6 +7242,9 @@ def main():
                                 if _lu:
                                     _regelinfo.append(f"[📖 BibleHub-lexicon]({_lu})")
                                 st.caption(" · ".join(_regelinfo))
+                                # Hoe vertaal je déze vorm? (naamval-functie / wijs-tijd-diathese in het NL)
+                                for _vh in _ontleed_vertaalhulp(_pi):
+                                    st.markdown("💡 " + _vh)
                                 toon_opbouw_hulp(_g, _lemma, _pi, _ginfo, sleutel=f"zoek_{_zi}")
                                 toon_rijtje_hulp(_pi, _lemma, _ginfo, sleutel=f"zoek_{_zi}")
                                 st.write("")
@@ -7235,6 +7268,15 @@ def main():
                                 if _pt:
                                     st.markdown("##### ⏳ Per tijd — zo vertaalt de Bijbel de vormen van dit werkwoord")
                                     for _r in _regels_per_tijd(_pt):
+                                        st.markdown(_r)
+                            # Naamwoord? Toon hoe de Bijbel de verschillende naamvallen vertaalt.
+                            _nv_strong = next((r[2] for r in _res if "Werkwoord" not in r[1]
+                                               and any(c in r[1] for c in ("Nom", "Gen", "Dat", "Acc", "Voc"))), None)
+                            if _nv_strong:
+                                _pnv = naamwoord_vertaling_per_naamval(_obdb, _nv_strong)
+                                if _pnv:
+                                    st.markdown("##### 📐 Per naamval — zo vertaalt de Bijbel de vormen van dit woord")
+                                    for _r in _regels_per_tijd(_pnv):
                                         st.markdown(_r)
                             with st.expander(f"📍 Alle {len(_vp)} vindplaatsen in het NT"):
                                 st.caption("Klik op een vers voor de interlinear op BibleHub.")
