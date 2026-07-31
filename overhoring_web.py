@@ -1338,6 +1338,18 @@ def bsb_glosse(en):
         return ""
     return s
 
+def tel_glossen(glossen):
+    """Telt Engelse glossen, hoofdletter-ongevoelig samengevoegd ('All' + 'all' → één; hoofdletters
+    zijn later toegevoegd). De vaakst voorkomende schrijfwijze wordt het label. → [(label, aantal)]."""
+    import collections as _c
+    per_low = _c.defaultdict(_c.Counter)
+    for g in glossen:
+        if g:
+            per_low[g.lower()][g] += 1
+    uit = [(cas.most_common(1)[0][0], sum(cas.values())) for cas in per_low.values()]
+    uit.sort(key=lambda x: x[1], reverse=True)
+    return uit
+
 @st.cache_data(show_spinner=False)
 def zoek_vindplaatsen(_bijbel_db, norm_vorm):
     """Alle vindplaatsen van één (genormaliseerde) vorm in het NT: (ref, grieks, parsing_info,
@@ -1376,7 +1388,7 @@ def _regels_per_tijd(per_tijd, max_glossen=4):
     """Markdown-regels: per tijd de meest voorkomende Engelse vertalingen met aantallen."""
     regels = []
     for tijd, teller in per_tijd.items():
-        top = teller.most_common(max_glossen)
+        top = tel_glossen(teller.elements())[:max_glossen]   # hoofdletter-ongevoelig samengevoegd
         glossen = ", ".join(f"“{g}” ({n}×)" for g, n in top)
         regels.append(f"- **{tijd}** ({sum(teller.values())}×): {glossen}")
     return regels
@@ -1417,17 +1429,17 @@ def toon_engels_diagram(grieks_vorm, bijbel_db, sleutel="", strong=None, parsing
     if not bijbel_db:
         return False
     _vp = zoek_vindplaatsen(bijbel_db, normaliseer_accent(grieks_vorm)) if grieks_vorm else []
-    _gloss = _coll.Counter(g for g in (bsb_glosse(v[3]) for v in _vp) if g)
-    _zonder = len(_vp) - sum(_gloss.values())   # plekken zonder aparte Engelse glosse
+    _paren = tel_glossen(bsb_glosse(v[3]) for v in _vp)
+    _zonder = len(_vp) - sum(n for _l, n in _paren)   # plekken zonder aparte Engelse glosse
     _is_ww = bool(strong) and "Werkwoord" in (parsing_info or "")
     _per_tijd = werkwoord_vertaling_per_tijd(bijbel_db, strong) if _is_ww else {}
-    if len(_gloss) < 2 and not _per_tijd:
+    if len(_paren) < 2 and not _per_tijd:
         return False
     with st.expander(f"🇬🇧 Zo vertaalt de Bijbel deze vorm in het Engels ({len(_vp)} vindplaatsen)", expanded=uitgeklapt):
-        if len(_gloss) >= 2:
+        if len(_paren) >= 2:
             if _per_tijd:
                 st.caption("Déze vorm:")
-            st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+            st.markdown(cirkeldiagram_html(_paren), unsafe_allow_html=True)
             if _zonder:
                 st.caption(f"ℹ️ {_zonder} van de {len(_vp)} plekken zijn in een zinsdeel vertaald "
                            "(geen los Engels woord in de BSB).")
@@ -7185,7 +7197,11 @@ def main():
                             _bet = str(_bw.get('nederlands', '')) if _bw else ""
                             _ws = _woordsoort_van(_pi)
                             with st.container():
-                                st.markdown(f"#### {_zi + 1}. {_ws if _ws != '—' else 'Vorm'} — {_pi or '(geen ontleding)'}")
+                                # De accentvorm vooraan, zodat je bij gelijkluidende woorden (εἰς vs εἷς)
+                                # meteen de juiste kunt herkennen en aanklikken.
+                                st.markdown(f"#### {_zi + 1}. <span style='color:#33ccff'>{_g}</span> — "
+                                            f"{_ws if _ws != '—' else 'Vorm'} · {_pi or '(geen ontleding)'}",
+                                            unsafe_allow_html=True)
                                 _regelinfo = []
                                 if _lemma:
                                     _regelinfo.append(f"🔑 Basiswoord: **{_ginfo or _lemma}**")
@@ -7204,12 +7220,11 @@ def main():
                         _vp = zoek_vindplaatsen(_obdb, _key)
                         if _vp:
                             st.write("---")
-                            import collections as _coll
-                            _gloss = _coll.Counter(g for g in (bsb_glosse(v[3]) for v in _vp) if g)
-                            _zonder = len(_vp) - sum(_gloss.values())
-                            if len(_gloss) > 1:
+                            _paren = tel_glossen(bsb_glosse(v[3]) for v in _vp)
+                            _zonder = len(_vp) - sum(n for _l, n in _paren)
+                            if len(_paren) > 1:
                                 st.markdown("##### 🇬🇧 Zo wordt deze vorm in het Engels vertaald (BSB)")
-                                st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+                                st.markdown(cirkeldiagram_html(_paren), unsafe_allow_html=True)
                                 if _zonder:
                                     st.caption(f"ℹ️ {_zonder} van de {len(_vp)} plekken zijn in een zinsdeel vertaald "
                                                "(geen los Engels woord in de BSB).")
