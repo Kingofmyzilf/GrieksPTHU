@@ -850,7 +850,7 @@ def toon_vertaalhulp(parsing_info, sleutel="", uitgeklapt=False):
 def toon_rijtje_hulp(parsing_info, lemma="", grieks_info="", sleutel="", uitgeklapt=False):
     """Spiek-expander met de paradigma-tabel(len) die bij deze vorm horen, met het exacte vakje
     gemarkeerd. Geeft True terug als er iets getoond is."""
-    tabellen = laad_gramtabellen()
+    tabellen = ontleed_alle_tabellen()
     if not tabellen:
         return False
     tips = [t for t in _ontleed_tip_tabellen(parsing_info, lemma, grieks_info) if t in tabellen]
@@ -997,6 +997,52 @@ def laad_gramtabellen():
     except Exception:
         return {}
 
+# Vaste αὐτός-tabel (3e-persoons persoonlijk vnw) — declineert als ος/η/ο, staat niet in de slides.
+_AUTOS_TABEL = [
+    ["", "Mannelijk", "Vrouwelijk", "Onzijdig"],
+    ["Nom sg", "αὐτός", "αὐτή", "αὐτό"],
+    ["Gen sg", "αὐτοῦ", "αὐτῆς", "αὐτοῦ"],
+    ["Dat sg", "αὐτῷ", "αὐτῇ", "αὐτῷ"],
+    ["Acc sg", "αὐτόν", "αὐτήν", "αὐτό"],
+    ["Nom pl", "αὐτοί", "αὐταί", "αὐτά"],
+    ["Gen pl", "αὐτῶν", "αὐτῶν", "αὐτῶν"],
+    ["Dat pl", "αὐτοῖς", "αὐταῖς", "αὐτοῖς"],
+    ["Acc pl", "αὐτούς", "αὐτάς", "αὐτά"],
+]
+
+def pronomen_tabellen():
+    """Bouwt de persoonlijk-vnw-tabellen: 1e/2e persoon uit Actief Beheersen, 3e persoon (αὐτός)
+    vast. Zo krijgen ἐγώ/σύ/αὐτός in de ontleed-hulp tóch een rijtje (die staan niet in de slides)."""
+    uit = {"Persoonlijk vnw αὐτός (3e)": _AUTOS_TABEL}
+    try:
+        ab = laad_actief_db()
+        def _cellen(sub_bevat):
+            for _niv, _cats in (ab or {}).items():
+                for _cat, _paras in _cats.items():
+                    if "Personale" not in _cat and "persoon" not in _cat.lower():
+                        continue
+                    for _sub, _cel in _paras.items():
+                        if sub_bevat in _sub:
+                            return {c.get('label', ''): c.get('vorm', '') for c in _cel}
+            return {}
+        _p1 = _cellen("1e Persoon"); _p2 = _cellen("2e Persoon")
+        if _p1 and _p2:
+            rijen = [["", "1e (ik/wij)", "2e (jij/jullie)"]]
+            for _lab in ["Nom ev", "Gen ev", "Dat ev", "Acc ev", "Nom mv", "Gen mv", "Dat mv", "Acc mv"]:
+                _rlab = _lab.replace("ev", "sg").replace("mv", "pl")
+                rijen.append([_rlab, _p1.get(_lab, ""), _p2.get(_lab, "")])
+            uit["Persoonlijk vnw (ik/jij)"] = rijen
+    except Exception:
+        pass
+    return uit
+
+@st.cache_data(show_spinner=False)
+def ontleed_alle_tabellen():
+    """De slide-tabellen plus de zelf opgebouwde persoonlijk-vnw-tabellen (één bron voor de hulp)."""
+    t = dict(laad_gramtabellen())
+    t.update(pronomen_tabellen())
+    return t
+
 def _noun_declinatie(grieks_info):
     """Declinatie-tabel van een naamwoord uit de woordenboekvorm (bv. 'θεός, -οῦ, ὁ').
     De genitief-uitgang verraadt de declinatie: -ου = 2e, -ης/-ας = 1e, -ος = 3e, -εως = 3e klinker."""
@@ -1055,6 +1101,9 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
         elif "Interrogative" in info or "Indefinite" in info: tabs.append("G25 Interrogativum")
         elif "Reflexive" in info: tabs.append("G22 Reflexiva")
         elif "Correlative" in info: tabs.append("G37 Correlativa")
+        # Persoonlijke voornaamwoorden: rijtjes uit Actief Beheersen (1e/2e) resp. de αὐτός-tabel (3e).
+        elif "3e pers." in info: tabs.append("Persoonlijk vnw αὐτός (3e)")
+        elif "1e pers." in info or "2e pers." in info: tabs.append("Persoonlijk vnw (ik/jij)")
     else:  # zelfstandig naamwoord: kies de declinatie uit de woordenboekvorm (grieks_info)
         _decl = _noun_declinatie(grieks_info)
         if _decl:
@@ -1277,6 +1326,46 @@ def _bijbel_strong_index(_bijbel_db):
                 gezien.add(s)
                 idx.setdefault(s, []).append(ref)
     return idx
+
+@st.cache_data(show_spinner=False)
+def zoek_vindplaatsen(_bijbel_db, norm_vorm):
+    """Alle vindplaatsen van één (genormaliseerde) vorm in het NT: (ref, grieks, parsing_info,
+    engelse glosse). Gecached per opgezochte vorm."""
+    uit = []
+    for ref, zin in (_bijbel_db or {}).items():
+        for w in zin:
+            if normaliseer_accent(w.get('grieks', '')) == norm_vorm:
+                uit.append((ref, str(w.get('grieks', '')), str(w.get('parsing_info', '')),
+                            str(w.get('vertaling_bsb', '') or '')))
+    return uit
+
+_PIE_KLEUREN = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
+
+def cirkeldiagram_html(paren, grootte=170):
+    """Kleurenblind-vriendelijk cirkeldiagram (conic-gradient) + legenda met percentages.
+    `paren` = [(label, aantal), ...]. Toont de grootste segmenten, rest als 'overig'."""
+    paren = [(str(l), int(n)) for l, n in paren if int(n) > 0]
+    if not paren:
+        return ""
+    paren.sort(key=lambda x: x[1], reverse=True)
+    if len(paren) > 7:
+        rest = sum(n for _l, n in paren[7:])
+        paren = paren[:7] + [("overig", rest)]
+    totaal = sum(n for _l, n in paren) or 1
+    segs, legenda, loop = [], [], 0.0
+    for i, (lab, n) in enumerate(paren):
+        kl = _PIE_KLEUREN[i % len(_PIE_KLEUREN)]
+        pct = n / totaal * 100
+        segs.append(f"{kl} {loop:.2f}% {loop + pct:.2f}%")
+        loop += pct
+        legenda.append(
+            f"<div style='display:flex;align-items:center;gap:6px;margin:2px 0;font-size:13px'>"
+            f"<span style='width:12px;height:12px;border-radius:3px;background:{kl};display:inline-block'></span>"
+            f"<span>{lab} — <b>{n}</b> ({pct:.0f}%)</span></div>")
+    return (f"<div style='display:flex;gap:18px;align-items:center;flex-wrap:wrap'>"
+            f"<div style='width:{grootte}px;height:{grootte}px;border-radius:50%;flex:0 0 auto;"
+            f"background:conic-gradient({', '.join(segs)})'></div>"
+            f"<div style='min-width:180px'>{''.join(legenda)}</div></div>")
 
 def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifieke_vorm=None, bekende_vocab=None, strikte_dekking=False, vastgezet_vers_ref=None, kleur_aan=True, co_doel_strongs=None):
     if not strong_nr or not bijbel_db: return None
@@ -7012,6 +7101,22 @@ def main():
                                 toon_opbouw_hulp(_g, _lemma, _pi, _ginfo, sleutel=f"zoek_{_zi}")
                                 toon_rijtje_hulp(_pi, _lemma, _ginfo, sleutel=f"zoek_{_zi}")
                                 st.write("")
+
+                        # --- Alle vindplaatsen + hoe het in het Engels (BSB) wordt vertaald ---
+                        _vp = zoek_vindplaatsen(_obdb, _key)
+                        if _vp:
+                            st.write("---")
+                            import collections as _coll
+                            _gloss = _coll.Counter(v[3].strip() for v in _vp if v[3].strip())
+                            if len(_gloss) > 1:
+                                st.markdown("##### 🇬🇧 Zo wordt deze vorm in het Engels vertaald (BSB)")
+                                st.markdown(cirkeldiagram_html(_gloss.most_common()), unsafe_allow_html=True)
+                            with st.expander(f"📍 Alle {len(_vp)} vindplaatsen in het NT"):
+                                for _ref2, _g2, _pi2, _en2 in _vp[:300]:
+                                    _en_s = f" — *{_en2}*" if _en2 else ""
+                                    st.markdown(f"**{_ref2}** · {_g2}{_en_s}")
+                                if len(_vp) > 300:
+                                    st.caption(f"… en nog {len(_vp) - 300} meer (eerste 300 getoond).")
                 else:
                     st.info("Typ hierboven een woord en klik op **🔍 Zoek**.")
 
