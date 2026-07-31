@@ -2257,6 +2257,27 @@ def betekenis_exact(typed, ned):
     kernen = {_kern(d) for d in delen}
     return t in delen or t in kernen or _kern(t) in delen or _kern(t) in kernen
 
+def zelfde_betekenis(a, b):
+    """True als twee glosses écht synoniem zijn: dezelfde set deel-betekenissen, ongeacht volgorde
+    ('meteen, onmiddellijk' == 'onmiddellijk, meteen'). Bewust streng: gedeeltelijke overlap
+    ('meteen, snel' vs 'meteen, onmiddellijk') telt NIET als hetzelfde. Kleine typo's per deel mogen."""
+    da = {_kern(d) for d in _betekenis_delen(a)}
+    db = {_kern(d) for d in _betekenis_delen(b)}
+    if not da or not db or len(da) != len(db):
+        return False
+    if da == db:
+        return True
+    rest = set(db)
+    for x in da:
+        gevonden = None
+        for y in rest:
+            if x == y or (len(y) > 4 and levenshtein(x, y) <= 1) or (len(y) > 8 and levenshtein(x, y) <= 2):
+                gevonden = y; break
+        if gevonden is None:
+            return False
+        rest.discard(gevonden)
+    return not rest
+
 def woorden_met_zelfde_betekenis(typed, alle_data, exclude_grieks=None, alleen_geoefend=True, max_n=5):
     """Reverse-lookup: geeft de woorden terug waarvan de betekenis LETTERLIJK overeenkomt met wat de
     student typte/koos. Zo zie je met welk (al geoefend) woord je het mogelijk verwarde.
@@ -4450,6 +4471,13 @@ def main():
                                         if ned not in gekozen_betekenissen: afleiders.append(ned); gekozen_betekenissen.add(ned)
                                         if len(afleiders) >= 3: break
 
+                            # Nooit een afleider tonen die exact dezelfde betekenis heeft als het juiste
+                            # antwoord (bv. εὐθέως 'onmiddellijk, meteen' vs εὐθύς 'meteen, onmiddellijk').
+                            # Dat maakt de vraag onwinbaar. Bij mastery-vormen NIET filteren: daar verschillen
+                            # de opties juist alleen in de parsing tussen haakjes.
+                            if not (is_mastery and heeft_vormen):
+                                afleiders = [a for a in afleiders if not zelfde_betekenis(a, correct_optie)]
+
                             st.session_state.huidige_opties = [correct_optie] + afleiders[:3]
                             rnd.shuffle(st.session_state.huidige_opties)
 
@@ -4468,7 +4496,11 @@ def main():
                         for idx, optie in enumerate(st.session_state.huidige_opties):
                             if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
                                 registreer_oefening(item)
-                                if optie == correct_optie:
+                                # Vangnet: keur ook goed als de gekozen optie qua betekenis identiek is aan
+                                # het juiste antwoord (echte synoniemen). Bij mastery telt de parsing wél mee.
+                                _optie_goed = (optie == correct_optie) or (
+                                    not (is_mastery and heeft_vormen) and zelfde_betekenis(optie, correct_optie))
+                                if _optie_goed:
                                     _oude_streak_mc = int(item.get('streak', 0))
                                     if st.session_state.fouten_huidig_woord == 0 and item['grieks'] not in st.session_state.gestrafte_woorden_vocab:
                                         item['score_goed'] = int(item.get('score_goed', 0)) + 1
