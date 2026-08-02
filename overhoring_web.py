@@ -5252,22 +5252,26 @@ def main():
                 # --- 🎮 LEERPAD-INSCHATTING: hoeveel automatische rondes tot alles 'af' is ---
                 st.markdown("### 🎮 Leerpad-inschatting")
                 st.caption("Kijkt naar het **Leerpad** (Woordenschat → 🎮 Leerpad): een woord telt als 'af' bij "
-                           f"streak ≥ {LEERPAD_DREMPEL}. **Al beheerste woorden tellen als klaar** — die zitten niet "
-                           "meer in de schuld, dus die hoef je niet opnieuw. Zo zie je hoeveel automatische rondes je "
-                           "nog te gaan hebt.")
+                           f"streak ≥ {LEERPAD_DREMPEL}. **Ook je beheersingsniveau telt mee** — een woord dat al half "
+                           "op streek is heeft minder te gaan, en beheerste woorden tellen als klaar. Het gebruikt "
+                           "hetzelfde **woorden-per-dag** en dezelfde **accuratesse** die je hierboven instelde.")
                 _lp_pool = [w for w in (fc_pool or st.session_state.get('data') or []) if isinstance(w, dict)]
                 _lp_open = [w for w in _lp_pool if int(w.get('streak', 0) or 0) < LEERPAD_DREMPEL]
                 _lp_schuld = sum(max(0, LEERPAD_DREMPEL - int(w.get('streak', 0) or 0)) for w in _lp_pool)
                 if _lp_schuld <= 0:
-                    st.success(f"✓ Alle woorden in deze selectie hebben al streak ≥ {LEERPAD_DREMPEL} — je leerpad is hier klaar!")
+                    st.success(f"🎉 Alle woorden in deze selectie hebben al streak ≥ {LEERPAD_DREMPEL} — je leerpad is hier klaar!")
                 else:
-                    _rondes_dag = st.number_input("Automatische Leerpad-rondes per dag:", min_value=1, max_value=50,
-                                                  value=3, step=1,
-                                                  help=f"Eén ronde ≈ {LEERPAD_CHUNK} woorden. Meer rondes/dag = eerder klaar.")
+                    _woorden_ronde = st.number_input("Woorden per Leerpad-ronde:", min_value=1, max_value=60,
+                                                     value=12, step=1, key="lp_woorden_ronde",
+                                                     help=f"Eén automatische ronde ≈ dit aantal woorden. Een level is {LEERPAD_CHUNK} "
+                                                          "nieuwe woorden, maar met 'oude stof meenemen' erbij zijn het er vaak meer.")
                     _acc_lp = (sim_acc_override or 78) / 100.0
                     _netto_lp = max(0.08, (_acc_lp * 1.2) - ((1.0 - _acc_lp) * 2.0))   # netto streak-winst per oefening
-                    _rondes_totaal = math.ceil(_lp_schuld / max(0.5, LEERPAD_CHUNK * _netto_lp))
-                    _dagen_lp = math.ceil(_rondes_totaal / max(1, int(_rondes_dag)))
+                    _oefeningen_totaal = math.ceil(_lp_schuld / _netto_lp)              # aantal woord-beurten te gaan
+                    _wpd = max(1, int(sim_dag_vocab))                                   # gelinkt aan 'woorden oefenen per dag'
+                    _dagen_lp = math.ceil(_oefeningen_totaal / _wpd)
+                    _rondes_dag = max(1, round(_wpd / max(1, int(_woorden_ronde))))     # rondes/dag volgt uit woorden/dag
+                    _rondes_totaal = math.ceil(_oefeningen_totaal / max(1, int(_woorden_ronde)))
                     try:
                         _einddat_lp = (_nu() + pd.Timedelta(days=_dagen_lp)).strftime("%d-%m-%Y")
                     except Exception:
@@ -5275,9 +5279,22 @@ def main():
                     _lpc1, _lpc2, _lpc3 = st.columns(3)
                     _lpc1.metric("Woorden nog niet 'af'", f"{len(_lp_open)}/{len(_lp_pool)}")
                     _lpc2.metric("Rondes te gaan", f"~{_rondes_totaal}")
-                    _lpc3.metric(f"Bij {int(_rondes_dag)}/dag", f"~{_dagen_lp} dagen")
-                    st.caption(f"📅 Zo ben je rond **{_einddat_lp}** door je leerpad (bij ~{sim_acc_override}% accuratesse "
-                               "en dezelfde mix). Meer rondes per dag → sneller klaar; hoger scoren ook.")
+                    _lpc3.metric("Klaar over", f"~{_dagen_lp} dagen")
+                    st.caption(f"📅 Met jouw **{_wpd} woorden/dag** (≈ **{_rondes_dag} automatische ronde(s)/dag** van "
+                               f"{int(_woorden_ronde)} woorden) ben je rond **{_einddat_lp}** door je leerpad, bij ~{sim_acc_override}% accuratesse.")
+                    # --- Motiverend: past dit binnen de cursus-vensters? (Grieks 1 ~3mnd, 2 ~3mnd, 3 ~1,5mnd) ---
+                    _gnaam = "Grieks 1" if "Grieks 1" in sim_doel_groep else ("Grieks 3" if "Grieks 3" in sim_doel_groep else "Grieks 2")
+                    _venster = 45 if _gnaam == "Grieks 3" else 90
+                    _venstertekst = "±6 weken" if _venster == 45 else "±3 maanden"
+                    _nodig_wpd = max(1, math.ceil(_oefeningen_totaal / _venster))       # woorden/dag om binnen het venster klaar te zijn
+                    _nodig_rondes = max(1, round(_nodig_wpd / max(1, int(_woorden_ronde))))
+                    if _dagen_lp <= _venster:
+                        st.success(f"🎉 Ruim op schema! Voor **{_gnaam}** heb je {_venstertekst}, en zo ben je al na ~{_dagen_lp} dagen rond. "
+                                   f"Eigenlijk is **~{_nodig_wpd} woorden/dag** (≈ {_nodig_rondes} ronde(s)) al genoeg voor dat venster — dit ga je makkelijk redden! 💪")
+                    else:
+                        st.info(f"💡 Voor **{_gnaam}** heb je {_venstertekst}. Om alles binnen dat venster te kennen doe je "
+                                f"**~{_nodig_wpd} woorden/dag** (≈ {_nodig_rondes} ronde(s)/dag). Nu staat 'ie op {_wpd}/dag — "
+                                "zet 'm hierboven een tandje hoger en je ligt op schema! 🚀")
 
                 st.write("---")
 
@@ -5814,10 +5831,11 @@ def main():
                             _celpar = _alle_cel_par.get(cid, gekozen_sub)   # welk rijtje deze cel hoort bij
                             st.caption(f"{_slabel} · streak {_cstreak(cell)} · nog {len(_q)} kaart(en) in de rij")
                             if sub == 'Herhaal':
-                                st.caption(f"↩️ Uit het rijtje **{_celpar}** — even ophalen zodat het erin blijft zitten.")
-                            # Rijtjenaam bij het doelwoord, zodat 'Dat ev' van ἐγώ niet met dat van σύ verwart.
-                            st.markdown(f"<div style='font-size:13px;color:#9aa3af;margin-bottom:-6px'>{_celpar}</div>"
-                                        f"<div class='grieks-woord' style='font-size:30px'>{cell['label']}</div>", unsafe_allow_html=True)
+                                st.caption("↩️ Herhaling van oude stof — even ophalen zodat het erin blijft zitten.")
+                            # Paradigma NAAST het cel-label, zodat 'Gen ev van ἐγώ' niet met 'Gen ev van σύ' verwart.
+                            st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']} "
+                                        f"<span style='font-size:17px;color:#9aa3af;font-weight:400'>van {_celpar}</span></div>",
+                                        unsafe_allow_html=True)
 
                             def _volgende(requeue=False):
                                 if requeue and _q: _q.append(_q[0])
