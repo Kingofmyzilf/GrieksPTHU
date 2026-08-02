@@ -2581,22 +2581,34 @@ def _sessie_reset_samenvatting():
     st.session_state.sessie_fout = {}
     st.session_state.sessie_verwar_kandidaten = {}
 
-def verzamel_lookalikes(poule, twins_map):
+def _is_geoefend(w):
+    """Woord is al eens overhoord (heeft een goed/fout-score)."""
+    try:
+        return (int(w.get('score_goed', 0)) + int(w.get('score_fout', 0))) > 0
+    except (ValueError, TypeError):
+        return False
+
+def verzamel_lookalikes(poule, twins_map, alleen_geoefend=True):
     """Doel-lijst voor 'Gelijkende woorden': woorden binnen de selectie die een look-alike-twin
-    (op spelling) hebben, plus de twin-partners die ook in de selectie zitten."""
+    (op spelling) hebben, plus de twin-partners die ook in de selectie zitten. Standaard alleen
+    woorden die je al eens hebt geoefend (een goed/fout-score hebben) — geen ongeziene woorden."""
     if not twins_map:
         return []
-    idx = {w.get('grieks'): w for w in poule if isinstance(w, dict) and w.get('grieks')}
+    _pool = [w for w in poule if isinstance(w, dict) and w.get('grieks')
+             and (not alleen_geoefend or _is_geoefend(w))]
+    idx = {w.get('grieks'): w for w in _pool}
     doel = {}
-    for w in poule:
-        if not isinstance(w, dict):
-            continue
+    for w in _pool:
         g = w.get('grieks', '')
-        if not g or not twins_map.get(g):
+        if not twins_map.get(g):
+            continue
+        # alleen een paar als óók de twin in de (geoefende) selectie zit
+        _twins_in = [tg for tg in twins_map.get(g, []) if tg in idx]
+        if not _twins_in:
             continue
         doel[g] = w
-        for tg in twins_map.get(g, []):
-            if tg in idx and tg not in doel:
+        for tg in _twins_in:
+            if tg not in doel:
                 doel[tg] = idx[tg]
     return list(doel.values())
 
@@ -2680,11 +2692,13 @@ def bouw_verwar_paren(alle_data, verwar_stats):
             paren.append((wa, wb))
     return paren
 
-def bouw_lookalike_paren(poule, twins_map):
-    """(woordA, woordB)-paren van spelling-gelijkende woorden binnen de selectie, voor de paar-oefening
-    ('Gelijkende woorden'): je krijgt twee lijkende woorden naast elkaar en geeft van allebei de betekenis."""
+def bouw_lookalike_paren(poule, twins_map, rng=None, doel_lengte=16):
+    """(woordA, woordB)-paren van spelling-gelijkende woorden, voor de paar-oefening ('Gelijkende
+    woorden'). Bouwt een GEWOGEN mix i.p.v. álle paren: paren met woorden die je vaak fout doet
+    komen vaker terug, makkelijke minder — en de sessie wordt begrensd op ~doel_lengte paren."""
     if not twins_map:
         return []
+    rng = rng or r_engine
     idx = {w.get('grieks'): w for w in poule if isinstance(w, dict) and w.get('grieks')}
     seen = set()
     paren = []
@@ -2701,7 +2715,29 @@ def bouw_lookalike_paren(poule, twins_map):
                 continue
             seen.add(sleutel)
             paren.append((w, wb))
-    return paren
+    if not paren:
+        return []
+
+    def _druk(w):
+        # Foutdruk: meer fouten en een lage streak → zwaarder gewicht (vaker vragen).
+        try:
+            f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
+        except (ValueError, TypeError):
+            f, s = 0, 0
+        return 1 + 2 * f + (1 if s <= 3 else 0)
+
+    gewichten = [_druk(a) + _druk(b) for a, b in paren]
+    if len(paren) <= doel_lengte:
+        # Weinig paren: elk paar minstens één keer (dekking), daarna gewogen aanvullen.
+        queue = list(paren)
+        extra = doel_lengte - len(queue)
+        if extra > 0 and sum(gewichten) > 0:
+            queue += rng.choices(paren, weights=gewichten, k=extra)
+    else:
+        # Veel paren: gewogen selectie i.p.v. alles — de lastige komen vaker, makkelijke soms niet.
+        queue = rng.choices(paren, weights=gewichten, k=doel_lengte)
+    rng.shuffle(queue)
+    return queue
 
 # --- BADGES / ACHIEVEMENTS ---
 def badge_definities(m):
@@ -3973,10 +4009,15 @@ def main():
                         doel = [x[0] for x in knel_kandidaten[:20]]
 
                     elif "Gelijkende woorden" in keuze:
-                        # Wens 3: woorden binnen de selectie die qua spelling op elkaar lijken (verwarparen.json)
-                        doel = verzamel_lookalikes(poule_lessen, laad_verwarparen_db())
-                        if not doel:
-                            st.caption("ℹ️ Geen look-alikes gevonden in deze lessen. Kies meer/andere lessen.")
+                        # Wens 3: al geoefende woorden binnen de selectie die qua spelling op elkaar lijken
+                        # (verwarparen.json). De sessie wordt een gewogen mix — vaak-fout vaker.
+                        doel = verzamel_lookalikes(poule_lessen, laad_verwarparen_db(), alleen_geoefend=True)
+                        if doel:
+                            st.caption(f"🔀 {len(doel)} geoefende look-alike-woorden. De sessie wordt een gewogen mix: "
+                                       "woorden die je vaker fout doet komen vaker terug.")
+                        else:
+                            st.caption("ℹ️ Nog geen geoefende look-alikes in deze lessen. Oefen de woorden eerst "
+                                       "gewoon, of kies meer/andere lessen.")
 
                     else:
                         doel = poule_lessen
