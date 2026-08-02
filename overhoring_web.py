@@ -5163,13 +5163,15 @@ def main():
                                 except Exception: pass
                             _recent_pace = int(round(_rtot / 14))
                         except Exception: _recent_pace = 0
-                    _pace_default = min(100, max(5, _recent_pace)) if _recent_pace else 30
+                    _pace_default = min(500, max(5, _recent_pace)) if _recent_pace else 30
 
                     st.write("**2. Bepaal je parameters:**")
                     sim_doel_streak = st.slider("Gewenste Kennis-diepte (Streak):", min_value=2, max_value=30, value=16, help="16 = Beheerst (Standaard PThU norm). 8 = Voldoende om passief te herkennen in een tekst. 30 = Vloeiende Mastery.")
                     if _recent_pace:
                         st.caption(f"⚡ Je tempo van de afgelopen 2 weken: **~{_recent_pace} items/dag** (de schuif staat daarop; pas gerust aan).")
-                    sim_dag_vocab = st.slider("Woorden oefenen per dag:", min_value=5, max_value=100, value=_pace_default, step=5)
+                    sim_dag_vocab = st.number_input("Woorden oefenen per dag:", min_value=5, max_value=1000,
+                                                    value=int(_pace_default), step=5,
+                                                    help="Typ een getal of gebruik +/−. Je mag ruim boven de 100.")
                     sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
 
                 with fc_c2:
@@ -5244,6 +5246,38 @@ def main():
                                 advies_box += f"2. **Hefboom op Focus:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijvoorbeeld door bij twijfel de hint te openen in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** doorlooptijd."
                             
                         st.info(advies_box)
+
+                st.write("---")
+
+                # --- 🎮 LEERPAD-INSCHATTING: hoeveel automatische rondes tot alles 'af' is ---
+                st.markdown("### 🎮 Leerpad-inschatting")
+                st.caption("Kijkt naar het **Leerpad** (Woordenschat → 🎮 Leerpad): een woord telt als 'af' bij "
+                           f"streak ≥ {LEERPAD_DREMPEL}. **Al beheerste woorden tellen als klaar** — die zitten niet "
+                           "meer in de schuld, dus die hoef je niet opnieuw. Zo zie je hoeveel automatische rondes je "
+                           "nog te gaan hebt.")
+                _lp_pool = [w for w in (fc_pool or st.session_state.get('data') or []) if isinstance(w, dict)]
+                _lp_open = [w for w in _lp_pool if int(w.get('streak', 0) or 0) < LEERPAD_DREMPEL]
+                _lp_schuld = sum(max(0, LEERPAD_DREMPEL - int(w.get('streak', 0) or 0)) for w in _lp_pool)
+                if _lp_schuld <= 0:
+                    st.success(f"✓ Alle woorden in deze selectie hebben al streak ≥ {LEERPAD_DREMPEL} — je leerpad is hier klaar!")
+                else:
+                    _rondes_dag = st.number_input("Automatische Leerpad-rondes per dag:", min_value=1, max_value=50,
+                                                  value=3, step=1,
+                                                  help=f"Eén ronde ≈ {LEERPAD_CHUNK} woorden. Meer rondes/dag = eerder klaar.")
+                    _acc_lp = (sim_acc_override or 78) / 100.0
+                    _netto_lp = max(0.08, (_acc_lp * 1.2) - ((1.0 - _acc_lp) * 2.0))   # netto streak-winst per oefening
+                    _rondes_totaal = math.ceil(_lp_schuld / max(0.5, LEERPAD_CHUNK * _netto_lp))
+                    _dagen_lp = math.ceil(_rondes_totaal / max(1, int(_rondes_dag)))
+                    try:
+                        _einddat_lp = (_nu() + pd.Timedelta(days=_dagen_lp)).strftime("%d-%m-%Y")
+                    except Exception:
+                        _einddat_lp = "—"
+                    _lpc1, _lpc2, _lpc3 = st.columns(3)
+                    _lpc1.metric("Woorden nog niet 'af'", f"{len(_lp_open)}/{len(_lp_pool)}")
+                    _lpc2.metric("Rondes te gaan", f"~{_rondes_totaal}")
+                    _lpc3.metric(f"Bij {int(_rondes_dag)}/dag", f"~{_dagen_lp} dagen")
+                    st.caption(f"📅 Zo ben je rond **{_einddat_lp}** door je leerpad (bij ~{sim_acc_override}% accuratesse "
+                               "en dezelfde mix). Meer rondes per dag → sneller klaar; hoger scoren ook.")
 
                 st.write("---")
 
