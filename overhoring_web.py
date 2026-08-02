@@ -5829,7 +5829,9 @@ def main():
                                 _q.pop(0); st.rerun()
                             _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen', 'Herhaal': '🔁 Herhaling (oude stof)'}.get(sub, sub)
                             _celpar = _alle_cel_par.get(cid, gekozen_sub)   # welk rijtje deze cel hoort bij
-                            st.caption(f"{_slabel} · streak {_cstreak(cell)} · nog {len(_q)} kaart(en) in de rij")
+                            _arec = st.session_state.actief_stats.get(cid) or {}
+                            st.caption(f"{_slabel} · ✅ {int(_arec.get('g', 0))} / ❌ {int(_arec.get('f', 0))} · "
+                                       f"🔥 streak {_cstreak(cell)}/{ACTIEF_BEHEERST} · nog {len(_q)} kaart(en) in de rij")
                             if sub == 'Herhaal':
                                 st.caption("↩️ Herhaling van oude stof — even ophalen zodat het erin blijft zitten.")
                             # Paradigma NAAST het cel-label, zodat 'Gen ev van ἐγώ' niet met 'Gen ev van σύ' verwart.
@@ -5876,6 +5878,13 @@ def main():
                                         else:
                                             _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
+
+                            # 'Ik weet het niet' — toont het antwoord zonder aftrek en zet de kaart weer
+                            # achteraan in de rij, zodat je 'm straks nog een keer echt ophaalt.
+                            if sub != 'Leer':
+                                if st.button("🤔 Ik weet het niet — toon het antwoord", key=f"afweet_{cid}"):
+                                    st.session_state.af_feedback = {"type": "info", "msg": f"💡 {_celpar} · {cell['label']} = **{cell['vorm']}** — geen aftrek, je krijgt 'm zo nog een keer."}
+                                    _volgende(requeue=True); st.rerun()
 
                     with st.expander("🗺️ Alle paradigma-levels"):
                         for l in _af_levels:
@@ -6502,6 +6511,15 @@ def main():
                                                 st.session_state.stam_feedback = {"type": "error", "msg": f"✗ Fout. Het was: {fout_msg}.\n\n{uitleg_regel}\n\nKlik hem nu nog één keer goed aan."}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                             else: st.session_state.stam_stats[vid]['f'] += 1; st.session_state.stam_feedback = {"type": "warning", "msg": f"Eén van je keuzes is onjuist!\n\n{uitleg_regel}"}
                                             st.rerun()
+
+                            # 'Ik weet het niet' — toont het antwoord zonder aftrek en zet 'm terug in de rij,
+                            # zodat je 'm straks nog een keer echt ophaalt (geen streak-punten deze keer).
+                            if sub_modus not in ('Leer', 'overtik'):
+                                if st.button("🤔 Ik weet het niet — toon het antwoord", key=f"stam_weetniet_{vid}"):
+                                    st.session_state.gestrafte_woorden_stam.add(vid)
+                                    st.session_state.stam_sessie_lijst.append((huidig, sub_modus))
+                                    st.session_state.stam_feedback = {"type": "info", "msg": f"💡 {fout_msg}\n\n{uitleg_regel}\n\nGeen aftrek — je krijgt 'm straks nog een keer om echt op te halen."}
+                                    trigger_save(); laad_volgend_stam_woord(); st.rerun()
 
                             if sub_modus != 'overtik':
                                 st.write("---")
