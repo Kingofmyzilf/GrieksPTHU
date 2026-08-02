@@ -9,6 +9,7 @@ import math
 import os
 import unicodedata
 import difflib
+import functools
 from datetime import datetime
 
 # De app draait in de cloud op UTC-servers, terwijl de gebruiker in Nederland zit. Zonder deze
@@ -224,6 +225,7 @@ def naar_grieks_transliteratie(tekst):
         res = res[:-1] + 'ς'
     return res
 
+@functools.lru_cache(maxsize=200000)
 def normaliseer_accent(woord):
     if pd.notna(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
@@ -1670,7 +1672,7 @@ def bijbel_boek_index(_bijbel_db):
             parsed[b][c].sort(key=lambda x: x[0])
     return parsed
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def bijbel_vorm_index(_bijbel_db):
     """Index: genormaliseerde Griekse vorm → lijst van unieke ontledingen die die vorm in het NT
     kan zijn. Elk item: (grieks, parsing_info, strong, voorbeeld-ref, aantal keer, transliteratie).
@@ -1697,13 +1699,25 @@ def bijbel_vorm_index(_bijbel_db):
         uit[key] = rijen
     return uit
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def _zoek_vormen(_bijbel_db):
     """(genormaliseerde vorm, weergavevorm-met-accenten, totaal aantal) voor de zoeksuggesties."""
     out = []
     for k, rijen in bijbel_vorm_index(_bijbel_db).items():
         out.append((k, rijen[0][0], sum(r[4] for r in rijen)))
     return out
+
+@st.cache_resource(show_spinner=False)
+def _struct_vorm_posities(_bijbel_db):
+    """{genormaliseerde vorm (ς→σ) → [(ref, woord-index)]} — zodat de Structuurwoorden-tab een
+    voorbeeldvers via een dict-lookup vindt i.p.v. het hele NT te scannen bij elke rerun."""
+    idx = {}
+    for ref, zin in (_bijbel_db or {}).items():
+        for iw, w in enumerate(zin):
+            key = normaliseer_accent(w.get('grieks', '')).replace('ς', 'σ')
+            if key:
+                idx.setdefault(key, []).append((ref, iw))
+    return idx
 
 def zoek_suggesties(bijbel_db, term, maxn=8):
     """Vergelijkbare Griekse vormen bij een (mogelijk verkeerd getypte) zoekterm: eerst vormen die
@@ -3777,6 +3791,9 @@ def trigger_save(forceer=False):
             nieuwe_vocab_stats[word['grieks']] = entry
 
     st.session_state.vocab_stats = nieuwe_vocab_stats
+    # De accent-ongevoelige streak-index is afgeleid van vocab_stats; hier bevat vocab_stats
+    # verse dict-objecten, dus de index moet opnieuw worden opgebouwd (anders stale streaks).
+    st.session_state._vocab_streak_idx = None
 
     # --- GEBATCHTE CLOUD-OPSLAG ---
     # De in-memory stats hierboven zijn altijd up-to-date (instant). Het trage deel is het
@@ -4482,7 +4499,7 @@ def main():
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
                             if st.session_state.get('optie_kleur_nv_vocab', True):
-                                st.markdown("<div style='font-size:14px; margin-bottom:4px;'>**(Legenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**</div>", unsafe_allow_html=True)
+                                st.markdown("<div style='font-size:14px; margin-bottom:4px;'><b>Legenda:</b> <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span></div>", unsafe_allow_html=True)
                             st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
                         else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
@@ -4580,7 +4597,7 @@ def main():
                                     item['score_fout'] = int(item.get('score_fout', 0)) + 1
                                     st.session_state.feedback = {
                                         "type": "warning", 
-                                        "msg": f"Inhoudelijk juist (**{inp}**)! Je grammaticale ontleding (*{p_vorm if p_vorm else 'leeg'}*) afweek echter van de officiële duiding: **{huidige_parsing}**."
+                                        "msg": f"Inhoudelijk juist (**{inp}**)! Alleen de ontleding (*{p_vorm if p_vorm else 'leeg'}*) week af — het juiste is: **{huidige_parsing}**."
                                     }
                                     st.rerun()
                                     
@@ -4816,7 +4833,7 @@ def main():
                         st.write("---")
                         st.markdown("#### ⚠️ Mogelijk verward — vink aan wat écht klopte")
                         st.caption("Er zijn vaak meerdere woorden met dezelfde betekenis. Vink alleen aan met welk woord je het echt door elkaar haalde (één, meer of geen). Alleen die worden aan **Mijn verwarwoorden** toegevoegd.")
-                        with st.form("verwar_bevestig_form"):
+                        with st.form("verwar_bevestig_form", clear_on_submit=True):
                             for _g, _d in _te_bevestigen.items():
                                 st.markdown(f"**{_g}** ({_d.get('nederlands','')}) — jij gaf: *{_d.get('antwoord','')}*")
                                 for _cg, _cn in _d.get('kandidaten', {}).items():
@@ -5778,13 +5795,17 @@ def main():
                                     if not st.session_state.actief_lp_state[c['id']]["correct"]:
                                         if grieks_vorm_ok(_inp.get(c['id'], ""), c['vorm']):
                                             st.session_state.actief_lp_state[c['id']] = {"correct": True, "value": c['vorm']}
-                                        else: st.session_state.actief_lp_state[c['id']]["value"] = ""
+                                        else:
+                                            st.session_state.actief_lp_state[c['id']]["value"] = ""
+                                            st.session_state.pop(f"lpm_{c['id']}", None)   # veld echt legen
                                 st.rerun()
                         else:
                             st.success("🏆 Volledig foutloos — dit paradigma zit écht vast!")
                             st.balloons()
                             if st.button("🔄 Opnieuw", key="lpm_reset"):
-                                st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}; st.rerun()
+                                st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}
+                                for c in cells: st.session_state.pop(f"lpm_{c['id']}", None)   # velden echt legen
+                                st.rerun()
                     else:
                         # PER-CEL SCAFFOLD: bouw een rij kaarten op basis van de streak per cel.
                         def _bouw_q():
@@ -6439,8 +6460,8 @@ def main():
                             elif sub_modus == 'overtik':
                                 st.warning("⚠️ Overtikken: Je had deze vorm fout. Vul de correcte gegevens exact in.")
                                 st.info(f"Het juiste antwoord is: {fout_msg}"); st.markdown(uitleg_regel)
-                                p_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
-                                p_prae = st.text_input("2. Praesens bronwoord:", key="in_ov_p")
+                                p_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_ov_g_{vid}")
+                                p_prae = st.text_input("2. Praesens bronwoord:", key=f"in_ov_p_{vid}")
                                 if st.button("Bevestig Overtikken"):
                                     registreer_oefening()
                                     if p_gram == correct_gram and normaliseer_accent(naar_grieks_transliteratie(p_prae)) == normaliseer_accent(correct_praesens):
@@ -6448,8 +6469,8 @@ def main():
                                     else: st.error("Nog niet exact overgetypt!")
 
                             elif sub_modus == "Typen":
-                                t_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"])
-                                t_prae = st.text_input("2. Praesens bronwoord:", key="in_tp_p"); t_bete = st.text_input("3. Betekenis bronwoord:", key="in_tp_b")
+                                t_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_tp_g_{vid}")
+                                t_prae = st.text_input("2. Praesens bronwoord:", key=f"in_tp_p_{vid}"); t_bete = st.text_input("3. Betekenis bronwoord:", key=f"in_tp_b_{vid}")
                                 if st.button("Controleer Antwoord", type="primary"):
                                     registreer_oefening()
                                     if (t_gram == correct_gram) and (normaliseer_accent(naar_grieks_transliteratie(t_prae)) == normaliseer_accent(correct_praesens)) and check_betekenis(t_bete, correct_betekenis):
@@ -6660,63 +6681,66 @@ def main():
                         struct_kleur_nv = _pref_bool(st.checkbox, "🎨 Markeer Naamvallen in zin (Kleur)", 'struct_kleur_nv_pref', default=False, key="struct_global_kleur_nv")
                         
                         if bijbel_db:
-                            for ref, zin in bijbel_db.items():
-                                for idx_w, w in enumerate(zin):
-                                    norm_w = normaliseer_accent(w['grieks'])
-                                    if any(norm_w == k or norm_w == k.replace('ς','σ') for k in zoek_opties):
+                            # Gecachte vorm-index i.p.v. het hele NT scannen bij elke rerun.
+                            _sidx = _struct_vorm_posities(bijbel_db)
+                            _kandidaten = []
+                            for k in zoek_opties:
+                                _kandidaten.extend(_sidx.get(k.replace('ς', 'σ'), []))
+                            for ref, idx_w in _kandidaten:
+                                zin = bijbel_db.get(ref)
+                                if not zin or idx_w >= len(zin):
+                                    continue
+                                eis_voldaan = True
+                                if "Voorzetsel" in huidig.get('categorie', ''):
+                                    if idx_w + 1 < len(zin):
+                                        next_p = zin[idx_w + 1].get('parsing_info', '')
+                                        nv_prefix = doel_nv[:3]
+                                        if nv_prefix not in next_p: eis_voldaan = False
+                                    else: eis_voldaan = False
+
+                                if eis_voldaan:
+                                    if idx_w + 1 < len(zin):
+                                        next_p = zin[idx_w + 1].get('parsing_info', '')
+                                        if "Gen" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Genitivus)*"
+                                        elif "Dat" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Dativus)*"
+                                        elif "Acc" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Accusativus)*"
+
+                                    html_z = ""
+                                    for sub_w in zin:
+                                        txt_col = "#bbb"
+                                        if struct_kleur_nv:
+                                            p_inf = sub_w.get('parsing_info', '')
+                                            if "Nom" in p_inf: txt_col = "#33ccff"
+                                            elif "Gen" in p_inf: txt_col = "#28a745"
+                                            elif "Dat" in p_inf: txt_col = "#6f42c1"
+                                            elif "Acc" in p_inf: txt_col = "#dc3545"
+                                            elif "Voc" in p_inf: txt_col = "#fd7e14"
+
+                                        n_sub = normaliseer_accent(sub_w['grieks'])
+                                        is_doel = any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties)
+
+                                        if is_doel:
+                                            # Doelwoord: neutrale (witte) tekst — NIET de naamval-kleur,
+                                            # anders verklapt de kleur de gevraagde naamval. Alleen het
+                                            # gele kader markeert dat dit het te toetsen woord is.
+                                            t_tip = "❓ [Dit woord wordt getoetst]"
+                                            w_style = "color: #ffffff; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
+                                        else:
+                                            v_nl = sub_w.get('vertaling_nl', '')
+                                            v_bsb = sub_w.get('vertaling_bsb', '')
+                                            p_inf = sub_w.get('parsing_info', '')
+                                            # Nederlandse glosse primair; val terug op BSB; toon EN alleen als anker
+                                            _kern = v_nl if v_nl.strip() else v_bsb
+                                            _en_anker = f"\nEN: {v_bsb}" if (v_nl.strip() and v_bsb.strip()) else ""
+                                            t_tip = f"{_kern} ({p_inf})" if _kern else p_inf
+                                            t_tip = f"{t_tip}{_en_anker}"
+                                            t_tip = t_tip.replace("'", "&#39;").replace('"', "&quot;")
+                                            w_style = f"color: {txt_col}; border-bottom: 1px dotted #555;"
+
+                                        html_z += f"<span class='mobile-tooltip' tabindex='0' style='{w_style}'>{sub_w['grieks']}<span class='tooltiptext'>{t_tip}</span></span>{sub_w.get('interpunctie','')} "
                                         
-                                        eis_voldaan = True
-                                        if "Voorzetsel" in huidig.get('categorie', ''):
-                                            if idx_w + 1 < len(zin):
-                                                next_p = zin[idx_w + 1].get('parsing_info', '')
-                                                nv_prefix = doel_nv[:3]
-                                                if nv_prefix not in next_p: eis_voldaan = False
-                                            else: eis_voldaan = False
-                                            
-                                        if eis_voldaan:
-                                            if idx_w + 1 < len(zin):
-                                                next_p = zin[idx_w + 1].get('parsing_info', '')
-                                                if "Gen" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Genitivus)*"
-                                                elif "Dat" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Dativus)*"
-                                                elif "Acc" in next_p: extra_casus_hint = " *(wordt hier direct gevolgd door de Accusativus)*"
-                                                
-                                            html_z = ""
-                                            for sub_w in zin:
-                                                txt_col = "#bbb"
-                                                if struct_kleur_nv:
-                                                    p_inf = sub_w.get('parsing_info', '')
-                                                    if "Nom" in p_inf: txt_col = "#33ccff"
-                                                    elif "Gen" in p_inf: txt_col = "#28a745"
-                                                    elif "Dat" in p_inf: txt_col = "#6f42c1"
-                                                    elif "Acc" in p_inf: txt_col = "#dc3545"
-                                                    elif "Voc" in p_inf: txt_col = "#fd7e14"
-
-                                                n_sub = normaliseer_accent(sub_w['grieks'])
-                                                is_doel = any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties)
-
-                                                if is_doel:
-                                                    # Doelwoord: neutrale (witte) tekst — NIET de naamval-kleur,
-                                                    # anders verklapt de kleur de gevraagde naamval. Alleen het
-                                                    # gele kader markeert dat dit het te toetsen woord is.
-                                                    t_tip = "❓ [Dit woord wordt getoetst]"
-                                                    w_style = "color: #ffffff; font-weight: 900; background-color: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; border-bottom: 3px solid #ffd700; padding: 1px 5px; border-radius: 4px;"
-                                                else:
-                                                    v_nl = sub_w.get('vertaling_nl', '')
-                                                    v_bsb = sub_w.get('vertaling_bsb', '')
-                                                    p_inf = sub_w.get('parsing_info', '')
-                                                    # Nederlandse glosse primair; val terug op BSB; toon EN alleen als anker
-                                                    _kern = v_nl if v_nl.strip() else v_bsb
-                                                    _en_anker = f"\nEN: {v_bsb}" if (v_nl.strip() and v_bsb.strip()) else ""
-                                                    t_tip = f"{_kern} ({p_inf})" if _kern else p_inf
-                                                    t_tip = f"{t_tip}{_en_anker}"
-                                                    t_tip = t_tip.replace("'", "&#39;").replace('"', "&quot;")
-                                                    w_style = f"color: {txt_col}; border-bottom: 1px dotted #555;"
-
-                                                html_z += f"<span class='mobile-tooltip' tabindex='0' style='{w_style}'>{sub_w['grieks']}<span class='tooltiptext'>{t_tip}</span></span>{sub_w.get('interpunctie','')} "
-                                                
-                                            gevonden_context = (ref, html_z.strip())
-                                            break
-                                if gevonden_context: break
+                                    gevonden_context = (ref, html_z.strip())
+                                    break
 
                         # --- SPOILERVRIJE WEERGAVE ---
                         # Zuiver de weergavenaam permanent van haakjes (maakt van 'παρά (dat)' -> 'παρά')
