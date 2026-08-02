@@ -137,26 +137,42 @@ def audio_knop(fonetisch, key=""):
     wat botst met de Erasmiaanse uitspraak die de cursus hanteert."""
     if not fonetisch:
         return
-    veilig = str(fonetisch).replace("'", "\\'").replace('"', '\\"')
+    veilig = (str(fonetisch).replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
+              .replace("\n", " ").replace("\r", " "))
     components.html(
         f"""
-        <button onclick="_spreek_{key}()" style="
+        <button id="_btn_{key}" onclick="_spreek_{key}()" style="
             background:#0e5a8a; color:#fff; border:none; border-radius:6px;
             padding:6px 14px; font-size:15px; cursor:pointer; margin-top:4px;">
             🔊 Uitspraak
         </button>
         <script>
+        // Stemmen laden asynchroon (vooral op mobiel) — vast alvast aanzwengelen.
+        try {{ if (window.speechSynthesis) window.speechSynthesis.getVoices(); }} catch (e) {{}}
         function _spreek_{key}() {{
             try {{
-                var u = new SpeechSynthesisUtterance("{veilig}");
-                u.rate = 0.85;   // iets langzamer, duidelijker
-                u.pitch = 1.0;
-                // kies een neutrale stem; forceer géén Griekse (nieuwgriekse) uitspraak
+                if (!window.speechSynthesis) {{ alert("Uitspraak wordt niet ondersteund in deze browser."); return; }}
+                var tekst = "{veilig}";
+                var gedaan = false;
+                var zeg = function() {{
+                    if (gedaan) return; gedaan = true;
+                    var u = new SpeechSynthesisUtterance(tekst);
+                    u.rate = 0.85; u.pitch = 1.0; u.lang = "nl-NL";
+                    var stemmen = window.speechSynthesis.getVoices() || [];
+                    // neutrale (niet-nieuwgriekse) stem kiezen als die er is
+                    var voorkeur = stemmen.find(function(v) {{ return /en-|nl-|de-/i.test(v.lang); }});
+                    if (voorkeur) u.voice = voorkeur;
+                    window.speechSynthesis.cancel();
+                    window.speechSynthesis.speak(u);
+                }};
                 var stemmen = window.speechSynthesis.getVoices();
-                var voorkeur = stemmen.find(v => /en-|nl-|de-/i.test(v.lang));
-                if (voorkeur) u.voice = voorkeur;
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(u);
+                if (!stemmen || stemmen.length === 0) {{
+                    // wacht tot de stemmen geladen zijn; met een tijd-fallback als het event niet vuurt
+                    window.speechSynthesis.onvoiceschanged = zeg;
+                    setTimeout(zeg, 300);
+                }} else {{
+                    zeg();
+                }}
             }} catch (e) {{ console.log("TTS niet beschikbaar:", e); }}
         }}
         </script>
@@ -8455,17 +8471,8 @@ def main():
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
-                        # Altijd beschikbaar: het bijbehorende rijtje om te spieken (uitgeklapt na een fout).
-                        _vwoord = next((v for v in (st.session_state.get('data') or [])
-                                        if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
-                        _lemma = str(_vwoord.get('grieks', '')) if _vwoord else ""
-                        _ginfo = str(_vwoord.get('grieks_info', '')) if _vwoord else ""
-                        if _osteun:
-                            # Samentrekkingen/klankwetten van déze vorm (G20, σ-samensmelting, augment).
-                            toon_opbouw_hulp(_w.get('grieks', ''), _lemma, _info, _ginfo,
-                                             uitgeklapt=bool(st.session_state.get('ontl_feedback')), strong=_w.get('strong'))
-                        toon_rijtje_hulp(_info, _lemma, _ginfo, sleutel=f"ontl_{_fase}_{_pos}",
-                                         uitgeklapt=bool(st.session_state.get('ontl_feedback')))
+                        # De spiek-/opbouwhulp staat ONDER de check-knop (zie het hulpblok onderaan),
+                        # zodat het doelwoord en de antwoordknoppen bij elkaar staan.
                         _cA, _cB = st.columns(2)
                         if _alles_ingevuld and _cA.button("✓ Check antwoord", key=f"ontl_check_{_fase}_{_pos}", type="primary"):
                             _res = []; _alle_goed = True; _eerste = _eerste_keer()
@@ -8516,12 +8523,7 @@ def main():
                         _vorm = _info.split(' - ', 1)[1] if ' - ' in _info else _info
                         st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         st.caption(f"Vorm: *{_vorm}* — houd rekening met naamval/tijd in je vertaling.")
-                        if _osteun:
-                            toon_vertaalhulp(_info, sleutel=f"ontl_vert_{_pos}")
-                            _vw0 = next((v for v in (st.session_state.get('data') or [])
-                                         if str(v.get('strong')) == str(_w.get('strong')) and v.get('strong')), None)
-                            toon_opbouw_hulp(_w.get('grieks', ''), str(_vw0.get('grieks', '')) if _vw0 else "",
-                                             _info, str(_vw0.get('grieks_info', '')) if _vw0 else "", strong=_w.get('strong'))
+                        # De vertaal-/opbouwhulp staat ONDER de check-knop (zie het hulpblok onderaan).
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
@@ -8589,7 +8591,8 @@ def main():
                         if st.button("➡️ Volgend vers", key="ontl_volgend", type="primary"):
                             _nieuw_ontleed_vers(); st.rerun()
 
-                    # === HULP: in ELKE ronde beschikbaar (zolang 💡 Hulp aanstaat) ===
+                    # === HULP: ALLE uitklap-balkjes staan hier, ÓNDER het antwoord + de check-knop, zodat
+                    # het doelwoord en de invoer altijd bij elkaar staan (fijner op mobiel). ===
                     if _osteun:
                         if _fase in ('woordsoort', 'znw', 'ww', 'vertalen') and _hidx >= 0:
                             _hw = _zin[_hidx]
@@ -8598,13 +8601,13 @@ def main():
                                          if str(v.get('strong')) == str(_hw.get('strong')) and v.get('strong')), None)
                             _hlemma = str(_hvw.get('grieks', '')) if _hvw else ""
                             _hginfo = str(_hvw.get('grieks_info', '')) if _hvw else ""
-                            # In de rondes znw/ww staan opbouw- en rijtjeshulp al bovenaan bij het woord zelf;
-                            # in de andere rondes horen ze hier, zodat je overal kunt spieken.
-                            if _fase not in ('znw', 'ww'):
-                                toon_opbouw_hulp(_hw.get('grieks', ''), _hlemma, _hinfo, _hginfo,
-                                                 uitgeklapt=False, strong=_hw.get('strong'))
-                                toon_rijtje_hulp(_hinfo, _hlemma, _hginfo,
-                                                 sleutel=f"ontl_{_fase}_{_pos}", uitgeklapt=False)
+                            _hopen = bool(st.session_state.get('ontl_feedback'))   # na een fout meteen open
+                            if _fase == 'vertalen':
+                                toon_vertaalhulp(_hinfo, sleutel=f"ontl_vert_{_pos}")
+                            toon_opbouw_hulp(_hw.get('grieks', ''), _hlemma, _hinfo, _hginfo,
+                                             uitgeklapt=_hopen, strong=_hw.get('strong'))
+                            toon_rijtje_hulp(_hinfo, _hlemma, _hginfo,
+                                             sleutel=f"ontl_{_fase}_{_pos}", uitgeklapt=_hopen)
                             toon_engels_diagram(_hw.get('grieks', ''), _obdb, sleutel=f"ontl_{_fase}_{_pos}",
                                                 strong=_hw.get('strong'), parsing_info=_hinfo)
                             _bh = biblehub_regel(st.session_state.ontl_ref, _hw.get('strong'))
