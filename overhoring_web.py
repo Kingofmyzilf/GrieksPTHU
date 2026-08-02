@@ -5639,13 +5639,15 @@ def main():
                     # als retentie-herhaling terug te laten komen (blijft er zo goed in zitten).
                     _alle_cel_idx = {}   # id -> cel
                     _alle_cel_sib = {}   # id -> [vormen in eigen paradigma] (voor MC-afleiders)
+                    _alle_cel_par = {}   # id -> paradigma-naam (welk rijtje) — voorkomt verwarring
                     for _nvv in actief_db.values():
                         for _catt in _nvv.values():
-                            for _para in _catt.values():
+                            for _para_naam, _para in _catt.items():
                                 _vv = [x['vorm'] for x in _para if x.get('id')]
                                 for x in _para:
                                     if x.get('id'):
                                         _alle_cel_idx[x['id']] = x; _alle_cel_sib[x['id']] = _vv
+                                        _alle_cel_par[x['id']] = _para_naam
                     _klaar20 = sum(1 for c in cells if _cstreak(c) >= ACTIEF_BEHEERST)
                     st.markdown(f"### {gekozen_sub}  ({_klaar20}/{len(cells)} cellen beheerst)")
 
@@ -5734,10 +5736,13 @@ def main():
                             if cell is None:
                                 _q.pop(0); st.rerun()
                             _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen', 'Herhaal': '🔁 Herhaling (oude stof)'}.get(sub, sub)
+                            _celpar = _alle_cel_par.get(cid, gekozen_sub)   # welk rijtje deze cel hoort bij
                             st.caption(f"{_slabel} · streak {_cstreak(cell)} · nog {len(_q)} kaart(en) in de rij")
                             if sub == 'Herhaal':
-                                st.caption("↩️ Even ophalen zodat het erin blijft zitten.")
-                            st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']}</div>", unsafe_allow_html=True)
+                                st.caption(f"↩️ Uit het rijtje **{_celpar}** — even ophalen zodat het erin blijft zitten.")
+                            # Rijtjenaam bij het doelwoord, zodat 'Dat ev' van ἐγώ niet met dat van σύ verwart.
+                            st.markdown(f"<div style='font-size:13px;color:#9aa3af;margin-bottom:-6px'>{_celpar}</div>"
+                                        f"<div class='grieks-woord' style='font-size:30px'>{cell['label']}</div>", unsafe_allow_html=True)
 
                             def _volgende(requeue=False):
                                 if requeue and _q: _q.append(_q[0])
@@ -5764,9 +5769,9 @@ def main():
                                 for _oi, _opt in enumerate(st.session_state.af_opties):
                                     if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}"):
                                         if _opt == cell['vorm']:
-                                            _af_score(cid, 2, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
+                                            _af_score(cid, 2, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {cell['label']} = **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
+                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
                             else:  # Typen
                                 forceer_focus()
@@ -5774,9 +5779,9 @@ def main():
                                     _in = st.text_input("Typ de vorm (Latijnse toetsen mag):")
                                     if st.form_submit_button("Controleer", type="primary"):
                                         if grieks_vorm_ok(_in, cell['vorm']):
-                                            _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {cell['label']} = {cell['vorm']}"}; _volgende()
+                                            _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
+                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
                                         trigger_save(); st.rerun()
 
                     with st.expander("🗺️ Alle paradigma-levels"):
