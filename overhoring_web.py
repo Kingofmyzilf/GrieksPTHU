@@ -718,13 +718,72 @@ def _augment_treffer(vorm, lemma, parsing_info=""):
         return (van, naar)
     return None
 
-def samensmelting_analyse(vorm, lemma="", parsing_info=""):
+def _naam_klank_treffer(vorm, grieks_info="", parsing_info="", corpus_stam=""):
+    """Klankwet bij een naamwoord/bijv. naamwoord van de 3e declinatie: (klasse, formule, stam).
+
+    Alleen in de nominativus ev en de dativus mv botst de stam met een σ. We VOORSPELLEN de vorm
+    uit de stam + de sandhi-regel en accepteren alleen als die voorspelling exact uitkomt — zo
+    kan er geen verzonnen regel bij een onregelmatige vorm terechtkomen."""
+    info = parsing_info or ""
+    if "Werkwoord" in info or not any(x in info for x in ("Zelfst.", "Bijv.")):
+        return None
+    nv = next((k.lower() for k in ("Nom", "Gen", "Dat", "Acc", "Voc") if k in info), None)
+    getal = "mv" if "mv" in info else ("ev" if "ev" in info else None)
+    if nv not in ("nom", "dat") or not getal:
+        return None
+    stam = _naam3_stam_kaal(grieks_info) or _opb_kaal(corpus_stam or "")
+    if not stam or len(stam) < 2:
+        return None
+    vk = _opb_kaal(vorm)
+    eind = stam[-1]
+    kandidaten = []
+    if nv == "nom" and getal == "ev":
+        if eind in "κγχ":
+            kandidaten.append((stam[:-1] + "ξ", "gutturalen", f"{eind} + ς → ξ"))
+        if eind in "πβφ":
+            kandidaten.append((stam[:-1] + "ψ", "labialen", f"{eind} + ς → ψ"))
+        if eind in "τδθ":
+            kandidaten.append((stam[:-1] + "ς", "dentalen", f"{eind} + ς → ς"))
+        if stam.endswith("ντ"):
+            kandidaten.append((stam[:-2] + "ς", "dentalen", "ντ + ς → ς"))
+    elif nv == "dat" and getal == "mv":
+        for suf in ("σι", "σιν"):
+            rest = suf[1:]
+            if eind in "κγχ":
+                kandidaten.append((stam[:-1] + "ξ" + rest, "gutturalen", f"{eind} + σι → ξι"))
+            if eind in "πβφ":
+                kandidaten.append((stam[:-1] + "ψ" + rest, "labialen", f"{eind} + σι → ψι"))
+            if eind in "τδθ":
+                kandidaten.append((stam[:-1] + suf, "dentalen", f"{eind} + σι → σι"))
+            if stam.endswith("ντ"):
+                kandidaten.append((stam[:-2] + suf, "dentalen", "ντ + σι → σι"))
+    for voorspeld, klasse, formule in kandidaten:
+        if voorspeld == vk:
+            return (klasse, formule, stam)
+    return None
+
+def samensmelting_analyse(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
     """Welke klankwet zie je in déze vorm? → dict met klasse/formule/uitleg, of None.
     Sleutels: sleutel, klasse, letters, links, rechts, resultaat, formule, uitleg."""
-    if not vorm or not lemma:
+    if not vorm:
         return None
     info = parsing_info or ""
     if "Werkwoord" not in info:
+        # Naamwoorden/bijv. naamwoorden (3e declinatie): nominativus ev en dativus mv botsen met σ.
+        nt = _naam_klank_treffer(vorm, grieks_info, info, corpus_stam)
+        if nt:
+            klasse_s, formule, stam = nt
+            klasse, letters = _SAMENSMELT_KLASSEN[klasse_s]
+            _links = formule.split(" +")[0]
+            _hint = _naam3_klankhint(stam).replace(" — ", "")
+            return {"sleutel": klasse_s, "klasse": klasse, "letters": letters, "links": _links,
+                    "rechts": "ς / σι", "resultaat": formule.split("→")[-1].strip(),
+                    "formule": formule, "stam": stam,
+                    "uitleg": (f"3e declinatie: de echte stam is **{stam}-** (zie de genitivus). "
+                               + (_hint[0].upper() + _hint[1:] + "." if _hint else
+                                  f"Op de stamgrens botst **{_links}** met de σ van de uitgang."))}
+        return None
+    if not lemma:
         return None
     # 1. σ-samensmelting (futurum/aoristus): κ + σ → ξ, π + σ → ψ, dentaal valt weg, vloeiklank.
     treffer = _sigma_treffer(vorm, lemma, info)
@@ -767,19 +826,20 @@ def samensmelting_analyse(vorm, lemma="", parsing_info=""):
     return None
 
 @st.cache_resource(show_spinner=False)
-def klankwet_index(_bijbel_db, _lemma_van_strong):
+def klankwet_index(_bijbel_db, _woord_van_strong):
     """{klasse-sleutel: [(vorm, lemma, parsing_info, ref, strong)]} — alle NT-vormen waarin de app
-    aantoonbaar een klankwet herkent. Wordt een keer opgebouwd; filteren op 'woorden die jij al
-    kent' en op lesnummer gebeurt daarna in de tab zelf."""
+    aantoonbaar een klankwet herkent (werkwoorden én 3e-declinatie-naamwoorden). Wordt een keer
+    opgebouwd; filteren op 'woorden die jij al kent' en op lesnummer gebeurt in de tab zelf."""
     uit = {}
     gezien = set()
     for ref, zin in (_bijbel_db or {}).items():
         for w in zin:
             info = w.get('parsing_info', '') or ''
-            if "Werkwoord" not in info:
+            if not ("Werkwoord" in info or any(x in info for x in ("Zelfst.", "Bijv."))):
                 continue
             strong = str(w.get('strong', '') or '').strip()
-            lemma = (_lemma_van_strong or {}).get(strong, "")
+            bron = (_woord_van_strong or {}).get(strong) or {}
+            lemma = str(bron.get('grieks', '') or '')
             vorm = str(w.get('grieks', '') or '')
             if not lemma or not vorm:
                 continue
@@ -787,22 +847,28 @@ def klankwet_index(_bijbel_db, _lemma_van_strong):
             if sleutel in gezien:
                 continue
             gezien.add(sleutel)
-            analyse = samensmelting_analyse(vorm, lemma, info)
+            analyse = samensmelting_analyse(vorm, lemma, info,
+                                            grieks_info=str(bron.get('grieks_info', '') or ''),
+                                            corpus_stam=corpus_stam_van(strong, info))
             if analyse:
                 uit.setdefault(analyse['sleutel'], []).append((vorm, lemma, info, ref, strong))
     return uit
 
-def samensmeltingen_in_zin(zin, lemma_van_strong):
+def samensmeltingen_in_zin(zin, woord_van_strong):
     """[(vorm, formule, klasse)] voor elk woord in de zin waar een klankwet speelt — gebruikt door
     het schuifje 'Toon samensmeltingen' bij het ontleden."""
     uit = []
     for w in (zin or []):
         info = w.get('parsing_info', '') or ''
         vorm = str(w.get('grieks', '') or '')
-        lemma = (lemma_van_strong or {}).get(str(w.get('strong', '') or '').strip(), "")
+        strong = str(w.get('strong', '') or '').strip()
+        bron = (woord_van_strong or {}).get(strong) or {}
+        lemma = str(bron.get('grieks', '') or '')
         if not vorm or not lemma:
             continue
-        a = samensmelting_analyse(vorm, lemma, info)
+        a = samensmelting_analyse(vorm, lemma, info,
+                                  grieks_info=str(bron.get('grieks_info', '') or ''),
+                                  corpus_stam=corpus_stam_van(strong, info))
         if a:
             uit.append((vorm, a['formule'], a['klasse']))
     return uit
@@ -3060,7 +3126,8 @@ def leerpad_kaart_volgorde(sampled):
     return kaarten
 
 # --- DAGELIJKS DOEL ---
-DAGDOEL_STANDAARD = {'woorden': 10, 'verwar': 3, 'knelpunt': 5, 'actief': 5, 'stam': 5, 'struct': 5, 'verzen': 2}
+DAGDOEL_STANDAARD = {'woorden': 10, 'verwar': 3, 'knelpunt': 5, 'actief': 5, 'stam': 5, 'struct': 5,
+                     'verzen': 2, 'klank': 5}
 
 def dagdoel_config():
     cfg = (st.session_state.get('dagdoel') or {}).get('config') or {}
@@ -4116,14 +4183,14 @@ def main():
                      f"\n\n*Technische melding: {st.session_state['_opslag_mislukt']}*")
         # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
         # Weergavevolgorde van de tabbladen (Dagelijks doel zit nu ín Voortgang).
-        _tabs = st.tabs(["🚀 Woordenschat", "🔎 Ontleden", "🔊 Klankwetten", "🎓 Actief Beheersen", "⏳ Stamtijden",
-                         "📝 Leesteksten", "🧱 Structuurwoorden", "📊 Voortgang", "📖 Lijst", "📐 Grammatica",
-                         "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
+        _tabs = st.tabs(["🚀 Woordenschat", "🔎 Ontleden", "🎓 Actief Beheersen", "⏳ Stamtijden",
+                         "📝 Leesteksten", "🔊 Klankwetten", "🧱 Structuurwoorden", "📊 Voortgang", "📖 Lijst",
+                         "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
         # menu[i] = het content-blok zoals het in de code staat; hier gekoppeld aan de juiste tab-positie.
         # 0=Woorden 1=Lijst 2=Voortgang 3=Actief 4=Stam 5=Struct 6=Leesteksten 7=Grammatica 8=Uitleg
         # 9=NL→Grieks 10=Ontleden 11=Klankwetten
-        menu = [_tabs[0], _tabs[8], _tabs[7], _tabs[3], _tabs[4], _tabs[6], _tabs[5], _tabs[9], _tabs[10],
-                _tabs[11], _tabs[1], _tabs[2]]
+        menu = [_tabs[0], _tabs[8], _tabs[7], _tabs[2], _tabs[3], _tabs[6], _tabs[4], _tabs[9], _tabs[10],
+                _tabs[11], _tabs[1], _tabs[5]]
 
         # Eenvoud-modus: standaard alleen de basis-opties; aan te zetten in ℹ️ Uitleg & Hulp.
         _geav = bool(st.session_state.get('ui_geavanceerd',
@@ -5239,6 +5306,32 @@ def main():
                         if _t > 0:
                             _pct = int(100 * int(_v.get('g', 0)) / _t)
                             st.progress(_pct / 100, text=f"{_lab}: {_pct}% goed ({_v.get('g', 0)}/{_t})")
+
+            # --- 🔊 KLANKWETTEN: eigen lijst, uitgesplitst per klanksoort ---
+            _ksa = st.session_state.get('klank_stats') or {}
+            if any((v.get('g', 0) + v.get('f', 0)) > 0 for v in _ksa.values() if isinstance(v, dict)):
+                with st.expander("🔊 Klankwetten per klanksoort", expanded=False):
+                    st.caption("Hoe vaak je in de 🔊 Klankwetten-tab de juiste samensmelting aanwees. "
+                               "Zo zie je meteen welke klanksoort nog aandacht nodig heeft.")
+                    _krijen = []
+                    for _ks, (_knaam, _kletters) in _SAMENSMELT_KLASSEN.items():
+                        _kv = _ksa.get(_ks) or {}
+                        _kt = int(_kv.get('g', 0)) + int(_kv.get('f', 0))
+                        if _kt > 0:
+                            _krijen.append((int(100 * int(_kv.get('g', 0)) / _kt), _knaam, _kletters,
+                                            int(_kv.get('g', 0)), _kt))
+                    for _pct2, _knaam, _kletters, _kg, _kt in sorted(_krijen):
+                        st.progress(_pct2 / 100, text=f"{_knaam} ({_kletters}): {_pct2}% goed ({_kg}/{_kt})")
+                    _kb = _ksa.get('basiswoord') or {}
+                    _kbt = int(_kb.get('g', 0)) + int(_kb.get('f', 0))
+                    if _kbt:
+                        _pb = int(100 * int(_kb.get('g', 0)) / _kbt)
+                        st.progress(_pb / 100, text=f"Basiswoord herkennen: {_pb}% goed ({_kb.get('g', 0)}/{_kbt})")
+                    if _krijen:
+                        _zwak = sorted(_krijen)[0]
+                        if _zwak[0] < 70:
+                            st.info(f"💡 **{_zwak[1]}** gaat nog het minst goed ({_zwak[0]}%). Zet in de "
+                                    "🔊 Klankwetten-tab alleen die klanksoort aan om er gericht mee te oefenen.")
 
             st.write("---")
 
@@ -8297,9 +8390,9 @@ def main():
                                     unsafe_allow_html=True)
                     # Welke klankwetten zitten er in deze zin? (schuifje '🔊 Toon samensmeltingen')
                     if _wprefs.get('ontlw_kl_sm'):
-                        _wsm_lemma = {str(v.get('strong')): str(v.get('grieks', ''))
-                                      for v in (st.session_state.get('data') or []) if v.get('strong')}
-                        _wsm = samensmeltingen_in_zin(_wzin, _wsm_lemma)
+                        _wsm_bron = {str(v.get('strong')): v for v in (st.session_state.get('data') or [])
+                                     if v.get('strong')}
+                        _wsm = samensmeltingen_in_zin(_wzin, _wsm_bron)
                         if _wsm:
                             st.markdown("<div style='font-size:13px;color:#9aa3af'>🔊 " +
                                         " &nbsp;|&nbsp; ".join(f"<b>{v}</b>: {f}" for v, f, _k in _wsm) + "</div>",
@@ -8712,9 +8805,9 @@ def main():
                                     unsafe_allow_html=True)
                     # Welke klankwetten zitten er in deze zin? (schuifje '🔊 Toon samensmeltingen')
                     if _oprefs.get('ontl_kl_sm'):
-                        _sm_lemma = {str(v.get('strong')): str(v.get('grieks', ''))
-                                     for v in (st.session_state.get('data') or []) if v.get('strong')}
-                        _sm = samensmeltingen_in_zin(_zin, _sm_lemma)
+                        _sm_bron = {str(v.get('strong')): v for v in (st.session_state.get('data') or [])
+                                    if v.get('strong')}
+                        _sm = samensmeltingen_in_zin(_zin, _sm_bron)
                         if _sm:
                             st.markdown("<div style='font-size:13px;color:#9aa3af'>🔊 " +
                                         " &nbsp;|&nbsp; ".join(f"<b>{v}</b>: {f}" for v, f, _k in _sm) + "</div>",
@@ -8994,7 +9087,8 @@ def main():
                                            ('actief', '🎓', 'Actief Beheersen'),
                                            ('stam', '⏳', 'Stamtijden'),
                                            ('struct', '🧱', 'Structuurwoorden'),
-                                           ('verzen', '📝', 'Verzen ontleden')]:
+                                           ('verzen', '📝', 'Verzen ontleden'),
+                                           ('klank', '🔊', 'Klankwetten')]:
                 _gedaan = int(_lg.get(_soort, 0)); _doel = int(_cfg[_soort])
                 st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
 
@@ -9007,6 +9101,7 @@ def main():
                     'stam': st.slider("Stamtijden", 0, 20, _cfg['stam'], key="dd_stam"),
                     'struct': st.slider("Structuurwoorden", 0, 20, _cfg['struct'], key="dd_struct"),
                     'verzen': st.slider("Verzen ontleden", 0, 10, _cfg['verzen'], key="dd_verzen"),
+                    'klank': st.slider("Klankwetten", 0, 30, _cfg['klank'], key="dd_klank"),
                 }
                 if st.button("💾 Doelen opslaan", key="dd_save"):
                     _d = st.session_state.get('dagdoel')
@@ -9030,8 +9125,8 @@ def main():
                 _kprefs = {}; st.session_state.ui_prefs = _kprefs
             _kdb = laad_bijbel_db()
             _kdata = st.session_state.get('data') or []
-            _klemma = {str(v.get('strong')): str(v.get('grieks', '')) for v in _kdata
-                       if v.get('strong') and v.get('grieks')}
+            _kbron = {str(v.get('strong')): v for v in _kdata if v.get('strong') and v.get('grieks')}
+            _kginfo = {str(v.get('strong')): str(v.get('grieks_info', '') or '') for v in _kdata if v.get('strong')}
             _kbet = {str(v.get('strong')): str(v.get('nederlands', '')) for v in _kdata if v.get('strong')}
             _kstreak = {str(v.get('strong')): int(v.get('streak', 0) or 0) for v in _kdata if v.get('strong')}
             _kles = {str(v.get('strong')): veilig_les_nummer(v) for v in _kdata if v.get('strong')}
@@ -9039,7 +9134,7 @@ def main():
             if not _kdb:
                 st.info("De Bijbeltekst-database is niet beschikbaar.")
             else:
-                _kidx = klankwet_index(_kdb, _klemma)
+                _kidx = klankwet_index(_kdb, _kbron)
 
                 # --- Instellingen (mobielvriendelijk achter één dropdown) ---
                 with st.expander("⚙️ Instellingen (klanksoorten · niveau · lessen)", expanded=False):
@@ -9153,11 +9248,20 @@ def main():
                         r_engine.shuffle(_opties)
                         st.session_state.klank_opts_regel = _opties
                         # Basiswoord-opties: andere lemma's uit dezelfde klasse (lijken meer op elkaar).
-                        _lemmas = list({_l3 for (_v3, _l3, _i3, _r3, _s3) in _kidx.get(_sleutel, []) if _l3 != _lem})
+                        _strong_van_lem = {}
+                        for (_v3, _l3, _i3, _r3, _s3) in _kidx.get(_sleutel, []):
+                            _strong_van_lem.setdefault(_l3, _s3)
+                        def _toon_lem(_l):
+                            _b = _kbet.get(_strong_van_lem.get(_l, ''), '')
+                            _b = _b.split(',')[0].strip()
+                            return f"{_l} ({_b})" if _b else _l
+                        _lemmas = [_l3 for _l3 in _strong_van_lem if _l3 != _lem]
                         r_engine.shuffle(_lemmas)
-                        _lopts = [_lem] + _lemmas[:3]
+                        _lopts = [_toon_lem(_lem)] + [_toon_lem(_x) for _x in _lemmas[:3]]
+                        _lopts = list(dict.fromkeys(_lopts))
                         r_engine.shuffle(_lopts)
                         st.session_state.klank_opts_lemma = _lopts
+                        st.session_state.klank_lemma_juist = _toon_lem(_lem)
 
                     if st.button("🎲 Nieuwe vorm", type="primary", key="klank_nieuw"):
                         _klank_nieuw(); st.rerun()
@@ -9172,19 +9276,22 @@ def main():
                     else:
                         _sleutel, _vorm, _lem, _info, _ref, _strong = _kh
                         _an = samensmelting_analyse(_vorm, _lem, _info) or {}
-                        _tijd = next((t for t in ("Praesens", "Imperfectum", "Futurum", "Aoristus",
-                                                  "Perfectum", "Plusquamperfectum") if t in _info), "")
+                        # Volledige vormaanduiding: tijd + wijs + diathese + persoon/getal (of naamval).
+                        _vorm_txt = _info.split(' - ', 1)[1] if ' - ' in _info else _info
+                        _is_ww = "Werkwoord" in _info
                         st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
                                     f"padding:6px 0'>{_vorm}</div>", unsafe_allow_html=True)
-                        st.caption(f"📖 {_ref} · {_tijd or 'vorm'} — welke klankwet zie je hier, en van welk "
-                                   "werkwoord komt deze vorm?")
+                        st.caption(f"📖 {_ref} · **{_vorm_txt}**" if _vorm_txt else f"📖 {_ref}")
+                        st.caption("Welke klankwet zie je hier, en van welk "
+                                   + ("werkwoord" if _is_ww else "woord") + " komt deze vorm?")
 
                         _kopts_r = st.session_state.get('klank_opts_regel') or []
                         _kopts_l = st.session_state.get('klank_opts_lemma') or []
                         with st.form(f"klank_form_{_vorm}_{_strong}", clear_on_submit=False):
                             _kz_regel = st.radio("1. Welke letters zijn hier samengegaan?", _kopts_r,
                                                  index=None, key=f"klank_r_{_vorm}_{_strong}")
-                            _kz_lemma = st.radio("2. Van welk werkwoord komt deze vorm?", _kopts_l,
+                            _kz_lemma = st.radio("2. Van welk " + ("werkwoord" if _is_ww else "woord")
+                                                 + " komt deze vorm?", _kopts_l,
                                                  index=None, key=f"klank_l_{_vorm}_{_strong}")
                             _ksub = st.form_submit_button("✓ Nakijken", type="primary")
 
@@ -9195,7 +9302,7 @@ def main():
                         if _ksub:
                             registreer_oefening()
                             _ok_r = (_kz_regel == _an.get('formule'))
-                            _ok_l = (_kz_lemma == _lem)
+                            _ok_l = (_kz_lemma == st.session_state.get('klank_lemma_juist', _lem))
                             if not st.session_state.get('klank_geteld'):
                                 _rec = _kstats.setdefault(_sleutel, {'g': 0, 'f': 0})
                                 _rec['g' if _ok_r else 'f'] = int(_rec.get('g' if _ok_r else 'f', 0)) + 1
@@ -9209,8 +9316,18 @@ def main():
                                         + (f" — *{_kbet.get(_strong,'')}*" if _kbet.get(_strong) else ""))
                             if _an.get('uitleg'):
                                 _res.append(f"- 💡 {_an['uitleg']}")
+                            # Laat expliciet zien hoe de vorm is opgebouwd — welke uitgang er staat en
+                            # waar die met de stam samensmelt.
+                            _kseg = ontleed_segmenten(_vorm, _lem, _kginfo.get(_strong, ''), _info,
+                                                      corpus_stam=corpus_stam_van(_strong, _info))
+                            if _kseg:
+                                _res.append("- 🧩 **Opbouw:** " + " + ".join(f"**{_t}**" for _t, _s2 in _kseg)
+                                            + f" → **{_vorm}**  ({' + '.join(_s2 for _t, _s2 in _kseg)})")
+                            if _an.get('stam'):
+                                _res.append(f"- 🔑 **Echte stam:** {_an['stam']}- "
+                                            f"(daar botst **{_an.get('links','')}** met de uitgang)")
                             if _ok_r and _ok_l:
-                                dagdoel_plus('stam')
+                                dagdoel_plus('klank')
                                 st.session_state.klank_topfb = {
                                     "type": "success",
                                     "msg": f"✅ **{_vorm}** — {_an.get('formule','')} · van **{_lem}**"}
@@ -9242,12 +9359,25 @@ def main():
                             _khtml = ""
                             for _w in _kzin:
                                 _g = str(_w.get('grieks', '') or '')
-                                _stijl = ("background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;"
-                                          "padding:0 3px;border-radius:4px;font-weight:700"
-                                          if _g == _vorm else "color:#9aa3af")
-                                _khtml += f"<span style='{_stijl}'>{_g}</span>{_w.get('interpunctie','')} "
+                                _pi = _w.get('parsing_info', '') or ''
+                                if _g == _vorm:
+                                    _stijl = ("background:rgba(255,215,0,.25);border-bottom:3px solid #ffd700;"
+                                              "padding:0 3px;border-radius:4px;font-weight:700")
+                                else:
+                                    # Naamvalkleuren staan hier standaard aan (het antwoord is al gegeven).
+                                    _nvk = next((c for c in ("Nom", "Gen", "Dat", "Acc", "Voc") if c in _pi), None)
+                                    _stijl = f"color:{_ONTLEED_KLEUR.get(_nvk, '#9aa3af')}"
+                                _tt = (str(_w.get('vertaling_nl', '') or _w.get('vertaling_bsb', '')) +
+                                       ("  ·  " + _pi if _pi else "")).replace("'", "&#39;").replace('"', "&quot;")
+                                _khtml += (f"<span class='mobile-tooltip' tabindex='0' style='{_stijl}'>{_g}"
+                                           f"<span class='tooltiptext'>{_tt}</span></span>"
+                                           f"{_w.get('interpunctie','')} ")
                             st.markdown(f"<div style='font-size:20px;line-height:1.6'>{_khtml.strip()}</div>",
                                         unsafe_allow_html=True)
+                            st.caption("💡 Hover (of tik) over een woord voor de betekenis en ontleding. "
+                                       + " · ".join(f":{c}[{n}]" for c, n in
+                                                    [("blue", "Nom"), ("green", "Gen"), ("violet", "Dat"),
+                                                     ("red", "Acc"), ("orange", "Voc")]))
 
                     # --- Hoe doe je het? ---
                     _ktot_g = sum(int((v or {}).get('g', 0)) for v in _kstats.values())
