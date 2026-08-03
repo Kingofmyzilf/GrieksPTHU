@@ -4399,7 +4399,7 @@ def main():
                                 st.success(f"✓ {wB['grieks']} = {wB['nederlands']}"); _inB = None
                             else:
                                 _inB = st.text_input(f"Betekenis van {wB['grieks']}:")
-                            _sub = st.form_submit_button("Controleer", type="primary")
+                            _sub = st.form_submit_button("✓ Nakijken", type="primary")
 
                         if _sub:
                             registreer_oefening(wA); registreer_oefening(wB)
@@ -4573,7 +4573,7 @@ def main():
                             else:
                                 p_vorm = huidige_parsing.lower().strip()
 
-                            if st.form_submit_button("Check Antwoord"):
+                            if st.form_submit_button("✓ Nakijken"):
                                 registreer_oefening(item)
                                 
                                 # Ontkoppelde semantische en syntactische evaluatie
@@ -4935,7 +4935,7 @@ def main():
         # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
         with menu[2]: 
-            st.subheader("📊 Academische Cockpit & Dashboard")
+            st.subheader("📊 Mijn voortgang")
             
             vocab_db = laad_vocab_db()
             actief_db = laad_actief_db()
@@ -5153,8 +5153,8 @@ def main():
                 st.write("---")
 
                 # --- DE MORFOLOGISCHE HORIZON (Interactieve Studieplanner 2.1) ---
-                st.markdown("### 🧭 De Morfologische Horizon (Interactieve Studieplanner)")
-                st.caption("Analyseer de wiskundige verhouding tussen doelniveau, dagelijks oefenritme en persoonlijke focus om een haalbare planning te maken.")
+                st.markdown("### 🧭 Studieplanner — wanneer ken ik alles?")
+                st.caption("Stel je doel, je tempo en je accuratesse in, dan schat de app hoe lang je er nog over doet.")
 
                 fc_c1, fc_c2 = st.columns([1.1, 1.9])
             
@@ -5251,11 +5251,11 @@ def main():
                             <div style="display: flex; justify-content: space-between; border-top: 1px solid #333; padding-top: 14px;">
                                 <div>
                                     <span style="font-size: 20px; font-weight: bold; color: #fff;">{prognose['schuld']} pt</span><br>
-                                    <span style="font-size: 12px; color: #aaa;">Totale Streak-schuld</span>
+                                    <span style="font-size: 12px; color: #aaa;">Nog te leren (streak-punten)</span>
                                 </div>
                                 <div>
                                     <span style="font-size: 20px; font-weight: bold; color: #f6c23e;">~{prognose['netto_winst']} pt</span><br>
-                                    <span style="font-size: 12px; color: #aaa;">Netto winst / oefening</span>
+                                    <span style="font-size: 12px; color: #aaa;">Winst per oefening</span>
                                 </div>
                                 <div>
                                     <span style="font-size: 20px; font-weight: bold; color: #28a745;">{sim_acc_override}%</span><br>
@@ -5278,7 +5278,7 @@ def main():
                         if winst_bij_plus5:
                             dagen_bespaard = prognose["dagen"] - winst_bij_plus5["dagen"]
                             if dagen_bespaard > 1 and sim_acc_override < 95:
-                                advies_box += f"2. **Hefboom op Focus:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** weet te tillen (bijvoorbeeld door bij twijfel de hint te openen in plaats van te gokken), bespaar je **{dagen_bespaard} dagen** doorlooptijd."
+                                advies_box += f"2. **Nauwkeuriger oefenen loont:** Als je je accuratesse van {sim_acc_override}% naar **{sim_acc_override + 5}%** tilt (bijvoorbeeld door bij twijfel de hint te openen in plaats van te gokken), ben je **{dagen_bespaard} dagen** eerder klaar."
                             
                         st.info(advies_box)
 
@@ -5494,7 +5494,7 @@ def main():
             st.write("---")
 
             # --- AARTSRIVALEN TOP 5 (Nemesis Tracker) ---
-            st.subheader("⚔️ Jouw Aartsrivalen (Top 5 Nemesissen)")
+            st.subheader("🐛 Woorden die ik het vaakst fout doe")
             st.caption("Dit zijn de items over álle vakken heen (Woorden, Stamtijden & Structuur) waar je structureel de meeste moeite mee hebt.")
             nemesissen = []
             
@@ -5636,7 +5636,7 @@ def main():
                                 inputs[item["id"]] = c_in.text_input("Uitgang", key=f"foc_{item['id']}", label_visibility="collapsed")
                         
                         st.write("")
-                        if st.form_submit_button("Nakijken", type="primary"):
+                        if st.form_submit_button("✓ Nakijken", type="primary"):
                             score = 0; fouten = []
                             for item in huidig_paradigma:
                                 verwacht = normaliseer_accent(item.get("uitgang", ""))
@@ -5676,7 +5676,7 @@ def main():
 
                     st.write("")
                     if not all(s["correct"] for s in st.session_state.tent_state.values()):
-                        if st.button("Nakijken", type="primary"):
+                        if st.button("✓ Nakijken", type="primary"):
                             for item in huidig_paradigma:
                                 i_id = item["id"]
                                 if not st.session_state.tent_state[i_id]["correct"]:
@@ -5719,7 +5719,7 @@ def main():
 
                     with st.form("fc_form", clear_on_submit=True):
                         fc_in = st.text_input("Griekse vorm:")
-                        if st.form_submit_button("Controleer"):
+                        if st.form_submit_button("✓ Nakijken"):
                             verwacht = normaliseer_accent(huidig_fc["vorm"])
                             ingevuld = normaliseer_accent(naar_grieks_transliteratie(fc_in))
                             if verwacht == ingevuld:
@@ -5808,7 +5808,7 @@ def main():
                                 if _s["correct"]: st.success(f"**{c['label']}:** {c['vorm']}")
                                 else: _inp[c['id']] = st.text_input(f"**{c['label']}**", value=_s["value"], key=f"lpm_{c['id']}")
                         if not all(s["correct"] for s in st.session_state.actief_lp_state.values()):
-                            if st.button("Nakijken", type="primary", key="lpm_nakijk"):
+                            if st.button("✓ Nakijken", type="primary", key="lpm_nakijk"):
                                 for c in cells:
                                     if not st.session_state.actief_lp_state[c['id']]["correct"]:
                                         if grieks_vorm_ok(_inp.get(c['id'], ""), c['vorm']):
@@ -5911,7 +5911,7 @@ def main():
                                 forceer_focus()
                                 with st.form(f"aft_{cid}", clear_on_submit=True):
                                     _in = st.text_input("Typ de vorm (Latijnse toetsen mag):")
-                                    if st.form_submit_button("Controleer", type="primary"):
+                                    if st.form_submit_button("✓ Nakijken", type="primary"):
                                         if grieks_vorm_ok(_in, cell['vorm']):
                                             _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
@@ -6237,7 +6237,7 @@ def main():
                                     opties_tijd = [correct_tijd] + r_engine.sample(afleiders_t, min(3, len(afleiders_t)))
                                     opties_tijd = sorted(set(opties_tijd))
                                     keuze_tijd = st.radio("Welke tijd?", opties_tijd, index=None)
-                                    if st.form_submit_button("Controleer", type="primary"):
+                                    if st.form_submit_button("✓ Nakijken", type="primary"):
                                         registreer_oefening()
                                         goed_lemma = (keuze_lemma == f"{correct_prae} — {correct_bet}")
                                         goed_tijd = (keuze_tijd == correct_tijd)
@@ -6274,7 +6274,7 @@ def main():
                                     afleiders_t = [t for t in alle_tijden if t != correct_tijd]
                                     opties_tijd = sorted(set([correct_tijd] + r_engine.sample(afleiders_t, min(3, len(afleiders_t)))))
                                     in_tijd = st.selectbox("3. Tijd:", [""] + opties_tijd)
-                                    if st.form_submit_button("Controleer", type="primary"):
+                                    if st.form_submit_button("✓ Nakijken", type="primary"):
                                         registreer_oefening()
                                         ok_prae = normaliseer_accent(naar_grieks_transliteratie(in_prae)) == normaliseer_accent(correct_prae)
                                         ok_bet = check_betekenis(in_bet, correct_bet)
@@ -6489,7 +6489,7 @@ def main():
                             elif sub_modus == "Typen":
                                 t_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_tp_g_{vid}")
                                 t_prae = st.text_input("2. Praesens bronwoord:", key=f"in_tp_p_{vid}"); t_bete = st.text_input("3. Betekenis bronwoord:", key=f"in_tp_b_{vid}")
-                                if st.button("Controleer Antwoord", type="primary"):
+                                if st.button("✓ Nakijken", type="primary"):
                                     registreer_oefening()
                                     if (t_gram == correct_gram) and (normaliseer_accent(naar_grieks_transliteratie(t_prae)) == normaliseer_accent(correct_praesens)) and check_betekenis(t_bete, correct_betekenis):
                                         if st.session_state.stam_fouten == 0 and vid not in st.session_state.gestrafte_woorden_stam: st.session_state.stam_stats[vid]['g'] += 1; st.session_state.stam_stats[vid]['streak'] += 1
@@ -6529,7 +6529,7 @@ def main():
                                     if st.session_state.stam_mc_solved["praesens"]: st.success(f"✓ {correct_praesens} — {correct_betekenis}"); keuze_praesens = f"{correct_praesens} — {correct_betekenis}"
                                     else: keuze_praesens = st.radio("Bij welk werkwoord hoort dit?", st.session_state.stam_opties_praesens, index=None, label_visibility="collapsed")
                                     
-                                    if st.form_submit_button("Check Antwoord"):
+                                    if st.form_submit_button("✓ Nakijken"):
                                         registreer_oefening()
                                         if (keuze_gram == correct_gram): st.session_state.stam_mc_solved["gram"] = True
                                         if (keuze_praesens == f"{correct_praesens} — {correct_betekenis}"): st.session_state.stam_mc_solved["praesens"] = True
@@ -6807,7 +6807,7 @@ def main():
                                     p_eig = st.selectbox("2. Eigenschap/Naamval", [""] + gefilterde_eigs, key=f"typ_e_{w_id_clean}")
                                 with c_bet: p_bet = st.text_input("3. Betekenis:", key=f"typ_b_{w_id_clean}")
                                 
-                                if st.form_submit_button("Check Antwoord"):
+                                if st.form_submit_button("✓ Nakijken"):
                                     registreer_oefening()
                                     if (gekozen_cat == correct_cat) and (p_eig == correct_eig) and check_betekenis(p_bet, correct_bet):
                                         if st.session_state.struct_fouten == 0 and vid not in st.session_state.gestrafte_woorden_struct:
@@ -6879,7 +6879,7 @@ def main():
                                 if st.session_state.struct_mc_solved["bet"]: st.success(f"✓ Betekenis: {correct_bet}"); keuze_bet = correct_bet
                                 else: keuze_bet = st.radio("3. Betekenis:", st.session_state.struct_opties_bet, index=None, key=f"mc_b_{w_id_clean}")
                                 
-                                if st.form_submit_button("Check Antwoord"):
+                                if st.form_submit_button("✓ Nakijken"):
                                     registreer_oefening()
                                     if (keuze_cat == correct_cat): st.session_state.struct_mc_solved["cat"] = True
                                     if (keuze_eig == correct_eig): st.session_state.struct_mc_solved["eig"] = True
@@ -7082,7 +7082,7 @@ def main():
                                     with c_gram: p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"s_g_{idx}"); p_praesens = st.text_input("Praesens:", key=f"s_p_{idx}")
                                     with c_bet: p_betekenis = st.text_input("Betekenis:", key=f"s_b_{idx}")
                                     
-                                    if st.form_submit_button("Check Stamtijd"):
+                                    if st.form_submit_button("✓ Nakijken"):
                                         registreer_oefening()
                                         if (p_gram == stam_data['tijd_diathese']) and (normaliseer_accent(naar_grieks_transliteratie(p_praesens)) == normaliseer_accent(stam_data['praesens'])) and check_betekenis(p_betekenis, stam_data['betekenis']): st.success(f"✓ Goed! **{w['grieks']}** is de {stam_data['tijd_diathese']} van {stam_data['praesens']}.")
                                         else: st.error(f"✗ Onjuist. Het is de **{stam_data['tijd_diathese']}** van **{stam_data['praesens']}** (Betekenis: **{stam_data['betekenis']}**).")
@@ -7122,7 +7122,7 @@ def main():
                                     forceer_focus()
                                     with st.form(key=f"form_typ_{idx}"):
                                         inp = st.text_input("Woordenboekvertaling:")
-                                        if st.form_submit_button("Check"):
+                                        if st.form_submit_button("✓ Nakijken"):
                                             registreer_oefening(basis)
                                             if check_betekenis(inp, basis['nederlands']): basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save(); st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
                                             else: basis['streak'] = max(0, int(basis.get('streak', 0)) - 1); basis['score_fout'] = int(basis.get('score_fout', 0)) + 1; trigger_save(); st.error(f"✗ Fout. Het is: {basis['nederlands']}")
@@ -7172,7 +7172,7 @@ def main():
                     st.write("---")
                     st.write("### ✍️ Zinsvertaling")
                     user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
-                    if st.button("Toon vertaling"):
+                    if st.button("👁️ Toon antwoord"):
                         def _eerste_betekenis(g):
                             # Pak alleen de eerste betekenis (tot eerste komma/slash) voor een leesbare zin;
                             # strip eventuele naamval-aanduiding als "(+gen.)" vooraan.
@@ -7479,7 +7479,7 @@ def main():
                                 opties = [r["regel"] for r in cdb["augment"]]
                                 goed_antwoord = opg["regel"]
                             keuze = st.radio("Kies:", opties, index=None, key=f"n1_{skey}_{stt['idx']}")
-                            if st.button("Controleer", key=f"chk1_{skey}", type="primary"):
+                            if st.button("✓ Nakijken", key=f"chk1_{skey}", type="primary"):
                                 if keuze is None:
                                     st.warning("Kies eerst een optie.")
                                 else:
@@ -7505,7 +7505,7 @@ def main():
                                 stt["opties_voor"] = stt["idx"]
                             opties = stt.get("opties") or [opg["naar"]]
                             keuze = st.radio("Wat is de juiste vorm?", opties, index=None, key=f"n2_{skey}_{stt['idx']}")
-                            if st.button("Controleer", key=f"chk2_{skey}", type="primary"):
+                            if st.button("✓ Nakijken", key=f"chk2_{skey}", type="primary"):
                                 if keuze is None:
                                     st.warning("Kies eerst een optie.")
                                 else:
@@ -7520,7 +7520,7 @@ def main():
                             st.caption("Typ de gecontraheerde/samengesmolten vorm (Grieks). Kleine accentafwijkingen worden soepel nagekeken.")
                             with st.form(f"form_n3_{skey}_{stt['idx']}"):
                                 antwoord = st.text_input("Jouw vorm:", key=f"n3_{skey}_{stt['idx']}")
-                                verzonden = st.form_submit_button("Controleer", type="primary")
+                                verzonden = st.form_submit_button("✓ Nakijken", type="primary")
                             if verzonden:
                                 if not antwoord.strip():
                                     st.warning("Typ eerst een vorm.")
@@ -7775,7 +7775,7 @@ def main():
                         if invoer_type.startswith("⌨️"):
                             with st.form(f"prod_typ_{strong_key}", clear_on_submit=True):
                                 inp = st.text_input("Grieks (Latijnse toetsen mag):", key=f"prod_in_{strong_key}")
-                                verzonden = st.form_submit_button("Controleer", type="primary")
+                                verzonden = st.form_submit_button("✓ Nakijken", type="primary")
                             if verzonden:
                                 if not inp.strip():
                                     st.warning("Typ eerst een antwoord.")
@@ -7795,7 +7795,7 @@ def main():
                                 st.session_state.prod_opties = opties
                                 st.session_state.prod_opties_voor = strong_key
                             keuze = st.radio("Kies de juiste Griekse vorm:", st.session_state.prod_opties, index=None, key=f"prod_mc_{strong_key}")
-                            if st.button("Controleer", key=f"prod_mc_btn_{strong_key}", type="primary"):
+                            if st.button("✓ Nakijken", key=f"prod_mc_btn_{strong_key}", type="primary"):
                                 if keuze is None:
                                     st.warning("Kies eerst een optie.")
                                 else:
@@ -8174,7 +8174,7 @@ def main():
                             _wvz = st.text_input("En zoals het hier in de zin staat (optioneel):", key=f"ontlw_zin_{_wsleutel}",
                                                  help="Bijvoorbeeld 'aan de mens' bij een dativus. Dit kan de app niet automatisch "
                                                       "nakijken — je krijgt na het checken het antwoord te zien en beoordeelt zelf.")
-                            _wsub = st.form_submit_button("✓ Check alles", type="primary")
+                            _wsub = st.form_submit_button("✓ Alles nakijken", type="primary")
 
                     if st.session_state.get('ontlw_fb'):
                         for _r in st.session_state.ontlw_fb:
@@ -8589,7 +8589,7 @@ def main():
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
                                 st.markdown(_line)
-                        if st.button("✓ Check", key=f"ontl_wscheck_{_pos}", type="primary"):
+                        if st.button("✓ Nakijken", key=f"ontl_wscheck_{_pos}", type="primary"):
                             _ok = _ontleed_deel_ok('woordsoort', _kz, _info)
                             if _eerste_keer() and _kz is not None:
                                 _tel_deel('woordsoort', _ok); _markeer_geteld()
@@ -8688,7 +8688,7 @@ def main():
                         forceer_focus()   # cursor staat meteen in het typveld, zo kun je doortikken
                         with st.form(f"ontl_vform_{st.session_state.ontl_ref}_{_pos}", clear_on_submit=True):
                             _vin = st.text_input("Vertaling van dit woord:")
-                            _vsub = st.form_submit_button("✓ Check", type="primary")  # Enter werkt binnen een form
+                            _vsub = st.form_submit_button("✓ Nakijken", type="primary")  # Enter werkt binnen een form
                         if _vsub:
                             _vok = check_betekenis(_vin or "", _w.get('vertaling_nl', ''))
                             if _eerste_keer() and (_vin or "").strip():
@@ -8709,7 +8709,7 @@ def main():
                             else:
                                 st.session_state.ontl_feedback = [f"❌ Het is o.a. *{str(_w.get('vertaling_nl','')).split(',')[0]}*. Probeer opnieuw of klik 'Toon'."]
                             st.rerun()
-                        if st.button("👁️ Toon", key=f"ontl_vtoon_{_pos}"):
+                        if st.button("👁️ Toon antwoord", key=f"ontl_vtoon_{_pos}"):
                             if _eerste_keer():
                                 _tel_deel('vertaling', False); _markeer_geteld()
                             st.session_state.ontl_topfb = {"type": "info", "msg": f"👁️ **{_w.get('grieks','')}** = {_w.get('vertaling_nl','')}"}
