@@ -1744,7 +1744,7 @@ def zoek_suggesties(bijbel_db, term, maxn=8):
             uit.append(disp)
     return uit
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def _bijbel_strong_index(_bijbel_db):
     """Index strong-nummer → lijst van vers-referenties (in db-volgorde). Wordt één keer opgebouwd
     en gecached; zonder deze index scande zoek_context_zin bij elk getoond woord de héle NT-database
@@ -1803,8 +1803,9 @@ def werkwoord_vertaling_per_tijd(_bijbel_db, strong):
     import collections as _coll
     per = _coll.defaultdict(_coll.Counter)
     strong = str(strong)
-    for _ref, zin in (_bijbel_db or {}).items():
-        for w in zin:
+    # Alleen de verzen die dit strong-nummer bevatten (via de index) i.p.v. het hele NT scannen.
+    for _ref in _bijbel_strong_index(_bijbel_db).get(strong, []):
+        for w in (_bijbel_db.get(_ref) or []):
             if str(w.get('strong', '')) != strong:
                 continue
             info = w.get('parsing_info', '') or ''
@@ -1826,8 +1827,8 @@ def naamwoord_vertaling_per_naamval(_bijbel_db, strong):
     import collections as _coll
     per = _coll.defaultdict(_coll.Counter)
     strong = str(strong)
-    for _ref, zin in (_bijbel_db or {}).items():
-        for w in zin:
+    for _ref in _bijbel_strong_index(_bijbel_db).get(strong, []):
+        for w in (_bijbel_db.get(_ref) or []):
             if str(w.get('strong', '')) != strong:
                 continue
             info = w.get('parsing_info', '') or ''
@@ -3763,6 +3764,7 @@ def opslaan_naar_cloud(update_scorebord=True):
                 _update_scorebord()
             except Exception:
                 pass
+        st.session_state['_opslag_mislukt'] = None   # geslaagd → eventuele waarschuwing weg
         try:
             st.toast("💾 Voortgang opgeslagen", icon="✅")
         except Exception:
@@ -3775,6 +3777,9 @@ def opslaan_naar_cloud(update_scorebord=True):
             try: st.toast("⏳ Even te druk met opslaan — je voortgang wordt zo automatisch opgeslagen.", icon="⏳")
             except Exception: pass
         else:
+            # Echte opslagfout: onthoud dit zodat we het blijvend (niet alleen als vluchtige toast)
+            # boven de tabbladen kunnen tonen — anders denkt de student dat het is opgeslagen.
+            st.session_state['_opslag_mislukt'] = _msg[:120]
             try: st.toast(f"⚠️ Opslaan lukte niet: {_msg[:80]}", icon="⚠️")
             except Exception: pass
 
@@ -3958,6 +3963,10 @@ def main():
                         except Exception as e: st.error(f"Fout: {e}")
 
     if st.session_state.data:
+        if st.session_state.get('_opslag_mislukt'):
+            st.error("⚠️ Je laatste opslag lukte niet — je voortgang staat nog in het geheugen (nog niet in de cloud). "
+                     "Blijf even oefenen (dan probeert de app het vanzelf opnieuw) of log uit en weer in. "
+                     f"\n\n*Technische melding: {st.session_state['_opslag_mislukt']}*")
         # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
         # Weergavevolgorde van de tabbladen (Dagelijks doel zit nu ín Voortgang).
         _tabs = st.tabs(["🚀 Woordenschat", "🔎 Ontleden", "🎓 Actief Beheersen", "⏳ Stamtijden", "📝 Leesteksten",
@@ -4545,7 +4554,16 @@ def main():
                         forceer_focus()
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
                             inp = st.text_input("Vertaling:").lower().strip()
-                            vorm_getoetst = is_mastery and heeft_vormen
+                            # De vorm-vraag (naamval/getal/geslacht) alleen stellen als het écht een
+                            # naamwoord-vorm is. Heeft de parsing tijd/persoon/wijs (werkwoordvormen),
+                            # dan is die vraag met alleen naamval/getal/geslacht onbeantwoordbaar → sla 'm
+                            # over en toets alleen de vertaling (anders eindeloze 'bijna'-lus).
+                            _pl_mv = str(huidige_parsing or "").lower()
+                            _heeft_nv = any(x in _pl_mv for x in ('nom', 'gen', 'dat', 'acc', 'voc'))
+                            _heeft_ww = any(x in _pl_mv for x in ('praes', 'imperf', 'fut', 'aor', 'perf', 'plqp',
+                                                                   'pers', '1e', '2e', '3e', 'ind', 'conj', 'optat',
+                                                                   'imperat', 'infin', 'partic'))
+                            vorm_getoetst = is_mastery and heeft_vormen and _heeft_nv and not _heeft_ww
                             if vorm_getoetst:
                                 _vc1, _vc2, _vc3 = st.columns(3)
                                 _nv = _vc1.selectbox("Naamval", [""] + NAAMVAL_OPTIES, key=f"mvorm_nv_{item.get('grieks')}")
