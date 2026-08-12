@@ -2346,11 +2346,25 @@ def bereken_studietijd_forecast(items_lijst, module_naam, doel_streak=16, dageli
         "schuld": totale_schuld
     }
     
+def woorden_vandaag_uniek():
+    """Hoeveel VERSCHILLENDE woorden je vandaag hebt overhoord (elk woord telt één keer per dag).
+    Afgeleid uit 'laatst_geoefend', dus ook na opnieuw inloggen nog kloppend."""
+    vandaag = _vandaag_str()
+    return sum(1 for w in (st.session_state.get('data') or [])
+               if isinstance(w, dict) and str(w.get('laatst_geoefend', '')) == vandaag)
+
 def registreer_oefening(item=None):
     vandaag = str(_nu().date())
     if 'dag_stats' not in st.session_state: st.session_state.dag_stats = {}
     st.session_state.dag_stats[vandaag] = st.session_state.dag_stats.get(vandaag, 0) + 1
-    if item is not None: item['laatst_geoefend'] = vandaag
+    if item is not None:
+        item['laatst_geoefend'] = vandaag
+        # Het aantal unieke woorden van vandaag meteen in het dagboek zetten, zodat de kalender
+        # het later ook voor voorbije dagen kan tonen (laatst_geoefend bewaart maar één datum).
+        try:
+            dagdoel_log_vandaag()['woorden_uniek'] = woorden_vandaag_uniek()
+        except Exception:
+            pass
 
 def krijg_streak(item, module):
     return int(item.get('streak', 0))
@@ -3262,15 +3276,17 @@ def dagblok_arm_struct():
     laad_volgend_struct_woord()
 
 def dagkalender_html(dag_stats, log):
-    """5-weekse heatmap-kalender: kleurintensiteit = hoeveel je die dag oefende, plus gekleurde
-    stipjes voor de onderdelen die je die dag deed (woorden/stamtijden/structuur/verzen)."""
+    """5-weekse heatmap-kalender: kleurintensiteit = hoeveel je die dag oefende, plus een gekleurd
+    stipje per onderdeel waarvan je die dag het DAGDOEL hebt gehaald."""
     try:
         v = pd.Timestamp(_nu().date())
     except Exception:
         return ""
     start = v - pd.Timedelta(days=int(v.weekday()) + 28)  # maandag, 4 weken terug
-    onderdelen = [("woordblok", "#33ccff", "woorden"), ("stam", "#b07be0", "stamtijden"),
+    # (log-sleutel, kleur, naam) — 'woorden_uniek' = aantal verschillende woorden die dag.
+    onderdelen = [("woorden_uniek", "#33ccff", "woorden"), ("stam", "#b07be0", "stamtijden"),
                   ("struct", "#f6923c", "structuur"), ("verzen", "#3fb27f", "verzen")]
+    _doelen = dagdoel_config()
     dag_stats = dag_stats or {}
     log = log if isinstance(log, dict) else {}
     def _bg(n):
@@ -3292,7 +3308,14 @@ def dagkalender_html(dag_stats, log):
         stip = ""
         for sl, kl, _naam in onderdelen:
             _val = lg.get(sl)
-            if _val is True or (isinstance(_val, (int, float)) and _val > 0):
+            _doel = int(_doelen.get('woorden' if sl == 'woorden_uniek' else sl, 0) or 0)
+            if sl == "woorden_uniek" and _val is None and lg.get("woordblok") is True:
+                _gehaald = True          # oude data: de vlag van het afgeronde dagblok telt nog mee
+            elif isinstance(_val, (int, float)):
+                _gehaald = _doel > 0 and _val >= _doel
+            else:
+                _gehaald = _val is True
+            if _gehaald:
                 stip += f"<span style='display:inline-block;width:11px;height:11px;border-radius:50%;background:{kl};margin:0 2px'></span>"
         bg = "#1a1d22" if toekomst else _bg(n)
         # aantal geoefende items groot in het midden; datum klein in de hoek; stipjes onderaan
@@ -3307,7 +3330,8 @@ def dagkalender_html(dag_stats, log):
     legenda = " &nbsp; ".join(f"<span style='color:{kl}'>●</span> {naam}" for _sl, kl, naam in onderdelen)
     return (f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px'>{kop}</div>"
             f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px'>{cellen}</div>"
-            f"<div style='font-size:11px;color:#9aa3af;margin-top:8px'>Groot getal = aantal geoefende items die dag · fellere groen = meer · {legenda}</div>")
+            f"<div style='font-size:11px;color:#9aa3af;margin-top:8px'>Groot getal = aantal geoefende items die dag · "
+            f"fellere groen = meer · een stip = <b>dagdoel gehaald</b> voor: {legenda}</div>")
 
 # --- LEERPAD voor STAMTIJDEN (elk werkwoord = één level) ---
 _STAM_TIJDEN = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
@@ -9083,14 +9107,19 @@ def main():
             st.write("---")
             st.markdown("### ✅ Voortgang onderdelen vandaag")
             st.caption("Deze tellen automatisch mee zodra je een goed antwoord geeft in dat tabblad.")
-            for _soort, _emoji, _label in [('woorden', '🚀', 'Woorden'),
+            for _soort, _emoji, _label in [('woorden', '🚀', 'Woorden (verschillende)'),
                                            ('actief', '🎓', 'Actief Beheersen'),
                                            ('stam', '⏳', 'Stamtijden'),
                                            ('struct', '🧱', 'Structuurwoorden'),
                                            ('verzen', '📝', 'Verzen ontleden'),
                                            ('klank', '🔊', 'Klankwetten')]:
-                _gedaan = int(_lg.get(_soort, 0)); _doel = int(_cfg[_soort])
+                # 'Woorden' telt het aantal VERSCHILLENDE woorden dat je vandaag hebt gehad; hetzelfde
+                # woord twee keer overhoren telt dus één keer (live berekend, altijd actueel).
+                _gedaan = woorden_vandaag_uniek() if _soort == 'woorden' else int(_lg.get(_soort, 0))
+                _doel = int(_cfg[_soort])
                 st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
+            st.caption("ℹ️ Bij **Woorden** tellen verschillende woorden: oefen je hetzelfde woord vaker, "
+                       "dan telt dat één keer. De andere tellers tellen elk goed antwoord.")
 
             with st.expander("⚙️ Mijn dagelijkse doelen instellen"):
                 _nw = {
