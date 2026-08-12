@@ -3140,6 +3140,24 @@ def leerpad_kaart_volgorde(sampled):
     return kaarten
 
 # --- DAGELIJKS DOEL ---
+# --- Welke tabbladen wil je zien? (aan/uit in ℹ️ Uitleg & Hulp) ---
+# De volgorde hier is ook de volgorde in de tabbalk.
+TAB_KEUZE = [
+    ("woorden", "🚀 Woordenschat"), ("ontleden", "🔎 Ontleden"), ("actief", "🎓 Actief Beheersen"),
+    ("stam", "⏳ Stamtijden"), ("lezen", "📝 Leesteksten"), ("klank", "🔊 Klankwetten"),
+    ("struct", "🧱 Structuurwoorden"), ("voortgang", "📊 Voortgang"), ("lijst", "📖 Lijst"),
+    ("gram", "📐 Grammatica"), ("uitleg", "ℹ️ Uitleg & Hulp"), ("nlgr", "✍️ NL → Grieks (productie)"),
+]
+# Deze twee blijven altijd staan: via Uitleg zet je tabbladen weer aan, en Voortgang is je overzicht.
+TAB_ALTIJD = {"uitleg", "voortgang"}
+
+def tab_zichtbaar(sleutel):
+    if sleutel in TAB_ALTIJD:
+        return True
+    _p = st.session_state.get('ui_prefs')
+    _uit = (_p or {}).get('verborgen_tabs') or []
+    return sleutel not in _uit
+
 DAGDOEL_STANDAARD = {'woorden': 10, 'verwar': 3, 'knelpunt': 5, 'actief': 5, 'stam': 5, 'struct': 5,
                      'verzen': 2, 'klank': 5}
 
@@ -4207,9 +4225,17 @@ def main():
                      f"\n\n*Technische melding: {st.session_state['_opslag_mislukt']}*")
         # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
         # Weergavevolgorde van de tabbladen (Dagelijks doel zit nu ín Voortgang).
-        _tabs = st.tabs(["🚀 Woordenschat", "🔎 Ontleden", "🎓 Actief Beheersen", "⏳ Stamtijden",
-                         "📝 Leesteksten", "🔊 Klankwetten", "🧱 Structuurwoorden", "📊 Voortgang", "📖 Lijst",
-                         "📐 Grammatica", "ℹ️ Uitleg & Hulp", "✍️ NL → Grieks (productie)"])
+        _tabs = st.tabs([_lab for _sl, _lab in TAB_KEUZE])
+        # Tabbladen die je in ℹ️ Uitleg & Hulp hebt uitgezet, verbergen we in de tabbalk. Dat gebeurt
+        # op LABELNAAM (niet op positie), zodat de geneste tabjes elders in de app ongemoeid blijven.
+        _verborgen_labels = [_lab for _sl, _lab in TAB_KEUZE if not tab_zichtbaar(_sl)]
+        if _verborgen_labels:
+            components.html(
+                "<script>(function(){var L=" + json.dumps(_verborgen_labels, ensure_ascii=False) + ";"
+                "function v(){try{var d=window.parent.document;"
+                "d.querySelectorAll('button[data-baseweb=\"tab\"]').forEach(function(b){"
+                "if(L.indexOf((b.innerText||'').trim())>=0){b.style.display='none';}});}catch(e){}}"
+                "v();setTimeout(v,200);setTimeout(v,800);setTimeout(v,2000);})();</script>", height=0)
         # menu[i] = het content-blok zoals het in de code staat; hier gekoppeld aan de juiste tab-positie.
         # 0=Woorden 1=Lijst 2=Voortgang 3=Actief 4=Stam 5=Struct 6=Leesteksten 7=Grammatica 8=Uitleg
         # 9=NL→Grieks 10=Ontleden 11=Klankwetten
@@ -7885,6 +7911,30 @@ def main():
                 _prefs_ui['geavanceerd'] = _geav_nu
                 st.rerun()
             st.caption("Eenvoudig = rustige start (Leerpad + kern). Geavanceerd = alles: knelpunten, mastery, bijbelcontext, zelf samenstellen, koude herkenning, enz.")
+
+            # --- Welke tabbladen wil je zien? ---
+            st.markdown("### 🗂️ Welke tabbladen wil je zien?")
+            st.caption("Zet uit wat je (nog) niet gebruikt — dan oogt de app een stuk rustiger. Je voortgang "
+                       "blijft gewoon bewaard; je kunt een tabblad hier altijd weer aanzetten. "
+                       "**📊 Voortgang** en **ℹ️ Uitleg & Hulp** blijven altijd staan.")
+            _verborgen_nu = set((_prefs_ui.get('verborgen_tabs') or []))
+            _nieuw_verborgen = set()
+            _tk1, _tk2 = st.columns(2)
+            for _i, (_sl, _lab) in enumerate(TAB_KEUZE):
+                _kol = _tk1 if _i % 2 == 0 else _tk2
+                if _sl in TAB_ALTIJD:
+                    _kol.checkbox(_lab, value=True, disabled=True, key=f"tabzicht_{_sl}",
+                                  help="Dit tabblad blijft altijd zichtbaar.")
+                    continue
+                _aan = _kol.checkbox(_lab, value=(_sl not in _verborgen_nu), key=f"tabzicht_{_sl}")
+                if not _aan:
+                    _nieuw_verborgen.add(_sl)
+            if _nieuw_verborgen != _verborgen_nu:
+                _prefs_ui['verborgen_tabs'] = sorted(_nieuw_verborgen)
+                st.rerun()
+            if _nieuw_verborgen:
+                st.caption(f"🙈 Verborgen: {len(_nieuw_verborgen)} tabblad(en). "
+                           "Ze staan er nog wel — je ziet ze alleen niet in de balk.")
             st.write("---")
 
             st.markdown("### 📱 De App installeren als PWA (Beginscherm)")
