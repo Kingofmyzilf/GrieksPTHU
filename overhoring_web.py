@@ -4228,14 +4228,17 @@ def main():
         _tabs = st.tabs([_lab for _sl, _lab in TAB_KEUZE])
         # Tabbladen die je in ℹ️ Uitleg & Hulp hebt uitgezet, verbergen we in de tabbalk. Dat gebeurt
         # op LABELNAAM (niet op positie), zodat de geneste tabjes elders in de app ongemoeid blijven.
-        _verborgen_labels = [_lab for _sl, _lab in TAB_KEUZE if not tab_zichtbaar(_sl)]
-        if _verborgen_labels:
-            components.html(
-                "<script>(function(){var L=" + json.dumps(_verborgen_labels, ensure_ascii=False) + ";"
-                "function v(){try{var d=window.parent.document;"
-                "d.querySelectorAll('button[data-baseweb=\"tab\"]').forEach(function(b){"
-                "if(L.indexOf((b.innerText||'').trim())>=0){b.style.display='none';}});}catch(e){}}"
-                "v();setTimeout(v,200);setTimeout(v,800);setTimeout(v,2000);})();</script>", height=0)
+        _verborgen_posities = [_i for _i, (_sl, _lab) in enumerate(TAB_KEUZE) if not tab_zichtbaar(_sl)]
+        if _verborgen_posities:
+            # CSS in de pagina zelf (géén component-iframe: die mag de tabbalk niet aanpassen).
+            # De tweede regel zet geneste tabjes — zoals 'Deze week / All-time' in Voortgang —
+            # weer terug, want die staan in een tab-panel en moeten gewoon zichtbaar blijven.
+            _verberg = ", ".join(f'div[data-baseweb="tab-list"] > button:nth-child({_i + 1})'
+                                 for _i in _verborgen_posities)
+            _herstel = ", ".join(f'div[data-baseweb="tab-panel"] div[data-baseweb="tab-list"] > '
+                                 f'button:nth-child({_i + 1})' for _i in _verborgen_posities)
+            st.markdown(f"<style>{_verberg} {{display:none !important;}} "
+                        f"{_herstel} {{display:inline-flex !important;}}</style>", unsafe_allow_html=True)
         # menu[i] = het content-blok zoals het in de code staat; hier gekoppeld aan de juiste tab-positie.
         # 0=Woorden 1=Lijst 2=Voortgang 3=Actief 4=Stam 5=Struct 6=Leesteksten 7=Grammatica 8=Uitleg
         # 9=NL→Grieks 10=Ontleden 11=Klankwetten
@@ -7931,6 +7934,9 @@ def main():
                     _nieuw_verborgen.add(_sl)
             if _nieuw_verborgen != _verborgen_nu:
                 _prefs_ui['verborgen_tabs'] = sorted(_nieuw_verborgen)
+                # Meteen wegschrijven: anders is je keuze na herladen weer weg (dit gebeurt zelden,
+                # dus één extra opslag kan prima).
+                trigger_save(forceer=True)
                 st.rerun()
             if _nieuw_verborgen:
                 st.caption(f"🙈 Verborgen: {len(_nieuw_verborgen)} tabblad(en). "
@@ -7942,51 +7948,43 @@ def main():
             st.markdown("* **iPhone (Safari):** Tik onderin op de deel-knop (vierkantje met pijltje omhoog) → *'Zet op beginscherm'*\n* **Android (Chrome):** Tik rechtsboven op de drie puntjes → *'Toevoegen aan startscherm'*")
             st.write("---")
             st.markdown("""
-            ## 🏛️ De Didactische Architectuur
-            Deze applicatie is ontworpen om de grens over te steken van *domweg rijtjes stampen* naar **morfologisch inzicht**. Hieronder lees je hoe de AI-motor onder de motorkap functioneert.
+            ## 🏛️ Hoe deze app je laat leren
 
-            ### 1. De Leermotor: Spaced Repetition
-            Elk item in de app heeft een 'Universele Streak'. Hoe vaker je iets achter elkaar goed beantwoordt, hoe hoger de streak en hoe groter de tijdsinterval tot de volgende overhoring.
-            * **Streak 0 (Nieuw):** Woorden die je nog moet funderen.
-            * **Streak 1–15 (In Training):** De intensieve inslijp-fase.
-            * **Streak 16–29 (Beheerst):** Kennis is geland; de app test je nu nog maar sporadisch om wegglijden te voorkomen.
-            * **Streak 30+ (Mastery):** Het ultieme doel. Het losse woord verdwijnt. De app zoekt via het Strong-nummer een **authentieke Bijbelzin uit het Nieuwe Testament** en vraagt je het woord live in zijn theologische context te vertalen!
+            De volledige uitleg — met stroomdiagrammen van hoe de app een woord kiest — staat in de
+            **instructie-PowerPoint** bovenaan deze pagina. Hieronder de kern in het kort.
 
-            ### 2. Nakijken: Slagvrij & Synoniem-tolerant
-            * **Levenshtein-afstand:** Typ je per ongeluk `weliswar` i.p.v. `weliswaar`? De wiskundige motor telt het aantal 'foute bewerkingen' en keurt kleine typefouten bij langere woorden gewoon goed.
-            * **Slashes en Komma's:** Antwoorden in de database zoals `zien / kijken` worden door de app op de achtergrond opgesplitst als twee losse, 100% geldige antwoorden.
-            * **Haakjes:** Alles wat in de database tussen `()`, `[]` of `{}` staat (bijv. context-uitleg) filtert de nakijk-engine netjes weg.
+            ### Het uitgangspunt
+            De app legt alleen een regel uit als hij die **aantoonbaar kan verantwoorden**. Kan hij een vorm
+            niet met zekerheid ontleden of verklaren, dan zegt hij niets — liever geen uitleg dan een uitleg
+            die er goed uitziet maar fout is. Elke regel is getoetst tegen het complete Nieuwe Testament.
 
-            ### 3. De Harde Hand: Het Strafbankje
-            Leren vanuit je *kortetermijngeheugen* levert schijn-kennis op. Daarom hanteert de app twee ijzeren regels:
-            1. **Strafwerk:** Maak je bij een woord 2x een fout (of 1x een fout terwijl het woord al op 'Beheerst' stond)? Dan incasseer je **-2 streak-punten** én dwingt de app je het antwoord direct foutloos over te tikken.
-            2. **Het Strafbankje:** Het foute woord wordt op de achtergrond op een virtueel strafbankje gezet. Wanneer het woord aan het eind van je sessie ter herhaling langskomt en je doet het dán goed, krijg je je welverdiende vinkje, maar **0 streak-punten**. De app weigert je langetermijn-score te verhogen voor een antwoord dat je 3 minuten geleden hebt overgetypt.
+            ### De vier fasen
+            Elk woord heeft een **streak**: hoe vaak je het achter elkaar goed had.
+            🌱 Nieuw (0) · 🏃 In training (1–15) · 🛡️ Beheerst (16–29) · 🏆 Mastery (30+).
+            Goed antwoord levert +1 (meerkeuze) tot +3 (zelf typen) op; een fout kost 2 punten, waarna het
+            woord terugzakt en dus weer vaker langskomt.
 
-            ### 4. Tabblad 5 (Stamtijden): Scaffolding & Klankwetten
-            * **Vrij Studeren (Paspoort):** Via Modus 0 kun je de 'Mental Map' van een werkwoord opvragen. Je ziet de 6 stamtijden in hun vaste Griekse raamwerk, de taalkundige stamwortel en de fonetische formule.
-            * **De Steigers (Scaffolding):** De trainingsmodus overhoort je autonoom. Je start op 0. Pas als het *Praesens* in je algemene woordenschat-lijst op streak 5 staat, opent de sluis naar dit tabblad en mag je het *Futurum* oefenen.
-            * **De 5 Klankklassen:** Het Grieks is wiskunde. De app traint je op de 5 grote stam-botsingen met de Sigma (σ):
-              1. *Labialen (π, β, φ):* versmelten met σ tot een **ψ** (*βλέπω → βλέψω*).
-              2. *Gutturalen (κ, γ, χ):* versmelten met σ tot een **ξ** (*ἄγω → ἄξω*).
-              3. *Dentalen (τ, δ, θ, ζ):* vallen simpelweg weg voor de σ (*πείθω → πείσω*).
-              4. *Contracta (α, ε, ο):* de stamklinker ondergaat compensatorische rekking (*ποιέω → ποιήσω*).
-              5. *Liquidae (λ, μ, ν, ρ):* haten de sigma en trekken samen tot een circumflexus (*μένω → μενῶ*).
+            ### Wat je wanneer krijgt
+            Hoe hoger je streak, hoe langer een woord met rust gelaten wordt (van elke sessie tot ongeveer
+            maandelijks). Daar bovenop krijgen woorden voorrang waar jij persoonlijk over struikelt — wat je
+            gisteren fout had, komt vandaag met voorrang terug. Een sessie is een bewuste mix: een paar nieuwe
+            woorden, de prille en de lopende stof, plus een opfrisser uit een eerdere les.
 
-            ### 5. Hoe stelt de app je oefensessie samen?
-            Bij *"Aanbevolen Mix"* en in het **Leerpad** kies je de woorden niet zelf — de app stelt elke sessie (± 10 kaarten) slim samen. Dit gebeurt er, op volgorde:
+            ### Oefenvorm groeit mee
+            Hetzelfde woord wordt steeds moeilijker gevraagd: **flashcard → meerkeuze → zelf typen**.
+            Herkennen is makkelijker dan produceren, dus je hoeft pas te typen als het woord al zit.
 
-            1. **Fase bepalen** — elk woord valt op basis van je streak in een fase: 🌱 Nieuw (0) · 🐣 Prille start (1–3) · 🏃 In training (4–15) · 🛡️ Beheerst (16–29) · 🏆 Mastery (30+).
-            2. **Prioriteren** — wat de meeste aandacht nodig heeft, komt eerst:
-               * **Teruggevallen woorden** (ooit gekend, nu terug op 0) gaan vóór op gloednieuwe.
-               * Een **worstel-bonus** tilt foutgevoelige woorden omhoog; een stevige streak dempt de urgentie.
-               * **Lang niet gedaan** telt zwaarder, zodat oude stof terugkomt.
-               * Er is een **rem op nieuwe woorden** (± 2 per sessie), zodat je niet wordt overspoeld.
-            3. **Herhaling meemengen** — er komt altijd minstens **één oud/overdue woord** mee (in het Leerpad instelbaar: 1, 5 of 10 — oudste datum eerst). Zo blijft eerder geleerde stof vers.
-            4. **Verwar-partners erbij** — woorden die qua **vorm op elkaar lijken** (look-alikes) of die **jij aantoonbaar door elkaar haalt**, komen in dezelfde sessie mee, zodat je ze naast elkaar leert onderscheiden. Nooit gloednieuwe woorden — alleen wat je al eens hebt gezien. Een verwarpaar valt vanzelf weg zodra je beide woorden weer beheerst.
-            5. **Oefenvorm laten meegroeien** (Leerpad) — de app kiest zelf de moeilijkheid per woord: 🌱 nieuw → **flashcard + meerkeuze**, 🏃 in training → **meerkeuze**, 🛡️ sterk → **typen**. Twee keer fout? Dan eerst **overtypen** (telt niet mee) en het woord komt later terug.
+            ### Nakijken is streng maar redelijk
+            * **Typefouten:** een kleine vertyping in een langer woord wordt goedgekeurd — je ziet altijd het
+              juiste antwoord erbij, dus een echte fout merk je meteen.
+            * **Meerdere betekenissen:** staat er `zien / kijken` in de lijst, dan zijn dat allebei goede antwoorden.
+            * **Haakjes:** uitleg tussen `()`, `[]` of `{}` hoeft je niet mee te typen.
+            * **Synoniemen:** twee woorden met dezelfde betekenis worden nooit als elkaars foute antwoord gerekend.
 
-            ### 6. Dagelijks doel
-            In het **🎯 Dagelijks doel**-tabblad stel je je dagelijkse portie in. Het **woord-dagblok** speelt de woord-achtige onderdelen naadloos achter elkaar af: je woorden → moeilijke woorden → verwarparen. De app houdt je **dagblok-streak** bij (opeenvolgende dagen dat je het afmaakt); structuurwoorden, stamtijden en verzen vink je zelf af.
+            ### Fouten zijn stuurinformatie
+            Twee keer fout (of één keer bij een woord dat je al beheerste)? Dan tik je het juiste antwoord over
+            en komt het woord later terug — die keer zonder streakpunten, want overtypen is geen kennis.
+            In **🔎 Ontleden** en **🔊 Klankwetten** kun je nooit punten verliezen: daar mag je vrij experimenteren.
 
             ---
             *Ontwikkeld voor Grieks Premaster PTHU. Vragen of suggesties? Mail naar:* **jtimmer@students.pthu.nl**
