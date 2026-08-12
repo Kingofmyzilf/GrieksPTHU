@@ -4563,8 +4563,6 @@ def main():
                     st.caption(f"⭐ {_niv['xp_totaal']} XP — nog {_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP tot niveau {_niv['niveau'] + 1}."
                                + (f" Rang {_niv['rang_nr']}/{_niv['rang_totaal']}; hierna **{_niv['volgende_rang']}**."
                                   if _niv.get('volgende_rang') else " Je hebt de laatste rang bereikt!"))
-                    with st.expander("📖 Hoe werken de rangen?", expanded=False):
-                        st.markdown(RANG_UITLEG)
 
                     _levels = leerpad_status(bouw_leerpad_levels(st.session_state.data))
                     _ontgrendeld = [l for l in _levels if l['ontgrendeld']]
@@ -5548,6 +5546,11 @@ def main():
 
             # Altijd zichtbaar (motiverend), rest achter een dropdown:
             st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP, over alle onderdelen)")
+            with st.expander("📖 Hoe werken de niveaus en rangen?", expanded=False):
+                st.markdown(RANG_UITLEG)
+                st.caption(f"Je staat nu op rang {_niv_info['rang_nr']} van {_niv_info['rang_totaal']}"
+                           + (f" — hierna: **{_niv_info['volgende_rang']}**." if _niv_info.get('volgende_rang')
+                              else " — de laatste rang!"))
             with st.expander("🏅 Bekijk al je badges", expanded=False):
                 st.caption("Verzamel badges door te oefenen, woorden te beheersen, verwarringen op te lossen en niveaus te halen. Behaalde badges staan bovenaan.")
                 _gesorteerd = sorted(_badges, key=lambda b: (not b['behaald']))
