@@ -768,6 +768,34 @@ def _naam_klank_treffer(vorm, grieks_info="", parsing_info="", corpus_stam=""):
             return (klasse, formule, stam)
     return None
 
+def _contractie_plek(vorm, lemma, parsing_info=""):
+    """(index, lengte) van de samengetrokken klinker in de vorm, of (-1, 0) als we het niet zeker
+    weten. Zelfde rekenwijze als opb_analyse_contractie, zodat beide altijd hetzelfde aanwijzen."""
+    sk = opb_contracta_stamklinker(lemma)
+    if not sk:
+        return (-1, 0)
+    info = parsing_info or ""
+    tijd = next((t for t in ["Praesens", "Imperfectum", "Futurum", "Aoristus", "Perfectum",
+                             "Plusquamperfectum"] if t in info), "")
+    if tijd and tijd not in ("Praesens", "Imperfectum"):
+        return (-1, 0)
+    lk = _opb_kaal(lemma)
+    stam = lk[:-1] if lk.endswith("ω") else (lk[:-4] if lk.endswith("ομαι") else lk)
+    stam_zk = stam[:-1] if stam and stam[-1] in "αεοη" else stam
+    vkaal = _opb_kaal(vorm)
+    rest_k, _aug = _opb_zonder_augment(vkaal, lk)
+    n = _opb_prefix_len(rest_k, stam_zk)
+    if n < max(1, len(stam_zk) - 1):
+        return (-1, 0)
+    i = len(vkaal) - len(rest_k) + n
+    if not (0 <= i < len(vorm)) or len(vkaal) != len(vorm):
+        return (-1, 0)
+    staart = _opb_norm(vorm)[i:]
+    langste = max((len(u) for _c, u in G20_CONTRACTA[sk] if staart.startswith(u)), default=0)
+    if not langste or i + langste > len(vorm):
+        return (-1, 0)
+    return (i, langste)
+
 def samensmeltingen_alle(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
     """ALLE klankwetten die in deze vorm te zien zijn, op volgorde van voor naar achter in het woord.
 
@@ -816,7 +844,9 @@ def samensmeltingen_alle(vorm, lemma="", parsing_info="", grieks_info="", corpus
         if naam == "liquidae":
             uit.append({"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
                         "rechts": "σ", "resultaat": "(σ valt weg)", "formule": f"{slot} + σ → σ valt weg",
-                        "plek": "stamgrens", "pos": _pos,
+                        # Geen plek: bij een vloeiklank VERDWIJNT de σ juist — er is geen letter die
+                        # 'het resultaat' is, dus markeren zou een verkeerd beeld geven.
+                        "plek": "stamgrens", "pos": -1,
                         "uitleg": "Een vloeiklank (λ/μ/ν/ρ) stoot de σ van het futurum af; de stam krijgt "
                                   "een **-ε-** die samentrekt (*ε + ω → ῶ*) — vandaar de circumflexus."})
         elif naam == "dentalen":
@@ -837,9 +867,11 @@ def samensmeltingen_alle(vorm, lemma="", parsing_info="", grieks_info="", corpus
             delen = [d.strip() for d in combo.split("+")]
             if uitk and len(delen) == 2:
                 klasse, letters = _SAMENSMELT_KLASSEN["contracta"]
+                _cp, _cl = _contractie_plek(vorm, lemma, info)
                 uit.append({"sleutel": "contracta", "klasse": klasse, "letters": letters,
                             "links": delen[0], "rechts": delen[1], "resultaat": uitk,
                             "formule": f"{combo} → {uitk}", "plek": "stamgrens",
+                            "pos": _cp, "lengte": _cl,
                             "uitleg": f"Verbum contractum op **-{sk}**: de stamklinker versmelt met de "
                                       f"uitgang (*{combo} → {uitk}*)."})
     return uit
@@ -899,11 +931,17 @@ def klank_opbouw_regels(vorm, analyse, segmenten=None):
         pos = int(pos)
     except (TypeError, ValueError):
         pos = -1
-    if pos >= 0 and pos < len(vorm) and links and rechts == "σ":
-        # De spelling zoals hij zou zijn zonder de samensmelting: stam op zijn eigen medeklinker,
-        # uitgang nog met zijn σ.
+    lengte = analyse.get("lengte", 1)
+    try:
+        lengte = max(1, int(lengte))
+    except (TypeError, ValueError):
+        lengte = 1
+    if (pos >= 0 and pos + lengte <= len(vorm) and links and rechts
+            and "/" not in rechts and "(" not in rechts):
+        # De spelling zoals hij zou zijn zonder de samensmelting: stam met zijn eigen letter,
+        # uitgang nog met de zijne (κ + σουσιν, of α + ομενον bij een contractum).
         regels.append(f"🔧 **Zonder de samensmelting zou het zijn:**  :blue[{vorm[:pos]}{links}]"
-                      f" + :orange[σ{vorm[pos + 1:]}]")
+                      f" + :orange[{rechts}{vorm[pos + lengte:]}]")
     if links:
         regels.append(f"⚡ **Wat er samensmelt:**  :blue[{links}] + :orange[{rechts}]  →  "
                       f":green[{analyse.get('resultaat', '')}]   ·  {analyse.get('klasse', '')}")
@@ -916,10 +954,15 @@ def klank_vorm_gemarkeerd(vorm, analyse, kleur="#39d17f"):
         pos = int(pos)
     except (TypeError, ValueError):
         pos = -1
-    if pos < 0 or pos >= len(vorm):
+    lengte = analyse.get("lengte", 1) if isinstance(analyse, dict) else 1
+    try:
+        lengte = max(1, int(lengte))
+    except (TypeError, ValueError):
+        lengte = 1
+    if pos < 0 or pos >= len(vorm) or pos + lengte > len(vorm):
         return vorm
     return (f"{vorm[:pos]}<span style='color:{kleur};text-decoration:underline;"
-            f"text-underline-offset:6px'>{vorm[pos]}</span>{vorm[pos + 1:]}")
+            f"text-underline-offset:6px'>{vorm[pos:pos + lengte]}</span>{vorm[pos + lengte:]}")
 
 @st.cache_resource(show_spinner=False)
 def klankwet_formule_index(_bijbel_db, _woord_van_strong):
@@ -3153,8 +3196,22 @@ def bereken_xp(alle_data):
         if s >= 30: xp += 50
     return xp
 
-_RANG_TITELS = ["Nieuweling", "Beginner", "Leerling", "Student", "Gevorderde", "Kenner",
-                "Exegeet", "Vertaler", "Geleerde", "Meester", "Grootmeester"]
+# Je rang is een Bijbelboek: je begint bij Genesis en werkt je door de hele Bijbel heen naar
+# Openbaring. Hoe verder het boek, hoe meer je kent — en er is dus altijd nog een volgend boek.
+_RANG_TITELS = [
+    "Genesis", "Exodus", "Leviticus", "Numeri", "Deuteronomium", "Jozua", "Richteren", "Ruth",
+    "1 Samuël", "2 Samuël", "1 Koningen", "2 Koningen", "1 Kronieken", "2 Kronieken", "Ezra",
+    "Nehemia", "Ester", "Job", "Psalmen", "Spreuken", "Prediker", "Hooglied", "Jesaja", "Jeremia",
+    "Klaagliederen", "Ezechiël", "Daniël", "Hosea", "Joël", "Amos", "Obadja", "Jona", "Micha",
+    "Nahum", "Habakuk", "Sefanja", "Haggai", "Zacharia", "Maleachi",
+    "Matteüs", "Marcus", "Lucas", "Johannes", "Handelingen", "Romeinen", "1 Korintiërs",
+    "2 Korintiërs", "Galaten", "Efeziërs", "Filippenzen", "Kolossenzen", "1 Tessalonicenzen",
+    "2 Tessalonicenzen", "1 Timoteüs", "2 Timoteüs", "Titus", "Filemon", "Hebreeën", "Jakobus",
+    "1 Petrus", "2 Petrus", "1 Johannes", "2 Johannes", "3 Johannes", "Judas", "Openbaring",
+]
+RANG_UITLEG = ("📖 Je rang is een Bijbelboek: je begint bij **Genesis** en leest je een weg naar "
+               "**Openbaring**. Hoe verder in de Bijbel, hoe meer Grieks je kent — "
+               f"{len(_RANG_TITELS)} rangen in totaal, dus er is altijd een volgend boek te halen.")
 
 def niveau_van_xp(xp):
     """Zet XP om in een oplopend niveau; de benodigde XP per niveau groeit gestaag (100, 175, 250, ...)."""
@@ -3165,9 +3222,12 @@ def niveau_van_xp(xp):
         rest -= nodig
         niveau += 1
         nodig += 75
-    titel = _RANG_TITELS[min(niveau // 2, len(_RANG_TITELS) - 1)]
+    _ri = min(niveau // 2, len(_RANG_TITELS) - 1)
+    titel = _RANG_TITELS[_ri]
+    _volgend = _RANG_TITELS[_ri + 1] if _ri + 1 < len(_RANG_TITELS) else None
     return {"niveau": niveau, "titel": titel, "xp_totaal": int(xp),
-            "xp_in_niveau": rest, "xp_voor_volgend": nodig}
+            "xp_in_niveau": rest, "xp_voor_volgend": nodig,
+            "rang_nr": _ri + 1, "rang_totaal": len(_RANG_TITELS), "volgende_rang": _volgend}
 
 def bouw_leerpad_levels(alle_data, chunk=LEERPAD_CHUNK):
     """Deelt de woordenschat op in kleine levels in les-volgorde; elk level ≈ chunk woorden."""
@@ -3423,8 +3483,9 @@ def dagkalender_html(dag_stats, log):
         return ""
     start = v - pd.Timedelta(days=int(v.weekday()) + 28)  # maandag, 4 weken terug
     # (log-sleutel, kleur, naam) — 'woorden_uniek' = aantal verschillende woorden die dag.
-    onderdelen = [("woorden_uniek", "#33ccff", "woorden"), ("stam", "#b07be0", "stamtijden"),
-                  ("struct", "#f6923c", "structuur"), ("verzen", "#3fb27f", "verzen")]
+    onderdelen = [("woorden_uniek", "#33ccff", "woorden"), ("actief", "#f6c23e", "actief"),
+                  ("stam", "#b07be0", "stamtijden"), ("struct", "#f6923c", "structuur"),
+                  ("verzen", "#3fb27f", "verzen"), ("klank", "#20c997", "klankwetten")]
     _doelen = dagdoel_config()
     dag_stats = dag_stats or {}
     log = log if isinstance(log, dict) else {}
@@ -4449,9 +4510,13 @@ def main():
                     # Duolingo-stijl: XP + oplopende rang, en een pad van levels die je vrijspeelt.
                     _xp = bereken_xp(st.session_state.data)
                     _niv = niveau_van_xp(_xp)
-                    st.markdown(f"#### 🎮 Niveau {_niv['niveau']} · {_niv['titel']}")
+                    st.markdown(f"#### 🎮 Niveau {_niv['niveau']} · 📖 {_niv['titel']}")
                     st.progress(_niv['xp_in_niveau'] / max(1, _niv['xp_voor_volgend']))
-                    st.caption(f"⭐ {_niv['xp_totaal']} XP — nog {_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP tot niveau {_niv['niveau'] + 1}.")
+                    st.caption(f"⭐ {_niv['xp_totaal']} XP — nog {_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP tot niveau {_niv['niveau'] + 1}."
+                               + (f" Rang {_niv['rang_nr']}/{_niv['rang_totaal']}; hierna **{_niv['volgende_rang']}**."
+                                  if _niv.get('volgende_rang') else " Je hebt de laatste rang bereikt!"))
+                    with st.expander("📖 Hoe werken de rangen?", expanded=False):
+                        st.markdown(RANG_UITLEG)
 
                     _levels = leerpad_status(bouw_leerpad_levels(st.session_state.data))
                     _ontgrendeld = [l for l in _levels if l['ontgrendeld']]
@@ -9568,7 +9633,7 @@ def main():
                                 _opb = klank_opbouw_regels(_vorm, _an, _kseg)
                                 st.session_state.klank_topfb = {
                                     "type": "success",
-                                    "msg": f"✅ **{_vorm}** — van **{_lem}**"
+                                    "msg": f"✅ **{_vorm}** ({_vorm_txt}) — van **{_lem}**"
                                            + (_NR + _NR.join(_opb) if _opb else "")}
                                 st.session_state.klank_fb = None
                                 trigger_save(); _klank_nieuw()
@@ -9588,7 +9653,7 @@ def main():
                                                   corpus_stam=corpus_stam_van(_strong, _info)))
                             st.session_state.klank_topfb = {
                                 "type": "info",
-                                "msg": f"💡 **{_vorm}** — van **{_lem}**. {_an.get('uitleg','')}"
+                                "msg": f"💡 **{_vorm}** ({_vorm_txt}) — van **{_lem}**. {_an.get('uitleg','')}"
                                        + (_NR + _NR.join(_opb_w) if _opb_w else "")}
                             st.session_state.klank_fb = None
                             _klank_nieuw(); st.rerun()
