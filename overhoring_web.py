@@ -4225,25 +4225,23 @@ def main():
                      f"\n\n*Technische melding: {st.session_state['_opslag_mislukt']}*")
         # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
         # Weergavevolgorde van de tabbladen (Dagelijks doel zit nu ín Voortgang).
-        _tabs = st.tabs([_lab for _sl, _lab in TAB_KEUZE])
-        # Tabbladen die je in ℹ️ Uitleg & Hulp hebt uitgezet, verbergen we in de tabbalk. Dat gebeurt
-        # op LABELNAAM (niet op positie), zodat de geneste tabjes elders in de app ongemoeid blijven.
-        _verborgen_posities = [_i for _i, (_sl, _lab) in enumerate(TAB_KEUZE) if not tab_zichtbaar(_sl)]
-        if _verborgen_posities:
-            # CSS in de pagina zelf (géén component-iframe: die mag de tabbalk niet aanpassen).
-            # De tweede regel zet geneste tabjes — zoals 'Deze week / All-time' in Voortgang —
-            # weer terug, want die staan in een tab-panel en moeten gewoon zichtbaar blijven.
-            _verberg = ", ".join(f'div[data-baseweb="tab-list"] > button:nth-child({_i + 1})'
-                                 for _i in _verborgen_posities)
-            _herstel = ", ".join(f'div[data-baseweb="tab-panel"] div[data-baseweb="tab-list"] > '
-                                 f'button:nth-child({_i + 1})' for _i in _verborgen_posities)
-            st.markdown(f"<style>{_verberg} {{display:none !important;}} "
-                        f"{_herstel} {{display:inline-flex !important;}}</style>", unsafe_allow_html=True)
-        # menu[i] = het content-blok zoals het in de code staat; hier gekoppeld aan de juiste tab-positie.
-        # 0=Woorden 1=Lijst 2=Voortgang 3=Actief 4=Stam 5=Struct 6=Leesteksten 7=Grammatica 8=Uitleg
-        # 9=NL→Grieks 10=Ontleden 11=Klankwetten
-        menu = [_tabs[0], _tabs[8], _tabs[7], _tabs[2], _tabs[3], _tabs[6], _tabs[4], _tabs[9], _tabs[10],
-                _tabs[11], _tabs[1], _tabs[5]]
+        # Alleen de tabbladen die je aan hebt staan komen in de balk. Wat je hebt uitgezet krijgt
+        # zijn eigen (ingeklapte) tabbalk onderaan: de inhoud blijft dus gewoon werken en bereikbaar,
+        # maar staat je niet in de weg. Geen CSS-trucs — Streamlit maakt simpelweg minder tabs aan.
+        _zichtbaar = [(_sl, _lab) for _sl, _lab in TAB_KEUZE if tab_zichtbaar(_sl)]
+        _verborgen = [(_sl, _lab) for _sl, _lab in TAB_KEUZE if not tab_zichtbaar(_sl)]
+        _tabs_z = st.tabs([_lab for _sl, _lab in _zichtbaar])
+        _tab_van_sleutel = {_sl: _tabs_z[_i] for _i, (_sl, _lab) in enumerate(_zichtbaar)}
+        if _verborgen:
+            with st.expander(f"🙈 Verborgen tabbladen ({len(_verborgen)}) — weer aanzetten in ℹ️ Uitleg & Hulp",
+                             expanded=False):
+                _tabs_v = st.tabs([_lab for _sl, _lab in _verborgen])
+                for _i, (_sl, _lab) in enumerate(_verborgen):
+                    _tab_van_sleutel[_sl] = _tabs_v[_i]
+        # menu[i] = het content-blok zoals het in de code staat, gekoppeld aan het juiste tabblad.
+        _MENU_SLEUTELS = ["woorden", "lijst", "voortgang", "actief", "stam", "struct",
+                          "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank"]
+        menu = [_tab_van_sleutel[_s] for _s in _MENU_SLEUTELS]
 
         # Eenvoud-modus: standaard alleen de basis-opties; aan te zetten in ℹ️ Uitleg & Hulp.
         _geav = bool(st.session_state.get('ui_geavanceerd',
