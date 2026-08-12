@@ -3140,6 +3140,11 @@ def leerpad_kaart_volgorde(sampled):
     return kaarten
 
 # --- DAGELIJKS DOEL ---
+# Label voor "de app kiest de oefenvorm zelf" - overal hetzelfde in de app.
+AUTO_VORM = "🤖 Automatisch (aanbevolen)"
+_STAM_VORMEN = [AUTO_VORM, "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen"]
+_STRUCT_VORMEN = [AUTO_VORM, "1. MC", "2. Mix (MC + Typen)", "3. Typen"]
+
 # --- Welke tabbladen wil je zien? (aan/uit in ℹ️ Uitleg & Hulp) ---
 # De volgorde hier is ook de volgorde in de tabbalk.
 TAB_KEUZE = [
@@ -4277,12 +4282,11 @@ def main():
                 # --- Wens 7: herstel eerder gekozen instellingen als default (uit ui_prefs) ---
                 _prefs = st.session_state.get('ui_prefs', {}) or {}
 
-                _modus_opts = ["1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"]
-                if _geav:
-                    _modus_idx = _modus_opts.index(_prefs['modus']) if _prefs.get('modus') in _modus_opts else 0
-                    modus = st.radio("Modus:", _modus_opts, index=_modus_idx)
-                else:
-                    modus = "2. MC"  # eenvoudige modus: het Leerpad kiest zelf de oefenvorm
+                # De oefenvorm staat niet meer bovenaan: standaard kiest de app hem zelf per woord
+                # (flashcard, dan meerkeuze, dan typen) net als in het Leerpad. Zelf kiezen kan
+                # onder "Extra instellingen".
+                _modus_opts = [AUTO_VORM, "1. Leer", "2. MC", "3. Mix (MC + Typen)", "4. Typen"]
+                modus = _prefs.get('modus') if _prefs.get('modus') in _modus_opts else AUTO_VORM
 
                 _alle_keuze = ["Lessen", "🎮 Leerpad (levels)", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
                 _keuze_opts = _alle_keuze if _geav else ["🎮 Leerpad (levels)", "Mijn verwarwoorden"]
@@ -4406,6 +4410,10 @@ def main():
                         optie_mastery_context = st.checkbox("🏆 Mastery-woorden in Bijbelcontext tonen", key="optie_mastery_context", value=_prefs.get('optie_mastery_context', False), help="Vink aan om woorden met streak ≥ 30 in een echte Bijbelzin te oefenen (extra invulvelden). Staat dit uit, dan overhoor je ook mastery-woorden gewoon los, zodat de flow snel blijft.")
                         optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=_prefs.get('optie_audio', True), help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
                         optie_opbouw = st.checkbox("🔗 Toon woordopbouw (samenstellingen)", key="optie_opbouw_vocab", value=_prefs.get('optie_opbouw_vocab', False), help="Toont bij samengestelde woorden het voorzetsel + het grondwoord dat je al kent, bv. εἰσέρχομαι = εἰς + ἔρχομαι. Zo zie je de verbanden sneller.")
+                        st.write("")
+                        modus = st.radio("Oefenvorm:", _modus_opts, key="vocab_oefenvorm",
+                                         index=_modus_opts.index(modus),
+                                         help="Automatisch = de app kiest per woord: een nieuw woord eerst als flashcard, daarna meerkeuze, en typen zodra je het kent. Kies je zelf een vorm, dan krijgt elk woord die vorm.")
                     _stijl_opts = ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"]
                     _stijl_idx = _stijl_opts.index(_prefs['oefen_stijl']) if _prefs.get('oefen_stijl') in _stijl_opts else 0
                     oefen_stijl = st.radio("Sessie opbouw:", _stijl_opts, index=_stijl_idx)
@@ -4597,8 +4605,9 @@ def main():
                             else: st.session_state.vocab_sessie_verzen = {}; st.session_state.vocab_cluster_strongs = {}
 
                             st.session_state.modus_actief = modus_id
-                            if keuze == "🎮 Leerpad (levels)":
-                                # Leerpad bepaalt zelf de oefenvorm: flashcard → meerkeuze → typen (oplopend).
+                            if modus == AUTO_VORM or keuze == "🎮 Leerpad (levels)":
+                                # Automatisch (standaard): de app kiest de oefenvorm per woord - flashcard,
+                                # dan meerkeuze, dan typen. Dit geldt nu ook buiten het Leerpad.
                                 st.session_state.sessie_lijst = leerpad_kaart_volgorde(sampled)
                             elif modus_id == "3":
                                 st.session_state.sessie_lijst = [(w, "3_mc") for w in sampled] + [(w, "3_typ") for w in sampled]
@@ -5902,7 +5911,7 @@ def main():
 
                 _af_modi = (["🎮 Leerpad (levels)", "📖 0. Paradigma-paspoort (Bestuderen)", "🎯 1. Focus op Uitgangen", "📝 2. Volledig Tentamenrooster", "⚡ 3. Flashcards (Zwakke plekken)"]
                             if _geav else ["🎮 Leerpad (levels)", "📖 0. Paradigma-paspoort (Bestuderen)"])
-                actief_modus = _pref_keuze(st.radio, "Kies je leervorm:", _af_modi, 'actief_modus', horizontal=True)
+                actief_modus = _pref_keuze(st.selectbox, "Oefening:", _af_modi, 'actief_modus')
                 st.write("---")
 
                 with st.expander("📂 Kies niveau · categorie · paradigma", expanded=False):
@@ -6259,9 +6268,12 @@ def main():
                     sc3.markdown("**Bèta-code:**\n* `q` = θ (thèta)\n* `c` = ξ (xi)\n* `f` = φ (phi)\n* `x` = χ (chi)\n* `y` = ψ (psi)\n* `s` = σ (wordt aan het eind ς!)")
 
                 st.subheader("⏳ Stamtijden: Overzien, Herleiden & Trainen")
-                _stam_modi = (["🎮 Leerpad (levels)", "📖 Werkwoordpaspoort", "🧠 Leer (flashcards)", "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen", "🔎 Herkennen (koud)"]
+                # Eerst WAT je oefent (standaard het Leerpad); de oefenvorm (MC/typen) kies je
+                # bij de sessie-instellingen - standaard bepaalt de app die zelf.
+                _stam_modi = (["🎮 Leerpad (levels)", "🧠 Leer (flashcards)",
+                               "📖 Werkwoordpaspoort", "🔎 Herkennen (koud)"]
                               if _geav else ["🎮 Leerpad (levels)", "🧠 Leer (flashcards)"])
-                stam_modus = _pref_keuze(st.radio, "Modus:", _stam_modi, 'stam_modus', horizontal=True)
+                stam_modus = _pref_keuze(st.selectbox, "Oefening:", _stam_modi, 'stam_modus')
                 st.write("---")
 
                 if "Werkwoordpaspoort" in stam_modus:
@@ -6676,6 +6688,9 @@ def main():
                             gefilterde_ww_pool = [w for w in stamtijden_db if str(w.get('strong_nummer', '')).replace('G', '') in strongs_in_tekst]
 
                         if _geav:
+                            stam_vorm = st.radio("Oefenvorm:", _STAM_VORMEN, horizontal=True,
+                                                 key="stam_oefenvorm",
+                                                 help="Automatisch = de app kiest per vorm: eerst leren, dan meerkeuze, en typen zodra je hem kent.")
                             oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
                             stam_negeer_gate = st.checkbox(
                                 "🔓 Negeer vergrendeling (oefen ook stamtijden waarvan het basiswoord nog niet op streak 5 staat)",
@@ -6683,6 +6698,7 @@ def main():
                                 help="Normaal ontgrendel je de stamtijden van een werkwoord pas als je het basiswoord al kent (vocab-streak ≥ 5), en elke volgende tijd als de vorige zit. Zet dit aan om meteen met alle stamtijden te oefenen."
                             )
                         else:
+                            stam_vorm = _STAM_VORMEN[0]
                             oefen_stijl = "🤖 Automatische Gated Mix"
                             stam_negeer_gate = False
                         custom_counts = None
@@ -6719,8 +6735,8 @@ def main():
 
                             if doel_vormen:
                                 sampled = kies_gefaseerde_oefensessie(doel_vormen, 'stam', custom_counts=custom_counts)
-                                m_id = "2" if "Mix" in stam_modus else ("3" if "Typen" in stam_modus else "1")
-                                if is_stam_leerpad:
+                                m_id = "2" if "Mix" in stam_vorm else ("3" if "Typen" in stam_vorm else "1")
+                                if is_stam_leerpad and stam_vorm == _STAM_VORMEN[0]:
                                     # Leerpad: oplopend — nieuwe vorm eerst als flashcard (Leer), dan
                                     # meerkeuze zolang de streak laag is, en pas daarna typen.
                                     _stam_kaarten = []
@@ -6899,7 +6915,7 @@ def main():
                         "Voegwoorden & Partikels",
                         "Voornaamwoorden (Pronomina)"
                     ] if _geav else ["🎮 Leerpad (levels)"]
-                    struct_filter = _pref_keuze(st.selectbox, "1. Kies leer-spoor:", _struct_sporen,
+                    struct_filter = _pref_keuze(st.selectbox, "Oefening:", _struct_sporen,
                                                 'struct_spoor', key="struct_filter_box")
 
                     is_struct_leerpad = False
@@ -6929,7 +6945,8 @@ def main():
                             if _slot_st:
                                 st.caption(f"🔒 Hierna: Level {_slot_st['index']} — {_slot_st['titel']}.")
 
-                    struct_modus = _pref_keuze(st.radio, "2. Oefenvorm:", ["1. MC", "2. Mix (MC + Typen)", "3. Typen"], 'struct_oefenvorm', key="struct_modus_radio")
+                    struct_modus = _pref_keuze(st.radio, "Oefenvorm:", _STRUCT_VORMEN, 'struct_oefenvorm', key="struct_modus_radio",
+                                                help="Automatisch = de app kiest per woord: eerst leren, dan meerkeuze, en typen zodra je het woord kent.")
 
                     if st.button("Start Sessie", key="btn_start_struct", type="primary"):
                         st.session_state.gestrafte_woorden_struct = set()
@@ -6960,7 +6977,7 @@ def main():
                         if doel_vormen:
                             sampled = kies_gefaseerde_oefensessie(doel_vormen, module='struct')
                             modus_id = str(struct_modus[0])
-                            if is_struct_leerpad:
+                            if is_struct_leerpad or struct_modus == AUTO_VORM:
                                 # Leerpad: oplopend per woord — nieuw eerst flashcard (Leer) + meerkeuze,
                                 # daarna meerkeuze, en bij een stevige streak typen.
                                 _struct_kaarten = []
