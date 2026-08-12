@@ -93,7 +93,7 @@
     },
     "stamtijden": {
       "Futurum Actief/Medium": "ἐλεύσομαι",
-      "Aoristus Actief/Medium": "ἠλθον",
+      "Aoristus Actief/Medium": "ἦλθον",
       "Aoristus Passief": "———",
       "Perfectum Actief": "ἐλήλυθα",
       "Perfectum Medium/Passief": "———"
@@ -170,8 +170,8 @@
       "Futurum Actief/Medium": "λήμψομαι",
       "Aoristus Actief/Medium": "ἔλαβον",
       "Aoristus Passief": "ἐλήμφθην",
-      "Perfectum Actief": "εἰληφα",
-      "Perfectum Medium/Passief": "εἰλημμαι"
+      "Perfectum Actief": "εἴληφα",
+      "Perfectum Medium/Passief": "εἴλημμαι"
     }
   },
   {
@@ -1166,7 +1166,7 @@
       "Futurum Actief/Medium": "ζήσω",
       "Aoristus Actief/Medium": "ἔζησα",
       "Aoristus Passief": "———",
-      "Perfectum Actief": "βεβἰωκα",
+      "Perfectum Actief": "βεβίωκα",
       "Perfectum Medium/Passief": "———"
     }
   },
