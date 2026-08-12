@@ -693,6 +693,7 @@ _SAMENSMELT_KLASSEN = {
     "liquidae":   ("Liquidae (vloeiklanken)", "λ, μ, ν, ρ"),
     "contracta":  ("Contracta (klinkersamentrekking)", "α, ε, ο, η"),
     "augment":    ("Augment (klinkerverlenging)", "α, ε, ο, αι, ει, αυ"),
+    "elisie":     ("Elisie (wegval vóór klinker)", "ά, έ, ό vooraan weg"),
 }
 # Langere tweeklanken eerst, anders matcht 'ο' al vóór 'οι' (οἰκοδομέω → ᾠκοδόμησεν).
 _AUG_TEMPOREEL = [("αι", "ῃ"), ("ει", "ῃ"), ("οι", "ῳ"), ("αυ", "ηυ"), ("ευ", "ηυ"),
@@ -796,6 +797,31 @@ def _contractie_plek(vorm, lemma, parsing_info=""):
         return (-1, 0)
     return (i, langste)
 
+_ELISIE_ASPIRATIE = {"φ": "π", "θ": "τ", "χ": "κ"}   # φ<π, θ<τ, χ<κ vóór een spiritus asper
+_ELISIE_TEKENS = ("’", "᾽", "'", "ʼ")
+
+def _elisie_treffer(vorm, lemma):
+    """(weggevallen klinker, geschreven letter, oorspronkelijke letter) bij een elisie, of None.
+
+    ἀλλά → ἀλλ᾽ : de laatste klinker valt weg vóór een woord dat met een klinker begint.
+    ἐπί → ἐφ᾽   : daarbij wordt de π ook nog geaspireerd tot φ (vóór een spiritus asper).
+    Alleen als de rest exact met het lemma overeenkomt — anders zeggen we niets."""
+    v = str(vorm or "")
+    if not any(t in v for t in _ELISIE_TEKENS):
+        return None
+    kaal = v
+    for t in _ELISIE_TEKENS:
+        kaal = kaal.replace(t, "")
+    vk, lk = _opb_kaal(kaal), _opb_kaal(lemma)
+    if not vk or not lk or len(lk) != len(vk) + 1:
+        return None
+    if lk.startswith(vk):
+        return (lk[-1], "", "")
+    origineel = _ELISIE_ASPIRATIE.get(vk[-1]) if vk else None
+    if origineel and lk.startswith(vk[:-1] + origineel):
+        return (lk[-1], vk[-1], origineel)
+    return None
+
 def samensmeltingen_alle(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
     """ALLE klankwetten die in deze vorm te zien zijn, op volgorde van voor naar achter in het woord.
 
@@ -806,6 +832,26 @@ def samensmeltingen_alle(vorm, lemma="", parsing_info="", grieks_info="", corpus
     if not vorm:
         return uit
     info = parsing_info or ""
+
+    # Elisie kan bij elk woordsoort (ἀλλά → ἀλλ᾽, ἐπί → ἐφ᾽) — dus vóór alle andere regels.
+    el = _elisie_treffer(vorm, lemma)
+    if el:
+        weg, geschreven, origineel = el
+        klasse, letters = _SAMENSMELT_KLASSEN["elisie"]
+        if geschreven:
+            uit.append({"sleutel": "elisie", "klasse": klasse, "letters": letters, "links": weg,
+                        "rechts": "klinker", "resultaat": "᾽", "plek": "einde", "pos": -1,
+                        "formule": f"-{weg} valt weg  ·  {origineel} → {geschreven}",
+                        "uitleg": f"**Elisie:** de slotklinker **{weg}** valt weg omdat het volgende woord "
+                                  f"met een klinker begint; de **{origineel}** wordt daarbij geaspireerd tot "
+                                  f"**{geschreven}** (het volgende woord heeft een spiritus asper)."})
+        else:
+            uit.append({"sleutel": "elisie", "klasse": klasse, "letters": letters, "links": weg,
+                        "rechts": "klinker", "resultaat": "᾽", "plek": "einde", "pos": -1,
+                        "formule": f"-{weg} valt weg (elisie)",
+                        "uitleg": f"**Elisie:** de slotklinker **{weg}** valt weg omdat het volgende woord "
+                                  f"met een klinker begint. De apostrof laat zien wat er ontbreekt."})
+        return uit
 
     if "Werkwoord" not in info:
         # Naamwoorden/bijv. naamwoorden (3e declinatie): nominativus ev en dativus mv botsen met σ.
@@ -895,7 +941,9 @@ def klankwet_index(_bijbel_db, _woord_van_strong):
     for ref, zin in (_bijbel_db or {}).items():
         for w in zin:
             info = w.get('parsing_info', '') or ''
-            if not ("Werkwoord" in info or any(x in info for x in ("Zelfst.", "Bijv."))):
+            _heeft_apostrof = any(t in str(w.get('grieks', '') or '') for t in _ELISIE_TEKENS)
+            if not (_heeft_apostrof or "Werkwoord" in info
+                    or any(x in info for x in ("Zelfst.", "Bijv."))):
                 continue
             strong = str(w.get('strong', '') or '').strip()
             bron = (_woord_van_strong or {}).get(strong) or {}
