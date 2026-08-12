@@ -5480,21 +5480,26 @@ def main():
             stats_stam = _vg['stats_stam']; tot_goed_s = _vg['tot_goed_s']; tot_fout_s = _vg['tot_fout_s']
             stats_str = _vg['stats_str']; tot_goed_st = _vg['tot_goed_st']; tot_fout_st = _vg['tot_fout_st']
 
-            # --- TOP METRICS & BAROMETER ---
-            c_met1, c_met2, c_met3, c_met4 = st.columns(4)
+            
+            # --- TOP METRICS: hoe sta je ervoor, en wat deed je vandaag? ---
             tot_g = tot_goed_v + tot_goed_s + tot_goed_st
             tot_f = tot_fout_v + tot_fout_s + tot_fout_st
             acc = int((tot_g / (tot_g + tot_f) * 100)) if (tot_g + tot_f) > 0 else 0
-            
             dekking_pct = int((bekende_freq / max(1, totale_freq)) * 78) if totale_freq else 0
             
+            c_met1, c_met2, c_met3 = st.columns(3)
             c_met1.metric("Totale Accuratesse", f"{acc}%")
-            c_met2.metric("Items op 'Mastery'", stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery'])
-            c_met3.metric("Beoordelingen", tot_g + tot_f)
-            c_met4.metric("🌍 NT Exegese-Dekking", f"~{dekking_pct}%", help="Geschat percentage van het Nieuwe Testament dat je nu zónder woordenboek kunt lezen op basis van de theologische frequentie van jouw beheerste woorden.")
-
+            c_met2.metric("🔥 Oefen-streak", f"{dagdoel_streak()} dagen op rij",
+                          help="Aantal dagen achter elkaar dat je iets hebt geoefend — wat je oefent maakt niet uit.")
+            c_met3.metric("Vandaag geoefend", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
+            
+            c_met4, c_met5, c_met6 = st.columns(3)
+            c_met4.metric("Items op 'Mastery'", stats_vocab['Mastery'] + stats_stam['Mastery'] + stats_str['Mastery'])
+            c_met5.metric("Beoordelingen", tot_g + tot_f)
+            c_met6.metric("🌍 NT Exegese-Dekking", f"~{dekking_pct}%", help="Geschat percentage van het Nieuwe Testament dat je nu zónder woordenboek kunt lezen op basis van de theologische frequentie van jouw beheerste woorden.")
+            
             st.write("---")
-
+            
             # --- 🏅 BADGES / ACHIEVEMENTS (Wens 5) ---
             _dagen_set = {str(d) for d in (st.session_state.dag_stats or {}).keys()}
             _oefendagen = len(_dagen_set)
@@ -5544,47 +5549,72 @@ def main():
             for _bid in _nieuw:
                 st.session_state.badges[_bid] = _vandaag
 
-            # Altijd zichtbaar (motiverend), rest achter een dropdown:
-            st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP, over alle onderdelen)")
-            with st.expander("📖 Hoe werken de niveaus en rangen?", expanded=False):
-                st.markdown(RANG_UITLEG)
-                st.caption(f"Je staat nu op rang {_niv_info['rang_nr']} van {_niv_info['rang_totaal']}"
-                           + (f" — hierna: **{_niv_info['volgende_rang']}**." if _niv_info.get('volgende_rang')
-                              else " — de laatste rang!"))
-            with st.expander("🏅 Bekijk al je badges", expanded=False):
-                st.caption("Verzamel badges door te oefenen, woorden te beheersen, verwarringen op te lossen en niveaus te halen. Behaalde badges staan bovenaan.")
-                _gesorteerd = sorted(_badges, key=lambda b: (not b['behaald']))
-                _kols = st.columns(4)
-                for _i, _b in enumerate(_gesorteerd):
-                    _behaald = _b['behaald']
-                    _earned_date = st.session_state.badges.get(_b['id'], "")
-                    _rand = "#f6c23e" if _behaald else "#333"
-                    _bg = "rgba(246,194,62,0.12)" if _behaald else "rgba(255,255,255,0.03)"
-                    _op = "1" if _behaald else "0.45"
-                    if _behaald:
-                        _status = "✓ behaald" + (f" · {_earned_date}" if _earned_date else "")
-                        _status_kleur = "#f6c23e"
-                    else:
-                        _status = f"🔒 {_b['voortgang']}" if _b['voortgang'] else "🔒"
-                        _status_kleur = "#888"
-                    with _kols[_i % 4]:
-                        st.markdown(f"""
-                        <div style="border:2px solid {_rand}; background:{_bg}; border-radius:12px; padding:12px; margin-bottom:10px; text-align:center; opacity:{_op};">
-                            <div style="font-size:34px; line-height:1;">{_b['icon']}</div>
-                            <div style="font-weight:700; color:#fff; margin-top:6px;">{_b['titel']}</div>
-                            <div style="font-size:12px; color:#bbb; margin:4px 0; min-height:32px;">{_b['uitleg']}</div>
-                            <div style="font-size:12px; color:{_status_kleur};">{_status}</div>
-                        </div>
-                        """, unsafe_allow_html=True)
+            
+            # --- JOUW OEFENRITME (kalender-heatmap) ---
+            st.subheader("📅 Jouw oefenritme")
 
-            if _nieuw:
-                for _bid in _nieuw:
-                    _bdef = next((x for x in _badges if x['id'] == _bid), None)
-                    if _bdef:
-                        try: st.toast(f"{_bdef['icon']} Badge behaald: {_bdef['titel']}!", icon="🏅")
-                        except Exception: pass
-                trigger_save(forceer=True)
+            vandaag_str = str(_nu().date())
+            vandaag_aantal = int(st.session_state.dag_stats.get(vandaag_str, 0)) if st.session_state.dag_stats else 0
+            beheerst_nu = stats_vocab['Beheerst'] + stats_vocab['Mastery']
+            in_training_nu = stats_vocab['In Training']
+            cs1, cs2, cs3 = st.columns(3)
+            cs1.metric("Vandaag geoefend", vandaag_aantal)
+            cs2.metric("Woorden 'Beheerst' (streak ≥ 16)", beheerst_nu)
+            cs3.metric("Woorden 'In Training'", in_training_nu)
+            if vandaag_aantal == 0:
+                st.caption("Nog niets geoefend vandaag — een korte sessie houdt je streaks vers.")
 
+            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
+                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
+            if st.session_state.dag_stats:
+                st.metric("Totaal geoefend (All-time)", sum(st.session_state.dag_stats.values()))
+            else:
+                st.caption("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
+
+            
+            # --- 🎯 DAGELIJKS DOEL — details achter een uitklapper: aan de stippen in de kalender
+            # hierboven zie je al of je het gehaald hebt.
+            _cfg = dagdoel_config()
+            _lg = dagdoel_log_vandaag()
+            with st.expander("🎯 Dagelijks doel instellen", expanded=False):
+                st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['actief']} actief-cellen · {_cfg['verzen']} verzen**. Alles telt automatisch mee zodra je goed antwoordt in het betreffende tabblad.")
+                st.write("")
+                _nw = {
+                    'woorden': st.slider("Woorden", 0, 40, _cfg['woorden'], key="dd_woorden"),
+                    'knelpunt': st.slider("Moeilijke woorden", 0, 20, _cfg['knelpunt'], key="dd_knelpunt"),
+                    'verwar': st.slider("Verwarparen", 0, 15, _cfg['verwar'], key="dd_verwar"),
+                    'actief': st.slider("Actief Beheersen (cellen)", 0, 30, _cfg['actief'], key="dd_actief"),
+                    'stam': st.slider("Stamtijden", 0, 20, _cfg['stam'], key="dd_stam"),
+                    'struct': st.slider("Structuurwoorden", 0, 20, _cfg['struct'], key="dd_struct"),
+                    'verzen': st.slider("Verzen ontleden", 0, 10, _cfg['verzen'], key="dd_verzen"),
+                    'klank': st.slider("Klankwetten", 0, 30, _cfg['klank'], key="dd_klank"),
+                }
+                if st.button("💾 Doelen opslaan", key="dd_save"):
+                    _d = st.session_state.get('dagdoel')
+                    if not isinstance(_d, dict):
+                        _d = {}; st.session_state.dagdoel = _d
+                    _d['config'] = _nw
+                    trigger_save(forceer=True); st.success("Doelen opgeslagen!"); st.rerun()
+            
+            with st.expander("✅ Voortgang onderdelen vandaag", expanded=False):
+                st.markdown("### ✅ Voortgang onderdelen vandaag")
+                st.caption("Deze tellen automatisch mee zodra je een goed antwoord geeft in dat tabblad.")
+                for _soort, _emoji, _label in [('woorden', '🚀', 'Woorden (verschillende)'),
+                                               ('actief', '🎓', 'Actief Beheersen'),
+                                               ('stam', '⏳', 'Stamtijden'),
+                                               ('struct', '🧱', 'Structuurwoorden'),
+                                               ('verzen', '📝', 'Verzen ontleden'),
+                                               ('klank', '🔊', 'Klankwetten')]:
+                    # 'Woorden' telt het aantal VERSCHILLENDE woorden dat je vandaag hebt gehad; hetzelfde
+                    # woord twee keer overhoren telt dus één keer (live berekend, altijd actueel).
+                    _gedaan = woorden_vandaag_uniek() if _soort == 'woorden' else int(_lg.get(_soort, 0))
+                    _doel = int(_cfg[_soort])
+                    st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
+                st.caption("ℹ️ Bij **Woorden** tellen verschillende woorden: oefen je hetzelfde woord vaker, "
+                           "dan telt dat één keer. De andere tellers tellen elk goed antwoord.")
+            
+            st.write("---")
+            
             # --- 🔎 ONTLEED-ACCURATESSE (uit de Ontleden-tab) ---
             _osa = st.session_state.get('ontleed_stats') or {}
             if any((v.get('g', 0) + v.get('f', 0)) > 0 for v in _osa.values() if isinstance(v, dict)):
@@ -5625,9 +5655,6 @@ def main():
                         if _zwak[0] < 70:
                             st.info(f"💡 **{_zwak[1]}** gaat nog het minst goed ({_zwak[0]}%). Zet in de "
                                     "🔊 Klankwetten-tab alleen die klanksoort aan om er gericht mee te oefenen.")
-
-            st.write("---")
-
             with st.expander("📉 Gedetailleerde voortgang per onderdeel (uitklappen)", expanded=False):
                 # --- DE LEKKENDE EMMER ---
                 lekkende_woorden = [w for w in st.session_state.data if 16 <= int(w.get('streak', 0)) <= 17]
@@ -5905,30 +5932,123 @@ def main():
                     st.bar_chart(df_plot, color=['#e0e0e0', '#f6c23e', '#28a745', '#33ccff'], height=340)
             
                 st.write("---")
-
-            # --- JOUW OEFENRITME (kalender-heatmap) ---
-            st.subheader("📅 Jouw oefenritme")
-
-            vandaag_str = str(_nu().date())
-            vandaag_aantal = int(st.session_state.dag_stats.get(vandaag_str, 0)) if st.session_state.dag_stats else 0
-            beheerst_nu = stats_vocab['Beheerst'] + stats_vocab['Mastery']
-            in_training_nu = stats_vocab['In Training']
-            cs1, cs2, cs3 = st.columns(3)
-            cs1.metric("Vandaag geoefend", vandaag_aantal)
-            cs2.metric("Woorden 'Beheerst' (streak ≥ 16)", beheerst_nu)
-            cs3.metric("Woorden 'In Training'", in_training_nu)
-            if vandaag_aantal == 0:
-                st.caption("Nog niets geoefend vandaag — een korte sessie houdt je streaks vers.")
-
-            st.markdown(dagkalender_html(st.session_state.get('dag_stats') or {},
-                                         (st.session_state.get('dagdoel') or {}).get('log', {})), unsafe_allow_html=True)
-            if st.session_state.dag_stats:
-                st.metric("Totaal geoefend (All-time)", sum(st.session_state.dag_stats.values()))
-            else:
-                st.caption("Nog geen oefenhistorie opgebouwd. Begin vandaag!")
-
+            
             st.write("---")
+            
+            st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP, over alle onderdelen)")
+            with st.expander("📖 Hoe werken de niveaus en rangen?", expanded=False):
+                st.markdown(RANG_UITLEG)
+                st.caption(f"Je staat nu op rang {_niv_info['rang_nr']} van {_niv_info['rang_totaal']}"
+                           + (f" — hierna: **{_niv_info['volgende_rang']}**." if _niv_info.get('volgende_rang')
+                              else " — de laatste rang!"))
+            with st.expander("🏅 Bekijk al je badges", expanded=False):
+                st.caption("Verzamel badges door te oefenen, woorden te beheersen, verwarringen op te lossen en niveaus te halen. Behaalde badges staan bovenaan.")
+                _gesorteerd = sorted(_badges, key=lambda b: (not b['behaald']))
+                _kols = st.columns(4)
+                for _i, _b in enumerate(_gesorteerd):
+                    _behaald = _b['behaald']
+                    _earned_date = st.session_state.badges.get(_b['id'], "")
+                    _rand = "#f6c23e" if _behaald else "#333"
+                    _bg = "rgba(246,194,62,0.12)" if _behaald else "rgba(255,255,255,0.03)"
+                    _op = "1" if _behaald else "0.45"
+                    if _behaald:
+                        _status = "✓ behaald" + (f" · {_earned_date}" if _earned_date else "")
+                        _status_kleur = "#f6c23e"
+                    else:
+                        _status = f"🔒 {_b['voortgang']}" if _b['voortgang'] else "🔒"
+                        _status_kleur = "#888"
+                    with _kols[_i % 4]:
+                        st.markdown(f"""
+                        <div style="border:2px solid {_rand}; background:{_bg}; border-radius:12px; padding:12px; margin-bottom:10px; text-align:center; opacity:{_op};">
+                            <div style="font-size:34px; line-height:1;">{_b['icon']}</div>
+                            <div style="font-weight:700; color:#fff; margin-top:6px;">{_b['titel']}</div>
+                            <div style="font-size:12px; color:#bbb; margin:4px 0; min-height:32px;">{_b['uitleg']}</div>
+                            <div style="font-size:12px; color:{_status_kleur};">{_status}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
 
+            if _nieuw:
+                for _bid in _nieuw:
+                    _bdef = next((x for x in _badges if x['id'] == _bid), None)
+                    if _bdef:
+                        try: st.toast(f"{_bdef['icon']} Badge behaald: {_bdef['titel']}!", icon="🏅")
+                        except Exception: pass
+                trigger_save(forceer=True)
+            
+            # --- Woorden die structureel misgaan: allebei achter een uitklapper ---
+            with st.expander("🐛 Woorden die ik het vaakst fout doe", expanded=False):
+                st.caption("Dit zijn de items over álle vakken heen (Woorden, Stamtijden & Structuur) waar je structureel de meeste moeite mee hebt.")
+                nemesissen = []
+            
+                for w in st.session_state.data:
+                    g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0))
+                    if (g + f) >= 3 and f > 0:
+                        nemesissen.append({"Type": "Woord", "Item": w['grieks'], "Betekenis": w['nederlands'], "Fout-ratio": f / (g + f), "Fouten": f})
+                    
+                if stamtijden_db:
+                    for w in stamtijden_db:
+                        for t_d, vorm in w.get('stamtijden', {}).items():
+                            s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
+                            g, f = s.get('g', 0), s.get('f', 0)
+                            if (g + f) >= 3 and f > 0:
+                                nemesissen.append({"Type": "Stamtijd", "Item": vorm, "Betekenis": f"{t_d} van {w['praesens']}", "Fout-ratio": f / (g + f), "Fouten": f})
+
+                if str_db:
+                    for idx_w, w in enumerate(str_db):
+                        s = _struct_stat_lookup(st.session_state.struct_stats, w, idx_w)
+                        g, f = s.get('g', 0), s.get('f', 0)
+                        if (g + f) >= 3 and f > 0:
+                            nemesissen.append({"Type": "Structuur", "Item": w['grieks'], "Betekenis": w['betekenis'], "Fout-ratio": f / (g + f), "Fouten": f})
+                        
+                if nemesissen:
+                    nemesissen.sort(key=lambda x: (x["Fouten"], x["Fout-ratio"]), reverse=True)
+                    df_nemesis = pd.DataFrame(nemesissen[:5])
+                    df_nemesis["Fout-ratio"] = df_nemesis["Fout-ratio"].apply(lambda x: f"{int(x*100)}%")
+                    st.dataframe(df_nemesis, width='stretch')
+                    st.error("💡 **Exegese Tip:** Schrijf deze 5 aartsrivalen op een geeltje en plak die op je beeldscherm. Als je déze temt, schiet je totaalscore omhoog!")
+                else:
+                    st.success("🎉 Je hebt op dit moment geen structurele aartsrivalen. Alles loopt op rolletjes!")
+                
+                st.write("---")
+            
+            with st.expander("🐛 Hardnekkige probleemwoorden", expanded=False):
+                st.caption("Woorden die je al meerdere keren hebt geoefend maar die telkens blijven haperen — hoge fout-verhouding én lage streak. Dit zijn je beste kandidaten voor gericht oefenen.")
+
+                leeches = []
+                if st.session_state.data:
+                    for w in st.session_state.data:
+                        g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
+                        totaal = g + f
+                        # leech-criterium: minstens 3 pogingen, minstens 2 fouten, nog niet 'in training' ontstegen
+                        if totaal >= 3 and f >= 2 and s <= 3:
+                            ratio = f / totaal
+                            if ratio >= 0.4:
+                                leeches.append((ratio, f, w))
+                leeches.sort(key=lambda x: (x[0], x[1]), reverse=True)
+
+                if leeches:
+                    st.warning(f"Je hebt **{len(leeches)}** hardnekkige woorden. Kies in *Tabblad 1 → 'Knelpunten (Gericht Oefenen)'* dezelfde lessen om ze gericht te stutten.")
+                    leech_rijen = []
+                    for ratio, f, w in leeches[:25]:
+                        leech_rijen.append({
+                            "Grieks": w.get('grieks', ''),
+                            "Betekenis": str(w.get('nederlands', ''))[:35],
+                            "Les": w.get('les', ''),
+                            "Goed": int(w.get('score_goed', 0)),
+                            "Fout": int(w.get('score_fout', 0)),
+                            "Streak": int(w.get('streak', 0)),
+                            "Fout-%": f"{int(ratio*100)}%",
+                        })
+                    st.dataframe(pd.DataFrame(leech_rijen), use_container_width=True, hide_index=True)
+                    if len(leeches) > 25:
+                        st.caption(f"(Top 25 van {len(leeches)} getoond, gesorteerd op hardnekkigheid.)")
+                else:
+                    st.success("🎉 Geen hardnekkige probleemwoorden — niets blijft structureel haperen. Sterk!")
+
+                st.write("---")
+            
+            st.write("---")
+            
             # --- COMPETITIE DASHBOARD ---
             st.subheader("🏆 Competitie Dashboard")
             st.caption("Meet je met de groep — **deze week** (wie oefent het hardst?) én **all-time** (wie staat op het hoogste niveau?). Filter op onderdeel om te zien wie waar sterk in is.")
@@ -6027,86 +6147,14 @@ def main():
                 st.caption("Kon de competitiegegevens momenteel niet synchroniseren.")
             
             st.write("---")
-
-            # --- AARTSRIVALEN TOP 5 (Nemesis Tracker) ---
-            st.subheader("🐛 Woorden die ik het vaakst fout doe")
-            st.caption("Dit zijn de items over álle vakken heen (Woorden, Stamtijden & Structuur) waar je structureel de meeste moeite mee hebt.")
-            nemesissen = []
             
-            for w in st.session_state.data:
-                g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0))
-                if (g + f) >= 3 and f > 0:
-                    nemesissen.append({"Type": "Woord", "Item": w['grieks'], "Betekenis": w['nederlands'], "Fout-ratio": f / (g + f), "Fouten": f})
-                    
-            if stamtijden_db:
-                for w in stamtijden_db:
-                    for t_d, vorm in w.get('stamtijden', {}).items():
-                        s = st.session_state.stam_stats.get(f"{w['praesens']}_{vorm}", {'g': 0, 'f': 0, 'streak': 0})
-                        g, f = s.get('g', 0), s.get('f', 0)
-                        if (g + f) >= 3 and f > 0:
-                            nemesissen.append({"Type": "Stamtijd", "Item": vorm, "Betekenis": f"{t_d} van {w['praesens']}", "Fout-ratio": f / (g + f), "Fouten": f})
-
-            if str_db:
-                for idx_w, w in enumerate(str_db):
-                    s = _struct_stat_lookup(st.session_state.struct_stats, w, idx_w)
-                    g, f = s.get('g', 0), s.get('f', 0)
-                    if (g + f) >= 3 and f > 0:
-                        nemesissen.append({"Type": "Structuur", "Item": w['grieks'], "Betekenis": w['betekenis'], "Fout-ratio": f / (g + f), "Fouten": f})
-                        
-            if nemesissen:
-                nemesissen.sort(key=lambda x: (x["Fouten"], x["Fout-ratio"]), reverse=True)
-                df_nemesis = pd.DataFrame(nemesissen[:5])
-                df_nemesis["Fout-ratio"] = df_nemesis["Fout-ratio"].apply(lambda x: f"{int(x*100)}%")
-                st.dataframe(df_nemesis, width='stretch')
-                st.error("💡 **Exegese Tip:** Schrijf deze 5 aartsrivalen op een geeltje en plak die op je beeldscherm. Als je déze temt, schiet je totaalscore omhoog!")
-            else:
-                st.success("🎉 Je hebt op dit moment geen structurele aartsrivalen. Alles loopt op rolletjes!")
-                
             st.write("---")
-
-            # --- HARDNEKKIGE PROBLEEMWOORDEN (LEECHES) ---
-            st.subheader("🐛 Hardnekkige probleemwoorden")
-            st.caption("Woorden die je al meerdere keren hebt geoefend maar die telkens blijven haperen — hoge fout-verhouding én lage streak. Dit zijn je beste kandidaten voor gericht oefenen.")
-
-            leeches = []
-            if st.session_state.data:
-                for w in st.session_state.data:
-                    g = int(w.get('score_goed', 0)); f = int(w.get('score_fout', 0)); s = int(w.get('streak', 0))
-                    totaal = g + f
-                    # leech-criterium: minstens 3 pogingen, minstens 2 fouten, nog niet 'in training' ontstegen
-                    if totaal >= 3 and f >= 2 and s <= 3:
-                        ratio = f / totaal
-                        if ratio >= 0.4:
-                            leeches.append((ratio, f, w))
-            leeches.sort(key=lambda x: (x[0], x[1]), reverse=True)
-
-            if leeches:
-                st.warning(f"Je hebt **{len(leeches)}** hardnekkige woorden. Kies in *Tabblad 1 → 'Knelpunten (Gericht Oefenen)'* dezelfde lessen om ze gericht te stutten.")
-                leech_rijen = []
-                for ratio, f, w in leeches[:25]:
-                    leech_rijen.append({
-                        "Grieks": w.get('grieks', ''),
-                        "Betekenis": str(w.get('nederlands', ''))[:35],
-                        "Les": w.get('les', ''),
-                        "Goed": int(w.get('score_goed', 0)),
-                        "Fout": int(w.get('score_fout', 0)),
-                        "Streak": int(w.get('streak', 0)),
-                        "Fout-%": f"{int(ratio*100)}%",
-                    })
-                st.dataframe(pd.DataFrame(leech_rijen), use_container_width=True, hide_index=True)
-                if len(leeches) > 25:
-                    st.caption(f"(Top 25 van {len(leeches)} getoond, gesorteerd op hardnekkigheid.)")
-            else:
-                st.success("🎉 Geen hardnekkige probleemwoorden — niets blijft structureel haperen. Sterk!")
-
-            st.write("---")
-
+            
             # --- EXPORTEREN ---
             st.subheader("💾 Exporteer je data")
             df_export = pd.DataFrame(st.session_state.data)[['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend']]
             csv = df_export.to_csv(index=False).encode('utf-8')
             st.download_button(label="📥 Download woordenschat als CSV", data=csv, file_name="mijn_grieks_voortgang.csv", mime="text/csv")
-            
         # ==========================================
         # TAB 4: ACTIEF BEHEERSEN (PARADIGMA'S)
         # ==========================================
@@ -9401,54 +9449,6 @@ def main():
         # ==========================================
         # DAGELIJKS DOEL — ondergebracht onderaan de Voortgang-tab
         # ==========================================
-        if _TOON[2]:
-         with menu[2]:
-            st.write("---")
-            st.subheader("🎯 Dagelijks doel")
-            _cfg = dagdoel_config()
-            _lg = dagdoel_log_vandaag()
-
-            c_top1, c_top2 = st.columns(2)
-            c_top1.metric("🔥 Oefen-streak", f"{dagdoel_streak()} dagen op rij",
-                          help="Aantal dagen achter elkaar dat je iets hebt geoefend — wat je oefent maakt niet uit.")
-            c_top2.metric("Totaal geoefend vandaag", int((st.session_state.dag_stats or {}).get(_vandaag_str(), 0)))
-            st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['actief']} actief-cellen · {_cfg['verzen']} verzen**. Alles telt automatisch mee zodra je goed antwoordt in het betreffende tabblad.")
-
-            st.write("---")
-            st.markdown("### ✅ Voortgang onderdelen vandaag")
-            st.caption("Deze tellen automatisch mee zodra je een goed antwoord geeft in dat tabblad.")
-            for _soort, _emoji, _label in [('woorden', '🚀', 'Woorden (verschillende)'),
-                                           ('actief', '🎓', 'Actief Beheersen'),
-                                           ('stam', '⏳', 'Stamtijden'),
-                                           ('struct', '🧱', 'Structuurwoorden'),
-                                           ('verzen', '📝', 'Verzen ontleden'),
-                                           ('klank', '🔊', 'Klankwetten')]:
-                # 'Woorden' telt het aantal VERSCHILLENDE woorden dat je vandaag hebt gehad; hetzelfde
-                # woord twee keer overhoren telt dus één keer (live berekend, altijd actueel).
-                _gedaan = woorden_vandaag_uniek() if _soort == 'woorden' else int(_lg.get(_soort, 0))
-                _doel = int(_cfg[_soort])
-                st.progress(min(1.0, _gedaan / _doel) if _doel else 1.0, text=f"{_emoji} {_label}: {_gedaan}/{_doel}")
-            st.caption("ℹ️ Bij **Woorden** tellen verschillende woorden: oefen je hetzelfde woord vaker, "
-                       "dan telt dat één keer. De andere tellers tellen elk goed antwoord.")
-
-            with st.expander("⚙️ Mijn dagelijkse doelen instellen"):
-                _nw = {
-                    'woorden': st.slider("Woorden", 0, 40, _cfg['woorden'], key="dd_woorden"),
-                    'knelpunt': st.slider("Moeilijke woorden", 0, 20, _cfg['knelpunt'], key="dd_knelpunt"),
-                    'verwar': st.slider("Verwarparen", 0, 15, _cfg['verwar'], key="dd_verwar"),
-                    'actief': st.slider("Actief Beheersen (cellen)", 0, 30, _cfg['actief'], key="dd_actief"),
-                    'stam': st.slider("Stamtijden", 0, 20, _cfg['stam'], key="dd_stam"),
-                    'struct': st.slider("Structuurwoorden", 0, 20, _cfg['struct'], key="dd_struct"),
-                    'verzen': st.slider("Verzen ontleden", 0, 10, _cfg['verzen'], key="dd_verzen"),
-                    'klank': st.slider("Klankwetten", 0, 30, _cfg['klank'], key="dd_klank"),
-                }
-                if st.button("💾 Doelen opslaan", key="dd_save"):
-                    _d = st.session_state.get('dagdoel')
-                    if not isinstance(_d, dict):
-                        _d = {}; st.session_state.dagdoel = _d
-                    _d['config'] = _nw
-                    trigger_save(forceer=True); st.success("Doelen opgeslagen!"); st.rerun()
-
 
         # ==========================================
         # TAB: KLANKWETTEN & SAMENSMELTINGEN
