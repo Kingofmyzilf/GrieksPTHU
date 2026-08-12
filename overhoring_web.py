@@ -3151,6 +3151,23 @@ TAB_KEUZE = [
 # Deze twee blijven altijd staan: via Uitleg zet je tabbladen weer aan, en Voortgang is je overzicht.
 TAB_ALTIJD = {"uitleg", "voortgang"}
 
+def nieuwe_gebruiker():
+    """True zolang er nog nooit iets geoefend is. De app opent dan op ℹ️ Uitleg & Hulp, zodat je
+    eerst ziet hoe alles werkt in plaats van meteen in een overhoring te vallen."""
+    if st.session_state.get('dag_stats') or {}:
+        return False
+    for w in (st.session_state.get('data') or []):
+        if not isinstance(w, dict):
+            continue
+        try:
+            if int(w.get('streak', 0) or 0) or int(w.get('score_goed', 0) or 0) or int(w.get('score_fout', 0) or 0):
+                return False
+        except (TypeError, ValueError):
+            return False
+        if str(w.get('laatst_geoefend', '') or '').strip():
+            return False
+    return True
+
 def tab_zichtbaar(sleutel):
     if sleutel in TAB_ALTIJD:
         return True
@@ -4225,23 +4242,21 @@ def main():
                      f"\n\n*Technische melding: {st.session_state['_opslag_mislukt']}*")
         # Weergavevolgorde: eerst het dagblok, dan de oefen-tabbladen in leervolgorde, dan de rest.
         # Weergavevolgorde van de tabbladen (Dagelijks doel zit nu ín Voortgang).
-        # Alleen de tabbladen die je aan hebt staan komen in de balk. Wat je hebt uitgezet krijgt
-        # zijn eigen (ingeklapte) tabbalk onderaan: de inhoud blijft dus gewoon werken en bereikbaar,
-        # maar staat je niet in de weg. Geen CSS-trucs — Streamlit maakt simpelweg minder tabs aan.
-        _zichtbaar = [(_sl, _lab) for _sl, _lab in TAB_KEUZE if tab_zichtbaar(_sl)]
-        _verborgen = [(_sl, _lab) for _sl, _lab in TAB_KEUZE if not tab_zichtbaar(_sl)]
-        _tabs_z = st.tabs([_lab for _sl, _lab in _zichtbaar])
-        _tab_van_sleutel = {_sl: _tabs_z[_i] for _i, (_sl, _lab) in enumerate(_zichtbaar)}
-        if _verborgen:
-            with st.expander(f"🙈 Verborgen tabbladen ({len(_verborgen)}) — weer aanzetten in ℹ️ Uitleg & Hulp",
-                             expanded=False):
-                _tabs_v = st.tabs([_lab for _sl, _lab in _verborgen])
-                for _i, (_sl, _lab) in enumerate(_verborgen):
-                    _tab_van_sleutel[_sl] = _tabs_v[_i]
-        # menu[i] = het content-blok zoals het in de code staat, gekoppeld aan het juiste tabblad.
+        # Alleen de tabbladen die je aan hebt staan worden aangemaakt. Wat je uitzet bestaat deze
+        # sessie simpelweg niet: het content-blok wordt overgeslagen (zie de _TOON-guards hieronder),
+        # dus er is ook geen 'app in de app' met verborgen tabjes.
         _MENU_SLEUTELS = ["woorden", "lijst", "voortgang", "actief", "stam", "struct",
                           "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank"]
-        menu = [_tab_van_sleutel[_s] for _s in _MENU_SLEUTELS]
+        _volgorde = list(TAB_KEUZE)
+        if nieuwe_gebruiker():
+            # Nog niets geoefend? Begin bij de uitleg — Streamlit opent altijd het eerste tabblad.
+            _volgorde.sort(key=lambda t: 0 if t[0] == "uitleg" else 1)
+        _zichtbaar = [(_sl, _lab) for _sl, _lab in _volgorde if tab_zichtbaar(_sl)]
+        _tabs_z = st.tabs([_lab for _sl, _lab in _zichtbaar])
+        _tab_van_sleutel = {_sl: _tabs_z[_i] for _i, (_sl, _lab) in enumerate(_zichtbaar)}
+        # menu[i] = het content-blok zoals het in de code staat; None (en overgeslagen) als het uit staat.
+        menu = [_tab_van_sleutel.get(_s) for _s in _MENU_SLEUTELS]
+        _TOON = [tab_zichtbaar(_s) for _s in _MENU_SLEUTELS]
 
         # Eenvoud-modus: standaard alleen de basis-opties; aan te zetten in ℹ️ Uitleg & Hulp.
         _geav = bool(st.session_state.get('ui_geavanceerd',
@@ -4252,7 +4267,8 @@ def main():
        # ==========================================
         # TAB 1: WOORDENSCHAT
         # ==========================================
-        with menu[0]: 
+        if _TOON[0]:
+         with menu[0]:
             if 'vocab_sessie_verzen' not in st.session_state: st.session_state.vocab_sessie_verzen = {}
             if 'vocab_cluster_strongs' not in st.session_state: st.session_state.vocab_cluster_strongs = {}
             
@@ -5152,7 +5168,8 @@ def main():
         # ==========================================
         # TAB 2: LIJST
         # ==========================================
-        with menu[1]: 
+        if _TOON[1]:
+         with menu[1]:
             st.subheader("📖 Database & Lijsten")
             weergave = st.selectbox("Wat wil je bekijken?", ["Vocabulaire", "🧩 Mijn verwarwoorden", "Actief Beheersen (Rijtjes)", "Stamtijden", "Structuurwoorden"])
 
@@ -5201,7 +5218,8 @@ def main():
         # ==========================================
         # TAB 3: VOORTGANG & DASHBOARD
         # ==========================================
-        with menu[2]: 
+        if _TOON[2]:
+         with menu[2]:
             st.subheader("📊 Mijn voortgang")
             
             vocab_db = laad_vocab_db()
@@ -5868,7 +5886,8 @@ def main():
         # ==========================================
         # TAB 4: ACTIEF BEHEERSEN (PARADIGMA'S)
         # ==========================================
-        with menu[3]: 
+        if _TOON[3]:
+         with menu[3]:
             actief_db = laad_actief_db()
             if not actief_db:
                 st.warning("Bestand 'actief_beheersen.json' ontbreekt of is niet ingeladen.")
@@ -6226,7 +6245,8 @@ def main():
         # ==========================================
         # TAB 5: STAMTIJDEN
         # ==========================================
-        with menu[4]: 
+        if _TOON[4]:
+         with menu[4]:
             stamtijden_db = laad_stamtijden_db()
             bijbel_db = laad_bijbel_db()
             
@@ -6861,7 +6881,8 @@ def main():
        # ==========================================
         # TAB 6: STRUCTUURWOORDEN & SYNTAXIS
         # ==========================================
-        with menu[5]: 
+        if _TOON[5]:
+         with menu[5]:
             struct_db = laad_structuurwoorden_db()
             if not struct_db: 
                 st.warning("Bestand 'structuurwoorden.json' ontbreekt.")
@@ -7204,7 +7225,8 @@ def main():
         # ==========================================
         # TAB 7: LEESTEKSTEN
         # ==========================================
-        with menu[6]: 
+        if _TOON[6]:
+         with menu[6]:
             bijbel_db = laad_bijbel_db()
             stam_db_leestekst = laad_stamtijden_db() or []
             if not bijbel_db: st.warning("De Bijbel-database ontbreekt.")
@@ -7484,7 +7506,8 @@ def main():
         # ==========================================
         # TAB 8: GRAMMATICA (zoeken · bestuderen · contractietrainer)
         # ==========================================
-        with menu[7]:
+        if _TOON[7]:
+         with menu[7]:
             st.subheader("📐 Grammatica")
             gram_db = laad_grammatica_db()
 
@@ -7874,8 +7897,14 @@ def main():
         # ==========================================
         # TAB 9: UITLEG & HULP (Masterclass Bijsluiter)
         # ==========================================
-        with menu[8]:
+        if _TOON[8]:
+         with menu[8]:
             st.subheader("ℹ️ Handboek & Achterliggende Logica")
+            if nieuwe_gebruiker():
+                st.success("👋 **Welkom!** Je begint hier omdat je nog niets hebt geoefend. Lees eventueel eerst "
+                           "de korte uitleg hieronder (of download de PowerPoint), en ga daarna naar "
+                           "**🚀 Woordenschat → 🎮 Leerpad** om te beginnen. Zodra je je eerste woorden hebt "
+                           "gedaan, opent de app gewoon op Woordenschat.")
 
             # --- Downloadbare instructie-PowerPoint ---
             _ppt_pad = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Instructie_GrieksPTHU.pptx")
@@ -7991,7 +8020,8 @@ def main():
         # ==========================================
         # TAB 10: NL -> GRIEKS (ACTIEVE PRODUCTIE)
         # ==========================================
-        with menu[9]:
+        if _TOON[9]:
+         with menu[9]:
             st.subheader("✍️ NL → Grieks: actieve productie")
             st.info("Dit tabblad staat los van het gewone (passieve) woorden leren. Hier zie je de **Nederlandse** betekenis en reproduceer je zélf het Griekse woord — de moeilijkere, actieve vaardigheid. Je voortgang hier wordt apart bijgehouden en beïnvloedt je gewone streaks niet.")
 
@@ -8117,7 +8147,8 @@ def main():
         # ==========================================
         # TAB 12: ONTLEDEN (morfologische trainer)
         # ==========================================
-        with menu[10]:
+        if _TOON[10]:
+         with menu[10]:
             st.subheader("🔎 Ontleden")
             _ONTL_MODI = ["📖 Zin ontleden", "🔤 Losse woorden ontleden", "📜 Hele tekst ontleden", "🔍 Zoeken"]
             _ontl_modus = _pref_keuze(st.radio, "Wat wil je ontleden?", _ONTL_MODI, 'ontl_modus', horizontal=True)
@@ -9138,7 +9169,8 @@ def main():
         # ==========================================
         # DAGELIJKS DOEL — ondergebracht onderaan de Voortgang-tab
         # ==========================================
-        with menu[2]:
+        if _TOON[2]:
+         with menu[2]:
             st.write("---")
             st.subheader("🎯 Dagelijks doel")
             _cfg = dagdoel_config()
@@ -9189,7 +9221,8 @@ def main():
         # ==========================================
         # TAB: KLANKWETTEN & SAMENSMELTINGEN
         # ==========================================
-        with menu[11]:
+        if _TOON[11]:
+         with menu[11]:
             st.subheader("🔊 Klankwetten & samensmeltingen")
             st.caption("Leer herkennen **welke letters zijn samengesmolten** (κ + σ → ξ) en **van welk "
                        "werkwoord** een vorm komt. Alle vormen komen echt in het Nieuwe Testament voor en "
