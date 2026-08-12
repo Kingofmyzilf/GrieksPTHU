@@ -762,12 +762,17 @@ def _naam_klank_treffer(vorm, grieks_info="", parsing_info="", corpus_stam=""):
             return (klasse, formule, stam)
     return None
 
-def samensmelting_analyse(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
-    """Welke klankwet zie je in déze vorm? → dict met klasse/formule/uitleg, of None.
-    Sleutels: sleutel, klasse, letters, links, rechts, resultaat, formule, uitleg."""
+def samensmeltingen_alle(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
+    """ALLE klankwetten die in deze vorm te zien zijn, op volgorde van voor naar achter in het woord.
+
+    Een vorm kan er meer dan één hebben: bij ἠγαπᾶτε (< ἀγαπάω) is vooraan de beginklinker verlengd
+    als augment (α → η) én trekt achteraan de stamklinker samen met de uitgang (α + ε → ᾱ). Alleen
+    één ervan tonen zou een half verhaal zijn."""
+    uit = []
     if not vorm:
-        return None
+        return uit
     info = parsing_info or ""
+
     if "Werkwoord" not in info:
         # Naamwoorden/bijv. naamwoorden (3e declinatie): nominativus ev en dativus mv botsen met σ.
         nt = _naam_klank_treffer(vorm, grieks_info, info, corpus_stam)
@@ -776,54 +781,71 @@ def samensmelting_analyse(vorm, lemma="", parsing_info="", grieks_info="", corpu
             klasse, letters = _SAMENSMELT_KLASSEN[klasse_s]
             _links = formule.split(" +")[0]
             _hint = _naam3_klankhint(stam).replace(" — ", "")
-            return {"sleutel": klasse_s, "klasse": klasse, "letters": letters, "links": _links,
-                    "rechts": "ς / σι", "resultaat": formule.split("→")[-1].strip(),
-                    "formule": formule, "stam": stam,
-                    "uitleg": (f"3e declinatie: de echte stam is **{stam}-** (zie de genitivus). "
-                               + (_hint[0].upper() + _hint[1:] + "." if _hint else
-                                  f"Op de stamgrens botst **{_links}** met de σ van de uitgang."))}
-        return None
+            uit.append({"sleutel": klasse_s, "klasse": klasse, "letters": letters, "links": _links,
+                        "rechts": "ς / σι", "resultaat": formule.split("→")[-1].strip(),
+                        "formule": formule, "stam": stam, "plek": "stamgrens",
+                        "uitleg": (f"3e declinatie: de echte stam is **{stam}-** (zie de genitivus). "
+                                   + (_hint[0].upper() + _hint[1:] + "." if _hint else
+                                      f"Op de stamgrens botst **{_links}** met de σ van de uitgang."))})
+        return uit
     if not lemma:
-        return None
-    # 1. σ-samensmelting (futurum/aoristus): κ + σ → ξ, π + σ → ψ, dentaal valt weg, vloeiklank.
-    treffer = _sigma_treffer(vorm, lemma, info)
-    if treffer:
-        naam, slot, uit, _regel = treffer
-        klasse, letters = _SAMENSMELT_KLASSEN[naam]
-        if naam == "liquidae":
-            return {"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
-                    "rechts": "σ", "resultaat": "(σ valt weg)", "formule": f"{slot} + σ → σ valt weg",
-                    "uitleg": "Een vloeiklank (λ/μ/ν/ρ) stoot de σ van het futurum af; de stam krijgt "
-                              "een **-ε-** die samentrekt (*ε + ω → ῶ*) — vandaar de circumflexus."}
-        if naam == "dentalen":
-            return {"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
-                    "rechts": "σ", "resultaat": "σ", "formule": f"{slot} + σ → σ",
-                    "uitleg": f"Een dentaal (**{slot}**) valt weg vóór de σ."}
-        return {"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
-                "rechts": "σ", "resultaat": uit, "formule": f"{slot} + σ → {uit}",
-                "uitleg": f"**{slot} + σ** versmelt tot **{uit}**."}
-    # 2. Verbum contractum (praesens/imperfectum): ε + ο → ου enz. (G20).
-    sk, treffers, _los = opb_analyse_contractie(vorm, lemma, info)
-    if sk and treffers:
-        combo = treffers[0]
-        uit = next((u for c, u in G20_CONTRACTA[sk] if c == combo), "")
-        delen = [d.strip() for d in combo.split("+")]
-        if uit and len(delen) == 2:
-            klasse, letters = _SAMENSMELT_KLASSEN["contracta"]
-            return {"sleutel": "contracta", "klasse": klasse, "letters": letters, "links": delen[0],
-                    "rechts": delen[1], "resultaat": uit, "formule": f"{combo} → {uit}",
-                    "uitleg": f"Verbum contractum op **-{sk}**: de stamklinker versmelt met de uitgang "
-                              f"(*{combo} → {uit}*)."}
-    # 3. Temporeel augment: beginklinker verlengd (ἀκούω → ἤκουον).
+        return uit
+
+    # 1. Vooraan: temporeel augment — de beginklinker is verlengd (ἀγαπάω → ἠγάπων).
     aug = _augment_treffer(vorm, lemma, info)
     if aug:
         van, naar = aug
         klasse, letters = _SAMENSMELT_KLASSEN["augment"]
-        return {"sleutel": "augment", "klasse": klasse, "letters": letters, "links": van,
-                "rechts": "ε- (augment)", "resultaat": naar, "formule": f"{van} → {naar}",
-                "uitleg": f"Verleden tijd: de beginklinker **{van}** is verlengd tot **{naar}** "
-                          f"(temporeel augment)."}
-    return None
+        uit.append({"sleutel": "augment", "klasse": klasse, "letters": letters, "links": van,
+                    "rechts": "ε- (augment)", "resultaat": naar, "formule": f"{van} → {naar}",
+                    "plek": "vooraan",
+                    "uitleg": f"Verleden tijd: de beginklinker **{van}** is verlengd tot **{naar}** "
+                              f"(temporeel augment)."})
+
+    # 2. Op de stamgrens: σ-samensmelting (futurum/aoristus).
+    treffer = _sigma_treffer(vorm, lemma, info)
+    if treffer:
+        naam, slot, uitk, _regel = treffer
+        klasse, letters = _SAMENSMELT_KLASSEN[naam]
+        if naam == "liquidae":
+            uit.append({"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
+                        "rechts": "σ", "resultaat": "(σ valt weg)", "formule": f"{slot} + σ → σ valt weg",
+                        "plek": "stamgrens",
+                        "uitleg": "Een vloeiklank (λ/μ/ν/ρ) stoot de σ van het futurum af; de stam krijgt "
+                                  "een **-ε-** die samentrekt (*ε + ω → ῶ*) — vandaar de circumflexus."})
+        elif naam == "dentalen":
+            uit.append({"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
+                        "rechts": "σ", "resultaat": "σ", "formule": f"{slot} + σ → σ", "plek": "stamgrens",
+                        "uitleg": f"Een dentaal (**{slot}**) valt weg vóór de σ."})
+        else:
+            uit.append({"sleutel": naam, "klasse": klasse, "letters": letters, "links": slot,
+                        "rechts": "σ", "resultaat": uitk, "formule": f"{slot} + σ → {uitk}",
+                        "plek": "stamgrens",
+                        "uitleg": f"**{slot} + σ** versmelt tot **{uitk}**."})
+    else:
+        # 3. Of: verbum contractum — stamklinker + uitgang trekken samen (G20).
+        sk, treffers, _los = opb_analyse_contractie(vorm, lemma, info)
+        if sk and treffers:
+            combo = treffers[0]
+            uitk = next((u for c, u in G20_CONTRACTA[sk] if c == combo), "")
+            delen = [d.strip() for d in combo.split("+")]
+            if uitk and len(delen) == 2:
+                klasse, letters = _SAMENSMELT_KLASSEN["contracta"]
+                uit.append({"sleutel": "contracta", "klasse": klasse, "letters": letters,
+                            "links": delen[0], "rechts": delen[1], "resultaat": uitk,
+                            "formule": f"{combo} → {uitk}", "plek": "stamgrens",
+                            "uitleg": f"Verbum contractum op **-{sk}**: de stamklinker versmelt met de "
+                                      f"uitgang (*{combo} → {uitk}*)."})
+    return uit
+
+def samensmelting_analyse(vorm, lemma="", parsing_info="", grieks_info="", corpus_stam=""):
+    """De belangrijkste klankwet van deze vorm (die op de stamgrens gaat vóór het augment), of None.
+    Wil je ze allemaal, gebruik dan samensmeltingen_alle()."""
+    alle = samensmeltingen_alle(vorm, lemma, parsing_info, grieks_info, corpus_stam)
+    if not alle:
+        return None
+    return next((a for a in alle if a.get("plek") == "stamgrens"), alle[0])
+
 
 @st.cache_resource(show_spinner=False)
 def klankwet_index(_bijbel_db, _woord_van_strong):
@@ -847,10 +869,10 @@ def klankwet_index(_bijbel_db, _woord_van_strong):
             if sleutel in gezien:
                 continue
             gezien.add(sleutel)
-            analyse = samensmelting_analyse(vorm, lemma, info,
-                                            grieks_info=str(bron.get('grieks_info', '') or ''),
-                                            corpus_stam=corpus_stam_van(strong, info))
-            if analyse:
+            for analyse in samensmeltingen_alle(vorm, lemma, info,
+                                                grieks_info=str(bron.get('grieks_info', '') or ''),
+                                                corpus_stam=corpus_stam_van(strong, info)):
+                # Eén vorm kan meer dan één klankwet laten zien; elke wet wordt een eigen kaart.
                 uit.setdefault(analyse['sleutel'], []).append((vorm, lemma, info, ref, strong))
     return uit
 
@@ -866,10 +888,9 @@ def samensmeltingen_in_zin(zin, woord_van_strong):
         lemma = str(bron.get('grieks', '') or '')
         if not vorm or not lemma:
             continue
-        a = samensmelting_analyse(vorm, lemma, info,
-                                  grieks_info=str(bron.get('grieks_info', '') or ''),
-                                  corpus_stam=corpus_stam_van(strong, info))
-        if a:
+        for a in samensmeltingen_alle(vorm, lemma, info,
+                                      grieks_info=str(bron.get('grieks_info', '') or ''),
+                                      corpus_stam=corpus_stam_van(strong, info)):
             uit.append((vorm, a['formule'], a['klasse']))
     return uit
 
@@ -9346,6 +9367,16 @@ def main():
                     st.caption("🎯 " + " · ".join(f"{_SAMENSMELT_KLASSEN[_s][0]}: {_n}"
                                                   for _s, _n in sorted(_perklasse.items())))
 
+                    def _klank_van(_v, _l, _i, _st, _sleut):
+                        """(analyse van deze kaart, overige klankwetten in dezelfde vorm)."""
+                        _alles = samensmeltingen_alle(_v, _l, _i,
+                                                      grieks_info=_kginfo.get(_st, ''),
+                                                      corpus_stam=corpus_stam_van(_st, _i))
+                        _deze = next((_a for _a in _alles if _a['sleutel'] == _sleut), None)
+                        if _deze is None:
+                            _deze = _alles[0] if _alles else {}
+                        return _deze, [_a for _a in _alles if _a is not _deze]
+
                     def _klank_nieuw():
                         """Kiest een nieuwe oefenvorm; klanksoorten die je vaker fout doet komen vaker."""
                         _gewicht = []
@@ -9358,7 +9389,7 @@ def main():
                         st.session_state.klank_fb = None
                         st.session_state.klank_geteld = False
                         _sleutel, _vorm, _lem, _info, _ref, _strong = _keuze
-                        _an = samensmelting_analyse(_vorm, _lem, _info) or {}
+                        _an, _an_extra = _klank_van(_vorm, _lem, _info, _strong, _sleutel)
                         # Antwoordopties: de juiste formule + formules van ándere klanksoorten.
                         _alle_form = []
                         for _s2, _rijen2 in _kidx.items():
@@ -9400,7 +9431,7 @@ def main():
                         st.info("Klik op **🎲 Nieuwe vorm** om te beginnen.")
                     else:
                         _sleutel, _vorm, _lem, _info, _ref, _strong = _kh
-                        _an = samensmelting_analyse(_vorm, _lem, _info) or {}
+                        _an, _an_extra = _klank_van(_vorm, _lem, _info, _strong, _sleutel)
                         # Volledige vormaanduiding: tijd + wijs + diathese + persoon/getal (of naamval).
                         _vorm_txt = _info.split(' - ', 1)[1] if ' - ' in _info else _info
                         _is_ww = "Werkwoord" in _info
@@ -9441,6 +9472,8 @@ def main():
                                         + (f" — *{_kbet.get(_strong,'')}*" if _kbet.get(_strong) else ""))
                             if _an.get('uitleg'):
                                 _res.append(f"- 💡 {_an['uitleg']}")
+                            for _ax in _an_extra:
+                                _res.append(f"- ➕ **Ook in deze vorm:** {_ax['formule']} ({_ax['klasse']}) — {_ax['uitleg']}")
                             # Laat expliciet zien hoe de vorm is opgebouwd — welke uitgang er staat en
                             # waar die met de stam samensmelt.
                             _kseg = ontleed_segmenten(_vorm, _lem, _kginfo.get(_strong, ''), _info,
