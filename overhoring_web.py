@@ -7883,7 +7883,7 @@ def main():
                     with open(_ppt_pad, "rb") as _pf:
                         _ppt_bytes = _pf.read()
                     st.markdown("### 📥 Uitgebreide instructie (PowerPoint)")
-                    st.caption("Een complete rondleiding door de app — één dia per tabblad met precies wat je er ziet en wat er gebeurt. Handig als naslag of om te delen.")
+                    st.caption("Een complete rondleiding door de app: wat je per tabblad kunt doen, én — met stroomdiagrammen — hoe de app bepaalt wélk woord je wanneer krijgt (fasen, spaced repetition, worstel-score, opbouw van een sessie). Handig als naslag of om te delen met anderen.")
                     st.download_button(
                         "📥 Download de instructie-PowerPoint",
                         data=_ppt_bytes,
