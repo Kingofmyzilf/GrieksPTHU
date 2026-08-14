@@ -267,6 +267,34 @@ def bouw_poule(g, keuze, lessen):
     return [w for w in alles if (w.get("les") or 99) <= 4] or alles
 
 
+def _hint(w):
+    """Een bruikbare hint: eerste letter van elk woord plus streepjes voor de rest,
+    zodat je de vorm ziet zonder het antwoord te krijgen."""
+    nl = str(w.get("nederlands", "") or "").strip()
+    if not nl:
+        return "geen betekenis bekend"
+    eerste = nl.split(",")[0].split(";")[0].strip()
+    gemaskeerd = " ".join(
+        deel[0] + "·" * (len(deel) - 1) if len(deel) > 1 else deel
+        for deel in eerste.split())
+    extra = f"   ({nl.count(',') + nl.count(';') + 1} betekenissen)" if ("," in nl or ";" in nl) else ""
+    return f"{gemaskeerd}{extra}"
+
+
+def _opbouw_tekst(w, woordenlijst):
+    """Samenstelling tonen als het grondwoord zelf ook in je lijst staat."""
+    ob = gebruikers.woord_opbouw(w.get("grieks", ""), woordenlijst)
+    if ob:
+        grond = next((x for x in woordenlijst if x.get("grieks") == ob["grondwoord"]), None)
+        bet = f" ({grond.get('nederlands', '')[:34]})" if grond else ""
+        return (f"{w.get('grieks','')} = {ob['voorzetsel']} + {ob['grondwoord']}\n"
+                f"{ob['voorzetsel']} betekent '{ob['betekenis']}'{bet}")
+    kl = motor.opb_contracta_stamklinker(w.get("grieks", ""))
+    if kl:
+        return f"Verbum contractum op -{kl}ω: de stamklinker {kl} versmelt met de uitgang."
+    return "Dit woord is niet uit delen opgebouwd die je al kent."
+
+
 class Sessie:
     """Eén ronde kaarten, met oplopende moeilijkheid per woord."""
 
@@ -364,6 +392,7 @@ def oefenpagina():
         woord = ui.label().classes("grieks w-full text-center").style(
             f"font-size:58px;line-height:1.15;color:{TEKST};padding:18px 0 2px")
         lemma = ui.label().classes("w-full text-center").style(f"color:{ZACHT};font-size:14px")
+        statusbalk = ui.row().classes("w-full gap-2 no-wrap justify-center").style("padding-top:2px")
         vraagsoort = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:12px")
         opties = ui.column().classes("w-full gap-2").style("padding-top:8px")
@@ -393,12 +422,11 @@ def oefenpagina():
         if soort == "Uitspraak":
             tekst = motor.fonetisch_uit_translit(k.get("fonetisch", "")) or k.get("fonetisch", "")
         elif soort == "Hint":
-            nl = k.get("nederlands", "")
-            tekst = nl[:2] + "…" if len(nl) > 3 else nl
+            tekst = _hint(k)
         else:
-            seg = motor.ontleed_segmenten(k.get("grieks", ""), grieks_info=k.get("grieks_info", ""))
-            tekst = " + ".join(str(s) for s in seg) if seg else "geen opbouw bekend"
-        ui.notify(tekst, position="top", color="dark")
+            tekst = _opbouw_tekst(k, g.woorden)
+        ui.notify(tekst, position="top", color="dark", multi_line=True,
+                  classes="text-body2").style("max-width:88vw")
 
     async def verwerk(k, juist):
         sessie.beoordeeld = True
@@ -428,6 +456,29 @@ def oefenpagina():
         toon_kaart()
 
     # ---------------- de drie vraagvormen ----------------
+    def teken_status(k):
+        """Zelfde gegevens als de caption in de Streamlit-app: fase, streak,
+        goed/fout, laatst geoefend en hoeveel er nog te gaan zijn."""
+        statusbalk.clear()
+        if k is None:
+            return
+        fase = gebruikers.fase_van(k.get("streak", 0))
+        resterend = len(sessie.kaarten) - sessie.i - 1
+        with statusbalk:
+            for waarde, label, kleur in [
+                (fase, "fase", MERK if fase != "Nieuw" else ZACHT),
+                (int(k.get("streak", 0) or 0), "streak", TEKST),
+                (f"{int(k.get('score_goed', 0) or 0)}/{int(k.get('score_fout', 0) or 0)}",
+                 "goed/fout", TEKST),
+                (k.get("laatst_geoefend") or "nooit", "laatst", ZACHT),
+                (resterend, "te gaan", ZACHT),
+            ]:
+                with ui.column().classes("items-center gap-0").style(
+                        f"flex:1;border:1px solid {RAND};border-radius:8px;padding:5px 2px"):
+                    ui.label(str(waarde)).style(
+                        f"color:{kleur};font-size:13px;font-weight:600;line-height:1.2")
+                    ui.label(label).style(f"color:{ZACHT};font-size:10px")
+
     def toon_kaart():
         for vak in (opties, terugkoppeling, hulp):
             vak.clear()
@@ -436,7 +487,9 @@ def oefenpagina():
         balk.set_visibility(True)
         invoer.set_visibility(True)
 
+        teken_status(k)
         if k is None:
+            statusbalk.clear()
             woord.text = "✓"
             lemma.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             vraagsoort.text = ""

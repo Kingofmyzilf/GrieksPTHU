@@ -397,6 +397,28 @@ _OPB_VOORVOEGSELS = ["προσ", "παρα", "περι", "κατα", "μετα",
 _OPB_TIJD_MET_AUGMENT = ("Imperfectum", "Aoristus", "Plusquamperfectum")
 
 
+_VOORZETSEL_INFO = {
+    "απο": ("ἀπό", "van(af), weg"), "απ": ("ἀπό", "van(af), weg"), "αφ": ("ἀπό", "van(af), weg"),
+    "εκ": ("ἐκ", "uit"), "εξ": ("ἐκ", "uit"),
+    "εισ": ("εἰς", "in, naar"),
+    "εν": ("ἐν", "in"), "εγ": ("ἐν", "in"), "εμ": ("ἐν", "in"),
+    "προσ": ("πρός", "naar…toe, bij"),
+    "προ": ("πρό", "voor(af)"),
+    "παρα": ("παρά", "naast, langs, bij"), "παρ": ("παρά", "naast, langs, bij"),
+    "περι": ("περί", "rondom, over"),
+    "κατα": ("κατά", "neer, tegen, volgens"), "καθ": ("κατά", "neer, tegen, volgens"),
+    "μετα": ("μετά", "met, na"), "μεθ": ("μετά", "met, na"),
+    "ανα": ("ἀνά", "omhoog, opnieuw"),
+    "επι": ("ἐπί", "op, bij, tegen"), "επ": ("ἐπί", "op, bij, tegen"), "εφ": ("ἐπί", "op, bij, tegen"),
+    "υπερ": ("ὑπέρ", "boven, voor"),
+    "υπο": ("ὑπό", "onder"), "υπ": ("ὑπό", "onder"), "υφ": ("ὑπό", "onder"),
+    "δια": ("διά", "door(heen), uiteen"),
+    "συν": ("σύν", "samen, met"), "συγ": ("σύν", "samen, met"), "συμ": ("σύν", "samen, met"),
+    "αντι": ("ἀντί", "tegen(over), in plaats van"),
+    "αμφι": ("ἀμφί", "aan beide kanten"),
+}
+
+
 def _opb_prefix_len(a, b):
     n = 0
     while n < len(a) and n < len(b) and a[n] == b[n]:

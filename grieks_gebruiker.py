@@ -129,6 +129,44 @@ class Gebruiker:
         }
 
 
+def fase_van(streak):
+    """Dezelfde vier fasen als de Streamlit-app."""
+    s = int(streak or 0)
+    if s == 0:
+        return "Nieuw"
+    if s <= 15:
+        return "In training"
+    if s <= 29:
+        return "Beheerst"
+    return "Mastery"
+
+
+def woord_opbouw(lemma, woordenlijst):
+    """Voorzetsel-voorvoegsel + grondwoord, maar alleen als dat grondwoord zélf ook in
+    de lijst staat (bv. εἰσέρχομαι = εἰς + ἔρχομαι). Zo verzint de app geen etymologie.
+
+    Zelfde logica als woord_opbouw() in overhoring_web.py; die kon niet mee naar de
+    motor omdat hij de woordenlijst uit st.session_state haalde. Hier is het een
+    gewone parameter.
+    """
+    lk = motor._opb_kaal(lemma)
+    if len(lk) < 5:
+        return None
+    idx = {}
+    for w in woordenlijst:
+        g = str(w.get("grieks", "") or "")
+        if g:
+            idx.setdefault(motor._opb_kaal(g), g)
+    for p in sorted(motor._VOORZETSEL_INFO, key=len, reverse=True):
+        if not lk.startswith(p) or len(lk) - len(p) < 3:
+            continue
+        grond = idx.get(lk[len(p):])
+        if grond and motor._opb_kaal(grond) != lk:
+            weer, bet = motor._VOORZETSEL_INFO[p]
+            return {"voorzetsel": weer, "betekenis": bet, "grondwoord": grond}
+    return None
+
+
 def inloggen(naam, code):
     """Geeft een geladen Gebruiker, of werpt OpslagFout met een leesbare melding."""
     if not str(naam).strip() or not str(code).strip():
