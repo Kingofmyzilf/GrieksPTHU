@@ -710,7 +710,21 @@ TIJDEN = list(TIJD_KORT)
 
 STAM_OEFENINGEN = ["Zwakste eerst", "Leerpad (per werkwoord)", "Meest voorkomend",
                    "Alleen wat ik fout deed"]
-STAM_STANDAARD = {"stam_keuze": "Zwakste eerst", "stam_aantal": 10, "stam_praesens": True}
+STAM_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen de tijd", "Tijd en werkwoord"]
+STAM_STANDAARD = {"stam_keuze": "Zwakste eerst", "stam_aantal": 10,
+                  "stam_vraagvorm": STAM_VRAAGVORM[0]}
+STAM_TYP_STREAK = 3        # vanaf hier ook het werkwoord laten typen
+
+
+def stam_vraagt_praesens(vraagvorm, streak):
+    """Bij een lage streak eerst alleen de tijd aanwijzen; het werkwoord erbij typen
+    komt pas als de vorm begint te zitten. Zelfde gedachte als leerpad_kaart_volgorde
+    bij de woordenschat."""
+    if vraagvorm == "Alleen de tijd":
+        return False
+    if vraagvorm == "Tijd en werkwoord":
+        return True
+    return int(streak or 0) >= STAM_TYP_STREAK
 
 
 class StamSessie:
@@ -759,6 +773,7 @@ class StamSessie:
         self.fout = 0
         self.beoordeeld = False
         self.tijd_keuze = None
+        self.vraag_praesens = True
 
     @property
     def huidig(self):
@@ -780,14 +795,17 @@ def stampagina():
                              label="Oefening").props("outlined dark").classes("w-full")
         kies_aantal = ui.number("Vormen per ronde", value=int(sessie.prefs["stam_aantal"]),
                                 min=4, max=40, step=1).props("outlined dark").classes("w-full")
-        kies_praesens = ui.switch("Ook het werkwoord laten typen",
-                                  value=bool(sessie.prefs["stam_praesens"]))
-        ui.label("Uit = alleen de tijd aanwijzen. Aan = ook zeggen van welk werkwoord "
-                 "de vorm komt.").style(f"color:{ZACHT};font-size:12px")
+        _hv = sessie.prefs["stam_vraagvorm"]
+        kies_praesens = ui.select(
+            STAM_VRAAGVORM, value=_hv if _hv in STAM_VRAAGVORM else STAM_VRAAGVORM[0],
+            label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
+        ui.label(f"Automatisch: eerst alleen de tijd aanwijzen, en vanaf streak "
+                 f"{STAM_TYP_STREAK} ook het werkwoord erbij typen.").style(
+            f"color:{ZACHT};font-size:12px")
 
         async def bewaar_inst():
             for sleutel, veld in [("stam_keuze", kies_oef), ("stam_aantal", kies_aantal),
-                                  ("stam_praesens", kies_praesens)]:
+                                  ("stam_vraagvorm", kies_praesens)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -854,6 +872,9 @@ def stampagina():
             return
         sessie.tijd_keuze = t
         teken_tijden()
+        # Meteen door naar het typveld: anders moet je daar nog een keer op tikken.
+        if sessie.vraag_praesens:
+            invoer.run_method("focus")
 
     def toon():
         terugkoppeling.clear()
@@ -863,7 +884,9 @@ def stampagina():
         v = sessie.huidig
         for vak in (tijdknoppen, statusbalk, vormlabel, vraagsoort):
             vak.set_visibility(True)
-        invoer.set_visibility(bool(sessie.prefs["stam_praesens"]))
+        sessie.vraag_praesens = bool(v) and stam_vraagt_praesens(
+            sessie.prefs["stam_vraagvorm"], v["streak"])
+        invoer.set_visibility(sessie.vraag_praesens)
         if v is None:
             vormlabel.text = "✓"
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
@@ -875,7 +898,7 @@ def stampagina():
             return
         vormlabel.text = v["vorm"]
         vraagsoort.text = ("Welke tijd is dit, en van welk werkwoord?"
-                           if sessie.prefs["stam_praesens"] else "Welke tijd is dit?")
+                           if sessie.vraag_praesens else "Welke tijd is dit?")
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken"
         invoer.value = ""
@@ -903,7 +926,7 @@ def stampagina():
             ui.notify("Kies eerst een tijd.", position="top", color="dark")
             return
         tijd_ok = sessie.tijd_keuze == v["tijd"]
-        pr_ok = (not sessie.prefs["stam_praesens"]
+        pr_ok = (not sessie.vraag_praesens
                  or bool(motor.grieks_vorm_ok(invoer.value or "", v["praesens"])))
         juist = tijd_ok and pr_ok
         sessie.beoordeeld = True
