@@ -298,6 +298,39 @@ def _hint(w):
     return f"{gemaskeerd}{extra}"
 
 
+def _leerkaart(w, woordenlijst):
+    """Wat je bij een nieuw woord meteen wilt zien: hoe het klinkt, waar het vandaan
+    komt en wat het betekent. Zelfde inhoud als de leerkaart in de Streamlit-app."""
+    delen = []
+    ob = gebruikers.woord_opbouw(w.get("grieks", ""), woordenlijst)
+    if ob:
+        delen.append(
+            f"<div style='color:{ZACHT};font-size:13.5px;margin-bottom:10px'>"
+            f"🔗 {ob['voorzetsel']} <i>({ob['betekenis']})</i> + {ob['grondwoord']}"
+            f" → {w.get('grieks','')}</div>")
+
+    fonetisch = str(w.get("fonetisch", "") or "").strip()
+    # 'anker' is de emoji, 'beeld' de omschrijving die erbij hoort — niet andersom.
+    emoji = str(w.get("anker", "") or "").strip()
+    beeld = str(w.get("beeld", "") or "").strip()
+    if fonetisch or beeld:
+        binnen = ""
+        if fonetisch:
+            binnen += (f"<div style='color:{MERK};font-size:17px;font-weight:600'>"
+                       f"🔊 {fonetisch}</div>")
+        if beeld:
+            binnen += (f"<div style='color:{ZACHT};font-size:13.5px;line-height:1.5;"
+                       f"margin-top:8px'>{emoji + ' ' if emoji else '💡 '}{beeld}</div>")
+        delen.append(f"<div style='background:rgba(51,204,255,.09);"
+                     f"border:1px solid {MERK}40;border-radius:12px;padding:12px 14px;"
+                     f"margin-bottom:10px'>{binnen}</div>")
+
+    delen.append(f"<div style='color:{ZACHT};font-size:12px'>betekenis</div>"
+                 f"<div style='color:{TEKST};font-size:20px;line-height:1.35'>"
+                 f"{w.get('nederlands','')}</div>")
+    return f"<div style='width:100%;text-align:center'>{''.join(delen)}</div>"
+
+
 def _feedbackblok(w, juist, sessie, woordenlijst):
     """Hetzelfde als de groene/rode balk in de Streamlit-app: het woord, de
     woordenboekvorm mét uitgangen, de uitspraak en de volledige betekenis."""
@@ -566,8 +599,7 @@ def oefenpagina():
         if vorm == "1":                                    # flashcard: eerst zien
             vraagsoort.text = "Nieuw woord — bekijk het even"
             with opties:
-                ui.label(k.get("nederlands", "")).style(
-                    f"color:{TEKST};font-size:19px;text-align:center;padding:6px 0")
+                ui.html(_leerkaart(k, g.woorden))
             invoer.set_visibility(False)
             knop.text = "Ik heb het bekeken"
             return
