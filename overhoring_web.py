@@ -45,10 +45,18 @@ except Exception as e:
 
 st.markdown("""
     <style>
+    /* Polytonisch Grieks tekstfont: in het UI-font lopen spiritus, accent en iota subscriptum
+       dicht en gloeien ze uit op donker. Gentium is hier voor gemaakt. */
+    @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap');
     .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
     .stTextInput>div>div>input { font-size: 20px; text-align: center; }
-    .grieks-woord { font-size: 50px; font-weight: bold; color: #33ccff; text-align: center; padding: 20px; }
-    .grieks-zin { font-size: 28px; line-height: 1.8; color: #ffffff; padding: 20px; background-color: #1e1e1e; border-radius: 10px; }
+    .grieks-woord { font-family: 'Gentium Book Plus', 'Palatino Linotype', Georgia, serif;
+                    font-size: 58px; font-weight: 400; color: #fafafa; text-align: center; padding: 16px 20px; }
+    .grieks-mid { font-family: 'Gentium Book Plus', 'Palatino Linotype', Georgia, serif;
+                  font-weight: 400; color: #fafafa; }
+    .grieks-zin { font-family: 'Gentium Book Plus', 'Palatino Linotype', Georgia, serif;
+                  font-size: 32px; line-height: 1.7; color: #ffffff; padding: 20px;
+                  background-color: #1e1e1e; border-radius: 10px; }
     .woord-bekend { color: #00ffff; font-weight: bold; border-bottom: 2px solid #00ffff; padding: 0 4px; }
     .woord-stamtijd { color: #d63384; font-weight: bold; border-bottom: 2px solid #d63384; padding: 0 4px; }
     .woord-onbekend { color: #aaaaaa; padding: 0 2px; }
@@ -142,9 +150,12 @@ def audio_knop(fonetisch, key=""):
               .replace("\n", " ").replace("\r", " "))
     components.html(
         f"""
+        <style>html,body{{margin:0;padding:0;overflow:hidden}}</style>
         <button id="_btn_{key}" onclick="_spreek_{key}()" style="
-            background:#0e5a8a; color:#fff; border:none; border-radius:6px;
-            padding:6px 14px; font-size:15px; cursor:pointer; margin-top:4px;">
+            width:100%; height:3em; background:transparent; color:#fafafa;
+            border:1px solid rgba(250,250,250,.25); border-radius:10px;
+            font-size:16px; font-weight:700; cursor:pointer;
+            font-family:'Source Sans Pro','Source Sans 3',system-ui,sans-serif;">
             🔊 Uitspraak
         </button>
         <script>
@@ -177,7 +188,7 @@ def audio_knop(fonetisch, key=""):
             }} catch (e) {{ console.log("TTS niet beschikbaar:", e); }}
         }}
         </script>
-        """, height=44
+        """, height=50
     )
 
 def fonetisch_uit_translit(tekst):
@@ -374,7 +385,16 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
     return True
 
 # --- ONTLEED-TRAINER: helpers ---
-_ONTLEED_KLEUR = {"Nom": "#33ccff", "Gen": "#28a745", "Dat": "#6f42c1", "Acc": "#dc3545", "Voc": "#fd7e14"}
+# Eén reeks met gelijke helderheid. Bewust weg van rood en groen (die betekenen in deze app
+# al "fout" en "goed") en weg van de merkkleur #33ccff (die betekent "actief/voortgang").
+_ONTLEED_KLEUR = {"Nom": "#7FB3FF", "Gen": "#E8B44A", "Dat": "#B694FF", "Acc": "#FF8FB1", "Voc": "#5ED3C0"}
+
+
+def naamval_legenda(kop="Kleurlegenda"):
+    """Eén legenda voor alle plekken, opgebouwd uit _ONTLEED_KLEUR zodat kleur en legenda
+    niet uit elkaar kunnen lopen."""
+    _sp = " · ".join(f"<span style='color:{_k}'>{_n}</span>" for _n, _k in _ONTLEED_KLEUR.items())
+    return f"<div style='font-size:14px; margin-bottom:4px; opacity:.9'>{kop}: {_sp}</div>"
 _ONTLEED_GES = {"M": "mannelijk", "V": "vrouwelijk", "O": "onzijdig"}
 _ONTLEED_STEUN = {
     # Naamvallen — functie + vertaling (uit 'functies van naamvallen')
@@ -1544,7 +1564,7 @@ def toon_rijtje_hulp(parsing_info, lemma="", grieks_info="", sleutel="", uitgekl
         # van het vórige woord vast en wordt de juiste standaardtabel (index=) genegeerd — daardoor
         # kreeg bv. een werkwoord de naamwoordentabel van het vorige woord te zien.
         _wsig = re.sub(r'\W', '', (str(parsing_info)[:50] + str(lemma)))[:48]
-        keuze = st.selectbox("Tabel:", alle, index=alle.index(tips[0]), key=f"rijtje_tab_{sleutel}_{_wsig}")
+        keuze = st.selectbox("Tabel", alle, index=alle.index(tips[0]), key=f"rijtje_tab_{sleutel}_{_wsig}")
         ktarget = _noun_g6_target(grieks_info) if keuze == "G6 Naamwoorden" else None
         mrow, mcol = _ontleed_doelcel(parsing_info)
         st.caption("De uitgangen zijn oranje; jouw vorm heeft een ▶ en een gouden kader."
@@ -2423,11 +2443,8 @@ def zoek_context_zin(strong_nr, woordsoort, bijbel_db, anti_spiek=False, specifi
             p_info = zw.get('parsing_info', '')
             kleur_stijl = ""
             if kleur_aan:
-                if "Nom" in p_info: kleur_stijl += "color: #33ccff;"
-                elif "Gen" in p_info: kleur_stijl += "color: #28a745;"
-                elif "Dat" in p_info: kleur_stijl += "color: #6f42c1;"
-                elif "Acc" in p_info: kleur_stijl += "color: #dc3545;"
-                elif "Voc" in p_info: kleur_stijl += "color: #fd7e14;"
+                _nvk = next((_c for _c in _ONTLEED_KLEUR if _c in p_info), None)
+                if _nvk: kleur_stijl += f"color: {_ONTLEED_KLEUR[_nvk]};"
                 elif not anti_spiek and ("Voegwoord" in p_info or "Conjunction" in p_info):
                     kleur_stijl += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
                 else: kleur_stijl += "color: #888888;"
@@ -4399,6 +4416,29 @@ def laad_volgend_struct_woord():
 # ==========================================
 # MAIN APP FUNCTIE
 # ==========================================
+def _herstel_backup_formulier():
+    """Backup terugzetten. Staat zowel op het inlogscherm als in de zijbalk; terugzetten kan
+    pas als je ingelogd bent, want de scores worden op je eigen woordenlijst gezet."""
+    if st.session_state.data is None:
+        st.caption("Log eerst in met de naam en code waar je backup bij hoort. "
+                   "Daarna kun je hem hier terugzetten.")
+        return
+    backup_input = st.text_area("JSON Backup", label_visibility="collapsed")
+    if st.button("Herstel"):
+        if backup_input:
+            try:
+                schoon_input = backup_input.strip().replace('“', '"').replace('”', '"').replace("'", '"')
+                nieuwe_data = json.loads(schoon_input)
+                for w in st.session_state.data:
+                    if w['grieks'] in nieuwe_data:
+                        b = nieuwe_data[w['grieks']]
+                        w['streak'] = b.get('streak', 0); w['score_goed'] = b.get('g', 0)
+                        w['score_fout'] = b.get('f', 0); w['laatst_geoefend'] = b.get('laatst_geoefend', "")
+                trigger_save()
+                st.success("Succesvol hersteld!")
+            except Exception as e: st.error(f"Fout: {e}")
+
+
 def main():
     if "u" in st.query_params:
         auto_user = st.query_params["u"]
@@ -4406,17 +4446,24 @@ def main():
             st.session_state.last_user = auto_user
             st.session_state.data = laad_gebruiker_data(auto_user)
 
-    with st.sidebar:
-        if st.session_state.data is None:
+    if st.session_state.data is None:
+        # Inloggen staat in de hoofdkolom, niet in de zijbalk: op een telefoon is de zijbalk
+        # ingeklapt, en dan is het eerste wat de app laat zien een leeg scherm.
+        _mid = st.columns([1, 2, 1])[1]
+        with _mid:
             if st.session_state.get('laad_fout'):
                 st.error("⚠️ Kon je gegevens nu even niet laden (mogelijk te druk of geen verbinding). "
                          "Je voortgang is **niet** gewijzigd — wacht een halve minuut en log opnieuw in.")
-            st.header("👤 Inloggen")
-            st.caption("ℹ️ Kies een unieke naam en code (bijv. 'zomer2026').")
-            col_u, col_p = st.columns(2)
-            with col_u: u_naam = st.text_input("Naam", key="inp_naam").strip()
-            with col_p: u_code = st.text_input("Code", type="password", key="inp_code").strip()
-            
+            st.markdown(
+                "<div style='text-align:center; padding:18px 0 2px;'>"
+                "<div class='grieks-woord' style='padding:0; font-size:64px; line-height:1.1;'>λόγος</div>"
+                "<div style='font-size:22px; font-weight:600; margin-top:10px;'>Grieks</div>"
+                "<div style='font-size:14px; color:#9aa4ae; margin-top:2px;'>"
+                "Nieuwtestamentisch Grieks · PThU</div></div>",
+                unsafe_allow_html=True)
+            st.write("")
+            u_naam = st.text_input("Naam", key="inp_naam").strip()
+            u_code = st.text_input("Code", type="password", key="inp_code").strip()
             if st.button("Inloggen", type="primary"):
                 if u_naam and u_code:
                     user_input = f"{u_naam}_{u_code}"
@@ -4425,28 +4472,20 @@ def main():
                     st.session_state.last_user = user_input
                     st.rerun()
                 else: st.warning("Vul beide velden in.")
-        else:
+            st.caption("Kies zelf een naam en code. Daar hangt je voortgang aan — bewaar ze goed.")
+            with st.expander("Backup herstellen"):
+                _herstel_backup_formulier()
+    else:
+        with st.sidebar:
             st.success(f"👋 Welkom, {st.session_state.last_user.split('_')[0]}!")
-            if st.button("🚪 Uitloggen"): 
+            if st.button("🚪 Uitloggen"):
                 trigger_save(forceer=True); st.session_state.data = None; st.session_state.last_user = None
                 if "u" in st.query_params: del st.query_params["u"]
                 st.rerun()
-            
+
             st.write("---")
-            with st.expander("⚙️ Backup Herstellen"):
-                backup_input = st.text_area("JSON Backup", label_visibility="collapsed")
-                if st.button("Herstel"):
-                    if backup_input:
-                        try:
-                            schoon_input = backup_input.strip().replace('“', '"').replace('”', '"').replace("'", '"')
-                            nieuwe_data = json.loads(schoon_input)
-                            for w in st.session_state.data:
-                                if w['grieks'] in nieuwe_data:
-                                    b = nieuwe_data[w['grieks']]
-                                    w['streak'] = b.get('streak', 0); w['score_goed'] = b.get('g', 0); w['score_fout'] = b.get('f', 0); w['laatst_geoefend'] = b.get('laatst_geoefend', "")
-                            trigger_save()
-                            st.success("Succesvol hersteld!")
-                        except Exception as e: st.error(f"Fout: {e}")
+            with st.expander("Backup herstellen"):
+                _herstel_backup_formulier()
 
     if st.session_state.data:
         if st.session_state.get('_opslag_mislukt'):
@@ -4474,7 +4513,9 @@ def main():
         # Eenvoud-modus: standaard alleen de basis-opties; aan te zetten in ℹ️ Uitleg & Hulp.
         _geav = bool(st.session_state.get('ui_geavanceerd',
                      (st.session_state.get('ui_prefs') or {}).get('geavanceerd', False)))
-        if not _geav:
+        if not _geav and nieuwe_gebruiker():
+            # Alleen zolang je nog niets geoefend hebt. Daarna weet je waar de schakelaar zit en
+            # kost deze regel elk bezoek een blok bovenaan het scherm.
             st.info("🧭 Je zit in de **eenvoudige modus** — alleen het belangrijkste is zichtbaar. Zet *‘Geavanceerde opties tonen’* aan in het **ℹ️ Uitleg & Hulp**-tabblad voor alle mogelijkheden.")
 
        # ==========================================
@@ -4499,7 +4540,7 @@ def main():
                 _alle_keuze = ["Lessen", "🎮 Leerpad (levels)", "Mastery", "Knelpunten (Gericht Oefenen)", "Lang niet gedaan (Geheugen-onderhoud)", "Gelijkende woorden (look-alikes)", "Mijn verwarwoorden"]
                 _keuze_opts = _alle_keuze if _geav else ["🎮 Leerpad (levels)", "Mijn verwarwoorden"]
                 _keuze_idx = _keuze_opts.index(_prefs['keuze']) if _prefs.get('keuze') in _keuze_opts else 0
-                keuze = st.selectbox("Oefening:", _keuze_opts, index=_keuze_idx)
+                keuze = st.selectbox("Oefening", _keuze_opts, index=_keuze_idx)
                 doel = []
                 gekozen = list(_prefs.get('lessen') or [])
                 lp_herhaal_aantal = 0  # aantal 'oude woorden' dat het Leerpad meeneemt (0 = uit)
@@ -4574,7 +4615,7 @@ def main():
                         _huidig = next((l for l in _levels if l['ontgrendeld'] and not l['voltooid']), _ontgrendeld[-1])
                         _labels = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgrendeld]
                         _def_idx = _ontgrendeld.index(_huidig) if _huidig in _ontgrendeld else 0
-                        _sel = st.selectbox("Kies een ontgrendeld level:", _labels, index=_def_idx)
+                        _sel = st.selectbox("Kies een ontgrendeld level", _labels, index=_def_idx)
                         _gekozen_level = _ontgrendeld[_labels.index(_sel)]
                         doel = list(_gekozen_level['woorden'])
                         _volgend_slot = next((l for l in _levels if not l['ontgrendeld']), None)
@@ -4621,12 +4662,12 @@ def main():
                         optie_audio = st.checkbox("🔊 Uitspraak-knop tonen", key="optie_audio", value=_prefs.get('optie_audio', True), help="Toont een knop die het woord voorleest volgens de Erasmiaanse uitspraak (via de fonetische spelling).")
                         optie_opbouw = st.checkbox("🔗 Toon woordopbouw (samenstellingen)", key="optie_opbouw_vocab", value=_prefs.get('optie_opbouw_vocab', False), help="Toont bij samengestelde woorden het voorzetsel + het grondwoord dat je al kent, bv. εἰσέρχομαι = εἰς + ἔρχομαι. Zo zie je de verbanden sneller.")
                         st.write("")
-                        modus = st.radio("Oefenvorm:", _modus_opts, key="vocab_oefenvorm",
+                        modus = st.radio("Oefenvorm", _modus_opts, key="vocab_oefenvorm",
                                          index=_modus_opts.index(modus),
                                          help="Automatisch = de app kiest per woord: een nieuw woord eerst als flashcard, daarna meerkeuze, en typen zodra je het kent. Kies je zelf een vorm, dan krijgt elk woord die vorm.")
                     _stijl_opts = ["🤖 Aanbevolen Mix", "🎛️ Zelf Samenstellen"]
                     _stijl_idx = _stijl_opts.index(_prefs['oefen_stijl']) if _prefs.get('oefen_stijl') in _stijl_opts else 0
-                    oefen_stijl = st.radio("Sessie opbouw:", _stijl_opts, index=_stijl_idx)
+                    oefen_stijl = st.radio("Sessie opbouw", _stijl_opts, index=_stijl_idx)
                 else:
                     # eenvoudige modus: nette standaardwaarden, opties niet tonen
                     optie_context = _prefs.get('optie_context', False)
@@ -4687,7 +4728,7 @@ def main():
                     
                     custom_counts = {'nieuw': val_n, 'incubatie': val_i, 'training': val_t, 'beheerst': val_b, 'mastery': val_m}
                 
-                if st.button("Start Sessie", type="primary"):
+                if st.button("Start sessie", type="primary"):
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         # Vangnet: punten van een eventueel afgebroken vorige sessie alsnog boeken
@@ -5010,7 +5051,7 @@ def main():
                         if zin_data: 
                             st.markdown(zin_data["html"], unsafe_allow_html=True)
                             if st.session_state.get('optie_kleur_nv_vocab', True):
-                                st.markdown("<div style='font-size:14px; margin-bottom:4px;'><b>Legenda:</b> <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span></div>", unsafe_allow_html=True)
+                                st.markdown(naamval_legenda(), unsafe_allow_html=True)
                             st.markdown(f"<div class='grieks-woord' style='font-size: 42px; padding: 10px; margin-top: -10px;'>{huidige_vorm}</div>", unsafe_allow_html=True)
                         else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
                     else: st.markdown(f"<div class='grieks-woord'>{huidige_vorm}</div>", unsafe_allow_html=True)
@@ -5035,7 +5076,7 @@ def main():
                         st.info(f"Het juiste antwoord is: **{correct_antw}**")
                         forceer_focus()
                         with st.form(key=f"form_overtik_{item.get('grieks')}", clear_on_submit=True):
-                            inp = st.text_input("Typ over:").lower().strip()
+                            inp = st.text_input("Typ over").lower().strip()
                             if st.form_submit_button("Bevestig"):
                                 registreer_oefening(item)
                                 if check_betekenis(inp, correct_antw):
@@ -5055,7 +5096,7 @@ def main():
                             st.info(actuele_hint)
                         forceer_focus()
                         with st.form(key=f"form_vocab_{item.get('grieks')}", clear_on_submit=True):
-                            inp = st.text_input("Vertaling:").lower().strip()
+                            inp = st.text_input("Vertaling").lower().strip()
                             # De vorm-vraag (naamval/getal/geslacht) alleen stellen als het écht een
                             # naamwoord-vorm is. Heeft de parsing tijd/persoon/wijs (werkwoordvormen),
                             # dan is die vraag met alleen naamval/getal/geslacht onbeantwoordbaar → sla 'm
@@ -5358,7 +5399,7 @@ def main():
                                 st.markdown(f"**{_g}** ({_d.get('nederlands','')}) — jij gaf: *{_d.get('antwoord','')}*")
                                 for _cg, _cn in _d.get('kandidaten', {}).items():
                                     st.checkbox(f"↔️ ik verwarde het met **{_cg}** ({_cn})", key=f"vc_{_g}__{_cg}")
-                            _bevestig = st.form_submit_button("✅ Toevoegen aan Mijn verwarwoorden", type="primary")
+                            _bevestig = st.form_submit_button("✅ Toevoegen aan mijn verwarwoorden", type="primary")
                         if _bevestig:
                             _toegevoegd = 0
                             for _g, _d in _te_bevestigen.items():
@@ -5412,7 +5453,7 @@ def main():
 
             elif weergave == "Vocabulaire" and st.session_state.data:
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
-                les_filter = st.selectbox("Bekijk les:", alle_lessen)
+                les_filter = st.selectbox("Bekijk les", alle_lessen)
                 df_vocab = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
                 if not df_vocab.empty: st.dataframe(df_vocab[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort', 'lexeem_info'] if c in df_vocab.columns]], width='stretch')
             elif weergave == "Actief Beheersen (Rijtjes)": st.info("De scores voor actieve rijtjes worden per specifieke cel bijgehouden in je profiel.")
@@ -5723,7 +5764,7 @@ def main():
                 with fc_c1:
                     st.write("**1. Kies je tentamengroep:**")
                     sim_doel_groep = st.selectbox(
-                        "Onderdeel:", 
+                        "Onderdeel", 
                         ["Tentamen Grieks 1 (Les 1–6)", "Tentamen Grieks 2 (Les 7–12)", "Tentamen Grieks 3 (Les 13–14)"], 
                         label_visibility="collapsed"
                     )
@@ -5766,7 +5807,7 @@ def main():
                     sim_doel_streak = st.slider("Gewenste Kennis-diepte (Streak):", min_value=2, max_value=30, value=16, help="16 = Beheerst (Standaard PThU norm). 8 = Voldoende om passief te herkennen in een tekst. 30 = Vloeiende Mastery.")
                     if _recent_pace:
                         st.caption(f"⚡ Je tempo van de afgelopen 2 weken: **~{_recent_pace} items/dag** (de schuif staat daarop; pas gerust aan).")
-                    sim_dag_vocab = st.number_input("Woorden oefenen per dag:", min_value=5, max_value=1000,
+                    sim_dag_vocab = st.number_input("Woorden oefenen per dag", min_value=5, max_value=1000,
                                                     value=int(_pace_default), step=5,
                                                     help="Typ een getal of gebruik +/−. Je mag ruim boven de 100.")
                     sim_acc_override = st.slider(f"Verwachte Accuratesse (Jouw praktijk is ~{echte_hist_acc}%):", min_value=50, max_value=100, value=echte_hist_acc, step=1)
@@ -5858,7 +5899,7 @@ def main():
                 if _lp_schuld <= 0:
                     st.success(f"🎉 Alle woorden in deze selectie hebben al streak ≥ {LEERPAD_DREMPEL} — je leerpad is hier klaar!")
                 else:
-                    _woorden_ronde = st.number_input("Woorden per Leerpad-ronde:", min_value=1, max_value=60,
+                    _woorden_ronde = st.number_input("Woorden per Leerpad-ronde", min_value=1, max_value=60,
                                                      value=12, step=1, key="lp_woorden_ronde",
                                                      help=f"Eén automatische ronde ≈ dit aantal woorden. Een level is {LEERPAD_CHUNK} "
                                                           "nieuwe woorden, maar met 'oude stof meenemen' erbij zijn het er vaak meer.")
@@ -6179,11 +6220,11 @@ def main():
 
                 with st.expander("📂 Kies niveau · categorie · paradigma", expanded=False):
                     niveaus = list(actief_db.keys())
-                    gekozen_niv = st.selectbox("Niveau / Boek:", niveaus)
+                    gekozen_niv = st.selectbox("Niveau / Boek", niveaus)
                     categorieen = list(actief_db[gekozen_niv].keys())
-                    gekozen_cat = st.selectbox("Categorie:", categorieen)
+                    gekozen_cat = st.selectbox("Categorie", categorieen)
                     subcats = list(actief_db[gekozen_niv][gekozen_cat].keys())
-                    gekozen_sub = st.selectbox("Paradigma:", subcats)
+                    gekozen_sub = st.selectbox("Paradigma", subcats)
 
                 huidig_paradigma = actief_db[gekozen_niv][gekozen_cat][gekozen_sub]
                 st.write("---")
@@ -6280,7 +6321,7 @@ def main():
                             st.rerun()
                     else:
                         st.success("🏆 Geweldig! Je hebt het volledige paradigma foutloos gereproduceerd!")
-                        if st.button("Reset Rooster"):
+                        if st.button("Reset rooster"):
                             st.session_state.tent_state = {item["id"]: {"correct": False, "value": ""} for item in huidig_paradigma}; st.rerun()
 
                 elif "3." in actief_modus:
@@ -6302,7 +6343,7 @@ def main():
                     st.info(f"Vertaal naar het Grieks: **{gekozen_cat} - {huidig_fc['label']}**")
 
                     with st.form("fc_form", clear_on_submit=True):
-                        fc_in = st.text_input("Griekse vorm:")
+                        fc_in = st.text_input("Griekse vorm")
                         if st.form_submit_button("✓ Nakijken"):
                             verwacht = normaliseer_accent(huidig_fc["vorm"])
                             ingevuld = normaliseer_accent(naar_grieks_transliteratie(fc_in))
@@ -6494,7 +6535,7 @@ def main():
                             else:  # Typen
                                 forceer_focus()
                                 with st.form(f"aft_{cid}", clear_on_submit=True):
-                                    _in = st.text_input("Typ de vorm (Latijnse toetsen mag):")
+                                    _in = st.text_input("Typ de vorm (Latijnse toetsen mag)")
                                     if st.form_submit_button("✓ Nakijken", type="primary"):
                                         if grieks_vorm_ok(_in, cell['vorm']):
                                             _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
@@ -6542,10 +6583,10 @@ def main():
                 if "Werkwoordpaspoort" in stam_modus:
                     st.markdown("### 📖 Morfologisch Paspoort")
                     alle_lessen_p = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
-                    pas_les = st.selectbox("Selecteer uit les:", alle_lessen_p)
+                    pas_les = st.selectbox("Selecteer uit les", alle_lessen_p)
                     
                     ww_in_les = [w for w in stamtijden_db if w.get('les') == pas_les]
-                    gekozen_pas_ww = st.selectbox("Kies het werkwoord:", [w['praesens'] for w in ww_in_les])
+                    gekozen_pas_ww = st.selectbox("Kies het werkwoord", [w['praesens'] for w in ww_in_les])
                     
                     for w in ww_in_les:
                         if w['praesens'] == gekozen_pas_ww:
@@ -6600,13 +6641,13 @@ def main():
                     fc1, fc2 = st.columns([1, 2])
                     with fc1:
                         alle_lessen_fc = sorted(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0))
-                        gekozen_fc = st.multiselect("Kies les(sen):", alle_lessen_fc, default=alle_lessen_fc[:1], key="fc_lessen")
-                        fc_focus = st.radio("Welke werkwoorden:", ["Alle", "🔥 Alleen onregelmatige (suppletie)"], key="fc_focus")
+                        gekozen_fc = st.multiselect("Kies les(sen)", alle_lessen_fc, default=alle_lessen_fc[:1], key="fc_lessen")
+                        fc_focus = st.radio("Welke werkwoorden", ["Alle", "🔥 Alleen onregelmatige (suppletie)"], key="fc_focus")
                         pool_fc = [w for w in stamtijden_db if w.get('les', 0) in gekozen_fc]
                         if "onregelmatige" in fc_focus:
                             pool_fc = [w for w in pool_fc if w.get('morfologie', {}).get('memoriseren_vereist')]
 
-                        groep = st.radio("Leer stap voor stap:",
+                        groep = st.radio("Leer stap voor stap",
                                          ["🔤 Per werkwoord (mét overzicht)", "⏳ Per tijd", "🔀 Alles door elkaar"],
                                          key="fc_group",
                                          help="Per werkwoord: eerst het hele rijtje van één werkwoord bekijken, daarna oefenen. Per tijd: alleen één tijd (bv. aoristus) over alle gekozen werkwoorden. Alles: alle vormen gehusseld.")
@@ -6620,12 +6661,12 @@ def main():
                         if groep.startswith("🔤"):
                             if pool_fc:
                                 _labels_ww = [f"{w['praesens']} — {w['betekenis']}" for w in pool_fc]
-                                _sel_ww = st.selectbox("Kies werkwoord:", _labels_ww, key="fc_ww")
+                                _sel_ww = st.selectbox("Kies werkwoord", _labels_ww, key="fc_ww")
                                 gekozen_ww = pool_fc[_labels_ww.index(_sel_ww)]
                             reeks = (["Praesens"] if fc_incl_prae else []) + _tijden_fc
                             items_fc = [k for k in (_maak_kaart(gekozen_ww, t) for t in reeks) if k] if gekozen_ww else []
                         elif groep.startswith("⏳"):
-                            gekozen_tijd = st.selectbox("Kies tijd/diathese:", _tijden_fc, key="fc_tijd")
+                            gekozen_tijd = st.selectbox("Kies tijd/diathese", _tijden_fc, key="fc_tijd")
                             items_fc = [k for k in (_maak_kaart(w, gekozen_tijd) for w in pool_fc) if k]
                         else:
                             reeks = (["Praesens"] if fc_incl_prae else []) + _tijden_fc
@@ -6743,12 +6784,12 @@ def main():
                     with kc1:
                         # Bronfilter: alle werkwoorden, of alleen de onregelmatige 'hall of pain'
                         focus = st.radio(
-                            "Oefenselectie:",
+                            "Oefenselectie",
                             ["📚 Uit geselecteerde lessen", "🔥 Alleen onregelmatige (suppletie)", "🌍 Alle werkwoorden"],
                             key="kh_focus"
                         )
                         antwoordvorm = st.radio(
-                            "Antwoordvorm:",
+                            "Antwoordvorm",
                             ["🔢 Meerkeuze (herkennen)", "⌨️ Typen (reproduceren)"],
                             key="kh_antwoordvorm"
                         )
@@ -6756,7 +6797,7 @@ def main():
                         kh_pool = []
                         if focus == "📚 Uit geselecteerde lessen":
                             alle_lessen_kh = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
-                            gekozen_kh_lessen = st.multiselect("Kies les(sen):", alle_lessen_kh, default=alle_lessen_kh[:2] if alle_lessen_kh else [], key="kh_lessen")
+                            gekozen_kh_lessen = st.multiselect("Kies les(sen)", alle_lessen_kh, default=alle_lessen_kh[:2] if alle_lessen_kh else [], key="kh_lessen")
                             kh_pool = [w for w in stamtijden_db if w.get('les', 0) in gekozen_kh_lessen]
                         elif focus == "🔥 Alleen onregelmatige (suppletie)":
                             kh_pool = [w for w in stamtijden_db if w.get('morfologie', {}).get('memoriseren_vereist')]
@@ -6857,11 +6898,11 @@ def main():
                             # ---- TYPEN ----
                             else:
                                 with st.form("kh_typ_form"):
-                                    in_prae = st.text_input("1. Praesens (lemma) — Latijnse toetsen mag:", key="kh_in_prae")
-                                    in_bet = st.text_input("2. Betekenis:", key="kh_in_bet")
+                                    in_prae = st.text_input("1. Praesens (lemma) — Latijnse toetsen mag", key="kh_in_prae")
+                                    in_bet = st.text_input("2. Betekenis", key="kh_in_bet")
                                     afleiders_t = [t for t in alle_tijden if t != correct_tijd]
                                     opties_tijd = sorted(set([correct_tijd] + r_engine.sample(afleiders_t, min(3, len(afleiders_t)))))
-                                    in_tijd = st.selectbox("3. Tijd:", [""] + opties_tijd)
+                                    in_tijd = st.selectbox("3. Tijd", [""] + opties_tijd)
                                     if st.form_submit_button("✓ Nakijken", type="primary"):
                                         registreer_oefening()
                                         ok_prae = normaliseer_accent(naar_grieks_transliteratie(in_prae)) == normaliseer_accent(correct_prae)
@@ -6897,7 +6938,7 @@ def main():
                         if "Leerpad" in stam_modus:
                             bron_keuze = "🎮 Leerpad (levels)"
                         else:
-                            bron_keuze = st.selectbox("Oefening:", ["📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"])
+                            bron_keuze = st.selectbox("Oefening", ["📚 Uit geselecteerde lessen", "📖 Uit een Bijbeltekst"])
                         gekozen_stam_lessen = []; gefilterde_ww_pool = []
                         is_stam_leerpad = False
                         lp_stam_aantal = 0
@@ -6917,14 +6958,14 @@ def main():
                             if _ontgr_s:
                                 _huidig_s = next((l for l in _lv_s if l['ontgrendeld'] and not l['voltooid']), _ontgr_s[-1])
                                 _labels_s = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgr_s]
-                                _sel_s = st.selectbox("Kies een ontgrendeld werkwoord:", _labels_s,
+                                _sel_s = st.selectbox("Kies een ontgrendeld werkwoord", _labels_s,
                                                       index=_ontgr_s.index(_huidig_s) if _huidig_s in _ontgr_s else 0)
                                 gefilterde_ww_pool = [_ontgr_s[_labels_s.index(_sel_s)]['verb']]
                                 _slot_s = next((l for l in _lv_s if not l['ontgrendeld']), None)
                                 if _slot_s:
                                     st.caption(f"🔒 Hierna: Level {_slot_s['index']} — {_slot_s['titel']}.")
                             lp_stam_aantal = {"1 oude vorm (aanrader)": 1, "Kleine herhaalronde (4)": 4, "Alleen dit werkwoord": 0}[
-                                st.selectbox("🔁 Oude stof meenemen:", ["1 oude vorm (aanrader)", "Kleine herhaalronde (4)", "Alleen dit werkwoord"], index=0, key="lp_stam_herhaal")]
+                                st.selectbox("🔁 Oude stof meenemen", ["1 oude vorm (aanrader)", "Kleine herhaalronde (4)", "Alleen dit werkwoord"], index=0, key="lp_stam_herhaal")]
                             with st.expander("🗺️ Toon het hele pad", expanded=False):
                                 for l in _lv_s:
                                     _ico = "✅" if l['voltooid'] else ("▶️" if l['ontgrendeld'] else "🔒")
@@ -6932,14 +6973,14 @@ def main():
 
                         elif bron_keuze == "📚 Uit geselecteerde lessen":
                             alle_lessen_stam = sorted(list(set(i.get('les', 0) for i in stamtijden_db if i.get('les', 0) > 0)))
-                            gekozen_stam_lessen = st.multiselect("Kies les(sen):", alle_lessen_stam, default=alle_lessen_stam[:1])
+                            gekozen_stam_lessen = st.multiselect("Kies les(sen)", alle_lessen_stam, default=alle_lessen_stam[:1])
                             gefilterde_ww_pool = [w for w in stamtijden_db if w.get('les', 0) in gekozen_stam_lessen]
 
                         elif bron_keuze == "📖 Uit een Bijbeltekst":
                             b_lijst = sorted(list(set(k.split(" ")[0] for k in bijbel_db.keys() if " " in k)))
-                            p_boek = st.selectbox("Kies Bijbelboek:", b_lijst if b_lijst else ["Mattheus"])
+                            p_boek = st.selectbox("Kies Bijbelboek", b_lijst if b_lijst else ["Mattheus"])
                             h_lijst = sorted(list(set(k.split(" ")[1].split(":")[0] for k in bijbel_db.keys() if k.startswith(p_boek) and ":" in k)), key=lambda x: int(x) if x.isdigit() else 0)
-                            p_hoofdstuk = st.selectbox("Kies Hoofdstuk:", h_lijst)
+                            p_hoofdstuk = st.selectbox("Kies Hoofdstuk", h_lijst)
                             
                             strongs_in_tekst = set()
                             prefix_zoek = f"{p_boek} {p_hoofdstuk}:"
@@ -6951,10 +6992,10 @@ def main():
                             gefilterde_ww_pool = [w for w in stamtijden_db if str(w.get('strong_nummer', '')).replace('G', '') in strongs_in_tekst]
 
                         if _geav:
-                            stam_vorm = st.radio("Oefenvorm:", _STAM_VORMEN, horizontal=True,
+                            stam_vorm = st.radio("Oefenvorm", _STAM_VORMEN, horizontal=True,
                                                  key="stam_oefenvorm",
                                                  help="Automatisch = de app kiest per vorm: eerst leren, dan meerkeuze, en typen zodra je hem kent.")
-                            oefen_stijl = st.radio("Sessie opbouw:", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
+                            oefen_stijl = st.radio("Sessie opbouw", ["🤖 Automatische Gated Mix", "🎛️ Zelf Fasen Samenstellen"], horizontal=True)
                             stam_negeer_gate = st.checkbox(
                                 "🔓 Negeer vergrendeling (oefen ook stamtijden waarvan het basiswoord nog niet op streak 5 staat)",
                                 key="stam_negeer_gate",
@@ -6971,7 +7012,7 @@ def main():
                                 'beheerst': st.slider("Beheerst (Streak 16–29)", 0, 20, 0), 'mastery': st.slider("Mastery (Streak 30+)", 0, 20, 0)
                             }
 
-                        if st.button("Start Sessie", key="btn_start_stam", type="primary"):
+                        if st.button("Start sessie", key="btn_start_stam", type="primary"):
                             st.session_state.gestrafte_woorden_stam = set()
                             doel_vormen = []
                             tijden_volgorde = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
@@ -7070,17 +7111,17 @@ def main():
                             elif sub_modus == 'overtik':
                                 st.warning("⚠️ Overtikken: Je had deze vorm fout. Vul de correcte gegevens exact in.")
                                 st.info(f"Het juiste antwoord is: {fout_msg}"); st.markdown(uitleg_regel)
-                                p_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_ov_g_{vid}")
-                                p_prae = st.text_input("2. Praesens bronwoord:", key=f"in_ov_p_{vid}")
-                                if st.button("Bevestig Overtikken"):
+                                p_gram = st.selectbox("1. Grammatica", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_ov_g_{vid}")
+                                p_prae = st.text_input("2. Praesens bronwoord", key=f"in_ov_p_{vid}")
+                                if st.button("Bevestig overtikken"):
                                     registreer_oefening()
                                     if p_gram == correct_gram and normaliseer_accent(naar_grieks_transliteratie(p_prae)) == normaliseer_accent(correct_praesens):
                                         st.session_state.stam_feedback = {"type": "success", "msg": "Genoteerd! Hij komt straks weer."}; trigger_save(); laad_volgend_stam_woord(); st.rerun()
                                     else: st.error("Nog niet exact overgetypt!")
 
                             elif sub_modus == "Typen":
-                                t_gram = st.selectbox("1. Grammatica:", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_tp_g_{vid}")
-                                t_prae = st.text_input("2. Praesens bronwoord:", key=f"in_tp_p_{vid}"); t_bete = st.text_input("3. Betekenis bronwoord:", key=f"in_tp_b_{vid}")
+                                t_gram = st.selectbox("1. Grammatica", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"in_tp_g_{vid}")
+                                t_prae = st.text_input("2. Praesens bronwoord", key=f"in_tp_p_{vid}"); t_bete = st.text_input("3. Betekenis bronwoord", key=f"in_tp_b_{vid}")
                                 if st.button("✓ Nakijken", type="primary"):
                                     registreer_oefening()
                                     if (t_gram == correct_gram) and (normaliseer_accent(naar_grieks_transliteratie(t_prae)) == normaliseer_accent(correct_praesens)) and check_betekenis(t_bete, correct_betekenis):
@@ -7196,7 +7237,7 @@ def main():
                         if _ontgr_st:
                             _huidig_st = next((l for l in _lv_st if l['ontgrendeld'] and not l['voltooid']), _ontgr_st[-1])
                             _labels_st = [f"{'✅' if l['voltooid'] else '▶️'} Level {l['index']} · {l['titel']} ({l['klaar']}/{l['totaal']})" for l in _ontgr_st]
-                            _sel_st = st.selectbox("Kies een ontgrendeld level:", _labels_st,
+                            _sel_st = st.selectbox("Kies een ontgrendeld level", _labels_st,
                                                    index=_ontgr_st.index(_huidig_st) if _huidig_st in _ontgr_st else 0)
                             _gekozen_lv_st = _ontgr_st[_labels_st.index(_sel_st)]
                             struct_leerpad_indices = {idx for idx, _w in _gekozen_lv_st['items']}
@@ -7211,7 +7252,7 @@ def main():
                     struct_modus = _pref_keuze(st.radio, "Oefenvorm:", _STRUCT_VORMEN, 'struct_oefenvorm', key="struct_modus_radio",
                                                 help="Automatisch = de app kiest per woord: eerst leren, dan meerkeuze, en typen zodra je het woord kent.")
 
-                    if st.button("Start Sessie", key="btn_start_struct", type="primary"):
+                    if st.button("Start sessie", key="btn_start_struct", type="primary"):
                         st.session_state.gestrafte_woorden_struct = set()
                         doel_vormen = []
 
@@ -7322,11 +7363,8 @@ def main():
                                         txt_col = "#bbb"
                                         if struct_kleur_nv:
                                             p_inf = sub_w.get('parsing_info', '')
-                                            if "Nom" in p_inf: txt_col = "#33ccff"
-                                            elif "Gen" in p_inf: txt_col = "#28a745"
-                                            elif "Dat" in p_inf: txt_col = "#6f42c1"
-                                            elif "Acc" in p_inf: txt_col = "#dc3545"
-                                            elif "Voc" in p_inf: txt_col = "#fd7e14"
+                                            _nvk = next((_c for _c in _ONTLEED_KLEUR if _c in p_inf), None)
+                                            if _nvk: txt_col = _ONTLEED_KLEUR[_nvk]
 
                                         n_sub = normaliseer_accent(sub_w['grieks'])
                                         is_doel = any(n_sub == k or n_sub == k.replace('ς','σ') for k in zoek_opties)
@@ -7361,7 +7399,7 @@ def main():
                         if gevonden_context:
                             st.markdown(f"<div style='font-size: 13px; color: #f6c23e; margin-bottom: 2px;'>📖 Zinverband ({gevonden_context[0]}):</div>", unsafe_allow_html=True)
                             if struct_kleur_nv:
-                                st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
+                                st.markdown(naamval_legenda(), unsafe_allow_html=True)
                             st.markdown(f"<div class='grieks-zin' style='font-size: 22px; padding: 12px; margin-bottom: 12px;'>{gevonden_context[1]}</div>", unsafe_allow_html=True)
                             st.caption(f"Kijk naar de grammaticale functie van **{toon_naam}** in deze zin:")
                         else:
@@ -7381,8 +7419,8 @@ def main():
                             st.info(f"Het juiste antwoord is: {fout_msg_volledig}")
                             forceer_focus()
                             with st.form(f"form_ov_{w_id_clean}", clear_on_submit=True):
-                                p_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key=f"ov_c_{w_id_clean}")
-                                p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen):", key=f"ov_e_{w_id_clean}")
+                                p_cat = st.selectbox("1. Categorie", [""] + alle_cats, key=f"ov_c_{w_id_clean}")
+                                p_eig = st.text_input("2. Eigenschap/Naamval (exact overtypen)", key=f"ov_e_{w_id_clean}")
                                 if st.form_submit_button("Bevestig"):
                                     registreer_oefening()
                                     if p_cat == correct_cat and p_eig.lower().strip() == correct_eig.lower().strip():
@@ -7392,14 +7430,14 @@ def main():
 
                         # --- MODUS 2: TYPEN ---
                         elif sub_modus == "Typen":
-                            gekozen_cat = st.selectbox("1. Categorie:", [""] + alle_cats, key=f"typ_c_{w_id_clean}")
+                            gekozen_cat = st.selectbox("1. Categorie", [""] + alle_cats, key=f"typ_c_{w_id_clean}")
                             forceer_focus()
                             with st.form(f"form_typ_{w_id_clean}", clear_on_submit=True):
                                 c_eig, c_bet = st.columns(2)
                                 with c_eig: 
                                     gefilterde_eigs = sorted(list(set([w['eigenschap'] for w in struct_db if w['categorie'] == gekozen_cat]))) if gekozen_cat else []
                                     p_eig = st.selectbox("2. Eigenschap/Naamval", [""] + gefilterde_eigs, key=f"typ_e_{w_id_clean}")
-                                with c_bet: p_bet = st.text_input("3. Betekenis:", key=f"typ_b_{w_id_clean}")
+                                with c_bet: p_bet = st.text_input("3. Betekenis", key=f"typ_b_{w_id_clean}")
                                 
                                 if st.form_submit_button("✓ Nakijken"):
                                     registreer_oefening()
@@ -7465,13 +7503,13 @@ def main():
                                 
                             with st.form(f"form_mc_{w_id_clean}"):
                                 if st.session_state.struct_mc_solved["cat"]: st.success(f"✓ Categorie: {correct_cat}"); keuze_cat = correct_cat
-                                else: keuze_cat = st.radio("1. Categorie:", st.session_state.struct_opties_cat, index=None, key=f"mc_c_{w_id_clean}")
+                                else: keuze_cat = st.radio("1. Categorie", st.session_state.struct_opties_cat, index=None, key=f"mc_c_{w_id_clean}")
                                 
                                 if st.session_state.struct_mc_solved["eig"]: st.success(f"✓ Eigenschap: {correct_eig}"); keuze_eig = correct_eig
-                                else: keuze_eig = st.radio("2. Eigenschap / Naamval:", st.session_state.struct_opties_eig, index=None, key=f"mc_e_{w_id_clean}")
+                                else: keuze_eig = st.radio("2. Eigenschap / Naamval", st.session_state.struct_opties_eig, index=None, key=f"mc_e_{w_id_clean}")
                                 
                                 if st.session_state.struct_mc_solved["bet"]: st.success(f"✓ Betekenis: {correct_bet}"); keuze_bet = correct_bet
-                                else: keuze_bet = st.radio("3. Betekenis:", st.session_state.struct_opties_bet, index=None, key=f"mc_b_{w_id_clean}")
+                                else: keuze_bet = st.radio("3. Betekenis", st.session_state.struct_opties_bet, index=None, key=f"mc_b_{w_id_clean}")
                                 
                                 if st.form_submit_button("✓ Nakijken"):
                                     registreer_oefening()
@@ -7515,7 +7553,7 @@ def main():
                 top_c1, top_c2 = st.columns(2)
                 with top_c1:
                     alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
-                    gekozen = st.multiselect("1. Oefen lessen (voor cyaan/paarse woorden):", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
+                    gekozen = st.multiselect("1. Oefen lessen (voor cyaan/paarse woorden)", alle_lessen, default=[alle_lessen[0]] if alle_lessen else [])
                     actieve_strongs = {str(w['strong']): w for w in st.session_state.data if veilig_les_nummer(w) in gekozen and w.get('strong')}
                     actieve_stam_vormen = {}
                     for s_ww in stam_db_leestekst:
@@ -7543,16 +7581,16 @@ def main():
                     parsed_db = bijbel_boek_index(bijbel_db)   # gecached: scheelt ~8.000 regex-matches per rerun
                     
                     col_b, col_c, col_v = st.columns(3)
-                    with col_b: gekozen_boek = st.selectbox("Boek:", list(parsed_db.keys()))
+                    with col_b: gekozen_boek = st.selectbox("Boek", list(parsed_db.keys()))
                     with col_c:
                         hoofdstukken = list(parsed_db[gekozen_boek].keys()); hoofdstukken.sort(key=lambda x: int(x) if str(x).isdigit() else 0)
-                        gekozen_hoofdstuk = st.selectbox("Hoofdstuk:", hoofdstukken)
+                        gekozen_hoofdstuk = st.selectbox("Hoofdstuk", hoofdstukken)
                     with col_v:
                         verzen_data = parsed_db[gekozen_boek][gekozen_hoofdstuk]; verzen_data.sort(key=lambda x: x[0])
                         vers_opties = [v[1] for v in verzen_data]
-                        gekozen_verzen = st.multiselect("Vers(zen):", vers_opties, default=[vers_opties[0]] if vers_opties else [])
+                        gekozen_verzen = st.multiselect("Vers(zen)", vers_opties, default=[vers_opties[0]] if vers_opties else [])
                     
-                    if st.button("Laad Tekst"):
+                    if st.button("Laad tekst"):
                         gecombineerd_vers = []
                         for vd in verzen_data:
                             if vd[1] in gekozen_verzen:
@@ -7626,11 +7664,8 @@ def main():
                         tooltip = f"{_kop_g}\n{w['parsing_info']}{_anker_g}".replace("'", "&#39;").replace('"', "&quot;")
                         extra_style = ""
                         if kleur_naamvallen:
-                            if "Nom" in w['parsing_info']: extra_style += "color: #33ccff;"
-                            elif "Gen" in w['parsing_info']: extra_style += "color: #28a745;"
-                            elif "Dat" in w['parsing_info']: extra_style += "color: #6f42c1;"
-                            elif "Acc" in w['parsing_info']: extra_style += "color: #dc3545;"
-                            elif "Voc" in w['parsing_info']: extra_style += "color: #fd7e14;"
+                            _nvk = next((_c for _c in _ONTLEED_KLEUR if _c in w['parsing_info']), None)
+                            if _nvk: extra_style += f"color: {_ONTLEED_KLEUR[_nvk]};"
                         
                         if kleur_voegwoorden and ("Voegwoord" in w['parsing_info'] or "Conjunction" in w['parsing_info']): extra_style += "background-color: #ffd700; color: #000; padding: 0 4px; border-radius: 4px;"
 
@@ -7661,7 +7696,7 @@ def main():
                         else: 
                             html_zin += f"<span class='{css_class} mobile-tooltip' tabindex='0' style='{extra_style}; border-bottom: 1px dotted #555;'>{w['grieks']}<span class='tooltiptext'>{tooltip}</span></span>{w['interpunctie']} "
                     
-                    if kleur_naamvallen: st.markdown("**(Kleurlegenda: <span style='color:#33ccff'>Nom</span> | <span style='color:#28a745'>Gen</span> | <span style='color:#6f42c1'>Dat</span> | <span style='color:#dc3545'>Acc</span> | <span style='color:#fd7e14'>Voc</span>)**", unsafe_allow_html=True)
+                    if kleur_naamvallen: st.markdown(naamval_legenda(), unsafe_allow_html=True)
                     st.markdown(f"<div class='grieks-zin'>{html_zin}</div>", unsafe_allow_html=True)
                     st.caption("ℹ️ Tik op (of hover over) een woord om de vertaling en ontleding te zien. Cyaan/Paarse woorden komen uit je actieve lessen.")
                     
@@ -7674,8 +7709,8 @@ def main():
                                 forceer_focus()
                                 with st.form(key=f"form_lees_stam_{idx}"):
                                     c_gram, c_bet = st.columns(2)
-                                    with c_gram: p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"s_g_{idx}"); p_praesens = st.text_input("Praesens:", key=f"s_p_{idx}")
-                                    with c_bet: p_betekenis = st.text_input("Betekenis:", key=f"s_b_{idx}")
+                                    with c_gram: p_gram = st.selectbox("Tijd & Diathese", ["", "Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"], key=f"s_g_{idx}"); p_praesens = st.text_input("Praesens", key=f"s_p_{idx}")
+                                    with c_bet: p_betekenis = st.text_input("Betekenis", key=f"s_b_{idx}")
                                     
                                     if st.form_submit_button("✓ Nakijken"):
                                         registreer_oefening()
@@ -7716,7 +7751,7 @@ def main():
                                 elif "3." in tekst_modus: 
                                     forceer_focus()
                                     with st.form(key=f"form_typ_{idx}"):
-                                        inp = st.text_input("Woordenboekvertaling:")
+                                        inp = st.text_input("Woordenboekvertaling")
                                         if st.form_submit_button("✓ Nakijken"):
                                             registreer_oefening(basis)
                                             if check_betekenis(inp, basis['nederlands']): basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save(); st.success(f"✓ Goed! **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
@@ -7725,7 +7760,7 @@ def main():
                                 elif "4." in tekst_modus:
                                     if not in_scope: st.success(f"*(Buiten scope voor {master_niveau})* **{w['grieks']}** = {basis['nederlands']} ({w['parsing_info']})")
                                     else:
-                                        p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"], key=f"soort_{idx}"); t_inp = st.text_input("Woordenboekvertaling:", key=f"bet_{idx}")
+                                        p_soort = st.selectbox("Woordsoort", ["", "Zelfst. nw.", "Werkwoord", "Bijv. nw.", "Lidwoord", "Voornaamwoord", "Overig"], key=f"soort_{idx}"); t_inp = st.text_input("Woordenboekvertaling", key=f"bet_{idx}")
                                         p_naam, p_get, p_ges, p_tijd, p_wijs, p_pers, p_diat = "", "", "", "", "", "", ""
                                         
                                         if p_soort in ["Zelfst. nw.", "Bijv. nw.", "Lidwoord", "Voornaamwoord"]:
@@ -7757,7 +7792,7 @@ def main():
                                                          sleutel=f"lt_{idx}", uitgeklapt=False)
                                         toon_vertaalhulp(w.get('parsing_info', ''), sleutel=f"lt_{idx}")
 
-                                        if st.button("Controleer Analyse", key=f"chk_{idx}"):
+                                        if st.button("Controleer analyse", key=f"chk_{idx}"):
                                             registreer_oefening(basis)
                                             if check_betekenis(t_inp, basis['nederlands']) and check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wijs, p_diat, p_pers, w['parsing_info']):
                                                 basis['streak'] = int(basis.get('streak', 0)) + 3; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; dagdoel_plus('verzen'); trigger_save(); st.success(f"✓ Volledig correct! ({w['parsing_info']})")
@@ -7766,7 +7801,7 @@ def main():
                                                 
                     st.write("---")
                     st.write("### ✍️ Zinsvertaling")
-                    user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands:")
+                    user_vertaling = st.text_area("Vertaal de hele zin naar het Nederlands")
                     if st.button("👁️ Toon antwoord"):
                         def _eerste_betekenis(g):
                             # Pak alleen de eerste betekenis (tot eerste komma/slash) voor een leesbare zin;
@@ -7817,7 +7852,7 @@ def main():
                         st.caption("⚠️ Automatisch gekoppeld via de inhoudsopgaven — controleer de exacte paragraaf zelf even in het boek.")
 
                 gram_modus = st.radio(
-                    "Kies:",
+                    "Kies",
                     ["🔎 Zoeken", "📖 Bestuderen", "🔀 Contractietrainer", "📊 Voortgang"],
                     horizontal=True
                 )
@@ -7829,7 +7864,7 @@ def main():
                 if gram_modus.startswith("🔎"):
                     st.markdown("#### Zoek een grammaticaal onderwerp of term")
                     st.caption("Typ bijv. *genitivus absolutus*, *aoristus*, *αὐτός*, *contractie* of *voorwaardelijke zin*. Grieks mag mét of zonder accenten, of getypt in gewone letters (*logos* → λόγος, *didwmi* → δίδωμι, θ=q, ξ=c, ω=w, ψ=y, η=h). Je krijgt de slide(s) én de vindplaats in het handboek.")
-                    zoek = st.text_input("Zoekterm:", key="gram_zoek", placeholder="genitivus absolutus")
+                    zoek = st.text_input("Zoekterm", key="gram_zoek", placeholder="genitivus absolutus")
 
                     if zoek and len(zoek.strip()) >= 2:
                         q = zoek.strip().lower()
@@ -7908,7 +7943,7 @@ def main():
                 # ==========================================================
                 elif gram_modus.startswith("📖"):
                     themas = ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"]
-                    gekozen_thema = st.selectbox("Filter op thema:", themas, key="study_thema")
+                    gekozen_thema = st.selectbox("Filter op thema", themas, key="study_thema")
 
                     g_nummers = sorted(items.keys(), key=lambda x: int(x))
                     if gekozen_thema != "Alle thema's":
@@ -7924,7 +7959,7 @@ def main():
                         if spring is not None and str(spring) in g_nummers:
                             default_idx = g_nummers.index(str(spring))
                         gekozen_g = st.selectbox(
-                            "Kies een grammatica-onderwerp:", g_nummers,
+                            "Kies een grammatica-onderwerp", g_nummers,
                             index=default_idx, format_func=lambda g: labels[g], key="study_gitem"
                         )
                         info = items[gekozen_g]
@@ -7963,7 +7998,7 @@ def main():
                         with st.expander("📚 Losse overzichten & samenvattingen achterin"):
                             if overzichten:
                                 ov_keys = sorted(overzichten.keys(), key=lambda x: int(x))
-                                gekozen_ov = st.selectbox("Kies een overzicht:", ov_keys,
+                                gekozen_ov = st.selectbox("Kies een overzicht", ov_keys,
                                     format_func=lambda k: overzichten[k], key="overzicht_keuze")
                                 png_ov = render_slide(int(gekozen_ov), dpi=130)
                                 if png_ov:
@@ -7987,7 +8022,7 @@ def main():
                             options=["1 · Herken de klankklasse", "2 · Voorspel de uitkomst", "3 · Vorm zelf (typen)"],
                             key="contr_niveau"
                         )
-                        soort = st.radio("Oefenstof:", ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)", "Augment (verleden tijd)"], horizontal=True, key="contr_soort")
+                        soort = st.radio("Oefenstof", ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)", "Augment (verleden tijd)"], horizontal=True, key="contr_soort")
                         st.write("---")
 
                         # bouw een platte lijst van opgaven op basis van soort.
@@ -8074,7 +8109,7 @@ def main():
                                 st.write("Welke augment-regel geldt hier?")
                                 opties = [r["regel"] for r in cdb["augment"]]
                                 goed_antwoord = opg["regel"]
-                            keuze = st.radio("Kies:", opties, index=None, key=f"n1_{skey}_{stt['idx']}")
+                            keuze = st.radio("Kies", opties, index=None, key=f"n1_{skey}_{stt['idx']}")
                             if st.button("✓ Nakijken", key=f"chk1_{skey}", type="primary"):
                                 if keuze is None:
                                     st.warning("Kies eerst een optie.")
@@ -8115,7 +8150,7 @@ def main():
                             st.markdown(f"### {opg['van']}  →  ?")
                             st.caption("Typ de gecontraheerde/samengesmolten vorm (Grieks). Kleine accentafwijkingen worden soepel nagekeken.")
                             with st.form(f"form_n3_{skey}_{stt['idx']}"):
-                                antwoord = st.text_input("Jouw vorm:", key=f"n3_{skey}_{stt['idx']}")
+                                antwoord = st.text_input("Jouw vorm", key=f"n3_{skey}_{stt['idx']}")
                                 verzonden = st.form_submit_button("✓ Nakijken", type="primary")
                             if verzonden:
                                 if not antwoord.strip():
@@ -8170,7 +8205,7 @@ def main():
                     for g in sorted(items.keys(), key=lambda x: int(x)):
                         rijen.append({"Onderwerp": f"G{g} · {items[g]['titel']}", "Thema": items[g]["thema"]})
                     df_gram = pd.DataFrame(rijen)
-                    tf = st.selectbox("Toon thema:", ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"], key="voortgang_thema")
+                    tf = st.selectbox("Toon thema", ["Alle thema's", "Naamwoorden", "Voornaamwoorden", "Werkwoorden", "Syntaxis & overig"], key="voortgang_thema")
                     toon_df = df_gram if tf == "Alle thema's" else df_gram[df_gram["Thema"] == tf]
                     st.dataframe(toon_df, use_container_width=True, hide_index=True)
 
@@ -8323,7 +8358,7 @@ def main():
                 pc1, pc2 = st.columns([1, 2])
                 with pc1:
                     alle_lessen_p = sorted(list(set(veilig_les_nummer(w) for w in prod_db)))
-                    gekozen_p = st.multiselect("Kies lessen:", alle_lessen_p, default=alle_lessen_p[:2] if alle_lessen_p else [], key="prod_lessen")
+                    gekozen_p = st.multiselect("Kies lessen", alle_lessen_p, default=alle_lessen_p[:2] if alle_lessen_p else [], key="prod_lessen")
                     invoer_type = _pref_keuze(st.radio, "Invoer:",
                         ["⌨️ Typen (Latijnse toetsen → Grieks)", "🔢 Meerkeuze (kies de juiste Griekse vorm)"],
                         'prod_invoer_pref', key="prod_invoer")
@@ -8396,7 +8431,7 @@ def main():
 
                         if invoer_type.startswith("⌨️"):
                             with st.form(f"prod_typ_{strong_key}", clear_on_submit=True):
-                                inp = st.text_input("Grieks (Latijnse toetsen mag):", key=f"prod_in_{strong_key}")
+                                inp = st.text_input("Grieks (Latijnse toetsen mag)", key=f"prod_in_{strong_key}")
                                 verzonden = st.form_submit_button("✓ Nakijken", type="primary")
                             if verzonden:
                                 if not inp.strip():
@@ -8416,7 +8451,7 @@ def main():
                                 r_engine.shuffle(opties)
                                 st.session_state.prod_opties = opties
                                 st.session_state.prod_opties_voor = strong_key
-                            keuze = st.radio("Kies de juiste Griekse vorm:", st.session_state.prod_opties, index=None, key=f"prod_mc_{strong_key}")
+                            keuze = st.radio("Kies de juiste Griekse vorm", st.session_state.prod_opties, index=None, key=f"prod_mc_{strong_key}")
                             if st.button("✓ Nakijken", key=f"prod_mc_btn_{strong_key}", type="primary"):
                                 if keuze is None:
                                     st.warning("Kies eerst een optie.")
@@ -8449,7 +8484,7 @@ def main():
             # ==================================================================
             elif _ontl_modus.startswith("🔍"):
                 with st.form("ontl_zoek_form"):
-                    _zq = st.text_input("Zoek een Griekse vorm:", key="ontl_zoek_in",
+                    _zq = st.text_input("Zoek een Griekse vorm", key="ontl_zoek_in",
                                         placeholder="bv. λόγον, ἔλυσεν, of logon / elusen",
                                         help="Latijnse letters worden omgezet naar Grieks (logos → λόγος, q=θ, c=ξ, w=ω, h=η, y=ψ). Accenten hoef je niet in te typen.")
                     _zsub = st.form_submit_button("🔍 Zoek", type="primary")
@@ -8481,7 +8516,7 @@ def main():
                         _toon_suggesties(zoek_suggesties(_obdb, _term), "🔎 Bedoelde je misschien? Klik om te openen:")
                     else:
                         _toon = _res[0][0]
-                        st.markdown(f"<div style='font-size:40px;font-weight:800;color:#33ccff;text-align:center;padding:4px 0'>{_toon}</div>",
+                        st.markdown(f"<div class='grieks-mid' style='font-size:46px;text-align:center;padding:4px 0'>{_toon}</div>",
                                     unsafe_allow_html=True)
                         audio_knop(fonetisch_uit_translit(_res[0][5]), key="ontlzoek")
                         _mv = "vorm" if len(_res) == 1 else "mogelijke ontledingen"
@@ -8636,8 +8671,8 @@ def main():
                         st.caption("Laat leeg = alle vormen. Vink aan om je alleen op bepaalde wijzen of tijden te richten.")
                         _wvw = [x for x in (_wprefs.get('ontlw_wijs') or []) if x in _WIJZEN]
                         _wvt = [x for x in (_wprefs.get('ontlw_tijd') or []) if x in _TIJDEN]
-                        _wwijs = st.multiselect("Wijs:", _WIJZEN, default=_wvw, key="ontlw_wijs_ms")
-                        _wtijd = st.multiselect("Tijd:", _TIJDEN, default=_wvt, key="ontlw_tijd_ms")
+                        _wwijs = st.multiselect("Wijs", _WIJZEN, default=_wvw, key="ontlw_wijs_ms")
+                        _wtijd = st.multiselect("Tijd", _TIJDEN, default=_wvt, key="ontlw_tijd_ms")
                         _wprefs['ontlw_wijs'] = list(_wwijs)
                         _wprefs['ontlw_tijd'] = list(_wtijd)
 
@@ -8729,7 +8764,7 @@ def main():
 
                     # Groot doelwoord — met 'kleur uitgangen' de stam/uitgang gesplitst.
                     _wug_html = kleur_uitgangen_html(_ww.get('grieks', ''), _wlemma, _wginfo, _winfo, strong=_ww.get('strong')) if _wkl_ug else None
-                    st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
+                    st.markdown(f"<div class='grieks-mid' style='font-size:50px;text-align:center;"
                                 f"padding:6px 0'>{_wug_html or _ww.get('grieks','')}</div>", unsafe_allow_html=True)
 
                     # De zin eromheen als context (het doelwoord licht op). Kleur-schuifjes kleuren
@@ -8807,10 +8842,10 @@ def main():
                         st.caption("↓ Vul in; de volgende regel verschijnt zodra je iets aanklikt.")
                     else:
                         with st.form(f"ontlw_form_{_wsleutel}", clear_on_submit=False):
-                            _wv = st.text_input("Woordenboekvertaling:", key=f"ontlw_vert_{_wsleutel}",
+                            _wv = st.text_input("Woordenboekvertaling", key=f"ontlw_vert_{_wsleutel}",
                                                 help="De betekenis zoals die in je woordenlijst staat — dus de vorm van het basiswoord. "
                                                      "Dit veld wordt automatisch nagekeken.")
-                            _wvz = st.text_input("En zoals het hier in de zin staat (optioneel):", key=f"ontlw_zin_{_wsleutel}",
+                            _wvz = st.text_input("En zoals het hier in de zin staat (optioneel)", key=f"ontlw_zin_{_wsleutel}",
                                                  help="Bijvoorbeeld 'aan de mens' bij een dativus. Dit kan de app niet automatisch "
                                                       "nakijken — je krijgt na het checken het antwoord te zien en beoordeelt zelf.")
                             _wsub = st.form_submit_button("✓ Alles nakijken", type="primary")
@@ -9238,8 +9273,8 @@ def main():
 
                     if _fase == 'woordsoort':
                         _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
-                        st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
-                        _kz = st.radio("Woordsoort:", _ONTLEED_WS_OPTS, index=None, horizontal=True,
+                        st.markdown(f"<div class='grieks-mid' style='font-size:38px'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
+                        _kz = st.radio("Woordsoort", _ONTLEED_WS_OPTS, index=None, horizontal=True,
                                        key=f"ontl_ws_{st.session_state.ontl_ref}_{_pos}")
                         if st.session_state.get('ontl_feedback'):
                             for _line in st.session_state.ontl_feedback:
@@ -9261,7 +9296,7 @@ def main():
 
                     elif _fase in ('znw', 'ww'):
                         _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
-                        st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='grieks-mid' style='font-size:38px'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         _dims = _ontleed_dims_zonder_ws(_info)
                         # Stapsgewijs tonen: de volgende rij verschijnt pas als je de vorige hebt
                         # aangeklikt. Zo verraadt de rij Naamval/Geslacht niet meteen dat het een
@@ -9334,7 +9369,7 @@ def main():
                     elif _fase == 'vertalen':
                         _w = _zin[_hidx]; _info = _w.get('parsing_info', '')
                         _vorm = _info.split(' - ', 1)[1] if ' - ' in _info else _info
-                        st.markdown(f"<div style='font-size:34px;font-weight:800;color:#33ccff'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='grieks-mid' style='font-size:38px'>{_w.get('grieks','')}</div>", unsafe_allow_html=True)
                         st.caption(f"Vorm: *{_vorm}* — houd rekening met naamval/tijd in je vertaling.")
                         # De vertaal-/opbouwhulp staat ONDER de check-knop (zie het hulpblok onderaan).
                         if st.session_state.get('ontl_feedback'):
@@ -9342,7 +9377,7 @@ def main():
                                 st.markdown(_line)
                         forceer_focus()   # cursor staat meteen in het typveld, zo kun je doortikken
                         with st.form(f"ontl_vform_{st.session_state.ontl_ref}_{_pos}", clear_on_submit=True):
-                            _vin = st.text_input("Vertaling van dit woord:")
+                            _vin = st.text_input("Vertaling van dit woord")
                             _vsub = st.form_submit_button("✓ Nakijken", type="primary")  # Enter werkt binnen een form
                         if _vsub:
                             _vok = check_betekenis(_vin or "", _w.get('vertaling_nl', ''))
@@ -9389,7 +9424,7 @@ def main():
                                     for _r in _ontleed_vertaalhulp(_zin[_i2].get('parsing_info', '')):
                                         if _r not in _gezien_r:
                                             _gezien_r.append(_r); st.markdown("- " + _r)
-                        st.text_area("Jouw vertaling van de hele zin:", key=f"ontl_zin_{st.session_state.ontl_ref}", height=90)
+                        st.text_area("Jouw vertaling van de hele zin", key=f"ontl_zin_{st.session_state.ontl_ref}", height=90)
                         if st.button("👁️ Toon modelvertaling", key="ontl_zintoon"):
                             _en = " ".join(str(w.get('vertaling_bsb', '')) for w in _zin if w.get('strong') and w.get('vertaling_bsb'))
                             st.session_state.ontl_zin_model = _en.strip() or "(geen Engelse vertaling beschikbaar)"
@@ -9630,7 +9665,7 @@ def main():
                         _vorm_txt = _info.split(' - ', 1)[1] if ' - ' in _info else _info
                         _is_ww = "Werkwoord" in _info
                         _toon_vorm = klank_vorm_gemarkeerd(_vorm, _an) if _kmarkeer else _vorm
-                        st.markdown(f"<div style='font-size:44px;font-weight:800;color:#33ccff;text-align:center;"
+                        st.markdown(f"<div class='grieks-mid' style='font-size:50px;text-align:center;"
                                     f"padding:6px 0'>{_toon_vorm}</div>", unsafe_allow_html=True)
                         st.caption(f"📖 {_ref} · **{_vorm_txt}**" if _vorm_txt else f"📖 {_ref}")
                         st.caption("Welke klankwet zie je hier, en van welk "
