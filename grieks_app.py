@@ -706,13 +706,20 @@ def oefenpagina():
 TIJD_KORT = {"Futurum Actief/Medium": "futurum", "Aoristus Actief/Medium": "aoristus",
              "Aoristus Passief": "aoristus passief", "Perfectum Actief": "perfectum",
              "Perfectum Medium/Passief": "perfectum med./pass."}
+TIJDEN = list(TIJD_KORT)
+
+STAM_OEFENINGEN = ["Zwakste eerst", "Leerpad (per werkwoord)", "Meest voorkomend",
+                   "Alleen wat ik fout deed"]
+STAM_STANDAARD = {"stam_keuze": "Zwakste eerst", "stam_aantal": 10, "stam_praesens": True}
 
 
 class StamSessie:
-    """Productierichting: je krijgt het praesens plus een tijd, en typt de vorm.
-    Dat is de kant die bij een tentamen wordt gevraagd."""
+    """Herkenrichting: je ziet een vorm en benoemt welke tijd het is en van welk
+    werkwoord. Het zelf maken van vormen hoort bij Actief Beheersen."""
 
-    def __init__(self, g, aantal=10):
+    def __init__(self, g):
+        p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+             for k, v in STAM_STANDAARD.items()}
         db = motor.laad_stamtijden_db()
         stats = g.stats.get("stam_stats") or {}
         vragen = []
@@ -728,13 +735,30 @@ class StamSessie:
                                "streak": int(s.get("streak", 0) or 0),
                                "goed": int(s.get("g", 0) or 0),
                                "fout": int(s.get("f", 0) or 0)})
-        # zwakste eerst, daarna op frequentie — zo oefen je wat nog niet zit
-        vragen.sort(key=lambda v: (v["streak"], -int(v["verb"].get("frequentie", 0) or 0)))
-        self.vragen = vragen[:aantal]
+        keuze = p["stam_keuze"]
+        if keuze == "Meest voorkomend":
+            vragen.sort(key=lambda v: -int(v["verb"].get("frequentie", 0) or 0))
+        elif keuze == "Alleen wat ik fout deed":
+            vragen = [v for v in vragen if v["fout"] > 0] or vragen
+            vragen.sort(key=lambda v: -v["fout"])
+        elif keuze == "Leerpad (per werkwoord)":
+            per = {}
+            for v in vragen:
+                per.setdefault(v["praesens"], []).append(v)
+            for _pr, groep in per.items():
+                if any(x["streak"] < 5 for x in groep):
+                    vragen = groep
+                    break
+        else:
+            vragen.sort(key=lambda v: (v["streak"],
+                                       -int(v["verb"].get("frequentie", 0) or 0)))
+        self.prefs = p
+        self.vragen = vragen[:int(p["stam_aantal"])]
         self.i = 0
         self.goed = 0
         self.fout = 0
         self.beoordeeld = False
+        self.tijd_keuze = None
 
     @property
     def huidig(self):
@@ -749,25 +773,54 @@ def stampagina():
     sessie = StamSessie(g)
     stats = g.stats.setdefault("stam_stats", {})
 
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        kies_oef = ui.select(STAM_OEFENINGEN, value=sessie.prefs["stam_keuze"],
+                             label="Oefening").props("outlined dark").classes("w-full")
+        kies_aantal = ui.number("Vormen per ronde", value=int(sessie.prefs["stam_aantal"]),
+                                min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        kies_praesens = ui.switch("Ook het werkwoord laten typen",
+                                  value=bool(sessie.prefs["stam_praesens"]))
+        ui.label("Uit = alleen de tijd aanwijzen. Aan = ook zeggen van welk werkwoord "
+                 "de vorm komt.").style(f"color:{ZACHT};font-size:12px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("stam_keuze", kies_oef), ("stam_aantal", kies_aantal),
+                                  ("stam_praesens", kies_praesens)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/stamtijden")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+                f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
     with ui.column().classes("inhoud metbalk w-full gap-3"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
-            ui.label("Stamtijden").style(f"color:{ZACHT};font-size:13px")
-            teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+            ui.label(f"Stamtijden · {sessie.prefs['stam_keuze']}").style(
+                f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
-        praesens = ui.label().classes("grieks w-full text-center").style(
-            f"font-size:46px;line-height:1.15;color:{TEKST};padding:16px 0 0")
-        betekenis = ui.label().classes("w-full text-center").style(
-            f"color:{ZACHT};font-size:14px")
-        gevraagd = ui.label().classes("w-full text-center").style(
-            f"color:{MERK};font-size:17px;font-weight:600;padding-top:10px")
-        statusbalk = ui.row().classes("w-full").style("padding-top:8px")
+        vormlabel = ui.label().classes("grieks w-full text-center").style(
+            f"font-size:52px;line-height:1.15;color:{TEKST};padding:16px 0 2px")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px")
+        tijdknoppen = ui.column().classes("w-full gap-2").style("padding-top:8px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:6px")
         terugkoppeling = ui.column().classes("w-full items-center").style(
             "min-height:64px;padding-top:8px")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
 
     with ui.element("div").classes("antwoordbalk"):
         with ui.row().classes("w-full gap-2 no-wrap items-center"):
-            invoer = ui.input(placeholder="typ de vorm (Latijnse toetsen mag)").props(
+            invoer = ui.input(placeholder="van welk werkwoord?").props(
                 "outlined dense dark autocomplete=off").classes("flex-grow")
             knop = ui.button("Nakijken").props("unelevated").style(
                 f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
@@ -780,28 +833,47 @@ def stampagina():
                 kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
                 ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
 
+    def teken_tijden():
+        tijdknoppen.clear()
+        with tijdknoppen:
+            for t in TIJDEN:
+                gekozen = sessie.tijd_keuze == t
+                rand = MERK if gekozen else RAND
+                achter = "rgba(51,204,255,.12)" if gekozen else VLAK
+                ui.html(f"<button class='keuze' style='background:{achter};"
+                        f"border-color:{rand}'>{TIJD_KORT[t]}</button>").on(
+                    "click", lambda _=None, tt=t: kies_tijd(tt))
+
+    def kies_tijd(t):
+        if sessie.beoordeeld:
+            return
+        sessie.tijd_keuze = t
+        teken_tijden()
+
     def toon():
         terugkoppeling.clear()
         statusbalk.clear()
         sessie.beoordeeld = False
+        sessie.tijd_keuze = None
         v = sessie.huidig
-        invoer.set_visibility(True)
+        invoer.set_visibility(bool(sessie.prefs["stam_praesens"]))
         if v is None:
-            praesens.text = "✓"
-            betekenis.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
-            gevraagd.text = ""
+            vormlabel.text = "✓"
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
+            tijdknoppen.clear()
             invoer.set_visibility(False)
             knop.text = "Nieuwe ronde"
             teken()
             return
-        praesens.text = v["praesens"]
-        betekenis.text = v["verb"].get("betekenis", "")
-        gevraagd.text = TIJD_KORT.get(v["tijd"], v["tijd"])
+        vormlabel.text = v["vorm"]
+        vraagsoort.text = ("Welke tijd is dit, en van welk werkwoord?"
+                           if sessie.prefs["stam_praesens"] else "Welke tijd is dit?")
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken"
         invoer.value = ""
         teken()
+        teken_tijden()
         with statusbalk:
             ui.html(_statusrij([
                 (v["streak"], "streak", TEKST),
@@ -809,7 +881,6 @@ def stampagina():
                 (v["verb"].get("morfologie", {}).get("klasse", "—"), "klasse", ZACHT),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
-        invoer.run_method("focus")
 
     async def nakijken():
         v = sessie.huidig
@@ -821,7 +892,13 @@ def stampagina():
             sessie.i += 1
             toon()
             return
-        juist = bool(motor.grieks_vorm_ok(invoer.value or "", v["vorm"]))
+        if sessie.tijd_keuze is None:
+            ui.notify("Kies eerst een tijd.", position="top", color="dark")
+            return
+        tijd_ok = sessie.tijd_keuze == v["tijd"]
+        pr_ok = (not sessie.prefs["stam_praesens"]
+                 or bool(motor.grieks_vorm_ok(invoer.value or "", v["praesens"])))
+        juist = tijd_ok and pr_ok
         sessie.beoordeeld = True
         sessie.goed += int(juist)
         sessie.fout += int(not juist)
@@ -835,25 +912,36 @@ def stampagina():
         try:
             regels = motor.deconstrueer_stamtijd_live(v["vorm"], v["tijd"], v["praesens"])
             if regels:
-                opbouw = ("<div style='color:" + ZACHT + ";font-size:13px;margin-top:8px'>"
-                          + "<br>".join(str(r) for r in (regels if isinstance(regels, list)
-                                                         else [regels])) + "</div>")
+                lijst = regels if isinstance(regels, list) else [regels]
+                opbouw = (f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
+                          + "<br>".join(str(r) for r in lijst) + "</div>")
         except Exception:                                        # noqa: BLE001
             pass
+        deel = ""
+        if not juist:
+            wat = []
+            if not tijd_ok:
+                wat.append(f"de tijd was <b>{TIJD_KORT[v['tijd']]}</b>")
+            if not pr_ok:
+                wat.append(f"het werkwoord was <b>{v['praesens']}</b>")
+            deel = (f"<div style='color:{ZACHT};font-size:13px;margin-top:4px'>"
+                    f"{' · '.join(wat)}</div>")
         kleur = GOED if juist else FOUT
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
         terugkoppeling.clear()
         with terugkoppeling:
             ui.html(
-                f"<div style='background:{achter};border:1px solid {kleur}40;border-radius:12px;"
-                f"padding:14px;text-align:center;width:100%'>"
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:12px;padding:14px;text-align:center;width:100%'>"
                 f"<div style='color:{kleur};font-weight:700;font-size:16px'>"
                 f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
-                f"<div class='grieks' style='font-size:30px;color:{TEKST};margin-top:6px'>"
+                f"<div class='grieks' style='font-size:26px;color:{TEKST};margin-top:6px'>"
                 f"{v['vorm']}</div>"
-                f"<div style='color:{ZACHT};font-size:13.5px'>"
-                f"{TIJD_KORT.get(v['tijd'], v['tijd'])} van {v['praesens']}</div>"
-                f"{opbouw}"
+                f"<div style='color:{TEKST};font-size:14.5px'>{TIJD_KORT[v['tijd']]} van "
+                f"<span class='grieks'>{v['praesens']}</span></div>"
+                f"<div style='color:{ZACHT};font-size:13px'>"
+                f"{v['verb'].get('betekenis', '')}</div>"
+                f"{deel}{opbouw}"
                 f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
                 f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                 f"streak nu {e['streak']}</div></div>")
