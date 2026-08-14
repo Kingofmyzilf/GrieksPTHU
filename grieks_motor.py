@@ -18,6 +18,23 @@ import re
 import unicodedata
 
 
+# --- omgeving ------------------------------------------------------------
+# Deze twee staan in de bron in een try-blok (optionele afhankelijkheden) en
+# worden daarom apart meegegeven in plaats van uit de broncode gekopieerd.
+try:
+    from zoneinfo import ZoneInfo
+    _TIJDZONE = ZoneInfo("Europe/Amsterdam")
+except Exception:
+    _TIJDZONE = None
+
+try:
+    import fitz  # PyMuPDF: rendert de grammatica-slides
+    FITZ_BESCHIKBAAR = True
+except Exception:
+    fitz = None
+    FITZ_BESCHIKBAAR = False
+
+
 # --- cache ---------------------------------------------------------------
 # Vervangt @st.cache_data en @st.cache_resource met dezelfde semantiek:
 #  * argumenten waarvan de naam met _ begint tellen niet mee in de sleutel
@@ -3294,31 +3311,3 @@ def _ws_naam(naam):
     kan die van een ander nooit overschrijven."""
     schoon = re.sub(r'[^0-9A-Za-z_]', '_', str(naam or ''))
     return ("u_" + schoon)[:95]
-
-
-@cache_data(ttl=120, show_spinner=False)
-def lees_scorebord(cache_key):
-    """Lees het Scorebord-tabblad en bouw de competitie-metrics. Gecached (2 min) zodat de
-    competitie-tab het niet bij elke rerun opnieuw ophaalt; met 'Ververs' direct te verversen."""
-    try:
-        df = conn.read(worksheet="Scorebord", ttl=0)
-    except Exception:
-        return []
-    if df is None or 'gebruiker' not in getattr(df, 'columns', []):
-        return []
-    _labels = {'woorden': '📘 Woorden', 'actief': '🎓 Actief', 'stam': '⏳ Stamtijden', 'struct': '🧱 Structuur'}
-    out = []
-    for _, r in df.iterrows():
-        naam = str(r.get('gebruiker', '')).strip()
-        if not naam:
-            continue
-        def _i(k):
-            try: return int(float(r.get(k, 0)))
-            except Exception: return 0
-        ond = {'woorden': {'beh': _i('w_beh'), 'pog': _i('w_pog')}, 'actief': {'beh': _i('a_beh'), 'pog': _i('a_pog')},
-               'stam': {'beh': _i('s_beh'), 'pog': _i('s_pog')}, 'struct': {'beh': _i('r_beh'), 'pog': _i('r_pog')}}
-        gedaan = [_labels[k] for k in ['woorden', 'actief', 'stam', 'struct'] if ond[k]['pog'] > 0]
-        out.append({'naam': naam, 'xp': _i('xp'), 'niveau': _i('niveau'), 'titel': str(r.get('titel', '')),
-                    'week': _i('week'), 'totaal': _i('totaal'), 'badges': _i('badges'),
-                    'onderdelen': ond, 'gedaan': gedaan})
-    return out
