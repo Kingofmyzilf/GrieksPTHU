@@ -1596,7 +1596,8 @@ def swpagina():
 
 
 # ============================================================== ontleden
-ONT_STANDAARD = {"ont_niveau": "Grieks 1", "ont_drempel": 5, "ont_kleur": True}
+ONT_STANDAARD = {"ont_niveau": "Grieks 1", "ont_drempel": 5, "ont_kleur": True,
+                 "ont_rijtje": True, "ont_vertaalhulp": True, "ont_links": True}
 ONT_NIVEAUS = ["Grieks 1", "Grieks 2", "Grieks 3"]
 
 
@@ -1670,12 +1671,16 @@ def ontpagina():
         k_drem = ui.number("Woorden moeten streak … hebben", value=int(p["ont_drempel"]),
                            min=0, max=20, step=1).props("outlined dark").classes("w-full")
         k_kleur = ui.switch("Naamvallen kleuren in het vers", value=bool(p["ont_kleur"]))
+        k_rijtje = ui.switch("Knop 'bekijk het rijtje' tonen", value=bool(p["ont_rijtje"]))
+        k_vh = ui.switch("Knop 'vertaalhulp' tonen", value=bool(p["ont_vertaalhulp"]))
+        k_links = ui.switch("Links naar BibleHub tonen", value=bool(p["ont_links"]))
         ui.label("Een lagere drempel geeft meer verzen om uit te kiezen.").style(
             f"color:{ZACHT};font-size:12px")
 
         async def bewaar_inst():
             for sleutel, veld in [("ont_niveau", k_niv), ("ont_drempel", k_drem),
-                                  ("ont_kleur", k_kleur)]:
+                                  ("ont_kleur", k_kleur), ("ont_rijtje", k_rijtje),
+                                  ("ont_vertaalhulp", k_vh), ("ont_links", k_links)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -1775,6 +1780,7 @@ def ontpagina():
         info = w.get("parsing_info", "") or ""
         lemma = w.get("lemma") or w.get("grieks", "")
         with hulpvak:
+          if p["ont_rijtje"]:
             with ui.expansion("Bekijk het rijtje (spieken)").classes("w-full").style(
                     f"background:{VLAK};border:1px solid {RAND};border-radius:10px;"
                     f"font-size:13px"):
@@ -1784,14 +1790,25 @@ def ontpagina():
                         info, lemma, w.get("grieks_info", "")) or []
                 except Exception:                                # noqa: BLE001
                     pass
-                if tabellen:
+                # _ontleed_tip_tabellen geeft NAMEN terug; de rijen staan in
+                # laad_gramtabellen(). De naam zelf doorgeven maakt er een tabel van
+                # één letter per rij van.
+                alle = motor.laad_gramtabellen() or {}
+                getoond = False
+                for naam in tabellen[:2]:
+                    rijen = alle.get(naam)
+                    if not rijen:
+                        continue
+                    ui.label(naam).style(f"color:{MERK};font-size:12.5px;font-weight:600")
                     try:
-                        ui.html(motor._render_gramtabel_html(tabellen[0]))
+                        ui.html(motor._render_gramtabel_html(rijen))
+                        getoond = True
                     except Exception:                            # noqa: BLE001
-                        ui.label("Kon dit rijtje niet tonen.").style(f"color:{ZACHT}")
-                else:
+                        pass
+                if not getoond:
                     ui.label("Voor dit woord staat geen rijtje in de tabellen.").style(
                         f"color:{ZACHT};font-size:13px")
+          if p["ont_vertaalhulp"]:
             with ui.expansion("Vertaalhulp bij deze vorm").classes("w-full").style(
                     f"background:{VLAK};border:1px solid {RAND};border-radius:10px;"
                     f"font-size:13px"):
@@ -1804,6 +1821,7 @@ def ontpagina():
                         if h else
                         f"<div style='color:{ZACHT};font-size:13px'>Geen extra hulp "
                         f"voor deze vorm.</div>")
+          if p["ont_links"]:
             _boek = ref.rsplit(" ", 1)[0].replace(" ", "_").lower()
             _hs = ref.rsplit(" ", 1)[-1].replace(":", "/")
             ui.html(
@@ -1839,14 +1857,23 @@ def ontpagina():
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
         info = t["woord"].get("parsing_info", "") or ""
         gloss = t["woord"].get("vertaling_nl") or t["woord"].get("vertaling_bsb") or ""
+        # Niet de hele parsing tonen zolang je van dit woord nog dimensies moet doen —
+        # dan staan de antwoorden op de volgende vragen er al.
+        nog = [x for x in taken[staat["i"] + 1:] if x["wi"] == t["wi"]]
+        alles_af = not nog
+        zichtbaar = info if alles_af else f"{t['label']}: {', '.join(t['goed'])}"
+        regel_gloss = (f"<div style='color:{TEKST};font-size:13.5px;margin-top:4px'>"
+                       f"{gloss}</div>") if alles_af else ""
         hulp = ""
-        try:
-            h = motor._ontleed_vertaalhulp(info)
-            if h:
-                hulp = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px;"
-                        f"line-height:1.5'>{h if isinstance(h, str) else ' · '.join(h)}</div>")
-        except Exception:                                        # noqa: BLE001
-            pass
+        if alles_af:
+            try:
+                h = motor._ontleed_vertaalhulp(info)
+                if h:
+                    hulp = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px;"
+                            f"line-height:1.5'>"
+                            f"{h if isinstance(h, str) else ' · '.join(h)}</div>")
+            except Exception:                                    # noqa: BLE001
+                pass
         terugkoppeling.clear()
         with terugkoppeling:
             ui.html(
@@ -1857,8 +1884,8 @@ def ontpagina():
                 f"</div>"
                 f"<div class='grieks' style='font-size:30px;color:{TEKST};margin-top:8px'>"
                 f"{t['woord'].get('grieks', '')}</div>"
-                f"<div style='color:{ZACHT};font-size:13px'>{info}</div>"
-                f"<div style='color:{TEKST};font-size:13.5px;margin-top:4px'>{gloss}</div>"
+                f"<div style='color:{ZACHT};font-size:13px'>{zichtbaar}</div>"
+                f"{regel_gloss}"
                 f"{hulp}</div>")
         knop.text = "Volgende"
 
