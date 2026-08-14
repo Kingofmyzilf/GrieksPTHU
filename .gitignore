@@ -16,3 +16,6 @@ venv/
 
 # --- Office-tijdelijke bestanden ---
 ~$*
+
+# --- gedownloade export uit de app ---
+mijn_grieks_voortgang.csv
