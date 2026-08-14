@@ -1661,7 +1661,7 @@ def ontpagina():
             taken.append({"wi": wi, "woord": w, "sleutel": sleutel, "label": label,
                           "opties": opties, "goed": goed})
     staat = {"i": 0, "goed": 0, "fout": 0, "beoordeeld": False, "bezig": False,
-         "af": set(), "mis": set()}
+         "gedaan": set()}          # (woordindex, dimensie) die je beantwoord hebt
 
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
@@ -1721,7 +1721,16 @@ def ontpagina():
             tekst = w.get("grieks", "")
             info = w.get("parsing_info", "") or ""
             stijl = "font-size:24px;padding:0 3px;"
-            gekleurd = p["ont_kleur"] and (toon_kleur or i in staat["af"])
+            # De kleur hoort bij de naamval, dus hij verschijnt pas als je die
+            # vraag hebt gehad — goed of fout maakt niet uit, de kleur is altijd de
+            # juiste. Woorden zonder naamval lichten pas op als ze helemaal af zijn.
+            heeft_nv = any(t["wi"] == i and t["sleutel"] == "naamval" for t in taken)
+            if heeft_nv:
+                onthuld = (i, "naamval") in staat["gedaan"]
+            else:
+                onthuld = all((i, t["sleutel"]) in staat["gedaan"]
+                              for t in taken if t["wi"] == i)
+            gekleurd = p["ont_kleur"] and (toon_kleur or onthuld)
             if i == actief_wi:
                 stijl += (f"color:{INKT};background:{MERK};border-radius:5px;"
                           f"font-weight:700;")
@@ -1841,12 +1850,7 @@ def ontpagina():
         e = stats.setdefault(t["sleutel"], {"g": 0, "f": 0})
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
-        if juist:
-            if t["wi"] not in staat["mis"]:
-                staat["af"].add(t["wi"])
-        else:
-            staat["mis"].add(t["wi"])
-            staat["af"].discard(t["wi"])
+        staat["gedaan"].add((t["wi"], t["sleutel"]))
         g.sinds_opslag += 1
         await run.io_bound(g.bewaar)
         # Geen actief woord meer: zo laat het net beantwoorde woord zijn naamvalkleur
