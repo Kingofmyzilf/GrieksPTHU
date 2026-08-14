@@ -12,23 +12,24 @@ Bijgewerkt na een systematische vergelijking van alle widgets per tabblad.
 | Inloggen + scores terugschrijven (`grieks_gebruiker.py`) | klaar |
 | Onderbalk, Vandaag, Voortgang (basis), Oefenen-lijst | klaar |
 
-## Woordenschat — 7 van de 19 opties
+## Woordenschat — klaar
 
 Aanwezig: oefening (7 soorten), lessenkeuze, oefenvorm, kaarten per ronde,
 nieuwe woorden mee-oefenen, uitspraakknop, woordopbouw.
 Plus: statusbalkje, hint, opbouw, leerkaart bij nieuwe woorden, feedbackblok.
 
-Nog te doen:
 - [x] Level kiezen binnen het Leerpad, met XP/rang-kop (nog te doen: "Toon het hele pad")
 - [x] Oude stof meenemen (0 / 5 / 10 / alleen level)
 - [x] Nieuwe woorden per sessie als aantal
-- [ ] Sessie opbouw: Aanbevolen Mix vs Zelf Samenstellen (5 fase-sliders)
+- [x] Sessie opbouw: Aanbevolen mix vs Zelf samenstellen (vijf fase-tellers, met
+      per fase hoeveel er in de gekozen poule klaarstaat)
 - [x] Beheerste woorden (streak 30+) als echte verbogen vorm uit het NT, met de
       parsing en de vindplaats in de feedback — vervangt "mastery in Bijbelcontext"
-- [ ] Verwarwoorden er samen bij trekken (discrimineren)
+- [x] Verwarwoorden er samen bij trekken (discrimineren)
 - [~] Bijbelcontext-modus, kaartenbak-clustering en naamvalkleuring in de zin:
       LATEN VALLEN op verzoek. Die oefen je in Leesteksten en Ontleden.
-- [ ] Verwarparen als paar-oefening + de eindsamenvatting van een sessie
+- [x] Verwarparen als paar-oefening (`/oefenen/paren`, met overtikken na twee
+      missers) + de eindsamenvatting waarin je zelf bevestigt wat je verwarde
 
 ## Stamtijden — kern klaar
 
@@ -70,19 +71,24 @@ Nog te doen:
 - [ ] Vergelijkbare vormen (andere spelling/accent)
 - [ ] Vertaalrondes: woord voor woord en de hele zin
 
-## Voortgang — alleen de basis
+## Voortgang — klaar
 
-Aanwezig: niveau en rang, accuratesse, beheerst, oefendagen, woorden-dekking, uitloggen.
+Aanwezig: niveau en rang, accuratesse, beheerst, oefendagen, dagstreak, vandaag,
+NT-dekking, woorden-dekking, uitloggen.
 
-Nog te doen:
-- [ ] Oefenritme-kalender (heatmap)
-- [ ] Dagelijks doel instellen + voortgang per onderdeel vandaag
-- [ ] Gedetailleerde voortgang per onderdeel
-- [ ] Badges
-- [ ] Woorden die ik het vaakst fout doe / hardnekkige probleemwoorden
-- [ ] Studieplanner (kennis-diepte, verwachte accuratesse, einddatum-prognose)
-- [ ] Competitiedashboard + scorebord
-- [ ] CSV-export
+- [x] Oefenritme-kalender (vijf weken, met een stip per gehaald dagdoel)
+- [x] Dagelijks doel instellen + voortgang per onderdeel vandaag
+- [x] Gedetailleerde voortgang per onderdeel (fasen per onderdeel, lekkende emmer,
+      per tentamen, ontleed-accuratesse)
+- [x] Badges
+- [x] Hardnekkige probleemwoorden
+- [x] Studieplanner (kennis-diepte, tempo, verwachte accuratesse, einddatum)
+- [x] Competitiedashboard + scorebord (leest en schrijft hetzelfde
+      Scorebord-tabblad als de Streamlit-app, sleutelkolom `gebruiker`)
+- [x] CSV-export
+
+Alle vijf de oefenonderdelen tellen nu mee in `dag_stats` en in het dagdoel-logboek
+(`Gebruiker.tel_dag` en `dagdoel_plus`); daarvoor deed alleen Woordenschat dat.
 
 ## Nog helemaal niet gebouwd
 
@@ -100,4 +106,9 @@ Nog te doen:
   aparte thread draait terwijl je de feedback leest.
 - Ontleden is één doorlopende reeks vragen in plaats van vijf aparte rondes.
 - Instellingen staan in `ui_prefs` met een `ng_`-voorvoegsel, zodat ze niet botsen
-  met de Streamlit-sleutels.
+  met de Streamlit-sleutels. Het dagdoel deelt wél dezelfde `dagdoel`-dict; alleen
+  de doelen die hier instelbaar zijn worden overschreven, de rest blijft staan.
+- Het scorebord wordt bijgewerkt zodra je de competitie-uitklapper opent, niet bij
+  elke opslag; dat scheelt schrijfbeurten op de gedeelde Sheet.
+- In de paar-oefening wist een misser de streak niet (alleen score_fout gaat omhoog).
+  Het is een onderscheid-oefening, geen gewone overhoring — net als in Streamlit.

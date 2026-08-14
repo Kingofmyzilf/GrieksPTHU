@@ -229,17 +229,30 @@ def lees_scorebord():
         return []
 
 
-def schrijf_scorebord(gebruiker, samenvatting):
-    """Werkt de eigen regel in het gedeelde Scorebord bij; laat de rest ongemoeid."""
-    tab = _tab(SCOREBORD, maak=True)
+def schrijf_scorebord(samenvatting):
+    """Werkt de eigen regel in het gedeelde Scorebord bij en laat de rest ongemoeid.
+    De sleutelkolom heet 'gebruiker', net als in de Streamlit-app, zodat beide apps
+    dezelfde ranglijst vullen in plaats van twee halve."""
+    naam = str(samenvatting.get('gebruiker', '')).strip()
+    if not naam:
+        return False
+    sheet = verbind()
     try:
-        rijen = tab.get_all_records()
-    except Exception:
+        tab = sheet.worksheet(SCOREBORD)
+    except gspread.WorksheetNotFound:
+        tab = sheet.add_worksheet(title=SCOREBORD, rows=100, cols=30)
         rijen = []
+    else:
+        try:
+            rijen = tab.get_all_records()
+        except Exception as e:
+            # Niet schrijven op een blad dat we niet konden lezen: dan zouden we alle
+            # klasgenoten uit de ranglijst gooien om er zelf één regel voor terug te zetten.
+            raise OpslagFout(f"Scorebord lezen mislukte: {e}") from e
     rijen = [r for r in rijen
-             if str(r.get('gebruikersnaam', '')).strip().lower() != str(gebruiker).strip().lower()]
-    rijen.append({'gebruikersnaam': gebruiker, **samenvatting})
-    kolommen = sorted({k for r in rijen for k in r}, key=lambda k: (k != 'gebruikersnaam', k))
+             if str(r.get('gebruiker', '')).strip().lower() != naam.lower()]
+    rijen.append(dict(samenvatting))
+    kolommen = sorted({k for r in rijen for k in r}, key=lambda k: (k != 'gebruiker', k))
     tab.clear()
     tab.update([kolommen] + [[r.get(k, "") for k in kolommen] for r in rijen], "A1")
     return True

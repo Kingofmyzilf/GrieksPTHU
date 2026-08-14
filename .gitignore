@@ -11,5 +11,8 @@ __pycache__/
 .venv/
 venv/
 
+# --- NiceGUI-werkmap (sessieopslag) ---
+.nicegui/
+
 # --- Office-tijdelijke bestanden ---
 ~$*

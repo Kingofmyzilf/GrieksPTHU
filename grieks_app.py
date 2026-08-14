@@ -7,6 +7,9 @@ zonder paginaherlaad.
 
 Starten:  py grieks_app.py
 """
+import csv
+import io
+import math
 import os
 import random
 from datetime import date, timedelta
@@ -169,7 +172,9 @@ def vandaagpagina():
         return
     sam = g.samenvatting()
     dagen = g.stats.get("dag_stats") or {}
-    doel = 25
+    # Het dagdoel dat je bij Voortgang instelt; 'woorden' telt verschillende woorden.
+    doel = max(1, int(g.dagdoel().get("woorden", 10) or 10))
+    gedaan = g.woorden_vandaag()
 
     with ui.column().classes("inhoud w-full gap-3"):
         ui.label("Vandaag").style("font-size:26px;font-weight:700")
@@ -177,16 +182,16 @@ def vandaagpagina():
 
         with ui.element("div").classes("kaart w-full"):
             with ui.row().classes("w-full items-baseline gap-2"):
-                ui.label(str(sam["vandaag"])).style(
+                ui.label(str(gedaan)).style(
                     f"font-size:44px;font-weight:800;color:{MERK};line-height:1")
                 ui.label(f"van {doel}").style(f"color:{ZACHT};font-size:15px")
-            balk = min(1.0, sam["vandaag"] / doel)
+            balk = min(1.0, gedaan / doel)
             ui.element("div").style(
                 f"width:100%;height:6px;border-radius:3px;background:{RAND};margin:10px 0 8px")\
                 .classes("relative")
             ui.html(f"<div style='margin-top:-14px;width:{balk*100:.0f}%;height:6px;"
                     f"border-radius:3px;background:{MERK}'></div>")
-            resterend = max(0, doel - sam["vandaag"])
+            resterend = max(0, doel - gedaan)
             ui.label("Je dagdoel is gehaald." if resterend == 0
                      else f"Nog {resterend} woorden voor je dagdoel.").style(
                 f"color:{TEKST};font-size:14px")
@@ -228,12 +233,31 @@ _VORM_CODE = {"Alleen leren": "1", "Alleen meerkeuze": "2", "Alleen typen": "4"}
 OEFENINGEN = ["Leerpad (levels)", "Losse lessen", "Knelpunten", "Lang niet gedaan",
               "Mastery", "Gelijkende woorden", "Mijn verwarwoorden"]
 
+# De twee oefeningen die als paar-oefening lopen: je krijgt twee lijkende woorden
+# tegelijk en geeft van allebei de betekenis. Zo leer je ze uit elkaar houden.
+PAAR_OEFENINGEN = ("Gelijkende woorden", "Mijn verwarwoorden")
+
 OUDE_STOF = {"Alleen dit level": 0, "Kleine herhaalronde (5)": 5,
              "Grote herhaalronde (10)": 10}
+
+MIX, ZELF = "Aanbevolen mix", "Zelf samenstellen"
+OPBOUW_STIJLEN = [MIX, ZELF]
+# (pref-sleutel, naam, streakbereik, telling) — dezelfde vijf fasen als de motor gebruikt.
+FASEN = [("mix_nieuw", "nieuw", "0", lambda s: s == 0),
+         ("mix_incubatie", "prille start", "1–3", lambda s: 1 <= s <= 3),
+         ("mix_training", "in training", "4–15", lambda s: 4 <= s <= 15),
+         ("mix_beheerst", "beheerst", "16–29", lambda s: 16 <= s <= 29),
+         ("mix_mastery", "mastery", "30+", lambda s: s >= 30)]
+# pref-sleutel -> de naam die kies_gefaseerde_oefensessie in custom_counts verwacht
+FASE_MOTOR = {"mix_nieuw": "nieuw", "mix_incubatie": "incubatie", "mix_training": "training",
+              "mix_beheerst": "beheerst", "mix_mastery": "mastery"}
+
 STANDAARD = {"keuze": "Leerpad (levels)", "lessen": [], "vorm": AUTO, "aantal": 12,
              "nieuw_mee": True, "audio": True, "opbouw": False,
              "level": 0, "oude_stof": "Kleine herhaalronde (5)", "nieuw_aantal": 3,
-             "mastery_vormen": True}
+             "mastery_vormen": True, "verwar_mee": True, "opbouw_stijl": MIX,
+             "mix_nieuw": 2, "mix_incubatie": 4, "mix_training": 6, "mix_beheerst": 2,
+             "mix_mastery": 0}
 
 
 def prefs(g):
@@ -423,6 +447,15 @@ def _feedbackblok(w, juist, sessie, woordenlijst):
             f"padding:14px;text-align:center;width:100%'>{''.join(regels)}</div>")
 
 
+def _uitslaglijst(kop, kleur, regels):
+    """Eén blok van de eindsamenvatting: een gekleurde kop met daaronder de woorden."""
+    inhoud = "".join(f"<div style='font-size:13.5px;color:{TEKST};line-height:1.7'>{r}</div>"
+                     for r in regels) or f"<div style='color:{ZACHT};font-size:13px'>—</div>"
+    return (f"<div class='kaart' style='width:100%'>"
+            f"<div style='color:{kleur};font-weight:700;font-size:14px;margin-bottom:4px'>"
+            f"{kop}</div>{inhoud}</div>")
+
+
 def _opbouw_tekst(w, woordenlijst):
     """Samenstelling tonen als het grondwoord zelf ook in je lijst staat."""
     ob = gebruikers.woord_opbouw(w.get("grieks", ""), woordenlijst)
@@ -437,17 +470,67 @@ def _opbouw_tekst(w, woordenlijst):
     return "Dit woord is niet uit delen opgebouwd die je al kent."
 
 
+def verwar_kandidaten(w, antwoord, woordenlijst):
+    """Woorden die je met dit woord verward kunt hebben: woorden die precies de betekenis
+    hebben die jij gaf, plus look-alikes op spelling. Er wordt niets van vastgelegd — in de
+    eindsamenvatting vink je zelf aan wat écht klopte. Automatisch toevoegen vervuilde de
+    lijst, want vaak hebben meerdere woorden dezelfde Nederlandse betekenis."""
+    getoond = w.get("grieks", "")
+    uit = {}
+    try:
+        for ander in motor.woorden_met_zelfde_betekenis(
+                antwoord, woordenlijst, exclude_grieks=getoond, alleen_geoefend=True):
+            uit[ander.get("grieks", "")] = str(ander.get("nederlands", ""))
+    except Exception:                                            # noqa: BLE001
+        pass
+    try:
+        idx = {x.get("grieks"): x for x in woordenlijst if x.get("grieks")}
+        for tg in (motor.laad_verwarparen_db().get(getoond) or []):
+            tw = idx.get(tg)
+            if tw and motor._is_al_geoefend(tw):
+                uit[tg] = str(tw.get("nederlands", ""))
+            if len(uit) >= 6:
+                break
+    except Exception:                                            # noqa: BLE001
+        pass
+    uit.pop(getoond, None)
+    uit.pop("", None)
+    return uit
+
+
+def fase_telling(poule):
+    """Hoeveel woorden er in deze poule per fase klaarstaan — de 'beschikbaar'-cijfers
+    bij Zelf samenstellen."""
+    return {sleutel: sum(1 for w in poule if test(int(w.get("streak", 0) or 0)))
+            for sleutel, _naam, _bereik, test in FASEN}
+
+
+def eigen_aantallen(p):
+    """De vijf fase-schuiven als custom_counts voor de motor, of None bij de aanbevolen mix.
+    Staat alles op nul, dan is 'zelf samenstellen' leeg gelaten; dan toch de mix pakken,
+    want een sessie van nul kaarten helpt niemand."""
+    if p.get("opbouw_stijl") != ZELF:
+        return None
+    telling = {FASE_MOTOR[s]: max(0, int(p.get(s, 0) or 0)) for s in FASE_MOTOR}
+    return telling if sum(telling.values()) else None
+
+
 class Sessie:
     """Eén ronde kaarten, met oplopende moeilijkheid per woord."""
 
     def __init__(self, g):
         p = prefs(g)
         self.poule = bouw_poule(g, p["keuze"], p["lessen"], p.get("level", 0)) or g.woorden
+        eigen = eigen_aantallen(p)
         gekozen = motor.kies_gefaseerde_oefensessie(
-            self.poule, "vocab",
+            self.poule, "vocab", custom_counts=eigen,
             max_nieuw=int(p.get("nieuw_aantal", 3)) if p["nieuw_mee"] else 0,
             verbied_nieuwe_woorden=not p["nieuw_mee"]) or self.poule
-        gekozen = list(gekozen)[:int(p["aantal"])]
+        # Bij zelf samenstellen bepalen de vijf schuiven de omvang; 'kaarten per ronde'
+        # zou die keuze anders alsnog afkappen.
+        gekozen = list(gekozen) if eigen else list(gekozen)[:int(p["aantal"])]
+        if p.get("verwar_mee", True):
+            gekozen = self._verwarwoorden_erbij(g, gekozen)
         herhaal = OUDE_STOF.get(p.get("oude_stof", ""), 0)
         if herhaal and p["keuze"] == "Leerpad (levels)":
             try:
@@ -467,6 +550,36 @@ class Sessie:
         self.fout = 0
         self.beoordeeld = False
         self.toonvorm = None
+        # Voor de eindsamenvatting: wat ging goed, wat fout, en welke woorden zou je
+        # verward kunnen hebben. Dat laatste bevestig je aan het eind zelf.
+        self.gelukt = {}
+        self.mislukt = {}
+        self.kandidaten = {}
+
+    @staticmethod
+    def _verwarwoorden_erbij(g, gekozen):
+        """Look-alikes van de gekozen woorden mee de sessie in trekken, zodat je ze naast
+        elkaar leert onderscheiden. Voegt nooit een woord toe dat je nog nooit zag."""
+        try:
+            gekozen = motor.voeg_verwar_twins_toe(
+                gekozen, g.woorden, motor.laad_verwarparen_db(), max_twins=3)
+            return motor.voeg_eigen_verwar_toe(
+                gekozen, g.woorden, g.stats.get("verwar_stats") or {}, max_extra=3)
+        except Exception:                                        # noqa: BLE001
+            return gekozen
+
+    def noteer_uitslag(self, w, juist, antwoord, woordenlijst):
+        grieks = w.get("grieks", "")
+        if juist:
+            self.gelukt[grieks] = str(w.get("nederlands", ""))
+            return
+        self.mislukt[grieks] = {"nederlands": str(w.get("nederlands", "")),
+                                "antwoord": str(antwoord or "")}
+        kand = verwar_kandidaten(w, antwoord, woordenlijst)
+        if kand:
+            self.kandidaten.setdefault(grieks, {"nederlands": str(w.get("nederlands", "")),
+                                                "antwoord": str(antwoord or ""),
+                                                "opties": {}})["opties"].update(kand)
 
     @property
     def huidig(self):
@@ -531,8 +644,7 @@ def oefenhub():
             ("Ontleden", _ont_pct(g), "/oefenen/ontleden"),
         ]),
     ]
-    nog_niet = ["Klankwetten",
-                "Nederlands → Grieks", "Verwarwoorden"]
+    nog_niet = ["Klankwetten", "Nederlands → Grieks"]
 
     with ui.column().classes("inhoud w-full gap-3"):
         ui.label("Oefenen").style("font-size:26px;font-weight:700")
@@ -555,14 +667,10 @@ def oefenhub():
     onderbalk("Oefenen")
 
 
-@ui.page("/oefenen/woorden")
-def oefenpagina():
-    g = _bewaakt()
-    if not g:
-        return
-    sessie = Sessie(g)
-
-    # --- instellingen achter het tandwiel (designreview: niet vóór de oefening) ---
+def woord_instellingen(g):
+    """De instellingen achter het tandwiel (designreview: niet vóór de oefening).
+    Gedeeld door de kaartenronde en de paar-oefening; welke van de twee je krijgt hangt
+    aan de gekozen oefening, dus dat bepaalt deze dialoog ook bij het toepassen."""
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
         ui.label("Instellingen").style("font-size:18px;font-weight:700")
@@ -571,6 +679,10 @@ def oefenpagina():
 
         kies_oefening = ui.select(OEFENINGEN, value=p["keuze"], label="Oefening").props(
             "outlined dark").classes("w-full")
+        ui.label("Gelijkende woorden en Mijn verwarwoorden lopen als paar-oefening: "
+                 "twee lijkende woorden tegelijk.").style(
+            f"color:{ZACHT};font-size:12px").bind_visibility_from(
+            kies_oefening, "value", lambda v: v in PAAR_OEFENINGEN)
         kies_lessen = ui.select(alle_lessen, value=p["lessen"], label="Lessen",
                                 multiple=True).props("outlined dark").classes("w-full")
         kies_lessen.bind_visibility_from(kies_oefening, "value",
@@ -600,7 +712,41 @@ def oefenpagina():
             "outlined dark").classes("w-full")
         kies_aantal = ui.number("Kaarten per ronde", value=int(p["aantal"]),
                                 min=4, max=40, step=1).props("outlined dark").classes("w-full")
+
+        # --- sessie opbouw: de app kiest, of jij bepaalt het per fase ---
+        kies_stijl = ui.select(OPBOUW_STIJLEN, value=p.get("opbouw_stijl", MIX),
+                               label="Sessie opbouw").props("outlined dark").classes("w-full")
+        eigen_vak = ui.column().classes("w-full gap-2")
+        eigen_vak.bind_visibility_from(kies_stijl, "value", lambda v: v == ZELF)
+        fase_velden = {}
+        with eigen_vak:
+            ui.label("Hoeveel woorden wil je per fase? 'Kaarten per ronde' geldt dan niet.").style(
+                f"color:{ZACHT};font-size:12px")
+            beschikbaar = ui.label().style(f"color:{ZACHT};font-size:12px")
+            for sleutel, naam, bereik, _test in FASEN:
+                fase_velden[sleutel] = ui.number(
+                    f"{naam.capitalize()} (streak {bereik})", value=int(p.get(sleutel, 0) or 0),
+                    min=0, max=40, step=1).props("outlined dark dense").classes("w-full")
+
+        def tel_beschikbaar():
+            """Wat er in de gekozen poule klaarstaat. Verandert mee met oefening en level,
+            zodat de aantallen kloppen bij wat je op dat moment kiest."""
+            poule = bouw_poule(g, kies_oefening.value, kies_lessen.value or [],
+                               kies_level.value or 0) or g.woorden
+            telling = fase_telling(poule)
+            beschikbaar.text = "Beschikbaar: " + " · ".join(
+                f"{naam} {telling[sleutel]}" for sleutel, naam, _b, _t in FASEN)
+
+        for veld in (kies_oefening, kies_lessen, kies_level):
+            veld.on_value_change(lambda _=None: tel_beschikbaar())
+        tel_beschikbaar()
+
         kies_nieuw = ui.switch("Nieuwe woorden mee-oefenen", value=bool(p["nieuw_mee"]))
+        kies_verwar = ui.switch("Verwarwoorden erbij trekken",
+                                value=bool(p.get("verwar_mee", True)))
+        ui.label("Heeft een gekozen woord een look-alike die je al eens deed, dan komt die "
+                 "in dezelfde sessie mee — zo leer je ze onderscheiden. Nooit nieuwe woorden.").style(
+            f"color:{ZACHT};font-size:12px")
         kies_audio = ui.switch("Uitspraakknop tonen", value=bool(p["audio"]))
         kies_opbouw = ui.switch("Woordopbouw tonen", value=bool(p["opbouw"]))
         kies_mv = ui.switch("Beheerste woorden als vorm uit de Bijbel",
@@ -612,23 +758,39 @@ def oefenpagina():
             f"color:{ZACHT};font-size:12px")
 
         async def bewaar_instellingen():
-            for sleutel, veld in [("keuze", kies_oefening), ("lessen", kies_lessen),
-                                  ("level", kies_level), ("oude_stof", kies_oude),
-                                  ("nieuw_aantal", kies_nieuw_n),
-                                  ("vorm", kies_vorm), ("aantal", kies_aantal),
-                                  ("nieuw_mee", kies_nieuw), ("audio", kies_audio),
-                                  ("opbouw", kies_opbouw),
-                                  ("mastery_vormen", kies_mv)]:
+            velden = [("keuze", kies_oefening), ("lessen", kies_lessen),
+                      ("level", kies_level), ("oude_stof", kies_oude),
+                      ("nieuw_aantal", kies_nieuw_n),
+                      ("vorm", kies_vorm), ("aantal", kies_aantal),
+                      ("opbouw_stijl", kies_stijl),
+                      ("nieuw_mee", kies_nieuw), ("verwar_mee", kies_verwar),
+                      ("audio", kies_audio), ("opbouw", kies_opbouw),
+                      ("mastery_vormen", kies_mv)]
+            for sleutel, veld in velden + list(fase_velden.items()):
                 zet_pref(g, sleutel, veld.value)
             instellingen.close()
             await run.io_bound(g.bewaar, True)
-            ui.navigate.to("/oefenen/woorden")
+            ui.navigate.to("/oefenen/paren" if kies_oefening.value in PAAR_OEFENINGEN
+                           else "/oefenen/woorden")
 
         with ui.row().classes("w-full justify-end gap-2"):
             ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
                 f"color:{ZACHT}")
             ui.button("Toepassen", on_click=bewaar_instellingen).props("unelevated").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
+    return instellingen
+
+
+@ui.page("/oefenen/woorden")
+def oefenpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if prefs(g)["keuze"] in PAAR_OEFENINGEN:
+        ui.navigate.to("/oefenen/paren")
+        return
+    sessie = Sessie(g)
+    instellingen = woord_instellingen(g)
 
     with ui.column().classes("inhoud metbalk w-full gap-3"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
@@ -688,14 +850,25 @@ def oefenpagina():
         ui.notify(tekst, position="top", color="dark", multi_line=True,
                   classes="text-body2").style("max-width:88vw")
 
-    async def verwerk(k, juist):
+    async def verwerk(k, juist, antwoord=""):
         sessie.beoordeeld = True
         sessie.goed += int(juist)
         sessie.fout += int(not juist)
+        sessie.noteer_uitslag(k, juist, antwoord, g.woorden)
+        if juist:
+            # goed antwoord dempt de geregistreerde verwarringen van dit woord
+            g.verzwak_verwarring(k.get("grieks", ""))
         opgeslagen = await run.io_bound(g.noteer, k, juist)
         terugkoppeling.clear()
         with terugkoppeling:
             ui.html(_feedbackblok(k, juist, sessie, g.woorden))
+            lijkt = (sessie.kandidaten.get(k.get("grieks", "")) or {}).get("opties") or {}
+            if lijkt:
+                regels = " · ".join(f"<span class='grieks'>{cg}</span> ({cn[:26]})"
+                                    for cg, cn in list(lijkt.items())[:3])
+                ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center;"
+                        f"line-height:1.5'>⚠ Lijkt op: {regels}<br>"
+                        f"Aan het eind van de ronde vink je zelf aan wat klopte.</div>")
         if g.laatste_fout:
             opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
             opslagmelding.style(f"color:{FOUT}")
@@ -749,6 +922,8 @@ def oefenpagina():
             invoer.set_visibility(False)
             knop.text = "Nieuwe ronde"
             teken_streepjes()
+            with opties:
+                toon_samenvatting()
             return
 
         # Beheers je dit woord, dan is de woordenboekvorm te makkelijk geworden:
@@ -797,13 +972,59 @@ def oefenpagina():
         knop.text = "Nakijken"
         invoer.run_method("focus")
 
+    # ---------------- de eindsamenvatting ----------------
+    def toon_samenvatting():
+        """Wat ging goed, wat fout, en welke verwarring klopte écht. Dat laatste bevestig
+        je zelf: meerdere woorden kunnen dezelfde Nederlandse betekenis hebben, dus
+        automatisch toevoegen zou de lijst vervuilen."""
+        goed_alleen = {gr: nl for gr, nl in sessie.gelukt.items() if gr not in sessie.mislukt}
+        ui.html(_uitslaglijst(f"✓ Goed ({len(goed_alleen)})", GOED, [
+            f"<span class='grieks'>{gr}</span> — {nl}" for gr, nl in goed_alleen.items()]))
+        ui.html(_uitslaglijst(f"✗ Fout ({len(sessie.mislukt)})", FOUT, [
+            f"<span class='grieks'>{gr}</span> — {d['nederlands']}"
+            f"<span style='color:{ZACHT}'> (jij: {d['antwoord'] or '—'})</span>"
+            for gr, d in sessie.mislukt.items()]))
+        if not sessie.kandidaten:
+            return
+        vinkjes = {}
+        with ui.element("div").classes("kaart w-full"):
+            ui.label("Mogelijk verward").style(
+                f"color:{TEKST};font-size:15px;font-weight:600")
+            ui.label("Vaak hebben meerdere woorden dezelfde betekenis. Vink alleen aan met "
+                     "welk woord je het écht door elkaar haalde — één, meer of geen.").style(
+                f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+            for grieks, d in sessie.kandidaten.items():
+                ui.html(f"<div style='margin-top:10px;font-size:13.5px;color:{TEKST}'>"
+                        f"<span class='grieks' style='font-size:17px'>{grieks}</span> "
+                        f"({d['nederlands']}) — jij gaf: <i>{d['antwoord'] or '—'}</i></div>")
+                for cg, cn in d["opties"].items():
+                    vinkjes[(grieks, cg)] = ui.checkbox(f"{cg} ({cn[:34]})").props(
+                        "dense dark").classes("w-full").style("font-size:13.5px")
+
+            async def bevestig():
+                aantal = 0
+                for (getoond, verward), vink in vinkjes.items():
+                    if vink.value:
+                        g.registreer_verwarring(getoond, verward)
+                        aantal += 1
+                sessie.kandidaten.clear()
+                await run.io_bound(g.bewaar, True)
+                ui.notify(f"{aantal} verwarpaar toegevoegd" if aantal == 1 else
+                          (f"{aantal} verwarparen toegevoegd" if aantal else "Niets toegevoegd"),
+                          position="top", color="dark")
+                toon_kaart()
+
+            ui.button("Toevoegen aan mijn verwarwoorden", on_click=bevestig).props(
+                "unelevated").style(f"background:{MERK};color:{INKT};font-weight:700;"
+                                    f"margin-top:10px;width:100%")
+
     async def kies(k, keuze):
         if sessie.beoordeeld:
             return
         juist = keuze == k.get("nederlands", "") or motor.zelfde_betekenis(
             keuze, k.get("nederlands", ""))
         opties.clear()
-        await verwerk(k, juist)
+        await verwerk(k, juist, keuze)
 
     async def hoofdknop():
         k, vorm = sessie.huidig
@@ -821,12 +1042,252 @@ def oefenpagina():
             opties.clear()
             await verwerk(k, False)
             return
-        await verwerk(k, bool(motor.check_betekenis(invoer.value or "",
-                                                    k.get("nederlands", ""))))
+        gegeven = invoer.value or ""
+        await verwerk(k, bool(motor.check_betekenis(gegeven, k.get("nederlands", ""))), gegeven)
 
     knop.on_click(hoofdknop)
     invoer.on("keydown.enter", hoofdknop)
     toon_kaart()
+
+
+# ============================================================== paar-oefening
+class PaarSessie:
+    """Twee lijkende woorden tegelijk, van allebei de betekenis. Een deel dat al goed is
+    hoef je niet opnieuw in te vullen; het paar telt pas als ze allebei kloppen."""
+
+    def __init__(self, g):
+        self.prefs = prefs(g)
+        db = motor.laad_verwarparen_db()
+        if self.prefs["keuze"] == "Mijn verwarwoorden":
+            paren = motor.bouw_verwar_paren(g.woorden, g.stats.get("verwar_stats") or {})
+        else:
+            poule = motor.verzamel_lookalikes(g.woorden, db, alleen_geoefend=True)
+            paren = motor.bouw_lookalike_paren(poule, db)
+        random.shuffle(paren)
+        self.paren = list(paren)
+        self.huidig = self.paren.pop(0) if self.paren else None
+        self.leeg = self.huidig is None
+        self.opgelost = {"A": False, "B": False}
+        self.fout = 0
+        self.overtik = False
+        self.af = 0
+
+    def volgend_paar(self, opnieuw=None):
+        """Naar het volgende paar. 'opnieuw' komt achteraan terug — eerst pakken, dan
+        aanschuiven, anders krijg je bij het laatste paar eindeloos hetzelfde terug."""
+        volgende = self.paren.pop(0) if self.paren else None
+        if opnieuw:
+            self.paren.append(opnieuw)
+        self.huidig = volgende
+        self.opgelost = {"A": False, "B": False}
+        self.fout = 0
+        self.overtik = False
+
+
+def _paar_scoor(g, w, goed):
+    """Score van één woord binnen de paar-oefening. Een misser telt wel als fout maar wist
+    de streak níét: dit is een onderscheid-oefening, geen gewone overhoring."""
+    if goed:
+        w["streak"] = int(w.get("streak", 0)) + 1
+        w["score_goed"] = int(w.get("score_goed", 0)) + 1
+    else:
+        w["score_fout"] = int(w.get("score_fout", 0)) + 1
+        w["laatst_fout"] = gebruikers.vandaag()
+    g.tel_dag(w)
+
+
+def _paar_hint(w):
+    """Alles wat helpt zonder de betekenis weg te geven: citatievorm, uitspraak, ezelsbruggetje."""
+    delen = [d for d in (w.get("lexeem_info") or w.get("grieks_info", ""),
+                         w.get("fonetisch", "")) if d]
+    beeld = f"{w.get('anker', '')} {w.get('beeld', '') or w.get('opmerking', '')}".strip()
+    if beeld:
+        delen.append(beeld)
+    return " · ".join(delen)
+
+
+@ui.page("/oefenen/paren")
+def paarpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if prefs(g)["keuze"] not in PAAR_OEFENINGEN:
+        ui.navigate.to("/oefenen/woorden")
+        return
+    sessie = PaarSessie(g)
+    instellingen = woord_instellingen(g)
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label(sessie.prefs["keuze"]).style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        woorden = ui.row().classes("w-full no-wrap items-start").style("padding:12px 0 2px")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:12px")
+        velden = ui.column().classes("w-full gap-2").style("padding-top:8px")
+        terugkoppeling = ui.column().classes("w-full gap-1 items-center").style(
+            "min-height:40px;padding-top:6px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+
+    balk = ui.element("div").classes("antwoordbalk")
+    with balk:
+        knop = ui.button("Nakijken").props("unelevated").style(
+            f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
+    onderbalk("Oefenen")
+
+    invoervelden = {}
+
+    def melding(tekst, kleur):
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(f"<div style='background:{kleur}1a;border:1px solid {kleur}40;"
+                    f"border-radius:12px;padding:10px 14px;text-align:center;width:100%;"
+                    f"color:{TEKST};font-size:13.5px;line-height:1.6'>{tekst}</div>")
+
+    def toon_paar(bericht=None, kleur=None):
+        woorden.clear()
+        velden.clear()
+        invoervelden.clear()
+        if bericht:
+            melding(bericht, kleur or GOED)
+        else:
+            terugkoppeling.clear()
+        if sessie.huidig is None:
+            teller.text = ""
+            vraagsoort.text = ""
+            with woorden:
+                ui.label("✓" if not sessie.leeg else "—").classes("w-full text-center").style(
+                    f"font-size:46px;color:{GOED if not sessie.leeg else ZACHT}")
+            with velden:
+                if sessie.leeg:
+                    ui.html(
+                        f"<div style='text-align:center;color:{TEKST};font-size:15px;"
+                        f"line-height:1.6'>Nog geen paren om te oefenen.<br>"
+                        f"<span style='color:{ZACHT};font-size:13px'>Verwarparen ontstaan "
+                        f"als je in een ronde twee woorden door elkaar haalt en dat in de "
+                        f"eindsamenvatting bevestigt. Kies anders een andere oefening via "
+                        f"het tandwiel.</span></div>")
+                else:
+                    ui.html(
+                        f"<div style='text-align:center;color:{TEKST};font-size:15px;"
+                        f"line-height:1.6'>Verwarparen afgerond — {sessie.af} paar in één "
+                        f"keer goed.<br><span style='color:{ZACHT};font-size:13px'>Paren die "
+                        f"je weer beheerst verdwijnen vanzelf uit je lijst.</span></div>")
+            knop.text = "Nieuwe ronde"
+            return
+
+        wa, wb = sessie.huidig
+        teller.text = f"nog {len(sessie.paren) + 1}"
+        with woorden:
+            for w in (wa, wb):
+                ui.label(w.get("grieks", "")).classes("grieks text-center").style(
+                    f"flex:1;min-width:0;font-size:34px;line-height:1.2;color:{TEKST}")
+        if sessie.overtik:
+            vraagsoort.text = "Overtikken — dit telt niet voor je streak"
+            with velden:
+                for kant, w in (("A", wa), ("B", wb)):
+                    ui.html(f"<div style='color:{ZACHT};font-size:13px'>"
+                            f"<span class='grieks' style='font-size:16px;color:{TEKST}'>"
+                            f"{w.get('grieks','')}</span> = {w.get('nederlands','')}</div>")
+                    invoervelden[kant] = ui.input(placeholder="typ over").props(
+                        "outlined dense dark autocomplete=off").classes("w-full").on(
+                        "keydown.enter", nakijken)
+            knop.text = "Bevestig"
+            return
+
+        vraagsoort.text = "Geef van allebei de betekenis"
+        with velden:
+            for kant, w in (("A", wa), ("B", wb)):
+                if sessie.opgelost[kant]:
+                    ui.html(f"<div style='color:{GOED};font-size:13.5px'>✓ "
+                            f"<span class='grieks' style='font-size:16px'>"
+                            f"{w.get('grieks','')}</span> = {w.get('nederlands','')}</div>")
+                    continue
+                invoervelden[kant] = ui.input(
+                    label=f"betekenis van {w.get('grieks','')}").props(
+                    "outlined dense dark autocomplete=off").classes("w-full").on(
+                    "keydown.enter", nakijken)
+                # Pas na een misser hulp erbij: anders geef je het antwoord te snel weg.
+                if sessie.fout >= 1:
+                    tip = _paar_hint(w)
+                    if tip:
+                        ui.label(f"💡 {tip}").style(f"color:{ZACHT};font-size:12px")
+        knop.text = "Nakijken"
+        if invoervelden:
+            list(invoervelden.values())[0].run_method("focus")
+
+    async def bewaar_stil():
+        opgeslagen = await run.io_bound(g.bewaar, True)
+        if g.laatste_fout:
+            opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
+            opslagmelding.style(f"color:{FOUT}")
+        elif opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+            opslagmelding.style(f"color:{ZACHT}")
+
+    async def nakijken():
+        if sessie.huidig is None:
+            ui.navigate.to("/oefenen/paren")
+            return
+        wa, wb = sessie.huidig
+        gegeven = {kant: (veld.value or "") for kant, veld in invoervelden.items()}
+
+        if sessie.overtik:
+            if all(motor.check_betekenis(gegeven.get(kant, ""), w.get("nederlands", ""))
+                   for kant, w in (("A", wa), ("B", wb))):
+                for w in (wa, wb):
+                    g.tel_dag(w)
+                sessie.volgend_paar(opnieuw=(wa, wb))
+                await bewaar_stil()
+                toon_paar("Genoteerd — dit paar komt straks nog terug.", MERK)
+            else:
+                toon_paar("Nog niet exact overgetypt — kijk goed naar de betekenissen.", FOUT)
+            return
+
+        misser = False
+        for kant, w in (("A", wa), ("B", wb)):
+            if sessie.opgelost[kant]:
+                continue
+            if motor.check_betekenis(gegeven.get(kant, ""), w.get("nederlands", "")):
+                sessie.opgelost[kant] = True
+            else:
+                misser = True
+                _paar_scoor(g, w, False)
+        if misser:
+            sessie.fout += 1
+
+        if all(sessie.opgelost.values()):
+            if sessie.fout == 0:
+                for w in (wa, wb):
+                    _paar_scoor(g, w, True)
+                    g.verzwak_verwarring(w.get("grieks", ""))
+                sessie.af += 1
+                g.dagdoel_plus("verwar")
+            uitslag = (f"✓ Allebei goed! <span class='grieks'>{wa.get('grieks','')}</span> = "
+                       f"{wa.get('nederlands','')} · <span class='grieks'>"
+                       f"{wb.get('grieks','')}</span> = {wb.get('nederlands','')}")
+            sessie.volgend_paar()
+            await bewaar_stil()
+            toon_paar(uitslag, GOED)
+            return
+
+        if sessie.fout >= 2:
+            # Twee keer mis: eerst verankeren door over te tikken, daarna komt het terug.
+            sessie.overtik = True
+            await bewaar_stil()
+            toon_paar("Twee keer mis — typ de betekenissen even over.", FOUT)
+            return
+
+        nog = ", ".join(w.get("grieks", "") for kant, w in (("A", wa), ("B", wb))
+                        if not sessie.opgelost[kant])
+        await bewaar_stil()
+        toon_paar(f"Nog te doen: {nog} — bekijk de hint.", MERK)
+
+    knop.on_click(nakijken)
+    toon_paar()
 
 
 # ============================================================== stamtijden
@@ -1081,7 +1542,9 @@ def stampagina():
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
         e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
-        g.sinds_opslag += 1
+        g.tel_dag()
+        if juist:
+            g.dagdoel_plus("stam")
         opgeslagen = await run.io_bound(g.bewaar) if g.sinds_opslag >= 5 else False
         opbouw = ""
         try:
@@ -1355,7 +1818,9 @@ def afpagina():
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
         e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
-        g.sinds_opslag += 1
+        g.tel_dag()
+        if juist:
+            g.dagdoel_plus("actief")
         opgeslagen = await run.io_bound(g.bewaar)
         for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
@@ -1629,7 +2094,9 @@ def swpagina():
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
         e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
-        g.sinds_opslag += 1
+        g.tel_dag()
+        if juist:
+            g.dagdoel_plus("struct")
         opgeslagen = await run.io_bound(g.bewaar)
         for vak in (woord, soort, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
@@ -1953,7 +2420,14 @@ def ontpagina():
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
         staat["gedaan"].add((t["wi"], t["sleutel"]))
-        g.sinds_opslag += 1
+        g.tel_dag()
+        # Niet de hele parsing tonen zolang je van dit woord nog dimensies moet doen —
+        # dan staan de antwoorden op de volgende vragen er al.
+        nog = [x for x in taken[staat["i"] + 1:] if x["wi"] == t["wi"]]
+        alles_af = not nog
+        if juist and alles_af:
+            # Het dagdoel telt woorden die je helemaal hebt ontleed, niet losse deelvragen.
+            g.dagdoel_plus("verzen")
         await run.io_bound(g.bewaar)
         # Geen actief woord meer: zo laat het net beantwoorde woord zijn naamvalkleur
         # zien in plaats van de cyaan markering.
@@ -1963,10 +2437,6 @@ def ontpagina():
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
         info = t["woord"].get("parsing_info", "") or ""
         gloss = t["woord"].get("vertaling_nl") or t["woord"].get("vertaling_bsb") or ""
-        # Niet de hele parsing tonen zolang je van dit woord nog dimensies moet doen —
-        # dan staan de antwoorden op de volgende vragen er al.
-        nog = [x for x in taken[staat["i"] + 1:] if x["wi"] == t["wi"]]
-        alles_af = not nog
         zichtbaar = info if alles_af else f"{t['label']}: {', '.join(t['goed'])}"
         regel_gloss = (f"<div style='color:{TEKST};font-size:13.5px;margin-top:4px'>"
                        f"{gloss}</div>") if alles_af else ""
@@ -2027,14 +2497,402 @@ def ontpagina():
 
 
 # ============================================================== voortgang
+# (sleutel in het dagboek, kleur, naam) — de stipjes onder de dagen in de oefenkalender.
+KALENDER_ONDERDELEN = [("woorden_uniek", MERK, "woorden"), ("actief", "#f6c23e", "actief"),
+                       ("stam", "#b07be0", "stamtijden"), ("struct", "#f6923c", "structuur"),
+                       ("verzen", GOED, "ontleden"), ("verwar", "#20c997", "verwarparen")]
+# (sleutel in het dagdoel, naam, hoogste instelbare waarde)
+DAGDOEL_VELDEN = [("woorden", "Woorden", 40), ("actief", "Actief beheersen", 30),
+                  ("stam", "Stamtijden", 20), ("struct", "Structuurwoorden", 20),
+                  ("verzen", "Woorden ontleden", 20), ("verwar", "Verwarparen", 15)]
+TENTAMENS = [("Grieks 1", "les 1–6", range(1, 7)), ("Grieks 2", "les 7–12", range(7, 13)),
+             ("Grieks 3", "les 13–14", range(13, 15))]
+ONTLEED_DIMS = [("woordsoort", "Woordsoort"), ("naamval", "Naamval"), ("geslacht", "Geslacht"),
+                ("getal", "Getal"), ("tijd", "Tijd"), ("wijs", "Wijs"),
+                ("diathese", "Diathese"), ("persoon", "Persoon"), ("vertaling", "Vertaling")]
+
+
+def _kalender_kleur(n):
+    """Hoe voller de dag, hoe feller het groen."""
+    if n <= 0:
+        return "#2a2f36"
+    if n < 5:
+        return "#16432c"
+    if n < 15:
+        return "#1f7a4d"
+    if n < 30:
+        return "#2aa866"
+    return "#39d17f"
+
+
+def dagkalender_html(dagen, dagboek, doelen):
+    """Vijf weken oefenritme, met per dag hoeveel je deed en een stipje per onderdeel
+    waarvan je die dag het dagdoel haalde. Zelfde kalender als in de Streamlit-app."""
+    vandaag_d = date.today()
+    start = vandaag_d - timedelta(days=vandaag_d.weekday() + 28)   # maandag, vier weken terug
+    kop = "".join(f"<div style='text-align:center;font-size:11px;color:{ZACHT}'>{d}</div>"
+                  for d in ("ma", "di", "wo", "do", "vr", "za", "zo"))
+    cellen = ""
+    for i in range(35):
+        d = start + timedelta(days=i)
+        sleutel = d.strftime("%Y-%m-%d")
+        n = int((dagen or {}).get(sleutel, 0) or 0)
+        regel = (dagboek or {}).get(sleutel) or {}
+        toekomst = d > vandaag_d
+        achter = "#1a1d22" if toekomst else _kalender_kleur(n)
+        rand = "2px solid #f6c23e" if d == vandaag_d else "1px solid rgba(255,255,255,.06)"
+        stippen = ""
+        for veld, kleur, _naam in KALENDER_ONDERDELEN:
+            doel = int(doelen.get("woorden" if veld == "woorden_uniek" else veld, 0) or 0)
+            if doel and int(regel.get(veld, 0) or 0) >= doel:
+                stippen += (f"<span style='display:inline-block;width:9px;height:9px;"
+                            f"border-radius:50%;background:{kleur};margin:0 1px'></span>")
+        aantal = (f"<div style='font-size:19px;font-weight:800;color:{TEKST};line-height:1'>"
+                  f"{n}</div>" if n and not toekomst else
+                  f"<div style='font-size:19px;line-height:1;color:#4b525c'>·</div>")
+        cellen += (
+            f"<div style='background:{achter};border:{rand};border-radius:8px;height:60px;"
+            f"padding:4px;position:relative;display:flex;flex-direction:column;"
+            f"align-items:center;justify-content:center;gap:3px;"
+            f"opacity:{'0.35' if toekomst else '1'}'>"
+            f"<div style='position:absolute;top:3px;left:5px;font-size:9.5px;font-weight:600;"
+            f"color:#aeb6c0;line-height:1'>{d.day}</div>{aantal}"
+            f"<div style='text-align:center;min-height:9px'>{stippen}</div></div>")
+    legenda = " · ".join(f"<span style='color:{kleur}'>●</span> {naam}"
+                         for _v, kleur, naam in KALENDER_ONDERDELEN)
+    return (f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"
+            f"margin-bottom:6px'>{kop}</div>"
+            f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px'>{cellen}</div>"
+            f"<div style='font-size:11px;color:{ZACHT};margin-top:8px;line-height:1.8'>"
+            f"Getal = geoefende items die dag · stip = dagdoel gehaald voor: {legenda}</div>")
+
+
+def _meterbalk(label, gedaan, doel, kleur=MERK):
+    """Balkje met 'gedaan van doel' erboven — voor dagdoelen en beheersing per onderdeel."""
+    deel = min(1.0, gedaan / doel) if doel else 1.0
+    return (f"<div style='margin-bottom:10px'>"
+            f"<div style='display:flex;justify-content:space-between;font-size:12.5px;"
+            f"color:{TEKST};gap:8px'><span>{label}</span>"
+            f"<span style='color:{ZACHT};white-space:nowrap'>{gedaan}/{doel}</span></div>"
+            f"<div style='width:100%;height:6px;border-radius:3px;background:{RAND};"
+            f"margin-top:4px'><div style='width:{deel * 100:.0f}%;height:6px;"
+            f"border-radius:3px;background:{kleur}'></div></div></div>")
+
+
+def studietijd_prognose(woorden, doel_streak=16, per_dag=30, accuratesse=None):
+    """Hoe lang je nog bezig bent tot deze woorden allemaal de gevraagde streak halen.
+    Zelfde rekenwijze als bereken_studietijd_forecast in de Streamlit-app: de schuld is
+    het aantal streak-punten dat je tekortkomt, en elke fout kost meer dan een goede
+    beurt oplevert — daarom weegt je accuratesse zo zwaar."""
+    schuld = sum(max(0, doel_streak - int(w.get("streak", 0) or 0)) for w in woorden)
+    if not woorden or schuld <= 0:
+        return {"dagen": 0, "einddatum": "Doel al bereikt", "schuld": 0, "winst": 0.0}
+    if accuratesse is None:
+        goed = sum(int(w.get("score_goed", 0) or 0) for w in woorden)
+        fout = sum(int(w.get("score_fout", 0) or 0) for w in woorden)
+        deel = goed / (goed + fout) if goed + fout > 10 else 0.75
+    else:
+        deel = accuratesse / 100.0
+    deel = max(0.50, min(1.0, deel))
+    winst = max(0.08, deel * 1.2 - (1.0 - deel) * 2.0)
+    dagen = math.ceil(schuld / (max(1, per_dag) * winst))
+    return {"dagen": dagen, "schuld": schuld, "winst": round(winst, 2),
+            "einddatum": (date.today() + timedelta(days=dagen)).strftime("%d-%m-%Y")}
+
+
+def gemiddeld_tempo(g, dagen_terug=14):
+    """Gemiddeld aantal geoefende items per dag over de laatste twee weken — de
+    startwaarde voor de planner, zodat de schatting bij jouw echte tempo begint."""
+    dagen = g.stats.get("dag_stats") or {}
+    grens = (date.today() - timedelta(days=dagen_terug - 1)).strftime("%Y-%m-%d")
+    vandaag_s = date.today().strftime("%Y-%m-%d")
+    totaal = sum(int(n or 0) for d, n in dagen.items() if grens <= str(d) <= vandaag_s)
+    return int(round(totaal / dagen_terug))
+
+
+def voortgang_cijfers(g):
+    """De zware fasetellingen voor dit dashboard. Gecached op een sleutel die meebeweegt
+    met je oefeningen, zodat hij vanzelf ververst zodra er iets verandert."""
+    dagen = g.stats.get("dag_stats") or {}
+    sleutel = f"{g.sleutel}:{sum(int(n or 0) for n in dagen.values())}"
+    return motor.voortgang_kernstats(
+        sleutel, g.woorden, g.stats.get("stam_stats") or {}, motor.laad_stamtijden_db(),
+        g.stats.get("struct_stats") or {}, motor.laad_structuurwoorden_db())
+
+
+def probleemwoorden(g):
+    """Woorden die blijven haperen: minstens drie beurten, minstens twee fouten, nog niet
+    boven de prille start uit en meer dan 40% fout. Dat zijn je beste kandidaten voor
+    gericht oefenen — moeilijkste eerst."""
+    uit = []
+    for w in g.woorden:
+        goed = int(w.get("score_goed", 0) or 0)
+        fout = int(w.get("score_fout", 0) or 0)
+        totaal = goed + fout
+        if totaal >= 3 and fout >= 2 and int(w.get("streak", 0) or 0) <= 3:
+            deel = fout / totaal
+            if deel >= 0.4:
+                uit.append((deel, fout, w))
+    uit.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    return uit
+
+
+def badgecijfers(g, cijfers):
+    """De samengevatte statistieken waar motor.badge_definities de badges uit afleidt."""
+    sv, ss, sr = cijfers["stats_vocab"], cijfers["stats_stam"], cijfers["stats_str"]
+    goed = cijfers["tot_goed_v"] + cijfers["tot_goed_s"] + cijfers["tot_goed_st"]
+    fout = cijfers["tot_fout_v"] + cijfers["tot_fout_s"] + cijfers["tot_fout_st"]
+    xp = (motor.bereken_xp(g.woorden)
+          + motor.bereken_xp_stam(g.stats.get("stam_stats") or {})
+          + motor.bereken_xp_struct(g.stats.get("struct_stats") or {})
+          + motor.bereken_xp_actief(g.stats.get("actief_stats") or {}))
+    return {
+        "beoordelingen": goed + fout,
+        "oefendagen": len(g.stats.get("dag_stats") or {}),
+        "dagstreak": g.dagstreak(),
+        "accuratesse": round(100 * goed / (goed + fout)) if goed + fout else 0,
+        "beheerst": (sv["Beheerst"] + sv["Mastery"] + ss["Beheerst"] + ss["Mastery"]
+                     + sr["Beheerst"] + sr["Mastery"]),
+        "mastery": sv["Mastery"] + ss["Mastery"] + sr["Mastery"],
+        "dekking": nt_dekking(cijfers),
+        "verwar_opgelost": int((g.stats.get("badges") or {}).get("_verwar_opgelost", 0)),
+        "niveau": motor.niveau_van_xp(xp)["niveau"],
+        "stam_beheerst": ss["Beheerst"] + ss["Mastery"],
+        "struct_beheerst": sr["Beheerst"] + sr["Mastery"],
+    }
+
+
+def nt_dekking(cijfers):
+    """Ruwe schatting van hoeveel van het NT je zonder woordenboek leest: het aandeel van
+    de tekst dat door jouw beheerste woorden wordt gedekt, afgetopt op 78% — de rest zijn
+    woorden die buiten deze lijst vallen."""
+    totaal = cijfers.get("totale_freq") or 0
+    return int(cijfers.get("bekende_freq", 0) / totaal * 78) if totaal else 0
+
+
+def scorebordregel(g):
+    """Alleen cijfers voor de gedeelde ranglijst — geen voortgangsdata. Dezelfde kolommen
+    als de Streamlit-app schrijft, zodat beide apps één scorebord vullen."""
+    stam = g.stats.get("stam_stats") or {}
+    struct = g.stats.get("struct_stats") or {}
+    actief = g.stats.get("actief_stats") or {}
+    xp = (motor.bereken_xp(g.woorden) + motor.bereken_xp_stam(stam)
+          + motor.bereken_xp_struct(struct) + motor.bereken_xp_actief(actief))
+    niv = motor.niveau_van_xp(xp)
+    s_pog, s_beh = motor._beheerst_telling(stam)
+    r_pog, r_beh = motor._beheerst_telling(struct)
+    a_pog, a_beh = motor._beheerst_telling(actief)
+    dagen = g.stats.get("dag_stats") or {}
+    grens = (date.today() - timedelta(days=6)).strftime("%Y-%m-%d")
+    vandaag_s = date.today().strftime("%Y-%m-%d")
+    return {
+        "gebruiker": g.naam,
+        "xp": xp, "niveau": niv["niveau"], "titel": niv["titel"],
+        "week": sum(int(n or 0) for d, n in dagen.items() if grens <= str(d) <= vandaag_s),
+        "totaal": sum(int(n or 0) for n in dagen.values()),
+        "badges": len([k for k in (g.stats.get("badges") or {}) if not str(k).startswith("_")]),
+        "w_beh": sum(1 for w in g.woorden if int(w.get("streak", 0) or 0) >= 16),
+        "w_pog": sum(int(w.get("score_goed", 0) or 0) + int(w.get("score_fout", 0) or 0)
+                     for w in g.woorden),
+        "a_beh": a_beh, "a_pog": a_pog, "s_beh": s_beh, "s_pog": s_pog,
+        "r_beh": r_beh, "r_pog": r_pog,
+    }
+
+
+def _heel(rij, kolom):
+    try:
+        return int(float(rij.get(kolom, 0) or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
+def ranglijst(rijen):
+    """De regels van het Scorebord-tabblad omzetten naar spelers, ontdubbeld op naam."""
+    spelers = {}
+    for r in rijen:
+        naam = str(r.get("gebruiker", "")).strip()
+        if not naam:
+            continue
+        speler = {"naam": naam, "xp": _heel(r, "xp"), "niveau": _heel(r, "niveau"),
+                  "titel": str(r.get("titel", "")), "week": _heel(r, "week"),
+                  "totaal": _heel(r, "totaal"), "badges": _heel(r, "badges"),
+                  "beheerst": (_heel(r, "w_beh") + _heel(r, "a_beh")
+                               + _heel(r, "s_beh") + _heel(r, "r_beh"))}
+        if naam not in spelers or speler["xp"] > spelers[naam]["xp"]:
+            spelers[naam] = speler
+    return list(spelers.values())
+
+
+def voortgang_csv(g):
+    """Je woordenschat als CSV, met dezelfde kolommen als de download in de Streamlit-app."""
+    buffer = io.StringIO()
+    schrijver = csv.writer(buffer)
+    schrijver.writerow(["grieks", "nederlands", "streak", "score_goed", "score_fout",
+                        "laatst_geoefend"])
+    for w in g.woorden:
+        schrijver.writerow([w.get("grieks", ""), w.get("nederlands", ""),
+                            int(w.get("streak", 0) or 0), int(w.get("score_goed", 0) or 0),
+                            int(w.get("score_fout", 0) or 0), w.get("laatst_geoefend", "")])
+    # utf-8-sig: anders toont Excel de Griekse letters als hiërogliefen.
+    return buffer.getvalue().encode("utf-8-sig")
+
+
+def _badgeraster(badges, bewaard):
+    """Behaalde badges vooraan met de datum erbij, de rest gedimd met hoever je bent."""
+    vakjes = ""
+    for b in sorted(badges, key=lambda x: not x["behaald"]):
+        rand = MERK if b["behaald"] else RAND
+        kleur = TEKST if b["behaald"] else ZACHT
+        datum = str(bewaard.get(b["id"], "") or "")
+        onder = (_kort_datum(datum) if datum else "behaald") if b["behaald"] \
+            else (b["voortgang"] or "—")
+        vakjes += (f"<div title='{b['uitleg']}' style='border:1px solid {rand};"
+                   f"border-radius:10px;padding:8px 4px;text-align:center;"
+                   f"opacity:{'1' if b['behaald'] else '.45'}'>"
+                   f"<div style='font-size:22px;line-height:1.1'>{b['icon']}</div>"
+                   f"<div style='color:{kleur};font-size:11.5px;font-weight:600;"
+                   f"line-height:1.3;margin-top:2px'>{b['titel']}</div>"
+                   f"<div style='color:{ZACHT};font-size:10.5px'>{onder}</div></div>")
+    return (f"<div style='display:grid;gap:8px;"
+            f"grid-template-columns:repeat(auto-fill,minmax(92px,1fr))'>{vakjes}</div>")
+
+
+def _fasen_van(streaks):
+    """Vier fasen tellen uit een reeks streaks — zelfde grenzen als de rest van de app."""
+    uit = {"Nieuw": 0, "In Training": 0, "Beheerst": 0, "Mastery": 0}
+    for s in streaks:
+        s = int(s or 0)
+        if s >= 30:
+            uit["Mastery"] += 1
+        elif s >= 16:
+            uit["Beheerst"] += 1
+        elif s >= 1:
+            uit["In Training"] += 1
+        else:
+            uit["Nieuw"] += 1
+    return uit
+
+
+def _onderdeelblok(g, cijfers):
+    """Per onderdeel hoeveel je beheerst, met de verdeling over de vier fasen eronder."""
+    modules = [("Woorden", cijfers["stats_vocab"]),
+               ("Stamtijden", cijfers["stats_stam"]),
+               ("Structuurwoorden", cijfers["stats_str"]),
+               ("Actief beheersen", _fasen_van(c["streak"] for c in af_cellen(g)))]
+    blokken = ""
+    for naam, fasen in modules:
+        totaal = sum(fasen.values())
+        blokken += _meterbalk(naam, fasen["Beheerst"] + fasen["Mastery"], totaal)
+        blokken += (f"<div style='color:{ZACHT};font-size:11.5px;margin:-6px 0 12px'>"
+                    f"nieuw {fasen['Nieuw']} · training {fasen['In Training']} · "
+                    f"beheerst {fasen['Beheerst']} · mastery {fasen['Mastery']}</div>")
+    return blokken
+
+
+def _probleemtabel(rijen):
+    """Eén regel per hardnekkig woord: wat het betekent en hoe scheef het staat."""
+    regels = ""
+    for deel, fout, w in rijen:
+        regels += (
+            f"<div style='display:flex;justify-content:space-between;gap:10px;"
+            f"border-top:1px solid {RAND};padding:7px 0'>"
+            f"<div style='min-width:0'>"
+            f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{w.get('grieks','')}</span>"
+            f"<div style='color:{ZACHT};font-size:12px;overflow:hidden;white-space:nowrap;"
+            f"text-overflow:ellipsis'>{str(w.get('nederlands',''))[:40]}</div></div>"
+            f"<div style='text-align:right;white-space:nowrap'>"
+            f"<span style='color:{FOUT};font-size:13px;font-weight:600'>"
+            f"{int(deel * 100)}% fout</span>"
+            f"<div style='color:{ZACHT};font-size:11.5px'>"
+            f"{int(w.get('score_goed', 0) or 0)} goed · {fout} fout · "
+            f"streak {int(w.get('streak', 0) or 0)}</div></div></div>")
+    return regels
+
+
+def _prognoseblok(prognose, woorden, doel_streak):
+    """De uitkomst van de planner: verdeling nu, en wanneer je klaar bent."""
+    fasen = _fasen_van(w.get("streak", 0) for w in woorden)
+    verdeling = (f"<div style='color:{ZACHT};font-size:12px;margin-bottom:10px'>"
+                 f"{len(woorden)} woorden · nieuw {fasen['Nieuw']} · training "
+                 f"{fasen['In Training']} · beheerst {fasen['Beheerst']} · mastery "
+                 f"{fasen['Mastery']}</div>")
+    if prognose["schuld"] <= 0:
+        return (verdeling +
+                f"<div style='background:rgba(61,220,151,.10);border:1px solid {GOED}40;"
+                f"border-radius:12px;padding:14px;color:{TEKST};font-size:14px'>"
+                f"Doel al bereikt — alles in deze selectie staat op streak "
+                f"{doel_streak} of hoger.</div>")
+    return (verdeling +
+            f"<div style='background:{VLAK};border-left:4px solid {MERK};border-radius:10px;"
+            f"padding:14px'>"
+            f"<div style='color:{ZACHT};font-size:11.5px;letter-spacing:.6px;"
+            f"text-transform:uppercase'>Verwachte afrondingsdatum</div>"
+            f"<div style='color:{MERK};font-size:28px;font-weight:800;margin:2px 0 8px'>"
+            f"{prognose['einddatum']}</div>"
+            f"<div style='color:{TEKST};font-size:13.5px'>Doorlooptijd "
+            f"{prognose['dagen']} dagen.</div>"
+            f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
+            f"Nog {prognose['schuld']} streak-punten te gaan · ongeveer "
+            f"{prognose['winst']} punt winst per beurt. Een fout kost meer dan een goede "
+            f"beurt oplevert, dus accuratesse telt zwaarder dan aantallen.</div></div>")
+
+
+def _ranglijstblok(spelers, eigen_naam):
+    """Podium van deze week plus de all-time stand op XP, met jouw regel gemarkeerd."""
+    def naamregel(speler):
+        return ("👉 " if speler["naam"] == eigen_naam else "") + speler["naam"]
+
+    week = sorted([s for s in spelers if s["week"] > 0], key=lambda s: -s["week"])[:3]
+    podium = ""
+    for medaille, speler in zip(("🥇", "🥈", "🥉"), week):
+        eigen = speler["naam"] == eigen_naam
+        podium += (f"<div style='flex:1;text-align:center;padding:6px;border-radius:10px;"
+                   f"background:{'rgba(51,204,255,.12)' if eigen else 'transparent'}'>"
+                   f"<div style='font-size:26px'>{medaille}</div>"
+                   f"<div style='color:{TEKST};font-size:13.5px;font-weight:600'>"
+                   f"{naamregel(speler)}</div>"
+                   f"<div style='color:{MERK};font-size:18px;font-weight:800'>"
+                   f"{speler['week']}</div>"
+                   f"<div style='color:{ZACHT};font-size:11px'>deze week</div></div>")
+    kop = (f"<div style='display:flex;gap:6px;margin-bottom:10px'>{podium}</div>"
+           if podium else
+           f"<div style='color:{ZACHT};font-size:13px;margin-bottom:10px'>"
+           f"Deze week heeft nog niemand geoefend.</div>")
+    regels = ""
+    alles = sorted(spelers, key=lambda s: -s["xp"])
+    for plek, speler in enumerate(alles, 1):
+        eigen = speler["naam"] == eigen_naam
+        regels += (f"<div style='display:flex;justify-content:space-between;gap:10px;"
+                   f"border-top:1px solid {RAND};padding:7px 0;"
+                   f"color:{MERK if eigen else TEKST};font-size:13px'>"
+                   f"<div style='min-width:0;overflow:hidden;white-space:nowrap;"
+                   f"text-overflow:ellipsis'>{plek}. {naamregel(speler)}"
+                   f"<div style='color:{ZACHT};font-size:11.5px'>niveau "
+                   f"{speler['niveau']} · {speler['titel']}</div></div>"
+                   f"<div style='text-align:right;white-space:nowrap'>{speler['xp']} XP"
+                   f"<div style='color:{ZACHT};font-size:11.5px'>🏅 {speler['badges']} · "
+                   f"{speler['beheerst']} beheerst</div></div></div>")
+    return kop + regels
+
+
+def _uitklap(titel):
+    """Uitklapper in de huisstijl van de kaarten."""
+    return ui.expansion(titel).classes("kaart w-full").props("dense expand-separator").style(
+        f"color:{TEKST}")
+
+
 @ui.page("/voortgang")
 def voortgangpagina():
     g = _bewaakt()
     if not g:
         return
     sam = g.samenvatting()
+    cijfers = voortgang_cijfers(g)
     xp = motor.bereken_xp(g.woorden)
     niv = motor.niveau_van_xp(xp)
+    doelen = g.dagdoel()
+    dagboek = (g.stats.get("dagdoel") or {}).get("log") or {}
+    vandaag_log = dagboek.get(gebruikers.vandaag()) or {}
 
     with ui.column().classes("inhoud w-full gap-3"):
         ui.label("Voortgang").style("font-size:26px;font-weight:700")
@@ -2051,15 +2909,56 @@ def voortgangpagina():
             ui.label(f"Nog {niv['xp_voor_volgend'] - niv['xp_in_niveau']} XP tot "
                      f"{niv['volgende_rang']}.").style(f"color:{TEKST};font-size:13px")
 
-        with ui.row().classes("w-full gap-2 no-wrap"):
-            for waarde, label in [(f"{sam['accuratesse']}%", "accuratesse"),
-                                  (sam["beheerst"], "beheerst"),
-                                  (sam["dagen"], "oefendagen")]:
-                with ui.element("div").classes("kaart").style("flex:1;text-align:center"):
-                    ui.label(str(waarde)).style(
-                        f"font-size:26px;font-weight:800;color:{MERK};line-height:1.1")
-                    ui.label(label).style(f"color:{ZACHT};font-size:11.5px")
+        tegels = [(f"{sam['accuratesse']}%", "accuratesse"), (sam["beheerst"], "beheerst"),
+                  (sam["dagen"], "oefendagen"), (f"🔥 {g.dagstreak()}", "dagen op rij"),
+                  (sam["vandaag"], "vandaag"), (f"~{nt_dekking(cijfers)}%", "NT-dekking")]
+        for rij in (tegels[:3], tegels[3:]):
+            with ui.row().classes("w-full gap-2 no-wrap"):
+                for waarde, label in rij:
+                    with ui.element("div").classes("kaart").style("flex:1;text-align:center"):
+                        ui.label(str(waarde)).style(
+                            f"font-size:24px;font-weight:800;color:{MERK};line-height:1.1")
+                        ui.label(label).style(f"color:{ZACHT};font-size:11.5px")
 
+        # --- oefenritme -------------------------------------------------------
+        with ui.element("div").classes("kaart w-full"):
+            ui.label("Jouw oefenritme").style(f"color:{TEKST};font-size:15px;font-weight:600")
+            ui.html(dagkalender_html(g.stats.get("dag_stats") or {}, dagboek, doelen))
+            if not sam["vandaag"]:
+                ui.label("Nog niets gedaan vandaag — een korte ronde houdt je streaks vers.").style(
+                    f"color:{ZACHT};font-size:12.5px;margin-top:6px")
+
+        # --- dagdoel ----------------------------------------------------------
+        with _uitklap("Vandaag per onderdeel"):
+            ui.label("Deze tellers lopen automatisch mee zodra je goed antwoordt.").style(
+                f"color:{ZACHT};font-size:12.5px;margin-bottom:8px")
+            for sleutel, naam, _max in DAGDOEL_VELDEN:
+                # 'Woorden' telt verschillende woorden: hetzelfde woord vaker oefenen
+                # telt één keer. De andere tellers tellen elk goed antwoord.
+                gedaan = (g.woorden_vandaag() if sleutel == "woorden"
+                          else int(vandaag_log.get(sleutel, 0) or 0))
+                ui.html(_meterbalk(naam, gedaan, int(doelen.get(sleutel, 0) or 0)))
+
+        with _uitklap("Dagelijks doel instellen"):
+            schuiven = {}
+            for sleutel, naam, hoogste in DAGDOEL_VELDEN:
+                schuiven[sleutel] = ui.number(
+                    naam, value=int(doelen.get(sleutel, 0) or 0), min=0, max=hoogste,
+                    step=1).props("outlined dark dense").classes("w-full")
+            ui.label("Zet een doel op 0 om het te laten vervallen; dan verschijnt er ook "
+                     "geen stipje meer in de kalender.").style(
+                f"color:{ZACHT};font-size:12px;margin:6px 0")
+
+            async def bewaar_doelen():
+                g.zet_dagdoel({s: (v.value or 0) for s, v in schuiven.items()})
+                await run.io_bound(g.bewaar, True)
+                ui.notify("Dagdoelen opgeslagen", position="top", color="dark")
+                ui.navigate.to("/voortgang")
+
+            ui.button("Doelen opslaan", on_click=bewaar_doelen).props("unelevated").style(
+                f"background:{MERK};color:{INKT};font-weight:700;width:100%")
+
+        # --- woorden ----------------------------------------------------------
         with ui.element("div").classes("kaart w-full"):
             ui.label("Woorden").style(f"color:{TEKST};font-size:15px;font-weight:600")
             ui.label(f"{sam['geoefend']} van de {len(g.woorden)} geoefend · "
@@ -2069,6 +2968,163 @@ def voortgangpagina():
             ui.html(f"<div style='width:100%;height:6px;border-radius:3px;background:{RAND};"
                     f"margin-top:8px'><div style='width:{deel*100:.0f}%;height:6px;"
                     f"border-radius:3px;background:{MERK}'></div></div>")
+
+        # --- badges -----------------------------------------------------------
+        badges = motor.badge_definities(badgecijfers(g, cijfers))
+        behaald = [b for b in badges if b["behaald"]]
+        bewaard = g.stats.setdefault("badges", {})
+        nieuw = [b for b in behaald if b["id"] not in bewaard]
+        for b in nieuw:
+            bewaard[b["id"]] = gebruikers.vandaag()
+        if nieuw:
+            # Meteen vastleggen wanneer je ze behaalde, anders staat er bij de volgende
+            # sessie opnieuw 'nieuw' bij badges die je allang had.
+            async def bewaar_badges():
+                await run.io_bound(g.bewaar, True)
+
+            ui.timer(0.2, bewaar_badges, once=True)
+        with _uitklap(f"Badges — {len(behaald)} van de {len(badges)}"):
+            if nieuw:
+                ui.label("Nieuw: " + " · ".join(f"{b['icon']} {b['titel']}" for b in nieuw)).style(
+                    f"color:{GOED};font-size:13px;margin-bottom:8px")
+            ui.html(_badgeraster(badges, bewaard))
+
+        # --- per onderdeel ----------------------------------------------------
+        with _uitklap("Voortgang per onderdeel"):
+            ui.html(_onderdeelblok(g, cijfers))
+            lek = [w for w in g.woorden if 16 <= int(w.get("streak", 0) or 0) <= 17]
+            if lek:
+                ui.label(f"🪣 {len(lek)} woorden balanceren op het randje van je "
+                         f"langetermijngeheugen (streak 16 of 17). Eén foutje en ze vallen "
+                         f"terug. Kies 'Knelpunten' om ze te stutten.").style(
+                    f"color:{TEKST};font-size:12.5px;line-height:1.6;margin-top:4px")
+            else:
+                ui.label("🛡️ Al je beheerste woorden staan stevig (streak 18 of hoger).").style(
+                    f"color:{ZACHT};font-size:12.5px;margin-top:4px")
+            ui.label("Per tentamen").style(
+                f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
+            ui.label("Een item telt als beheerst vanaf streak 16.").style(
+                f"color:{ZACHT};font-size:12px;margin-bottom:6px")
+            cellen = af_cellen(g)
+            for naam, lessen, bereik in TENTAMENS:
+                woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
+                rijtjes = [c for c in cellen if c["niveau"] == naam]
+                ui.label(f"{naam} · {lessen}").style(
+                    f"color:{MERK};font-size:13px;font-weight:600;margin-top:6px")
+                ui.html(_meterbalk(
+                    "Woordenschat",
+                    sum(1 for w in woorden if int(w.get("streak", 0) or 0) >= 16), len(woorden)))
+                ui.html(_meterbalk(
+                    "Rijtjes", sum(1 for c in rijtjes if c["streak"] >= 16), len(rijtjes)))
+            ontleed = g.stats.get("ontleed_stats") or {}
+            if any((int(v.get("g", 0)) + int(v.get("f", 0))) > 0
+                   for v in ontleed.values() if isinstance(v, dict)):
+                ui.label("Ontleden per onderdeel").style(
+                    f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
+                ui.label("Hoe vaak je het onderdeel in één keer goed had — je tentamenmaat.").style(
+                    f"color:{ZACHT};font-size:12px;margin-bottom:6px")
+                for sleutel, naam in ONTLEED_DIMS:
+                    e = ontleed.get(sleutel) or {}
+                    totaal = int(e.get("g", 0) or 0) + int(e.get("f", 0) or 0)
+                    if totaal:
+                        ui.html(_meterbalk(naam, int(e.get("g", 0) or 0), totaal))
+
+        # --- probleemwoorden ---------------------------------------------------
+        lastig = probleemwoorden(g)
+        with _uitklap(f"Hardnekkige probleemwoorden — {len(lastig)}"):
+            ui.label("Woorden die je al vaker deed maar die blijven haperen: veel fouten en "
+                     "nog een lage streak. Oefen ze gericht via 'Knelpunten'.").style(
+                f"color:{ZACHT};font-size:12.5px;line-height:1.6;margin-bottom:8px")
+            if not lastig:
+                ui.label("Niets blijft structureel haperen. Sterk!").style(
+                    f"color:{GOED};font-size:13px")
+            else:
+                ui.html(_probleemtabel(lastig[:25]))
+                if len(lastig) > 25:
+                    ui.label(f"De 25 hardnekkigste van {len(lastig)} getoond.").style(
+                        f"color:{ZACHT};font-size:12px;margin-top:6px")
+
+        # --- studieplanner -----------------------------------------------------
+        with _uitklap("Studieplanner — wanneer ken ik alles?"):
+            tempo = gemiddeld_tempo(g)
+            kies_groep = ui.select({naam: f"{naam} · {lessen}" for naam, lessen, _b in TENTAMENS},
+                                   value=TENTAMENS[0][0], label="Tentamen").props(
+                "outlined dark dense").classes("w-full")
+            kies_diepte = ui.number("Gewenste kennis-diepte (streak)", value=16, min=2, max=30,
+                                    step=1).props("outlined dark dense").classes("w-full")
+            ui.label("16 = beheerst (de norm). 8 = genoeg om te herkennen in een tekst. "
+                     "30 = vloeiend.").style(f"color:{ZACHT};font-size:12px")
+            kies_tempo = ui.number("Woorden per dag", value=max(5, tempo) if tempo else 30,
+                                   min=5, max=500, step=5).props(
+                "outlined dark dense").classes("w-full")
+            if tempo:
+                ui.label(f"Je tempo van de afgelopen twee weken: ongeveer {tempo} items per "
+                         f"dag. Pas gerust aan.").style(f"color:{ZACHT};font-size:12px")
+            kies_acc = ui.number("Verwachte accuratesse (%)", value=max(50, sam["accuratesse"]),
+                                 min=50, max=100, step=1).props(
+                "outlined dark dense").classes("w-full")
+            uitkomst = ui.column().classes("w-full gap-1").style("margin-top:10px")
+
+            def reken():
+                bereik = next(b for naam, _l, b in TENTAMENS if naam == kies_groep.value)
+                woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
+                p = studietijd_prognose(woorden, int(kies_diepte.value or 16),
+                                        int(kies_tempo.value or 30), int(kies_acc.value or 78))
+                uitkomst.clear()
+                with uitkomst:
+                    ui.html(_prognoseblok(p, woorden, int(kies_diepte.value or 16)))
+
+            for veld in (kies_groep, kies_diepte, kies_tempo, kies_acc):
+                veld.on_value_change(lambda _=None: reken())
+            reken()
+
+        # --- competitie --------------------------------------------------------
+        with _uitklap("Competitie — hoe sta je erbij?") as competitie:
+            ui.label("Het scorebord vergelijkt alleen cijfers: XP, niveau en hoeveel je "
+                     "oefent. Klasgenoten verschijnen zodra zij hebben geoefend.").style(
+                f"color:{ZACHT};font-size:12.5px;line-height:1.6")
+            bord = ui.column().classes("w-full gap-2")
+            geladen = {"ja": False}
+
+            async def laad_bord():
+                geladen["ja"] = True
+                bord.clear()
+                with bord:
+                    ui.label("Bezig met ophalen…").style(f"color:{ZACHT};font-size:13px")
+                try:
+                    await run.io_bound(opslag.schrijf_scorebord, scorebordregel(g))
+                    rijen = await run.io_bound(opslag.lees_scorebord)
+                except Exception as e:                           # noqa: BLE001
+                    bord.clear()
+                    with bord:
+                        ui.label(f"Het scorebord is nu niet bereikbaar ({e}).").style(
+                            f"color:{ZACHT};font-size:13px")
+                    return
+                spelers = ranglijst(rijen)
+                bord.clear()
+                with bord:
+                    if not spelers:
+                        ui.label("Nog geen groepsgegevens.").style(
+                            f"color:{ZACHT};font-size:13px")
+                        return
+                    ui.html(_ranglijstblok(spelers, g.naam))
+
+            def bij_openen(e):
+                """Pas ophalen als je de uitklapper opent — anders kost elk bezoek aan deze
+                pagina een lees- en schrijfbeurt op de gedeelde Sheet."""
+                if e.value and not geladen["ja"]:
+                    return laad_bord()
+                return None
+
+            competitie.on_value_change(bij_openen)
+            ui.button("Ranglijst verversen", on_click=laad_bord).props("flat").style(
+                f"color:{MERK};border:1px solid {RAND};border-radius:8px;width:100%")
+
+        # --- export ------------------------------------------------------------
+        ui.button("Woordenschat downloaden als CSV",
+                  on_click=lambda: ui.download.content(
+                      voortgang_csv(g), "mijn_grieks_voortgang.csv")).props("flat").style(
+            f"color:{MERK};border:1px solid {RAND};border-radius:10px")
 
         ui.button("Uitloggen", on_click=lambda: (
             _sessies.pop(app.storage.user.get("sleutel"), None),

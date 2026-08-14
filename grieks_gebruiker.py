@@ -8,7 +8,7 @@ aan dezelfde afspraken als overhoring_web.py:
   * opslaan gebeurt na elke beurt, in een aparte thread.
 """
 import threading
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 import grieks_motor as motor
 import grieks_opslag as opslag
@@ -19,6 +19,11 @@ import grieks_opslag as opslag
 # de volgende beurt neemt alles alsnog mee, want we schrijven telkens de hele staat.
 OPSLAG_INTERVAL = 1
 STAT_SLEUTELS = [s for s, _ in opslag.SPECS]
+
+# Dagdoel: dezelfde sleutels en standaardwaarden als de Streamlit-app, zodat een doel dat
+# je daar instelt hier gewoon geldt (het staat in dezelfde 'dagdoel'-dict in de Sheet).
+DAGDOEL_STANDAARD = {"woorden": 10, "verwar": 3, "knelpunt": 5, "actief": 5, "stam": 5,
+                     "struct": 5, "verzen": 2, "klank": 5}
 
 
 def vandaag():
@@ -66,6 +71,21 @@ class Gebruiker:
                 r["lexeem_info"] = r.get("grieks_info", "")
 
     # ---------------------------------------------------------------- scoren
+    def tel_dag(self, woord=None):
+        """Eén beoordeelde beurt meetellen voor het oefenritme. Goed of fout maakt niet uit:
+        de kalender en de dagstreak gaan over hoevéél je oefent. Zelfde teller als
+        registreer_oefening() in de Streamlit-app, en dus dezelfde 'dag_stats'."""
+        dag = self.stats.setdefault("dag_stats", {})
+        vd = vandaag()
+        dag[vd] = int(dag.get(vd, 0)) + 1
+        if woord is not None:
+            woord["laatst_geoefend"] = vd
+            # Het aantal verschillende woorden van vandaag meteen wegschrijven, zodat de
+            # kalender het later ook voor voorbije dagen kan tonen — laatst_geoefend
+            # bewaart per woord maar één datum.
+            self.daglog(vd)["woorden_uniek"] = self.woorden_vandaag()
+        self.sinds_opslag += 1
+
     def noteer(self, woord, goed):
         """Eén beurt verwerken. Geeft terug of er is opgeslagen."""
         vandaag_str = vandaag()
@@ -76,13 +96,83 @@ class Gebruiker:
             woord["streak"] = 0
             woord["score_fout"] = int(woord.get("score_fout", 0)) + 1
             woord["laatst_fout"] = vandaag_str
-        woord["laatst_geoefend"] = vandaag_str
-        dag = self.stats.setdefault("dag_stats", {})
-        dag[vandaag_str] = int(dag.get(vandaag_str, 0)) + 1
-        self.sinds_opslag += 1
+        # Voor het dagdoel telt 'woorden' het aantal VERSCHILLENDE woorden van vandaag; dat
+        # zet tel_dag() erbij, samen met de datumstempel op dit woord.
+        self.tel_dag(woord)
         if self.sinds_opslag >= OPSLAG_INTERVAL:
             return self.bewaar()
         return False
+
+    # ---------------------------------------------------------------- dagdoel
+    def dagdoel(self):
+        """De ingestelde doelen, aangevuld met de standaardwaarden."""
+        cfg = (self.stats.get("dagdoel") or {}).get("config") or {}
+        return {k: int(cfg.get(k, v)) for k, v in DAGDOEL_STANDAARD.items()}
+
+    def zet_dagdoel(self, nieuw):
+        """Alleen de meegegeven doelen wijzigen. De Streamlit-app kent er een paar meer
+        (knelpunten, klankwetten); die blijven staan zoals je ze daar hebt gezet."""
+        cfg = self.dagdoel()
+        cfg.update({k: int(v) for k, v in nieuw.items() if k in DAGDOEL_STANDAARD})
+        self.stats.setdefault("dagdoel", {})["config"] = cfg
+
+    def daglog(self, dag=None):
+        """Wat je vandaag per onderdeel goed had — de bron voor de stipjes in de kalender."""
+        d = self.stats.setdefault("dagdoel", {})
+        return d.setdefault("log", {}).setdefault(dag or vandaag(), {})
+
+    def dagdoel_plus(self, soort, n=1):
+        """Eén goed antwoord bijschrijven op het dagdoel van dit onderdeel."""
+        lg = self.daglog()
+        lg[soort] = int(lg.get(soort, 0)) + int(n)
+
+    def woorden_vandaag(self):
+        """Hoeveel verschillende woorden je vandaag hebt gehad. Hetzelfde woord twee keer
+        overhoren telt één keer; afgeleid uit laatst_geoefend, dus ook na opnieuw inloggen."""
+        vd = vandaag()
+        return sum(1 for w in self.woorden if str(w.get("laatst_geoefend", "")) == vd)
+
+    def dagstreak(self):
+        """Aantal dagen op rij dat je iets hebt geoefend. Heb je vandaag nog niets gedaan,
+        dan blijft de reeks t/m gisteren staan — die kun je vandaag nog voortzetten."""
+        dagen = self.stats.get("dag_stats") or {}
+        gedaan = {d for d, n in dagen.items() if int(n or 0) > 0}
+        dag = date.today()
+        if dag.strftime("%Y-%m-%d") not in gedaan:
+            dag -= timedelta(days=1)
+        streak = 0
+        while dag.strftime("%Y-%m-%d") in gedaan:
+            streak += 1
+            dag -= timedelta(days=1)
+        return streak
+
+    # ---------------------------------------------------------------- verwarparen
+    def registreer_verwarring(self, getoond, verward):
+        """Vastleggen dat je deze twee woorden door elkaar haalde. Zelfde vorm als in de
+        Streamlit-app, zodat 'Mijn verwarwoorden' in beide apps dezelfde paren toont."""
+        if not getoond or not verward or getoond == verward:
+            return
+        vs = self.stats.setdefault("verwar_stats", {})
+        rec = vs.setdefault(getoond, {}).setdefault(verward, {"n": 0, "laatst": ""})
+        rec["n"] = int(rec.get("n", 0)) + 1
+        rec["laatst"] = vandaag()
+
+    def verzwak_verwarring(self, getoond):
+        """Een goed antwoord dempt de verwarringen van dit woord; op nul verdwijnt het paar.
+        Zo verlaat een woord vanzelf de lijst zodra het weer goed gaat."""
+        vs = self.stats.get("verwar_stats")
+        if not isinstance(vs, dict) or getoond not in vs:
+            return
+        entry = vs[getoond]
+        for ander in list(entry):
+            entry[ander]["n"] = int(entry[ander].get("n", 0)) - 1
+            if entry[ander]["n"] <= 0:
+                del entry[ander]
+                # cumulatieve teller voor de 'Ontward'-badge (opgeloste verwarringen)
+                bd = self.stats.setdefault("badges", {})
+                bd["_verwar_opgelost"] = int(bd.get("_verwar_opgelost", 0)) + 1
+        if not entry:
+            del vs[getoond]
 
     # ---------------------------------------------------------------- opslaan
     def _verzamel_vocab(self):
