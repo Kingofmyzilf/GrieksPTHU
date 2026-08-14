@@ -5,7 +5,7 @@ Zit tussen grieks_opslag.py (de Sheet) en de schil (grieks_app.py) in, en houdt 
 aan dezelfde afspraken als overhoring_web.py:
   * de gebruikersnaam is 'naam_code' — die combinatie is je sleutel;
   * scores worden op de woordenlijst gezet met dezelfde velden;
-  * opslaan gaat gebatcht (om de vijf beurten), niet bij elke klik.
+  * opslaan gebeurt na elke beurt, in een aparte thread.
 """
 import threading
 from datetime import datetime
@@ -13,7 +13,11 @@ from datetime import datetime
 import grieks_motor as motor
 import grieks_opslag as opslag
 
-OPSLAG_INTERVAL = 5          # zelfde ritme als trigger_save() in de Streamlit-app
+# Na elke beurt opslaan. Dat kan hier, anders dan in Streamlit: het schrijven draait
+# in een aparte thread terwijl de gebruiker de feedback leest, dus het wachten valt
+# in tijd die toch al voorbijgaat. Loopt er al een opslag, dan slaan we deze over —
+# de volgende beurt neemt alles alsnog mee, want we schrijven telkens de hele staat.
+OPSLAG_INTERVAL = 1
 STAT_SLEUTELS = [s for s, _ in opslag.SPECS]
 
 
@@ -102,7 +106,9 @@ class Gebruiker:
         en wordt het bij de volgende poging opnieuw geprobeerd."""
         if not forceer and self.sinds_opslag == 0:
             return False
-        with self._slot:
+        if not self._slot.acquire(blocking=forceer):
+            return False          # er loopt er al een; die schrijft de nieuwste staat weg
+        try:
             self.stats["vocab_stats"] = self._verzamel_vocab()
             try:
                 opslag.bewaar(self.sleutel, self.stats)
@@ -112,6 +118,8 @@ class Gebruiker:
             except opslag.OpslagFout as e:
                 self.laatste_fout = str(e)
                 return False
+        finally:
+            self._slot.release()
 
     # ---------------------------------------------------------------- overzicht
     def samenvatting(self):

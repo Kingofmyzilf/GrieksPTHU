@@ -712,8 +712,8 @@ STAM_OEFENINGEN = ["Zwakste eerst", "Leerpad (per werkwoord)", "Meest voorkomend
                    "Alleen wat ik fout deed"]
 STAM_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen de tijd", "Tijd en werkwoord"]
 STAM_STANDAARD = {"stam_keuze": "Zwakste eerst", "stam_aantal": 10,
-                  "stam_vraagvorm": STAM_VRAAGVORM[0]}
-STAM_TYP_STREAK = 3        # vanaf hier ook het werkwoord laten typen
+                  "stam_vraagvorm": STAM_VRAAGVORM[0], "stam_kleur": True}
+STAM_TYP_STREAK = 10       # vanaf hier ook het werkwoord laten typen
 
 
 def stam_vraagt_praesens(vraagvorm, streak):
@@ -802,10 +802,15 @@ def stampagina():
         ui.label(f"Automatisch: eerst alleen de tijd aanwijzen, en vanaf streak "
                  f"{STAM_TYP_STREAK} ook het werkwoord erbij typen.").style(
             f"color:{ZACHT};font-size:12px")
+        kies_kleur = ui.switch("Uitgangen kleuren",
+                               value=bool(sessie.prefs.get("stam_kleur", True)))
+        ui.label("Toont in het antwoord welk deel de stam is en welk deel de uitgang.").style(
+            f"color:{ZACHT};font-size:12px")
 
         async def bewaar_inst():
             for sleutel, veld in [("stam_keuze", kies_oef), ("stam_aantal", kies_aantal),
-                                  ("stam_vraagvorm", kies_praesens)]:
+                                  ("stam_vraagvorm", kies_praesens),
+                                  ("stam_kleur", kies_kleur)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -945,8 +950,17 @@ def stampagina():
                 # de motor geeft (stam, uitgang) terug; dat is de opbouw van de vorm
                 if isinstance(regels, (tuple, list)) and len(regels) == 2 and all(
                         isinstance(x, str) for x in regels):
-                    tekst = (f"opbouw: <span class='grieks'>{regels[0]}</span> + "
-                             f"<span class='grieks'>{regels[1]}</span>")
+                    _stam, _uit = regels
+                    if sessie.prefs.get("stam_kleur", True):
+                        gekleurd = (f"<span class='grieks' style='color:{TEKST}'>{_stam}</span>"
+                                    f"<span class='grieks' style='color:{MERK};"
+                                    f"font-weight:700'>{_uit}</span>")
+                        tekst = (f"<span style='color:{TEKST}'>{_stam}</span> + "
+                                 f"<span style='color:{MERK};font-weight:700'>{_uit}</span>"
+                                 f" = {gekleurd}")
+                    else:
+                        tekst = (f"opbouw: <span class='grieks'>{_stam}</span> + "
+                                 f"<span class='grieks'>{_uit}</span>")
                 else:
                     lijst = regels if isinstance(regels, list) else [regels]
                     tekst = "<br>".join(str(r) for r in lijst)
