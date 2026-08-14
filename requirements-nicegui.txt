@@ -2,3 +2,5 @@
 # De Streamlit-app blijft draaien op requirements.txt; die twee staan los van elkaar.
 nicegui
 pandas
+gspread
+google-auth

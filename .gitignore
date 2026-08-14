@@ -1,0 +1,15 @@
+# --- geheimen: NOOIT committen ---
+.streamlit/secrets.toml
+secrets.toml
+*.credentials.json
+service_account*.json
+.env
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# --- Office-tijdelijke bestanden ---
+~$*
