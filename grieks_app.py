@@ -165,6 +165,36 @@ def inlogpagina():
 
 
 # ============================================================== vandaag
+def klaargezet(g):
+    """Wat er vandaag voor je klaarstaat, per onderdeel: naam, wat je krijgt, waar het
+    staat, de dagdoel-sleutel en hoeveel je er vandaag al deed. De aantallen komen uit
+    je eigen instellingen, zodat hier staat wat je straks écht voorgeschoteld krijgt."""
+    def voorkeur(standaard, sleutel):
+        return int((g.stats.get("ui_prefs") or {}).get(f"ng_{sleutel}", standaard[sleutel]))
+
+    p = prefs(g)
+    if p["keuze"] in PAAR_OEFENINGEN:
+        woord_uitleg, woord_pad = "twee lijkende woorden tegelijk", "/oefenen/paren"
+    elif p["opbouw_stijl"] == VAST:
+        woord_uitleg = f"{int(p['aantal'])} kaarten · achterstallige woorden eerst"
+        woord_pad = "/oefenen/woorden"
+    else:
+        woord_uitleg = "de app weegt wat je nodig hebt · achterstallig eerst"
+        woord_pad = "/oefenen/woorden"
+    log = g.daglog()
+    return [
+        ("Woordenschat", woord_uitleg, woord_pad, "woorden", g.woorden_vandaag()),
+        ("Structuurwoorden", f"{voorkeur(SW_STANDAARD, 'sw_aantal')} woorden · zwakste eerst",
+         "/oefenen/structuur", "struct", int(log.get("struct", 0) or 0)),
+        ("Stamtijden", f"{voorkeur(STAM_STANDAARD, 'stam_aantal')} vormen · zwakste eerst",
+         "/oefenen/stamtijden", "stam", int(log.get("stam", 0) or 0)),
+        ("Actief beheersen", f"{voorkeur(AF_STANDAARD, 'af_aantal')} cellen uit de rijtjes",
+         "/oefenen/actief", "actief", int(log.get("actief", 0) or 0)),
+        ("Ontleden", "een vers uit het NT, woord voor woord",
+         "/oefenen/ontleden", "verzen", int(log.get("verzen", 0) or 0)),
+    ]
+
+
 @ui.page("/vandaag")
 def vandaagpagina():
     g = _bewaakt()
@@ -173,7 +203,8 @@ def vandaagpagina():
     sam = g.samenvatting()
     dagen = g.stats.get("dag_stats") or {}
     # Het dagdoel dat je bij Voortgang instelt; 'woorden' telt verschillende woorden.
-    doel = max(1, int(g.dagdoel().get("woorden", 10) or 10))
+    doelen = g.dagdoel()
+    doel = max(1, int(doelen.get("woorden", 10) or 10))
     gedaan = g.woorden_vandaag()
 
     with ui.column().classes("inhoud w-full gap-3"):
@@ -199,13 +230,21 @@ def vandaagpagina():
                 f"color:{ZACHT};font-size:12.5px")
 
         ui.label("Klaargezet").style("font-size:15px;font-weight:700;margin-top:6px")
-        with ui.element("div").classes("kaart w-full").on("click", lambda: ui.navigate.to("/oefenen/woorden")):
-            with ui.row().classes("w-full items-center justify-between no-wrap"):
-                with ui.column().classes("gap-0"):
-                    ui.label("Woordenschat").style(f"color:{TEKST};font-size:16px;font-weight:600")
-                    ui.label("12 kaarten · jouw achterstallige woorden eerst").style(
-                        f"color:{ZACHT};font-size:12.5px")
-                ui.label("›").style(f"color:{ZACHT};font-size:22px")
+        for naam, uitleg, pad, sleutel, gedaan_nu in klaargezet(g):
+            doel_n = int(doelen.get(sleutel, 0) or 0)
+            af = doel_n and gedaan_nu >= doel_n
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda p=pad: ui.navigate.to(p)):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    with ui.column().classes("gap-0").style("min-width:0"):
+                        ui.label(naam).style(f"color:{TEKST};font-size:16px;font-weight:600")
+                        ui.label(uitleg).style(f"color:{ZACHT};font-size:12.5px")
+                    with ui.row().classes("items-center gap-2 no-wrap"):
+                        if doel_n:
+                            ui.label(f"{'✓ ' if af else ''}{gedaan_nu}/{doel_n}").style(
+                                f"color:{GOED if af else MERK};font-size:13px;"
+                                f"white-space:nowrap")
+                        ui.label("›").style(f"color:{ZACHT};font-size:22px")
 
         ui.label("Deze week").style("font-size:15px;font-weight:700;margin-top:6px")
         with ui.row().classes("w-full gap-2 no-wrap"):
@@ -227,8 +266,16 @@ def vandaagpagina():
 
 # ============================================================== oefenen
 AUTO = "Automatisch (aanbevolen)"
-VORMEN = [AUTO, "Alleen leren", "Alleen meerkeuze", "Mix", "Alleen typen"]
+VORMEN = [AUTO, "Alleen leren", "Alleen meerkeuze", "Mix (meerkeuze + typen)",
+          "Alleen typen"]
 _VORM_CODE = {"Alleen leren": "1", "Alleen meerkeuze": "2", "Alleen typen": "4"}
+
+# Wat een goed antwoord aan streak oplevert per vraagvorm. Zelf typen telt zwaarder
+# dan aanwijzen; in de Mix levert de meerkeuze zelf niets op maar verdubbelt hij de
+# opbrengst van het typen erna — dat is de combo.
+STREAK_PUNTEN = {"4": 3, "2": 1, "3_typ": 1, "3_mc": 0}
+STREAK_STRAF = 2           # wat een echte misser van de streak afhaalt
+STRAF_STREAK = 16          # vanaf deze streak is één misser meteen een echte misser
 
 OEFENINGEN = ["Leerpad (levels)", "Losse lessen", "Knelpunten", "Lang niet gedaan",
               "Mastery", "Gelijkende woorden", "Mijn verwarwoorden"]
@@ -240,8 +287,10 @@ PAAR_OEFENINGEN = ("Gelijkende woorden", "Mijn verwarwoorden")
 OUDE_STOF = {"Alleen dit level": 0, "Kleine herhaalronde (5)": 5,
              "Grote herhaalronde (10)": 10}
 
-MIX, ZELF = "Aanbevolen mix", "Zelf samenstellen"
-OPBOUW_STIJLEN = [MIX, ZELF]
+MIX = "Automatisch (weegt je woorden)"
+VAST = "Vast aantal kaarten"
+ZELF = "Zelf samenstellen"
+OPBOUW_STIJLEN = [MIX, VAST, ZELF]
 # (pref-sleutel, naam, streakbereik, telling) — dezelfde vijf fasen als de motor gebruikt.
 FASEN = [("mix_nieuw", "nieuw", "0", lambda s: s == 0),
          ("mix_incubatie", "prille start", "1–3", lambda s: 1 <= s <= 3),
@@ -255,7 +304,8 @@ FASE_MOTOR = {"mix_nieuw": "nieuw", "mix_incubatie": "incubatie", "mix_training"
 STANDAARD = {"keuze": "Leerpad (levels)", "lessen": [], "vorm": AUTO, "aantal": 12,
              "nieuw_mee": True, "audio": True, "opbouw": False,
              "level": 0, "oude_stof": "Kleine herhaalronde (5)", "nieuw_aantal": 3,
-             "mastery_vormen": True, "verwar_mee": True, "opbouw_stijl": MIX,
+             "mastery_vormen": True, "verwar_mee": True, "verwar_max": 3,
+             "opbouw_stijl": MIX,
              "mix_nieuw": 2, "mix_incubatie": 4, "mix_training": 6, "mix_beheerst": 2,
              "mix_mastery": 0}
 
@@ -264,7 +314,14 @@ def prefs(g):
     """Instellingen uit ui_prefs — hetzelfde blok dat de Streamlit-app gebruikt,
     dus wat je hier kiest komt daar ook terug."""
     p = g.stats.setdefault("ui_prefs", {})
-    return {k: p.get(f"ng_{k}", v) for k, v in STANDAARD.items()}
+    uit = {k: p.get(f"ng_{k}", v) for k, v in STANDAARD.items()}
+    # Een sleutel die van naam veranderde of van hand is aangepast mag de sessie niet
+    # laten omvallen; onbekende waarden vallen terug op de standaard.
+    if uit["opbouw_stijl"] not in OPBOUW_STIJLEN:
+        uit["opbouw_stijl"] = MIX
+    if uit["vorm"] not in VORMEN:
+        uit["vorm"] = AUTO
+    return uit
 
 
 def zet_pref(g, sleutel, waarde):
@@ -404,18 +461,20 @@ def _leerkaart(w, woordenlijst):
     return f"<div style='width:100%;text-align:center'>{''.join(delen)}</div>"
 
 
-def _feedbackblok(w, juist, sessie, woordenlijst):
+def _feedbackblok(w, juist, sessie, woordenlijst, kop=None):
     """Hetzelfde als de groene/rode balk in de Streamlit-app: het woord, de
-    woordenboekvorm mét uitgangen, de uitspraak en de volledige betekenis."""
-    kleur = GOED if juist else FOUT
-    achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+    woordenboekvorm mét uitgangen, de uitspraak en de volledige betekenis.
+    Met een eigen `kop` dient hetzelfde blok ook als 'hier is het antwoord'."""
+    kleur = MERK if kop else (GOED if juist else FOUT)
+    achter = ("rgba(51,204,255,.10)" if kop else
+              ("rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"))
     grieks = w.get("grieks", "")
     # lexeem_info is de citatievorm met genitief-uitgang en lidwoord: 'λόγος, -ου, ὁ'
     uitgangen = w.get("lexeem_info") or w.get("grieks_info") or ""
     fonetisch = w.get("fonetisch", "")
     regels = [
         f"<div style='color:{kleur};font-weight:700;font-size:16px;margin-bottom:6px'>"
-        f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>",
+        f"{kop or ('✓ Goed!' if juist else '✗ Niet goed')}</div>",
         f"<div class='grieks' style='font-size:26px;color:{TEKST};line-height:1.2'>{grieks}</div>",
     ]
     tv = getattr(sessie, "toonvorm", None)
@@ -516,7 +575,11 @@ def eigen_aantallen(p):
 
 
 class Sessie:
-    """Eén ronde kaarten, met oplopende moeilijkheid per woord."""
+    """Eén ronde kaarten, met oplopende moeilijkheid per woord.
+
+    De kaarten staan in een wachtrij, niet in een vaste lijst: een woord dat je mist
+    komt verderop terug (eerst overtikken, daarna nog een keer de echte vraag). Zelfde
+    opzet als sessie_lijst in de Streamlit-app."""
 
     def __init__(self, g):
         p = prefs(g)
@@ -525,48 +588,89 @@ class Sessie:
         gekozen = motor.kies_gefaseerde_oefensessie(
             self.poule, "vocab", custom_counts=eigen,
             max_nieuw=int(p.get("nieuw_aantal", 3)) if p["nieuw_mee"] else 0,
-            verbied_nieuwe_woorden=not p["nieuw_mee"]) or self.poule
-        # Bij zelf samenstellen bepalen de vijf schuiven de omvang; 'kaarten per ronde'
-        # zou die keuze anders alsnog afkappen.
-        gekozen = list(gekozen) if eigen else list(gekozen)[:int(p["aantal"])]
+            verbied_nieuwe_woorden=not p["nieuw_mee"],
+            totale_db=g.woorden) or self.poule
+        # Automatisch en Zelf samenstellen bepalen zelf de omvang: de motor weegt hoe
+        # zwaar je woorden zijn (veel wankele woorden = kortere ronde). Alleen bij een
+        # vast aantal kappen we af.
+        gekozen = (list(gekozen)[:int(p["aantal"])] if p["opbouw_stijl"] == VAST
+                   else list(gekozen))
         if p.get("verwar_mee", True):
-            gekozen = self._verwarwoorden_erbij(g, gekozen)
+            gekozen = self._verwarwoorden_erbij(g, gekozen, int(p.get("verwar_max", 3) or 0))
         herhaal = OUDE_STOF.get(p.get("oude_stof", ""), 0)
         if herhaal and p["keuze"] == "Leerpad (levels)":
             try:
                 gekozen = motor.voeg_herhaalwoorden_toe(gekozen, g.woorden, herhaal)
             except Exception:                                    # noqa: BLE001
                 pass
-        vast = _VORM_CODE.get(p["vorm"])
-        if vast:
-            self.kaarten = [(w, vast) for w in gekozen]
-        elif p["vorm"] == "Mix":
-            self.kaarten = [(w, random.choice(("2", "4"))) for w in gekozen]
-        else:
-            self.kaarten = motor.leerpad_kaart_volgorde(gekozen)
+        self.wachtrij = self._kaarten(gekozen, p["vorm"])
+        self.begin_aantal = len(self.wachtrij)
         self.prefs = p
-        self.i = 0
+        self.gedaan = 0
         self.goed = 0
         self.fout = 0
         self.beoordeeld = False
         self.toonvorm = None
+        self.fouten = 0            # missers op de kaart die nu voorligt
+        self.gestraft = set()      # woorden waarvan je het antwoord al zag
+        self.combo = {}            # Mix: had je de meerkeuze in één keer goed?
+        self.bezig = False         # tegen dubbelklikken tijdens het opslaan
         # Voor de eindsamenvatting: wat ging goed, wat fout, en welke woorden zou je
         # verward kunnen hebben. Dat laatste bevestig je aan het eind zelf.
         self.gelukt = {}
         self.mislukt = {}
         self.kandidaten = {}
+        self.woord = None
+        self.vorm = None
+        self.volgende()
 
     @staticmethod
-    def _verwarwoorden_erbij(g, gekozen):
+    def _kaarten(gekozen, vorm):
+        vast = _VORM_CODE.get(vorm)
+        if vast:
+            return [(w, vast) for w in gekozen]
+        if vorm.startswith("Mix"):
+            # Eerst de hele ronde aanwijzen, daarna dezelfde woorden typen. Wie de
+            # meerkeuze in één keer goed had, krijgt bij het typen een dubbele opbrengst.
+            return ([(w, "3_mc") for w in gekozen] + [(w, "3_typ") for w in gekozen])
+        return motor.leerpad_kaart_volgorde(gekozen)
+
+    @staticmethod
+    def _verwarwoorden_erbij(g, gekozen, hoeveel=3):
         """Look-alikes van de gekozen woorden mee de sessie in trekken, zodat je ze naast
         elkaar leert onderscheiden. Voegt nooit een woord toe dat je nog nooit zag."""
+        if hoeveel <= 0:
+            return gekozen
         try:
             gekozen = motor.voeg_verwar_twins_toe(
-                gekozen, g.woorden, motor.laad_verwarparen_db(), max_twins=3)
+                gekozen, g.woorden, motor.laad_verwarparen_db(), max_twins=hoeveel)
             return motor.voeg_eigen_verwar_toe(
-                gekozen, g.woorden, g.stats.get("verwar_stats") or {}, max_extra=3)
+                gekozen, g.woorden, g.stats.get("verwar_stats") or {}, max_extra=hoeveel)
         except Exception:                                        # noqa: BLE001
             return gekozen
+
+    # ------------------------------------------------------------ door de wachtrij
+    def volgende(self):
+        """Naar de volgende kaart. Leeg betekent: ronde klaar."""
+        self.woord, self.vorm = self.wachtrij.pop(0) if self.wachtrij else (None, None)
+        self.fouten = 0
+        self.beoordeeld = False
+
+    def opnieuw_later(self, straks=None):
+        """Deze kaart nog een keer aanbieden, achteraan de wachtrij."""
+        self.wachtrij.append((self.woord, straks or self.vorm))
+
+    def eerst_overtikken(self):
+        """Na een echte misser: eerst overtikken (meteen hierna), daarna nog een keer
+        de gewone vraag. Zo verankert het antwoord voordat je het opnieuw ophaalt."""
+        self.wachtrij.insert(0, (self.woord, "overtik"))
+        self.wachtrij.append((self.woord, self.vorm))
+        self.gestraft.add(self.woord.get("grieks", ""))
+
+    @property
+    def totaal(self):
+        """Hoeveel kaarten de ronde nu telt — dat groeit als een woord terugkomt."""
+        return max(self.begin_aantal, self.gedaan + len(self.wachtrij) + 1)
 
     def noteer_uitslag(self, w, juist, antwoord, woordenlijst):
         grieks = w.get("grieks", "")
@@ -581,21 +685,79 @@ class Sessie:
                                                 "antwoord": str(antwoord or ""),
                                                 "opties": {}})["opties"].update(kand)
 
-    @property
-    def huidig(self):
-        return self.kaarten[self.i] if self.i < len(self.kaarten) else (None, None)
+    def onthoud_kandidaat(self, w, antwoord, grieks, nederlands):
+        """De betekenis die je aanklikte hoort bij dít woord — ook als je dat nog nooit
+        geoefend hebt. Aanbieden in de eindsamenvatting, niet automatisch vastleggen."""
+        if not grieks or grieks == w.get("grieks", ""):
+            return
+        rec = self.kandidaten.setdefault(
+            w.get("grieks", ""), {"nederlands": str(w.get("nederlands", "")),
+                                  "antwoord": str(antwoord or ""), "opties": {}})
+        rec["opties"][grieks] = str(nederlands)
 
 
-def _afleiders(woord, poule, hoeveel=3):
-    """Meerkeuze-opties: plausibel maar niet synoniem met het goede antwoord."""
-    juist = woord.get("nederlands", "")
-    zelfde_soort = [w for w in poule
-                    if w is not woord and w.get("woordsoort") == woord.get("woordsoort")
-                    and not motor.zelfde_betekenis(w.get("nederlands", ""), juist)]
-    rest = [w for w in poule
-            if w is not woord and not motor.zelfde_betekenis(w.get("nederlands", ""), juist)]
-    bron = zelfde_soort if len(zelfde_soort) >= hoeveel else rest
-    return [w.get("nederlands", "") for w in random.sample(bron, min(hoeveel, len(bron)))]
+def afleiders(woord, woordenlijst, hoeveel=3):
+    """Meerkeuze-opties in dezelfde volgorde als de Streamlit-app ze kiest:
+    eerst de echte look-alike-twins uit verwarparen.json (die je al geoefend hebt),
+    dan woorden die qua spelling op dit woord lijken binnen dezelfde woordsoort,
+    dan de rest van die woordsoort, en pas daarna willekeurige woorden.
+
+    Geeft (opties, bron) terug: bron zegt bij welk Grieks woord elke afleider hoort,
+    zodat je na een misser kunt zien wat je eigenlijk hebt aangeklikt."""
+    juist = str(woord.get("nederlands", "") or "")
+    doel = motor.normaliseer_accent(woord.get("grieks", ""))
+    soort = woord.get("woordsoort", "")
+    prefix = doel[:2] if len(doel) >= 2 else ""
+    stamgok = doel[1:-2] if len(doel) >= 5 else ""
+
+    gekozen, bron = [], {}
+
+    def voeg_toe(ander):
+        ned = str(ander.get("nederlands", "") or "").strip()
+        if not ned or ned == juist or ned in bron or motor.zelfde_betekenis(ned, juist):
+            return False
+        bron[ned] = ander
+        gekozen.append(ned)
+        return True
+
+    index = {w.get("grieks"): w for w in woordenlijst if w.get("grieks")}
+    try:
+        twins = motor.laad_verwarparen_db().get(woord.get("grieks", "")) or []
+    except Exception:                                            # noqa: BLE001
+        twins = []
+    for tg in twins:
+        tw = index.get(tg)
+        # Alleen twins die je al eens hebt gehad: een onbekend woord als afleider
+        # leert je niets over het onderscheid.
+        if tw and motor._is_al_geoefend(tw):
+            voeg_toe(tw)
+        if len(gekozen) >= 2:
+            break
+
+    lijkt_erop, zelfde_soort, rest = [], [], []
+    for ander in woordenlijst:
+        if ander is woord or not ander.get("grieks"):
+            continue
+        g_ander = motor.normaliseer_accent(ander.get("grieks", ""))
+        if g_ander == doel:
+            continue
+        if ander.get("woordsoort") == soort:
+            zelfde_soort.append(ander)
+            if ((stamgok and len(stamgok) >= 3 and stamgok in g_ander)
+                    or (prefix and g_ander.startswith(prefix)
+                        and abs(len(g_ander) - len(doel)) <= 2)):
+                lijkt_erop.append(ander)
+        else:
+            rest.append(ander)
+    for groep in (lijkt_erop, zelfde_soort, rest):
+        random.shuffle(groep)
+        for ander in groep:
+            if len(gekozen) >= hoeveel:
+                break
+            voeg_toe(ander)
+        if len(gekozen) >= hoeveel:
+            break
+    return gekozen[:hoeveel], bron
 
 
 def _ont_pct(g):
@@ -710,17 +872,26 @@ def woord_instellingen(g):
                                  step=1).props("outlined dark").classes("w-full")
         kies_vorm = ui.select(VORMEN, value=p["vorm"], label="Oefenvorm").props(
             "outlined dark").classes("w-full")
+        ui.label("Automatisch kiest per woord: een nieuw woord eerst als leerkaart, daarna "
+                 "meerkeuze, en typen zodra het begint te zitten. Mix doet eerst de hele "
+                 "ronde meerkeuze en daarna dezelfde woorden typen.").style(
+            f"color:{ZACHT};font-size:12px")
+
+        # --- sessie opbouw: de app weegt, jij zet een vast aantal, of jij vult per fase ---
+        kies_stijl = ui.select(OPBOUW_STIJLEN, value=p["opbouw_stijl"],
+                               label="Sessie opbouw").props("outlined dark").classes("w-full")
+        ui.label("Automatisch weegt hoe zwaar je woorden nu zijn: staan er veel wankele "
+                 "woorden klaar, dan wordt de ronde korter.").style(
+            f"color:{ZACHT};font-size:12px").bind_visibility_from(
+            kies_stijl, "value", lambda v: v == MIX)
         kies_aantal = ui.number("Kaarten per ronde", value=int(p["aantal"]),
                                 min=4, max=40, step=1).props("outlined dark").classes("w-full")
-
-        # --- sessie opbouw: de app kiest, of jij bepaalt het per fase ---
-        kies_stijl = ui.select(OPBOUW_STIJLEN, value=p.get("opbouw_stijl", MIX),
-                               label="Sessie opbouw").props("outlined dark").classes("w-full")
+        kies_aantal.bind_visibility_from(kies_stijl, "value", lambda v: v == VAST)
         eigen_vak = ui.column().classes("w-full gap-2")
         eigen_vak.bind_visibility_from(kies_stijl, "value", lambda v: v == ZELF)
         fase_velden = {}
         with eigen_vak:
-            ui.label("Hoeveel woorden wil je per fase? 'Kaarten per ronde' geldt dan niet.").style(
+            ui.label("Hoeveel woorden wil je per fase?").style(
                 f"color:{ZACHT};font-size:12px")
             beschikbaar = ui.label().style(f"color:{ZACHT};font-size:12px")
             for sleutel, naam, bereik, _test in FASEN:
@@ -744,9 +915,14 @@ def woord_instellingen(g):
         kies_nieuw = ui.switch("Nieuwe woorden mee-oefenen", value=bool(p["nieuw_mee"]))
         kies_verwar = ui.switch("Verwarwoorden erbij trekken",
                                 value=bool(p.get("verwar_mee", True)))
+        kies_verwar_n = ui.number("Hoeveel verwarwoorden er hooguit bij mogen",
+                                  value=int(p.get("verwar_max", 3) or 0), min=0, max=8,
+                                  step=1).props("outlined dark dense").classes("w-full")
+        kies_verwar_n.bind_visibility_from(kies_verwar, "value")
         ui.label("Heeft een gekozen woord een look-alike die je al eens deed, dan komt die "
-                 "in dezelfde sessie mee — zo leer je ze onderscheiden. Nooit nieuwe woorden.").style(
-            f"color:{ZACHT};font-size:12px")
+                 "in dezelfde sessie mee — zo leer je ze onderscheiden. Nooit nieuwe woorden. "
+                 "Het maximum geldt apart voor de look-alikes uit de woordenlijst en voor je "
+                 "eigen verwarparen.").style(f"color:{ZACHT};font-size:12px")
         kies_audio = ui.switch("Uitspraakknop tonen", value=bool(p["audio"]))
         kies_opbouw = ui.switch("Woordopbouw tonen", value=bool(p["opbouw"]))
         kies_mv = ui.switch("Beheerste woorden als vorm uit de Bijbel",
@@ -764,6 +940,7 @@ def woord_instellingen(g):
                       ("vorm", kies_vorm), ("aantal", kies_aantal),
                       ("opbouw_stijl", kies_stijl),
                       ("nieuw_mee", kies_nieuw), ("verwar_mee", kies_verwar),
+                      ("verwar_max", kies_verwar_n),
                       ("audio", kies_audio), ("opbouw", kies_opbouw),
                       ("mastery_vormen", kies_mv)]
             for sleutel, veld in velden + list(fase_velden.items()):
@@ -830,14 +1007,19 @@ def oefenpagina():
                 "outlined dense dark autocomplete=off").classes("flex-grow")
             knop = ui.button("Nakijken").props("unelevated").style(
                 f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
+        weetniet = ui.button("Ik weet het niet — toon het antwoord").props("flat dense").style(
+            f"color:{ZACHT};width:100%;font-size:12px;margin-top:2px")
     onderbalk("Oefenen")
 
     # ---------------- hulpjes ----------------
     def teken_streepjes():
+        """Eén streepje per kaart. De ronde kan groeien — een gemist woord komt terug —
+        dus de streepjes lopen mee met de wachtrij."""
         streepjes.clear()
+        totaal = min(40, max(1, sessie.totaal))
         with streepjes:
-            for n in range(len(sessie.kaarten)):
-                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+            for n in range(totaal):
+                kleur = MERK if n < sessie.gedaan else (TEKST if n == sessie.gedaan else RAND)
                 ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
 
     def toon_hulp(soort, k):
@@ -850,40 +1032,167 @@ def oefenpagina():
         ui.notify(tekst, position="top", color="dark", multi_line=True,
                   classes="text-body2").style("max-width:88vw")
 
-    async def verwerk(k, juist, antwoord=""):
-        sessie.beoordeeld = True
-        sessie.goed += int(juist)
-        sessie.fout += int(not juist)
-        sessie.noteer_uitslag(k, juist, antwoord, g.woorden)
-        if juist:
-            # goed antwoord dempt de geregistreerde verwarringen van dit woord
-            g.verzwak_verwarring(k.get("grieks", ""))
-        opgeslagen = await run.io_bound(g.noteer, k, juist)
+    def vier_fase(oud, nieuw, label):
+        """Een schouderklopje als een woord een nieuwe fase in gaat."""
+        for drempel, tekst in ((30, f"🏆 Mastery — {label} zit nu echt vast."),
+                               (16, f"🎉 {label} is nu Beheerst."),
+                               (1, f"🌱 {label} staat nu In training.")):
+            if oud < drempel <= nieuw:
+                ui.notify(tekst, position="top", color="dark")
+                break
+
+    def verwarregel(k):
+        """Onder de feedback: met welke woorden zou je dit verward kunnen hebben."""
+        lijkt = (sessie.kandidaten.get(k.get("grieks", "")) or {}).get("opties") or {}
+        if not lijkt:
+            return ""
+        regels = " · ".join(f"<span class='grieks'>{cg}</span> ({cn[:26]})"
+                            for cg, cn in list(lijkt.items())[:3])
+        return (f"<div style='color:{ZACHT};font-size:12.5px;text-align:center;"
+                f"line-height:1.5'>⚠ Lijkt op: {regels}<br>"
+                f"Aan het eind van de ronde vink je zelf aan wat klopte.</div>")
+
+    def melding(tekst, kleur):
         terugkoppeling.clear()
         with terugkoppeling:
-            ui.html(_feedbackblok(k, juist, sessie, g.woorden))
-            lijkt = (sessie.kandidaten.get(k.get("grieks", "")) or {}).get("opties") or {}
-            if lijkt:
-                regels = " · ".join(f"<span class='grieks'>{cg}</span> ({cn[:26]})"
-                                    for cg, cn in list(lijkt.items())[:3])
-                ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center;"
-                        f"line-height:1.5'>⚠ Lijkt op: {regels}<br>"
-                        f"Aan het eind van de ronde vink je zelf aan wat klopte.</div>")
+            ui.html(f"<div style='background:{kleur}1a;border:1px solid {kleur}40;"
+                    f"border-radius:12px;padding:10px 14px;text-align:center;width:100%;"
+                    f"color:{TEKST};font-size:13.5px;line-height:1.6'>{tekst}</div>")
+
+    async def opslaan(k, juist, punten=1, straf=None, scoor=True):
+        opgeslagen = await run.io_bound(g.noteer, k, juist, punten, straf, scoor)
         if g.laatste_fout:
             opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
             opslagmelding.style(f"color:{FOUT}")
         elif opgeslagen:
             opslagmelding.text = "Voortgang opgeslagen"
             opslagmelding.style(f"color:{ZACHT}")
-        knop.text = "Volgende"
-        balk.set_visibility(True)
+
+    def ververs_kop(k):
+        """Streak, goed/fout en het aantal kaarten lopen tijdens de beurt op; die cijfers
+        moeten meteen kloppen, ook als je nog op dezelfde kaart blijft."""
+        teken_status(k)
+        teller.text = f"{sessie.gedaan + 1}/{sessie.totaal}"
+        teken_streepjes()
+
+    def kaart_afgerond():
+        """Het antwoord staat vast: opties weg, alleen nog door naar de volgende."""
+        opties.clear()
+        sessie.beoordeeld = True
         invoer.set_visibility(False)
+        weetniet.set_visibility(False)
+        knop.set_visibility(True)
+        knop.text = "Volgende"
+        ververs_kop(sessie.woord)
 
     def volgende():
-        sessie.i += 1
+        sessie.gedaan += 1
+        sessie.volgende()
         toon_kaart()
 
-    # ---------------- de drie vraagvormen ----------------
+    # ---------------- een antwoord beoordelen ----------------
+    async def beoordeel(k, vorm, antwoord, juist, bron=None):
+        """Dezelfde regels als de Streamlit-app: de eerste misser kost je streak niets
+        en je mag het nog eens proberen met een hint erbij; bij de tweede misser — of
+        meteen als je het woord al beheerste — zakt de streak met twee en moet je het
+        antwoord eerst overtikken voordat de kaart terugkomt."""
+        grieks = k.get("grieks", "")
+        # Alleen een vlekkeloze beurt levert punten op. Zag je het antwoord al (via
+        # 'ik weet het niet' of een eerdere misser), dan telt de kaart niet meer mee.
+        schoon = sessie.fouten == 0 and grieks not in sessie.gestraft
+
+        if juist:
+            sessie.goed += 1
+            sessie.noteer_uitslag(k, True, antwoord, g.woorden)
+            if sessie.fouten == 0:
+                g.verzwak_verwarring(grieks)
+            punten = STREAK_PUNTEN.get(vorm, 1)
+            if vorm == "3_typ" and sessie.combo.get(grieks):
+                punten *= 2              # meerkeuze én typen in één keer goed
+            oud = int(k.get("streak", 0) or 0)
+            await opslaan(k, True, punten=punten, scoor=schoon)
+            if vorm == "3_mc":
+                sessie.combo[grieks] = schoon
+            extra = "" if schoon else (
+                f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
+                f"Geen streak-punten: je had het antwoord al gezien.</div>")
+            terugkoppeling.clear()
+            with terugkoppeling:
+                ui.html(_feedbackblok(k, True, sessie, g.woorden))
+                if extra:
+                    ui.html(extra)
+            vier_fase(oud, int(k.get("streak", 0) or 0), grieks)
+            kaart_afgerond()
+            return
+
+        sessie.fout += 1
+        sessie.fouten += 1
+        sessie.noteer_uitslag(k, False, antwoord, g.woorden)
+        if bron is not None:
+            sessie.onthoud_kandidaat(k, antwoord, bron.get("grieks", ""),
+                                     bron.get("nederlands", ""))
+        if vorm == "3_mc":
+            sessie.combo[grieks] = False
+        # Een woord dat je al beheerste hoort er meteen uit te vallen; bij de rest krijg
+        # je één herkansing voordat het streak-punten kost.
+        echt_mis = int(k.get("streak", 0) or 0) >= STRAF_STREAK or sessie.fouten >= 2
+        await opslaan(k, False, straf=STREAK_STRAF if echt_mis else None)
+
+        if echt_mis:
+            sessie.eerst_overtikken()
+            terugkoppeling.clear()
+            with terugkoppeling:
+                ui.html(_feedbackblok(k, False, sessie, g.woorden))
+                regel = verwarregel(k)
+                if regel:
+                    ui.html(regel)
+                if bron is not None and bron.get("grieks"):
+                    ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
+                            f"“{antwoord}” is de betekenis van "
+                            f"<span class='grieks'>{bron['grieks']}</span>.</div>")
+            kaart_afgerond()
+            return
+
+        # Bijna: het antwoord blijft verborgen, je krijgt de hint en nog een poging.
+        ververs_kop(k)
+        melding(f"Bijna — probeer het nog een keer.<br>"
+                f"<span style='color:{MERK}'>💡 {_hint(k)}</span>", MERK)
+        if bron is not None and bron.get("grieks"):
+            with terugkoppeling:
+                ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
+                        f"“{antwoord}” is de betekenis van "
+                        f"<span class='grieks'>{bron['grieks']}</span>.</div>")
+        if vorm in ("4", "3_typ"):
+            invoer.value = ""
+            invoer.run_method("focus")
+
+    async def kies(k, optie, bron):
+        if sessie.bezig or sessie.beoordeeld:
+            return
+        sessie.bezig = True
+        try:
+            juist = (optie == k.get("nederlands", "")
+                     or motor.zelfde_betekenis(optie, k.get("nederlands", "")))
+            await beoordeel(k, sessie.vorm, optie, juist, None if juist else bron.get(optie))
+        finally:
+            sessie.bezig = False
+
+    async def weet_niet():
+        """Het antwoord tonen zonder aftrek. De kaart komt achteraan terug, maar levert
+        dan geen volledige streak-punten meer op — je hebt hem immers al gezien."""
+        k = sessie.woord
+        if k is None or sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.gestraft.add(k.get("grieks", ""))
+        sessie.opnieuw_later()
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(_feedbackblok(k, True, sessie, g.woorden, kop="💡 Het antwoord"))
+            ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
+                    f"Geen aftrek. Je krijgt dit woord straks nog een keer.</div>")
+        kaart_afgerond()
+
+    # ---------------- de vraagvormen ----------------
     def teken_status(k):
         """Zelfde gegevens als de caption in de Streamlit-app: fase, streak,
         goed/fout, laatst geoefend en hoeveel er nog te gaan zijn."""
@@ -891,7 +1200,6 @@ def oefenpagina():
         if k is None:
             return
         fase = gebruikers.fase_van(k.get("streak", 0))
-        resterend = len(sessie.kaarten) - sessie.i - 1
         vakjes = [
             (fase.replace("In training", "Training"), "fase",
              MERK if fase != "Nieuw" else ZACHT),
@@ -899,7 +1207,7 @@ def oefenpagina():
             (f"{int(k.get('score_goed', 0) or 0)}/{int(k.get('score_fout', 0) or 0)}",
              "goed/fout", TEKST),
             (_kort_datum(k.get("laatst_geoefend")), "laatst", ZACHT),
-            (resterend, "te gaan", ZACHT),
+            (len(sessie.wachtrij), "te gaan", ZACHT),
         ]
         with statusbalk:
             ui.html(_statusrij(vakjes))
@@ -907,10 +1215,11 @@ def oefenpagina():
     def toon_kaart():
         for vak in (opties, terugkoppeling, hulp):
             vak.clear()
-        sessie.beoordeeld = False
-        k, vorm = sessie.huidig
+        k, vorm = sessie.woord, sessie.vorm
         balk.set_visibility(True)
         invoer.set_visibility(True)
+        knop.set_visibility(True)
+        weetniet.set_visibility(False)
 
         teken_status(k)
         if k is None:
@@ -930,7 +1239,8 @@ def oefenpagina():
         # toon een echte verbogen vorm uit het NT en laat de uitgang het werk doen.
         sessie.toonvorm = None
         if (sessie.prefs.get("mastery_vormen", True)
-                and int(k.get("streak", 0) or 0) >= MASTERY_STREAK and vorm != "1"):
+                and int(k.get("streak", 0) or 0) >= MASTERY_STREAK
+                and vorm not in ("1", "overtik")):
             anders = [v for v in bijbelvormen(k)
                       if motor.normaliseer_accent(v["vorm"])
                       != motor.normaliseer_accent(k.get("grieks", ""))]
@@ -939,10 +1249,17 @@ def oefenpagina():
         woord.text = (sessie.toonvorm["vorm"] if sessie.toonvorm else k.get("grieks", ""))
         lemma.text = (f"vorm uit {sessie.toonvorm['ref']}" if sessie.toonvorm
                       else (k.get("grieks_info") or k.get("woordsoort", "")))
-        teller.text = f"{sessie.i + 1}/{len(sessie.kaarten)}"
+        teller.text = f"{sessie.gedaan + 1}/{sessie.totaal}"
         teken_streepjes()
+        # Uitspraak en opbouw staan achter hun eigen schakelaar in de instellingen;
+        # de hint is er altijd, want daar leun je juist op als je vastloopt.
+        knoppen = ["Hint"]
+        if sessie.prefs.get("audio", True):
+            knoppen.insert(0, "Uitspraak")
+        if sessie.prefs.get("opbouw", False):
+            knoppen.append("Opbouw")
         with hulp:
-            for label in ("Uitspraak", "Hint", "Opbouw"):
+            for label in knoppen:
                 ui.button(label, on_click=lambda l=label, w=k: toon_hulp(l, w)).props(
                     "flat dense").style(
                     f"flex:1;color:{ZACHT};border:1px solid {RAND};border-radius:8px;font-size:12px")
@@ -955,21 +1272,34 @@ def oefenpagina():
             knop.text = "Ik heb het bekeken"
             return
 
-        if vorm == "2":                                    # meerkeuze
+        if vorm == "overtik":                              # verankeren na een misser
+            vraagsoort.text = "Typ het antwoord over — dit telt niet voor je streak"
+            with opties:
+                ui.html(f"<div style='text-align:center;color:{TEKST};font-size:17px;"
+                        f"line-height:1.5'>{k.get('nederlands', '')}</div>")
+            invoer.value = ""
+            knop.text = "Bevestig"
+            invoer.run_method("focus")
+            return
+
+        if vorm in ("2", "3_mc"):                          # meerkeuze
             vraagsoort.text = "Welke betekenis hoort hierbij?"
             invoer.set_visibility(False)
-            knop.text = "Ik weet het niet"
-            keuzes = _afleiders(k, sessie.poule) + [k.get("nederlands", "")]
+            knop.set_visibility(False)
+            weetniet.set_visibility(True)
+            keuzes, bron = afleiders(k, g.woorden)
+            keuzes = keuzes + [k.get("nederlands", "")]
             random.shuffle(keuzes)
             with opties:
                 for keuze in keuzes:
                     ui.html(f"<button class='keuze'>{keuze}</button>").on(
-                        "click", lambda _=None, c=keuze: kies(k, c))
+                        "click", lambda _=None, c=keuze, b=bron: kies(k, c, b))
             return
 
         vraagsoort.text = "Typ de betekenis"               # typen
         invoer.value = ""
         knop.text = "Nakijken"
+        weetniet.set_visibility(True)
         invoer.run_method("focus")
 
     # ---------------- de eindsamenvatting ----------------
@@ -1018,34 +1348,45 @@ def oefenpagina():
                 "unelevated").style(f"background:{MERK};color:{INKT};font-weight:700;"
                                     f"margin-top:10px;width:100%")
 
-    async def kies(k, keuze):
-        if sessie.beoordeeld:
-            return
-        juist = keuze == k.get("nederlands", "") or motor.zelfde_betekenis(
-            keuze, k.get("nederlands", ""))
-        opties.clear()
-        await verwerk(k, juist, keuze)
-
     async def hoofdknop():
-        k, vorm = sessie.huidig
-        if k is None:
-            await run.io_bound(g.bewaar, True)
-            ui.navigate.to("/oefenen/woorden")
+        # Eén beurt tegelijk: tijdens het opslaan duurt een beurt even, en een tweede
+        # klik of Enter zou anders de feedback meteen wegklikken.
+        if sessie.bezig:
             return
-        if sessie.beoordeeld:
-            volgende()
-            return
-        if vorm == "1":                                    # flashcard telt niet als beurt
-            volgende()
-            return
-        if vorm == "2":                                    # 'ik weet het niet'
-            opties.clear()
-            await verwerk(k, False)
-            return
-        gegeven = invoer.value or ""
-        await verwerk(k, bool(motor.check_betekenis(gegeven, k.get("nederlands", ""))), gegeven)
+        sessie.bezig = True
+        try:
+            k, vorm = sessie.woord, sessie.vorm
+            if k is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/woorden")
+                return
+            if sessie.beoordeeld:
+                volgende()
+                return
+            if vorm == "1":                                # flashcard: alleen bekeken
+                await opslaan(k, True, punten=0, scoor=False)
+                volgende()
+                return
+            if vorm == "overtik":
+                if motor.check_betekenis(invoer.value or "", k.get("nederlands", "")):
+                    await opslaan(k, True, punten=0, scoor=False)
+                    volgende()
+                    melding("Genoteerd — dit woord komt straks nog terug.", MERK)
+                else:
+                    melding("Nog niet exact overgetypt — kijk goed naar de betekenis.", FOUT)
+                    invoer.value = ""
+                    invoer.run_method("focus")
+                return
+            if vorm in ("2", "3_mc"):                      # daar klik je een optie aan
+                return
+            gegeven = invoer.value or ""
+            await beoordeel(k, vorm, gegeven,
+                            bool(motor.check_betekenis(gegeven, k.get("nederlands", ""))))
+        finally:
+            sessie.bezig = False
 
     knop.on_click(hoofdknop)
+    weetniet.on_click(weet_niet)
     invoer.on("keydown.enter", hoofdknop)
     toon_kaart()
 

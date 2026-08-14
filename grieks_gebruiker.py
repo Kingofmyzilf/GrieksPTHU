@@ -86,16 +86,27 @@ class Gebruiker:
             self.daglog(vd)["woorden_uniek"] = self.woorden_vandaag()
         self.sinds_opslag += 1
 
-    def noteer(self, woord, goed):
-        """Eén beurt verwerken. Geeft terug of er is opgeslagen."""
-        vandaag_str = vandaag()
+    def noteer(self, woord, goed, punten=1, straf=None, scoor=True):
+        """Eén beurt op een woord verwerken. Geeft terug of er is opgeslagen.
+
+        De oefening bepaalt de weging, net als in de Streamlit-app:
+          * `punten` — wat een goed antwoord aan streak oplevert. Typen telt zwaarder
+            dan aanwijzen, want zelf produceren is moeilijker dan herkennen.
+          * `straf` — wat een misser van de streak afhaalt. None laat de streak staan;
+            dat is de eerste misser, waarna je het nog een keer mag proberen.
+          * `scoor` — False als deze beurt niet meetelt voor goed/fout, bijvoorbeeld
+            omdat je het antwoord al had gezien. Voor je oefenritme telt hij wel mee.
+        """
         if goed:
-            woord["streak"] = int(woord.get("streak", 0)) + 1
-            woord["score_goed"] = int(woord.get("score_goed", 0)) + 1
+            if scoor:
+                woord["score_goed"] = int(woord.get("score_goed", 0)) + 1
+                woord["streak"] = int(woord.get("streak", 0)) + int(punten)
         else:
-            woord["streak"] = 0
-            woord["score_fout"] = int(woord.get("score_fout", 0)) + 1
-            woord["laatst_fout"] = vandaag_str
+            if scoor:
+                woord["score_fout"] = int(woord.get("score_fout", 0)) + 1
+                woord["laatst_fout"] = vandaag()
+            if straf is not None:
+                woord["streak"] = max(0, int(woord.get("streak", 0)) - int(straf))
         # Voor het dagdoel telt 'woorden' het aantal VERSCHILLENDE woorden van vandaag; dat
         # zet tel_dag() erbij, samen met de datumstempel op dit woord.
         self.tel_dag(woord)
