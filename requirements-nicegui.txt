@@ -4,3 +4,4 @@ nicegui
 pandas
 gspread
 google-auth
+truststore

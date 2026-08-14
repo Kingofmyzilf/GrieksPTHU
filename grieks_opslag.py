@@ -22,6 +22,16 @@ import os
 import re
 import time
 
+try:
+    # Virusscanners die https meelezen (Norton, ESET, Kaspersky) vervangen het certificaat
+    # door een eigen exemplaar. Dat staat wél in de certificaatopslag van Windows, maar niet
+    # in die van Python — vandaar 'CERTIFICATE_VERIFY_FAILED'. truststore laat Python de
+    # opslag van het besturingssysteem gebruiken. Verificatie blijft dus gewoon aan staan.
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
+
 import gspread
 from google.oauth2.service_account import Credentials
 
