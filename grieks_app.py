@@ -1659,7 +1659,8 @@ def ontpagina():
         for sleutel, label, opties, goed in ont_dims_van(w.get("parsing_info", "") or ""):
             taken.append({"wi": wi, "woord": w, "sleutel": sleutel, "label": label,
                           "opties": opties, "goed": goed})
-    staat = {"i": 0, "goed": 0, "fout": 0, "beoordeeld": False, "bezig": False}
+    staat = {"i": 0, "goed": 0, "fout": 0, "beoordeeld": False, "bezig": False,
+         "af": set(), "mis": set()}
 
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
@@ -1700,6 +1701,7 @@ def ontpagina():
         opties = ui.column().classes("w-full gap-2").style("padding-top:4px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:56px;padding-top:6px")
+        hulpvak = ui.column().classes("w-full gap-1").style("padding-top:6px")
 
     with ui.element("div").classes("antwoordbalk"):
         knop = ui.button("Volgende").props("unelevated").classes("w-full").style(
@@ -1707,17 +1709,24 @@ def ontpagina():
     onderbalk("Oefenen")
 
     def teken_vers(actief_wi, toon_kleur=False):
+        """Woorden die je goed hebt ontleed kleuren meteen op naamval — zo zie je de
+        zinsbouw onder je handen ontstaan in plaats van pas aan het eind."""
         delen = []
         for i, w in enumerate(woorden):
             tekst = w.get("grieks", "")
             info = w.get("parsing_info", "") or ""
             stijl = "font-size:24px;padding:0 3px;"
+            gekleurd = p["ont_kleur"] and (toon_kleur or i in staat["af"])
             if i == actief_wi:
                 stijl += (f"color:{INKT};background:{MERK};border-radius:5px;"
                           f"font-weight:700;")
-            elif toon_kleur and p["ont_kleur"]:
+            elif gekleurd:
                 nv = next((c for c in motor._ONTLEED_KLEUR if c in info), None)
-                stijl += f"color:{motor._ONTLEED_KLEUR[nv]};" if nv else f"color:{ZACHT};"
+                if nv:
+                    stijl += (f"color:{motor._ONTLEED_KLEUR[nv]};"
+                              f"border-bottom:2px solid {motor._ONTLEED_KLEUR[nv]};")
+                else:
+                    stijl += f"color:{TEKST};"
             else:
                 stijl += f"color:{ZACHT};"
             delen.append(f"<span class='grieks' style='{stijl}'>{tekst}</span>")
@@ -1749,6 +1758,7 @@ def ontpagina():
         teller.text = f"{staat['i'] + 1}/{len(taken)}"
         knop.text = "Ik weet het niet"
         teken_streepjes()
+        teken_hulp(t)
         with opties:
             for rij in [t["opties"][i:i + 3] for i in range(0, len(t["opties"]), 3)]:
                 with ui.row().classes("w-full gap-2 no-wrap"):
@@ -1757,6 +1767,55 @@ def ontpagina():
                                 f"text-align:center;padding:10px 4px'>{o}</button>").on(
                             "click", lambda _=None, keuze=o: kies(keuze)).style("flex:1")
 
+    def teken_hulp(t):
+        """Dezelfde hulpmiddelen als in de Streamlit-app, ingeklapt zodat ze het
+        oefenscherm niet in de weg zitten."""
+        hulpvak.clear()
+        w = t["woord"]
+        info = w.get("parsing_info", "") or ""
+        lemma = w.get("lemma") or w.get("grieks", "")
+        with hulpvak:
+            with ui.expansion("Bekijk het rijtje (spieken)").classes("w-full").style(
+                    f"background:{VLAK};border:1px solid {RAND};border-radius:10px;"
+                    f"font-size:13px"):
+                tabellen = []
+                try:
+                    tabellen = motor._ontleed_tip_tabellen(
+                        info, lemma, w.get("grieks_info", "")) or []
+                except Exception:                                # noqa: BLE001
+                    pass
+                if tabellen:
+                    try:
+                        ui.html(motor._render_gramtabel_html(tabellen[0]))
+                    except Exception:                            # noqa: BLE001
+                        ui.label("Kon dit rijtje niet tonen.").style(f"color:{ZACHT}")
+                else:
+                    ui.label("Voor dit woord staat geen rijtje in de tabellen.").style(
+                        f"color:{ZACHT};font-size:13px")
+            with ui.expansion("Vertaalhulp bij deze vorm").classes("w-full").style(
+                    f"background:{VLAK};border:1px solid {RAND};border-radius:10px;"
+                    f"font-size:13px"):
+                try:
+                    h = motor._ontleed_vertaalhulp(info)
+                except Exception:                                # noqa: BLE001
+                    h = None
+                ui.html(f"<div style='color:{ZACHT};font-size:13px;line-height:1.6'>"
+                        f"{h if isinstance(h, str) else ' · '.join(h or [])}</div>"
+                        if h else
+                        f"<div style='color:{ZACHT};font-size:13px'>Geen extra hulp "
+                        f"voor deze vorm.</div>")
+            _boek = ref.rsplit(" ", 1)[0].replace(" ", "_").lower()
+            _hs = ref.rsplit(" ", 1)[-1].replace(":", "/")
+            ui.html(
+                f"<div style='color:{ZACHT};font-size:12px;padding:4px 2px'>Op BibleHub: "
+                f"<a style='color:{MERK}' target='_blank' rel='noopener' "
+                f"href='https://biblehub.com/interlinear/{_boek}/{_hs}.htm'>"
+                f"interlinear van dit vers</a>"
+                + (f" · <a style='color:{MERK}' target='_blank' rel='noopener' "
+                   f"href='https://biblehub.com/greek/{w.get('strong','')}.htm'>"
+                   f"lexicon van dit woord</a>" if w.get("strong") else "")
+                + "</div>")
+
     async def verwerk(t, juist, gekozen):
         staat["beoordeeld"] = True
         staat["goed"] += int(juist)
@@ -1764,8 +1823,17 @@ def ontpagina():
         e = stats.setdefault(t["sleutel"], {"g": 0, "f": 0})
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
+        if juist:
+            if t["wi"] not in staat["mis"]:
+                staat["af"].add(t["wi"])
+        else:
+            staat["mis"].add(t["wi"])
+            staat["af"].discard(t["wi"])
         g.sinds_opslag += 1
         await run.io_bound(g.bewaar)
+        # Geen actief woord meer: zo laat het net beantwoorde woord zijn naamvalkleur
+        # zien in plaats van de cyaan markering.
+        teken_vers(-1)
         opties.clear()
         kleur = GOED if juist else FOUT
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
