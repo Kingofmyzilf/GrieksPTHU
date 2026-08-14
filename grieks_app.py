@@ -232,7 +232,8 @@ OUDE_STOF = {"Alleen dit level": 0, "Kleine herhaalronde (5)": 5,
              "Grote herhaalronde (10)": 10}
 STANDAARD = {"keuze": "Leerpad (levels)", "lessen": [], "vorm": AUTO, "aantal": 12,
              "nieuw_mee": True, "audio": True, "opbouw": False,
-             "level": 0, "oude_stof": "Kleine herhaalronde (5)", "nieuw_aantal": 3}
+             "level": 0, "oude_stof": "Kleine herhaalronde (5)", "nieuw_aantal": 3,
+             "mastery_vormen": True}
 
 
 def prefs(g):
@@ -286,6 +287,37 @@ def bouw_poule(g, keuze, lessen, level=0):
     except Exception:                                            # noqa: BLE001
         pass
     return [w for w in alles if (w.get("les") or 99) <= 4] or alles
+
+
+MASTERY_STREAK = 30
+
+
+def bijbelvormen(w, hoeveel=6):
+    """Verschillende verbogen vormen van dit woord zoals ze echt in het NT staan.
+    Voor woorden die je al beheerst is de woordenboekvorm te makkelijk geworden;
+    zo'n echte vorm dwingt je de uitgang te herkennen."""
+    strong = str(w.get("strong", "") or "").lstrip("G").strip()
+    if not strong:
+        return []
+    try:
+        db = motor.laad_bijbel_db()
+        refs = (motor._bijbel_strong_index(db) or {}).get(strong) or []
+    except Exception:                                            # noqa: BLE001
+        return []
+    gezien, uit = set(), []
+    for ref in refs[:40]:
+        for x in db.get(ref, []):
+            if str(x.get("strong", "")).lstrip("G").strip() != strong:
+                continue
+            vorm = str(x.get("grieks", "") or "").strip(" ,.;·")
+            sleutel = motor.normaliseer_accent(vorm)
+            if not vorm or sleutel in gezien:
+                continue
+            gezien.add(sleutel)
+            uit.append({"vorm": vorm, "parsing": x.get("parsing_info", ""), "ref": ref})
+            if len(uit) >= hoeveel:
+                return uit
+    return uit
 
 
 def _hint(w):
@@ -362,6 +394,13 @@ def _feedbackblok(w, juist, sessie, woordenlijst):
         f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>",
         f"<div class='grieks' style='font-size:26px;color:{TEKST};line-height:1.2'>{grieks}</div>",
     ]
+    tv = getattr(sessie, "toonvorm", None)
+    if tv:
+        regels.append(
+            f"<div style='color:{MERK};font-size:14px;margin-top:4px'>"
+            f"<span class='grieks' style='font-size:19px'>{tv['vorm']}</span> — "
+            f"{tv['parsing']}</div>"
+            f"<div style='color:{ZACHT};font-size:12px'>{tv['ref']}</div>")
     # Bij werkwoorden is de citatievorm gelijk aan het lemma; dan niets herhalen.
     # Genormaliseerd vergelijken: dezelfde letters kunnen als NFC of NFD zijn opgeslagen.
     import unicodedata as _u
@@ -427,6 +466,7 @@ class Sessie:
         self.goed = 0
         self.fout = 0
         self.beoordeeld = False
+        self.toonvorm = None
 
     @property
     def huidig(self):
@@ -563,6 +603,11 @@ def oefenpagina():
         kies_nieuw = ui.switch("Nieuwe woorden mee-oefenen", value=bool(p["nieuw_mee"]))
         kies_audio = ui.switch("Uitspraakknop tonen", value=bool(p["audio"]))
         kies_opbouw = ui.switch("Woordopbouw tonen", value=bool(p["opbouw"]))
+        kies_mv = ui.switch("Beheerste woorden als vorm uit de Bijbel",
+                            value=bool(p.get("mastery_vormen", True)))
+        ui.label(f"Bij streak {MASTERY_STREAK}+ krijg je een echte verbogen vorm uit "
+                 f"het NT in plaats van de woordenboekvorm.").style(
+            f"color:{ZACHT};font-size:12px")
         ui.label("Je keuzes worden bewaard bij je voortgang.").style(
             f"color:{ZACHT};font-size:12px")
 
@@ -572,7 +617,8 @@ def oefenpagina():
                                   ("nieuw_aantal", kies_nieuw_n),
                                   ("vorm", kies_vorm), ("aantal", kies_aantal),
                                   ("nieuw_mee", kies_nieuw), ("audio", kies_audio),
-                                  ("opbouw", kies_opbouw)]:
+                                  ("opbouw", kies_opbouw),
+                                  ("mastery_vormen", kies_mv)]:
                 zet_pref(g, sleutel, veld.value)
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -705,8 +751,19 @@ def oefenpagina():
             teken_streepjes()
             return
 
-        woord.text = k.get("grieks", "")
-        lemma.text = k.get("grieks_info") or k.get("woordsoort", "")
+        # Beheers je dit woord, dan is de woordenboekvorm te makkelijk geworden:
+        # toon een echte verbogen vorm uit het NT en laat de uitgang het werk doen.
+        sessie.toonvorm = None
+        if (sessie.prefs.get("mastery_vormen", True)
+                and int(k.get("streak", 0) or 0) >= MASTERY_STREAK and vorm != "1"):
+            anders = [v for v in bijbelvormen(k)
+                      if motor.normaliseer_accent(v["vorm"])
+                      != motor.normaliseer_accent(k.get("grieks", ""))]
+            if anders:
+                sessie.toonvorm = random.choice(anders)
+        woord.text = (sessie.toonvorm["vorm"] if sessie.toonvorm else k.get("grieks", ""))
+        lemma.text = (f"vorm uit {sessie.toonvorm['ref']}" if sessie.toonvorm
+                      else (k.get("grieks_info") or k.get("woordsoort", "")))
         teller.text = f"{sessie.i + 1}/{len(sessie.kaarten)}"
         teken_streepjes()
         with hulp:

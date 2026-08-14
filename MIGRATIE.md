@@ -23,11 +23,11 @@ Nog te doen:
 - [x] Oude stof meenemen (0 / 5 / 10 / alleen level)
 - [x] Nieuwe woorden per sessie als aantal
 - [ ] Sessie opbouw: Aanbevolen Mix vs Zelf Samenstellen (5 fase-sliders)
-- [ ] Toon woorden áltijd in Bijbelcontext
-- [ ] Mastery-woorden in Bijbelcontext tonen
-- [ ] Markeer naamvallen in de zin (kleur)
+- [x] Beheerste woorden (streak 30+) als echte verbogen vorm uit het NT, met de
+      parsing en de vindplaats in de feedback — vervangt "mastery in Bijbelcontext"
 - [ ] Verwarwoorden er samen bij trekken (discrimineren)
-- [ ] Groep kaartenbak-selectie rondom gedeelde Bijbelverzen
+- [~] Bijbelcontext-modus, kaartenbak-clustering en naamvalkleuring in de zin:
+      LATEN VALLEN op verzoek. Die oefen je in Leesteksten en Ontleden.
 - [ ] Verwarparen als paar-oefening + de eindsamenvatting van een sessie
 
 ## Stamtijden — kern klaar
