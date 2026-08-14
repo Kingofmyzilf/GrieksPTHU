@@ -12,24 +12,43 @@ Bijgewerkt na een systematische vergelijking van alle widgets per tabblad.
 | Inloggen + scores terugschrijven (`grieks_gebruiker.py`) | klaar |
 | Onderbalk, Vandaag, Voortgang (basis), Oefenen-lijst | klaar |
 
-## Woordenschat — klaar
+## Woordenschat — klaar, systematisch vergeleken met tab 0 van Streamlit
 
-Aanwezig: oefening (7 soorten), lessenkeuze, oefenvorm, kaarten per ronde,
-nieuwe woorden mee-oefenen, uitspraakknop, woordopbouw.
-Plus: statusbalkje, hint, opbouw, leerkaart bij nieuwe woorden, feedbackblok.
+De oefenlus is gelijk: de ronde is een wachtrij, dus een gemist woord komt terug.
+Eerste misser kost geen streak (hint + herkansing), tweede misser of streak 16+ kost
+er twee en gaat via overtikken. Typen levert +3 op, aanwijzen +1, Mix het dubbele bij
+een schone combo. 'Ik weet het niet' toont het antwoord zonder aftrek. Afleiders in
+dezelfde volgorde: verwarparen-twins, dan spelling-lookalikes binnen de woordsoort,
+dan de rest. Poules (knelpunten, lang niet gedaan, gelijkende woorden, mijn
+verwarwoorden) gebruiken dezelfde filters, en de instroom van nieuwe woorden ligt stil
+bij knelpunten, lang-niet-gedaan en puur typen.
 
-- [x] Level kiezen binnen het Leerpad, met XP/rang-kop (nog te doen: "Toon het hele pad")
-- [x] Oude stof meenemen (0 / 5 / 10 / alleen level)
-- [x] Nieuwe woorden per sessie als aantal
-- [x] Sessie opbouw: Aanbevolen mix vs Zelf samenstellen (vijf fase-tellers, met
-      per fase hoeveel er in de gekozen poule klaarstaat)
+
+- [x] Level kiezen binnen het Leerpad, met XP/rang-kop, "Toon het hele pad" en
+      "Hierna: level X"
+- [x] Oude stof meenemen (0 / 1 / 5 / 10)
+- [x] Nieuwe woorden per sessie als aantal, plus de melding hoeveel nieuwe woorden
+      er nog in dit level wachten
+- [x] Sessie opbouw: Automatisch (de motor weegt hoe zwaar je woorden zijn en bepaalt
+      zelf de omvang, zoals Streamlit) / Vast aantal kaarten / Zelf samenstellen met
+      vijf fase-tellers en per fase hoeveel er klaarstaat
 - [x] Beheerste woorden (streak 30+) als echte verbogen vorm uit het NT, met de
       parsing en de vindplaats in de feedback — vervangt "mastery in Bijbelcontext"
-- [x] Verwarwoorden er samen bij trekken (discrimineren)
+- [x] Verwarwoorden er samen bij trekken (discrimineren), met instelbaar maximum
+- [x] Verwarparen als paar-oefening (`/oefenen/paren`, met hint, overtikken na twee
+      missers en een stopknop) + de eindsamenvatting waarin je zelf bevestigt wat je
+      verwarde
+- [x] Uitspraakknop spreekt het woord echt uit (Web Speech API op de Erasmiaanse
+      transliteratie, net als in Streamlit — geen Nieuwgriekse stem dus)
 - [~] Bijbelcontext-modus, kaartenbak-clustering en naamvalkleuring in de zin:
       LATEN VALLEN op verzoek. Die oefen je in Leesteksten en Ontleden.
-- [x] Verwarparen als paar-oefening (`/oefenen/paren`, met overtikken na twee
-      missers) + de eindsamenvatting waarin je zelf bevestigt wat je verwarde
+- [~] Mastery-parsingvragen (naamval/getal/geslacht invullen bij een beheerst woord)
+      en de bijbehorende "inhoudelijk juist, ontleding fout"-feedback: vervallen met
+      de Bijbelcontext-modus. In plaats daarvan krijg je een echte NT-vorm te zien.
+
+Alleen hier, niet in Streamlit: de stijl "Vast aantal kaarten", een instelbaar maximum
+voor de verwarwoorden, expliciete levelkeuze, de streepjesbalk met teller, losse
+hint-knop, bediening met Enter, en een slot tegen dubbelklikken.
 
 ## Stamtijden — kern klaar
 
@@ -112,3 +131,13 @@ Alle vijf de oefenonderdelen tellen nu mee in `dag_stats` en in het dagdoel-logb
   elke opslag; dat scheelt schrijfbeurten op de gedeelde Sheet.
 - In de paar-oefening wist een misser de streak niet (alleen score_fout gaat omhoog).
   Het is een onderscheid-oefening, geen gewone overhoring — net als in Streamlit.
+- Een sessie leeft in de pagina, niet in een sessie-opslag: navigeer je weg van
+  `/oefenen/woorden`, dan begin je bij terugkomst een nieuwe ronde. In Streamlit
+  overleeft de wachtrij een tabwissel.
+- "Nieuwe woorden per sessie" geldt hier bij elke oefening; in Streamlit stuurt die
+  schuif alleen het Leerpad en gebruikt de rest de standaard van de motor.
+- Kies je in het Leerpad "Vast aantal kaarten" of "Zelf samenstellen", dan gaat de
+  ronde via de motor in plaats van via de Leerpad-opbouw. Streamlit negeert die keuze
+  in het Leerpad; hier telt hij, anders zou je instelling niets doen.
+- Geen ballonnen bij een afgeronde ronde, en geen eenvoud/geavanceerd-schakelaar —
+  die hoort bij Uitleg & Hulp en is nog niet overgezet.

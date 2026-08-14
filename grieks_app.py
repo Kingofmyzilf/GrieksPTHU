@@ -9,6 +9,7 @@ Starten:  py grieks_app.py
 """
 import csv
 import io
+import json
 import math
 import os
 import random
@@ -284,7 +285,7 @@ OEFENINGEN = ["Leerpad (levels)", "Losse lessen", "Knelpunten", "Lang niet gedaa
 # tegelijk en geeft van allebei de betekenis. Zo leer je ze uit elkaar houden.
 PAAR_OEFENINGEN = ("Gelijkende woorden", "Mijn verwarwoorden")
 
-OUDE_STOF = {"Alleen dit level": 0, "Kleine herhaalronde (5)": 5,
+OUDE_STOF = {"Alleen dit level": 0, "1 oud woord": 1, "Kleine herhaalronde (5)": 5,
              "Grote herhaalronde (10)": 10}
 
 MIX = "Automatisch (weegt je woorden)"
@@ -328,32 +329,53 @@ def zet_pref(g, sleutel, waarde):
     g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = waarde
 
 
+KNELPUNT_MAX = 20        # zoveel knelpunten tegelijk; meer wordt een uitzichtloze lijst
+OUD_MAX = 60
+
+
 def bouw_poule(g, keuze, lessen, level=0):
-    """De verzameling woorden waaruit een sessie wordt getrokken."""
+    """De verzameling woorden waaruit een sessie wordt getrokken.
+    De filters volgen die van de Streamlit-app, zodat dezelfde keuze daar en hier
+    dezelfde woorden oplevert."""
     alles = g.woorden
-    if keuze == "Losse lessen" and lessen:
-        return [w for w in alles if w.get("les") in lessen]
+    # De lessenkeuze beperkt niet alleen 'Losse lessen': ook knelpunten, lang niet
+    # gedaan en gelijkende woorden zoek je binnen de lessen die je hebt aangevinkt.
+    binnen = [w for w in alles if w.get("les") in lessen] if lessen else alles
+    if keuze == "Losse lessen":
+        return binnen
     if keuze == "Mastery":
         return [w for w in alles if int(w.get("streak", 0)) >= 30]
     if keuze == "Knelpunten":
-        fout = [w for w in alles if int(w.get("score_fout", 0)) > 0]
-        return sorted(fout, key=lambda w: -int(w.get("score_fout", 0)))[:60]
+        # Alles waar je op struikelt: fouten gemaakt, of wel goed maar nog wankel.
+        knel = [w for w in binnen
+                if int(w.get("score_fout", 0) or 0) > 0
+                or (int(w.get("score_goed", 0) or 0) > 0
+                    and int(w.get("streak", 0) or 0) <= 3)]
+
+        def scheefheid(w):
+            goed = int(w.get("score_goed", 0) or 0)
+            fout = int(w.get("score_fout", 0) or 0)
+            return fout / max(1, goed + fout)
+
+        return sorted(knel, key=scheefheid, reverse=True)[:KNELPUNT_MAX]
     if keuze == "Lang niet gedaan":
-        gedaan = [w for w in alles if w.get("laatst_geoefend")]
-        return sorted(gedaan, key=lambda w: w.get("laatst_geoefend", ""))[:60]
+        gedaan = [w for w in binnen if w.get("laatst_geoefend")]
+        return sorted(gedaan, key=lambda w: w.get("laatst_geoefend", ""))[:OUD_MAX]
     if keuze == "Gelijkende woorden":
+        # Alleen woorden die je al eens deed: een onbekend woord naast een ander
+        # onbekend woord leert je niets over het onderscheid.
         try:
-            paren = motor.bouw_lookalike_paren(alles, motor.laad_verwarparen_db())
+            return motor.verzamel_lookalikes(binnen, motor.laad_verwarparen_db(),
+                                             alleen_geoefend=True)
         except Exception:                                        # noqa: BLE001
-            paren = []
-        uit = [w for paar in paren for w in paar]
-        return uit or alles
+            return []
     if keuze == "Mijn verwarwoorden":
-        eigen = set()
-        for sleutel in (g.stats.get("verwar_stats") or {}):
-            eigen.update(str(sleutel).split("||"))
-        uit = [w for w in alles if w.get("grieks") in eigen]
-        return uit or alles
+        # verzamel_verwarwoorden trekt de partner van elk paar erbij en laat paren
+        # vallen zodra je ze allebei beheerst (streak 16+).
+        try:
+            return motor.verzamel_verwarwoorden(alles, g.stats.get("verwar_stats") or {})
+        except Exception:                                        # noqa: BLE001
+            return []
     # Leerpad: het gekozen level, of anders het eerstvolgende dat nog niet af is
     try:
         status = motor.leerpad_status(motor.bouw_leerpad_levels(alles))
@@ -363,7 +385,8 @@ def bouw_poule(g, keuze, lessen, level=0):
                 if st.get("index") == gekozen and st.get("woorden"):
                     return list(st["woorden"])
         for st in status:
-            if not st.get("klaar") and st.get("woorden"):
+            # 'voltooid' is het ja/nee; 'klaar' is het AANTAL woorden dat al af is.
+            if not st.get("voltooid") and st.get("woorden"):
                 return list(st["woorden"])
     except Exception:                                            # noqa: BLE001
         pass
@@ -402,8 +425,48 @@ def bijbelvormen(w, hoeveel=6):
 
 
 def _hint(w):
-    """Een bruikbare hint: eerste letter van elk woord plus streepjes voor de rest,
-    zodat je de vorm ziet zonder het antwoord te krijgen."""
+    """De hint die je krijgt als je vastloopt: citatievorm, uitspraak en het
+    ezelsbruggetje. Zelfde inhoud als de hint in de Streamlit-app — die helpt je het
+    woord ophalen, terwijl gemaskeerde letters je alleen laten raden."""
+    delen = [str(d).strip() for d in (w.get("lexeem_info") or w.get("grieks_info", ""),
+                                      w.get("fonetisch", "")) if str(d or "").strip()]
+    beeld = f"{w.get('anker', '') or ''} {w.get('beeld', '') or w.get('opmerking', '') or ''}".strip()
+    if beeld:
+        delen.append(beeld)
+    return " · ".join(delen) or _letterhint(w)
+
+
+def spreek_uit(tekst):
+    """Laat de browser de Erasmiaanse transliteratie voorlezen. Bewust de fonetische
+    spelling en geen Grieks schrift: Nieuwgriekse stemmen volgen een andere klankleer
+    (η/υ/ει → 'ie') dan de uitspraak die de cursus hanteert. Zelfde aanpak als de
+    uitspraakknop in de Streamlit-app."""
+    if not str(tekst or "").strip():
+        return
+    ui.run_javascript(f"""
+        (function() {{
+            if (!window.speechSynthesis) return;
+            var zeg = function() {{
+                var u = new SpeechSynthesisUtterance({json.dumps(str(tekst))});
+                u.rate = 0.85; u.lang = "nl-NL";
+                var stemmen = window.speechSynthesis.getVoices() || [];
+                var voorkeur = stemmen.find(function(v) {{ return /nl-|en-|de-/i.test(v.lang); }});
+                if (voorkeur) u.voice = voorkeur;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(u);
+            }};
+            // Stemmen laden asynchroon, vooral op mobiel; even wachten als ze er nog niet zijn.
+            if ((window.speechSynthesis.getVoices() || []).length === 0) {{
+                window.speechSynthesis.onvoiceschanged = zeg;
+                setTimeout(zeg, 300);
+            }} else {{ zeg(); }}
+        }})();
+    """)
+
+
+def _letterhint(w):
+    """Terugval als een woord geen ezelsbruggetje heeft: de eerste letter van elk
+    woord plus puntjes, zodat je de vorm ziet zonder het antwoord te krijgen."""
     nl = str(w.get("nederlands", "") or "").strip()
     if not nl:
         return "geen betekenis bekend"
@@ -584,12 +647,23 @@ class Sessie:
     def __init__(self, g):
         p = prefs(g)
         self.poule = bouw_poule(g, p["keuze"], p["lessen"], p.get("level", 0)) or g.woorden
+        self.nieuw_over = 0
         eigen = eigen_aantallen(p)
-        gekozen = motor.kies_gefaseerde_oefensessie(
-            self.poule, "vocab", custom_counts=eigen,
-            max_nieuw=int(p.get("nieuw_aantal", 3)) if p["nieuw_mee"] else 0,
-            verbied_nieuwe_woorden=not p["nieuw_mee"],
-            totale_db=g.woorden) or self.poule
+        # Bij deze drie zou een gloednieuw woord de bedoeling ondermijnen: je bent aan
+        # het stutten of ophalen, niet aan het uitbreiden. Puur typen kan een woord dat
+        # je nog nooit zag sowieso niet vragen.
+        geen_nieuw = (not p["nieuw_mee"]
+                      or p["keuze"] in ("Knelpunten", "Lang niet gedaan")
+                      or p["vorm"] == "Alleen typen")
+        if p["keuze"] == "Leerpad (levels)" and p["opbouw_stijl"] == MIX:
+            gekozen = self._leerpadronde(p)
+        else:
+            gekozen = motor.kies_gefaseerde_oefensessie(
+                self.poule, "vocab", custom_counts=eigen,
+                max_nieuw=int(p.get("nieuw_aantal", 3)) if p["nieuw_mee"] else 0,
+                sorteer_oudste_eerst=p["keuze"] == "Lang niet gedaan",
+                verbied_nieuwe_woorden=geen_nieuw,
+                totale_db=g.woorden) or self.poule
         # Automatisch en Zelf samenstellen bepalen zelf de omvang: de motor weegt hoe
         # zwaar je woorden zijn (veel wankele woorden = kortere ronde). Alleen bij een
         # vast aantal kappen we af.
@@ -623,6 +697,28 @@ class Sessie:
         self.woord = None
         self.vorm = None
         self.volgende()
+
+    def _leerpadronde(self, p):
+        """In het Leerpad ís het level de lesstof, dus daar gelden de instroomfilters niet:
+        woorden waar je al mee bezig bent komen allemaal mee — die wil je afmaken — en
+        gloednieuwe woorden alleen tot het ingestelde maximum, zodat het behapbaar blijft.
+        Is het level helemaal af, dan haal je het gewoon nog eens op."""
+        def is_nieuw(w):
+            return (int(w.get("streak", 0) or 0) == 0
+                    and not int(w.get("score_goed", 0) or 0)
+                    and not int(w.get("score_fout", 0) or 0)
+                    and not str(w.get("laatst_geoefend", "") or "").strip())
+
+        drempel = motor.LEERPAD_DREMPEL
+        bezig = [w for w in self.poule
+                 if int(w.get("streak", 0) or 0) < drempel and not is_nieuw(w)]
+        nieuw = [w for w in self.poule if is_nieuw(w)]
+        random.shuffle(bezig)
+        random.shuffle(nieuw)
+        instroom = max(1, int(p.get("nieuw_aantal", 3) or 0)) if p["nieuw_mee"] else 0
+        self.nieuw_over = max(0, len(nieuw) - instroom)
+        return (bezig + nieuw[:instroom]) or [
+            w for w in self.poule if int(w.get("streak", 0) or 0) >= drempel]
 
     @staticmethod
     def _kaarten(gekozen, vorm):
@@ -792,7 +888,7 @@ def oefenhub():
     stam_stats = g.stats.get("stam_stats") or {}
     stam_db = motor.laad_stamtijden_db()
     stam_klaar = sum(1 for s in motor.stam_level_status(motor.bouw_stam_levels(stam_db),
-                                                        stam_stats) if s.get("klaar"))
+                                                        stam_stats) if s.get("voltooid"))
     groepen = [
         ("Woorden kennen", [
             ("Woordenschat", f"{round(100 * sam['geoefend'] / max(1, len(g.woorden)))}%",
@@ -854,13 +950,30 @@ def woord_instellingen(g):
         _open = {0: "Automatisch (volgend level)"}
         for _st in _lv:
             if _st.get("ontgrendeld"):
+                # 'klaar' is het aantal woorden dat af is, 'totaal' hoeveel er in zitten.
                 _open[_st["index"]] = (f"Level {_st['index']} · les {_st.get('les','?')} "
-                                       f"({_st.get('voltooid',0)}/{_st.get('totaal',0)})")
+                                       f"({_st.get('klaar', 0)}/{_st.get('totaal', 0)})")
         _hl = int(p.get("level", 0) or 0)
         kies_level = ui.select(_open, value=_hl if _hl in _open else 0,
                                label="Level").props("outlined dark").classes("w-full")
         kies_level.bind_visibility_from(kies_oefening, "value",
                                         lambda v: v == "Leerpad (levels)")
+        _hierna = next((s for s in _lv if not s.get("ontgrendeld")), None)
+        if _hierna:
+            ui.label(f"🔒 Hierna: level {_hierna['index']} · les "
+                     f"{_hierna.get('les', '?')}").style(
+                f"color:{ZACHT};font-size:12px").bind_visibility_from(
+                kies_oefening, "value", lambda v: v == "Leerpad (levels)")
+        _pad = ui.expansion("Toon het hele pad").props("dense").classes("w-full").style(
+            f"color:{ZACHT};font-size:13px")
+        _pad.bind_visibility_from(kies_oefening, "value", lambda v: v == "Leerpad (levels)")
+        with _pad:
+            ui.html("".join(
+                f"<div style='font-size:12.5px;line-height:1.9;color:"
+                f"{TEKST if s.get('ontgrendeld') else ZACHT}'>"
+                f"{'✅' if s.get('voltooid') else ('▶️' if s.get('ontgrendeld') else '🔒')} "
+                f"Level {s['index']} · les {s.get('les', '?')} — "
+                f"{s.get('klaar', 0)}/{s.get('totaal', 0)}</div>" for s in _lv))
         kies_oude = ui.select(list(OUDE_STOF),
                               value=p.get("oude_stof", "Kleine herhaalronde (5)"),
                               label="Oude stof meenemen").props(
@@ -980,7 +1093,7 @@ def oefenpagina():
         _xp = motor.bereken_xp(g.woorden)
         _niv = motor.niveau_van_xp(_xp)
         _klaar = sum(1 for _s in motor.leerpad_status(
-            motor.bouw_leerpad_levels(g.woorden)) if _s.get("klaar"))
+            motor.bouw_leerpad_levels(g.woorden)) if _s.get("voltooid"))
         ui.html(
             f"<div style='display:flex;justify-content:space-between;font-size:12px;"
             f"color:{ZACHT};padding-top:2px'>"
@@ -988,6 +1101,9 @@ def oefenpagina():
             f"{_niv['titel']}</span></span>"
             f"<span>{_klaar} levels af · nog "
             f"{_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP</span></div>")
+        if sessie.nieuw_over:
+            ui.label(f"🌱 Nog {sessie.nieuw_over} nieuwe woorden in dit level voor een "
+                     f"volgende ronde.").style(f"color:{ZACHT};font-size:12px")
         woord = ui.label().classes("grieks w-full text-center").style(
             f"font-size:58px;line-height:1.15;color:{TEKST};padding:18px 0 2px")
         lemma = ui.label().classes("w-full text-center").style(f"color:{ZACHT};font-size:14px")
@@ -1025,6 +1141,7 @@ def oefenpagina():
     def toon_hulp(soort, k):
         if soort == "Uitspraak":
             tekst = motor.fonetisch_uit_translit(k.get("fonetisch", "")) or k.get("fonetisch", "")
+            spreek_uit(tekst)
         elif soort == "Hint":
             tekst = _hint(k)
         else:
@@ -1157,11 +1274,16 @@ def oefenpagina():
         ververs_kop(k)
         melding(f"Bijna — probeer het nog een keer.<br>"
                 f"<span style='color:{MERK}'>💡 {_hint(k)}</span>", MERK)
-        if bron is not None and bron.get("grieks"):
-            with terugkoppeling:
+        with terugkoppeling:
+            if bron is not None and bron.get("grieks"):
                 ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
                         f"“{antwoord}” is de betekenis van "
                         f"<span class='grieks'>{bron['grieks']}</span>.</div>")
+            # Ook bij de eerste misser al laten zien waarmee je het kunt verwarren —
+            # dat is juist het moment waarop het onderscheid blijft hangen.
+            regel = verwarregel(k)
+            if regel:
+                ui.html(regel)
         if vorm in ("4", "3_typ"):
             invoer.value = ""
             invoer.run_method("focus")
@@ -1425,26 +1547,16 @@ class PaarSessie:
         self.overtik = False
 
 
-def _paar_scoor(g, w, goed):
+def _paar_scoor(w, goed):
     """Score van één woord binnen de paar-oefening. Een misser telt wel als fout maar wist
-    de streak níét: dit is een onderscheid-oefening, geen gewone overhoring."""
+    de streak níét: dit is een onderscheid-oefening, geen gewone overhoring. Het meetellen
+    voor je oefenritme gebeurt apart, want dat geldt voor elke inzending."""
     if goed:
         w["streak"] = int(w.get("streak", 0)) + 1
         w["score_goed"] = int(w.get("score_goed", 0)) + 1
     else:
         w["score_fout"] = int(w.get("score_fout", 0)) + 1
         w["laatst_fout"] = gebruikers.vandaag()
-    g.tel_dag(w)
-
-
-def _paar_hint(w):
-    """Alles wat helpt zonder de betekenis weg te geven: citatievorm, uitspraak, ezelsbruggetje."""
-    delen = [d for d in (w.get("lexeem_info") or w.get("grieks_info", ""),
-                         w.get("fonetisch", "")) if d]
-    beeld = f"{w.get('anker', '')} {w.get('beeld', '') or w.get('opmerking', '')}".strip()
-    if beeld:
-        delen.append(beeld)
-    return " · ".join(delen)
 
 
 @ui.page("/oefenen/paren")
@@ -1477,6 +1589,8 @@ def paarpagina():
     with balk:
         knop = ui.button("Nakijken").props("unelevated").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
+        stopknop = ui.button("Stop deze ronde").props("flat dense").style(
+            f"color:{ZACHT};width:100%;font-size:12px;margin-top:2px")
     onderbalk("Oefenen")
 
     invoervelden = {}
@@ -1496,6 +1610,7 @@ def paarpagina():
             melding(bericht, kleur or GOED)
         else:
             terugkoppeling.clear()
+        stopknop.set_visibility(sessie.huidig is not None)
         if sessie.huidig is None:
             teller.text = ""
             vraagsoort.text = ""
@@ -1509,8 +1624,16 @@ def paarpagina():
                         f"line-height:1.6'>Nog geen paren om te oefenen.<br>"
                         f"<span style='color:{ZACHT};font-size:13px'>Verwarparen ontstaan "
                         f"als je in een ronde twee woorden door elkaar haalt en dat in de "
-                        f"eindsamenvatting bevestigt. Kies anders een andere oefening via "
-                        f"het tandwiel.</span></div>")
+                        f"eindsamenvatting bevestigt.</span></div>")
+
+                    async def naar_kaarten():
+                        zet_pref(g, "keuze", "Leerpad (levels)")
+                        await run.io_bound(g.bewaar, True)
+                        ui.navigate.to("/oefenen/woorden")
+
+                    ui.button("Doe dan een gewone ronde", on_click=naar_kaarten).props(
+                        "unelevated").style(f"background:{MERK};color:{INKT};"
+                                            f"font-weight:700;width:100%;margin-top:10px")
                 else:
                     ui.html(
                         f"<div style='text-align:center;color:{TEKST};font-size:15px;"
@@ -1553,7 +1676,7 @@ def paarpagina():
                     "keydown.enter", nakijken)
                 # Pas na een misser hulp erbij: anders geef je het antwoord te snel weg.
                 if sessie.fout >= 1:
-                    tip = _paar_hint(w)
+                    tip = _hint(w)
                     if tip:
                         ui.label(f"💡 {tip}").style(f"color:{ZACHT};font-size:12px")
         knop.text = "Nakijken"
@@ -1576,11 +1699,15 @@ def paarpagina():
         wa, wb = sessie.huidig
         gegeven = {kant: (veld.value or "") for kant, veld in invoervelden.items()}
 
+        # Elke inzending telt voor allebei de woorden mee in je oefenritme, en stempelt
+        # de datum. Anders zou een paar dat je pas na een misser goed krijgt eeuwig als
+        # 'lang niet gedaan' bovenaan blijven staan.
+        for w in (wa, wb):
+            g.tel_dag(w)
+
         if sessie.overtik:
             if all(motor.check_betekenis(gegeven.get(kant, ""), w.get("nederlands", ""))
                    for kant, w in (("A", wa), ("B", wb))):
-                for w in (wa, wb):
-                    g.tel_dag(w)
                 sessie.volgend_paar(opnieuw=(wa, wb))
                 await bewaar_stil()
                 toon_paar("Genoteerd — dit paar komt straks nog terug.", MERK)
@@ -1596,14 +1723,14 @@ def paarpagina():
                 sessie.opgelost[kant] = True
             else:
                 misser = True
-                _paar_scoor(g, w, False)
+                _paar_scoor(w, False)
         if misser:
             sessie.fout += 1
 
         if all(sessie.opgelost.values()):
             if sessie.fout == 0:
                 for w in (wa, wb):
-                    _paar_scoor(g, w, True)
+                    _paar_scoor(w, True)
                     g.verzwak_verwarring(w.get("grieks", ""))
                 sessie.af += 1
                 g.dagdoel_plus("verwar")
@@ -1627,7 +1754,19 @@ def paarpagina():
         await bewaar_stil()
         toon_paar(f"Nog te doen: {nog} — bekijk de hint.", MERK)
 
+    async def stoppen():
+        """Ronde afbreken. De half-opgeloste staat gaat mee weg, anders levert dezelfde
+        kaart bij een herstart gratis streak op voor de helft die al goed stond."""
+        sessie.paren = []
+        sessie.huidig = None
+        sessie.opgelost = {"A": False, "B": False}
+        sessie.fout = 0
+        sessie.overtik = False
+        await run.io_bound(g.bewaar, True)
+        toon_paar()
+
     knop.on_click(nakijken)
+    stopknop.on_click(stoppen)
     toon_paar()
 
 
