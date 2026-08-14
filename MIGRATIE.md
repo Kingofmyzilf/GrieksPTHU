@@ -19,9 +19,9 @@ nieuwe woorden mee-oefenen, uitspraakknop, woordopbouw.
 Plus: statusbalkje, hint, opbouw, leerkaart bij nieuwe woorden, feedbackblok.
 
 Nog te doen:
-- [ ] Level kiezen binnen het Leerpad, met XP/rang-kop en "Toon het hele pad"
-- [ ] Oude stof meenemen (0 / 5 / 10 / alleen level)
-- [ ] Nieuwe woorden per sessie als aantal (nu alleen aan/uit)
+- [x] Level kiezen binnen het Leerpad, met XP/rang-kop (nog te doen: "Toon het hele pad")
+- [x] Oude stof meenemen (0 / 5 / 10 / alleen level)
+- [x] Nieuwe woorden per sessie als aantal
 - [ ] Sessie opbouw: Aanbevolen Mix vs Zelf Samenstellen (5 fase-sliders)
 - [ ] Toon woorden áltijd in Bijbelcontext
 - [ ] Mastery-woorden in Bijbelcontext tonen
