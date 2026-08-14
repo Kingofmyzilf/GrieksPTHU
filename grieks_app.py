@@ -434,6 +434,12 @@ def _afleiders(woord, poule, hoeveel=3):
     return [w.get("nederlands", "") for w in random.sample(bron, min(hoeveel, len(bron)))]
 
 
+def _sw_pct(g):
+    """Aandeel structuurwoorden met een streak van 5 of hoger."""
+    w = sw_woorden(g)
+    return round(100 * sum(1 for x in w if x["streak"] >= 5) / max(1, len(w)))
+
+
 def _af_pct(g):
     """Aandeel cellen van Actief Beheersen dat je beheerst (streak 16 of hoger)."""
     cellen = af_cellen(g)
@@ -457,6 +463,7 @@ def oefenhub():
         ("Woorden kennen", [
             ("Woordenschat", f"{round(100 * sam['geoefend'] / max(1, len(g.woorden)))}%",
              "/oefenen/woorden"),
+            ("Structuurwoorden", f"{_sw_pct(g)}%", "/oefenen/structuur"),
         ]),
         ("Vormen beheersen", [
             ("Stamtijden", f"{round(100 * stam_klaar / max(1, len(stam_db)))}%",
@@ -464,7 +471,7 @@ def oefenhub():
             ("Actief beheersen", f"{_af_pct(g)}%", "/oefenen/actief"),
         ]),
     ]
-    nog_niet = ["Structuurwoorden", "Ontleden", "Klankwetten",
+    nog_niet = ["Ontleden", "Klankwetten",
                 "Nederlands → Grieks", "Verwarwoorden"]
 
     with ui.column().classes("inhoud w-full gap-3"):
@@ -1301,6 +1308,276 @@ def afpagina():
                 await verwerk(c, bool(motor.grieks_vorm_ok(invoer.value or "", c["vorm"])))
             else:
                 await verwerk(c, False)          # 'ik weet het niet'
+        finally:
+            sessie.bezig = False
+
+    knop.on_click(hoofdknop)
+    invoer.on("keydown.enter", hoofdknop)
+    toon()
+
+
+# ============================================================== structuurwoorden
+SW_OEFENINGEN = ["Zwakste eerst", "Leerpad (volgend blokje)", "Alleen wat ik fout deed",
+                 "Per categorie"]
+SW_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen meerkeuze", "Alleen typen"]
+SW_STANDAARD = {"sw_keuze": "Zwakste eerst", "sw_aantal": 10,
+                "sw_vraagvorm": SW_VRAAGVORM[0], "sw_categorie": "Alles"}
+SW_TYP_STREAK = 10
+
+
+def sw_woorden(g):
+    """De 99 structuurwoorden met je scores erbij, op dezelfde sleutel als de
+    Streamlit-app (grieks_index, met terugval op de kale vorm voor oude data)."""
+    db = motor.laad_structuurwoorden_db() or []
+    stats = g.stats.get("struct_stats") or {}
+    uit = []
+    for idx, w in enumerate(db):
+        s = motor._struct_stat_lookup(stats, w, idx)
+        uit.append({**w, "idx": idx, "sleutel": f"{w.get('grieks', '')}_{idx}",
+                    "streak": int(s.get("streak", 0) or 0),
+                    "goed": int(s.get("g", 0) or 0),
+                    "fout": int(s.get("f", 0) or 0)})
+    return uit
+
+
+def sw_vraagt_typen(vraagvorm, streak):
+    if vraagvorm == "Alleen meerkeuze":
+        return False
+    if vraagvorm == "Alleen typen":
+        return True
+    return int(streak or 0) >= SW_TYP_STREAK
+
+
+class SwSessie:
+    def __init__(self, g):
+        p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+             for k, v in SW_STANDAARD.items()}
+        woorden = sw_woorden(g)
+        if p["sw_categorie"] != "Alles":
+            woorden = [w for w in woorden
+                       if w.get("categorie") == p["sw_categorie"]] or woorden
+        if p["sw_keuze"] == "Alleen wat ik fout deed":
+            woorden = [w for w in woorden if w["fout"] > 0] or woorden
+            woorden.sort(key=lambda w: -w["fout"])
+        elif p["sw_keuze"] == "Leerpad (volgend blokje)":
+            per = {}
+            for w in woorden:
+                per.setdefault(w.get("categorie", ""), []).append(w)
+            for _cat, groep in per.items():
+                if any(x["streak"] < 5 for x in groep):
+                    woorden = groep
+                    break
+        elif p["sw_keuze"] == "Per categorie":
+            woorden.sort(key=lambda w: (str(w.get("categorie", "")), w["streak"]))
+        else:
+            woorden.sort(key=lambda w: w["streak"])
+        self.prefs = p
+        self.alles = sw_woorden(g)
+        self.vragen = woorden[:int(p["sw_aantal"])]
+        self.i = 0
+        self.goed = 0
+        self.fout = 0
+        self.beoordeeld = False
+        self.bezig = False
+        self.vraag_typen = True
+
+    @property
+    def huidig(self):
+        return self.vragen[self.i] if self.i < len(self.vragen) else None
+
+
+@ui.page("/oefenen/structuur")
+def swpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    sessie = SwSessie(g)
+    stats = g.stats.setdefault("struct_stats", {})
+    categorieen = ["Alles"] + sorted({str(w.get("categorie", "")) for w in sessie.alles
+                                      if w.get("categorie")})
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_oef = ui.select(SW_OEFENINGEN, value=sessie.prefs["sw_keuze"],
+                          label="Oefening").props("outlined dark").classes("w-full")
+        k_cat = ui.select(categorieen, value=sessie.prefs["sw_categorie"],
+                          label="Categorie").props("outlined dark").classes("w-full")
+        k_vorm = ui.select(SW_VRAAGVORM, value=sessie.prefs["sw_vraagvorm"],
+                           label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
+        k_aantal = ui.number("Woorden per ronde", value=int(sessie.prefs["sw_aantal"]),
+                             min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        ui.label(f"Automatisch: eerst aanwijzen, en vanaf streak {SW_TYP_STREAK} "
+                 f"de betekenis zelf typen.").style(f"color:{ZACHT};font-size:12px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("sw_keuze", k_oef), ("sw_categorie", k_cat),
+                                  ("sw_vraagvorm", k_vorm), ("sw_aantal", k_aantal)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/structuur")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+                f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Structuurwoorden").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        woord = ui.label().classes("grieks w-full text-center").style(
+            f"font-size:42px;line-height:1.1;color:{TEKST};padding:2px 0 0")
+        soort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:12.5px")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px;padding-top:4px")
+        opties = ui.column().classes("w-full gap-2").style("padding-top:6px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:2px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:64px;padding-top:8px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+
+    with ui.element("div").classes("antwoordbalk"):
+        with ui.row().classes("w-full gap-2 no-wrap items-center"):
+            invoer = ui.input(placeholder="betekenis").props(
+                "outlined dense dark autocomplete=off").classes("flex-grow")
+            knop = ui.button("Nakijken").props("unelevated").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
+    onderbalk("Oefenen")
+
+    def teken():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(sessie.vragen)):
+                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+                ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
+
+    def toon():
+        for vak in (opties, terugkoppeling, statusbalk):
+            vak.clear()
+        sessie.beoordeeld = False
+        w = sessie.huidig
+        for vak in (woord, soort, vraagsoort, opties, statusbalk):
+            vak.set_visibility(True)
+        if w is None:
+            woord.text = "✓"
+            soort.text = ""
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
+            teller.text = ""
+            invoer.set_visibility(False)
+            knop.text = "Nieuwe ronde"
+            teken()
+            return
+        sessie.vraag_typen = sw_vraagt_typen(sessie.prefs["sw_vraagvorm"], w["streak"])
+        woord.text = w.get("grieks", "")
+        soort.text = f"{w.get('categorie', '')} · {w.get('eigenschap', '')}".strip(" ·")
+        vraagsoort.text = ("Typ de betekenis" if sessie.vraag_typen
+                           else "Welke betekenis hoort hierbij?")
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
+        invoer.value = ""
+        invoer.set_visibility(sessie.vraag_typen)
+        teken()
+        if not sessie.vraag_typen:
+            # Afleiders het liefst uit dezelfde categorie: voorzetsels met voorzetsels.
+            zelfde = [x for x in sessie.alles
+                      if x is not w and x.get("categorie") == w.get("categorie")
+                      and x.get("betekenis") != w.get("betekenis")]
+            rest = [x for x in sessie.alles
+                    if x is not w and x.get("betekenis") != w.get("betekenis")]
+            bron = zelfde if len(zelfde) >= 3 else rest
+            keuzes = [x.get("betekenis", "") for x in random.sample(bron, min(3, len(bron)))]
+            keuzes.append(w.get("betekenis", ""))
+            random.shuffle(keuzes)
+            with opties:
+                for keuze in keuzes:
+                    ui.html(f"<button class='keuze' style='font-size:14.5px;"
+                            f"padding:9px 12px;line-height:1.35'>{keuze}</button>").on(
+                        "click", lambda _=None, kz=keuze: kies(kz))
+        with statusbalk:
+            ui.html(_statusrij([
+                (w["streak"], "streak", TEKST),
+                (f"{w['goed']}/{w['fout']}", "goed/fout", TEKST),
+                (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
+            ]))
+        if sessie.vraag_typen:
+            invoer.run_method("focus")
+
+    async def verwerk(w, juist):
+        sessie.beoordeeld = True
+        sessie.goed += int(juist)
+        sessie.fout += int(not juist)
+        e = stats.setdefault(w["sleutel"], {"g": 0, "f": 0, "streak": 0})
+        e["g"] = int(e.get("g", 0)) + int(juist)
+        e["f"] = int(e.get("f", 0)) + int(not juist)
+        e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+        g.sinds_opslag += 1
+        opgeslagen = await run.io_bound(g.bewaar)
+        for vak in (woord, soort, vraagsoort, opties, statusbalk):
+            vak.set_visibility(False)
+        invoer.set_visibility(False)
+        eig = w.get("eigenschap", "")
+        regel_eig = (f"<div style='color:{MERK};font-size:15px;margin-top:6px'>{eig}</div>"
+                     if eig else "")
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:16px;padding:26px 18px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
+                f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
+                f"<div class='grieks' style='font-size:44px;color:{TEKST};"
+                f"margin-top:14px;line-height:1.15'>{w.get('grieks', '')}</div>"
+                f"<div style='color:{TEKST};font-size:17px;margin-top:8px'>"
+                f"{w.get('betekenis', '')}</div>"
+                f"{regel_eig}"
+                f"<div style='color:{ZACHT};font-size:13px;margin-top:4px'>"
+                f"{w.get('categorie', '')}</div>"
+                f"<div style='color:{ZACHT};font-size:12.5px;margin-top:18px'>"
+                f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                f"streak nu {e['streak']}</div></div>")
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+
+    async def kies(keuze):
+        if sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            w = sessie.huidig
+            await verwerk(w, keuze == w.get("betekenis", ""))
+        finally:
+            sessie.bezig = False
+
+    async def hoofdknop():
+        if sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            w = sessie.huidig
+            if w is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/structuur")
+                return
+            if sessie.beoordeeld:
+                sessie.i += 1
+                toon()
+                return
+            if sessie.vraag_typen:
+                await verwerk(w, bool(motor.check_betekenis(invoer.value or "",
+                                                            w.get("betekenis", ""))))
+            else:
+                await verwerk(w, False)
         finally:
             sessie.bezig = False
 
