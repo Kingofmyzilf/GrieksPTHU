@@ -298,6 +298,42 @@ def _hint(w):
     return f"{gemaskeerd}{extra}"
 
 
+def _feedbackblok(w, juist, sessie, woordenlijst):
+    """Hetzelfde als de groene/rode balk in de Streamlit-app: het woord, de
+    woordenboekvorm mét uitgangen, de uitspraak en de volledige betekenis."""
+    kleur = GOED if juist else FOUT
+    achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+    grieks = w.get("grieks", "")
+    # lexeem_info is de citatievorm met genitief-uitgang en lidwoord: 'λόγος, -ου, ὁ'
+    uitgangen = w.get("lexeem_info") or w.get("grieks_info") or ""
+    fonetisch = w.get("fonetisch", "")
+    regels = [
+        f"<div style='color:{kleur};font-weight:700;font-size:16px;margin-bottom:6px'>"
+        f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>",
+        f"<div class='grieks' style='font-size:26px;color:{TEKST};line-height:1.2'>{grieks}</div>",
+    ]
+    # Bij werkwoorden is de citatievorm gelijk aan het lemma; dan niets herhalen.
+    # Genormaliseerd vergelijken: dezelfde letters kunnen als NFC of NFD zijn opgeslagen.
+    import unicodedata as _u
+    _n = lambda t: _u.normalize("NFC", str(t or "")).strip()
+    if _n(uitgangen) and _n(uitgangen) != _n(grieks):
+        regels.append(f"<div class='grieks' style='color:{ZACHT};font-size:15px'>{uitgangen}</div>")
+    if fonetisch:
+        regels.append(f"<div style='color:{ZACHT};font-size:12.5px;font-style:italic'>{fonetisch}</div>")
+    regels.append(f"<div style='color:{TEKST};font-size:16px;margin-top:6px'>"
+                  f"{w.get('nederlands', '')}</div>")
+    ob = gebruikers.woord_opbouw(grieks, woordenlijst)
+    if ob:
+        regels.append(f"<div style='color:{ZACHT};font-size:13px;margin-top:6px'>"
+                      f"🔗 {ob['voorzetsel']} <i>({ob['betekenis']})</i> + {ob['grondwoord']}"
+                      f" → {grieks}</div>")
+    regels.append(f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
+                  f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                  f"streak nu {int(w.get('streak', 0) or 0)}</div>")
+    return (f"<div style='background:{achter};border:1px solid {kleur}40;border-radius:12px;"
+            f"padding:14px;text-align:center;width:100%'>{''.join(regels)}</div>")
+
+
 def _opbouw_tekst(w, woordenlijst):
     """Samenstelling tonen als het grondwoord zelf ook in je lijst staat."""
     ob = gebruikers.woord_opbouw(w.get("grieks", ""), woordenlijst)
@@ -452,12 +488,7 @@ def oefenpagina():
         opgeslagen = await run.io_bound(g.noteer, k, juist)
         terugkoppeling.clear()
         with terugkoppeling:
-            ui.label("Goed" if juist else "Niet goed").style(
-                f"color:{GOED if juist else FOUT};font-weight:700;font-size:16px")
-            ui.label(k.get("nederlands", "")).style(
-                f"color:{TEKST};font-size:15px;text-align:center")
-            ui.label(f"{sessie.goed} goed · {sessie.fout} fout · streak {k.get('streak', 0)}").style(
-                f"color:{ZACHT};font-size:12px")
+            ui.html(_feedbackblok(k, juist, sessie, g.woorden))
         if g.laatste_fout:
             opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
             opslagmelding.style(f"color:{FOUT}")
