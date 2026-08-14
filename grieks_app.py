@@ -820,7 +820,7 @@ def stampagina():
 
     with ui.element("div").classes("antwoordbalk"):
         with ui.row().classes("w-full gap-2 no-wrap items-center"):
-            invoer = ui.input(placeholder="van welk werkwoord?").props(
+            invoer = ui.input(placeholder="van welk werkwoord? (x = χ, u = υ, h = η)").props(
                 "outlined dense dark autocomplete=off").classes("flex-grow")
             knop = ui.button("Nakijken").props("unelevated").style(
                 f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
@@ -834,15 +834,20 @@ def stampagina():
                 ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
 
     def teken_tijden():
+        """Twee kolommen: vijf knoppen onder elkaar maakt het scherm te lang om de
+        vraag en het antwoord zonder scrollen te kunnen zien."""
         tijdknoppen.clear()
         with tijdknoppen:
-            for t in TIJDEN:
-                gekozen = sessie.tijd_keuze == t
-                rand = MERK if gekozen else RAND
-                achter = "rgba(51,204,255,.12)" if gekozen else VLAK
-                ui.html(f"<button class='keuze' style='background:{achter};"
-                        f"border-color:{rand}'>{TIJD_KORT[t]}</button>").on(
-                    "click", lambda _=None, tt=t: kies_tijd(tt))
+            for rij in (TIJDEN[:2], TIJDEN[2:4], TIJDEN[4:]):
+                with ui.row().classes("w-full gap-2 no-wrap"):
+                    for t in rij:
+                        gekozen = sessie.tijd_keuze == t
+                        rand = MERK if gekozen else RAND
+                        achter = "rgba(51,204,255,.12)" if gekozen else VLAK
+                        ui.html(f"<button class='keuze' style='background:{achter};"
+                                f"border-color:{rand};font-size:14px;text-align:center;"
+                                f"padding:11px 6px'>{TIJD_KORT[t]}</button>").on(
+                            "click", lambda _=None, tt=t: kies_tijd(tt)).style("flex:1")
 
     def kies_tijd(t):
         if sessie.beoordeeld:
@@ -856,6 +861,8 @@ def stampagina():
         sessie.beoordeeld = False
         sessie.tijd_keuze = None
         v = sessie.huidig
+        for vak in (tijdknoppen, statusbalk, vormlabel, vraagsoort):
+            vak.set_visibility(True)
         invoer.set_visibility(bool(sessie.prefs["stam_praesens"]))
         if v is None:
             vormlabel.text = "✓"
@@ -912,9 +919,16 @@ def stampagina():
         try:
             regels = motor.deconstrueer_stamtijd_live(v["vorm"], v["tijd"], v["praesens"])
             if regels:
-                lijst = regels if isinstance(regels, list) else [regels]
+                # de motor geeft (stam, uitgang) terug; dat is de opbouw van de vorm
+                if isinstance(regels, (tuple, list)) and len(regels) == 2 and all(
+                        isinstance(x, str) for x in regels):
+                    tekst = (f"opbouw: <span class='grieks'>{regels[0]}</span> + "
+                             f"<span class='grieks'>{regels[1]}</span>")
+                else:
+                    lijst = regels if isinstance(regels, list) else [regels]
+                    tekst = "<br>".join(str(r) for r in lijst)
                 opbouw = (f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
-                          + "<br>".join(str(r) for r in lijst) + "</div>")
+                          f"{tekst}</div>")
         except Exception:                                        # noqa: BLE001
             pass
         deel = ""
@@ -928,6 +942,13 @@ def stampagina():
                     f"{' · '.join(wat)}</div>")
         kleur = GOED if juist else FOUT
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        # De feedback vervangt de vraag: vijf tijdknoppen plus een antwoordkaart
+        # eronder maakt het scherm te lang voor een telefoon.
+        tijdknoppen.set_visibility(False)
+        statusbalk.set_visibility(False)
+        vormlabel.set_visibility(False)
+        vraagsoort.set_visibility(False)
+        invoer.set_visibility(False)
         terugkoppeling.clear()
         with terugkoppeling:
             ui.html(
