@@ -57,6 +57,19 @@ _MAANDEN = ["januari", "februari", "maart", "april", "mei", "juni",
             "juli", "augustus", "september", "oktober", "november", "december"]
 
 
+_MND_KORT = ["jan", "feb", "mrt", "apr", "mei", "jun",
+             "jul", "aug", "sep", "okt", "nov", "dec"]
+
+
+def _kort_datum(tekst):
+    """'2026-08-13' -> '13 aug'. Past in een smal vakje zonder af te breken."""
+    try:
+        j, m, d = str(tekst).split("-")
+        return f"{int(d)} {_MND_KORT[int(m) - 1]}"
+    except (ValueError, IndexError, AttributeError):
+        return "nooit"
+
+
 def nl_datum(d):
     """Nederlandse datum, zonder afhankelijk te zijn van de taalinstelling van de server."""
     return f"{_DAGEN[d.weekday()]} {d.day} {_MAANDEN[d.month - 1]}"
@@ -70,11 +83,15 @@ def _huidige():
 
 
 def onderbalk(actief):
-    with ui.element("div").classes("onderbalk"):
-        for naam, teken, pad in BESTEMMINGEN:
-            merk = " actief" if naam == actief else ""
-            ui.html(f"<a href='{pad}' class='vak{merk}'>"
-                    f"<span style='font-size:17px'>{teken}</span>{naam}</a>")
+    """In één HTML-blok, zodat de vier links rechtstreeks in de flex-container zitten.
+    Zet je ze los neer, dan wikkelt NiceGUI elk element in een eigen div en verdeelt
+    de balk zich niet — dan vallen de tekens en de labels uit elkaar."""
+    vakken = "".join(
+        f"<a href='{pad}' class='vak{" actief" if naam == actief else ""}'>"
+        f"<span style='font-size:17px;line-height:1'>{teken}</span>"
+        f"<span>{naam}</span></a>"
+        for naam, teken, pad in BESTEMMINGEN)
+    ui.html(f"<div class='onderbalk'>{vakken}</div>")
 
 
 def _bewaakt():
@@ -464,20 +481,26 @@ def oefenpagina():
             return
         fase = gebruikers.fase_van(k.get("streak", 0))
         resterend = len(sessie.kaarten) - sessie.i - 1
+        vakjes = [
+            (fase.replace("In training", "Training"), "fase",
+             MERK if fase != "Nieuw" else ZACHT),
+            (int(k.get("streak", 0) or 0), "streak", TEKST),
+            (f"{int(k.get('score_goed', 0) or 0)}/{int(k.get('score_fout', 0) or 0)}",
+             "goed/fout", TEKST),
+            (_kort_datum(k.get("laatst_geoefend")), "laatst", ZACHT),
+            (resterend, "te gaan", ZACHT),
+        ]
+        # Ook hier één HTML-blok: losse elementen krijgen elk een wrapper van NiceGUI,
+        # waardoor de vakjes niet even breed worden en de rij scheef loopt.
+        inhoud = "".join(
+            f"<div style='flex:1;min-width:0;border:1px solid {RAND};border-radius:8px;"
+            f"padding:5px 2px;text-align:center'>"
+            f"<div style='color:{kleur};font-size:13px;font-weight:600;line-height:1.25;"
+            f"white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>{waarde}</div>"
+            f"<div style='color:{ZACHT};font-size:10px;line-height:1.2'>{label}</div></div>"
+            for waarde, label, kleur in vakjes)
         with statusbalk:
-            for waarde, label, kleur in [
-                (fase, "fase", MERK if fase != "Nieuw" else ZACHT),
-                (int(k.get("streak", 0) or 0), "streak", TEKST),
-                (f"{int(k.get('score_goed', 0) or 0)}/{int(k.get('score_fout', 0) or 0)}",
-                 "goed/fout", TEKST),
-                (k.get("laatst_geoefend") or "nooit", "laatst", ZACHT),
-                (resterend, "te gaan", ZACHT),
-            ]:
-                with ui.column().classes("items-center gap-0").style(
-                        f"flex:1;border:1px solid {RAND};border-radius:8px;padding:5px 2px"):
-                    ui.label(str(waarde)).style(
-                        f"color:{kleur};font-size:13px;font-weight:600;line-height:1.2")
-                    ui.label(label).style(f"color:{ZACHT};font-size:10px")
+            ui.html(f"<div style='display:flex;gap:6px;width:100%'>{inhoud}</div>")
 
     def toon_kaart():
         for vak in (opties, terugkoppeling, hulp):
