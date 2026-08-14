@@ -434,6 +434,14 @@ def _afleiders(woord, poule, hoeveel=3):
     return [w.get("nederlands", "") for w in random.sample(bron, min(hoeveel, len(bron)))]
 
 
+def _ont_pct(g):
+    """Accuratesse over alle ontleed-dimensies samen."""
+    st = g.stats.get("ontleed_stats") or {}
+    goed = sum(int(v.get("g", 0) or 0) for v in st.values() if isinstance(v, dict))
+    fout = sum(int(v.get("f", 0) or 0) for v in st.values() if isinstance(v, dict))
+    return f"{round(100 * goed / (goed + fout))}%" if goed + fout else "nieuw"
+
+
 def _sw_pct(g):
     """Aandeel structuurwoorden met een streak van 5 of hoger."""
     w = sw_woorden(g)
@@ -469,9 +477,10 @@ def oefenhub():
             ("Stamtijden", f"{round(100 * stam_klaar / max(1, len(stam_db)))}%",
              "/oefenen/stamtijden"),
             ("Actief beheersen", f"{_af_pct(g)}%", "/oefenen/actief"),
+            ("Ontleden", _ont_pct(g), "/oefenen/ontleden"),
         ]),
     ]
-    nog_niet = ["Ontleden", "Klankwetten",
+    nog_niet = ["Klankwetten",
                 "Nederlands → Grieks", "Verwarwoorden"]
 
     with ui.column().classes("inhoud w-full gap-3"):
@@ -1583,6 +1592,236 @@ def swpagina():
 
     knop.on_click(hoofdknop)
     invoer.on("keydown.enter", hoofdknop)
+    toon()
+
+
+# ============================================================== ontleden
+ONT_STANDAARD = {"ont_niveau": "Grieks 1", "ont_drempel": 5, "ont_kleur": True}
+ONT_NIVEAUS = ["Grieks 1", "Grieks 2", "Grieks 3"]
+
+
+def ont_dims_van(info):
+    """De dimensies die dit woord echt heeft. De woordsoort krijgt bewust de volledige
+    lijst: de verkorte lijst uit de motor bevat bijvoorbeeld geen 'Voorzetsel', en dan
+    staat het juiste antwoord er niet tussen."""
+    uit = []
+    for sleutel, label, opties in motor._ontleed_dims(info) or []:
+        if sleutel == "woordsoort":
+            opties = list(motor._ONTLEED_WS_OPTS)
+        goed = [o for o in opties if motor._ontleed_deel_ok(sleutel, o, info)]
+        if goed:                      # alleen vragen die te beantwoorden zijn
+            uit.append((sleutel, label, opties, goed))
+    return uit
+
+
+def ont_kies_vers(g, niveau, drempel):
+    """Een vers waarvan je de woorden kent: alle lexicale woorden minstens één keer
+    geoefend, en minstens één naam- of werkwoord dat je goed beheerst."""
+    bijbel = motor.laad_bijbel_db() or {}
+    bekend = {w["grieks"]: int(w.get("streak", 0) or 0) for w in g.woorden}
+    kandidaten = []
+    for ref, woorden in bijbel.items():
+        if not 4 <= len(woorden) <= 12:
+            continue
+        sterk = 0
+        goed = True
+        for w in woorden:
+            info = w.get("parsing_info", "") or ""
+            if not motor._ontleed_in_scope(info, niveau):
+                goed = False
+                break
+            s = bekend.get(w.get("lemma") or w.get("grieks", ""), 0)
+            if s >= drempel and ("Zelfst" in info or "Werkwoord" in info):
+                sterk += 1
+        if goed and sterk >= 1:
+            kandidaten.append(ref)
+        if len(kandidaten) >= 400:
+            break
+    if not kandidaten:
+        kandidaten = [r for r, w in bijbel.items() if 4 <= len(w) <= 10][:200]
+    ref = random.choice(kandidaten)
+    return ref, bijbel[ref]
+
+
+@ui.page("/oefenen/ontleden")
+def ontpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+         for k, v in ONT_STANDAARD.items()}
+    stats = g.stats.setdefault("ontleed_stats", {})
+    ref, woorden = ont_kies_vers(g, p["ont_niveau"], int(p["ont_drempel"]))
+
+    # per woord de te stellen vragen; woorden zonder vragen slaan we over
+    taken = []
+    for wi, w in enumerate(woorden):
+        for sleutel, label, opties, goed in ont_dims_van(w.get("parsing_info", "") or ""):
+            taken.append({"wi": wi, "woord": w, "sleutel": sleutel, "label": label,
+                          "opties": opties, "goed": goed})
+    staat = {"i": 0, "goed": 0, "fout": 0, "beoordeeld": False, "bezig": False}
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_niv = ui.select(ONT_NIVEAUS, value=p["ont_niveau"], label="Niveau").props(
+            "outlined dark").classes("w-full")
+        k_drem = ui.number("Woorden moeten streak … hebben", value=int(p["ont_drempel"]),
+                           min=0, max=20, step=1).props("outlined dark").classes("w-full")
+        k_kleur = ui.switch("Naamvallen kleuren in het vers", value=bool(p["ont_kleur"]))
+        ui.label("Een lagere drempel geeft meer verzen om uit te kiezen.").style(
+            f"color:{ZACHT};font-size:12px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("ont_niveau", k_niv), ("ont_drempel", k_drem),
+                                  ("ont_kleur", k_kleur)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/ontleden")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+                f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-2"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label(f"Ontleden · {ref}").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        vers = ui.html().classes("w-full").style("padding:6px 0")
+        gevraagd = ui.label().classes("w-full text-center").style(
+            f"color:{MERK};font-size:17px;font-weight:600;padding-top:4px")
+        opties = ui.column().classes("w-full gap-2").style("padding-top:4px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:56px;padding-top:6px")
+
+    with ui.element("div").classes("antwoordbalk"):
+        knop = ui.button("Volgende").props("unelevated").classes("w-full").style(
+            f"background:{MERK};color:{INKT};font-weight:700;height:42px")
+    onderbalk("Oefenen")
+
+    def teken_vers(actief_wi, toon_kleur=False):
+        delen = []
+        for i, w in enumerate(woorden):
+            tekst = w.get("grieks", "")
+            info = w.get("parsing_info", "") or ""
+            stijl = "font-size:24px;padding:0 3px;"
+            if i == actief_wi:
+                stijl += (f"color:{INKT};background:{MERK};border-radius:5px;"
+                          f"font-weight:700;")
+            elif toon_kleur and p["ont_kleur"]:
+                nv = next((c for c in motor._ONTLEED_KLEUR if c in info), None)
+                stijl += f"color:{motor._ONTLEED_KLEUR[nv]};" if nv else f"color:{ZACHT};"
+            else:
+                stijl += f"color:{ZACHT};"
+            delen.append(f"<span class='grieks' style='{stijl}'>{tekst}</span>")
+        vers.content = (f"<div style='text-align:center;line-height:1.9;background:{VLAK};"
+                        f"border:1px solid {RAND};border-radius:12px;padding:12px 10px'>"
+                        + " ".join(delen) + "</div>")
+
+    def teken_streepjes():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(taken)):
+                kleur = MERK if n < staat["i"] else (TEKST if n == staat["i"] else RAND)
+                ui.element("div").style(f"flex:1;height:3px;border-radius:2px;background:{kleur}")
+
+    def toon():
+        opties.clear()
+        terugkoppeling.clear()
+        staat["beoordeeld"] = False
+        if staat["i"] >= len(taken):
+            teken_vers(-1, toon_kleur=True)
+            gevraagd.text = f"Klaar — {staat['goed']} goed, {staat['fout']} fout."
+            teller.text = ""
+            knop.text = "Nieuw vers"
+            teken_streepjes()
+            return
+        t = taken[staat["i"]]
+        teken_vers(t["wi"])
+        gevraagd.text = t["label"]
+        teller.text = f"{staat['i'] + 1}/{len(taken)}"
+        knop.text = "Ik weet het niet"
+        teken_streepjes()
+        with opties:
+            for rij in [t["opties"][i:i + 3] for i in range(0, len(t["opties"]), 3)]:
+                with ui.row().classes("w-full gap-2 no-wrap"):
+                    for o in rij:
+                        ui.html(f"<button class='keuze' style='font-size:14px;"
+                                f"text-align:center;padding:10px 4px'>{o}</button>").on(
+                            "click", lambda _=None, keuze=o: kies(keuze)).style("flex:1")
+
+    async def verwerk(t, juist, gekozen):
+        staat["beoordeeld"] = True
+        staat["goed"] += int(juist)
+        staat["fout"] += int(not juist)
+        e = stats.setdefault(t["sleutel"], {"g": 0, "f": 0})
+        e["g"] = int(e.get("g", 0)) + int(juist)
+        e["f"] = int(e.get("f", 0)) + int(not juist)
+        g.sinds_opslag += 1
+        await run.io_bound(g.bewaar)
+        opties.clear()
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        info = t["woord"].get("parsing_info", "") or ""
+        gloss = t["woord"].get("vertaling_nl") or t["woord"].get("vertaling_bsb") or ""
+        hulp = ""
+        try:
+            h = motor._ontleed_vertaalhulp(info)
+            if h:
+                hulp = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px;"
+                        f"line-height:1.5'>{h if isinstance(h, str) else ' · '.join(h)}</div>")
+        except Exception:                                        # noqa: BLE001
+            pass
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:14px;padding:16px 14px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:16px'>"
+                f"{'✓ Goed!' if juist else '✗ ' + t['label'] + ' is ' + ', '.join(t['goed'])}"
+                f"</div>"
+                f"<div class='grieks' style='font-size:30px;color:{TEKST};margin-top:8px'>"
+                f"{t['woord'].get('grieks', '')}</div>"
+                f"<div style='color:{ZACHT};font-size:13px'>{info}</div>"
+                f"<div style='color:{TEKST};font-size:13.5px;margin-top:4px'>{gloss}</div>"
+                f"{hulp}</div>")
+        knop.text = "Volgende"
+
+    async def kies(keuze):
+        if staat["beoordeeld"] or staat["bezig"]:
+            return
+        staat["bezig"] = True
+        try:
+            t = taken[staat["i"]]
+            await verwerk(t, keuze in t["goed"], keuze)
+        finally:
+            staat["bezig"] = False
+
+    async def hoofdknop():
+        if staat["bezig"]:
+            return
+        staat["bezig"] = True
+        try:
+            if staat["i"] >= len(taken):
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/ontleden")
+                return
+            if staat["beoordeeld"]:
+                staat["i"] += 1
+                toon()
+                return
+            await verwerk(taken[staat["i"]], False, None)
+        finally:
+            staat["bezig"] = False
+
+    knop.on_click(hoofdknop)
     toon()
 
 
