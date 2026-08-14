@@ -1,0 +1,4 @@
+# Afhankelijkheden voor de NiceGUI-schil (grieks_app.py).
+# De Streamlit-app blijft draaien op requirements.txt; die twee staan los van elkaar.
+nicegui
+pandas
