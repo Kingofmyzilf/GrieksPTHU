@@ -204,14 +204,87 @@ def vandaagpagina():
 
 
 # ============================================================== oefenen
+AUTO = "Automatisch (aanbevolen)"
+VORMEN = [AUTO, "Alleen leren", "Alleen meerkeuze", "Mix", "Alleen typen"]
+_VORM_CODE = {"Alleen leren": "1", "Alleen meerkeuze": "2", "Alleen typen": "4"}
+
+OEFENINGEN = ["Leerpad (levels)", "Losse lessen", "Knelpunten", "Lang niet gedaan",
+              "Mastery", "Gelijkende woorden", "Mijn verwarwoorden"]
+
+STANDAARD = {"keuze": "Leerpad (levels)", "lessen": [], "vorm": AUTO, "aantal": 12,
+             "nieuw_mee": True, "audio": True, "opbouw": False}
+
+
+def prefs(g):
+    """Instellingen uit ui_prefs — hetzelfde blok dat de Streamlit-app gebruikt,
+    dus wat je hier kiest komt daar ook terug."""
+    p = g.stats.setdefault("ui_prefs", {})
+    return {k: p.get(f"ng_{k}", v) for k, v in STANDAARD.items()}
+
+
+def zet_pref(g, sleutel, waarde):
+    g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = waarde
+
+
+def bouw_poule(g, keuze, lessen):
+    """De verzameling woorden waaruit een sessie wordt getrokken."""
+    alles = g.woorden
+    if keuze == "Losse lessen" and lessen:
+        return [w for w in alles if w.get("les") in lessen]
+    if keuze == "Mastery":
+        return [w for w in alles if int(w.get("streak", 0)) >= 30]
+    if keuze == "Knelpunten":
+        fout = [w for w in alles if int(w.get("score_fout", 0)) > 0]
+        return sorted(fout, key=lambda w: -int(w.get("score_fout", 0)))[:60]
+    if keuze == "Lang niet gedaan":
+        gedaan = [w for w in alles if w.get("laatst_geoefend")]
+        return sorted(gedaan, key=lambda w: w.get("laatst_geoefend", ""))[:60]
+    if keuze == "Gelijkende woorden":
+        try:
+            paren = motor.bouw_lookalike_paren(alles, motor.laad_verwarparen_db())
+        except Exception:                                        # noqa: BLE001
+            paren = []
+        uit = [w for paar in paren for w in paar]
+        return uit or alles
+    if keuze == "Mijn verwarwoorden":
+        eigen = set()
+        for sleutel in (g.stats.get("verwar_stats") or {}):
+            eigen.update(str(sleutel).split("||"))
+        uit = [w for w in alles if w.get("grieks") in eigen]
+        return uit or alles
+    # Leerpad: het eerstvolgende niet-afgeronde level
+    try:
+        levels = motor.bouw_leerpad_levels(alles)
+        status = motor.leerpad_status(levels)
+        for lvl, st in zip(levels, status):
+            klaar = st.get("klaar") if isinstance(st, dict) else None
+            if not klaar:
+                woorden = lvl.get("woorden") if isinstance(lvl, dict) else lvl
+                if woorden:
+                    return list(woorden)
+    except Exception:                                            # noqa: BLE001
+        pass
+    return [w for w in alles if (w.get("les") or 99) <= 4] or alles
+
+
 class Sessie:
     """Eén ronde kaarten, met oplopende moeilijkheid per woord."""
 
-    def __init__(self, g, aantal=12):
-        poule = [w for w in g.woorden if (w.get("les") or 99) <= 4]
-        gekozen = motor.kies_gefaseerde_oefensessie(poule, "vocab", max_nieuw=3) or poule
-        self.kaarten = motor.leerpad_kaart_volgorde(list(gekozen)[:aantal])
-        self.poule = poule
+    def __init__(self, g):
+        p = prefs(g)
+        self.poule = bouw_poule(g, p["keuze"], p["lessen"]) or g.woorden
+        gekozen = motor.kies_gefaseerde_oefensessie(
+            self.poule, "vocab", max_nieuw=3 if p["nieuw_mee"] else 0,
+            verbied_nieuwe_woorden=not p["nieuw_mee"]) or self.poule
+        gekozen = list(gekozen)[:int(p["aantal"])]
+        vast = _VORM_CODE.get(p["vorm"])
+        if vast:
+            self.kaarten = [(w, vast) for w in gekozen]
+        elif p["vorm"] == "Mix":
+            self.kaarten = [(w, random.choice(("2", "4"))) for w in gekozen]
+        else:
+            self.kaarten = motor.leerpad_kaart_volgorde(gekozen)
+        self.prefs = p
         self.i = 0
         self.goed = 0
         self.fout = 0
@@ -241,10 +314,52 @@ def oefenpagina():
         return
     sessie = Sessie(g)
 
+    # --- instellingen achter het tandwiel (designreview: niet vóór de oefening) ---
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        p = prefs(g)
+        alle_lessen = sorted({int(w["les"]) for w in g.woorden if w.get("les")})
+
+        kies_oefening = ui.select(OEFENINGEN, value=p["keuze"], label="Oefening").props(
+            "outlined dark").classes("w-full")
+        kies_lessen = ui.select(alle_lessen, value=p["lessen"], label="Lessen",
+                                multiple=True).props("outlined dark").classes("w-full")
+        kies_lessen.bind_visibility_from(kies_oefening, "value",
+                                         lambda v: v == "Losse lessen")
+        kies_vorm = ui.select(VORMEN, value=p["vorm"], label="Oefenvorm").props(
+            "outlined dark").classes("w-full")
+        kies_aantal = ui.number("Kaarten per ronde", value=int(p["aantal"]),
+                                min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        kies_nieuw = ui.switch("Nieuwe woorden mee-oefenen", value=bool(p["nieuw_mee"]))
+        kies_audio = ui.switch("Uitspraakknop tonen", value=bool(p["audio"]))
+        kies_opbouw = ui.switch("Woordopbouw tonen", value=bool(p["opbouw"]))
+        ui.label("Je keuzes worden bewaard bij je voortgang.").style(
+            f"color:{ZACHT};font-size:12px")
+
+        async def bewaar_instellingen():
+            for sleutel, veld in [("keuze", kies_oefening), ("lessen", kies_lessen),
+                                  ("vorm", kies_vorm), ("aantal", kies_aantal),
+                                  ("nieuw_mee", kies_nieuw), ("audio", kies_audio),
+                                  ("opbouw", kies_opbouw)]:
+                zet_pref(g, sleutel, veld.value)
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+                f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_instellingen).props("unelevated").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
     with ui.column().classes("inhoud metbalk w-full gap-3"):
-        with ui.row().classes("w-full items-center justify-between"):
-            ui.label("Woordenschat").style(f"color:{ZACHT};font-size:13px")
-            teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label(sessie.prefs["keuze"]).style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
         woord = ui.label().classes("grieks w-full text-center").style(
             f"font-size:58px;line-height:1.15;color:{TEKST};padding:18px 0 2px")
