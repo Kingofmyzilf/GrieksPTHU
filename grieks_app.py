@@ -228,8 +228,11 @@ _VORM_CODE = {"Alleen leren": "1", "Alleen meerkeuze": "2", "Alleen typen": "4"}
 OEFENINGEN = ["Leerpad (levels)", "Losse lessen", "Knelpunten", "Lang niet gedaan",
               "Mastery", "Gelijkende woorden", "Mijn verwarwoorden"]
 
+OUDE_STOF = {"Alleen dit level": 0, "Kleine herhaalronde (5)": 5,
+             "Grote herhaalronde (10)": 10}
 STANDAARD = {"keuze": "Leerpad (levels)", "lessen": [], "vorm": AUTO, "aantal": 12,
-             "nieuw_mee": True, "audio": True, "opbouw": False}
+             "nieuw_mee": True, "audio": True, "opbouw": False,
+             "level": 0, "oude_stof": "Kleine herhaalronde (5)", "nieuw_aantal": 3}
 
 
 def prefs(g):
@@ -243,7 +246,7 @@ def zet_pref(g, sleutel, waarde):
     g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = waarde
 
 
-def bouw_poule(g, keuze, lessen):
+def bouw_poule(g, keuze, lessen, level=0):
     """De verzameling woorden waaruit een sessie wordt getrokken."""
     alles = g.woorden
     if keuze == "Losse lessen" and lessen:
@@ -269,16 +272,17 @@ def bouw_poule(g, keuze, lessen):
             eigen.update(str(sleutel).split("||"))
         uit = [w for w in alles if w.get("grieks") in eigen]
         return uit or alles
-    # Leerpad: het eerstvolgende niet-afgeronde level
+    # Leerpad: het gekozen level, of anders het eerstvolgende dat nog niet af is
     try:
-        levels = motor.bouw_leerpad_levels(alles)
-        status = motor.leerpad_status(levels)
-        for lvl, st in zip(levels, status):
-            klaar = st.get("klaar") if isinstance(st, dict) else None
-            if not klaar:
-                woorden = lvl.get("woorden") if isinstance(lvl, dict) else lvl
-                if woorden:
-                    return list(woorden)
+        status = motor.leerpad_status(motor.bouw_leerpad_levels(alles))
+        gekozen = int(level or 0)
+        if gekozen:
+            for st in status:
+                if st.get("index") == gekozen and st.get("woorden"):
+                    return list(st["woorden"])
+        for st in status:
+            if not st.get("klaar") and st.get("woorden"):
+                return list(st["woorden"])
     except Exception:                                            # noqa: BLE001
         pass
     return [w for w in alles if (w.get("les") or 99) <= 4] or alles
@@ -399,11 +403,18 @@ class Sessie:
 
     def __init__(self, g):
         p = prefs(g)
-        self.poule = bouw_poule(g, p["keuze"], p["lessen"]) or g.woorden
+        self.poule = bouw_poule(g, p["keuze"], p["lessen"], p.get("level", 0)) or g.woorden
         gekozen = motor.kies_gefaseerde_oefensessie(
-            self.poule, "vocab", max_nieuw=3 if p["nieuw_mee"] else 0,
+            self.poule, "vocab",
+            max_nieuw=int(p.get("nieuw_aantal", 3)) if p["nieuw_mee"] else 0,
             verbied_nieuwe_woorden=not p["nieuw_mee"]) or self.poule
         gekozen = list(gekozen)[:int(p["aantal"])]
+        herhaal = OUDE_STOF.get(p.get("oude_stof", ""), 0)
+        if herhaal and p["keuze"] == "Leerpad (levels)":
+            try:
+                gekozen = motor.voeg_herhaalwoorden_toe(gekozen, g.woorden, herhaal)
+            except Exception:                                    # noqa: BLE001
+                pass
         vast = _VORM_CODE.get(p["vorm"])
         if vast:
             self.kaarten = [(w, vast) for w in gekozen]
@@ -524,6 +535,27 @@ def oefenpagina():
                                 multiple=True).props("outlined dark").classes("w-full")
         kies_lessen.bind_visibility_from(kies_oefening, "value",
                                          lambda v: v == "Losse lessen")
+        # Levelkeuze: alleen de ontgrendelde levels, met hoever je bent erbij.
+        _lv = motor.leerpad_status(motor.bouw_leerpad_levels(g.woorden))
+        _open = {0: "Automatisch (volgend level)"}
+        for _st in _lv:
+            if _st.get("ontgrendeld"):
+                _open[_st["index"]] = (f"Level {_st['index']} · les {_st.get('les','?')} "
+                                       f"({_st.get('voltooid',0)}/{_st.get('totaal',0)})")
+        _hl = int(p.get("level", 0) or 0)
+        kies_level = ui.select(_open, value=_hl if _hl in _open else 0,
+                               label="Level").props("outlined dark").classes("w-full")
+        kies_level.bind_visibility_from(kies_oefening, "value",
+                                        lambda v: v == "Leerpad (levels)")
+        kies_oude = ui.select(list(OUDE_STOF),
+                              value=p.get("oude_stof", "Kleine herhaalronde (5)"),
+                              label="Oude stof meenemen").props(
+            "outlined dark").classes("w-full")
+        kies_oude.bind_visibility_from(kies_oefening, "value",
+                                       lambda v: v == "Leerpad (levels)")
+        kies_nieuw_n = ui.number("Nieuwe woorden per sessie",
+                                 value=int(p.get("nieuw_aantal", 3)), min=0, max=10,
+                                 step=1).props("outlined dark").classes("w-full")
         kies_vorm = ui.select(VORMEN, value=p["vorm"], label="Oefenvorm").props(
             "outlined dark").classes("w-full")
         kies_aantal = ui.number("Kaarten per ronde", value=int(p["aantal"]),
@@ -536,6 +568,8 @@ def oefenpagina():
 
         async def bewaar_instellingen():
             for sleutel, veld in [("keuze", kies_oefening), ("lessen", kies_lessen),
+                                  ("level", kies_level), ("oude_stof", kies_oude),
+                                  ("nieuw_aantal", kies_nieuw_n),
                                   ("vorm", kies_vorm), ("aantal", kies_aantal),
                                   ("nieuw_mee", kies_nieuw), ("audio", kies_audio),
                                   ("opbouw", kies_opbouw)]:
@@ -558,6 +592,17 @@ def oefenpagina():
                 ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        _xp = motor.bereken_xp(g.woorden)
+        _niv = motor.niveau_van_xp(_xp)
+        _klaar = sum(1 for _s in motor.leerpad_status(
+            motor.bouw_leerpad_levels(g.woorden)) if _s.get("klaar"))
+        ui.html(
+            f"<div style='display:flex;justify-content:space-between;font-size:12px;"
+            f"color:{ZACHT};padding-top:2px'>"
+            f"<span>Niveau {_niv['niveau']} · <span style='color:{MERK}'>"
+            f"{_niv['titel']}</span></span>"
+            f"<span>{_klaar} levels af · nog "
+            f"{_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP</span></div>")
         woord = ui.label().classes("grieks w-full text-center").style(
             f"font-size:58px;line-height:1.15;color:{TEKST};padding:18px 0 2px")
         lemma = ui.label().classes("w-full text-center").style(f"color:{ZACHT};font-size:14px")
