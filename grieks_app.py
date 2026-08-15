@@ -2398,7 +2398,8 @@ def stamleerpagina():
 # ============================================================== actief beheersen
 AF_OEFENINGEN = ["Zwakste eerst", "Leerpad (volgend rijtje)", "Alleen wat ik fout deed"]
 AF_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen meerkeuze", "Alleen typen"]
-AF_MODI = ["Cel voor cel", "Tentamenrooster (heel rijtje)"]
+AF_MODI = ["Cel voor cel", "Tentamenrooster (heel rijtje)", "Alleen de uitgangen"]
+AF_ROOSTER_MODI = AF_MODI[1:]      # de twee die het hele rijtje ineens vragen
 AF_STANDAARD = {"af_keuze": "Zwakste eerst", "af_aantal": 10,
                 "af_vraagvorm": AF_VRAAGVORM[0], "af_niveau": "Alles",
                 "af_modus": AF_MODI[0], "af_rijtje": ""}
@@ -2417,6 +2418,19 @@ def af_rijtjes(g):
     for c in af_cellen(g):
         uit.setdefault(f"{c['niveau']} · {c['categorie']} · {c['paradigma']}", []).append(c)
     return uit
+
+
+def af_paspoort(cellen):
+    """Het rijtje om te bestuderen: de vaste stam wit, de variabele uitgang cyaan.
+    Zelfde beeld als het paradigma-paspoort in de Streamlit-app."""
+    return "".join(
+        f"<div style='display:flex;justify-content:space-between;gap:10px;"
+        f"border-top:1px solid {RAND};padding:6px 0;font-size:13px'>"
+        f"<span style='color:{ZACHT}'>{c['label']}</span>"
+        f"<span class='grieks' style='font-size:17px'>"
+        f"<span style='color:{TEKST}'>{c.get('stam', '') or c['vorm']}</span>"
+        f"<span style='color:{MERK};font-weight:700'>{c.get('uitgang', '')}</span>"
+        f"</span></div>" for c in cellen)
 
 
 def af_cellen(g):
@@ -2497,14 +2511,15 @@ def af_instellingen(g, sessie_prefs):
         k_modus = ui.select(AF_MODI, value=_mo if _mo in AF_MODI else AF_MODI[0],
                             label="Wat wil je doen").props("outlined dark").classes("w-full")
         ui.label("Cel voor cel bouwt op van aanwijzen naar typen. Het tentamenrooster "
-                 "vraagt één heel rijtje in één keer, zoals op het tentamen.").style(
+                 "vraagt één heel rijtje in één keer, zoals op het tentamen. Bij 'alleen "
+                 "de uitgangen' staat de stam er al en typ je alleen wat erachter komt.").style(
             f"color:{ZACHT};font-size:12px")
         _rijtjes = sorted(af_rijtjes(g))
         _hr = sessie_prefs.get("af_rijtje") or (_rijtjes[0] if _rijtjes else None)
         k_rijtje = ui.select(_rijtjes, value=_hr if _hr in _rijtjes else
                              (_rijtjes[0] if _rijtjes else None),
                              label="Welk rijtje").props("outlined dark").classes("w-full")
-        k_rijtje.bind_visibility_from(k_modus, "value", lambda v: v == AF_MODI[1])
+        k_rijtje.bind_visibility_from(k_modus, "value", lambda v: v in AF_ROOSTER_MODI)
         k_oef = ui.select(AF_OEFENINGEN, value=sessie_prefs["af_keuze"],
                           label="Oefening").props("outlined dark").classes("w-full")
         k_niv = ui.select(niveaus, value=sessie_prefs["af_niveau"],
@@ -2527,7 +2542,7 @@ def af_instellingen(g, sessie_prefs):
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
-            ui.navigate.to("/oefenen/actief/rooster" if k_modus.value == AF_MODI[1]
+            ui.navigate.to("/oefenen/actief/rooster" if k_modus.value in AF_ROOSTER_MODI
                            else "/oefenen/actief")
 
         with ui.row().classes("w-full justify-end gap-2"):
@@ -2546,9 +2561,10 @@ def afroosterpagina():
     if not g:
         return
     p = af_prefs(g)
-    if p.get("af_modus") != AF_MODI[1]:
+    if p.get("af_modus") not in AF_ROOSTER_MODI:
         ui.navigate.to("/oefenen/actief")
         return
+    alleen_uitgang = p.get("af_modus") == AF_MODI[2]
     rijtjes = af_rijtjes(g)
     naam = p.get("af_rijtje") if p.get("af_rijtje") in rijtjes else (
         sorted(rijtjes)[0] if rijtjes else "")
@@ -2568,9 +2584,16 @@ def afroosterpagina():
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         ui.label(naam or "geen rijtje gekozen").style(
             f"color:{TEKST};font-size:16px;font-weight:600")
-        ui.label("Typ de volledige vormen. Wat goed is blijft staan; een fout veld wordt "
-                 "leeggemaakt zodat je het opnieuw kunt proberen.").style(
+        ui.label(("De stam staat er al — typ alleen de uitgang. " if alleen_uitgang else
+                  "Typ de volledige vormen. ")
+                 + "Wat goed is blijft staan; een fout veld wordt leeggemaakt zodat je "
+                   "het opnieuw kunt proberen.").style(
             f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+        with ui.expansion("Bekijk het rijtje").props("dense").classes("w-full").style(
+                f"color:{ZACHT};font-size:13px"):
+            ui.label("De vaste stam is wit, de variabele uitgang cyaan.").style(
+                f"color:{ZACHT};font-size:12px")
+            ui.html(af_paspoort(cellen))
         rooster = ui.column().classes("w-full gap-2").style("padding-top:6px")
         terugkoppeling = ui.column().classes("w-full items-center").style("min-height:40px")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
@@ -2595,6 +2618,12 @@ def afroosterpagina():
                             f"<span style='color:{ZACHT}'>{c['label']}</span>"
                             f"<span class='grieks' style='font-size:16px'>{c['vorm']}</span>"
                             f"</div>")
+                elif alleen_uitgang:
+                    with ui.row().classes("w-full gap-2 no-wrap items-center"):
+                        ui.html(f"<span class='grieks' style='font-size:19px;color:{TEKST};"
+                                f"white-space:nowrap'>{c.get('stam', '')} +</span>")
+                        velden[c["id"]] = ui.input(label=c["label"]).props(
+                            "outlined dense dark autocomplete=off").classes("flex-grow")
                 else:
                     velden[c["id"]] = ui.input(label=c["label"]).props(
                         "outlined dense dark autocomplete=off").classes("w-full")
@@ -2617,7 +2646,15 @@ def afroosterpagina():
             if staat[c["id"]]:
                 continue
             gegeven = (velden.get(c["id"]).value or "") if velden.get(c["id"]) else ""
-            juist = bool(motor.grieks_vorm_ok(gegeven, c["vorm"]))
+            if alleen_uitgang:
+                # Een lege uitgang is een geldig antwoord (bv. de nominatief van
+                # sommige rijtjes), dus die vergelijking mag niet op 'ingevuld' hangen.
+                verwacht = motor.normaliseer_accent(c.get("uitgang", "") or "")
+                gedaan = motor.normaliseer_accent(
+                    motor.naar_grieks_transliteratie(gegeven))
+                juist = verwacht == gedaan
+            else:
+                juist = bool(motor.grieks_vorm_ok(gegeven, c["vorm"]))
             e = stats.setdefault(c["id"], {"g": 0, "f": 0, "streak": 0})
             e["g"] = int(e.get("g", 0)) + int(juist)
             e["f"] = int(e.get("f", 0)) + int(not juist)
@@ -2674,6 +2711,7 @@ def afpagina():
                 ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        paspoort = ui.column().classes("w-full")
         rijtje = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px;padding-top:4px")
         gevraagd = ui.label().classes("w-full text-center").style(
@@ -2710,6 +2748,7 @@ def afpagina():
             vak.set_visibility(True)
         if c is None:
             rijtje.text = ""
+            paspoort.clear()
             gevraagd.text = "✓"
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
@@ -2719,6 +2758,13 @@ def afpagina():
             return
         sessie.vraag_typen = af_vraagt_typen(sessie.prefs["af_vraagvorm"], c["streak"])
         rijtje.text = f"{c['categorie']} · {c['paradigma']}"
+        # Het hele rijtje kunnen bestuderen zonder de oefening te verlaten: de vaste
+        # stam wit, de variabele uitgang cyaan.
+        paspoort.clear()
+        with paspoort:
+            with ui.expansion("Bekijk het rijtje").props("dense").classes("w-full").style(
+                    f"color:{ZACHT};font-size:12.5px"):
+                ui.html(af_paspoort(c["rijtje"]))
         gevraagd.text = c["label"]
         vraagsoort.text = ("Typ deze vorm" if sessie.vraag_typen
                            else "Welke vorm hoort hierbij?")
@@ -4185,6 +4231,30 @@ def lijst_structuur(g, zoek):
     return regels
 
 
+def _werkwoordpaspoort(verb):
+    """Het morfologische paspoort: klasse, stamwortel en de mutatieregel die verklaart
+    waarom de stamtijden eruitzien zoals ze eruitzien. Zelfde gegevens als het
+    Werkwoordpaspoort in de Streamlit-app."""
+    morf = verb.get("morfologie") or {}
+    regel = morf.get("mutatieregel") or {}
+    delen = []
+    kop = " · ".join(x for x in (
+        f"klasse {morf['klasse']}" if morf.get("klasse") else "",
+        f"stamwortel {morf['stamwortel']}" if morf.get("stamwortel") else "",
+        f"Strong {verb['strong_nummer']}" if verb.get("strong_nummer") else "") if x)
+    if kop:
+        delen.append(f"<div style='color:{MERK};font-size:11.5px'>{kop}</div>")
+    if morf.get("memoriseren_vereist"):
+        delen.append(f"<div style='color:{FOUT};font-size:11.5px'>🔥 onregelmatig — "
+                     f"deze moet je uit je hoofd leren</div>")
+    if regel.get("formule"):
+        delen.append(f"<div style='color:{ZACHT};font-size:11.5px'>{regel['formule']}</div>")
+    if regel.get("toelichting"):
+        delen.append(f"<div style='color:{ZACHT};font-size:11.5px;font-style:italic'>"
+                     f"{regel['toelichting']}</div>")
+    return "".join(delen)
+
+
 def lijst_stamtijden(g, zoek):
     stats = g.stats.get("stam_stats") or {}
     regels = []
@@ -4202,7 +4272,7 @@ def lijst_stamtijden(g, zoek):
         regels.append(_lijstregel(
             f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{praesens}</span>",
             f"les {verb.get('les', '?')}",
-            f"{betekenis[:40]}<br>{' · '.join(vormen)}"))
+            f"{betekenis[:40]}<br>{' · '.join(vormen)}{_werkwoordpaspoort(verb)}"))
     return regels
 
 
