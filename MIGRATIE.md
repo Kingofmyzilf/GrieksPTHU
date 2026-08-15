@@ -3,6 +3,25 @@
 Wat er in `overhoring_web.py` zit en wat er in de NiceGUI-app (`grieks_app.py`) staat.
 Bijgewerkt na een systematische vergelijking van alle widgets per tabblad.
 
+## Stand per tabblad
+
+De Streamlit-app heeft twaalf tabbladen (`TAB_KEUZE`, overhoring_web.py:3374).
+
+| Streamlit-tabblad | NiceGUI | status |
+|---|---|---|
+| 🚀 Woordenschat | `/oefenen/woorden`, `/oefenen/paren` | klaar, regel voor regel vergeleken |
+| 🎓 Actief Beheersen | `/oefenen/actief`, `/oefenen/actief/rooster` | klaar |
+| ⏳ Stamtijden | `/oefenen/stamtijden`, `.../leren` | klaar |
+| 🧱 Structuurwoorden | `/oefenen/structuur` | klaar |
+| 📊 Voortgang | `/voortgang` | klaar |
+| 📖 Lijst | `/lijst` | klaar |
+| 🔎 Ontleden | `/oefenen/ontleden` | kern klaar, acht opties open |
+| 📝 Leesteksten | — | niet gebouwd |
+| 🔊 Klankwetten | — | niet gebouwd |
+| 📐 Grammatica | — | niet gebouwd |
+| ℹ️ Uitleg & Hulp | — | niet gebouwd |
+| ✍️ NL → Grieks | — | niet gebouwd |
+
 ## Fundament — klaar
 
 | | status |
@@ -10,7 +29,8 @@ Bijgewerkt na een systematische vergelijking van alle widgets per tabblad.
 | Griekse motor (`grieks_motor.py`, 160 functies) | klaar, 1.305 vergelijkingen identiek |
 | Opslag naar dezelfde Google Sheet (`grieks_opslag.py`) | klaar, live getest |
 | Inloggen + scores terugschrijven (`grieks_gebruiker.py`) | klaar |
-| Onderbalk, Vandaag, Voortgang (basis), Oefenen-lijst | klaar |
+| Onderbalk, Vandaag (alle onderdelen klaargezet), Oefenen-lijst | klaar |
+| Grieks typen met Latijnse toetsen (spiekbrief achter ⌨ waar je Grieks typt) | klaar |
 
 ## Woordenschat — klaar, systematisch vergeleken met tab 0 van Streamlit
 
@@ -61,6 +81,9 @@ vormen per ronde, uitgangen kleuren, feedback met opbouw.
 - [x] Flashcard-modus "Leren" naast overhoren (`/oefenen/stamtijden/leren`): vorm
       zien, jezelf checken, 'wist ik' of 'nog niet' — dat laatste komt achteraan terug
 - [x] Spiekbrief: hoe typ ik Grieks met Latijnse toetsen (⌨-knopje in de kop)
+- [x] Werkwoordpaspoort (klasse, stamwortel, Strong, mutatieregel met toelichting,
+      markering van de onregelmatige werkwoorden) — staat bij Stamtijden in de Lijst
+      in plaats van als eigen oefenmodus
 
 ## Actief Beheersen — klaar
 
@@ -69,12 +92,17 @@ het eigen rijtje, feedback met stam + gekleurde uitgang en toelichting.
 
 - [x] Tentamenrooster: heel rijtje in één keer invullen (`/oefenen/actief/rooster`).
       Goede cellen worden vastgezet, foute velden leeggemaakt voor een nieuwe poging.
+- [x] "Alleen de uitgangen": de stam staat er al, jij typt alleen wat erachter komt
+- [x] Paradigma-paspoort ("Bekijk het rijtje") op beide schermen: stam wit, uitgang cyaan
 - [x] Spiekbrief Griekse toetsaanslagen
 
 ## Structuurwoorden — klaar
 
 Aanwezig: 4 oefeningen, categoriefilter, vraagvorm, aantal per ronde.
-Geen bekende gaten.
+
+- [x] Leerpad in blokjes van zes zoals de motor ze bouwt (het groepeerde eerst op
+      categorie, waardoor 'volgend blokje' soms dertig woorden pakte), met keuzelijst
+      van de ontgrendelde blokjes, "Hierna: blokje X" en het rijtje eerst kunnen lezen
 
 ## Ontleden — kern klaar
 
@@ -111,16 +139,29 @@ NT-dekking, woorden-dekking, uitloggen.
 Alle vijf de oefenonderdelen tellen nu mee in `dag_stats` en in het dagdoel-logboek
 (`Gebruiker.tel_dag` en `dagdoel_plus`); daarvoor deed alleen Woordenschat dat.
 
+## Lijst — klaar
+
+`/lijst`, te bereiken via Lezen. Woordenschat, verwarparen, structuurwoorden en
+stamtijden opzoeken met je eigen streaks erbij, met zoekveld op Grieks of Nederlands
+en een filter 'alleen wat ik al geoefend heb'. Bij Stamtijden staat het
+werkwoordpaspoort erbij.
+
 ## Nog helemaal niet gebouwd
 
-- [ ] **Klankwetten** — 5 instellingen, filter op klanksoort, aparte scorelijst
-- [ ] **Leesteksten** — 17 instellingen, vier methodes waaronder Masterclass
-- [ ] **Nederlands → Grieks**
-- [ ] **Grammatica** — slides uit de PDF, thema-filter, overzichten
-- [x] **Lijst** — woordenschat, verwarparen, structuurwoorden en stamtijden opzoeken
-      met je eigen streaks erbij (`/lijst`, te bereiken via Lezen)
-- [ ] **Uitleg & Hulp** — inclusief de schakelaar geavanceerde opties en
-      het aan/uit zetten van tabbladen
+- [ ] **Klankwetten** — 5 instellingen, filter op klanksoort, aparte scorelijst.
+      De motor heeft alles al: `klankwet_index`, `klankwet_formule_index`,
+      `samensmeltingen_alle`, `klank_afleiders`, `klank_opbouw_regels`,
+      `klank_vorm_gemarkeerd`. Alleen de schil ontbreekt.
+- [ ] **Leesteksten** — de grootste: boek/hoofdstuk/verzen kiezen, drie kleurlagen
+      (naamvallen, stamtijden, voegwoorden), ontleedvragen per woord met alle acht
+      dimensies, vier methodes waaronder Masterclass
+- [ ] **Nederlands → Grieks** — lessenkeuze, meerkeuze op de juiste Griekse vorm,
+      spiekbrief (die laatste is er al als gedeelde component)
+- [ ] **Grammatica** — slides uit `grammatica_overzicht.pdf` (via pymupdf), thema-filter,
+      losse overzichten en de contractietrainer
+- [ ] **Uitleg & Hulp** — inclusief de schakelaar geavanceerde opties en het aan/uit
+      zetten van tabbladen. Zolang die er niet is, toont de NiceGUI-app altijd alles;
+      de Streamlit-app kent een eenvoudige modus die opties verbergt.
 
 ## Bekende afwijkingen (bewust)
 
