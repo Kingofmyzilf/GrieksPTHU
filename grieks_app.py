@@ -2835,7 +2835,7 @@ SW_OEFENINGEN = ["Zwakste eerst", "Leerpad (volgend blokje)", "Alleen wat ik fou
                  "Per categorie"]
 SW_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen meerkeuze", "Alleen typen"]
 SW_STANDAARD = {"sw_keuze": "Zwakste eerst", "sw_aantal": 10,
-                "sw_vraagvorm": SW_VRAAGVORM[0], "sw_categorie": "Alles"}
+                "sw_vraagvorm": SW_VRAAGVORM[0], "sw_categorie": "Alles", "sw_level": 0}
 SW_TYP_STREAK = 10
 
 
@@ -2862,11 +2862,23 @@ def sw_vraagt_typen(vraagvorm, streak):
     return int(streak or 0) >= SW_TYP_STREAK
 
 
+def sw_levels(g):
+    """De structuurwoorden in blokjes van zes, met per blokje hoever je bent.
+    Zelfde indeling als de Streamlit-app: op categorie gegroepeerd, 'af' bij streak 5."""
+    try:
+        return motor.struct_level_status(
+            motor.bouw_struct_levels(motor.laad_structuurwoorden_db() or []),
+            g.stats.get("struct_stats") or {})
+    except Exception:                                            # noqa: BLE001
+        return []
+
+
 class SwSessie:
     def __init__(self, g):
         p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
              for k, v in SW_STANDAARD.items()}
         woorden = sw_woorden(g)
+        self.level = None
         if p["sw_categorie"] != "Alles":
             woorden = [w for w in woorden
                        if w.get("categorie") == p["sw_categorie"]] or woorden
@@ -2874,13 +2886,17 @@ class SwSessie:
             woorden = [w for w in woorden if w["fout"] > 0] or woorden
             woorden.sort(key=lambda w: -w["fout"])
         elif p["sw_keuze"] == "Leerpad (volgend blokje)":
-            per = {}
-            for w in woorden:
-                per.setdefault(w.get("categorie", ""), []).append(w)
-            for _cat, groep in per.items():
-                if any(x["streak"] < 5 for x in groep):
-                    woorden = groep
-                    break
+            # Het gekozen blokje, of anders het eerstvolgende dat nog niet af is.
+            status = sw_levels(g)
+            gekozen = int(p.get("sw_level", 0) or 0)
+            doel = next((s for s in status if s["index"] == gekozen), None) if gekozen else None
+            if doel is None:
+                doel = next((s for s in status
+                             if s.get("ontgrendeld") and not s.get("voltooid")), None)
+            if doel:
+                self.level = doel
+                idxs = {idx for idx, _w in doel["items"]}
+                woorden = [w for w in woorden if w["idx"] in idxs] or woorden
         elif p["sw_keuze"] == "Per categorie":
             woorden.sort(key=lambda w: (str(w.get("categorie", "")), w["streak"]))
         else:
@@ -2915,6 +2931,23 @@ def swpagina():
         ui.label("Instellingen").style("font-size:18px;font-weight:700")
         k_oef = ui.select(SW_OEFENINGEN, value=sessie.prefs["sw_keuze"],
                           label="Oefening").props("outlined dark").classes("w-full")
+        # Blokjes van zes; alleen wat je hebt ontgrendeld staat in de lijst.
+        _lv = sw_levels(g)
+        _open = {0: "Automatisch (volgend blokje)"}
+        for _st in _lv:
+            if _st.get("ontgrendeld"):
+                _open[_st["index"]] = (f"Blokje {_st['index']} · {_st.get('titel', '')} "
+                                       f"({_st.get('klaar', 0)}/{_st.get('totaal', 0)})")
+        _hl = int(sessie.prefs.get("sw_level", 0) or 0)
+        k_level = ui.select(_open, value=_hl if _hl in _open else 0,
+                            label="Blokje").props("outlined dark").classes("w-full")
+        k_level.bind_visibility_from(k_oef, "value",
+                                     lambda v: v == "Leerpad (volgend blokje)")
+        _slot = next((s for s in _lv if not s.get("ontgrendeld")), None)
+        if _slot:
+            ui.label(f"🔒 Hierna: blokje {_slot['index']} · {_slot.get('titel', '')}").style(
+                f"color:{ZACHT};font-size:12px").bind_visibility_from(
+                k_oef, "value", lambda v: v == "Leerpad (volgend blokje)")
         k_cat = ui.select(categorieen, value=sessie.prefs["sw_categorie"],
                           label="Categorie").props("outlined dark").classes("w-full")
         k_vorm = ui.select(SW_VRAAGVORM, value=sessie.prefs["sw_vraagvorm"],
@@ -2926,7 +2959,8 @@ def swpagina():
 
         async def bewaar_inst():
             for sleutel, veld in [("sw_keuze", k_oef), ("sw_categorie", k_cat),
-                                  ("sw_vraagvorm", k_vorm), ("sw_aantal", k_aantal)]:
+                                  ("sw_vraagvorm", k_vorm), ("sw_aantal", k_aantal),
+                                  ("sw_level", k_level)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -2945,6 +2979,23 @@ def swpagina():
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
                 ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
+        if sessie.level:
+            _xp = motor.bereken_xp_struct(g.stats.get("struct_stats") or {})
+            _niv = motor.niveau_van_xp(_xp)
+            _vol = sum(1 for s in sw_levels(g) if s.get("voltooid"))
+            ui.html(f"<div style='display:flex;justify-content:space-between;font-size:12px;"
+                    f"color:{ZACHT}'><span>Blokje {sessie.level['index']} · "
+                    f"{sessie.level.get('titel', '')}</span><span>{_vol} af · niveau "
+                    f"{_niv['niveau']}</span></div>")
+            with ui.expansion("Leer eerst dit rijtje").props("dense").classes(
+                    "w-full").style(f"color:{ZACHT};font-size:13px"):
+                ui.html("".join(
+                    f"<div style='font-size:13px;line-height:1.7;color:{TEKST}'>"
+                    f"<span class='grieks' style='font-size:16px'>{w.get('grieks','')}</span>"
+                    f" — {w.get('nederlands', '') or w.get('betekenis', '')}"
+                    f"<span style='color:{ZACHT};font-size:11.5px'> · "
+                    f"{w.get('categorie', '')}</span></div>"
+                    for _idx, w in sessie.level["items"]))
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
         woord = ui.label().classes("grieks w-full text-center").style(
             f"font-size:42px;line-height:1.1;color:{TEKST};padding:2px 0 0")
