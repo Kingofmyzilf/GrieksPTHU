@@ -1770,6 +1770,49 @@ def paarpagina():
     toon_paar()
 
 
+# ============================================================== Grieks typen
+# Welke Latijnse toets welke Griekse letter geeft. motor.naar_grieks_transliteratie
+# rekent je invoer hiermee om, dus dit is de sleutel bij elke vraag waar je Grieks typt.
+GRIEKSE_TOETSEN = [
+    ("Klinkers", [("a", "α"), ("e", "ε"), ("h", "η"), ("i", "ι"),
+                  ("o", "ο"), ("u", "υ"), ("w", "ω")]),
+    ("Medeklinkers", [("b", "β"), ("g", "γ"), ("d", "δ"), ("z", "ζ"), ("k", "κ"),
+                      ("l", "λ"), ("m", "μ"), ("n", "ν"), ("p", "π"), ("r", "ρ"),
+                      ("t", "τ")]),
+    ("Bèta-code", [("q", "θ"), ("c", "ξ"), ("f", "φ"), ("x", "χ"), ("y", "ψ"),
+                   ("s", "σ · aan het eind ς")]),
+]
+
+
+def spiekbrief():
+    """Dialoog met de toetsaanslagen voor Griekse letters. Geeft de dialoog terug, zodat
+    elke pagina waar je Grieks typt er een knopje voor kan neerzetten."""
+    with ui.dialog() as venster, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:290px;max-width:92vw"):
+        ui.label("Grieks typen met een gewoon toetsenbord").style(
+            "font-size:17px;font-weight:700")
+        ui.label("Typ de Latijnse letter; de app maakt er de Griekse van. Accenten en "
+                 "spiritus hoef je niet mee te typen.").style(
+            f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+        for kop, paren in GRIEKSE_TOETSEN:
+            ui.label(kop).style(f"color:{MERK};font-size:13px;font-weight:600;margin-top:8px")
+            ui.html("<div style='display:grid;grid-template-columns:repeat(auto-fill,"
+                    "minmax(96px,1fr));gap:4px'>" + "".join(
+                        f"<div style='font-size:13.5px;color:{TEKST}'>"
+                        f"<code style='background:{RAND};border-radius:4px;padding:1px 5px'>"
+                        f"{toets}</code> = <span class='grieks' style='font-size:17px'>"
+                        f"{letter}</span></div>" for toets, letter in paren) + "</div>")
+        ui.button("Sluiten", on_click=venster.close).props("flat").style(
+            f"color:{MERK};margin-top:10px;width:100%")
+    return venster
+
+
+def spiekknop(venster):
+    """Het toetsenbord-knopje in de kop van een oefenpagina."""
+    return ui.button("⌨", on_click=venster.open).props("flat dense").style(
+        f"color:{ZACHT};font-size:16px;min-width:30px")
+
+
 # ============================================================== stamtijden
 TIJD_KORT = {"Futurum Actief/Medium": "futurum", "Aoristus Actief/Medium": "aoristus",
              "Aoristus Passief": "aoristus passief", "Perfectum Actief": "perfectum",
@@ -1779,9 +1822,60 @@ TIJDEN = list(TIJD_KORT)
 STAM_OEFENINGEN = ["Zwakste eerst", "Leerpad (per werkwoord)", "Meest voorkomend",
                    "Alleen wat ik fout deed"]
 STAM_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen de tijd", "Tijd en werkwoord"]
+STAM_MODI = ["Overhoren", "Leren (flashcards)"]
+STAM_BRONNEN = ["Alle werkwoorden", "Losse lessen", "Uit een Bijbeltekst"]
 STAM_STANDAARD = {"stam_keuze": "Zwakste eerst", "stam_aantal": 10,
-                  "stam_vraagvorm": STAM_VRAAGVORM[0], "stam_kleur": True}
+                  "stam_vraagvorm": STAM_VRAAGVORM[0], "stam_kleur": True,
+                  "stam_modus": STAM_MODI[0], "stam_bron": STAM_BRONNEN[0],
+                  "stam_lessen": [], "stam_boek": "", "stam_hoofdstuk": ""}
 STAM_TYP_STREAK = 10       # vanaf hier ook het werkwoord laten typen
+
+
+def stam_prefs(g):
+    return {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+            for k, v in STAM_STANDAARD.items()}
+
+
+def stam_bijbelboeken():
+    """boek -> [hoofdstukken], uit de vers-referenties van het NT."""
+    try:
+        return {boek: sorted(hfd, key=lambda h: int(h) if str(h).isdigit() else 0)
+                for boek, hfd in motor.bijbel_boek_index(motor.laad_bijbel_db()).items()}
+    except Exception:                                            # noqa: BLE001
+        return {}
+
+
+def stam_strongs_in_tekst(boek, hoofdstuk):
+    """Welke Strong-nummers er in dit hoofdstuk voorkomen — de filter voor 'oefen de
+    werkwoorden die je in deze tekst tegenkomt'."""
+    if not boek or not hoofdstuk:
+        return set()
+    try:
+        db = motor.laad_bijbel_db()
+    except Exception:                                            # noqa: BLE001
+        return set()
+    begin = f"{boek} {hoofdstuk}:"
+    uit = set()
+    for ref, zin in db.items():
+        if ref.startswith(begin):
+            for w in zin:
+                if w.get("strong"):
+                    uit.add(str(w["strong"]).lstrip("G").strip())
+    return uit
+
+
+def stam_poule(p):
+    """De werkwoorden waaruit een stamtijden-ronde wordt getrokken."""
+    db = motor.laad_stamtijden_db() or []
+    bron = p.get("stam_bron", STAM_BRONNEN[0])
+    if bron == "Losse lessen" and p.get("stam_lessen"):
+        return [w for w in db if w.get("les") in p["stam_lessen"]] or db
+    if bron == "Uit een Bijbeltekst":
+        strongs = stam_strongs_in_tekst(p.get("stam_boek"), p.get("stam_hoofdstuk"))
+        gevonden = [w for w in db
+                    if str(w.get("strong_nummer", "")).lstrip("G").strip() in strongs]
+        return gevonden or db
+    return db
 
 
 def stam_vraagt_praesens(vraagvorm, streak):
@@ -1800,9 +1894,8 @@ class StamSessie:
     werkwoord. Het zelf maken van vormen hoort bij Actief Beheersen."""
 
     def __init__(self, g):
-        p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
-             for k, v in STAM_STANDAARD.items()}
-        db = motor.laad_stamtijden_db()
+        p = stam_prefs(g)
+        db = stam_poule(p)
         stats = g.stats.get("stam_stats") or {}
         vragen = []
         for verb in db:
@@ -1854,14 +1947,69 @@ def stampagina():
     g = _bewaakt()
     if not g:
         return
+    if stam_prefs(g).get("stam_modus") == STAM_MODI[1]:
+        ui.navigate.to("/oefenen/stamtijden/leren")
+        return
     sessie = StamSessie(g)
     stats = g.stats.setdefault("stam_stats", {})
+    spiek = spiekbrief()
 
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
         ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        _mo = sessie.prefs.get("stam_modus", STAM_MODI[0])
+        kies_modus = ui.select(STAM_MODI, value=_mo if _mo in STAM_MODI else STAM_MODI[0],
+                               label="Wat wil je doen").props(
+            "outlined dark").classes("w-full")
+        ui.label("Leren toont de vorm met het antwoord erbij: je kijkt zelf of je het "
+                 "wist. Overhoren stelt echte vragen en telt mee voor je streak.").style(
+            f"color:{ZACHT};font-size:12px")
         kies_oef = ui.select(STAM_OEFENINGEN, value=sessie.prefs["stam_keuze"],
                              label="Oefening").props("outlined dark").classes("w-full")
+
+        # --- waar de vormen vandaan komen ---
+        _br = sessie.prefs.get("stam_bron", STAM_BRONNEN[0])
+        kies_bron = ui.select(STAM_BRONNEN, value=_br if _br in STAM_BRONNEN else STAM_BRONNEN[0],
+                              label="Welke werkwoorden").props(
+            "outlined dark").classes("w-full")
+        _lessen = sorted({int(w["les"]) for w in (motor.laad_stamtijden_db() or [])
+                          if w.get("les")})
+        kies_lessen = ui.select(_lessen, value=list(sessie.prefs.get("stam_lessen") or []),
+                                label="Lessen", multiple=True).props(
+            "outlined dark").classes("w-full")
+        kies_lessen.bind_visibility_from(kies_bron, "value", lambda v: v == "Losse lessen")
+        _boeken = stam_bijbelboeken()
+        _boeknamen = sorted(_boeken)
+        _hb = sessie.prefs.get("stam_boek") or (_boeknamen[0] if _boeknamen else "")
+        kies_boek = ui.select(_boeknamen, value=_hb if _hb in _boeken else
+                              (_boeknamen[0] if _boeknamen else None),
+                              label="Bijbelboek").props("outlined dark").classes("w-full")
+        kies_hfd = ui.select(_boeken.get(kies_boek.value or "", []),
+                             value=sessie.prefs.get("stam_hoofdstuk") or None,
+                             label="Hoofdstuk").props("outlined dark").classes("w-full")
+        for veld in (kies_boek, kies_hfd):
+            veld.bind_visibility_from(kies_bron, "value",
+                                      lambda v: v == "Uit een Bijbeltekst")
+        _telling = ui.label().style(f"color:{ZACHT};font-size:12px")
+        _telling.bind_visibility_from(kies_bron, "value",
+                                      lambda v: v == "Uit een Bijbeltekst")
+
+        def bij_boek():
+            """Hoofdstukken horen bij het gekozen boek; die lijst moet dus meeveranderen."""
+            hfd = _boeken.get(kies_boek.value or "", [])
+            kies_hfd.set_options(hfd, value=hfd[0] if hfd else None)
+            tel_werkwoorden()
+
+        def tel_werkwoorden():
+            gevonden = stam_poule({**sessie.prefs, "stam_bron": "Uit een Bijbeltekst",
+                                   "stam_boek": kies_boek.value,
+                                   "stam_hoofdstuk": kies_hfd.value})
+            _telling.text = f"{len(gevonden)} werkwoorden uit deze tekst in de stamtijdenlijst."
+
+        kies_boek.on_value_change(lambda _=None: bij_boek())
+        kies_hfd.on_value_change(lambda _=None: tel_werkwoorden())
+        tel_werkwoorden()
+
         kies_aantal = ui.number("Vormen per ronde", value=int(sessie.prefs["stam_aantal"]),
                                 min=4, max=40, step=1).props("outlined dark").classes("w-full")
         _hv = sessie.prefs["stam_vraagvorm"]
@@ -1879,7 +2027,9 @@ def stampagina():
         async def bewaar_inst():
             for sleutel, veld in [("stam_keuze", kies_oef), ("stam_aantal", kies_aantal),
                                   ("stam_vraagvorm", kies_praesens),
-                                  ("stam_kleur", kies_kleur)]:
+                                  ("stam_kleur", kies_kleur), ("stam_modus", kies_modus),
+                                  ("stam_bron", kies_bron), ("stam_lessen", kies_lessen),
+                                  ("stam_boek", kies_boek), ("stam_hoofdstuk", kies_hfd)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -1897,6 +2047,7 @@ def stampagina():
                 f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                spiekknop(spiek)
                 ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
@@ -2096,12 +2247,176 @@ def stampagina():
     toon()
 
 
+# ============================================================== stamtijden leren
+class StamLeerSessie:
+    """Flashcards: je ziet een vorm, benoemt in gedachten welke tijd het is en van welk
+    praesens hij komt, en checkt jezelf. Geen puntendruk — wat je nog niet wist komt
+    achteraan opnieuw."""
+
+    def __init__(self, g):
+        self.prefs = stam_prefs(g)
+        kaarten = []
+        for verb in stam_poule(self.prefs):
+            praesens = verb.get("praesens", "")
+            if praesens:
+                kaarten.append({"verb": verb, "tijd": "Praesens", "vorm": praesens,
+                                "sleutel": f"{praesens}_{praesens}"})
+            for tijd, vorm in (verb.get("stamtijden") or {}).items():
+                if motor._stam_vorm_ok(vorm):
+                    kaarten.append({"verb": verb, "tijd": tijd, "vorm": vorm,
+                                    "sleutel": f"{praesens}_{vorm}"})
+        random.shuffle(kaarten)
+        self.wachtrij = kaarten
+        self.begin_aantal = len(kaarten)
+        self.gedaan = 0
+        self.wist = 0
+        self.onthuld = False
+        self.bezig = False
+        self.huidig = self.wachtrij.pop(0) if self.wachtrij else None
+
+    def volgende(self, opnieuw=False):
+        if opnieuw and self.huidig is not None:
+            self.wachtrij.append(self.huidig)
+        self.gedaan += 1
+        self.huidig = self.wachtrij.pop(0) if self.wachtrij else None
+        self.onthuld = False
+
+
+@ui.page("/oefenen/stamtijden/leren")
+def stamleerpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if stam_prefs(g).get("stam_modus") != STAM_MODI[1]:
+        ui.navigate.to("/oefenen/stamtijden")
+        return
+    sessie = StamLeerSessie(g)
+    stats = g.stats.setdefault("stam_stats", {})
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Stamtijden leren").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=lambda: ui.navigate.to("/oefenen/stamtijden")).props(
+                    "flat dense").style(f"color:{ZACHT};font-size:17px;min-width:32px")
+        ui.label("Bekijk de vorm, benoem voor jezelf wélke tijd het is en van wélk "
+                 "werkwoord, en check jezelf. Wat je nog niet wist komt achteraan terug.").style(
+            f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+        vormlabel = ui.label().classes("grieks w-full text-center").style(
+            f"font-size:52px;line-height:1.15;color:{TEKST};padding:16px 0 2px")
+        antwoordvak = ui.column().classes("w-full gap-1 items-center").style(
+            "min-height:120px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+
+    balk = ui.element("div").classes("antwoordbalk")
+    with balk:
+        toonknop = ui.button("Toon antwoord").props("unelevated").style(
+            f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
+        with ui.row().classes("w-full gap-2 no-wrap").style("margin-top:4px") as oordeel:
+            wistknop = ui.button("✓ Wist ik").props("flat").style(
+                f"flex:1;color:{GOED};border:1px solid {RAND};border-radius:8px")
+            nogknop = ui.button("✗ Nog niet").props("flat").style(
+                f"flex:1;color:{FOUT};border:1px solid {RAND};border-radius:8px")
+    onderbalk("Oefenen")
+
+    def toon():
+        antwoordvak.clear()
+        k = sessie.huidig
+        if k is None:
+            vormlabel.text = "✓"
+            teller.text = ""
+            with antwoordvak:
+                ui.html(f"<div style='text-align:center;color:{TEKST};font-size:15px;"
+                        f"line-height:1.6'>Alle kaarten gehad — {sessie.wist} van de "
+                        f"{sessie.begin_aantal} in één keer geweten.</div>")
+            toonknop.text = "Nieuwe ronde"
+            toonknop.set_visibility(True)
+            oordeel.set_visibility(False)
+            return
+        vormlabel.text = k["vorm"]
+        teller.text = f"nog {len(sessie.wachtrij) + 1}"
+        toonknop.set_visibility(not sessie.onthuld)
+        toonknop.text = "Toon antwoord"
+        oordeel.set_visibility(sessie.onthuld)
+        if not sessie.onthuld:
+            return
+        verb = k["verb"]
+        s = stats.get(k["sleutel"]) or {}
+        with antwoordvak:
+            ui.html(
+                f"<div style='background:rgba(51,204,255,.10);border:1px solid {MERK}40;"
+                f"border-radius:12px;padding:14px;text-align:center;width:100%'>"
+                f"<div style='color:{MERK};font-size:14px;font-weight:600'>"
+                f"{TIJD_KORT.get(k['tijd'], k['tijd'])}</div>"
+                f"<div class='grieks' style='color:{TEKST};font-size:24px;margin-top:6px'>"
+                f"{verb.get('praesens', '')}</div>"
+                f"<div style='color:{TEKST};font-size:14px'>{verb.get('betekenis', '')}</div>"
+                f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
+                f"les {verb.get('les', '?')} · streak {int(s.get('streak', 0) or 0)} · "
+                f"{int(s.get('g', 0) or 0)} goed, {int(s.get('f', 0) or 0)} fout</div></div>")
+
+    async def onthullen():
+        if sessie.huidig is None:
+            ui.navigate.to("/oefenen/stamtijden/leren")
+            return
+        sessie.onthuld = True
+        toon()
+
+    async def oordeel_geven(wist):
+        if sessie.bezig or sessie.huidig is None or not sessie.onthuld:
+            return
+        sessie.bezig = True
+        try:
+            e = stats.setdefault(sessie.huidig["sleutel"], {"g": 0, "f": 0, "streak": 0})
+            if wist:
+                e["g"] = int(e.get("g", 0)) + 1
+                e["streak"] = int(e.get("streak", 0)) + 1
+                sessie.wist += 1
+                g.dagdoel_plus("stam")
+            else:
+                e["f"] = int(e.get("f", 0)) + 1
+            g.tel_dag()
+            sessie.volgende(opnieuw=not wist)
+            opgeslagen = await run.io_bound(g.bewaar)
+            if g.laatste_fout:
+                opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
+                opslagmelding.style(f"color:{FOUT}")
+            elif opgeslagen:
+                opslagmelding.text = "Voortgang opgeslagen"
+                opslagmelding.style(f"color:{ZACHT}")
+            toon()
+        finally:
+            sessie.bezig = False
+
+    toonknop.on_click(onthullen)
+    wistknop.on_click(lambda: oordeel_geven(True))
+    nogknop.on_click(lambda: oordeel_geven(False))
+    toon()
+
+
 # ============================================================== actief beheersen
 AF_OEFENINGEN = ["Zwakste eerst", "Leerpad (volgend rijtje)", "Alleen wat ik fout deed"]
 AF_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen meerkeuze", "Alleen typen"]
+AF_MODI = ["Cel voor cel", "Tentamenrooster (heel rijtje)"]
 AF_STANDAARD = {"af_keuze": "Zwakste eerst", "af_aantal": 10,
-                "af_vraagvorm": AF_VRAAGVORM[0], "af_niveau": "Alles"}
+                "af_vraagvorm": AF_VRAAGVORM[0], "af_niveau": "Alles",
+                "af_modus": AF_MODI[0], "af_rijtje": ""}
 AF_TYP_STREAK = 10        # vanaf hier zelf typen in plaats van aanwijzen
+
+
+def af_prefs(g):
+    return {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+            for k, v in AF_STANDAARD.items()}
+
+
+def af_rijtjes(g):
+    """De paradigma's, gegroepeerd zoals ze in actief_beheersen.json staan:
+    'Grieks 1 · Werkwoorden · Praesens actief' -> de cellen van dat rijtje."""
+    uit = {}
+    for c in af_cellen(g):
+        uit.setdefault(f"{c['niveau']} · {c['categorie']} · {c['paradigma']}", []).append(c)
+    return uit
 
 
 def af_cellen(g):
@@ -2171,48 +2486,191 @@ class AfSessie:
         return self.vragen[self.i] if self.i < len(self.vragen) else None
 
 
-@ui.page("/oefenen/actief")
-def afpagina():
-    g = _bewaakt()
-    if not g:
-        return
-    sessie = AfSessie(g)
-    stats = g.stats.setdefault("actief_stats", {})
+def af_instellingen(g, sessie_prefs):
+    """Instellingen van Actief Beheersen. Gedeeld door de cel-voor-cel-ronde en het
+    tentamenrooster; de modus bepaalt naar welk van de twee 'Toepassen' navigeert."""
     niveaus = ["Alles"] + sorted((motor.laad_actief_beheersen_db() or {}).keys())
-
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
         ui.label("Instellingen").style("font-size:18px;font-weight:700")
-        k_oef = ui.select(AF_OEFENINGEN, value=sessie.prefs["af_keuze"],
+        _mo = sessie_prefs.get("af_modus", AF_MODI[0])
+        k_modus = ui.select(AF_MODI, value=_mo if _mo in AF_MODI else AF_MODI[0],
+                            label="Wat wil je doen").props("outlined dark").classes("w-full")
+        ui.label("Cel voor cel bouwt op van aanwijzen naar typen. Het tentamenrooster "
+                 "vraagt één heel rijtje in één keer, zoals op het tentamen.").style(
+            f"color:{ZACHT};font-size:12px")
+        _rijtjes = sorted(af_rijtjes(g))
+        _hr = sessie_prefs.get("af_rijtje") or (_rijtjes[0] if _rijtjes else None)
+        k_rijtje = ui.select(_rijtjes, value=_hr if _hr in _rijtjes else
+                             (_rijtjes[0] if _rijtjes else None),
+                             label="Welk rijtje").props("outlined dark").classes("w-full")
+        k_rijtje.bind_visibility_from(k_modus, "value", lambda v: v == AF_MODI[1])
+        k_oef = ui.select(AF_OEFENINGEN, value=sessie_prefs["af_keuze"],
                           label="Oefening").props("outlined dark").classes("w-full")
-        k_niv = ui.select(niveaus, value=sessie.prefs["af_niveau"],
+        k_niv = ui.select(niveaus, value=sessie_prefs["af_niveau"],
                           label="Niveau").props("outlined dark").classes("w-full")
-        k_vorm = ui.select(AF_VRAAGVORM, value=sessie.prefs["af_vraagvorm"],
+        k_vorm = ui.select(AF_VRAAGVORM, value=sessie_prefs["af_vraagvorm"],
                            label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
-        k_aantal = ui.number("Cellen per ronde", value=int(sessie.prefs["af_aantal"]),
+        k_aantal = ui.number("Cellen per ronde", value=int(sessie_prefs["af_aantal"]),
                              min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        for veld in (k_oef, k_niv, k_vorm, k_aantal):
+            veld.bind_visibility_from(k_modus, "value", lambda v: v == AF_MODI[0])
         ui.label(f"Automatisch: eerst aanwijzen uit het eigen rijtje, en vanaf streak "
-                 f"{AF_TYP_STREAK} zelf typen.").style(f"color:{ZACHT};font-size:12px")
+                 f"{AF_TYP_STREAK} zelf typen.").style(
+            f"color:{ZACHT};font-size:12px").bind_visibility_from(
+            k_modus, "value", lambda v: v == AF_MODI[0])
 
         async def bewaar_inst():
             for sleutel, veld in [("af_keuze", k_oef), ("af_niveau", k_niv),
-                                  ("af_vraagvorm", k_vorm), ("af_aantal", k_aantal)]:
+                                  ("af_vraagvorm", k_vorm), ("af_aantal", k_aantal),
+                                  ("af_modus", k_modus), ("af_rijtje", k_rijtje)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
-            ui.navigate.to("/oefenen/actief")
+            ui.navigate.to("/oefenen/actief/rooster" if k_modus.value == AF_MODI[1]
+                           else "/oefenen/actief")
 
         with ui.row().classes("w-full justify-end gap-2"):
             ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
                 f"color:{ZACHT}")
             ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
+    return instellingen
+
+
+@ui.page("/oefenen/actief/rooster")
+def afroosterpagina():
+    """Het hele rijtje in één keer invullen. Goede cellen worden vastgezet, foute velden
+    leeggemaakt voor een nieuwe poging — zoals het tentamenrooster in de Streamlit-app."""
+    g = _bewaakt()
+    if not g:
+        return
+    p = af_prefs(g)
+    if p.get("af_modus") != AF_MODI[1]:
+        ui.navigate.to("/oefenen/actief")
+        return
+    rijtjes = af_rijtjes(g)
+    naam = p.get("af_rijtje") if p.get("af_rijtje") in rijtjes else (
+        sorted(rijtjes)[0] if rijtjes else "")
+    cellen = rijtjes.get(naam) or []
+    stats = g.stats.setdefault("actief_stats", {})
+    instellingen = af_instellingen(g, p)
+    spiek = spiekbrief()
+    velden, staat = {}, {c["id"]: False for c in cellen}
+
+    with ui.column().classes("inhoud metbalk w-full gap-2"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Tentamenrooster").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                spiekknop(spiek)
+                ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        ui.label(naam or "geen rijtje gekozen").style(
+            f"color:{TEKST};font-size:16px;font-weight:600")
+        ui.label("Typ de volledige vormen. Wat goed is blijft staan; een fout veld wordt "
+                 "leeggemaakt zodat je het opnieuw kunt proberen.").style(
+            f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+        rooster = ui.column().classes("w-full gap-2").style("padding-top:6px")
+        terugkoppeling = ui.column().classes("w-full items-center").style("min-height:40px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+
+    balk = ui.element("div").classes("antwoordbalk")
+    with balk:
+        knop = ui.button("Nakijken").props("unelevated").style(
+            f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
+    onderbalk("Oefenen")
+
+    def teken():
+        rooster.clear()
+        velden.clear()
+        af = sum(1 for c in cellen if staat[c["id"]])
+        teller.text = f"{af}/{len(cellen)}"
+        with rooster:
+            for c in cellen:
+                if staat[c["id"]]:
+                    ui.html(f"<div style='display:flex;justify-content:space-between;"
+                            f"gap:8px;font-size:13.5px;color:{GOED};border:1px solid "
+                            f"{GOED}40;border-radius:8px;padding:7px 10px'>"
+                            f"<span style='color:{ZACHT}'>{c['label']}</span>"
+                            f"<span class='grieks' style='font-size:16px'>{c['vorm']}</span>"
+                            f"</div>")
+                else:
+                    velden[c["id"]] = ui.input(label=c["label"]).props(
+                        "outlined dense dark autocomplete=off").classes("w-full")
+        if af == len(cellen) and cellen:
+            knop.text = "Opnieuw"
+        else:
+            knop.text = "Nakijken"
+
+    async def nakijken():
+        if not cellen:
+            return
+        if all(staat.values()):
+            for c in cellen:
+                staat[c["id"]] = False
+            terugkoppeling.clear()
+            teken()
+            return
+        nieuw_goed = 0
+        for c in cellen:
+            if staat[c["id"]]:
+                continue
+            gegeven = (velden.get(c["id"]).value or "") if velden.get(c["id"]) else ""
+            juist = bool(motor.grieks_vorm_ok(gegeven, c["vorm"]))
+            e = stats.setdefault(c["id"], {"g": 0, "f": 0, "streak": 0})
+            e["g"] = int(e.get("g", 0)) + int(juist)
+            e["f"] = int(e.get("f", 0)) + int(not juist)
+            e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+            g.tel_dag()
+            if juist:
+                staat[c["id"]] = True
+                nieuw_goed += 1
+                g.dagdoel_plus("actief")
+        klaar = all(staat.values())
+        opgeslagen = await run.io_bound(g.bewaar, klaar)
+        terugkoppeling.clear()
+        with terugkoppeling:
+            if klaar:
+                ui.html(f"<div style='background:rgba(61,220,151,.10);border:1px solid "
+                        f"{GOED}40;border-radius:12px;padding:12px;text-align:center;"
+                        f"width:100%;color:{TEKST};font-size:14px'>🏆 Het hele rijtje "
+                        f"foutloos gereproduceerd.</div>")
+            else:
+                over = sum(1 for c in cellen if not staat[c["id"]])
+                ui.html(f"<div style='color:{ZACHT};font-size:13px;text-align:center'>"
+                        f"{nieuw_goed} erbij · nog {over} te gaan.</div>")
+        if g.laatste_fout:
+            opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
+            opslagmelding.style(f"color:{FOUT}")
+        elif opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+            opslagmelding.style(f"color:{ZACHT}")
+        teken()
+
+    knop.on_click(nakijken)
+    teken()
+
+
+@ui.page("/oefenen/actief")
+def afpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if af_prefs(g).get("af_modus") == AF_MODI[1]:
+        ui.navigate.to("/oefenen/actief/rooster")
+        return
+    sessie = AfSessie(g)
+    stats = g.stats.setdefault("actief_stats", {})
+    instellingen = af_instellingen(g, sessie.prefs)
+    spiek = spiekbrief()
 
     with ui.column().classes("inhoud metbalk w-full gap-3"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
             ui.label("Actief beheersen").style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                spiekknop(spiek)
                 ui.button("⚙", on_click=instellingen.open).props("flat dense").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
@@ -3613,6 +4071,135 @@ def voortgangpagina():
     onderbalk("Voortgang")
 
 
+# ============================================================== lijst
+LIJST_SOORTEN = ["Woordenschat", "Mijn verwarwoorden", "Structuurwoorden", "Stamtijden"]
+LIJST_MAX = 200          # zoveel regels tegelijk; meer maakt de pagina onbruikbaar traag
+
+
+def _lijstregel(links, rechts, onder="", kleur=None):
+    return (f"<div style='display:flex;justify-content:space-between;gap:10px;"
+            f"border-top:1px solid {RAND};padding:7px 0'>"
+            f"<div style='min-width:0'>{links}"
+            f"{f'<div style=\"color:{ZACHT};font-size:11.5px\">{onder}</div>' if onder else ''}"
+            f"</div>"
+            f"<div style='text-align:right;white-space:nowrap;font-size:12.5px;"
+            f"color:{kleur or ZACHT}'>{rechts}</div></div>")
+
+
+def lijst_woorden(g, zoek, alleen_geoefend):
+    regels = []
+    for w in g.woorden:
+        grieks = str(w.get("grieks", ""))
+        ned = str(w.get("nederlands", ""))
+        if zoek and zoek not in grieks.lower() and zoek not in ned.lower():
+            continue
+        streak = int(w.get("streak", 0) or 0)
+        goed = int(w.get("score_goed", 0) or 0)
+        fout = int(w.get("score_fout", 0) or 0)
+        if alleen_geoefend and not (goed or fout or streak):
+            continue
+        fase = gebruikers.fase_van(streak)
+        regels.append(_lijstregel(
+            f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{grieks}</span>",
+            f"streak {streak}", f"{ned[:44]} · les {w.get('les', '?')}",
+            MERK if streak >= 16 else (TEKST if fase != "Nieuw" else ZACHT)))
+    return regels
+
+
+def lijst_verwarparen(g):
+    try:
+        paren = motor.verwar_paren_lijst(g.woorden, g.stats.get("verwar_stats") or {})
+    except Exception:                                            # noqa: BLE001
+        paren = []
+    return [_lijstregel(
+        f"<span class='grieks' style='font-size:16px;color:{TEKST}'>{p['a']}</span>"
+        f" <span style='color:{ZACHT}'>↔</span> "
+        f"<span class='grieks' style='font-size:16px;color:{TEKST}'>{p['b']}</span>",
+        f"{p['n']}× verward",
+        f"{str(p['a_ned'])[:22]} / {str(p['b_ned'])[:22]} · streak "
+        f"{p['a_streak']}/{p['b_streak']}") for p in paren]
+
+
+def lijst_structuur(g, zoek):
+    regels = []
+    for w in sw_woorden(g):
+        grieks = str(w.get("grieks", ""))
+        ned = str(w.get("nederlands", "") or w.get("betekenis", ""))
+        if zoek and zoek not in grieks.lower() and zoek not in ned.lower():
+            continue
+        regels.append(_lijstregel(
+            f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{grieks}</span>",
+            f"streak {w['streak']}", f"{ned[:44]} · {w.get('categorie', '')}",
+            MERK if w["streak"] >= 16 else ZACHT))
+    return regels
+
+
+def lijst_stamtijden(g, zoek):
+    stats = g.stats.get("stam_stats") or {}
+    regels = []
+    for verb in (motor.laad_stamtijden_db() or []):
+        praesens = str(verb.get("praesens", ""))
+        betekenis = str(verb.get("betekenis", ""))
+        if zoek and zoek not in praesens.lower() and zoek not in betekenis.lower():
+            continue
+        vormen = []
+        for tijd, vorm in (verb.get("stamtijden") or {}).items():
+            if motor._stam_vorm_ok(vorm):
+                s = int((stats.get(f"{praesens}_{vorm}") or {}).get("streak", 0) or 0)
+                kleur = MERK if s >= 16 else (TEKST if s else ZACHT)
+                vormen.append(f"<span class='grieks' style='color:{kleur}'>{vorm}</span>")
+        regels.append(_lijstregel(
+            f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{praesens}</span>",
+            f"les {verb.get('les', '?')}",
+            f"{betekenis[:40]}<br>{' · '.join(vormen)}"))
+    return regels
+
+
+@ui.page("/lijst")
+def lijstpagina():
+    """Opzoeken wat er in de lijsten staat en hoe je ervoor staat — zonder te oefenen."""
+    g = _bewaakt()
+    if not g:
+        return
+    with ui.column().classes("inhoud w-full gap-3"):
+        ui.label("Lijst").style("font-size:26px;font-weight:700")
+        kies = ui.select(LIJST_SOORTEN, value=LIJST_SOORTEN[0], label="Wat wil je zien").props(
+            "outlined dark dense").classes("w-full")
+        zoekveld = ui.input(placeholder="zoek op Grieks of Nederlands").props(
+            "outlined dense dark clearable autocomplete=off").classes("w-full")
+        alleen = ui.switch("Alleen wat ik al geoefend heb", value=False)
+        for veld in (zoekveld, alleen):
+            veld.bind_visibility_from(kies, "value", lambda v: v != "Mijn verwarwoorden")
+        kop = ui.label().style(f"color:{ZACHT};font-size:12.5px")
+        inhoud = ui.element("div").classes("kaart w-full")
+
+        def teken():
+            zoek = str(zoekveld.value or "").strip().lower()
+            soort = kies.value
+            if soort == "Mijn verwarwoorden":
+                regels = lijst_verwarparen(g)
+                leeg = ("Nog geen verwarparen. Die ontstaan als je in een ronde twee "
+                        "woorden door elkaar haalt en dat in de eindsamenvatting bevestigt.")
+            elif soort == "Structuurwoorden":
+                regels, leeg = lijst_structuur(g, zoek), "Niets gevonden."
+            elif soort == "Stamtijden":
+                regels, leeg = lijst_stamtijden(g, zoek), "Niets gevonden."
+            else:
+                regels = lijst_woorden(g, zoek, bool(alleen.value))
+                leeg = "Niets gevonden."
+            kop.text = (f"{len(regels)} regels"
+                        + (f", de eerste {LIJST_MAX} getoond" if len(regels) > LIJST_MAX else ""))
+            inhoud.clear()
+            with inhoud:
+                ui.html("".join(regels[:LIJST_MAX]) if regels else
+                        f"<div style='color:{ZACHT};font-size:13px;line-height:1.6'>{leeg}</div>")
+
+        for veld in (kies, zoekveld, alleen):
+            veld.on_value_change(lambda _=None: teken())
+        teken()
+    onderbalk("Lezen")
+
+
 # ============================================================== lezen (nog te bouwen)
 @ui.page("/lezen")
 def lezenpagina():
@@ -3621,9 +4208,25 @@ def lezenpagina():
         return
     with ui.column().classes("inhoud w-full gap-3"):
         ui.label("Lezen").style("font-size:26px;font-weight:700")
+        with ui.element("div").classes("kaart w-full").on(
+                "click", lambda: ui.navigate.to("/lijst")):
+            with ui.row().classes("w-full items-center justify-between no-wrap"):
+                with ui.column().classes("gap-0"):
+                    ui.label("Lijst").style(f"color:{TEKST};font-size:16px;font-weight:600")
+                    ui.label("woordenlijst, verwarparen, structuurwoorden en stamtijden "
+                             "opzoeken").style(f"color:{ZACHT};font-size:12.5px")
+                ui.label("›").style(f"color:{ZACHT};font-size:22px")
+        with ui.element("div").classes("kaart w-full").on(
+                "click", lambda: ui.navigate.to("/oefenen/ontleden")):
+            with ui.row().classes("w-full items-center justify-between no-wrap"):
+                with ui.column().classes("gap-0"):
+                    ui.label("Ontleden").style(f"color:{TEKST};font-size:16px;font-weight:600")
+                    ui.label("een vers uit het NT, woord voor woord").style(
+                        f"color:{ZACHT};font-size:12.5px")
+                ui.label("›").style(f"color:{ZACHT};font-size:22px")
         with ui.element("div").classes("kaart w-full"):
             ui.label("Nog niet overgezet").style(f"color:{TEKST};font-size:15px;font-weight:600")
-            ui.label("Leesteksten, Ontleden en Grammatica staan nog in de Streamlit-app. "
+            ui.label("Leesteksten en Grammatica staan nog in de Streamlit-app. "
                      "Die blijft gewoon werken zolang dit onderdeel hier ontbreekt.").style(
                 f"color:{ZACHT};font-size:13px;line-height:1.5")
     onderbalk("Lezen")

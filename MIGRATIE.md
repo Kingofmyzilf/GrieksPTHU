@@ -50,24 +50,26 @@ Alleen hier, niet in Streamlit: de stijl "Vast aantal kaarten", een instelbaar m
 voor de verwarwoorden, expliciete levelkeuze, de streepjesbalk met teller, losse
 hint-knop, bediening met Enter, en een slot tegen dubbelklikken.
 
-## Stamtijden — kern klaar
+## Stamtijden — klaar
 
 Aanwezig: 4 oefeningen, vraagvorm (automatisch/tijd/tijd+werkwoord, drempel 10),
 vormen per ronde, uitgangen kleuren, feedback met opbouw.
 
-Nog te doen:
-- [ ] Filter op Bijbelboek / hoofdstuk / les
-- [ ] Flashcard-modus ("Leer") naast herkennen
-- [ ] Spiekbrief: hoe typ ik Grieks met Latijnse toetsen
+- [x] Filter op Bijbelboek + hoofdstuk of op losse lessen (de tekstfilter zoekt de
+      Strong-nummers in dat hoofdstuk op en houdt de werkwoorden over die je daar
+      tegenkomt; boeknamen zijn Engels, zoals in de NT-data)
+- [x] Flashcard-modus "Leren" naast overhoren (`/oefenen/stamtijden/leren`): vorm
+      zien, jezelf checken, 'wist ik' of 'nog niet' — dat laatste komt achteraan terug
+- [x] Spiekbrief: hoe typ ik Grieks met Latijnse toetsen (⌨-knopje in de kop)
 
-## Actief Beheersen — kern klaar
+## Actief Beheersen — klaar
 
 Aanwezig: 3 oefeningen, niveaufilter, vraagvorm, cellen per ronde, afleiders uit
 het eigen rijtje, feedback met stam + gekleurde uitgang en toelichting.
 
-Nog te doen:
-- [ ] Tentamenrooster (heel rijtje in één keer invullen)
-- [ ] Spiekbrief Griekse toetsaanslagen
+- [x] Tentamenrooster: heel rijtje in één keer invullen (`/oefenen/actief/rooster`).
+      Goede cellen worden vastgezet, foute velden leeggemaakt voor een nieuwe poging.
+- [x] Spiekbrief Griekse toetsaanslagen
 
 ## Structuurwoorden — klaar
 
@@ -115,7 +117,8 @@ Alle vijf de oefenonderdelen tellen nu mee in `dag_stats` en in het dagdoel-logb
 - [ ] **Leesteksten** — 17 instellingen, vier methodes waaronder Masterclass
 - [ ] **Nederlands → Grieks**
 - [ ] **Grammatica** — slides uit de PDF, thema-filter, overzichten
-- [ ] **Lijst** — woordenlijst en verwarparen bekijken
+- [x] **Lijst** — woordenschat, verwarparen, structuurwoorden en stamtijden opzoeken
+      met je eigen streaks erbij (`/lijst`, te bereiken via Lezen)
 - [ ] **Uitleg & Hulp** — inclusief de schakelaar geavanceerde opties en
       het aan/uit zetten van tabbladen
 
