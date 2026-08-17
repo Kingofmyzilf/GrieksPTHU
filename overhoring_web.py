@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 import json
+from urllib.parse import quote
 import pandas as pd
 import random as r_engine
 import re
@@ -3393,8 +3394,8 @@ def leerpad_kaart_volgorde(sampled):
 
 # --- DAGELIJKS DOEL ---
 # Label voor "de app kiest de oefenvorm zelf" - overal hetzelfde in de app.
-_NR = chr(10) + chr(10)      # lege regel in markdown-tekst
-_NR_ZACHT = "  " + chr(10)   # regelafbreking binnen dezelfde alinea
+_NR = chr(10) + chr(10)
+_NR_ZACHT = "  " + chr(10)   # regelafbreking binnen dezelfde alinea   # lege regel in markdown-tekst
 AUTO_VORM = "🤖 Automatisch (aanbevolen)"
 _STAM_VORMEN = [AUTO_VORM, "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen"]
 _STRUCT_VORMEN = [AUTO_VORM, "1. MC", "2. Mix (MC + Typen)", "3. Typen"]
@@ -4496,6 +4497,21 @@ def _herstel_backup_formulier():
             except Exception as e: st.error(f"Fout: {e}")
 
 
+def snelle_app_url(gebruiker=""):
+    """De snelle oefen-app (NiceGUI), als die ergens draait. Zet hem in
+    .streamlit/secrets.toml als `nicegui_url` of in de omgevingsvariabele
+    GRIEKS_NICEGUI. Met een gebruiker erbij komt ?u= mee, zodat je daar meteen
+    ingelogd bent — net zoals die app andersom naar ons linkt."""
+    try:
+        adres = str(st.secrets.get("nicegui_url", "") or "").strip()
+    except Exception:
+        adres = ""
+    adres = (adres or os.environ.get("GRIEKS_NICEGUI", "")).strip().rstrip("/")
+    if not adres:
+        return ""
+    return f"{adres}/?u={quote(str(gebruiker))}" if gebruiker else adres
+
+
 def main():
     if "u" in st.query_params:
         auto_user = st.query_params["u"]
@@ -4545,6 +4561,15 @@ def main():
                 else: st.warning("Vul beide velden in.")
             st.caption("Gebruik je dezelfde twee woorden als in de snelle oefen-app, dan "
                        "staat je voortgang er meteen.")
+            _snel = snelle_app_url()
+            if _snel:
+                st.markdown(
+                    f"<div style='font-size:13px; line-height:1.6; color:#9aa4ae; "
+                    f"margin-top:6px;'>Even snel woordjes, rijtjes of stamtijden doen? "
+                    f"Dat gaat vlotter in de <a href='{_snel}' style='color:#33ccff; "
+                    f"text-decoration:none;'>snelle oefen-app</a>. Hier vind je alles: "
+                    f"ontleden, leesteksten, grammatica en je volledige voortgang.</div>",
+                    unsafe_allow_html=True)
             with st.expander("Backup herstellen"):
                 _herstel_backup_formulier()
     else:
