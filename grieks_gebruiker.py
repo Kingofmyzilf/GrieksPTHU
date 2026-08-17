@@ -33,12 +33,17 @@ def vandaag():
 class Gebruiker:
     """Alles wat één ingelogde student in het geheugen heeft."""
 
-    def __init__(self, naam, code):
+    def __init__(self, naam, code, interval=OPSLAG_INTERVAL):
         self.naam = str(naam).strip()
         self.code = str(code).strip()
         self.sleutel = f"{self.naam}_{self.code}"
         self.woorden = []
         self.stats = {s: {} for s in STAT_SLEUTELS}
+        # Na hoeveel beurten er naar de Sheet wordt geschreven. Elke beurt is het
+        # prettigst (je raakt nooit iets kwijt), maar op een trage server wacht je dan
+        # elke keer op twee netwerkrondjes: eerst lezen om samen te voegen, dan
+        # schrijven. Aan het einde van een ronde wordt sowieso geforceerd bewaard.
+        self.interval = max(1, int(interval))
         self.sinds_opslag = 0
         self.laatste_fout = None
         self._slot = threading.Lock()
@@ -110,7 +115,7 @@ class Gebruiker:
         # Voor het dagdoel telt 'woorden' het aantal VERSCHILLENDE woorden van vandaag; dat
         # zet tel_dag() erbij, samen met de datumstempel op dit woord.
         self.tel_dag(woord)
-        if self.sinds_opslag >= OPSLAG_INTERVAL:
+        if self.sinds_opslag >= self.interval:
             return self.bewaar()
         return False
 
@@ -276,8 +281,8 @@ def woord_opbouw(lemma, woordenlijst):
     return None
 
 
-def inloggen(naam, code):
+def inloggen(naam, code, interval=OPSLAG_INTERVAL):
     """Geeft een geladen Gebruiker, of werpt OpslagFout met een leesbare melding."""
     if not str(naam).strip() or not str(code).strip():
         raise opslag.OpslagFout("Vul allebei de velden in.")
-    return Gebruiker(naam, code).laad()
+    return Gebruiker(naam, code, interval).laad()

@@ -39,8 +39,11 @@ ui.add_head_html(f"""
 <style>
   body {{ background:{INKT}; color:{TEKST}; }}
   .grieks {{ font-family:{GRIEKS_FONT}; font-weight:400; }}
+  /* De twee balken staan onder elkaar vast onderaan. dvh volgt het zichtbare deel van
+     het scherm, zodat ze meebewegen als de adresbalk in- of uitschuift. */
   .antwoordbalk {{ position:fixed; left:0; right:0; bottom:64px; z-index:20;
-                   background:{INKT}; border-top:1px solid {RAND}; padding:10px 14px 12px; }}
+                   background:{INKT}; border-top:1px solid {RAND}; padding:10px 14px 12px;
+                   padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px)); }}
   .onderbalk {{ position:fixed; left:0; right:0; bottom:0; z-index:30; height:64px;
                 background:{VLAK}; border-top:1px solid {RAND}; display:flex; }}
   .onderbalk .vak {{ flex:1; display:flex; flex-direction:column; align-items:center;
@@ -48,7 +51,10 @@ ui.add_head_html(f"""
                      cursor:pointer; user-select:none; text-decoration:none; }}
   .onderbalk .vak.actief {{ color:{MERK}; }}
   .inhoud {{ padding:14px 14px 96px; max-width:640px; margin:0 auto; }}
-  .inhoud.metbalk {{ padding-bottom:190px; }}
+  /* Ruimte onderaan zodat de inhoud vrij scrolt van de twee vaste balken samen
+     (antwoordbalk ~63px + onderbalk 64px). Meer marge dan dat maakt de pagina
+     onnodig lang en laat hem op een telefoon scrollen terwijl alles al past. */
+  .inhoud.metbalk {{ padding-bottom:150px; }}
   .smal {{ max-width:420px; margin:0 auto; padding:14px; }}
   .kaart {{ background:{VLAK}; border:1px solid {RAND}; border-radius:12px; padding:14px; }}
   .keuze {{ background:{VLAK}; border:1px solid {RAND}; border-radius:10px; padding:13px 14px;
@@ -96,6 +102,13 @@ def bijbel_aanwezig():
 
 
 BIJBEL = bijbel_aanwezig()
+
+# Hoe vaak er naar de Sheet wordt geschreven. Lokaal na elke beurt: je raakt dan nooit
+# iets kwijt en het wachten valt weg in de tijd dat je de feedback leest. Op een gehoste
+# lichte versie kost elke opslag twee netwerkrondjes (lezen om samen te voegen, dan
+# schrijven) op een trage machine — daar is één keer per vijf beurten prettiger. Aan het
+# einde van een ronde wordt sowieso geforceerd bewaard.
+OPSLAG_INTERVAL = 1 if BIJBEL else 5
 
 
 def streamlit_adres(g=None):
@@ -213,7 +226,8 @@ def inlogpagina():
         melding.text = ""
         knop.props("loading")
         try:
-            g = await run.io_bound(gebruikers.inloggen, veld_naam.value, veld_code.value)
+            g = await run.io_bound(gebruikers.inloggen, veld_naam.value, veld_code.value,
+                                   OPSLAG_INTERVAL)
         except opslag.OpslagFout as e:
             melding.text = str(e)
         except Exception as e:                                   # noqa: BLE001
@@ -1106,11 +1120,18 @@ def woord_instellingen(g):
                  "eigen verwarparen.").style(f"color:{ZACHT};font-size:12px")
         kies_audio = ui.switch("Uitspraakknop tonen", value=bool(p["audio"]))
         kies_opbouw = ui.switch("Woordopbouw tonen", value=bool(p["opbouw"]))
+        # Zonder de NT-tekst valt er geen verbogen vorm op te halen, dus dan zou deze
+        # schakelaar niets doen. Hij blijft wel bewaard, voor als je de tekst er ooit
+        # bij zet of in de uitgebreide app oefent.
         kies_mv = ui.switch("Beheerste woorden als vorm uit de Bijbel",
                             value=bool(p.get("mastery_vormen", True)))
-        ui.label(f"Bij streak {MASTERY_STREAK}+ krijg je een echte verbogen vorm uit "
-                 f"het NT in plaats van de woordenboekvorm.").style(
+        _mv_uitleg = ui.label(
+            f"Bij streak {MASTERY_STREAK}+ krijg je een echte verbogen vorm uit "
+            f"het NT in plaats van de woordenboekvorm.").style(
             f"color:{ZACHT};font-size:12px")
+        if not BIJBEL:
+            kies_mv.set_visibility(False)
+            _mv_uitleg.set_visibility(False)
         ui.label("Je keuzes worden bewaard bij je voortgang.").style(
             f"color:{ZACHT};font-size:12px")
 
@@ -1162,12 +1183,15 @@ def oefenpagina():
         _niv = motor.niveau_van_xp(_xp)
         _klaar = sum(1 for _s in motor.leerpad_status(
             motor.bouw_leerpad_levels(g.woorden)) if _s.get("voltooid"))
+        # gap en wrap zijn nodig: op een smal scherm raakten de twee helften elkaar en
+        # las je 'Psalmen45 levels af'. Elke helft blijft heel; ze wippen onder elkaar
+        # zodra ze samen niet meer passen.
         ui.html(
-            f"<div style='display:flex;justify-content:space-between;font-size:12px;"
-            f"color:{ZACHT};padding-top:2px'>"
-            f"<span>Niveau {_niv['niveau']} · <span style='color:{MERK}'>"
-            f"{_niv['titel']}</span></span>"
-            f"<span>{_klaar} levels af · nog "
+            f"<div style='display:flex;justify-content:space-between;flex-wrap:wrap;"
+            f"gap:2px 12px;font-size:12px;color:{ZACHT};padding-top:2px'>"
+            f"<span style='white-space:nowrap'>Niveau {_niv['niveau']} · "
+            f"<span style='color:{MERK}'>{_niv['titel']}</span></span>"
+            f"<span style='white-space:nowrap'>{_klaar} levels af · nog "
             f"{_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP</span></div>")
         if sessie.nieuw_over:
             ui.label(f"🌱 Nog {sessie.nieuw_over} nieuwe woorden in dit level voor een "
@@ -4476,7 +4500,14 @@ def lezenpagina():
 # hier niet apart. GRIEKS_ON_AIR=1 geeft een openbare URL via NiceGUI On Air — handig om
 # de app even op je telefoon of op een ander netwerk te bekijken zonder te hosten.
 _on_air = os.environ.get("GRIEKS_ON_AIR", "").strip()
+# interactive-widget=resizes-content: klapt het toetsenbord open, dan krimpt de pagina
+# zelf in plaats van dat het toetsenbord er overheen schuift. Zonder dit blijft de
+# antwoordbalk op zijn oude plek staan en lijkt hij midden op het scherm te zweven.
+# Het moet hier en niet in add_head_html: dan staan er twee viewport-regels in de kop
+# en is het aan de browser welke wint.
 ui.run(title="Grieks", dark=True, port=int(os.environ.get("PORT", 8123)),
+       viewport="width=device-width, initial-scale=1, viewport-fit=cover, "
+                "interactive-widget=resizes-content",
        reload=False, show=False, favicon="\U0001F4D6",
        on_air=(_on_air if _on_air not in ("", "0", "1") else _on_air == "1"),
        storage_secret=os.environ.get("GRIEKS_SESSIE_SLEUTEL", "grieks-lokaal-ontwikkelen"))
