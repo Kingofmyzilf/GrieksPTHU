@@ -3611,13 +3611,17 @@ def ontpagina():
 
 # ============================================================== voortgang
 # (sleutel in het dagboek, kleur, naam) — de stipjes onder de dagen in de oefenkalender.
-KALENDER_ONDERDELEN = [("woorden_uniek", MERK, "woorden"), ("actief", "#f6c23e", "actief"),
-                       ("stam", "#b07be0", "stamtijden"), ("struct", "#f6923c", "structuur"),
-                       ("verzen", GOED, "ontleden"), ("verwar", "#20c997", "verwarparen")]
+# Zonder de NT-tekst kun je niet ontleden, dus dan hoort 'verzen' ook nergens meer
+# in beeld: niet als stip in de kalender en niet als doel dat je kunt instellen.
+KALENDER_ONDERDELEN = ([("woorden_uniek", MERK, "woorden"), ("actief", "#f6c23e", "actief"),
+                        ("stam", "#b07be0", "stamtijden"), ("struct", "#f6923c", "structuur")]
+                       + ([("verzen", GOED, "ontleden")] if BIJBEL else [])
+                       + [("verwar", "#20c997", "verwarparen")])
 # (sleutel in het dagdoel, naam, hoogste instelbare waarde)
-DAGDOEL_VELDEN = [("woorden", "Woorden", 40), ("actief", "Actief beheersen", 30),
-                  ("stam", "Stamtijden", 20), ("struct", "Structuurwoorden", 20),
-                  ("verzen", "Woorden ontleden", 20), ("verwar", "Verwarparen", 15)]
+DAGDOEL_VELDEN = ([("woorden", "Woorden", 40), ("actief", "Actief beheersen", 30),
+                   ("stam", "Stamtijden", 20), ("struct", "Structuurwoorden", 20)]
+                  + ([("verzen", "Woorden ontleden", 20)] if BIJBEL else [])
+                  + [("verwar", "Verwarparen", 15)])
 TENTAMENS = [("Grieks 1", "les 1–6", range(1, 7)), ("Grieks 2", "les 7–12", range(7, 13)),
              ("Grieks 3", "les 13–14", range(13, 15))]
 ONTLEED_DIMS = [("woordsoort", "Woordsoort"), ("naamval", "Naamval"), ("geslacht", "Geslacht"),
@@ -3820,7 +3824,11 @@ def _heel(rij, kolom):
 
 
 def ranglijst(rijen):
-    """De regels van het Scorebord-tabblad omzetten naar spelers, ontdubbeld op naam."""
+    """De regels van het Scorebord-tabblad omzetten naar spelers.
+
+    Ontdubbelen gaat op de naam zónder hoofdletters: wie zich de ene keer als 'Bob' en
+    de andere keer als 'bob' aanmeldde stond anders twee keer in de lijst. Van elk paar
+    houden we de regel met de meeste XP — dat is de verste voortgang."""
     spelers = {}
     for r in rijen:
         naam = str(r.get("gebruiker", "")).strip()
@@ -3831,8 +3839,9 @@ def ranglijst(rijen):
                   "totaal": _heel(r, "totaal"), "badges": _heel(r, "badges"),
                   "beheerst": (_heel(r, "w_beh") + _heel(r, "a_beh")
                                + _heel(r, "s_beh") + _heel(r, "r_beh"))}
-        if naam not in spelers or speler["xp"] > spelers[naam]["xp"]:
-            spelers[naam] = speler
+        sleutel = naam.lower()
+        if sleutel not in spelers or speler["xp"] > spelers[sleutel]["xp"]:
+            spelers[sleutel] = speler
     return list(spelers.values())
 
 
@@ -4082,114 +4091,119 @@ def voortgangpagina():
                     f"margin-top:8px'><div style='width:{deel*100:.0f}%;height:6px;"
                     f"border-radius:3px;background:{MERK}'></div></div>")
 
-        # --- badges -----------------------------------------------------------
-        badges = motor.badge_definities(badgecijfers(g, cijfers))
-        behaald = [b for b in badges if b["behaald"]]
-        bewaard = g.stats.setdefault("badges", {})
-        nieuw = [b for b in behaald if b["id"] not in bewaard]
-        for b in nieuw:
-            bewaard[b["id"]] = gebruikers.vandaag()
-        if nieuw:
-            # Meteen vastleggen wanneer je ze behaalde, anders staat er bij de volgende
-            # sessie opnieuw 'nieuw' bij badges die je allang had.
-            async def bewaar_badges():
-                await run.io_bound(g.bewaar, True)
-
-            ui.timer(0.2, bewaar_badges, once=True)
-        with _uitklap(f"Badges — {len(behaald)} van de {len(badges)}"):
+        # De lichte versie houdt Voortgang kort: hoeveel je hebt geoefend, en de
+        # competitie. Badges, voortgang per onderdeel, probleemwoorden, de
+        # studieplanner en de export staan in de uitgebreide app, die daar de ruimte
+        # voor heeft. Zo blijft dit scherm op een telefoon te overzien.
+        if BIJBEL:
+            # --- badges -----------------------------------------------------------
+            badges = motor.badge_definities(badgecijfers(g, cijfers))
+            behaald = [b for b in badges if b["behaald"]]
+            bewaard = g.stats.setdefault("badges", {})
+            nieuw = [b for b in behaald if b["id"] not in bewaard]
+            for b in nieuw:
+                bewaard[b["id"]] = gebruikers.vandaag()
             if nieuw:
-                ui.label("Nieuw: " + " · ".join(f"{b['icon']} {b['titel']}" for b in nieuw)).style(
-                    f"color:{GOED};font-size:13px;margin-bottom:8px")
-            ui.html(_badgeraster(badges, bewaard))
+                # Meteen vastleggen wanneer je ze behaalde, anders staat er bij de volgende
+                # sessie opnieuw 'nieuw' bij badges die je allang had.
+                async def bewaar_badges():
+                    await run.io_bound(g.bewaar, True)
 
-        # --- per onderdeel ----------------------------------------------------
-        with _uitklap("Voortgang per onderdeel"):
-            ui.html(_onderdeelblok(g, cijfers))
-            lek = [w for w in g.woorden if 16 <= int(w.get("streak", 0) or 0) <= 17]
-            if lek:
-                ui.label(f"🪣 {len(lek)} woorden balanceren op het randje van je "
-                         f"langetermijngeheugen (streak 16 of 17). Eén foutje en ze vallen "
-                         f"terug. Kies 'Knelpunten' om ze te stutten.").style(
-                    f"color:{TEKST};font-size:12.5px;line-height:1.6;margin-top:4px")
-            else:
-                ui.label("🛡️ Al je beheerste woorden staan stevig (streak 18 of hoger).").style(
-                    f"color:{ZACHT};font-size:12.5px;margin-top:4px")
-            ui.label("Per tentamen").style(
-                f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
-            ui.label("Een item telt als beheerst vanaf streak 16.").style(
-                f"color:{ZACHT};font-size:12px;margin-bottom:6px")
-            cellen = af_cellen(g)
-            for naam, lessen, bereik in TENTAMENS:
-                woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
-                rijtjes = [c for c in cellen if c["niveau"] == naam]
-                ui.label(f"{naam} · {lessen}").style(
-                    f"color:{MERK};font-size:13px;font-weight:600;margin-top:6px")
-                ui.html(_meterbalk(
-                    "Woordenschat",
-                    sum(1 for w in woorden if int(w.get("streak", 0) or 0) >= 16), len(woorden)))
-                ui.html(_meterbalk(
-                    "Rijtjes", sum(1 for c in rijtjes if c["streak"] >= 16), len(rijtjes)))
-            ontleed = g.stats.get("ontleed_stats") or {}
-            if any((int(v.get("g", 0)) + int(v.get("f", 0))) > 0
-                   for v in ontleed.values() if isinstance(v, dict)):
-                ui.label("Ontleden per onderdeel").style(
+                ui.timer(0.2, bewaar_badges, once=True)
+            with _uitklap(f"Badges — {len(behaald)} van de {len(badges)}"):
+                if nieuw:
+                    ui.label("Nieuw: " + " · ".join(f"{b['icon']} {b['titel']}" for b in nieuw)).style(
+                        f"color:{GOED};font-size:13px;margin-bottom:8px")
+                ui.html(_badgeraster(badges, bewaard))
+
+            # --- per onderdeel ----------------------------------------------------
+            with _uitklap("Voortgang per onderdeel"):
+                ui.html(_onderdeelblok(g, cijfers))
+                lek = [w for w in g.woorden if 16 <= int(w.get("streak", 0) or 0) <= 17]
+                if lek:
+                    ui.label(f"🪣 {len(lek)} woorden balanceren op het randje van je "
+                             f"langetermijngeheugen (streak 16 of 17). Eén foutje en ze vallen "
+                             f"terug. Kies 'Knelpunten' om ze te stutten.").style(
+                        f"color:{TEKST};font-size:12.5px;line-height:1.6;margin-top:4px")
+                else:
+                    ui.label("🛡️ Al je beheerste woorden staan stevig (streak 18 of hoger).").style(
+                        f"color:{ZACHT};font-size:12.5px;margin-top:4px")
+                ui.label("Per tentamen").style(
                     f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
-                ui.label("Hoe vaak je het onderdeel in één keer goed had — je tentamenmaat.").style(
+                ui.label("Een item telt als beheerst vanaf streak 16.").style(
                     f"color:{ZACHT};font-size:12px;margin-bottom:6px")
-                for sleutel, naam in ONTLEED_DIMS:
-                    e = ontleed.get(sleutel) or {}
-                    totaal = int(e.get("g", 0) or 0) + int(e.get("f", 0) or 0)
-                    if totaal:
-                        ui.html(_meterbalk(naam, int(e.get("g", 0) or 0), totaal))
+                cellen = af_cellen(g)
+                for naam, lessen, bereik in TENTAMENS:
+                    woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
+                    rijtjes = [c for c in cellen if c["niveau"] == naam]
+                    ui.label(f"{naam} · {lessen}").style(
+                        f"color:{MERK};font-size:13px;font-weight:600;margin-top:6px")
+                    ui.html(_meterbalk(
+                        "Woordenschat",
+                        sum(1 for w in woorden if int(w.get("streak", 0) or 0) >= 16), len(woorden)))
+                    ui.html(_meterbalk(
+                        "Rijtjes", sum(1 for c in rijtjes if c["streak"] >= 16), len(rijtjes)))
+                ontleed = g.stats.get("ontleed_stats") or {}
+                if any((int(v.get("g", 0)) + int(v.get("f", 0))) > 0
+                       for v in ontleed.values() if isinstance(v, dict)):
+                    ui.label("Ontleden per onderdeel").style(
+                        f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
+                    ui.label("Hoe vaak je het onderdeel in één keer goed had — je tentamenmaat.").style(
+                        f"color:{ZACHT};font-size:12px;margin-bottom:6px")
+                    for sleutel, naam in ONTLEED_DIMS:
+                        e = ontleed.get(sleutel) or {}
+                        totaal = int(e.get("g", 0) or 0) + int(e.get("f", 0) or 0)
+                        if totaal:
+                            ui.html(_meterbalk(naam, int(e.get("g", 0) or 0), totaal))
 
-        # --- probleemwoorden ---------------------------------------------------
-        lastig = probleemwoorden(g)
-        with _uitklap(f"Hardnekkige probleemwoorden — {len(lastig)}"):
-            ui.label("Woorden die je al vaker deed maar die blijven haperen: veel fouten en "
-                     "nog een lage streak. Oefen ze gericht via 'Knelpunten'.").style(
-                f"color:{ZACHT};font-size:12.5px;line-height:1.6;margin-bottom:8px")
-            if not lastig:
-                ui.label("Niets blijft structureel haperen. Sterk!").style(
-                    f"color:{GOED};font-size:13px")
-            else:
-                ui.html(_probleemtabel(lastig[:25]))
-                if len(lastig) > 25:
-                    ui.label(f"De 25 hardnekkigste van {len(lastig)} getoond.").style(
-                        f"color:{ZACHT};font-size:12px;margin-top:6px")
+            # --- probleemwoorden ---------------------------------------------------
+            lastig = probleemwoorden(g)
+            with _uitklap(f"Hardnekkige probleemwoorden — {len(lastig)}"):
+                ui.label("Woorden die je al vaker deed maar die blijven haperen: veel fouten en "
+                         "nog een lage streak. Oefen ze gericht via 'Knelpunten'.").style(
+                    f"color:{ZACHT};font-size:12.5px;line-height:1.6;margin-bottom:8px")
+                if not lastig:
+                    ui.label("Niets blijft structureel haperen. Sterk!").style(
+                        f"color:{GOED};font-size:13px")
+                else:
+                    ui.html(_probleemtabel(lastig[:25]))
+                    if len(lastig) > 25:
+                        ui.label(f"De 25 hardnekkigste van {len(lastig)} getoond.").style(
+                            f"color:{ZACHT};font-size:12px;margin-top:6px")
 
-        # --- studieplanner -----------------------------------------------------
-        with _uitklap("Studieplanner — wanneer ken ik alles?"):
-            tempo = gemiddeld_tempo(g)
-            kies_groep = ui.select({naam: f"{naam} · {lessen}" for naam, lessen, _b in TENTAMENS},
-                                   value=TENTAMENS[0][0], label="Tentamen").props(
-                "outlined dark dense").classes("w-full")
-            kies_diepte = ui.number("Gewenste kennis-diepte (streak)", value=16, min=2, max=30,
-                                    step=1).props("outlined dark dense").classes("w-full")
-            ui.label("16 = beheerst (de norm). 8 = genoeg om te herkennen in een tekst. "
-                     "30 = vloeiend.").style(f"color:{ZACHT};font-size:12px")
-            kies_tempo = ui.number("Woorden per dag", value=max(5, tempo) if tempo else 30,
-                                   min=5, max=500, step=5).props(
-                "outlined dark dense").classes("w-full")
-            if tempo:
-                ui.label(f"Je tempo van de afgelopen twee weken: ongeveer {tempo} items per "
-                         f"dag. Pas gerust aan.").style(f"color:{ZACHT};font-size:12px")
-            kies_acc = ui.number("Verwachte accuratesse (%)", value=max(50, sam["accuratesse"]),
-                                 min=50, max=100, step=1).props(
-                "outlined dark dense").classes("w-full")
-            uitkomst = ui.column().classes("w-full gap-1").style("margin-top:10px")
+            # --- studieplanner -----------------------------------------------------
+            with _uitklap("Studieplanner — wanneer ken ik alles?"):
+                tempo = gemiddeld_tempo(g)
+                kies_groep = ui.select({naam: f"{naam} · {lessen}" for naam, lessen, _b in TENTAMENS},
+                                       value=TENTAMENS[0][0], label="Tentamen").props(
+                    "outlined dark dense").classes("w-full")
+                kies_diepte = ui.number("Gewenste kennis-diepte (streak)", value=16, min=2, max=30,
+                                        step=1).props("outlined dark dense").classes("w-full")
+                ui.label("16 = beheerst (de norm). 8 = genoeg om te herkennen in een tekst. "
+                         "30 = vloeiend.").style(f"color:{ZACHT};font-size:12px")
+                kies_tempo = ui.number("Woorden per dag", value=max(5, tempo) if tempo else 30,
+                                       min=5, max=500, step=5).props(
+                    "outlined dark dense").classes("w-full")
+                if tempo:
+                    ui.label(f"Je tempo van de afgelopen twee weken: ongeveer {tempo} items per "
+                             f"dag. Pas gerust aan.").style(f"color:{ZACHT};font-size:12px")
+                kies_acc = ui.number("Verwachte accuratesse (%)", value=max(50, sam["accuratesse"]),
+                                     min=50, max=100, step=1).props(
+                    "outlined dark dense").classes("w-full")
+                uitkomst = ui.column().classes("w-full gap-1").style("margin-top:10px")
 
-            def reken():
-                bereik = next(b for naam, _l, b in TENTAMENS if naam == kies_groep.value)
-                woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
-                p = studietijd_prognose(woorden, int(kies_diepte.value or 16),
-                                        int(kies_tempo.value or 30), int(kies_acc.value or 78))
-                uitkomst.clear()
-                with uitkomst:
-                    ui.html(_prognoseblok(p, woorden, int(kies_diepte.value or 16)))
+                def reken():
+                    bereik = next(b for naam, _l, b in TENTAMENS if naam == kies_groep.value)
+                    woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
+                    p = studietijd_prognose(woorden, int(kies_diepte.value or 16),
+                                            int(kies_tempo.value or 30), int(kies_acc.value or 78))
+                    uitkomst.clear()
+                    with uitkomst:
+                        ui.html(_prognoseblok(p, woorden, int(kies_diepte.value or 16)))
 
-            for veld in (kies_groep, kies_diepte, kies_tempo, kies_acc):
-                veld.on_value_change(lambda _=None: reken())
-            reken()
+                for veld in (kies_groep, kies_diepte, kies_tempo, kies_acc):
+                    veld.on_value_change(lambda _=None: reken())
+                reken()
 
         # --- competitie --------------------------------------------------------
         with _uitklap("Competitie — hoe sta je erbij?") as competitie:
@@ -4233,18 +4247,26 @@ def voortgangpagina():
             ui.button("Ranglijst verversen", on_click=laad_bord).props("flat").style(
                 f"color:{MERK};border:1px solid {RAND};border-radius:8px;width:100%")
 
-        # --- export ------------------------------------------------------------
-        ui.button("Woordenschat downloaden als CSV",
-                  on_click=lambda: ui.download.content(
-                      voortgang_csv(g), "mijn_grieks_voortgang.csv")).props("flat").style(
-            f"color:{MERK};border:1px solid {RAND};border-radius:10px")
+        if not BIJBEL:
+            # In de lichte versie is dit het enige uitklapblok op een korte pagina, dus
+            # daar mag hij meteen openstaan en zichzelf ophalen.
+            competitie.value = True
+            ui.timer(0.2, laad_bord, once=True)
 
-        with ui.element("div").classes("kaart w-full"):
-            ui.label("Meer overzichten").style(f"color:{TEKST};font-size:15px;font-weight:600")
-            ui.label("De studieplanner per tentamen, de aartsrivalen en alle grafieken "
-                     "staan in de volledige app.").style(
-                f"color:{ZACHT};font-size:13px;line-height:1.5")
-            streamlit_link(g)
+        if BIJBEL:
+            # --- export ------------------------------------------------------------
+            ui.button("Woordenschat downloaden als CSV",
+                      on_click=lambda: ui.download.content(
+                          voortgang_csv(g), "mijn_grieks_voortgang.csv")).props("flat").style(
+                f"color:{MERK};border:1px solid {RAND};border-radius:10px")
+
+        else:
+            with ui.element("div").classes("kaart w-full"):
+                ui.label("Meer overzichten").style(f"color:{TEKST};font-size:15px;font-weight:600")
+                ui.label("De studieplanner per tentamen, de aartsrivalen en alle grafieken "
+                         "staan in de volledige app.").style(
+                    f"color:{ZACHT};font-size:13px;line-height:1.5")
+                streamlit_link(g)
 
         ui.button("Uitloggen", on_click=lambda: (
             _sessies.pop(app.storage.user.get("sleutel"), None),
