@@ -4475,8 +4475,12 @@ def laad_volgend_struct_woord():
 # MAIN APP FUNCTIE
 # ==========================================
 def _herstel_backup_formulier():
-    """Backup terugzetten. Staat zowel op het inlogscherm als in de zijbalk; terugzetten kan
-    pas als je ingelogd bent, want de scores worden op je eigen woordenlijst gezet."""
+    """Backup terugzetten. Terugzetten kan pas als je ingelogd bent, want de scores
+    worden op je eigen woordenlijst gezet.
+
+    STAAT NU NERGENS IN BEELD: het stond op het inlogscherm en in de zijbalk, maar werd
+    niet gebruikt en leidde af. Bewust bewaard als vangnet — zet er weer een
+    st.expander("Backup herstellen") omheen als er ooit voortgang te redden valt."""
     if st.session_state.data is None:
         st.caption("Log eerst in met de naam en code waar je backup bij hoort. "
                    "Daarna kun je hem hier terugzetten.")
@@ -4498,6 +4502,16 @@ def _herstel_backup_formulier():
 
 
 SNELLE_APP = "https://griekspthu.onrender.com"
+
+# Zelfde tekst als op het inlogscherm van de snelle app. Op je beginscherm opent hij
+# zonder adresbalk, dus je hebt meteen een schermvullende app zonder iets te installeren.
+APP_OP_MOBIEL = (
+    "<div style='font-size:12.5px; line-height:1.7; color:#9aa4ae; margin-top:10px;'>"
+    "<b style='color:#fafafa;'>Als app op je mobiel?</b><br>"
+    "<b>iPhone (Safari):</b> tik onderin op het vierkantje met het pijltje omhoog → "
+    "<i>Zet op beginscherm</i><br>"
+    "<b>Android (Chrome):</b> tik rechtsboven op de drie puntjes → "
+    "<i>Toevoegen aan startscherm</i></div>")
 
 
 def snelle_app_url(gebruiker=""):
@@ -4580,8 +4594,7 @@ def main():
                     st.session_state.last_user = user_input
                     st.rerun()
                 else: st.warning("Vul beide velden in.")
-            st.caption("Gebruik je dezelfde twee woorden als in de snelle oefen-app, dan "
-                       "staat je voortgang er meteen.")
+            st.markdown(APP_OP_MOBIEL, unsafe_allow_html=True)
             _snel = snelle_app_url()
             if _snel:
                 st.markdown(
@@ -4596,8 +4609,6 @@ def main():
                     f"style='color:#33ccff; text-decoration:none;'>snelle oefen-app</a>. "
                     f"Die is voor je telefoon gemaakt en werkt daar veel prettiger.</div>",
                     unsafe_allow_html=True)
-            with st.expander("Backup herstellen"):
-                _herstel_backup_formulier()
     else:
         with st.sidebar:
             st.success(f"👋 Welkom, {st.session_state.last_user.split('_')[0]}!")
@@ -4605,10 +4616,6 @@ def main():
                 trigger_save(forceer=True); st.session_state.data = None; st.session_state.last_user = None
                 if "u" in st.query_params: del st.query_params["u"]
                 st.rerun()
-
-            st.write("---")
-            with st.expander("Backup herstellen"):
-                _herstel_backup_formulier()
 
     if st.session_state.data:
         if st.session_state.get('_opslag_mislukt'):

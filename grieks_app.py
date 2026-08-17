@@ -31,6 +31,16 @@ GRIEKS_FONT = "'Gentium Book Plus','Palatino Linotype',Georgia,serif"
 BESTEMMINGEN = [("Vandaag", "●", "/vandaag"), ("Oefenen", "■", "/oefenen"),
                 ("Lezen", "☰", "/lezen"), ("Voortgang", "▲", "/voortgang")]
 
+# Zelfde tekst als op het inlogscherm van de uitgebreide app. Op je beginscherm opent
+# hij zonder adresbalk, dus je hebt een schermvullende app zonder iets te installeren.
+APP_OP_MOBIEL = (
+    f"<div style='font-size:12.5px;line-height:1.7;color:{ZACHT}'>"
+    f"<b style='color:{TEKST}'>Als app op je mobiel?</b><br>"
+    f"<b>iPhone (Safari):</b> tik onderin op het vierkantje met het pijltje omhoog → "
+    f"<i>Zet op beginscherm</i><br>"
+    f"<b>Android (Chrome):</b> tik rechtsboven op de drie puntjes → "
+    f"<i>Toevoegen aan startscherm</i></div>")
+
 ui.add_head_html(f"""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:wght@400;700&display=swap" rel="stylesheet">
@@ -215,8 +225,7 @@ def inlogpagina():
         melding = ui.label().style(f"color:{FOUT};font-size:13px;min-height:18px")
         knop = ui.button("Beginnen").props("unelevated").classes("w-full").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:46px")
-        ui.label("Gebruik je dezelfde twee woorden als in de volledige app, dan staat je "
-                 "voortgang er meteen.").style(f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+        ui.html(APP_OP_MOBIEL)
         # Andersom verwijst de volledige app hierheen; zo weet je op elk inlogscherm
         # welke van de twee je voor je hebt.
         if STREAMLIT_URL:
