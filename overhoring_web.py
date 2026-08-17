@@ -7904,12 +7904,6 @@ def main():
                 if gram_modus.startswith("🔎"):
                     st.markdown("#### Zoek een grammaticaal onderwerp of term")
                     st.caption("Typ bijv. *genitivus absolutus*, *aoristus*, *αὐτός*, *contractie* of *voorwaardelijke zin*. Grieks mag mét of zonder accenten, of getypt in gewone letters (*logos* → λόγος, *didwmi* → δίδωμι, θ=q, ξ=c, ω=w, ψ=y, η=h). Je krijgt de slide(s) én de vindplaats in het handboek.")
-                    # De twee zoekvelden in de app doen iets anders: hier zoek je een onderwerp
-                    # en krijg je slides, in Ontleden zoek je een vorm en krijg je de ontleding.
-                    st.info("🔎 Zoek je wat een **woord of vorm betekent** (bv. λόγον, ἔλυσεν)? "
-                            "Dat doe je in het **🔎 Ontleden**-tabblad: daar krijg je de ontleding, "
-                            "de betekenis en de vindplaatsen. Hier zoek je grammaticale "
-                            "*onderwerpen* en krijg je de slides uit het handboek.")
                     zoek = st.text_input("Zoekterm", key="gram_zoek", placeholder="genitivus absolutus")
 
                     if zoek and len(zoek.strip()) >= 2:
