@@ -109,6 +109,21 @@ def streamlit_adres(g=None):
     return f"{STREAMLIT_URL}/?u={quote(sleutel)}" if sleutel else STREAMLIT_URL
 
 
+def volledige_app_blok(g=None):
+    """Wat de twee apps van elkaar onderscheiden. Staat op het inlogscherm en op
+    Vandaag, zodat je nooit hoeft te raden welke van de twee je voor je hebt."""
+    adres = streamlit_adres(g)
+    if not adres:
+        return ""
+    return (f"<div class='kaart' style='font-size:12.5px;line-height:1.6;color:{ZACHT}'>"
+            f"<b style='color:{TEKST}'>Twee apps, dezelfde voortgang.</b><br>"
+            f"Dit is de <b style='color:{TEKST}'>snelle oefen-app</b>, gemaakt voor je "
+            f"telefoon: woorden, rijtjes en stamtijden.<br>Wil je ontleden, leesteksten, "
+            f"grammatica of iets opzoeken in de bijbeltekst, ga dan naar de "
+            f"<a href='{adres}' target='_blank' style='color:{MERK};text-decoration:none'>"
+            f"uitgebreide app</a>.</div>")
+
+
 def streamlit_link(g, tekst="Open de volledige app →"):
     adres = streamlit_adres(g)
     if adres:
@@ -192,11 +207,7 @@ def inlogpagina():
         # Andersom verwijst de volledige app hierheen; zo weet je op elk inlogscherm
         # welke van de twee je voor je hebt.
         if STREAMLIT_URL:
-            ui.html(f"<div style='color:{ZACHT};font-size:12.5px;line-height:1.6'>"
-                    f"Deze app is voor snel oefenen: woorden, rijtjes en stamtijden. "
-                    f"Ontleden, leesteksten en grammatica staan in de "
-                    f"<a href='{STREAMLIT_URL}' style='color:{MERK};text-decoration:none'>"
-                    f"volledige app</a>.</div>")
+            ui.html(volledige_app_blok())
 
     async def probeer():
         melding.text = ""
@@ -244,9 +255,8 @@ def klaargezet(g):
          "/oefenen/stamtijden", "stam", int(log.get("stam", 0) or 0)),
         ("Actief beheersen", f"{voorkeur(AF_STANDAARD, 'af_aantal')} cellen uit de rijtjes",
          "/oefenen/actief", "actief", int(log.get("actief", 0) or 0)),
-        ("Ontleden", "een vers uit het NT, woord voor woord",
-         "/oefenen/ontleden", "verzen", int(log.get("verzen", 0) or 0)),
-    ]
+    ] + ([("Ontleden", "een vers uit het NT, woord voor woord",
+           "/oefenen/ontleden", "verzen", int(log.get("verzen", 0) or 0))] if BIJBEL else [])
 
 
 @ui.page("/vandaag")
@@ -315,6 +325,10 @@ def vandaagpagina():
                         f"width:100%;height:{hoog}px;border-radius:3px;background:{kleur}")
                     ui.label("mdwdvzz"[i]).style(
                         f"color:{TEKST if d == vandaag_d else ZACHT};font-size:11px")
+
+        blok = volledige_app_blok(g)
+        if blok:
+            ui.html(blok)
     onderbalk("Vandaag")
 
 
