@@ -236,9 +236,16 @@ def naar_grieks_transliteratie(tekst):
         res = res[:-1] + 'ς'
     return res
 
+def _heeft_waarde(waarde):
+    """True als er echt iets staat. Doet wat pandas' notna() deed: None en NaN tellen
+    niet mee. Zo hoeft de NiceGUI-schil pandas niet te laden — dat scheelt zeventig
+    megabyte geheugen op de server, voor deze ene controle. NaN is het enige dat
+    ongelijk aan zichzelf is; daar herken je het aan."""
+    return waarde is not None and waarde == waarde
+
 @functools.lru_cache(maxsize=200000)
 def normaliseer_accent(woord):
-    if pd.notna(woord) and str(woord).strip() != "":
+    if _heeft_waarde(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
@@ -4158,20 +4165,24 @@ def _ws_naam(naam):
     schoon = re.sub(r'[^0-9A-Za-z_]', '_', str(naam or ''))
     return ("u_" + schoon)[:95]
 
-def _bouw_rij_dict():
-    """Zet alle voortgang uit het geheugen om in één (gechunkte) rij, klaar voor de Sheet."""
+_OPSLAG_SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
+                 ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
+                 ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
+                 ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
+                 ('klank_stats', 'kl_chunks')]
+
+
+def _bouw_rij_dict(stats=None):
+    """Zet voortgang om in één (gechunkte) rij, klaar voor de Sheet.
+    Zonder argument: de voortgang uit het geheugen."""
     def get_chunks(data_dict, prefix, max_len=40000):
         s = json.dumps(data_dict, ensure_ascii=False)
         chunks = [s[i:i+max_len] for i in range(0, len(s), max_len)]
         return {f"{prefix}_{i}": c for i, c in enumerate(chunks)}, len(chunks)
-    specs = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
-             ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
-             ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
-             ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
-             ('klank_stats', 'kl_chunks')]
     rij = {'gebruikersnaam': st.session_state.last_user}
-    for dictkey, countcol in specs:
-        ch, n = get_chunks(st.session_state.get(dictkey, {}) or {}, dictkey)
+    for dictkey, countcol in _OPSLAG_SPECS:
+        bron = (stats or {}).get(dictkey) if stats is not None else st.session_state.get(dictkey, {})
+        ch, n = get_chunks(bron or {}, dictkey)
         rij.update(ch); rij[countcol] = n
     return rij
 
@@ -4269,10 +4280,33 @@ def lees_scorebord(cache_key):
                     'onderdelen': ond, 'gedaan': gedaan})
     return out
 
+def _samengevoegde_stats():
+    """Mijn voortgang samen met wat er nu in de Sheet staat.
+
+    De NiceGUI-app (grieks_app.py) schrijft naar hetzelfde tabblad en schrijft, net als
+    wij, de héle rij weg. Zonder samenvoegen wist wie het laatst opslaat alles wat de
+    ander deed sinds diens inloggen — dan lijkt een streak 'niet opgeslagen'. De regels
+    staan in grieks_opslag.samenvoeg_stats; die deelt de twee apps.
+
+    Lukt het lezen niet, dan voegen we niets samen en schrijven we gewoon onze eigen
+    staat weg: liever de oude situatie dan helemaal niet kunnen opslaan.
+    """
+    mijn = {sleutel: (st.session_state.get(sleutel, {}) or {})
+            for sleutel, _teller in _OPSLAG_SPECS}
+    try:
+        from grieks_opslag import lees_rij, samenvoeg_stats
+        df = conn.read(worksheet=_ws_naam(st.session_state.last_user), ttl=0)
+        if df is None or df.empty:
+            return mijn
+        return samenvoeg_stats(lees_rij(df.iloc[0]), mijn)
+    except Exception:
+        return mijn
+
+
 def opslaan_naar_cloud(update_scorebord=True):
     if not st.session_state.get('last_user'): return
     try:
-        rij = _bouw_rij_dict()
+        rij = _bouw_rij_dict(_samengevoegde_stats())
         df_row = pd.DataFrame([rij])
         ws = _ws_naam(st.session_state.last_user)
         # Schrijf naar het EIGEN tabblad (geen kruis-overschrijving). Bestaat de tab nog niet →

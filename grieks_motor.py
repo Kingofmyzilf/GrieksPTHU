@@ -138,6 +138,28 @@ def normaliseer_accent(woord):
     return ""
 
 
+def welke_vorm_typte_je(typed, cellen, juiste_id=None):
+    """Zoekt in hetzelfde rijtje welke cel je wél hebt getypt.
+
+    Typ je sou waar soi werd gevraagd, dan is dat geen willekeurige fout maar een
+    verwisseling van naamval — en juist dat wil je weten. Geeft het label van die
+    cel terug, of None als je invoer nergens in het rijtje voorkomt.
+    """
+    if not str(typed or "").strip():
+        return None
+    ing = normaliseer_accent(naar_grieks_transliteratie(typed))
+    if not ing:
+        return None
+    for c in (cellen or []):
+        if juiste_id is not None and c.get("id") == juiste_id:
+            continue
+        # een cel kan varianten hebben, bv. 'emou / mou'
+        for deel in re.split(r"[/,]", str(c.get("vorm", "") or "")):
+            if deel.strip() and normaliseer_accent(deel.strip()) == ing:
+                return c.get("label", "")
+    return None
+
+
 def grieks_vorm_ok(typed, correct):
     """Tolerante vergelijking van een Griekse vorm: accenten/leestekens genegeerd, Latijnse óf Griekse
     invoer, en elk deel van een 'x / y'-vorm (gescheiden door / , of ;) telt als goed."""

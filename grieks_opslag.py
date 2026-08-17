@@ -47,6 +47,11 @@ SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats',
 MAX_LEN = 40000
 SCOREBORD = "Scorebord"
 
+# Statistieken waarvan de waarden de vorm {sleutel: {'g':.., 'f':.., 'streak':..}} hebben.
+# Voor die vorm geldt de tel-regel bij het samenvoegen (zie samenvoeg_stats).
+TELDICTS = {"vocab_stats", "stam_stats", "struct_stats", "actief_stats",
+            "gram_stats", "prod_stats", "klank_stats", "ontleed_stats"}
+
 
 class OpslagFout(Exception):
     """Opslaan of laden mislukte. De aanroeper beslist wat de gebruiker te zien krijgt."""
@@ -147,6 +152,16 @@ def _json_of_leeg(tekst, streng=False, wat=""):
     return gelezen if isinstance(gelezen, dict) else {}
 
 
+def _cel(rij, kolom):
+    """Celtekst, met lege cellen als lege tekst. Een DataFrame-rij geeft een lege cel
+    terug als NaN, en NaN is waar in een or-uitdrukking — zonder deze controle sluipt
+    de tekst 'nan' midden in de JSON en is de hele rij onleesbaar."""
+    waarde = rij.get(kolom)
+    if waarde is None or waarde != waarde:          # NaN is ongelijk aan zichzelf
+        return ""
+    return str(waarde)
+
+
 def lees_rij(rij):
     """Eén rij uit de Sheet -> statistiek-dicts. Verdraagt ontbrekende of stukke velden."""
     uit = {}
@@ -160,14 +175,118 @@ def lees_rij(rij):
             n = 0
         if n <= 0:
             # Terugval op een ongechunkte kolom, zoals de oude opslag die kende.
-            uit[sleutel] = _json_of_leeg(rij.get(sleutel, "{}"))
+            uit[sleutel] = _json_of_leeg(_cel(rij, sleutel) or "{}")
             continue
-        tekst = "".join(str(rij.get(f"{sleutel}_{i}") or "") for i in range(n))
+        tekst = "".join(_cel(rij, f"{sleutel}_{i}") for i in range(n))
         if not tekst:
             raise OpslagFout(
                 f"'{sleutel}' zegt {n} stukken te hebben maar ze zijn leeg — "
                 "opslaan afgebroken om je voortgang niet te overschrijven.")
         uit[sleutel] = _json_of_leeg(tekst, streng=True, wat=sleutel)
+    return uit
+
+
+# --------------------------------------------------------------------------- samenvoegen
+def _pogingen(entry):
+    """Hoe vaak dit item al is overhoord. Goed en fout tellen alleen maar op, dus dit
+    getal loopt nooit terug — daarmee weet je welke van twee versies de nieuwste is."""
+    if not isinstance(entry, dict):
+        return -1
+    try:
+        return int(entry.get("g", 0) or 0) + int(entry.get("f", 0) or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _voeg_teldict_samen(oud, mijn):
+    """Per item de versie met de meeste pogingen. Bij gelijkspel wint die van mij:
+    dan heeft de ander niets aan dit item gedaan sinds ik inlogde."""
+    uit = dict(oud or {})
+    for sleutel, entry in (mijn or {}).items():
+        if _pogingen(entry) >= _pogingen(uit.get(sleutel)):
+            uit[sleutel] = entry
+    return uit
+
+
+def _voeg_dagstats_samen(oud, mijn):
+    """Per dag het hoogste aantal. Een dagteller loopt alleen op."""
+    uit = dict(oud or {})
+    for dag, aantal in (mijn or {}).items():
+        try:
+            uit[dag] = max(int(uit.get(dag, 0) or 0), int(aantal or 0))
+        except (TypeError, ValueError):
+            uit[dag] = aantal
+    return uit
+
+
+def _voeg_verwar_samen(oud, mijn):
+    """Verwarparen: {getoond: {verward: {n, laatst}}}. Anders dan de rest kan 'n' hier
+    ook omlaag (een goed antwoord dempt de verwarring), dus tellen helpt niet. De regel
+    is: de laatst bijgewerkte versie wint."""
+    uit = {a: dict(b) for a, b in (oud or {}).items() if isinstance(b, dict)}
+    for getoond, paren in (mijn or {}).items():
+        if not isinstance(paren, dict):
+            continue
+        bestaand = uit.setdefault(getoond, {})
+        for verward, rec in paren.items():
+            ander = bestaand.get(verward) or {}
+            if str(rec.get("laatst", "")) >= str(ander.get("laatst", "")):
+                bestaand[verward] = rec
+    return {a: b for a, b in uit.items() if b}
+
+
+def _voeg_dagdoel_samen(oud, mijn):
+    """Dagdoel heeft twee delen: 'config' (jouw instelling — de nieuwste wint per
+    sleutel) en 'log' (wat je per dag deed — het hoogste aantal wint)."""
+    uit = dict(oud or {})
+    mijn = mijn or {}
+    config = dict((uit.get("config") or {}))
+    config.update(mijn.get("config") or {})
+    log = {d: dict(v) for d, v in (uit.get("log") or {}).items() if isinstance(v, dict)}
+    for dag, regel in (mijn.get("log") or {}).items():
+        if not isinstance(regel, dict):
+            continue
+        samen = log.setdefault(dag, {})
+        for soort, waarde in regel.items():
+            try:
+                samen[soort] = max(int(samen.get(soort, 0) or 0), int(waarde or 0))
+            except (TypeError, ValueError):
+                samen[soort] = waarde
+    if config:
+        uit["config"] = config
+    if log:
+        uit["log"] = log
+    return uit
+
+
+def samenvoeg_stats(in_sheet, van_mij):
+    """Voegt mijn voortgang samen met wat er nu in de Sheet staat.
+
+    Nodig omdat de Streamlit-app en de NiceGUI-app allebei de héle rij wegschrijven.
+    Zonder samenvoegen wist wie het laatst opslaat alles wat de ander deed sinds diens
+    inloggen — precies het geval waarin een streak 'niet opgeslagen' lijkt.
+
+    De regels leunen erop dat de tellers alleen maar oplopen; zie de losse functies.
+    Voor alles waar geen regel voor is (instellingen, badges) wint mijn versie per
+    sleutel, en blijft staan wat ik niet ken.
+    """
+    uit = {}
+    for sleutel, _teller in SPECS:
+        oud, mijn = (in_sheet or {}).get(sleutel) or {}, (van_mij or {}).get(sleutel) or {}
+        if not isinstance(oud, dict) or not isinstance(mijn, dict):
+            uit[sleutel] = mijn or oud
+        elif sleutel in TELDICTS:
+            uit[sleutel] = _voeg_teldict_samen(oud, mijn)
+        elif sleutel == "dag_stats":
+            uit[sleutel] = _voeg_dagstats_samen(oud, mijn)
+        elif sleutel == "verwar_stats":
+            uit[sleutel] = _voeg_verwar_samen(oud, mijn)
+        elif sleutel == "dagdoel":
+            uit[sleutel] = _voeg_dagdoel_samen(oud, mijn)
+        else:
+            samen = dict(oud)
+            samen.update(mijn)
+            uit[sleutel] = samen
     return uit
 
 
@@ -198,8 +317,44 @@ def laad(gebruiker):
     return lees_rij(eigen[0] if eigen else rijen[0])
 
 
-def bewaar(gebruiker, stats, pogingen=3):
-    """Voortgang wegschrijven. Probeert het bij een quota-fout een paar keer opnieuw."""
+def huidige_stats(gebruiker):
+    """Wat er op dit moment in de Sheet staat, of None als er niets bruikbaars staat.
+
+    Twee soorten problemen, met een verschillende afloop:
+      * het ophalen zelf mislukt (netwerk, quota) — dan wérpen we. Je weet niet wat er
+        staat, dus schrijven zou de ander kunnen wissen. De voortgang blijft in het
+        geheugen en de volgende beurt probeert het opnieuw.
+      * de rij is er wél maar is onleesbaar — dan geven we None terug. Er valt niets te
+        behouden, en gewoon schrijven maakt de rij weer heel. Voor eeuwig weigeren te
+        bewaren zou hier de slechtste uitkomst zijn.
+    """
+    tab = _tab(werkblad_naam(gebruiker))
+    if tab is None:
+        return None
+    try:
+        rijen = tab.get_all_records()
+    except Exception as e:
+        raise OpslagFout(f"Lezen voor het samenvoegen mislukte: {e}") from e
+    if not rijen:
+        return None
+    eigen = [r for r in rijen
+             if str(r.get('gebruikersnaam', '')).strip().lower() == str(gebruiker).strip().lower()]
+    try:
+        return lees_rij(eigen[0] if eigen else rijen[0])
+    except OpslagFout:
+        return None
+
+
+def bewaar(gebruiker, stats, pogingen=3, samenvoegen=True):
+    """Voortgang wegschrijven. Probeert het bij een quota-fout een paar keer opnieuw.
+
+    Eerst lezen, dan samenvoegen, dan schrijven. Dat moet, omdat de Streamlit-app op
+    dezelfde rij werkt: zonder samenvoegen wist wie het laatst opslaat de voortgang van
+    de ander sinds diens inloggen. Lukt het lezen niet, dan schrijven we niet — je
+    voortgang blijft dan in het geheugen staan en de volgende beurt probeert het weer.
+    """
+    if samenvoegen:
+        stats = samenvoeg_stats(huidige_stats(gebruiker), stats)
     rij = bouw_rij(gebruiker, stats)
     kolommen = list(rij)
     tab = _tab(werkblad_naam(gebruiker), maak=True)
