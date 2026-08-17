@@ -122,12 +122,30 @@ def verbind(verplicht=True):
     # De private key staat in TOML vaak met letterlijke \n erin.
     if isinstance(inlog.get("private_key"), str):
         inlog["private_key"] = inlog["private_key"].replace("\\n", "\n")
+    adres = str(adres or "").strip().strip('"').strip("'")
+    if not adres:
+        raise OpslagFout(
+            "De inloggegevens zijn er wel, maar er staat geen Sheet bij. Zet de URL of "
+            "de sleutel van je Google Sheet in GSHEETS_SPREADSHEET (of in "
+            "secrets.toml onder [connections.gsheets] als 'spreadsheet').")
     try:
         cred = Credentials.from_service_account_info(inlog, scopes=SCOPES)
         _client = gspread.authorize(cred)
         _sheet = _client.open_by_url(adres) if adres.startswith("http") else _client.open_by_key(adres)
     except Exception as e:
-        raise OpslagFout(f"Verbinden met Google Sheets mislukte: {e}") from e
+        # Kaal '<Response [404]>' zegt niets. Vertel wat er is geprobeerd — zonder de
+        # sleutel zelf te tonen, want die melding komt op het scherm van de student.
+        soort = "URL" if adres.startswith("http") else "sleutel"
+        hint = ""
+        if "404" in str(e):
+            hint = (" Google vindt die Sheet niet. Klopt de waarde, en heb je de Sheet "
+                    f"gedeeld met {inlog.get('client_email', 'het service-account')}?")
+        elif "403" in str(e):
+            hint = (" Google weigert de toegang. Deel de Sheet met "
+                    f"{inlog.get('client_email', 'het service-account')} als bewerker.")
+        raise OpslagFout(
+            f"Verbinden met Google Sheets mislukte ({e}). Opgegeven als {soort} van "
+            f"{len(adres)} tekens, beginnend met '{adres[:24]}'.{hint}") from e
     return _sheet
 
 
