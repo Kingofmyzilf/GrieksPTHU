@@ -17,9 +17,10 @@ services:
     buildCommand: pip install -r requirements-nicegui.txt
     startCommand: python grieks_app.py
     healthCheckPath: /
+    # De Python-versie staat in .python-version. Dat moet daar en niet hier: als
+    # omgevingsvariabele eist Render een volledige versie (3.14.3), in dat bestand
+    # mag 3.14 en pakt hij vanzelf de nieuwste patch.
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.12"
       - key: GRIEKS_SESSIE_SLEUTEL
         generateValue: true         # ondertekent de sessiecookie; Render verzint er een
       - key: GSHEETS_SPREADSHEET

@@ -27,7 +27,7 @@ HOUDEN = {
     "basis_woorden_verrijkt.json", "actief_beheersen.json", "stamtijden.json",
     "structuurwoorden.json", "verwarparen.json", "grammatica_tabellen.json",
     "grammatica_index.json",
-    "requirements-nicegui.txt", "render.yaml", ".gitignore",
+    "requirements-nicegui.txt", "render.yaml", ".gitignore", ".python-version",
     "HOSTEN.md", "MIGRATIE.md", "OVERDRACHT.md",
 }
 
