@@ -1,0 +1,26 @@
+# Render-blauwdruk voor de NiceGUI-app. Aanmaken via New → Blueprint en deze repo
+# aanwijzen; Render leest dit bestand en maakt de dienst aan.
+#
+# BELANGRIJK: één instantie, niet meer. De ingelogde gebruikers staan in het geheugen
+# van het proces (_sessies in grieks_app.py); met twee instanties zou je bij elke klik
+# op een andere kunnen belanden en steeds opnieuw moeten inloggen.
+services:
+  - type: web
+    name: grieks
+    runtime: python
+    plan: free              # 512 MB, 0,1 CPU. Slaapt na 15 min stilte, ~1 min opstarten.
+                            # Zet op 'starter' als dat wachten hindert.
+    region: frankfurt
+    branch: nicegui-opslag
+    buildCommand: pip install -r requirements-nicegui.txt
+    startCommand: python grieks_app.py
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: GRIEKS_SESSIE_SLEUTEL
+        generateValue: true         # ondertekent de sessiecookie; Render verzint er een
+      - key: GSHEETS_SPREADSHEET
+        sync: false                 # de URL of sleutel van je Google Sheet — zelf invullen
+      - key: GSHEETS_CREDENTIALS
+        sync: false                 # de service-account-JSON als één regel — zelf invullen

@@ -246,6 +246,28 @@ def normaliseer_accent(woord):
         return w.strip()
     return ""
 
+def welke_vorm_typte_je(typed, cellen, juiste_id=None):
+    """Zoekt in hetzelfde rijtje welke cel je wél hebt getypt.
+
+    Typ je sou waar soi werd gevraagd, dan is dat geen willekeurige fout maar een
+    verwisseling van naamval — en juist dat wil je weten. Geeft het label van die
+    cel terug, of None als je invoer nergens in het rijtje voorkomt.
+    """
+    if not str(typed or "").strip():
+        return None
+    ing = normaliseer_accent(naar_grieks_transliteratie(typed))
+    if not ing:
+        return None
+    for c in (cellen or []):
+        if juiste_id is not None and c.get("id") == juiste_id:
+            continue
+        # een cel kan varianten hebben, bv. 'emou / mou'
+        for deel in re.split(r"[/,]", str(c.get("vorm", "") or "")):
+            if deel.strip() and normaliseer_accent(deel.strip()) == ing:
+                return c.get("label", "")
+    return None
+
+
 def grieks_vorm_ok(typed, correct):
     """Tolerante vergelijking van een Griekse vorm: accenten/leestekens genegeerd, Latijnse óf Griekse
     invoer, en elk deel van een 'x / y'-vorm (gescheiden door / , of ;) telt als goed."""
@@ -3364,7 +3386,8 @@ def leerpad_kaart_volgorde(sampled):
 
 # --- DAGELIJKS DOEL ---
 # Label voor "de app kiest de oefenvorm zelf" - overal hetzelfde in de app.
-_NR = chr(10) + chr(10)   # lege regel in markdown-tekst
+_NR = chr(10) + chr(10)
+_NR_ZACHT = "  " + chr(10)   # regelafbreking binnen dezelfde alinea   # lege regel in markdown-tekst
 AUTO_VORM = "🤖 Automatisch (aanbevolen)"
 _STAM_VORMEN = [AUTO_VORM, "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen"]
 _STRUCT_VORMEN = [AUTO_VORM, "1. MC", "2. Mix (MC + Typen)", "3. Typen"]
@@ -6407,9 +6430,15 @@ def main():
                         for c in cells:
                             st.markdown(f"- **{c['label']}** — {c.get('stam','')}:blue[{c.get('uitgang','')}]")
 
-                    if st.session_state.get('af_feedback'):
-                        _fb = st.session_state.af_feedback
-                        {"success": st.success, "warning": st.warning}.get(_fb["type"], st.error)(_fb["msg"])
+                    # De feedback hoort bij de vórige kaart maar wordt hieronder getoond,
+                    # vlak boven de nieuwe vraag. Bovenaan het tabblad viel hij buiten beeld
+                    # zodra het invoerveld de focus pakte en de pagina naar beneden sprong.
+                    def _toon_af_feedback():
+                        _fb = st.session_state.get('af_feedback')
+                        if not _fb:
+                            return
+                        {"success": st.success, "warning": st.warning}.get(
+                            _fb["type"], st.error)(_fb["msg"])
                         st.session_state.af_feedback = None
 
                     def _af_score(_cid, _delta, _goed):
@@ -6466,11 +6495,12 @@ def main():
                                          if cid not in _huidige_ids
                                          and int((st.session_state.actief_stats.get(cid) or {}).get('streak', 0)) >= ACTIEF_BEHEERST]
                             if _beheerst and _q:
-                                _n = min(3, len(_beheerst))
-                                _herhaal = r_engine.sample(_beheerst, _n)
-                                _stap = max(1, len(_q) // (_n + 1))
-                                for _i, _rid in enumerate(_herhaal):
-                                    _q.insert(min(len(_q), _stap * (_i + 1) + _i), (_rid, 'Herhaal'))
+                                # ACHTERAAN, niet ertussendoor. Een vorm uit een ander rijtje
+                                # middenin dit paradigma is geen herhaling maar een valstrik:
+                                # je zit in het hoofd van 'jij/jullie' en krijgt dan de acc van
+                                # 'ik/wij'. Eerst dit rijtje afmaken, dan pas ophalen.
+                                _q.extend((_rid, 'Herhaal')
+                                          for _rid in r_engine.sample(_beheerst, min(2, len(_beheerst))))
                             elif _beheerst:
                                 # Niets nieuws meer te leren in dit rijtje → puur herhaal-modus van oude stof.
                                 _n = min(8, len(_beheerst))
@@ -6499,6 +6529,7 @@ def main():
                             if sub == 'Herhaal':
                                 st.caption("↩️ Herhaling van oude stof — even ophalen zodat het erin blijft zitten.")
                             # Paradigma NAAST het cel-label, zodat 'Gen ev van ἐγώ' niet met 'Gen ev van σύ' verwart.
+                            _toon_af_feedback()
                             st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']} "
                                         f"<span style='font-size:17px;color:#9aa3af;font-weight:400'>van {_celpar}</span></div>",
                                         unsafe_allow_html=True)
@@ -6540,7 +6571,15 @@ def main():
                                         if grieks_vorm_ok(_in, cell['vorm']):
                                             _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
+                                            _af_score(cid, -2, False)
+                                            _msg = f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"
+                                            _anders = welke_vorm_typte_je(_in, cells, cid)
+                                            if _anders:
+                                                _msg += (_NR_ZACHT + f"↔ Jij typte de **{_anders}** "
+                                                         f"van {_celpar}. Gevraagd was de "
+                                                         f"**{cell['label']}** — let op de uitgang.")
+                                            st.session_state.af_feedback = {"type": "error", "msg": _msg}
+                                            _volgende(requeue=True)
                                         trigger_save(); st.rerun()
 
                             # 'Ik weet het niet' — toont het antwoord zonder aftrek en zet de kaart weer

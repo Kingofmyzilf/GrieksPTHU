@@ -4353,5 +4353,12 @@ def lezenpagina():
     onderbalk("Lezen")
 
 
-ui.run(title="Grieks", dark=True, port=8123, reload=False, show=False, favicon="\U0001F4D6",
+# Een hostingplatform (Render, Railway, Fly) geeft de poort mee via PORT; lokaal blijft
+# het gewoon 8123. NiceGUI luistert buiten native-modus vanzelf op 0.0.0.0, dus dat hoeft
+# hier niet apart. GRIEKS_ON_AIR=1 geeft een openbare URL via NiceGUI On Air — handig om
+# de app even op je telefoon of op een ander netwerk te bekijken zonder te hosten.
+_on_air = os.environ.get("GRIEKS_ON_AIR", "").strip()
+ui.run(title="Grieks", dark=True, port=int(os.environ.get("PORT", 8123)),
+       reload=False, show=False, favicon="\U0001F4D6",
+       on_air=(_on_air if _on_air not in ("", "0", "1") else _on_air == "1"),
        storage_secret=os.environ.get("GRIEKS_SESSIE_SLEUTEL", "grieks-lokaal-ontwikkelen"))

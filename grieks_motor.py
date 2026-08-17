@@ -12,7 +12,6 @@ import functools
 import json
 import math
 import os
-import pandas as pd
 import random as r_engine
 import re
 import unicodedata
@@ -120,9 +119,17 @@ def naar_grieks_transliteratie(tekst):
     return res
 
 
+def _heeft_waarde(waarde):
+    """True als er echt iets staat. Doet wat pandas' notna() deed: None en NaN tellen
+    niet mee. Zo hoeft de NiceGUI-schil pandas niet te laden — dat scheelt zeventig
+    megabyte geheugen op de server, voor deze ene controle. NaN is het enige dat
+    ongelijk aan zichzelf is; daar herken je het aan."""
+    return waarde is not None and waarde == waarde
+
+
 @functools.lru_cache(maxsize=200000)
 def normaliseer_accent(woord):
-    if pd.notna(woord) and str(woord).strip() != "":
+    if _heeft_waarde(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')

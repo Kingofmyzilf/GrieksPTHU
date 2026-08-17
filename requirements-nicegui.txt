@@ -1,7 +1,13 @@
 # Afhankelijkheden voor de NiceGUI-schil (grieks_app.py).
 # De Streamlit-app blijft draaien op requirements.txt; die twee staan los van elkaar.
+#
+# Bewust NIET hierin:
+#   pandas   — de motor gebruikt het niet meer (scheelt ~70 MB geheugen op de server)
+#   pymupdf  — alleen nodig voor de grammatica-slides, en die zijn nog niet overgezet
+#   truststore — alleen voor Windows-machines waar een virusscanner het certificaat
+#                vervangt; op een server heb je het niet nodig en is het niet te
+#                installeren op elke Python-versie. grieks_opslag slaat het over als
+#                het ontbreekt.
 nicegui
-pandas
 gspread
 google-auth
-truststore
