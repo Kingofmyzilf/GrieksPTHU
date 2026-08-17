@@ -187,8 +187,16 @@ def inlogpagina():
         melding = ui.label().style(f"color:{FOUT};font-size:13px;min-height:18px")
         knop = ui.button("Beginnen").props("unelevated").classes("w-full").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:46px")
-        ui.label("Gebruik je dezelfde twee woorden als in je huidige app, dan staat je "
+        ui.label("Gebruik je dezelfde twee woorden als in de volledige app, dan staat je "
                  "voortgang er meteen.").style(f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+        # Andersom verwijst de volledige app hierheen; zo weet je op elk inlogscherm
+        # welke van de twee je voor je hebt.
+        if STREAMLIT_URL:
+            ui.html(f"<div style='color:{ZACHT};font-size:12.5px;line-height:1.6'>"
+                    f"Deze app is voor snel oefenen: woorden, rijtjes en stamtijden. "
+                    f"Ontleden, leesteksten en grammatica staan in de "
+                    f"<a href='{STREAMLIT_URL}' style='color:{MERK};text-decoration:none'>"
+                    f"volledige app</a>.</div>")
 
     async def probeer():
         melding.text = ""
