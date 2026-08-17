@@ -66,31 +66,62 @@ op de andere terecht en moet je steeds opnieuw inloggen. Zet autoscaling dus uit
 Dat platform draait alleen Streamlit-apps (`streamlit run ...`). De Streamlit-versie
 kan daar blijven staan; de NiceGUI-app heeft een gewone Python-host nodig.
 
-### Aanbevolen: Render
+### De bestaande service ombouwen
 
-Render is de enige van de drie grote met een echte gratis laag. In de repo staat
-`render.yaml` klaar; kies bij Render **New → Blueprint** en wijs deze repo aan.
+Er draait al een Render-service **GrieksPTHU** (`griekspthu.onrender.com`) die van
+`main` de Streamlit-app uitrolt. Die is overbodig geworden — Streamlit staat ook op
+Streamlit Community Cloud — en de 750 gratis uren per maand gelden voor je hele
+account samen. Bouw hem dus om in plaats van er een tweede naast te zetten.
+
+In **Settings → Build & Deploy**:
+
+| veld | van | naar |
+|---|---|---|
+| Branch | `main` | `nicegui-deploy` |
+| Build Command | (streamlit) | `pip install -r requirements-nicegui.txt` |
+| Start Command | (streamlit) | `python grieks_app.py` |
+
+En in **Environment** deze vier erbij (of controleren):
+
+| variabele | waarde |
+|---|---|
+| `GSHEETS_CREDENTIALS` | de service-account-JSON, als één regel |
+| `GSHEETS_SPREADSHEET` | de URL of sleutel van je Google Sheet |
+| `GRIEKS_STREAMLIT` | `https://woordengriekspthu.streamlit.app` |
+| `GRIEKS_SESSIE_SLEUTEL` | een willekeurige lange tekst; ondertekent de sessiecookie |
+
+Deze service is met de hand aangemaakt, niet uit `render.yaml`. Render kan hem
+daarom niet alsnog aan die blauwdruk koppelen: als je **New → Blueprint** doet krijg
+je een tweede service ernaast. `render.yaml` blijft wél kloppen als beschrijving van
+wat er moet staan, en is handig als je ooit opnieuw begint.
+
+### Helemaal opnieuw beginnen: Render Blueprint
+
+Kies **New → Blueprint** en wijs deze repo aan; Render leest `render.yaml` en vraagt
+om de drie waarden met `sync: false`. `GRIEKS_SESSIE_SLEUTEL` verzint hij zelf.
+
+### Welk plan
 
 * **Free** — 512 MB, 0,1 CPU, gratis. Slaapt na 15 minuten zonder verkeer en doet er
   daarna ongeveer een minuut over om wakker te worden. Je voortgang blijft veilig
-  (die staat in de Sheet), maar je moet na het slapen opnieuw inloggen.
+  (die staat in de Sheet), maar je moet na het slapen opnieuw inloggen: wie is
+  ingelogd staat in het geheugen van het proces.
 * **Starter** — 512 MB, 0,5 CPU, ongeveer $7 per maand. Slaapt niet. Dit is wat je
   wilt zodra een klas de app echt gebruikt.
 
-Zet daarna deze twee omgevingsvariabelen in het Render-dashboard (ze staan in
-`render.yaml` op `sync: false`, dus Render vraagt erom):
+De 750 gratis instance-uren per maand gelden voor je hele account, niet per service.
+Twee gratis services die allebei wakker zijn halveren dus je budget.
 
-| variabele | wat erin moet |
-|---|---|
-| `GSHEETS_SPREADSHEET` | de URL of de sleutel van je Google Sheet |
-| `GSHEETS_CREDENTIALS` | de hele service-account-JSON, als één regel |
-| `GRIEKS_STREAMLIT` | de URL van de Streamlit-app, voor de verwijzingen |
+### De sleutels
 
-`GRIEKS_SESSIE_SLEUTEL` genereert Render zelf; die ondertekent de sessiecookie.
+De inhoud voor `GSHEETS_CREDENTIALS` en `GSHEETS_SPREADSHEET` haal je uit
+`.streamlit/secrets.toml`, sectie `[connections.gsheets]`. Dat bestand staat in
+`.gitignore` en moet daar blijven — zet de sleutels alleen in het dashboard, nooit
+in de repo. De JSON als één regel op je klembord:
 
-De inhoud voor die twee haal je uit `.streamlit/secrets.toml`, sectie
-`[connections.gsheets]`. Dat bestand staat in `.gitignore` en moet daar blijven —
-zet de sleutels alleen in het dashboard, nooit in de repo.
+```bash
+py -c "import tomllib,json;b=tomllib.load(open('.streamlit/secrets.toml','rb'))['connections']['gsheets'];print(json.dumps({k:v for k,v in b.items() if k not in ('spreadsheet','url','worksheet')}))" | clip
+```
 
 ### Alternatieven
 
