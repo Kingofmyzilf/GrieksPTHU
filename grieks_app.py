@@ -14,6 +14,7 @@ import math
 import os
 import random
 from datetime import date, timedelta
+from urllib.parse import quote
 
 from nicegui import app, run, ui
 
@@ -85,8 +86,8 @@ _sessies = {}
 # draait de app prima door — alleen vervalt alles wat de bijbeltekst nodig heeft:
 # Ontleden, de verbogen vormen uit het NT bij beheerste woorden, en het tekstfilter
 # bij Stamtijden. Zo kun je een lichte versie hosten en lokaal toch alles hebben.
-# GRIEKS_STREAMLIT verwijst dan naar de volledige app.
-STREAMLIT_URL = os.environ.get("GRIEKS_STREAMLIT", "").strip()
+STREAMLIT_URL = os.environ.get(
+    "GRIEKS_STREAMLIT", "https://woordengriekspthu.streamlit.app").strip().rstrip("/")
 
 
 def bijbel_aanwezig():
@@ -97,7 +98,25 @@ def bijbel_aanwezig():
 BIJBEL = bijbel_aanwezig()
 
 
-def naar_streamlit(waarvoor):
+def streamlit_adres(g=None):
+    """De volledige app, met je naam en codewoord erin zodat je meteen goed zit.
+    De Streamlit-app leest die uit ?u= (zie main() daar). Ze staan dan wel in je
+    browsergeschiedenis; dat kan hier, omdat het geen wachtwoord is — de app zegt dat
+    bij het inloggen ook met zoveel woorden."""
+    if not STREAMLIT_URL:
+        return ""
+    sleutel = getattr(g, "sleutel", "") if g is not None else ""
+    return f"{STREAMLIT_URL}/?u={quote(sleutel)}" if sleutel else STREAMLIT_URL
+
+
+def streamlit_link(g, tekst="Open de volledige app →"):
+    adres = streamlit_adres(g)
+    if adres:
+        ui.html(f"<a href='{adres}' target='_blank' style='color:{MERK};font-size:14px;"
+                f"text-decoration:none'>{tekst}</a>")
+
+
+def naar_streamlit(g, waarvoor):
     """Kaartje dat uitlegt dat dit onderdeel in de volledige app zit."""
     with ui.element("div").classes("kaart w-full"):
         ui.label("Zit in de volledige app").style(
@@ -105,9 +124,7 @@ def naar_streamlit(waarvoor):
         ui.label(f"{waarvoor} werkt met de tekst van het Nieuwe Testament. Die staat niet "
                  f"in deze lichte versie; gebruik daarvoor de Streamlit-app.").style(
             f"color:{ZACHT};font-size:13px;line-height:1.5")
-        if STREAMLIT_URL:
-            ui.html(f"<a href='{STREAMLIT_URL}' target='_blank' style='color:{MERK};"
-                    f"font-size:14px;text-decoration:none'>Open de volledige app →</a>")
+        streamlit_link(g)
 
 
 def _huidige():
@@ -950,9 +967,7 @@ def oefenhub():
                 f"color:{ZACHT};font-size:13px;line-height:1.6")
             ui.label("Deze onderdelen staan in de Streamlit-app.").style(
                 f"color:{ZACHT};font-size:12px;margin-top:4px")
-            if STREAMLIT_URL:
-                ui.html(f"<a href='{STREAMLIT_URL}' target='_blank' style='color:{MERK};"
-                        f"font-size:13.5px;text-decoration:none'>Daarheen →</a>")
+            streamlit_link(g, "Daarheen →")
     onderbalk("Oefenen")
 
 
@@ -3291,7 +3306,7 @@ def ontpagina():
     if not BIJBEL:
         with ui.column().classes("inhoud w-full gap-3"):
             ui.label("Ontleden").style("font-size:26px;font-weight:700")
-            naar_streamlit("Ontleden")
+            naar_streamlit(g, "Ontleden")
         onderbalk("Oefenen")
         return
     p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
@@ -4202,6 +4217,13 @@ def voortgangpagina():
                       voortgang_csv(g), "mijn_grieks_voortgang.csv")).props("flat").style(
             f"color:{MERK};border:1px solid {RAND};border-radius:10px")
 
+        with ui.element("div").classes("kaart w-full"):
+            ui.label("Meer overzichten").style(f"color:{TEKST};font-size:15px;font-weight:600")
+            ui.label("De studieplanner per tentamen, de aartsrivalen en alle grafieken "
+                     "staan in de volledige app.").style(
+                f"color:{ZACHT};font-size:13px;line-height:1.5")
+            streamlit_link(g)
+
         ui.button("Uitloggen", on_click=lambda: (
             _sessies.pop(app.storage.user.get("sleutel"), None),
             app.storage.user.clear(), ui.navigate.to("/"))).props("flat").style(
@@ -4359,6 +4381,10 @@ def lijstpagina():
         for veld in (kies, zoekveld, alleen):
             veld.on_value_change(lambda _=None: teken())
         teken()
+        ui.label("Een vorm in de Bijbel opzoeken, of de grammatica doorzoeken? Dat doe "
+                 "je in de volledige app.").style(
+            f"color:{ZACHT};font-size:12.5px;line-height:1.5;margin-top:6px")
+        streamlit_link(g)
     onderbalk("Lezen")
 
 
@@ -4397,9 +4423,7 @@ def lezenpagina():
                       "Bijbel staan in de Streamlit-app. Deze versie draait zonder de "
                       "NT-tekst, en is daarmee klein genoeg om overal te draaien.")).style(
                 f"color:{ZACHT};font-size:13px;line-height:1.5")
-            if STREAMLIT_URL:
-                ui.html(f"<a href='{STREAMLIT_URL}' target='_blank' style='color:{MERK};"
-                        f"font-size:14px;text-decoration:none'>Open de volledige app →</a>")
+            streamlit_link(g)
     onderbalk("Lezen")
 
 

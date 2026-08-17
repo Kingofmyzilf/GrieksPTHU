@@ -4519,9 +4519,23 @@ def main():
                 "Nieuwtestamentisch Grieks · PThU</div></div>",
                 unsafe_allow_html=True)
             st.write("")
-            u_naam = st.text_input("Naam", key="inp_naam").strip()
-            u_code = st.text_input("Code", type="password", key="inp_code").strip()
-            if st.button("Inloggen", type="primary"):
+            # Zelfde uitleg als in de snelle oefen-app. Bewust géén wachtwoordveld: dat
+            # nodigt uit tot het intypen van een echt wachtwoord, en deze twee woorden
+            # worden onversleuteld in de Google Sheet bewaard.
+            st.markdown(
+                "<div style='background:#1e1e1e; border:1px solid #2b3038; border-radius:12px; "
+                "padding:14px; font-size:13px; line-height:1.55; color:#9aa4ae;'>"
+                "<b style='color:#fafafa;'>Dit is geen wachtwoord.</b><br>"
+                "Je naam en codewoord vormen samen het label waaronder je voortgang wordt "
+                "bewaard. Ze beveiligen niets en staan gewoon leesbaar in de spreadsheet — "
+                "<b style='color:#fafafa;'>vul hier dus nooit een echt wachtwoord in.</b><br>"
+                "Kies iets wat je onthoudt, bijvoorbeeld <i>zomer2026</i>.</div>",
+                unsafe_allow_html=True)
+            st.write("")
+            u_naam = st.text_input("Naam", key="inp_naam", placeholder="bijv. Bob").strip()
+            u_code = st.text_input("Codewoord", key="inp_code",
+                                   placeholder="bijv. zomer2026").strip()
+            if st.button("Beginnen", type="primary"):
                 if u_naam and u_code:
                     user_input = f"{u_naam}_{u_code}"
                     st.query_params["u"] = user_input
@@ -4529,7 +4543,8 @@ def main():
                     st.session_state.last_user = user_input
                     st.rerun()
                 else: st.warning("Vul beide velden in.")
-            st.caption("Kies zelf een naam en code. Daar hangt je voortgang aan — bewaar ze goed.")
+            st.caption("Gebruik je dezelfde twee woorden als in de snelle oefen-app, dan "
+                       "staat je voortgang er meteen.")
             with st.expander("Backup herstellen"):
                 _herstel_backup_formulier()
     else:
