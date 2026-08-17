@@ -195,6 +195,33 @@ def onderbalk(actief):
     ui.html(f"<div class='onderbalk'>{vakken}</div>")
 
 
+def typbalk(hint):
+    """De antwoordbalk voor de oefeningen waar je iets kunt typen: veld links, knop
+    rechts. Geeft (invoer, knop) terug.
+
+    Twee dingen liggen hier vast omdat ze anders bij elke beurt verspringen. De knop
+    heeft een vaste breedte, zodat 'Nakijken' en 'Nieuwe ronde' hem niet opzij duwen.
+    En hij blijft rechts staan, ook als er niets te typen valt: verberg je het veld
+    met set_visibility (display:none), dan schuift de knop naar de linkerkant van het
+    scherm — met je duim de lastigste hoek. Gebruik daarom toon_typveld().
+    """
+    with ui.element("div").classes("antwoordbalk"):
+        with ui.row().classes("w-full gap-2 no-wrap items-center"):
+            invoer = ui.input(placeholder=hint).props(
+                "outlined dense dark autocomplete=off").classes("flex-grow")
+            knop = ui.button("Nakijken").props("unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
+                f"width:132px;min-width:132px;font-size:14px")
+    return invoer, knop
+
+
+def toon_typveld(invoer, aan):
+    """Het veld tonen of verbergen zónder de ruimte op te geven, zodat de knop ernaast
+    niet verspringt. Onzichtbaar is het ook niet aan te tikken, dus het toetsenbord
+    springt niet ongevraagd open."""
+    invoer.style(f"visibility:{'visible' if aan else 'hidden'}")
+
+
 def _bewaakt():
     """Geeft de ingelogde gebruiker, of stuurt naar het inlogscherm."""
     g = _huidige()
@@ -2214,12 +2241,7 @@ def stampagina():
             "min-height:64px;padding-top:8px")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
 
-    with ui.element("div").classes("antwoordbalk"):
-        with ui.row().classes("w-full gap-2 no-wrap items-center"):
-            invoer = ui.input(placeholder="van welk werkwoord? (x = χ, u = υ, h = η)").props(
-                "outlined dense dark autocomplete=off").classes("flex-grow")
-            knop = ui.button("Nakijken").props("unelevated").style(
-                f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
+    invoer, knop = typbalk("van welk werkwoord? (x = χ, u = υ, h = η)")
     onderbalk("Oefenen")
 
     def teken():
@@ -2245,14 +2267,19 @@ def stampagina():
                                 f"padding:11px 6px'>{TIJD_KORT[t]}</button>").on(
                             "click", lambda _=None, tt=t: kies_tijd(tt)).style("flex:1")
 
-    def kies_tijd(t):
-        if sessie.beoordeeld:
+    async def kies_tijd(t):
+        if sessie.beoordeeld or sessie.bezig:
             return
         sessie.tijd_keuze = t
         teken_tijden()
-        # Meteen door naar het typveld: anders moet je daar nog een keer op tikken.
         if sessie.vraag_praesens:
+            # Het antwoord is nog niet af — er hoort ook een werkwoord bij. Alvast naar
+            # het typveld, anders moet je daar nog een keer op tikken.
             invoer.run_method("focus")
+        else:
+            # Alleen de tijd gevraagd: met je keuze is het antwoord compleet, dus kijk
+            # meteen na. Net als bij de woorden, waar één tik op een optie genoeg is.
+            await nakijken()
 
     def toon():
         terugkoppeling.clear()
@@ -2264,13 +2291,13 @@ def stampagina():
             vak.set_visibility(True)
         sessie.vraag_praesens = bool(v) and stam_vraagt_praesens(
             sessie.prefs["stam_vraagvorm"], v["streak"])
-        invoer.set_visibility(sessie.vraag_praesens)
+        toon_typveld(invoer, sessie.vraag_praesens)
         if v is None:
             vormlabel.text = "✓"
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
             tijdknoppen.clear()
-            invoer.set_visibility(False)
+            toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
             return
@@ -2278,7 +2305,9 @@ def stampagina():
         vraagsoort.text = ("Welke tijd is dit, en van welk werkwoord?"
                            if sessie.vraag_praesens else "Welke tijd is dit?")
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
-        knop.text = "Nakijken"
+        # Wordt alleen de tijd gevraagd, dan kijkt je tik op een tijd meteen na en houdt
+        # de knop de rol die hij bij de woorden ook heeft: opgeven.
+        knop.text = "Nakijken" if sessie.vraag_praesens else "Ik weet het niet"
         invoer.value = ""
         teken()
         teken_tijden()
@@ -2312,7 +2341,9 @@ def stampagina():
             sessie.i += 1
             toon()
             return
-        if sessie.tijd_keuze is None:
+        if sessie.tijd_keuze is None and sessie.vraag_praesens:
+            # Er hoort ook een werkwoord bij, dus de knop heet hier 'Nakijken'. Zonder
+            # gekozen tijd valt er niets na te kijken; even zeggen wat er nog mist.
             ui.notify("Kies eerst een tijd.", position="top", color="dark")
             return
         tijd_ok = sessie.tijd_keuze == v["tijd"]
@@ -2372,7 +2403,7 @@ def stampagina():
         statusbalk.set_visibility(False)
         vormlabel.set_visibility(False)
         vraagsoort.set_visibility(False)
-        invoer.set_visibility(False)
+        toon_typveld(invoer, False)
         terugkoppeling.clear()
         with terugkoppeling:
             ui.html(
@@ -2877,12 +2908,7 @@ def afpagina():
             "min-height:64px;padding-top:8px")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
 
-    with ui.element("div").classes("antwoordbalk"):
-        with ui.row().classes("w-full gap-2 no-wrap items-center"):
-            invoer = ui.input(placeholder="typ de vorm (x = χ, u = υ, h = η)").props(
-                "outlined dense dark autocomplete=off").classes("flex-grow")
-            knop = ui.button("Nakijken").props("unelevated").style(
-                f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
+    invoer, knop = typbalk("typ de vorm (x = χ, u = υ, h = η)")
     onderbalk("Oefenen")
 
     def teken():
@@ -2905,7 +2931,7 @@ def afpagina():
             gevraagd.text = "✓"
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
-            invoer.set_visibility(False)
+            toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
             return
@@ -2924,7 +2950,7 @@ def afpagina():
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
         invoer.value = ""
-        invoer.set_visibility(sessie.vraag_typen)
+        toon_typveld(invoer, sessie.vraag_typen)
         teken()
         if not sessie.vraag_typen:
             # Afleiders uit hetzelfde rijtje: zo leer je de cellen onderling onderscheiden.
@@ -2961,7 +2987,7 @@ def afpagina():
         opgeslagen = await run.io_bound(g.bewaar)
         for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
-        invoer.set_visibility(False)
+        toon_typveld(invoer, False)
         opbouw = ""
         if c["stam"] and c["uitgang"]:
             opbouw = (f"<div style='font-size:18px;margin-top:16px'>"
@@ -3208,12 +3234,7 @@ def swpagina():
             "min-height:64px;padding-top:8px")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
 
-    with ui.element("div").classes("antwoordbalk"):
-        with ui.row().classes("w-full gap-2 no-wrap items-center"):
-            invoer = ui.input(placeholder="betekenis").props(
-                "outlined dense dark autocomplete=off").classes("flex-grow")
-            knop = ui.button("Nakijken").props("unelevated").style(
-                f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
+    invoer, knop = typbalk("betekenis")
     onderbalk("Oefenen")
 
     def teken():
@@ -3235,7 +3256,7 @@ def swpagina():
             soort.text = ""
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
-            invoer.set_visibility(False)
+            toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
             return
@@ -3247,7 +3268,7 @@ def swpagina():
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
         invoer.value = ""
-        invoer.set_visibility(sessie.vraag_typen)
+        toon_typveld(invoer, sessie.vraag_typen)
         teken()
         if not sessie.vraag_typen:
             # Afleiders het liefst uit dezelfde categorie: voorzetsels met voorzetsels.
@@ -3288,7 +3309,7 @@ def swpagina():
         opgeslagen = await run.io_bound(g.bewaar)
         for vak in (woord, soort, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
-        invoer.set_visibility(False)
+        toon_typveld(invoer, False)
         eig = w.get("eigenschap", "")
         regel_eig = (f"<div style='color:{MERK};font-size:15px;margin-top:6px'>{eig}</div>"
                      if eig else "")
