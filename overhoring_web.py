@@ -7856,6 +7856,7 @@ def main():
                     ["🔎 Zoeken", "📖 Bestuderen", "🔀 Contractietrainer", "📊 Voortgang"],
                     horizontal=True
                 )
+                st.caption("Dit zoekt in de **grammatica-onderwerpen** (naamvallen, tijden, constructies). Zoek je wat een **woord betekent** of hoe een vorm ontleed wordt? Gebruik dan de zoekfunctie in het 🔎 **Ontleden**-tabblad.")
                 st.write("---")
 
                 # ==========================================================
