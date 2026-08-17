@@ -236,15 +236,44 @@ def naar_grieks_transliteratie(tekst):
         res = res[:-1] + 'ς'
     return res
 
+def _heeft_waarde(waarde):
+    """True als er echt iets staat. Doet wat pandas' notna() deed: None en NaN tellen
+    niet mee. Zo hoeft de NiceGUI-schil pandas niet te laden — dat scheelt zeventig
+    megabyte geheugen op de server, voor deze ene controle. NaN is het enige dat
+    ongelijk aan zichzelf is; daar herken je het aan."""
+    return waarde is not None and waarde == waarde
+
 @functools.lru_cache(maxsize=200000)
 def normaliseer_accent(woord):
-    if pd.notna(woord) and str(woord).strip() != "":
+    if _heeft_waarde(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
         w = w.replace('(ν)', '').replace('(ν', '').replace('ν)', '')
         return w.strip()
     return ""
+
+def welke_vorm_typte_je(typed, cellen, juiste_id=None):
+    """Zoekt in hetzelfde rijtje welke cel je wél hebt getypt.
+
+    Typ je sou waar soi werd gevraagd, dan is dat geen willekeurige fout maar een
+    verwisseling van naamval — en juist dat wil je weten. Geeft het label van die
+    cel terug, of None als je invoer nergens in het rijtje voorkomt.
+    """
+    if not str(typed or "").strip():
+        return None
+    ing = normaliseer_accent(naar_grieks_transliteratie(typed))
+    if not ing:
+        return None
+    for c in (cellen or []):
+        if juiste_id is not None and c.get("id") == juiste_id:
+            continue
+        # een cel kan varianten hebben, bv. 'emou / mou'
+        for deel in re.split(r"[/,]", str(c.get("vorm", "") or "")):
+            if deel.strip() and normaliseer_accent(deel.strip()) == ing:
+                return c.get("label", "")
+    return None
+
 
 def grieks_vorm_ok(typed, correct):
     """Tolerante vergelijking van een Griekse vorm: accenten/leestekens genegeerd, Latijnse óf Griekse
@@ -3364,7 +3393,8 @@ def leerpad_kaart_volgorde(sampled):
 
 # --- DAGELIJKS DOEL ---
 # Label voor "de app kiest de oefenvorm zelf" - overal hetzelfde in de app.
-_NR = chr(10) + chr(10)   # lege regel in markdown-tekst
+_NR = chr(10) + chr(10)      # lege regel in markdown-tekst
+_NR_ZACHT = "  " + chr(10)   # regelafbreking binnen dezelfde alinea
 AUTO_VORM = "🤖 Automatisch (aanbevolen)"
 _STAM_VORMEN = [AUTO_VORM, "🔢 MC", "🔀 Mix (MC + Typen)", "⌨️ Typen"]
 _STRUCT_VORMEN = [AUTO_VORM, "1. MC", "2. Mix (MC + Typen)", "3. Typen"]
@@ -4135,20 +4165,24 @@ def _ws_naam(naam):
     schoon = re.sub(r'[^0-9A-Za-z_]', '_', str(naam or ''))
     return ("u_" + schoon)[:95]
 
-def _bouw_rij_dict():
-    """Zet alle voortgang uit het geheugen om in één (gechunkte) rij, klaar voor de Sheet."""
+_OPSLAG_SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
+                 ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
+                 ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
+                 ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
+                 ('klank_stats', 'kl_chunks')]
+
+
+def _bouw_rij_dict(stats=None):
+    """Zet voortgang om in één (gechunkte) rij, klaar voor de Sheet.
+    Zonder argument: de voortgang uit het geheugen."""
     def get_chunks(data_dict, prefix, max_len=40000):
         s = json.dumps(data_dict, ensure_ascii=False)
         chunks = [s[i:i+max_len] for i in range(0, len(s), max_len)]
         return {f"{prefix}_{i}": c for i, c in enumerate(chunks)}, len(chunks)
-    specs = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
-             ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
-             ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
-             ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
-             ('klank_stats', 'kl_chunks')]
     rij = {'gebruikersnaam': st.session_state.last_user}
-    for dictkey, countcol in specs:
-        ch, n = get_chunks(st.session_state.get(dictkey, {}) or {}, dictkey)
+    for dictkey, countcol in _OPSLAG_SPECS:
+        bron = (stats or {}).get(dictkey) if stats is not None else st.session_state.get(dictkey, {})
+        ch, n = get_chunks(bron or {}, dictkey)
         rij.update(ch); rij[countcol] = n
     return rij
 
@@ -4246,10 +4280,33 @@ def lees_scorebord(cache_key):
                     'onderdelen': ond, 'gedaan': gedaan})
     return out
 
+def _samengevoegde_stats():
+    """Mijn voortgang samen met wat er nu in de Sheet staat.
+
+    De NiceGUI-app (grieks_app.py) schrijft naar hetzelfde tabblad en schrijft, net als
+    wij, de héle rij weg. Zonder samenvoegen wist wie het laatst opslaat alles wat de
+    ander deed sinds diens inloggen — dan lijkt een streak 'niet opgeslagen'. De regels
+    staan in grieks_opslag.samenvoeg_stats; die deelt de twee apps.
+
+    Lukt het lezen niet, dan voegen we niets samen en schrijven we gewoon onze eigen
+    staat weg: liever de oude situatie dan helemaal niet kunnen opslaan.
+    """
+    mijn = {sleutel: (st.session_state.get(sleutel, {}) or {})
+            for sleutel, _teller in _OPSLAG_SPECS}
+    try:
+        from grieks_opslag import lees_rij, samenvoeg_stats
+        df = conn.read(worksheet=_ws_naam(st.session_state.last_user), ttl=0)
+        if df is None or df.empty:
+            return mijn
+        return samenvoeg_stats(lees_rij(df.iloc[0]), mijn)
+    except Exception:
+        return mijn
+
+
 def opslaan_naar_cloud(update_scorebord=True):
     if not st.session_state.get('last_user'): return
     try:
-        rij = _bouw_rij_dict()
+        rij = _bouw_rij_dict(_samengevoegde_stats())
         df_row = pd.DataFrame([rij])
         ws = _ws_naam(st.session_state.last_user)
         # Schrijf naar het EIGEN tabblad (geen kruis-overschrijving). Bestaat de tab nog niet →
@@ -4462,9 +4519,23 @@ def main():
                 "Nieuwtestamentisch Grieks · PThU</div></div>",
                 unsafe_allow_html=True)
             st.write("")
-            u_naam = st.text_input("Naam", key="inp_naam").strip()
-            u_code = st.text_input("Code", type="password", key="inp_code").strip()
-            if st.button("Inloggen", type="primary"):
+            # Zelfde uitleg als in de snelle oefen-app. Bewust géén wachtwoordveld: dat
+            # nodigt uit tot het intypen van een echt wachtwoord, en deze twee woorden
+            # worden onversleuteld in de Google Sheet bewaard.
+            st.markdown(
+                "<div style='background:#1e1e1e; border:1px solid #2b3038; border-radius:12px; "
+                "padding:14px; font-size:13px; line-height:1.55; color:#9aa4ae;'>"
+                "<b style='color:#fafafa;'>Dit is geen wachtwoord.</b><br>"
+                "Je naam en codewoord vormen samen het label waaronder je voortgang wordt "
+                "bewaard. Ze beveiligen niets en staan gewoon leesbaar in de spreadsheet — "
+                "<b style='color:#fafafa;'>vul hier dus nooit een echt wachtwoord in.</b><br>"
+                "Kies iets wat je onthoudt, bijvoorbeeld <i>zomer2026</i>.</div>",
+                unsafe_allow_html=True)
+            st.write("")
+            u_naam = st.text_input("Naam", key="inp_naam", placeholder="bijv. Bob").strip()
+            u_code = st.text_input("Codewoord", key="inp_code",
+                                   placeholder="bijv. zomer2026").strip()
+            if st.button("Beginnen", type="primary"):
                 if u_naam and u_code:
                     user_input = f"{u_naam}_{u_code}"
                     st.query_params["u"] = user_input
@@ -4472,7 +4543,8 @@ def main():
                     st.session_state.last_user = user_input
                     st.rerun()
                 else: st.warning("Vul beide velden in.")
-            st.caption("Kies zelf een naam en code. Daar hangt je voortgang aan — bewaar ze goed.")
+            st.caption("Gebruik je dezelfde twee woorden als in de snelle oefen-app, dan "
+                       "staat je voortgang er meteen.")
             with st.expander("Backup herstellen"):
                 _herstel_backup_formulier()
     else:
@@ -6407,9 +6479,15 @@ def main():
                         for c in cells:
                             st.markdown(f"- **{c['label']}** — {c.get('stam','')}:blue[{c.get('uitgang','')}]")
 
-                    if st.session_state.get('af_feedback'):
-                        _fb = st.session_state.af_feedback
-                        {"success": st.success, "warning": st.warning}.get(_fb["type"], st.error)(_fb["msg"])
+                    # De feedback hoort bij de vórige kaart maar wordt hieronder getoond,
+                    # vlak boven de nieuwe vraag. Bovenaan het tabblad viel hij buiten beeld
+                    # zodra het invoerveld de focus pakte en de pagina naar beneden sprong.
+                    def _toon_af_feedback():
+                        _fb = st.session_state.get('af_feedback')
+                        if not _fb:
+                            return
+                        {"success": st.success, "warning": st.warning}.get(
+                            _fb["type"], st.error)(_fb["msg"])
                         st.session_state.af_feedback = None
 
                     def _af_score(_cid, _delta, _goed):
@@ -6466,11 +6544,12 @@ def main():
                                          if cid not in _huidige_ids
                                          and int((st.session_state.actief_stats.get(cid) or {}).get('streak', 0)) >= ACTIEF_BEHEERST]
                             if _beheerst and _q:
-                                _n = min(3, len(_beheerst))
-                                _herhaal = r_engine.sample(_beheerst, _n)
-                                _stap = max(1, len(_q) // (_n + 1))
-                                for _i, _rid in enumerate(_herhaal):
-                                    _q.insert(min(len(_q), _stap * (_i + 1) + _i), (_rid, 'Herhaal'))
+                                # ACHTERAAN, niet ertussendoor. Een vorm uit een ander rijtje
+                                # middenin dit paradigma is geen herhaling maar een valstrik:
+                                # je zit in het hoofd van 'jij/jullie' en krijgt dan de acc van
+                                # 'ik/wij'. Eerst dit rijtje afmaken, dan pas ophalen.
+                                _q.extend((_rid, 'Herhaal')
+                                          for _rid in r_engine.sample(_beheerst, min(2, len(_beheerst))))
                             elif _beheerst:
                                 # Niets nieuws meer te leren in dit rijtje → puur herhaal-modus van oude stof.
                                 _n = min(8, len(_beheerst))
@@ -6499,6 +6578,7 @@ def main():
                             if sub == 'Herhaal':
                                 st.caption("↩️ Herhaling van oude stof — even ophalen zodat het erin blijft zitten.")
                             # Paradigma NAAST het cel-label, zodat 'Gen ev van ἐγώ' niet met 'Gen ev van σύ' verwart.
+                            _toon_af_feedback()
                             st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']} "
                                         f"<span style='font-size:17px;color:#9aa3af;font-weight:400'>van {_celpar}</span></div>",
                                         unsafe_allow_html=True)
@@ -6540,7 +6620,15 @@ def main():
                                         if grieks_vorm_ok(_in, cell['vorm']):
                                             _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"}; _volgende(requeue=True)
+                                            _af_score(cid, -2, False)
+                                            _msg = f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"
+                                            _anders = welke_vorm_typte_je(_in, cells, cid)
+                                            if _anders:
+                                                _msg += (_NR_ZACHT + f"↔ Jij typte de **{_anders}** "
+                                                         f"van {_celpar}. Gevraagd was de "
+                                                         f"**{cell['label']}** — let op de uitgang.")
+                                            st.session_state.af_feedback = {"type": "error", "msg": _msg}
+                                            _volgende(requeue=True)
                                         trigger_save(); st.rerun()
 
                             # 'Ik weet het niet' — toont het antwoord zonder aftrek en zet de kaart weer
@@ -7856,6 +7944,7 @@ def main():
                     ["🔎 Zoeken", "📖 Bestuderen", "🔀 Contractietrainer", "📊 Voortgang"],
                     horizontal=True
                 )
+                st.caption("Dit zoekt in de **grammatica-onderwerpen** (naamvallen, tijden, constructies). Zoek je wat een **woord betekent** of hoe een vorm ontleed wordt? Gebruik dan de zoekfunctie in het 🔎 **Ontleden**-tabblad.")
                 st.write("---")
 
                 # ==========================================================
