@@ -70,6 +70,13 @@ ui.add_head_html(f"""
   .keuze {{ background:{VLAK}; border:1px solid {RAND}; border-radius:10px; padding:13px 14px;
             cursor:pointer; font-size:16px; text-align:left; width:100%; color:{TEKST}; }}
   .keuze:hover {{ border-color:{MERK}; }}
+  /* Het vraagvak is een toneel van vaste hoogte: de feedback komt eroverheen te liggen
+     in plaats van eronder. Zonder dit groeide de pagina bij elk antwoord, schoven de
+     knoppen weg en stond de uitslag onder de vouw zodra het toetsenbord openstond. */
+  .vraagvak {{ position:relative; min-height:330px; }}
+  .vraagvak > .overlay {{ position:absolute; left:0; right:0; top:0; bottom:0;
+                          background:{INKT}; overflow-y:auto; }}
+  .vraagvak > .overlay:empty {{ display:none; }}
 </style>
 """, shared=True)
 
@@ -1205,25 +1212,41 @@ def oefenpagina():
         if sessie.nieuw_over:
             ui.label(f"🌱 Nog {sessie.nieuw_over} nieuwe woorden in dit level voor een "
                      f"volgende ronde.").style(f"color:{ZACHT};font-size:12px")
-        woord = ui.label().classes("grieks w-full text-center").style(
-            f"font-size:58px;line-height:1.15;color:{TEKST};padding:18px 0 2px")
-        lemma = ui.label().classes("w-full text-center").style(f"color:{ZACHT};font-size:14px")
-        statusbalk = ui.row().classes("w-full gap-2 no-wrap justify-center").style("padding-top:2px")
-        vraagsoort = ui.label().classes("w-full text-center").style(
-            f"color:{ZACHT};font-size:12px")
-        opties = ui.column().classes("w-full gap-2").style("padding-top:8px")
-        terugkoppeling = ui.column().classes("w-full gap-1 items-center").style(
-            "min-height:64px;padding-top:6px")
+        # Eén vast toneel voor de vraag, met de feedback eroverheen in plaats van
+        # eronder. Zo groeit en krimpt de pagina niet bij elk antwoord en blijven de
+        # knoppen op hun plek staan — dat scheelt zoeken tijdens het oefenen.
+        with ui.element("div").classes("vraagvak w-full"):
+            with ui.column().classes("w-full gap-1 items-stretch") as vraagvlak:
+                woord = ui.label().classes("grieks w-full text-center").style(
+                    f"font-size:58px;line-height:1.15;color:{TEKST};padding:14px 0 2px")
+                lemma = ui.label().classes("w-full text-center").style(
+                    f"color:{ZACHT};font-size:14px")
+                statusbalk = ui.row().classes(
+                    "w-full gap-2 no-wrap justify-center").style("padding-top:2px")
+                vraagsoort = ui.label().classes("w-full text-center").style(
+                    f"color:{ZACHT};font-size:12px")
+                # Bij een eerste misser blijft de vraag staan — je mag het nog eens
+                # proberen — dus die aanwijzing komt hier, vlak onder het woord, en
+                # niet in de laag die de vraag bedekt.
+                naastregel = ui.column().classes("w-full gap-1 items-center")
+                opties = ui.column().classes("w-full gap-2").style("padding-top:8px")
+            terugkoppeling = ui.column().classes(
+                "overlay w-full gap-1 items-center justify-center")
         hulp = ui.row().classes("w-full gap-2 no-wrap")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
 
     balk = ui.element("div").classes("antwoordbalk")
     with balk:
         with ui.row().classes("w-full gap-2 no-wrap items-center"):
+            # Het veld blijft altijd staan, ook na het nakijken. Verdween het, dan
+            # schoof de knop naar links en moest je elke beurt ergens anders tikken.
             invoer = ui.input(placeholder="vertaling").props(
                 "outlined dense dark autocomplete=off").classes("flex-grow")
-            knop = ui.button("Nakijken").props("unelevated").style(
-                f"background:{MERK};color:{INKT};font-weight:700;height:40px;min-width:108px")
+            # Vaste breedte: anders schuift de knop bij elk ander opschrift een stukje
+            # opzij en tik je elke beurt op een andere plek.
+            knop = ui.button("Nakijken").props("unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
+                f"width:132px;min-width:132px;font-size:14px")
         weetniet = ui.button("Ik weet het niet — toon het antwoord").props("flat dense").style(
             f"color:{ZACHT};width:100%;font-size:12px;margin-top:2px")
     onderbalk("Oefenen")
@@ -1270,12 +1293,12 @@ def oefenpagina():
                 f"line-height:1.5'>⚠ Lijkt op: {regels}<br>"
                 f"Aan het eind van de ronde vink je zelf aan wat klopte.</div>")
 
-    def melding(tekst, kleur):
+    def open_uitslag():
+        """Ruimte maken voor de uitslag: die komt óver de vraag te liggen, niet eronder.
+        De vraag zelf gaat weg, zodat de hoogte niet verspringt."""
         terugkoppeling.clear()
-        with terugkoppeling:
-            ui.html(f"<div style='background:{kleur}1a;border:1px solid {kleur}40;"
-                    f"border-radius:12px;padding:10px 14px;text-align:center;width:100%;"
-                    f"color:{TEKST};font-size:13.5px;line-height:1.6'>{tekst}</div>")
+        vraagvlak.set_visibility(False)
+        return terugkoppeling
 
     async def opslaan(k, juist, punten=1, straf=None, scoor=True):
         opgeslagen = await run.io_bound(g.noteer, k, juist, punten, straf, scoor)
@@ -1293,14 +1316,19 @@ def oefenpagina():
         teller.text = f"{sessie.gedaan + 1}/{sessie.totaal}"
         teken_streepjes()
 
+    def zet_balk(knoptekst, typen=False, weet_niet=False):
+        """De antwoordbalk in één keer instellen. Alles blijft altijd staan; wat niet
+        van toepassing is wordt onzichtbaar maar houdt zijn ruimte. Zo staat de knop
+        elke beurt op precies dezelfde plek en hoef je niet te zoeken."""
+        invoer.style(f"visibility:{'visible' if typen else 'hidden'}")
+        weetniet.style(f"visibility:{'visible' if weet_niet else 'hidden'}")
+        knop.text = knoptekst
+
     def kaart_afgerond():
         """Het antwoord staat vast: opties weg, alleen nog door naar de volgende."""
         opties.clear()
         sessie.beoordeeld = True
-        invoer.set_visibility(False)
-        weetniet.set_visibility(False)
-        knop.set_visibility(True)
-        knop.text = "Volgende"
+        zet_balk("Volgende")
         ververs_kop(sessie.woord)
 
     def volgende():
@@ -1334,8 +1362,7 @@ def oefenpagina():
             extra = "" if schoon else (
                 f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
                 f"Geen streak-punten: je had het antwoord al gezien.</div>")
-            terugkoppeling.clear()
-            with terugkoppeling:
+            with open_uitslag():
                 ui.html(_feedbackblok(k, True, sessie, g.woorden))
                 if extra:
                     ui.html(extra)
@@ -1358,8 +1385,7 @@ def oefenpagina():
 
         if echt_mis:
             sessie.eerst_overtikken()
-            terugkoppeling.clear()
-            with terugkoppeling:
+            with open_uitslag():
                 ui.html(_feedbackblok(k, False, sessie, g.woorden))
                 regel = verwarregel(k)
                 if regel:
@@ -1371,11 +1397,15 @@ def oefenpagina():
             kaart_afgerond()
             return
 
-        # Bijna: het antwoord blijft verborgen, je krijgt de hint en nog een poging.
+        # Bijna: het antwoord blijft verborgen en de vraag blijft staan, want je mag het
+        # nog eens proberen. De aanwijzing komt daarom náást de vraag, niet eroverheen.
         ververs_kop(k)
-        melding(f"Bijna — probeer het nog een keer.<br>"
-                f"<span style='color:{MERK}'>💡 {_hint(k)}</span>", MERK)
-        with terugkoppeling:
+        naastregel.clear()
+        with naastregel:
+            ui.html(f"<div style='background:{MERK}1a;border:1px solid {MERK}40;"
+                    f"border-radius:10px;padding:8px 12px;text-align:center;width:100%;"
+                    f"color:{TEKST};font-size:13px;line-height:1.5'>Bijna — probeer het "
+                    f"nog een keer.<br><span style='color:{MERK}'>💡 {_hint(k)}</span></div>")
             if bron is not None and bron.get("grieks"):
                 ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
                         f"“{antwoord}” is de betekenis van "
@@ -1408,8 +1438,7 @@ def oefenpagina():
             return
         sessie.gestraft.add(k.get("grieks", ""))
         sessie.opnieuw_later()
-        terugkoppeling.clear()
-        with terugkoppeling:
+        with open_uitslag():
             ui.html(_feedbackblok(k, True, sessie, g.woorden, kop="💡 Het antwoord"))
             ui.html(f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
                     f"Geen aftrek. Je krijgt dit woord straks nog een keer.</div>")
@@ -1436,13 +1465,11 @@ def oefenpagina():
             ui.html(_statusrij(vakjes))
 
     def toon_kaart():
-        for vak in (opties, terugkoppeling, hulp):
+        for vak in (opties, terugkoppeling, hulp, naastregel):
             vak.clear()
         k, vorm = sessie.woord, sessie.vorm
-        balk.set_visibility(True)
-        invoer.set_visibility(True)
-        knop.set_visibility(True)
-        weetniet.set_visibility(False)
+        # De feedback lag over de vraag heen; nu de vraag weer zichtbaar maken.
+        vraagvlak.set_visibility(True)
 
         teken_status(k)
         if k is None:
@@ -1451,8 +1478,7 @@ def oefenpagina():
             lemma.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             vraagsoort.text = ""
             teller.text = ""
-            invoer.set_visibility(False)
-            knop.text = "Nieuwe ronde"
+            zet_balk("Nieuwe ronde")
             teken_streepjes()
             with opties:
                 toon_samenvatting()
@@ -1491,8 +1517,7 @@ def oefenpagina():
             vraagsoort.text = "Nieuw woord — bekijk het even"
             with opties:
                 ui.html(_leerkaart(k, g.woorden))
-            invoer.set_visibility(False)
-            knop.text = "Ik heb het bekeken"
+            zet_balk("Bekeken")
             return
 
         if vorm == "overtik":                              # verankeren na een misser
@@ -1501,15 +1526,14 @@ def oefenpagina():
                 ui.html(f"<div style='text-align:center;color:{TEKST};font-size:17px;"
                         f"line-height:1.5'>{k.get('nederlands', '')}</div>")
             invoer.value = ""
-            knop.text = "Bevestig"
+            zet_balk("Bevestig", typen=True)
             invoer.run_method("focus")
             return
 
         if vorm in ("2", "3_mc"):                          # meerkeuze
             vraagsoort.text = "Welke betekenis hoort hierbij?"
-            invoer.set_visibility(False)
-            knop.set_visibility(False)
-            weetniet.set_visibility(True)
+            # Geen typveld, maar de knop blijft staan: die doet hier 'ik weet het niet'.
+            zet_balk("Weet ik niet")
             keuzes, bron = afleiders(k, g.woorden)
             keuzes = keuzes + [k.get("nederlands", "")]
             random.shuffle(keuzes)
@@ -1521,8 +1545,7 @@ def oefenpagina():
 
         vraagsoort.text = "Typ de betekenis"               # typen
         invoer.value = ""
-        knop.text = "Nakijken"
-        weetniet.set_visibility(True)
+        zet_balk("Nakijken", typen=True, weet_niet=True)
         invoer.run_method("focus")
 
     # ---------------- de eindsamenvatting ----------------
@@ -1594,9 +1617,16 @@ def oefenpagina():
                 if motor.check_betekenis(invoer.value or "", k.get("nederlands", "")):
                     await opslaan(k, True, punten=0, scoor=False)
                     volgende()
-                    melding("Genoteerd — dit woord komt straks nog terug.", MERK)
+                    with naastregel:
+                        ui.html(f"<div style='color:{MERK};font-size:12.5px;"
+                                f"text-align:center'>Genoteerd — dit woord komt straks "
+                                f"nog terug.</div>")
                 else:
-                    melding("Nog niet exact overgetypt — kijk goed naar de betekenis.", FOUT)
+                    naastregel.clear()
+                    with naastregel:
+                        ui.html(f"<div style='color:{FOUT};font-size:13px;"
+                                f"text-align:center'>Nog niet exact overgetypt — kijk "
+                                f"goed naar de betekenis hierboven.</div>")
                     invoer.value = ""
                     invoer.run_method("focus")
                 return
@@ -1696,12 +1726,12 @@ def paarpagina():
 
     invoervelden = {}
 
-    def melding(tekst, kleur):
+    def open_uitslag():
+        """Ruimte maken voor de uitslag: die komt óver de vraag te liggen, niet eronder.
+        De vraag zelf gaat weg, zodat de hoogte niet verspringt."""
         terugkoppeling.clear()
-        with terugkoppeling:
-            ui.html(f"<div style='background:{kleur}1a;border:1px solid {kleur}40;"
-                    f"border-radius:12px;padding:10px 14px;text-align:center;width:100%;"
-                    f"color:{TEKST};font-size:13.5px;line-height:1.6'>{tekst}</div>")
+        vraagvlak.set_visibility(False)
+        return terugkoppeling
 
     def toon_paar(bericht=None, kleur=None):
         woorden.clear()
