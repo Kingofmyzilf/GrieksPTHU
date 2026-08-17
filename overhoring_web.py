@@ -4497,8 +4497,11 @@ def _herstel_backup_formulier():
             except Exception as e: st.error(f"Fout: {e}")
 
 
+SNELLE_APP = "https://griekspthu.onrender.com"
+
+
 def snelle_app_url(gebruiker=""):
-    """De snelle oefen-app (NiceGUI), als die ergens draait. Zet hem in
+    """De snelle oefen-app (NiceGUI). Een ander adres zet je in
     .streamlit/secrets.toml als `nicegui_url` of in de omgevingsvariabele
     GRIEKS_NICEGUI. Met een gebruiker erbij komt ?u= mee, zodat je daar meteen
     ingelogd bent — net zoals die app andersom naar ons linkt."""
@@ -4506,10 +4509,28 @@ def snelle_app_url(gebruiker=""):
         adres = str(st.secrets.get("nicegui_url", "") or "").strip()
     except Exception:
         adres = ""
-    adres = (adres or os.environ.get("GRIEKS_NICEGUI", "")).strip().rstrip("/")
+    adres = (adres or os.environ.get("GRIEKS_NICEGUI", "") or SNELLE_APP).strip().rstrip("/")
     if not adres:
         return ""
     return f"{adres}/?u={quote(str(gebruiker))}" if gebruiker else adres
+
+
+def _snelle_app_balk(gebruiker=""):
+    """Verwijzing naar de snelle oefen-app, boven de tabbladen. Bewust niet in de
+    zijbalk: die is op een telefoon ingeklapt, en juist daar is deze tip bedoeld."""
+    adres = snelle_app_url(gebruiker)
+    if not adres:
+        return
+    st.markdown(
+        f"<div style='background:#1e1e1e; border:1px solid #2b3038; border-radius:10px; "
+        f"padding:10px 14px; margin-bottom:10px; font-size:13.5px; line-height:1.6; "
+        f"color:#9aa4ae;'>📱 <b style='color:#fafafa;'>Even snel oefenen op je telefoon?</b> "
+        f"Woorden, rijtjes en stamtijden gaan een stuk prettiger in de "
+        f"<a href='{adres}' target='_blank' style='color:#33ccff; text-decoration:none;'>"
+        f"snelle oefen-app</a> — die is voor mobiel gemaakt. Dit is de uitgebreide app, "
+        f"met de bijbeltekst erbij: ontleden, leesteksten en grammatica. Je voortgang is "
+        f"in allebei dezelfde.</div>",
+        unsafe_allow_html=True)
 
 
 def main():
@@ -4564,11 +4585,16 @@ def main():
             _snel = snelle_app_url()
             if _snel:
                 st.markdown(
-                    f"<div style='font-size:13px; line-height:1.6; color:#9aa4ae; "
-                    f"margin-top:6px;'>Even snel woordjes, rijtjes of stamtijden doen? "
-                    f"Dat gaat vlotter in de <a href='{_snel}' style='color:#33ccff; "
-                    f"text-decoration:none;'>snelle oefen-app</a>. Hier vind je alles: "
-                    f"ontleden, leesteksten, grammatica en je volledige voortgang.</div>",
+                    f"<div style='background:#1e1e1e; border:1px solid #2b3038; "
+                    f"border-radius:10px; padding:12px 14px; margin-top:10px; "
+                    f"font-size:13px; line-height:1.6; color:#9aa4ae;'>"
+                    f"<b style='color:#fafafa;'>Twee apps, dezelfde voortgang.</b><br>"
+                    f"Dit is de <b style='color:#fafafa;'>uitgebreide app</b>: met de "
+                    f"bijbeltekst erbij, dus ontleden, leesteksten, grammatica en alle "
+                    f"instellingen.<br>Wil je gewoon even oefenen — woorden, rijtjes, "
+                    f"stamtijden — pak dan de <a href='{_snel}' target='_blank' "
+                    f"style='color:#33ccff; text-decoration:none;'>snelle oefen-app</a>. "
+                    f"Die is voor je telefoon gemaakt en werkt daar veel prettiger.</div>",
                     unsafe_allow_html=True)
             with st.expander("Backup herstellen"):
                 _herstel_backup_formulier()
@@ -4601,6 +4627,7 @@ def main():
             # Nog niets geoefend? Begin bij de uitleg — Streamlit opent altijd het eerste tabblad.
             _volgorde.sort(key=lambda t: 0 if t[0] == "uitleg" else 1)
         _zichtbaar = [(_sl, _lab) for _sl, _lab in _volgorde if tab_zichtbaar(_sl)]
+        _snelle_app_balk(st.session_state.get('last_user', ''))
         _tabs_z = st.tabs([_lab for _sl, _lab in _zichtbaar])
         _tab_van_sleutel = {_sl: _tabs_z[_i] for _i, (_sl, _lab) in enumerate(_zichtbaar)}
         # menu[i] = het content-blok zoals het in de code staat; None (en overgeslagen) als het uit staat.
