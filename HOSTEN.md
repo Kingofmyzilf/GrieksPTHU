@@ -109,8 +109,34 @@ Werkt op elk platform dat Python draait:
 * starten: `python grieks_app.py`
 * poort: de app pakt `PORT` uit de omgeving en luistert op `0.0.0.0`
 
-## 3. Wat er nog niet af is
+## 3. De deploytak
 
-De app op GitHub staat op branch `nicegui-opslag` en is nog niet gepusht. Wat je
-host is dus pas actueel nadat die branch erop staat. `render.yaml` wijst nu naar die
-branch; zet dat op `main` zodra alles samengevoegd is.
+Een hostingplatform kloont de tak die je aanwijst. Staan de NT-tekst (31 MB), de
+grammatica-PDF (22 MB) en de Streamlit-app er nog in, dan wacht je daar bij elke
+deploy op — en op de gratis laag, die vaak herstart, merk je dat.
+
+Daarom is er `nicegui-deploy`: alleen de app en de zeven databestanden die hij echt
+opent. **1,3 MB in plaats van 55.** `render.yaml` wijst daarnaar.
+
+Die tak wordt telkens opnieuw gemaakt vanaf de werktak — hij heeft geen eigen
+geschiedenis en je past hem nooit met de hand aan:
+
+```bash
+py gereedschap/maak_deploy.py
+```
+
+```bash
+git push -f origin nicegui-deploy
+```
+
+Wat er niet in zit: de bijbelbestanden, de grammatica-PDF, `overhoring_web.py`, de
+praatplaten, de APK, het gereedschap en de tests. De app draait dan in de lichte
+stand (zie hierboven) en wijst voor de rest naar de Streamlit-app.
+
+## 4. Waar de code staat
+
+| tak | waarvoor |
+|---|---|
+| `main` | de Streamlit-app; die deployt Streamlit Community Cloud |
+| `nicegui-opslag` | de werktak van de NiceGUI-app |
+| `nicegui-deploy` | wat er gehost wordt; gemaakt door het script hierboven |
