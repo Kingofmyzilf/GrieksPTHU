@@ -32,8 +32,17 @@ try:
 except ImportError:
     pass
 
-import gspread
-from google.oauth2.service_account import Credentials
+# gspread is alleen nodig om écht met de Sheet te praten. De Streamlit-app importeert
+# dit bestand voor samenvoeg_stats() en praat zelf via st-gsheets-connection; die mag
+# hier niet op stuklopen als gspread er niet is.
+try:
+    import gspread
+    from google.oauth2.service_account import Credentials
+    GSPREAD_ER = True
+except ImportError:
+    gspread = None
+    Credentials = None
+    GSPREAD_ER = False
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive"]
@@ -95,6 +104,11 @@ def verbind(verplicht=True):
     global _client, _sheet
     if _sheet is not None:
         return _sheet
+    if not GSPREAD_ER:
+        if verplicht:
+            raise OpslagFout("gspread is niet geïnstalleerd; zonder die module kan deze "
+                             "app niet zelf met Google Sheets praten.")
+        return None
     inlog, adres = _uit_omgeving()
     if not inlog:
         inlog, adres = _uit_secrets_toml()
