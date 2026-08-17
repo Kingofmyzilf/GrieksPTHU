@@ -81,6 +81,34 @@ def nl_datum(d):
 
 _sessies = {}
 
+# De NT-tekst is 31 MB aan bestanden en kost 97 MB geheugen. Laat je die weg, dan
+# draait de app prima door — alleen vervalt alles wat de bijbeltekst nodig heeft:
+# Ontleden, de verbogen vormen uit het NT bij beheerste woorden, en het tekstfilter
+# bij Stamtijden. Zo kun je een lichte versie hosten en lokaal toch alles hebben.
+# GRIEKS_STREAMLIT verwijst dan naar de volledige app.
+STREAMLIT_URL = os.environ.get("GRIEKS_STREAMLIT", "").strip()
+
+
+def bijbel_aanwezig():
+    return any(os.path.exists(naam) for naam in
+               ("bijbel_nt.json", "bijbel_nt_deel1.json", "bijbel_nt_deel2.json"))
+
+
+BIJBEL = bijbel_aanwezig()
+
+
+def naar_streamlit(waarvoor):
+    """Kaartje dat uitlegt dat dit onderdeel in de volledige app zit."""
+    with ui.element("div").classes("kaart w-full"):
+        ui.label("Zit in de volledige app").style(
+            f"color:{TEKST};font-size:15px;font-weight:600")
+        ui.label(f"{waarvoor} werkt met de tekst van het Nieuwe Testament. Die staat niet "
+                 f"in deze lichte versie; gebruik daarvoor de Streamlit-app.").style(
+            f"color:{ZACHT};font-size:13px;line-height:1.5")
+        if STREAMLIT_URL:
+            ui.html(f"<a href='{STREAMLIT_URL}' target='_blank' style='color:{MERK};"
+                    f"font-size:14px;text-decoration:none'>Open de volledige app →</a>")
+
 
 def _huidige():
     return _sessies.get(app.storage.user.get("sleutel"))
@@ -401,7 +429,7 @@ def bijbelvormen(w, hoeveel=6):
     Voor woorden die je al beheerst is de woordenboekvorm te makkelijk geworden;
     zo'n echte vorm dwingt je de uitgang te herkennen."""
     strong = str(w.get("strong", "") or "").lstrip("G").strip()
-    if not strong:
+    if not strong or not BIJBEL:
         return []
     try:
         db = motor.laad_bijbel_db()
@@ -899,10 +927,10 @@ def oefenhub():
             ("Stamtijden", f"{round(100 * stam_klaar / max(1, len(stam_db)))}%",
              "/oefenen/stamtijden"),
             ("Actief beheersen", f"{_af_pct(g)}%", "/oefenen/actief"),
-            ("Ontleden", _ont_pct(g), "/oefenen/ontleden"),
-        ]),
+        ] + ([("Ontleden", _ont_pct(g), "/oefenen/ontleden")] if BIJBEL else [])),
     ]
-    nog_niet = ["Klankwetten", "Nederlands → Grieks"]
+    # Zonder de NT-tekst vervalt Ontleden; die staat dan bij wat in de volledige app zit.
+    nog_niet = ["Klankwetten", "Nederlands → Grieks"] + ([] if BIJBEL else ["Ontleden"])
 
     with ui.column().classes("inhoud w-full gap-3"):
         ui.label("Oefenen").style("font-size:26px;font-weight:700")
@@ -916,12 +944,15 @@ def oefenhub():
                         with ui.row().classes("items-center gap-3 no-wrap"):
                             ui.label(pct).style(f"color:{MERK};font-size:14px")
                             ui.label("›").style(f"color:{ZACHT};font-size:20px")
-        ui.label("Nog niet overgezet").style(f"color:{ZACHT};font-size:13px;margin-top:10px")
+        ui.label("In de volledige app").style(f"color:{ZACHT};font-size:13px;margin-top:10px")
         with ui.element("div").classes("kaart w-full"):
             ui.label(" · ".join(nog_niet)).style(
                 f"color:{ZACHT};font-size:13px;line-height:1.6")
-            ui.label("Deze staan nog in de Streamlit-app.").style(
+            ui.label("Deze onderdelen staan in de Streamlit-app.").style(
                 f"color:{ZACHT};font-size:12px;margin-top:4px")
+            if STREAMLIT_URL:
+                ui.html(f"<a href='{STREAMLIT_URL}' target='_blank' style='color:{MERK};"
+                        f"font-size:13.5px;text-decoration:none'>Daarheen →</a>")
     onderbalk("Oefenen")
 
 
@@ -1838,6 +1869,8 @@ def stam_prefs(g):
 
 def stam_bijbelboeken():
     """boek -> [hoofdstukken], uit de vers-referenties van het NT."""
+    if not BIJBEL:
+        return {}
     try:
         return {boek: sorted(hfd, key=lambda h: int(h) if str(h).isdigit() else 0)
                 for boek, hfd in motor.bijbel_boek_index(motor.laad_bijbel_db()).items()}
@@ -1968,8 +2001,10 @@ def stampagina():
                              label="Oefening").props("outlined dark").classes("w-full")
 
         # --- waar de vormen vandaan komen ---
-        _br = sessie.prefs.get("stam_bron", STAM_BRONNEN[0])
-        kies_bron = ui.select(STAM_BRONNEN, value=_br if _br in STAM_BRONNEN else STAM_BRONNEN[0],
+        # Zonder de NT-tekst valt het filter op een bijbelhoofdstuk weg.
+        _bronnen = STAM_BRONNEN if BIJBEL else STAM_BRONNEN[:2]
+        _br = sessie.prefs.get("stam_bron", _bronnen[0])
+        kies_bron = ui.select(_bronnen, value=_br if _br in _bronnen else _bronnen[0],
                               label="Welke werkwoorden").props(
             "outlined dark").classes("w-full")
         _lessen = sorted({int(w["les"]) for w in (motor.laad_stamtijden_db() or [])
@@ -3253,6 +3288,12 @@ def ontpagina():
     g = _bewaakt()
     if not g:
         return
+    if not BIJBEL:
+        with ui.column().classes("inhoud w-full gap-3"):
+            ui.label("Ontleden").style("font-size:26px;font-weight:700")
+            naar_streamlit("Ontleden")
+        onderbalk("Oefenen")
+        return
     p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
          for k, v in ONT_STANDAARD.items()}
     stats = g.stats.setdefault("ontleed_stats", {})
@@ -4337,19 +4378,28 @@ def lezenpagina():
                     ui.label("woordenlijst, verwarparen, structuurwoorden en stamtijden "
                              "opzoeken").style(f"color:{ZACHT};font-size:12.5px")
                 ui.label("›").style(f"color:{ZACHT};font-size:22px")
-        with ui.element("div").classes("kaart w-full").on(
-                "click", lambda: ui.navigate.to("/oefenen/ontleden")):
-            with ui.row().classes("w-full items-center justify-between no-wrap"):
-                with ui.column().classes("gap-0"):
-                    ui.label("Ontleden").style(f"color:{TEKST};font-size:16px;font-weight:600")
-                    ui.label("een vers uit het NT, woord voor woord").style(
-                        f"color:{ZACHT};font-size:12.5px")
-                ui.label("›").style(f"color:{ZACHT};font-size:22px")
+        if BIJBEL:
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/oefenen/ontleden")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    with ui.column().classes("gap-0"):
+                        ui.label("Ontleden").style(
+                            f"color:{TEKST};font-size:16px;font-weight:600")
+                        ui.label("een vers uit het NT, woord voor woord").style(
+                            f"color:{ZACHT};font-size:12.5px")
+                    ui.label("›").style(f"color:{ZACHT};font-size:22px")
         with ui.element("div").classes("kaart w-full"):
-            ui.label("Nog niet overgezet").style(f"color:{TEKST};font-size:15px;font-weight:600")
-            ui.label("Leesteksten en Grammatica staan nog in de Streamlit-app. "
-                     "Die blijft gewoon werken zolang dit onderdeel hier ontbreekt.").style(
+            ui.label("In de volledige app").style(
+                f"color:{TEKST};font-size:15px;font-weight:600")
+            ui.label(("Leesteksten en Grammatica staan in de Streamlit-app."
+                      if BIJBEL else
+                      "Ontleden, Leesteksten, Grammatica en het opzoeken van vormen in de "
+                      "Bijbel staan in de Streamlit-app. Deze versie draait zonder de "
+                      "NT-tekst, en is daarmee klein genoeg om overal te draaien.")).style(
                 f"color:{ZACHT};font-size:13px;line-height:1.5")
+            if STREAMLIT_URL:
+                ui.html(f"<a href='{STREAMLIT_URL}' target='_blank' style='color:{MERK};"
+                        f"font-size:14px;text-decoration:none'>Open de volledige app →</a>")
     onderbalk("Lezen")
 
 

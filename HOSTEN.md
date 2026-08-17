@@ -26,11 +26,32 @@ breder dan nodig, en sluit de app als je klaar bent.
 
 ## 2. Echt hosten
 
+### Licht of volledig
+
+De NT-tekst (`bijbel_nt_deel1.json` + `deel2.json`, samen 31 MB) is optioneel. Laat je
+die weg, dan draait de app gewoon door; alleen wat de bijbeltekst nodig heeft vervalt,
+en de app zegt dat zelf met een link naar de Streamlit-app:
+
+* Ontleden
+* de verbogen vorm uit het NT bij beheerste woorden
+* het filter 'uit een Bijbeltekst' bij Stamtijden
+
+Wat blijft: Woordenschat (inclusief verwarparen), Structuurwoorden, Stamtijden,
+Actief Beheersen, Voortgang en de Lijst.
+
+| | licht | volledig |
+|---|---|---|
+| Geheugen | 121 MB | 218 MB |
+| Databestanden | 1,8 MB | 55 MB |
+
+Zet `GRIEKS_STREAMLIT` op de URL van de Streamlit-app, dan wijst de lichte versie
+overal netjes de weg.
+
 ### Wat de app nodig heeft
 
 | | |
 |---|---|
-| Geheugen | ~120 MB, en ~220 MB zodra iemand Ontleden opent (die laadt de NT-tekst) |
+| Geheugen | 121 MB licht, 218 MB met de NT-tekst |
 | Instanties | **precies één** — zie hieronder |
 | Verbinding | WebSockets, want NiceGUI stuurt elke klik over een open verbinding |
 | Opslag | geen schijf nodig; alle voortgang gaat naar de Google Sheet |
@@ -63,6 +84,7 @@ Zet daarna deze twee omgevingsvariabelen in het Render-dashboard (ze staan in
 |---|---|
 | `GSHEETS_SPREADSHEET` | de URL of de sleutel van je Google Sheet |
 | `GSHEETS_CREDENTIALS` | de hele service-account-JSON, als één regel |
+| `GRIEKS_STREAMLIT` | de URL van de Streamlit-app, voor de verwijzingen |
 
 `GRIEKS_SESSIE_SLEUTEL` genereert Render zelf; die ondertekent de sessiecookie.
 

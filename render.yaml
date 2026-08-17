@@ -24,3 +24,5 @@ services:
         sync: false                 # de URL of sleutel van je Google Sheet — zelf invullen
       - key: GSHEETS_CREDENTIALS
         sync: false                 # de service-account-JSON als één regel — zelf invullen
+      - key: GRIEKS_STREAMLIT
+        sync: false                 # URL van de Streamlit-app, voor de verwijzingen daarheen
