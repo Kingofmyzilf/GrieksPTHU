@@ -29,6 +29,7 @@ HOUDEN = {
     # grammatica_tabellen.json en grammatica_index.json blijven weg: die gebruikt
     # alleen het 'rijtje spieken' bij Ontleden, en dat scherm vervalt zonder de
     # NT-tekst. Zet je die tekst er ooit bij, neem dan deze twee ook weer op.
+    "static",                 # de iconen voor het webmanifest
     "requirements-nicegui.txt", "render.yaml", ".gitignore", ".python-version",
     "HOSTEN.md", "MIGRATIE.md", "OVERDRACHT.md",
 }

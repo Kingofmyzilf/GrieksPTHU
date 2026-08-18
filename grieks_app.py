@@ -18,6 +18,7 @@ import time
 from datetime import date, timedelta
 from urllib.parse import quote
 
+from fastapi.responses import JSONResponse
 from nicegui import app, run, ui
 
 import grieks_gebruiker as gebruikers
@@ -29,6 +30,12 @@ INKT, VLAK, RAND = "#0e1117", "#1e1e1e", "#2b3038"
 TEKST, ZACHT = "#fafafa", "#9aa4ae"
 MERK, GOED, FOUT = "#33ccff", "#3ddc97", "#ff6b81"
 GRIEKS_FONT = "'Gentium Book Plus','Palatino Linotype',Georgia,serif"
+
+# Tekstmaten. Hieronder stond van alles tussen 10 en 12px; met de telefoon in één hand
+# is dat niet te lezen, en bij Grieks al helemaal niet — een spiritus of iota subscriptum
+# valt dan weg. KLEIN is de ondergrens voor bijzaak (tellers, meldingen, toelichting),
+# BASIS voor gewone begeleidende tekst, GRIEKS_MIN voor alles waar Grieks in staat.
+KLEIN, BASIS, GRIEKS_MIN = "12.5px", "13px", "15px"
 
 BESTEMMINGEN = [("Vandaag", "●", "/vandaag"), ("Oefenen", "■", "/oefenen"),
                 ("Lezen", "☰", "/lezen"), ("Voortgang", "▲", "/voortgang")]
@@ -48,25 +55,63 @@ ui.add_head_html(f"""
 <link href="https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:wght@400;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="{INKT}">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/grieks-192.png">
 <style>
   body {{ background:{INKT}; color:{TEKST}; }}
-  .grieks {{ font-family:{GRIEKS_FONT}; font-weight:400; }}
+  /* Grieks nooit onder 15px, ook niet als het in een regel bijzaak staat: een spiritus
+     of iota subscriptum is op 12,5px met de telefoon in één hand niet te zien. max(1em,…)
+     laat het meegroeien waar de omringende tekst al groter is, en een expliciete maat op
+     het element zelf (het woord op 58px) wint hier gewoon van. */
+  .grieks {{ font-family:{GRIEKS_FONT}; font-weight:400;
+             font-size:max(1em, {GRIEKS_MIN}); }}
   /* De twee balken staan onder elkaar vast onderaan. dvh volgt het zichtbare deel van
      het scherm, zodat ze meebewegen als de adresbalk in- of uitschuift. */
-  .antwoordbalk {{ position:fixed; left:0; right:0; bottom:64px; z-index:20;
-                   background:{INKT}; border-top:1px solid {RAND}; padding:10px 14px 12px;
-                   padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px)); }}
-  .onderbalk {{ position:fixed; left:0; right:0; bottom:0; z-index:30; height:64px;
-                background:{VLAK}; border-top:1px solid {RAND}; display:flex; }}
+  /* De drie hoogtes staan in variabelen en alles rekent ermee. Los ingevulde getallen
+     liepen uit elkaar: de veilige zone stond op de balk die de onderrand niet raakt, en
+     de inhoud trok er 136 af terwijl de balken samen 156 innemen — vandaar dat de laatste
+     regel van de eindkaart halverwege onder de knopbalk verdween. */
+  /* Quasar zet zijn eigen kleurklassen met !important op elke knop, elk pictogram en elk
+     invoerveld. Een inline background verloor het dus, en de hele app stond in het
+     standaardblauw #1976D2 in plaats van in het cyaan van MERK — gemeten op het scherm
+     kwam de knop Nakijken eruit als rgb(88,152,212) met witte letters. Dit zet de
+     huisstijl op de plek waar Quasar hem leest, in plaats van per knop te vechten. */
+  :root {{ --q-primary:{MERK}; --q-secondary:{MERK}; --q-accent:{MERK};
+           --q-positive:{GOED}; --q-negative:{FOUT};
+           --q-dark:{VLAK}; --q-dark-page:{INKT};
+           --veilig:env(safe-area-inset-bottom, 0px);
+           --onderbalk:64px; --antwoordbalk:92px; }}
+  .antwoordbalk {{ position:fixed; left:0; right:0; z-index:20;
+                   bottom:calc(var(--onderbalk) + var(--veilig));
+                   background:{INKT}; border-top:1px solid {RAND}; padding:10px 14px 12px; }}
+  /* De onderbalk raakt wél de onderrand, dus hier hoort de veilige zone: op een telefoon
+     met veegnavigatie valt anders de onderste strook van de vier labels achter de
+     gebaarbalk. Met drieknopsnavigatie is --veilig nul en verandert er niets. */
+  .onderbalk {{ position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex;
+                height:calc(var(--onderbalk) + var(--veilig));
+                padding-bottom:var(--veilig);
+                background:{VLAK}; border-top:1px solid {RAND}; }}
+  /* Staat het toetsenbord open, dan zijn de vier bestemmingen dode ruimte: je bent aan
+     het typen. Ze gaan weg, de antwoordbalk zakt naar de onderrand en het vraagvak krijgt
+     die 64 punten erbij — precies wat er ontbrak om woord, lemma en aanwijzing samen te
+     laten passen. Zie het scriptje hieronder voor wanneer dit aan gaat. */
+  body.typt .onderbalk {{ display:none; }}
+  body.typt .antwoordbalk {{ bottom:var(--veilig); }}
   .onderbalk .vak {{ flex:1; display:flex; flex-direction:column; align-items:center;
                      justify-content:center; gap:3px; font-size:11px; color:{ZACHT};
                      cursor:pointer; user-select:none; text-decoration:none; }}
   .onderbalk .vak.actief {{ color:{MERK}; }}
   .inhoud {{ padding:14px 14px 96px; max-width:640px; margin:0 auto; }}
-  /* Ruimte onderaan zodat de inhoud vrij scrolt van de twee vaste balken samen
-     (antwoordbalk ~63px + onderbalk 64px). Meer marge dan dat maakt de pagina
-     onnodig lang en laat hem op een telefoon scrollen terwijl alles al past. */
-  .inhoud.metbalk {{ padding-bottom:136px; }}
+  /* Precies zoveel ruimte onderaan als de twee balken samen innemen, geen pixel minder:
+     wat eronder valt is onbereikbaar. */
+  .inhoud.metbalk {{ padding-bottom:calc(var(--onderbalk) + var(--antwoordbalk)
+                                         + var(--veilig)); }}
+  /* :not(.vast) moet: een vaste kolom regelt zijn ruimte met height, en zonder deze
+     uitzondering won deze regel op specificiteit van de padding-bottom van 4px —
+     dan kromp het vraagvak juist met 88px zodra het toetsenbord openging. */
+  body.typt .inhoud.metbalk:not(.vast) {{
+      padding-bottom:calc(var(--antwoordbalk) + var(--veilig)); }}
   .smal {{ max-width:420px; margin:0 auto; padding:14px; }}
   .kaart {{ background:{VLAK}; border:1px solid {RAND}; border-radius:12px; padding:14px; }}
   /* Een tikvlak van minstens 48px zonder dat de knop meer ruimte inneemt: een
@@ -83,6 +128,11 @@ ui.add_head_html(f"""
             cursor:pointer; font-size:16px; text-align:left; width:100%; color:{TEKST};
             min-height:48px; }}
   .keuze:hover {{ border-color:{MERK}; }}
+  /* NiceGUI zet een wikkeldiv om elke ui.html. Die krimpt mee met zijn inhoud, dus
+     width:100% op de knop rekende tegen een te smalle ouder en stonden de opties
+     rafelig naast elkaar (240, 198, 315, 315 gemeten). Dit zet de wikkel op volle
+     breedte, zodat vier opties even breed zijn en even makkelijk te raken. */
+  .keuzevak > * {{ width:100%; }}
   /* Het vraagvak is een toneel: de feedback komt eroverheen te liggen in plaats van
      eronder. Zonder dit groeide de pagina bij elk antwoord, schoven de knoppen weg en
      stond de uitslag onder de vouw zodra het toetsenbord openstond.
@@ -91,15 +141,33 @@ ui.add_head_html(f"""
      het vraagvak krijgt met flex:1 wat de kop, de hulpknoppen en de rest overlaten. Dat
      rekent zichzelf uit — een vast getal klopte niet meer zodra er een regel bij kwam
      of wegviel, en dan viel de onderste antwoordknop half buiten beeld. */
-  .inhoud.metbalk.vast {{ height:calc(100dvh - 156px); padding-bottom:4px;
-                          display:flex; flex-direction:column; }}
+  .inhoud.metbalk.vast {{ padding-bottom:4px; display:flex; flex-direction:column;
+                          height:calc(100dvh - var(--onderbalk) - var(--antwoordbalk)
+                                      - var(--veilig)); }}
+  body.typt .inhoud.metbalk.vast {{
+      height:calc(100dvh - var(--antwoordbalk) - var(--veilig)); }}
   .vraagvak {{ position:relative; flex:1 1 auto; min-height:0; overflow-y:auto; }}
   .vraagvak.vrij {{ flex:0 0 auto; }}     /* de eindsamenvatting mag wél doorlopen */
   .vraagvak > .overlay {{ position:absolute; left:0; right:0; top:0; bottom:0;
                           background:{INKT}; overflow-y:auto; }}
   .vraagvak > .overlay:empty {{ display:none; }}
 </style>
+<script>
+  // Het toetsenbord meten in plaats van naar focus kijken: focus springt heen en weer
+  // zodra je op Nakijken tikt, en dan zou de balk onder je vinger vandaan schuiven.
+  // visualViewport krimpt alleen echt als er een toetsenbord staat.
+  (function () {{
+    var vv = window.visualViewport;
+    if (!vv) return;
+    var meet = function () {{
+      document.body.classList.toggle('typt', vv.height < window.innerHeight * 0.75);
+    }};
+    vv.addEventListener('resize', meet);
+    meet();
+  }})();
+</script>
 """, shared=True)
+
 
 _DAGEN = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"]
 _MAANDEN = ["januari", "februari", "maart", "april", "mei", "juni",
@@ -248,7 +316,7 @@ def toch_goed_knop(vak, handelen):
     even hoog blijven. Geen waarschuwkleur en geen bevestiging: één tik, en weg is hij.
     """
     with vak:
-        ui.button("Ik had het goed", on_click=handelen).props("flat no-caps").classes(
+        ui.button("Ik had het goed", on_click=handelen, color=None).props("flat no-caps").classes(
             "raakbaar").style(f"color:{ZACHT};border:1px solid {RAND};border-radius:8px;"
                               f"font-size:13px;width:100%;margin-top:10px")
 
@@ -267,7 +335,7 @@ def typbalk(hint):
         with ui.row().classes("w-full gap-2 no-wrap items-center"):
             invoer = ui.input(placeholder=hint).props(
                 "outlined dense dark autocomplete=off autocapitalize=none autocorrect=off spellcheck=false enterkeyhint=done").classes("flex-grow")
-            knop = ui.button("Nakijken").props("unelevated no-caps").style(
+            knop = ui.button("Nakijken", color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
                 f"width:132px;min-width:132px;font-size:14px")
     return invoer, knop
@@ -322,7 +390,7 @@ def inlogpagina():
         veld_code = ui.input("Codewoord", placeholder="bijv. zomer2026").props(
             "outlined dark autocomplete=off").classes("w-full")
         melding = ui.label().style(f"color:{FOUT};font-size:13px;min-height:18px")
-        knop = ui.button("Beginnen").props("unelevated").classes("w-full").style(
+        knop = ui.button("Beginnen", color=None).props("unelevated no-caps").classes("w-full").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:46px")
         ui.html(APP_OP_MOBIEL)
         # Andersom verwijst de volledige app hierheen; zo weet je op elk inlogscherm
@@ -446,7 +514,7 @@ def vandaagpagina():
                     ui.element("div").style(
                         f"width:100%;height:{hoog}px;border-radius:3px;background:{kleur}")
                     ui.label("mdwdvzz"[i]).style(
-                        f"color:{TEKST if d == vandaag_d else ZACHT};font-size:11px")
+                        f"color:{TEKST if d == vandaag_d else ZACHT};font-size:12.5px")
 
         blok = volledige_app_blok(g)
         if blok:
@@ -671,17 +739,21 @@ def _letterhint(w):
     return f"{gemaskeerd}{extra}"
 
 
-def _statusrij(vakjes):
-    """Rij gelijke vakjes met een waarde en een label. In één HTML-blok, anders
-    wikkelt NiceGUI elk vakje in een eigen div en lopen de breedtes uiteen."""
-    inhoud = "".join(
-        f"<div style='flex:1;min-width:0;border:1px solid {RAND};border-radius:8px;"
-        f"padding:5px 2px;text-align:center'>"
-        f"<div style='color:{kleur};font-size:13px;font-weight:600;line-height:1.25;"
-        f"white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>{waarde}</div>"
-        f"<div style='color:{ZACHT};font-size:10px;line-height:1.2'>{label}</div></div>"
-        for waarde, label, kleur in vakjes)
-    return f"<div style='display:flex;gap:6px;width:100%'>{inhoud}</div>"
+def _statusrij(delen):
+    """Eén regel status onder de antwoordopties: waarde en label achter elkaar, met
+    scheidingspunten ertussen.
+
+    Hiervoor stonden hier vijf vakjes naast elkaar. Op 360 punten breedte paste dat
+    niet: 'In training' werd 'Trai…', 'Nieuw' werd 'Nie…' en de datum '18 a…' — juist
+    de fase, het enige dat je tijdens het oefenen wilt weten, viel weg. Goed/fout en
+    'laatst geoefend' staan op Voortgang; naast het woord dat je leert horen ze niet.
+    Past een label niet voluit, dan vervalt het liever dan dat het wordt afgekapt."""
+    inhoud = f"<span style='color:{ZACHT}'> · </span>".join(
+        f"<span style='color:{kleur};font-weight:600'>{waarde}</span>"
+        f"<span style='color:{ZACHT}'> {label}</span>"
+        for waarde, label, kleur in delen if str(waarde) != "")
+    return (f"<div style='width:100%;text-align:center;font-size:{BASIS};"
+            f"line-height:1.5;white-space:normal'>{inhoud}</div>")
 
 
 def _leerkaart(w, woordenlijst):
@@ -711,7 +783,7 @@ def _leerkaart(w, woordenlijst):
                      f"border:1px solid {MERK}40;border-radius:12px;padding:12px 14px;"
                      f"margin-bottom:10px'>{binnen}</div>")
 
-    delen.append(f"<div style='color:{ZACHT};font-size:12px'>betekenis</div>"
+    delen.append(f"<div style='color:{ZACHT};font-size:13px'>betekenis</div>"
                  f"<div style='color:{TEKST};font-size:20px;line-height:1.35'>"
                  f"{w.get('nederlands','')}</div>")
     return f"<div style='width:100%;text-align:center'>{''.join(delen)}</div>"
@@ -739,7 +811,7 @@ def _feedbackblok(w, juist, sessie, woordenlijst, kop=None):
             f"<div style='color:{MERK};font-size:14px;margin-top:4px'>"
             f"<span class='grieks' style='font-size:19px'>{tv['vorm']}</span> — "
             f"{tv['parsing']}</div>"
-            f"<div style='color:{ZACHT};font-size:12px'>{tv['ref']}</div>")
+            f"<div style='color:{ZACHT};font-size:13px'>{tv['ref']}</div>")
     # Bij werkwoorden is de citatievorm gelijk aan het lemma; dan niets herhalen.
     # Genormaliseerd vergelijken: dezelfde letters kunnen als NFC of NFD zijn opgeslagen.
     import unicodedata as _u
@@ -755,7 +827,7 @@ def _feedbackblok(w, juist, sessie, woordenlijst, kop=None):
         regels.append(f"<div style='color:{ZACHT};font-size:13px;margin-top:6px'>"
                       f"🔗 {ob['voorzetsel']} <i>({ob['betekenis']})</i> + {ob['grondwoord']}"
                       f" → {grieks}</div>")
-    regels.append(f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
+    regels.append(f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
                   f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                   f"streak nu {int(w.get('streak', 0) or 0)}</div>")
     return (f"<div style='background:{achter};border:1px solid {kleur}40;border-radius:12px;"
@@ -1131,7 +1203,7 @@ def oefenhub():
             ui.label(" · ".join(nog_niet)).style(
                 f"color:{ZACHT};font-size:13px;line-height:1.6")
             ui.label("Deze onderdelen staan in de Streamlit-app.").style(
-                f"color:{ZACHT};font-size:12px;margin-top:4px")
+                f"color:{ZACHT};font-size:13px;margin-top:4px")
             streamlit_link(g, "Daarheen →")
     onderbalk("Oefenen")
 
@@ -1150,7 +1222,7 @@ def woord_instellingen(g):
             "outlined dark").classes("w-full")
         ui.label("Gelijkende woorden en Mijn verwarwoorden lopen als paar-oefening: "
                  "twee lijkende woorden tegelijk.").style(
-            f"color:{ZACHT};font-size:12px").bind_visibility_from(
+            f"color:{ZACHT};font-size:13px").bind_visibility_from(
             kies_oefening, "value", lambda v: v in PAAR_OEFENINGEN)
         kies_lessen = ui.select(alle_lessen, value=p["lessen"], label="Lessen",
                                 multiple=True).props("outlined dark").classes("w-full")
@@ -1173,7 +1245,7 @@ def woord_instellingen(g):
         if _hierna:
             ui.label(f"🔒 Hierna: level {_hierna['index']} · les "
                      f"{_hierna.get('les', '?')}").style(
-                f"color:{ZACHT};font-size:12px").bind_visibility_from(
+                f"color:{ZACHT};font-size:13px").bind_visibility_from(
                 kies_oefening, "value", lambda v: v == "Leerpad (levels)")
         _pad = ui.expansion("Toon het hele pad").props("dense").classes("w-full").style(
             f"color:{ZACHT};font-size:13px")
@@ -1199,14 +1271,14 @@ def woord_instellingen(g):
         ui.label("Automatisch kiest per woord: een nieuw woord eerst als leerkaart, daarna "
                  "meerkeuze, en typen zodra het begint te zitten. Mix doet eerst de hele "
                  "ronde meerkeuze en daarna dezelfde woorden typen.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
 
         # --- sessie opbouw: de app weegt, jij zet een vast aantal, of jij vult per fase ---
         kies_stijl = ui.select(OPBOUW_STIJLEN, value=p["opbouw_stijl"],
                                label="Sessie opbouw").props("outlined dark").classes("w-full")
         ui.label("Automatisch weegt hoe zwaar je woorden nu zijn: staan er veel wankele "
                  "woorden klaar, dan wordt de ronde korter.").style(
-            f"color:{ZACHT};font-size:12px").bind_visibility_from(
+            f"color:{ZACHT};font-size:13px").bind_visibility_from(
             kies_stijl, "value", lambda v: v == MIX)
         kies_aantal = ui.number("Kaarten per ronde", value=int(p["aantal"]),
                                 min=4, max=40, step=1).props("outlined dark").classes("w-full")
@@ -1216,8 +1288,8 @@ def woord_instellingen(g):
         fase_velden = {}
         with eigen_vak:
             ui.label("Hoeveel woorden wil je per fase?").style(
-                f"color:{ZACHT};font-size:12px")
-            beschikbaar = ui.label().style(f"color:{ZACHT};font-size:12px")
+                f"color:{ZACHT};font-size:13px")
+            beschikbaar = ui.label().style(f"color:{ZACHT};font-size:13px")
             for sleutel, naam, bereik, _test in FASEN:
                 fase_velden[sleutel] = ui.number(
                     f"{naam.capitalize()} (streak {bereik})", value=int(p.get(sleutel, 0) or 0),
@@ -1246,7 +1318,7 @@ def woord_instellingen(g):
         ui.label("Heeft een gekozen woord een look-alike die je al eens deed, dan komt die "
                  "in dezelfde sessie mee — zo leer je ze onderscheiden. Nooit nieuwe woorden. "
                  "Het maximum geldt apart voor de look-alikes uit de woordenlijst en voor je "
-                 "eigen verwarparen.").style(f"color:{ZACHT};font-size:12px")
+                 "eigen verwarparen.").style(f"color:{ZACHT};font-size:13px")
         kies_audio = ui.switch("Uitspraakknop tonen", value=bool(p["audio"]))
         kies_opbouw = ui.switch("Woordopbouw tonen", value=bool(p["opbouw"]))
         # Zonder de NT-tekst valt er geen verbogen vorm op te halen, dus dan zou deze
@@ -1257,12 +1329,12 @@ def woord_instellingen(g):
         _mv_uitleg = ui.label(
             f"Bij streak {MASTERY_STREAK}+ krijg je een echte verbogen vorm uit "
             f"het NT in plaats van de woordenboekvorm.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
         if not BIJBEL:
             kies_mv.set_visibility(False)
             _mv_uitleg.set_visibility(False)
         ui.label("Je keuzes worden bewaard bij je voortgang.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
 
         async def bewaar_instellingen():
             velden = [("keuze", kies_oefening), ("lessen", kies_lessen),
@@ -1282,9 +1354,9 @@ def woord_instellingen(g):
                            else "/oefenen/woorden")
 
         with ui.row().classes("w-full justify-end gap-2"):
-            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
                 f"color:{ZACHT}")
-            ui.button("Toepassen", on_click=bewaar_instellingen).props("unelevated").style(
+            ui.button("Toepassen", on_click=bewaar_instellingen, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
     return instellingen
 
@@ -1311,7 +1383,7 @@ def oefenpagina():
             ui.label(sessie.prefs["keuze"]).style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
@@ -1324,14 +1396,14 @@ def oefenpagina():
         # zodra ze samen niet meer passen.
         ui.html(
             f"<div style='display:flex;justify-content:space-between;flex-wrap:wrap;"
-            f"gap:2px 12px;font-size:12px;color:{ZACHT};padding-top:2px'>"
+            f"gap:2px 12px;font-size:13px;color:{ZACHT};padding-top:2px'>"
             f"<span style='white-space:nowrap'>Niveau {_niv['niveau']} · "
             f"<span style='color:{MERK}'>{_niv['titel']}</span></span>"
             f"<span style='white-space:nowrap'>{_klaar} levels af · nog "
             f"{_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP</span></div>")
         if sessie.nieuw_over:
             ui.label(f"🌱 Nog {sessie.nieuw_over} nieuwe woorden in dit level voor een "
-                     f"volgende ronde.").style(f"color:{ZACHT};font-size:12px")
+                     f"volgende ronde.").style(f"color:{ZACHT};font-size:13px")
         # Eén vast toneel voor de vraag, met de feedback eroverheen in plaats van
         # eronder. Zo groeit en krimpt de pagina niet bij elk antwoord en blijven de
         # knoppen op hun plek staan — dat scheelt zoeken tijdens het oefenen.
@@ -1341,11 +1413,10 @@ def oefenpagina():
                     f"font-size:58px;line-height:1.1;color:{TEKST};padding:8px 0 2px")
                 lemma = ui.label().classes("w-full text-center").style(
                     f"color:{ZACHT};font-size:14px")
-                statusbalk = ui.row().classes(
-                    "w-full gap-2 no-wrap justify-center").style("padding-top:2px")
                 vraagsoort = ui.label().classes("w-full text-center").style(
-                    f"color:{ZACHT};font-size:12px")
-                opties = ui.column().classes("w-full gap-2").style("padding-top:8px")
+                    f"color:{ZACHT};font-size:{BASIS}")
+                opties = ui.column().classes("keuzevak w-full gap-2").style(
+                    "padding-top:8px")
                 # Bij een eerste misser blijft de vraag staan — je mag het nog eens
                 # proberen — dus die aanwijzing hoort niet in de laag die de vraag
                 # bedekt. Hij komt ná de antwoordknoppen: die blijven dan staan waar ze
@@ -1353,10 +1424,16 @@ def oefenpagina():
                 # niet iets waarop je moet tikken.
                 naastregel = ui.column().classes("w-full gap-1 items-center").style(
                     "padding-top:4px")
+                # De statusregel staat in alle vier de modules op dezelfde plek: onder de
+                # antwoordopties. Stond hij bij de een boven en bij de ander onder, dan
+                # zocht je hem elke module opnieuw — en je blik hoort van het woord naar
+                # de opties naar je duim te lopen, niet over een blok statistiek heen.
+                statusbalk = ui.row().classes(
+                    "w-full gap-2 no-wrap justify-center").style("padding-top:6px")
             terugkoppeling = ui.column().classes(
                 "overlay w-full gap-1 items-center justify-center")
         hulp = ui.row().classes("w-full gap-2 no-wrap")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     balk = ui.element("div").classes("antwoordbalk")
     with balk:
@@ -1367,11 +1444,11 @@ def oefenpagina():
                 "outlined dense dark autocomplete=off autocapitalize=none autocorrect=off spellcheck=false enterkeyhint=done").classes("flex-grow")
             # Vaste breedte: anders schuift de knop bij elk ander opschrift een stukje
             # opzij en tik je elke beurt op een andere plek.
-            knop = ui.button("Nakijken").props("unelevated no-caps").style(
+            knop = ui.button("Nakijken", color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
                 f"width:132px;min-width:132px;font-size:14px")
-        weetniet = ui.button("Ik weet het niet — toon het antwoord").props("flat dense").style(
-            f"color:{ZACHT};width:100%;font-size:12px;margin-top:2px")
+        weetniet = ui.button("Ik weet het niet — toon het antwoord", color=None).props("flat dense no-caps").style(
+            f"color:{ZACHT};width:100%;font-size:13px;margin-top:2px")
     onderbalk("Oefenen")
 
     # ---------------- hulpjes ----------------
@@ -1397,13 +1474,19 @@ def oefenpagina():
                   classes="text-body2").style("max-width:88vw")
 
     def vier_fase(oud, nieuw, label):
-        """Een schouderklopje als een woord een nieuwe fase in gaat."""
+        """Ging dit woord een nieuwe fase in? Geeft de regel terug, of "".
+
+        Dit stond eerst in een melding bovenaan het scherm. Die kwam over de kopregel te
+        liggen — je zag "Leerpad (le…" en van "3/14" nog de helft — terwijl je duim en je
+        blik onderaan zitten. Nu hoort hij in de uitslagkaart, waar je op dat moment toch
+        al kijkt. ui.notify blijft voor techniek: geen verbinding, opslaan mislukt."""
         for drempel, tekst in ((30, f"🏆 Mastery — {label} zit nu echt vast."),
                                (16, f"🎉 {label} is nu Beheerst."),
                                (1, f"🌱 {label} staat nu In training.")):
             if oud < drempel <= nieuw:
-                ui.notify(tekst, position="top", color="dark")
-                break
+                return (f"<div style='color:{GOED};font-size:{BASIS};text-align:center;"
+                        f"padding-top:6px'>{tekst}</div>")
+        return ""
 
     def verwarregel(k):
         """Onder de feedback: met welke woorden zou je dit verward kunnen hebben."""
@@ -1486,11 +1569,13 @@ def oefenpagina():
             extra = "" if schoon else (
                 f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
                 f"Geen streak-punten: je had het antwoord al gezien.</div>")
+            fasemelding = vier_fase(oud, int(k.get("streak", 0) or 0), grieks)
             with open_uitslag():
                 ui.html(_feedbackblok(k, True, sessie, g.woorden))
                 if extra:
                     ui.html(extra)
-            vier_fase(oud, int(k.get("streak", 0) or 0), grieks)
+                if fasemelding:
+                    ui.html(fasemelding)
             kaart_afgerond()
             return
 
@@ -1575,17 +1660,12 @@ def oefenpagina():
         if k is None:
             return
         fase = gebruikers.fase_van(k.get("streak", 0))
-        vakjes = [
-            (fase.replace("In training", "Training"), "fase",
-             MERK if fase != "Nieuw" else ZACHT),
-            (int(k.get("streak", 0) or 0), "streak", TEKST),
-            (f"{int(k.get('score_goed', 0) or 0)}/{int(k.get('score_fout', 0) or 0)}",
-             "goed/fout", TEKST),
-            (_kort_datum(k.get("laatst_geoefend")), "laatst", ZACHT),
-            (len(sessie.wachtrij), "te gaan", ZACHT),
-        ]
         with statusbalk:
-            ui.html(_statusrij(vakjes))
+            ui.html(_statusrij([
+                (fase, "", MERK if fase != "Nieuw" else ZACHT),
+                (int(k.get("streak", 0) or 0), "streak", TEKST),
+                (len(sessie.wachtrij), "te gaan", ZACHT),
+            ]))
 
     def toon_kaart():
         for vak in (opties, terugkoppeling, hulp, naastregel):
@@ -1639,8 +1719,8 @@ def oefenpagina():
             knoppen.append("Opbouw")
         with hulp:
             for label in knoppen:
-                ui.button(label, on_click=lambda l=label, w=k: toon_hulp(l, w)).props(
-                    "flat dense").classes("raakbaar").style(
+                ui.button(label, on_click=lambda l=label, w=k: toon_hulp(l, w),
+                          color=None).props("flat dense no-caps").classes("raakbaar").style(
                     f"flex:1;color:{ZACHT};border:1px solid {RAND};border-radius:8px;"
                     f"font-size:12.5px")
 
@@ -1685,23 +1765,25 @@ def oefenpagina():
         je zelf: meerdere woorden kunnen dezelfde Nederlandse betekenis hebben, dus
         automatisch toevoegen zou de lijst vervuilen."""
         goed_alleen = {gr: nl for gr, nl in sessie.gelukt.items() if gr not in sessie.mislukt}
+        # De knop staat bóven de lijsten. Eronder stond hij in het scrollgebied buiten
+        # beeld: je zag alleen "Nieuwe ronde" in de balk, precies op het moment dat je
+        # net twee fouten had gemaakt en die wilde herhalen.
+        if sessie.mislukt:
+            def herhaal_fouten():
+                app.storage.user["herhaal"] = list(sessie.mislukt)
+                ui.navigate.to("/oefenen/woorden")
+
+            ui.button(f"Fouten herhalen ({len(sessie.mislukt)})",
+                      on_click=herhaal_fouten, color=None).props(
+                "unelevated no-caps").classes("raakbaar").style(
+                f"background:{MERK};color:{INKT};font-weight:700;width:100%;height:48px;"
+                f"font-size:15px;margin-bottom:10px")
         ui.html(_uitslaglijst(f"✓ Goed ({len(goed_alleen)})", GOED, [
             f"<span class='grieks'>{gr}</span> — {nl}" for gr, nl in goed_alleen.items()]))
         ui.html(_uitslaglijst(f"✗ Fout ({len(sessie.mislukt)})", FOUT, [
             f"<span class='grieks'>{gr}</span> — {d['nederlands']}"
             f"<span style='color:{ZACHT}'> (jij: {d['antwoord'] or '—'})</span>"
             for gr, d in sessie.mislukt.items()]))
-        if sessie.mislukt:
-            # Meteen doorpakken op wat misging is het moment waarop het blijft hangen;
-            # een ronde later ben je kwijt waarom je het fout had.
-            def herhaal_fouten():
-                app.storage.user["herhaal"] = list(sessie.mislukt)
-                ui.navigate.to("/oefenen/woorden")
-
-            ui.button(f"Fouten herhalen ({len(sessie.mislukt)})",
-                      on_click=herhaal_fouten).props("unelevated no-caps").style(
-                f"background:{MERK};color:{INKT};font-weight:700;width:100%;height:44px;"
-                f"font-size:14px;margin-top:10px")
         if not sessie.kandidaten:
             return
         vinkjes = {}
@@ -1732,8 +1814,8 @@ def oefenpagina():
                           position="top", color="dark")
                 toon_kaart()
 
-            ui.button("Toevoegen aan mijn verwarwoorden", on_click=bevestig).props(
-                "unelevated").style(f"background:{MERK};color:{INKT};font-weight:700;"
+            ui.button("Toevoegen aan mijn verwarwoorden", on_click=bevestig, color=None).props(
+                "unelevated no-caps").style(f"background:{MERK};color:{INKT};font-weight:700;"
                                     f"margin-top:10px;width:100%")
 
     async def hoofdknop():
@@ -1850,23 +1932,23 @@ def paarpagina():
             ui.label(sessie.prefs["keuze"]).style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         woorden = ui.row().classes("w-full no-wrap items-start").style("padding:12px 0 2px")
         vraagsoort = ui.label().classes("w-full text-center").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
         velden = ui.column().classes("w-full gap-2").style("padding-top:8px")
         terugkoppeling = ui.column().classes("w-full gap-1 items-center").style(
             "min-height:40px;padding-top:6px")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     balk = ui.element("div").classes("antwoordbalk")
     with balk:
-        knop = ui.button("Nakijken").props("unelevated").style(
+        knop = ui.button("Nakijken", color=None).props("unelevated no-caps").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
-        stopknop = ui.button("Stop deze ronde").props("flat dense").style(
-            f"color:{ZACHT};width:100%;font-size:12px;margin-top:2px")
+        stopknop = ui.button("Stop deze ronde", color=None).props("flat dense no-caps").style(
+            f"color:{ZACHT};width:100%;font-size:13px;margin-top:2px")
     onderbalk("Oefenen")
 
     invoervelden = {}
@@ -1907,7 +1989,7 @@ def paarpagina():
                         await run.io_bound(g.bewaar, True)
                         ui.navigate.to("/oefenen/woorden")
 
-                    ui.button("Doe dan een gewone ronde", on_click=naar_kaarten).props(
+                    ui.button("Doe dan een gewone ronde", on_click=naar_kaarten, color=None).props(
                         "unelevated").style(f"background:{MERK};color:{INKT};"
                                             f"font-weight:700;width:100%;margin-top:10px")
                 else:
@@ -1954,7 +2036,7 @@ def paarpagina():
                 if sessie.fout >= 1:
                     tip = _hint(w)
                     if tip:
-                        ui.label(f"💡 {tip}").style(f"color:{ZACHT};font-size:12px")
+                        ui.label(f"💡 {tip}").style(f"color:{ZACHT};font-size:13px")
         knop.text = "Nakijken"
         if invoervelden:
             list(invoervelden.values())[0].run_method("focus")
@@ -2078,14 +2160,14 @@ def spiekbrief():
                         f"<code style='background:{RAND};border-radius:4px;padding:1px 5px'>"
                         f"{toets}</code> = <span class='grieks' style='font-size:17px'>"
                         f"{letter}</span></div>" for toets, letter in paren) + "</div>")
-        ui.button("Sluiten", on_click=venster.close).props("flat").style(
+        ui.button("Sluiten", on_click=venster.close, color=None).props("flat no-caps").style(
             f"color:{MERK};margin-top:10px;width:100%")
     return venster
 
 
 def spiekknop(venster):
     """Het toetsenbord-knopje in de kop van een oefenpagina."""
-    return ui.button("⌨", on_click=venster.open).props("flat dense").classes(
+    return ui.button("⌨", on_click=venster.open, color=None).props("flat dense no-caps").classes(
         "raakbaar").style(
         f"color:{ZACHT};font-size:16px;min-width:30px")
 
@@ -2242,7 +2324,7 @@ def stampagina():
             "outlined dark").classes("w-full")
         ui.label("Leren toont de vorm met het antwoord erbij: je kijkt zelf of je het "
                  "wist. Overhoren stelt echte vragen en telt mee voor je streak.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
         kies_oef = ui.select(STAM_OEFENINGEN, value=sessie.prefs["stam_keuze"],
                              label="Oefening").props("outlined dark").classes("w-full")
 
@@ -2271,7 +2353,7 @@ def stampagina():
         for veld in (kies_boek, kies_hfd):
             veld.bind_visibility_from(kies_bron, "value",
                                       lambda v: v == "Uit een Bijbeltekst")
-        _telling = ui.label().style(f"color:{ZACHT};font-size:12px")
+        _telling = ui.label().style(f"color:{ZACHT};font-size:13px")
         _telling.bind_visibility_from(kies_bron, "value",
                                       lambda v: v == "Uit een Bijbeltekst")
 
@@ -2299,11 +2381,11 @@ def stampagina():
             label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
         ui.label(f"Automatisch: eerst alleen de tijd aanwijzen, en vanaf streak "
                  f"{STAM_TYP_STREAK} ook het werkwoord erbij typen.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
         kies_kleur = ui.switch("Uitgangen kleuren",
                                value=bool(sessie.prefs.get("stam_kleur", True)))
         ui.label("Toont in het antwoord welk deel de stam is en welk deel de uitgang.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
 
         async def bewaar_inst():
             for sleutel, veld in [("stam_keuze", kies_oef), ("stam_aantal", kies_aantal),
@@ -2317,9 +2399,9 @@ def stampagina():
             ui.navigate.to("/oefenen/stamtijden")
 
         with ui.row().classes("w-full justify-end gap-2"):
-            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
                 f"color:{ZACHT}")
-            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
 
     with ui.column().classes("inhoud metbalk w-full gap-3"):
@@ -2329,7 +2411,7 @@ def stampagina():
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
                 spiekknop(spiek)
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
@@ -2337,11 +2419,11 @@ def stampagina():
             f"font-size:52px;line-height:1.15;color:{TEKST};padding:16px 0 2px")
         vraagsoort = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px")
-        tijdknoppen = ui.column().classes("w-full gap-2").style("padding-top:8px")
+        tijdknoppen = ui.column().classes("keuzevak w-full gap-2").style("padding-top:8px")
         statusbalk = ui.row().classes("w-full").style("padding-top:6px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:64px;padding-top:8px")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     invoer, knop = typbalk("van welk werkwoord? (x = χ, u = υ, h = η)")
     onderbalk("Oefenen")
@@ -2417,8 +2499,6 @@ def stampagina():
         with statusbalk:
             ui.html(_statusrij([
                 (v["streak"], "streak", TEKST),
-                (f"{v['goed']}/{v['fout']}", "goed/fout", TEKST),
-                (v["verb"].get("morfologie", {}).get("klasse", "—"), "klasse", ZACHT),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
 
@@ -2619,7 +2699,7 @@ def stamleerpagina():
             ui.label("Stamtijden leren").style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
-                ui.button("⚙", on_click=lambda: ui.navigate.to("/oefenen/stamtijden")).props(
+                ui.button("⚙", on_click=lambda: ui.navigate.to("/oefenen/stamtijden"), color=None).props(
                     "flat dense").style(f"color:{ZACHT};font-size:17px;min-width:32px")
         ui.label("Bekijk de vorm, benoem voor jezelf wélke tijd het is en van wélk "
                  "werkwoord, en check jezelf. Wat je nog niet wist komt achteraan terug.").style(
@@ -2628,16 +2708,16 @@ def stamleerpagina():
             f"font-size:52px;line-height:1.15;color:{TEKST};padding:16px 0 2px")
         antwoordvak = ui.column().classes("w-full gap-1 items-center").style(
             "min-height:120px")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     balk = ui.element("div").classes("antwoordbalk")
     with balk:
-        toonknop = ui.button("Toon antwoord").props("unelevated").style(
+        toonknop = ui.button("Toon antwoord", color=None).props("unelevated no-caps").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
         with ui.row().classes("w-full gap-2 no-wrap").style("margin-top:4px") as oordeel:
-            wistknop = ui.button("✓ Wist ik").props("flat").style(
+            wistknop = ui.button("✓ Wist ik", color=None).props("flat no-caps").style(
                 f"flex:1;color:{GOED};border:1px solid {RAND};border-radius:8px")
-            nogknop = ui.button("✗ Nog niet").props("flat").style(
+            nogknop = ui.button("✗ Nog niet", color=None).props("flat no-caps").style(
                 f"flex:1;color:{FOUT};border:1px solid {RAND};border-radius:8px")
     onderbalk("Oefenen")
 
@@ -2674,7 +2754,7 @@ def stamleerpagina():
                 f"<div class='grieks' style='color:{TEKST};font-size:24px;margin-top:6px'>"
                 f"{verb.get('praesens', '')}</div>"
                 f"<div style='color:{TEKST};font-size:14px'>{verb.get('betekenis', '')}</div>"
-                f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
+                f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
                 f"les {verb.get('les', '?')} · streak {int(s.get('streak', 0) or 0)} · "
                 f"{int(s.get('g', 0) or 0)} goed, {int(s.get('f', 0) or 0)} fout</div></div>")
 
@@ -2835,7 +2915,7 @@ def af_instellingen(g, sessie_prefs):
         ui.label("Cel voor cel bouwt op van aanwijzen naar typen. Het tentamenrooster "
                  "vraagt één heel rijtje in één keer, zoals op het tentamen. Bij 'alleen "
                  "de uitgangen' staat de stam er al en typ je alleen wat erachter komt.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
         _rijtjes = sorted(af_rijtjes(g))
         _hr = sessie_prefs.get("af_rijtje") or (_rijtjes[0] if _rijtjes else None)
         k_rijtje = ui.select(_rijtjes, value=_hr if _hr in _rijtjes else
@@ -2854,7 +2934,7 @@ def af_instellingen(g, sessie_prefs):
             veld.bind_visibility_from(k_modus, "value", lambda v: v == AF_MODI[0])
         ui.label(f"Automatisch: eerst aanwijzen uit het eigen rijtje, en vanaf streak "
                  f"{AF_TYP_STREAK} zelf typen.").style(
-            f"color:{ZACHT};font-size:12px").bind_visibility_from(
+            f"color:{ZACHT};font-size:13px").bind_visibility_from(
             k_modus, "value", lambda v: v == AF_MODI[0])
 
         async def bewaar_inst():
@@ -2868,9 +2948,9 @@ def af_instellingen(g, sessie_prefs):
                            else "/oefenen/actief")
 
         with ui.row().classes("w-full justify-end gap-2"):
-            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
                 f"color:{ZACHT}")
-            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
     return instellingen
 
@@ -2902,7 +2982,7 @@ def afroosterpagina():
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
                 spiekknop(spiek)
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         ui.label(naam or "geen rijtje gekozen").style(
@@ -2915,15 +2995,15 @@ def afroosterpagina():
         with ui.expansion("Bekijk het rijtje").props("dense").classes("w-full").style(
                 f"color:{ZACHT};font-size:13px"):
             ui.label("De vaste stam is wit, de variabele uitgang cyaan.").style(
-                f"color:{ZACHT};font-size:12px")
+                f"color:{ZACHT};font-size:13px")
             ui.html(af_paspoort(cellen))
         rooster = ui.column().classes("w-full gap-2").style("padding-top:6px")
         terugkoppeling = ui.column().classes("w-full items-center").style("min-height:40px")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     balk = ui.element("div").classes("antwoordbalk")
     with balk:
-        knop = ui.button("Nakijken").props("unelevated").style(
+        knop = ui.button("Nakijken", color=None).props("unelevated no-caps").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:40px;width:100%")
     onderbalk("Oefenen")
 
@@ -3031,7 +3111,7 @@ def afpagina():
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
                 spiekknop(spiek)
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
@@ -3042,11 +3122,11 @@ def afpagina():
             f"color:{TEKST};font-size:30px;font-weight:700;line-height:1.2")
         vraagsoort = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px")
-        opties = ui.column().classes("w-full gap-2").style("padding-top:6px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
         statusbalk = ui.row().classes("w-full").style("padding-top:2px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:64px;padding-top:8px")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     invoer, knop = typbalk("typ de vorm (x = χ, u = υ, h = η)")
     onderbalk("Oefenen")
@@ -3106,8 +3186,7 @@ def afpagina():
         with statusbalk:
             ui.html(_statusrij([
                 (c["streak"], "streak", TEKST),
-                (f"{c['goed']}/{c['fout']}", "goed/fout", TEKST),
-                (c["niveau"].replace("Grieks ", "G"), "niveau", ZACHT),
+                (c["niveau"], "", ZACHT),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
         if sessie.vraag_typen:
@@ -3281,7 +3360,7 @@ def sw_rijtjeregel(w):
     return (f"<div style='font-size:13px;line-height:1.7;color:{TEKST}'>"
             f"<span class='grieks' style='font-size:16px'>{kaal}</span>{achter}"
             f" — {w.get('nederlands', '') or w.get('betekenis', '')}"
-            f"<span style='color:{ZACHT};font-size:11.5px'> · "
+            f"<span style='color:{ZACHT};font-size:12.5px'> · "
             f"{w.get('categorie', '')}</span></div>")
 
 
@@ -3394,7 +3473,7 @@ def swpagina():
         _slot = next((s for s in _lv if not s.get("ontgrendeld")), None)
         if _slot:
             ui.label(f"🔒 Hierna: blokje {_slot['index']} · {_slot.get('titel', '')}").style(
-                f"color:{ZACHT};font-size:12px").bind_visibility_from(
+                f"color:{ZACHT};font-size:13px").bind_visibility_from(
                 k_oef, "value", lambda v: v == "Leerpad (volgend blokje)")
         k_cat = ui.select(categorieen, value=sessie.prefs["sw_categorie"],
                           label="Categorie").props("outlined dark").classes("w-full")
@@ -3403,7 +3482,7 @@ def swpagina():
         k_aantal = ui.number("Woorden per ronde", value=int(sessie.prefs["sw_aantal"]),
                              min=4, max=40, step=1).props("outlined dark").classes("w-full")
         ui.label(f"Automatisch: eerst aanwijzen, en vanaf streak {SW_TYP_STREAK} "
-                 f"de betekenis zelf typen.").style(f"color:{ZACHT};font-size:12px")
+                 f"de betekenis zelf typen.").style(f"color:{ZACHT};font-size:13px")
 
         async def bewaar_inst():
             for sleutel, veld in [("sw_keuze", k_oef), ("sw_categorie", k_cat),
@@ -3415,9 +3494,9 @@ def swpagina():
             ui.navigate.to("/oefenen/structuur")
 
         with ui.row().classes("w-full justify-end gap-2"):
-            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
                 f"color:{ZACHT}")
-            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
 
     with ui.column().classes("inhoud metbalk w-full gap-3"):
@@ -3425,14 +3504,14 @@ def swpagina():
             ui.label("Structuurwoorden").style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         if sessie.level:
             _xp = motor.bereken_xp_struct(g.stats.get("struct_stats") or {})
             _niv = motor.niveau_van_xp(_xp)
             _vol = sum(1 for s in sw_levels(g) if s.get("voltooid"))
-            ui.html(f"<div style='display:flex;justify-content:space-between;font-size:12px;"
+            ui.html(f"<div style='display:flex;justify-content:space-between;font-size:13px;"
                     f"color:{ZACHT}'><span>Blokje {sessie.level['index']} · "
                     f"{sessie.level.get('titel', '')}</span><span>{_vol} af · niveau "
                     f"{_niv['niveau']}</span></div>")
@@ -3445,11 +3524,11 @@ def swpagina():
         soort = ui.html().classes("w-full text-center")
         vraagsoort = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px;padding-top:4px")
-        opties = ui.column().classes("w-full gap-2").style("padding-top:6px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
         statusbalk = ui.row().classes("w-full").style("padding-top:2px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:64px;padding-top:8px")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:11.5px;min-height:16px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     invoer, knop = typbalk("betekenis")
     onderbalk("Oefenen")
@@ -3500,7 +3579,7 @@ def swpagina():
                 ui.html(
                     f"<div style='background:rgba(51,204,255,.09);border:1px solid "
                     f"{MERK}40;border-radius:12px;padding:14px 16px;text-align:center'>"
-                    f"<div style='color:{ZACHT};font-size:12px'>betekenis</div>"
+                    f"<div style='color:{ZACHT};font-size:13px'>betekenis</div>"
                     f"<div style='color:{TEKST};font-size:19px;line-height:1.35;"
                     f"margin-top:2px'>{w.get('betekenis', '')}</div>"
                     + (f"<div style='color:{MERK};font-size:13px;margin-top:8px'>"
@@ -3532,7 +3611,6 @@ def swpagina():
         with statusbalk:
             ui.html(_statusrij([
                 (w["streak"], "streak", TEKST),
-                (f"{w['goed']}/{w['fout']}", "goed/fout", TEKST),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
         if sessie.vraag_typen:
@@ -3707,7 +3785,7 @@ def ontpagina():
         k_vh = ui.switch("Knop 'vertaalhulp' tonen", value=bool(p["ont_vertaalhulp"]))
         k_links = ui.switch("Links naar BibleHub tonen", value=bool(p["ont_links"]))
         ui.label("Een lagere drempel geeft meer verzen om uit te kiezen.").style(
-            f"color:{ZACHT};font-size:12px")
+            f"color:{ZACHT};font-size:13px")
 
         async def bewaar_inst():
             for sleutel, veld in [("ont_niveau", k_niv), ("ont_drempel", k_drem),
@@ -3719,9 +3797,9 @@ def ontpagina():
             ui.navigate.to("/oefenen/ontleden")
 
         with ui.row().classes("w-full justify-end gap-2"):
-            ui.button("Annuleren", on_click=instellingen.close).props("flat").style(
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
                 f"color:{ZACHT}")
-            ui.button("Toepassen", on_click=bewaar_inst).props("unelevated").style(
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
 
     with ui.column().classes("inhoud metbalk w-full gap-2"):
@@ -3729,20 +3807,20 @@ def ontpagina():
             ui.label(f"Ontleden · {ref}").style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
-                ui.button("⚙", on_click=instellingen.open).props("flat dense").classes(
+                ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
         vers = ui.html().classes("w-full").style("padding:6px 0")
         gevraagd = ui.label().classes("w-full text-center").style(
             f"color:{MERK};font-size:17px;font-weight:600;padding-top:4px")
-        opties = ui.column().classes("w-full gap-2").style("padding-top:4px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:4px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:56px;padding-top:6px")
         hulpvak = ui.column().classes("w-full gap-1").style("padding-top:6px")
 
     with ui.element("div").classes("antwoordbalk"):
-        knop = ui.button("Volgende").props("unelevated").classes("w-full").style(
+        knop = ui.button("Volgende", color=None).props("unelevated no-caps").classes("w-full").style(
             f"background:{MERK};color:{INKT};font-weight:700;height:42px")
     onderbalk("Oefenen")
 
@@ -3867,7 +3945,7 @@ def ontpagina():
             _boek = ref.rsplit(" ", 1)[0].replace(" ", "_").lower()
             _hs = ref.rsplit(" ", 1)[-1].replace(":", "/")
             ui.html(
-                f"<div style='color:{ZACHT};font-size:12px;padding:4px 2px'>Op BibleHub: "
+                f"<div style='color:{ZACHT};font-size:13px;padding:4px 2px'>Op BibleHub: "
                 f"<a style='color:{MERK}' target='_blank' rel='noopener' "
                 f"href='https://biblehub.com/interlinear/{_boek}/{_hs}.htm'>"
                 f"interlinear van dit vers</a>"
@@ -3998,7 +4076,7 @@ def dagkalender_html(dagen, dagboek, doelen):
     waarvan je die dag het dagdoel haalde. Zelfde kalender als in de Streamlit-app."""
     vandaag_d = date.today()
     start = vandaag_d - timedelta(days=vandaag_d.weekday() + 28)   # maandag, vier weken terug
-    kop = "".join(f"<div style='text-align:center;font-size:11px;color:{ZACHT}'>{d}</div>"
+    kop = "".join(f"<div style='text-align:center;font-size:12.5px;color:{ZACHT}'>{d}</div>"
                   for d in ("ma", "di", "wo", "do", "vr", "za", "zo"))
     cellen = ""
     for i in range(35):
@@ -4023,7 +4101,7 @@ def dagkalender_html(dagen, dagboek, doelen):
             f"padding:4px;position:relative;display:flex;flex-direction:column;"
             f"align-items:center;justify-content:center;gap:3px;"
             f"opacity:{'0.35' if toekomst else '1'}'>"
-            f"<div style='position:absolute;top:3px;left:5px;font-size:9.5px;font-weight:600;"
+            f"<div style='position:absolute;top:3px;left:5px;font-size:12.5px;font-weight:600;"
             f"color:#aeb6c0;line-height:1'>{d.day}</div>{aantal}"
             f"<div style='text-align:center;min-height:9px'>{stippen}</div></div>")
     legenda = " · ".join(f"<span style='color:{kleur}'>●</span> {naam}"
@@ -4031,7 +4109,7 @@ def dagkalender_html(dagen, dagboek, doelen):
     return (f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"
             f"margin-bottom:6px'>{kop}</div>"
             f"<div style='display:grid;grid-template-columns:repeat(7,1fr);gap:4px'>{cellen}</div>"
-            f"<div style='font-size:11px;color:{ZACHT};margin-top:8px;line-height:1.8'>"
+            f"<div style='font-size:12.5px;color:{ZACHT};margin-top:8px;line-height:1.8'>"
             f"Getal = geoefende items die dag · stip = dagdoel gehaald voor: {legenda}</div>")
 
 
@@ -4223,9 +4301,9 @@ def _badgeraster(badges, bewaard):
                    f"border-radius:10px;padding:8px 4px;text-align:center;"
                    f"opacity:{'1' if b['behaald'] else '.45'}'>"
                    f"<div style='font-size:22px;line-height:1.1'>{b['icon']}</div>"
-                   f"<div style='color:{kleur};font-size:11.5px;font-weight:600;"
+                   f"<div style='color:{kleur};font-size:12.5px;font-weight:600;"
                    f"line-height:1.3;margin-top:2px'>{b['titel']}</div>"
-                   f"<div style='color:{ZACHT};font-size:10.5px'>{onder}</div></div>")
+                   f"<div style='color:{ZACHT};font-size:12.5px'>{onder}</div></div>")
     return (f"<div style='display:grid;gap:8px;"
             f"grid-template-columns:repeat(auto-fill,minmax(92px,1fr))'>{vakjes}</div>")
 
@@ -4256,7 +4334,7 @@ def _onderdeelblok(g, cijfers):
     for naam, fasen in modules:
         totaal = sum(fasen.values())
         blokken += _meterbalk(naam, fasen["Beheerst"] + fasen["Mastery"], totaal)
-        blokken += (f"<div style='color:{ZACHT};font-size:11.5px;margin:-6px 0 12px'>"
+        blokken += (f"<div style='color:{ZACHT};font-size:12.5px;margin:-6px 0 12px'>"
                     f"nieuw {fasen['Nieuw']} · training {fasen['In Training']} · "
                     f"beheerst {fasen['Beheerst']} · mastery {fasen['Mastery']}</div>")
     return blokken
@@ -4271,12 +4349,12 @@ def _probleemtabel(rijen):
             f"border-top:1px solid {RAND};padding:7px 0'>"
             f"<div style='min-width:0'>"
             f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{w.get('grieks','')}</span>"
-            f"<div style='color:{ZACHT};font-size:12px;overflow:hidden;white-space:nowrap;"
+            f"<div style='color:{ZACHT};font-size:13px;overflow:hidden;white-space:nowrap;"
             f"text-overflow:ellipsis'>{str(w.get('nederlands',''))[:40]}</div></div>"
             f"<div style='text-align:right;white-space:nowrap'>"
             f"<span style='color:{FOUT};font-size:13px;font-weight:600'>"
             f"{int(deel * 100)}% fout</span>"
-            f"<div style='color:{ZACHT};font-size:11.5px'>"
+            f"<div style='color:{ZACHT};font-size:12.5px'>"
             f"{int(w.get('score_goed', 0) or 0)} goed · {fout} fout · "
             f"streak {int(w.get('streak', 0) or 0)}</div></div></div>")
     return regels
@@ -4285,7 +4363,7 @@ def _probleemtabel(rijen):
 def _prognoseblok(prognose, woorden, doel_streak):
     """De uitkomst van de planner: verdeling nu, en wanneer je klaar bent."""
     fasen = _fasen_van(w.get("streak", 0) for w in woorden)
-    verdeling = (f"<div style='color:{ZACHT};font-size:12px;margin-bottom:10px'>"
+    verdeling = (f"<div style='color:{ZACHT};font-size:13px;margin-bottom:10px'>"
                  f"{len(woorden)} woorden · nieuw {fasen['Nieuw']} · training "
                  f"{fasen['In Training']} · beheerst {fasen['Beheerst']} · mastery "
                  f"{fasen['Mastery']}</div>")
@@ -4298,13 +4376,13 @@ def _prognoseblok(prognose, woorden, doel_streak):
     return (verdeling +
             f"<div style='background:{VLAK};border-left:4px solid {MERK};border-radius:10px;"
             f"padding:14px'>"
-            f"<div style='color:{ZACHT};font-size:11.5px;letter-spacing:.6px;"
+            f"<div style='color:{ZACHT};font-size:12.5px;letter-spacing:.6px;"
             f"text-transform:uppercase'>Verwachte afrondingsdatum</div>"
             f"<div style='color:{MERK};font-size:28px;font-weight:800;margin:2px 0 8px'>"
             f"{prognose['einddatum']}</div>"
             f"<div style='color:{TEKST};font-size:13.5px'>Doorlooptijd "
             f"{prognose['dagen']} dagen.</div>"
-            f"<div style='color:{ZACHT};font-size:12px;margin-top:8px'>"
+            f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
             f"Nog {prognose['schuld']} streak-punten te gaan · ongeveer "
             f"{prognose['winst']} punt winst per beurt. Een fout kost meer dan een goede "
             f"beurt oplevert, dus accuratesse telt zwaarder dan aantallen.</div></div>")
@@ -4326,7 +4404,7 @@ def _ranglijstblok(spelers, eigen_naam):
                    f"{naamregel(speler)}</div>"
                    f"<div style='color:{MERK};font-size:18px;font-weight:800'>"
                    f"{speler['week']}</div>"
-                   f"<div style='color:{ZACHT};font-size:11px'>deze week</div></div>")
+                   f"<div style='color:{ZACHT};font-size:12.5px'>deze week</div></div>")
     kop = (f"<div style='display:flex;gap:6px;margin-bottom:10px'>{podium}</div>"
            if podium else
            f"<div style='color:{ZACHT};font-size:13px;margin-bottom:10px'>"
@@ -4340,10 +4418,10 @@ def _ranglijstblok(spelers, eigen_naam):
                    f"color:{MERK if eigen else TEKST};font-size:13px'>"
                    f"<div style='min-width:0;overflow:hidden;white-space:nowrap;"
                    f"text-overflow:ellipsis'>{plek}. {naamregel(speler)}"
-                   f"<div style='color:{ZACHT};font-size:11.5px'>niveau "
+                   f"<div style='color:{ZACHT};font-size:12.5px'>niveau "
                    f"{speler['niveau']} · {speler['titel']}</div></div>"
                    f"<div style='text-align:right;white-space:nowrap'>{speler['xp']} XP"
-                   f"<div style='color:{ZACHT};font-size:11.5px'>🏅 {speler['badges']} · "
+                   f"<div style='color:{ZACHT};font-size:12.5px'>🏅 {speler['badges']} · "
                    f"{speler['beheerst']} beheerst</div></div></div>")
     return kop + regels
 
@@ -4391,7 +4469,7 @@ def voortgangpagina():
                     with ui.element("div").classes("kaart").style("flex:1;text-align:center"):
                         ui.label(str(waarde)).style(
                             f"font-size:24px;font-weight:800;color:{MERK};line-height:1.1")
-                        ui.label(label).style(f"color:{ZACHT};font-size:11.5px")
+                        ui.label(label).style(f"color:{ZACHT};font-size:12.5px")
 
         # --- oefenritme -------------------------------------------------------
         with ui.element("div").classes("kaart w-full"):
@@ -4420,7 +4498,7 @@ def voortgangpagina():
                     step=1).props("outlined dark dense").classes("w-full")
             ui.label("Zet een doel op 0 om het te laten vervallen; dan verschijnt er ook "
                      "geen stipje meer in de kalender.").style(
-                f"color:{ZACHT};font-size:12px;margin:6px 0")
+                f"color:{ZACHT};font-size:13px;margin:6px 0")
 
             async def bewaar_doelen():
                 g.zet_dagdoel({s: (v.value or 0) for s, v in schuiven.items()})
@@ -4428,7 +4506,7 @@ def voortgangpagina():
                 ui.notify("Dagdoelen opgeslagen", position="top", color="dark")
                 ui.navigate.to("/voortgang")
 
-            ui.button("Doelen opslaan", on_click=bewaar_doelen).props("unelevated").style(
+            ui.button("Doelen opslaan", on_click=bewaar_doelen, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700;width:100%")
 
         # --- woorden ----------------------------------------------------------
@@ -4482,7 +4560,7 @@ def voortgangpagina():
                 ui.label("Per tentamen").style(
                     f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
                 ui.label("Een item telt als beheerst vanaf streak 16.").style(
-                    f"color:{ZACHT};font-size:12px;margin-bottom:6px")
+                    f"color:{ZACHT};font-size:13px;margin-bottom:6px")
                 cellen = af_cellen(g)
                 for naam, lessen, bereik in TENTAMENS:
                     woorden = [w for w in g.woorden if motor.veilig_les_nummer(w) in bereik]
@@ -4500,7 +4578,7 @@ def voortgangpagina():
                     ui.label("Ontleden per onderdeel").style(
                         f"color:{TEKST};font-size:14px;font-weight:600;margin-top:12px")
                     ui.label("Hoe vaak je het onderdeel in één keer goed had — je tentamenmaat.").style(
-                        f"color:{ZACHT};font-size:12px;margin-bottom:6px")
+                        f"color:{ZACHT};font-size:13px;margin-bottom:6px")
                     for sleutel, naam in ONTLEED_DIMS:
                         e = ontleed.get(sleutel) or {}
                         totaal = int(e.get("g", 0) or 0) + int(e.get("f", 0) or 0)
@@ -4520,7 +4598,7 @@ def voortgangpagina():
                     ui.html(_probleemtabel(lastig[:25]))
                     if len(lastig) > 25:
                         ui.label(f"De 25 hardnekkigste van {len(lastig)} getoond.").style(
-                            f"color:{ZACHT};font-size:12px;margin-top:6px")
+                            f"color:{ZACHT};font-size:13px;margin-top:6px")
 
             # --- studieplanner -----------------------------------------------------
             with _uitklap("Studieplanner — wanneer ken ik alles?"):
@@ -4531,13 +4609,13 @@ def voortgangpagina():
                 kies_diepte = ui.number("Gewenste kennis-diepte (streak)", value=16, min=2, max=30,
                                         step=1).props("outlined dark dense").classes("w-full")
                 ui.label("16 = beheerst (de norm). 8 = genoeg om te herkennen in een tekst. "
-                         "30 = vloeiend.").style(f"color:{ZACHT};font-size:12px")
+                         "30 = vloeiend.").style(f"color:{ZACHT};font-size:13px")
                 kies_tempo = ui.number("Woorden per dag", value=max(5, tempo) if tempo else 30,
                                        min=5, max=500, step=5).props(
                     "outlined dark dense").classes("w-full")
                 if tempo:
                     ui.label(f"Je tempo van de afgelopen twee weken: ongeveer {tempo} items per "
-                             f"dag. Pas gerust aan.").style(f"color:{ZACHT};font-size:12px")
+                             f"dag. Pas gerust aan.").style(f"color:{ZACHT};font-size:13px")
                 kies_acc = ui.number("Verwachte accuratesse (%)", value=max(50, sam["accuratesse"]),
                                      min=50, max=100, step=1).props(
                     "outlined dark dense").classes("w-full")
@@ -4595,7 +4673,7 @@ def voortgangpagina():
                 return None
 
             competitie.on_value_change(bij_openen)
-            ui.button("Ranglijst verversen", on_click=laad_bord).props("flat").style(
+            ui.button("Ranglijst verversen", on_click=laad_bord, color=None).props("flat no-caps").style(
                 f"color:{MERK};border:1px solid {RAND};border-radius:8px;width:100%")
 
         if not BIJBEL:
@@ -4608,7 +4686,7 @@ def voortgangpagina():
             # --- export ------------------------------------------------------------
             ui.button("Woordenschat downloaden als CSV",
                       on_click=lambda: ui.download.content(
-                          voortgang_csv(g), "mijn_grieks_voortgang.csv")).props("flat").style(
+                          voortgang_csv(g), "mijn_grieks_voortgang.csv"), color=None).props("flat no-caps").style(
                 f"color:{MERK};border:1px solid {RAND};border-radius:10px")
 
         else:
@@ -4621,7 +4699,7 @@ def voortgangpagina():
 
         ui.button("Uitloggen", on_click=lambda: (
             _sessies.pop(app.storage.user.get("sleutel"), None),
-            app.storage.user.clear(), ui.navigate.to("/"))).props("flat").style(
+            app.storage.user.clear(), ui.navigate.to("/")), color=None).props("flat no-caps").style(
             f"color:{ZACHT};border:1px solid {RAND};border-radius:10px;margin-top:8px")
     onderbalk("Voortgang")
 
@@ -4635,7 +4713,7 @@ def _lijstregel(links, rechts, onder="", kleur=None):
     return (f"<div style='display:flex;justify-content:space-between;gap:10px;"
             f"border-top:1px solid {RAND};padding:7px 0'>"
             f"<div style='min-width:0'>{links}"
-            f"{f'<div style=\"color:{ZACHT};font-size:11.5px\">{onder}</div>' if onder else ''}"
+            f"{f'<div style=\"color:{ZACHT};font-size:12.5px\">{onder}</div>' if onder else ''}"
             f"</div>"
             f"<div style='text-align:right;white-space:nowrap;font-size:12.5px;"
             f"color:{kleur or ZACHT}'>{rechts}</div></div>")
@@ -4679,7 +4757,7 @@ def lijst_structuur(g, zoek):
     regels = []
     for w in sw_woorden(g):
         kaal, naamval = sw_naamval(w)
-        grieks = kaal + (f" <span style='color:{MERK};font-size:12px'>+ {naamval}</span>"
+        grieks = kaal + (f" <span style='color:{MERK};font-size:13px'>+ {naamval}</span>"
                          if naamval else "")
         ned = str(w.get("nederlands", "") or w.get("betekenis", ""))
         if zoek and zoek not in grieks.lower() and zoek not in ned.lower():
@@ -4703,14 +4781,14 @@ def _werkwoordpaspoort(verb):
         f"stamwortel {morf['stamwortel']}" if morf.get("stamwortel") else "",
         f"Strong {verb['strong_nummer']}" if verb.get("strong_nummer") else "") if x)
     if kop:
-        delen.append(f"<div style='color:{MERK};font-size:11.5px'>{kop}</div>")
+        delen.append(f"<div style='color:{MERK};font-size:12.5px'>{kop}</div>")
     if morf.get("memoriseren_vereist"):
-        delen.append(f"<div style='color:{FOUT};font-size:11.5px'>🔥 onregelmatig — "
+        delen.append(f"<div style='color:{FOUT};font-size:12.5px'>🔥 onregelmatig — "
                      f"deze moet je uit je hoofd leren</div>")
     if regel.get("formule"):
-        delen.append(f"<div style='color:{ZACHT};font-size:11.5px'>{regel['formule']}</div>")
+        delen.append(f"<div style='color:{ZACHT};font-size:12.5px'>{regel['formule']}</div>")
     if regel.get("toelichting"):
-        delen.append(f"<div style='color:{ZACHT};font-size:11.5px;font-style:italic'>"
+        delen.append(f"<div style='color:{ZACHT};font-size:12.5px;font-style:italic'>"
                      f"{regel['toelichting']}</div>")
     return "".join(delen)
 
@@ -4822,6 +4900,37 @@ def lezenpagina():
                 f"color:{ZACHT};font-size:13px;line-height:1.5")
             streamlit_link(g)
     onderbalk("Lezen")
+
+
+# Zonder manifest maakt Chrome van 'Toevoegen aan startscherm' een snelkoppeling met een
+# letter als icoon; mét manifest een echte installatie met eigen icoon en naam. Dat de app
+# nu al schermvullend opent komt van de apple-regel hierboven, die Chrome ook honoreert —
+# dat is een oude gunst waar je niet op moet bouwen.
+app.add_static_files("/static", "static")
+
+MANIFEST = {
+    "name": "Grieks — PThU",
+    "short_name": "Grieks",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": INKT,
+    "theme_color": INKT,
+    "lang": "nl",
+    "icons": [
+        {"src": "/static/grieks-192.png", "sizes": "192x192", "type": "image/png"},
+        {"src": "/static/grieks-512.png", "sizes": "512x512", "type": "image/png"},
+        {"src": "/static/grieks-512-maskable.png", "sizes": "512x512",
+         "type": "image/png", "purpose": "maskable"},
+    ],
+}
+
+
+@app.get("/manifest.webmanifest")
+def manifest():
+    # Het eigen mediatype moet: met application/json slaat Chrome het manifest over.
+    return JSONResponse(MANIFEST, media_type="application/manifest+json")
 
 
 @app.on_disconnect
