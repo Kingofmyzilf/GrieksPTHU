@@ -13,6 +13,7 @@ import json
 import math
 import os
 import random
+import re
 from datetime import date, timedelta
 from urllib.parse import quote
 
@@ -192,7 +193,11 @@ def onderbalk(actief):
         f"<span style='font-size:17px;line-height:1'>{teken}</span>"
         f"<span>{naam}</span></a>"
         for naam, teken, pad in BESTEMMINGEN)
-    ui.html(f"<div class='onderbalk'>{vakken}</div>")
+    # display:contents haalt de wikkeldiv weg die NiceGUI om deze html zet. Die div is
+    # zelf 0px hoog — de balk erin hangt vast onderaan — maar telt wél mee als flex-item
+    # van de pagina, en kreeg dus de tussenruimte van 16px mee. Daardoor was de pagina
+    # net iets hoger dan het scherm en kon je hem een paar pixels wegschuiven.
+    ui.html(f"<div class='onderbalk'>{vakken}</div>").style("display:contents")
 
 
 def typbalk(hint):
@@ -3079,6 +3084,38 @@ def sw_woorden(g):
     return uit
 
 
+_SW_NAAMVAL = {"gen": "genitivus", "dat": "dativus", "acc": "accusativus"}
+
+
+def sw_naamval(w):
+    """'διά (met gen)' → ('διά', 'genitivus'). Hetzelfde woord met een andere naamval
+    erachter betekent iets anders, en dát is wat je hier leert onderscheiden. Ze staan als
+    aparte regels in de database en hebben dus elk hun eigen streak; door de naamval los
+    van het Griekse woord te zetten zie je dat ook."""
+    grieks = str(w.get("grieks", ""))
+    match = re.match(r"^(.*?)\s*\(met (\w+)\)\s*$", grieks)
+    if not match:
+        return grieks, ""
+    return match.group(1), _SW_NAAMVAL.get(match.group(2), match.group(2))
+
+
+def sw_nieuw(w):
+    """Nog nooit langsgekomen: geen goed, geen fout, geen streak."""
+    return not (int(w.get("goed", 0) or 0) or int(w.get("fout", 0) or 0)
+                or int(w.get("streak", 0) or 0))
+
+
+def sw_rijtjeregel(w):
+    """Eén regel voor 'Leer eerst dit rijtje': woord, naamval, betekenis, categorie."""
+    kaal, naamval = sw_naamval(w)
+    achter = (f" <span style='color:{MERK}'>+ {naamval}</span>") if naamval else ""
+    return (f"<div style='font-size:13px;line-height:1.7;color:{TEKST}'>"
+            f"<span class='grieks' style='font-size:16px'>{kaal}</span>{achter}"
+            f" — {w.get('nederlands', '') or w.get('betekenis', '')}"
+            f"<span style='color:{ZACHT};font-size:11.5px'> · "
+            f"{w.get('categorie', '')}</span></div>")
+
+
 def sw_vraagt_typen(vraagvorm, streak):
     if vraagvorm == "Alleen meerkeuze":
         return False
@@ -3128,7 +3165,7 @@ class SwSessie:
             woorden.sort(key=lambda w: w["streak"])
         self.prefs = p
         self.alles = sw_woorden(g)
-        self.vragen = woorden[:int(p["sw_aantal"])]
+        self.vragen = self._kaarten(woorden[:int(p["sw_aantal"])])
         self.i = 0
         self.goed = 0
         self.fout = 0
@@ -3136,9 +3173,26 @@ class SwSessie:
         self.bezig = False
         self.vraag_typen = True
 
+    @staticmethod
+    def _kaarten(woorden):
+        """Een woord dat je nog nooit zag krijgt eerst een leerkaart: je ziet wat het
+        betekent, en pas daarna de vraag. Zonder die kaart is je eerste ontmoeting met
+        ἀλλά een gok uit vier opties — dat leert niets. Zo doet het Leerpad van de
+        woordenschat het ook (leerpad_kaart_volgorde in de motor)."""
+        kaarten = []
+        for w in woorden:
+            if sw_nieuw(w):
+                kaarten.append((w, "leer"))
+            kaarten.append((w, "vraag"))
+        return kaarten
+
     @property
     def huidig(self):
-        return self.vragen[self.i] if self.i < len(self.vragen) else None
+        return self.vragen[self.i][0] if self.i < len(self.vragen) else None
+
+    @property
+    def vorm(self):
+        return self.vragen[self.i][1] if self.i < len(self.vragen) else None
 
 
 @ui.page("/oefenen/structuur")
@@ -3214,18 +3268,11 @@ def swpagina():
                     f"{_niv['niveau']}</span></div>")
             with ui.expansion("Leer eerst dit rijtje").props("dense").classes(
                     "w-full").style(f"color:{ZACHT};font-size:13px"):
-                ui.html("".join(
-                    f"<div style='font-size:13px;line-height:1.7;color:{TEKST}'>"
-                    f"<span class='grieks' style='font-size:16px'>{w.get('grieks','')}</span>"
-                    f" — {w.get('nederlands', '') or w.get('betekenis', '')}"
-                    f"<span style='color:{ZACHT};font-size:11.5px'> · "
-                    f"{w.get('categorie', '')}</span></div>"
-                    for _idx, w in sessie.level["items"]))
+                ui.html("".join(sw_rijtjeregel(w) for _idx, w in sessie.level["items"]))
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
         woord = ui.label().classes("grieks w-full text-center").style(
             f"font-size:42px;line-height:1.1;color:{TEKST};padding:2px 0 0")
-        soort = ui.label().classes("w-full text-center").style(
-            f"color:{ZACHT};font-size:12.5px")
+        soort = ui.html().classes("w-full text-center")
         vraagsoort = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px;padding-top:4px")
         opties = ui.column().classes("w-full gap-2").style("padding-top:6px")
@@ -3253,23 +3300,48 @@ def swpagina():
             vak.set_visibility(True)
         if w is None:
             woord.text = "✓"
-            soort.text = ""
+            soort.set_content("")
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
             toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
             return
+        kaal, naamval = sw_naamval(w)
+        woord.text = kaal
+        # De naamval krijgt de merkkleur en staat vóór de categorie: bij διά, κατά, ἐπί
+        # en de andere voorzetsels is juist dát het verschil tussen twee kaarten.
+        soort.set_content(
+            (f"<span style='color:{MERK};font-size:13px'>+ {naamval}</span>"
+             f"<span style='color:{ZACHT};font-size:12.5px'> · </span>" if naamval else "")
+            + f"<span style='color:{ZACHT};font-size:12.5px'>"
+              f"{w.get('categorie', '')}</span>")
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        teken()
+        if sessie.vorm == "leer":
+            # Eerste ontmoeting: laten zien in plaats van laten raden.
+            sessie.vraag_typen = False
+            vraagsoort.text = "Nieuw — bekijk het even"
+            statusbalk.set_visibility(False)
+            toon_typveld(invoer, False)
+            knop.text = "Bekeken"
+            with opties:
+                ui.html(
+                    f"<div style='background:rgba(51,204,255,.09);border:1px solid "
+                    f"{MERK}40;border-radius:12px;padding:14px 16px;text-align:center'>"
+                    f"<div style='color:{ZACHT};font-size:12px'>betekenis</div>"
+                    f"<div style='color:{TEKST};font-size:19px;line-height:1.35;"
+                    f"margin-top:2px'>{w.get('betekenis', '')}</div>"
+                    + (f"<div style='color:{MERK};font-size:13px;margin-top:8px'>"
+                       f"hoort bij de {naamval}</div>" if naamval else "")
+                    + "</div>")
+            return
         sessie.vraag_typen = sw_vraagt_typen(sessie.prefs["sw_vraagvorm"], w["streak"])
-        woord.text = w.get("grieks", "")
-        soort.text = f"{w.get('categorie', '')} · {w.get('eigenschap', '')}".strip(" ·")
         vraagsoort.text = ("Typ de betekenis" if sessie.vraag_typen
                            else "Welke betekenis hoort hierbij?")
-        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
         invoer.value = ""
         toon_typveld(invoer, sessie.vraag_typen)
-        teken()
         if not sessie.vraag_typen:
             # Afleiders het liefst uit dezelfde categorie: voorzetsels met voorzetsels.
             zelfde = [x for x in sessie.alles
@@ -3323,7 +3395,7 @@ def swpagina():
                 f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
                 f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
                 f"<div class='grieks' style='font-size:44px;color:{TEKST};"
-                f"margin-top:14px;line-height:1.15'>{w.get('grieks', '')}</div>"
+                f"margin-top:14px;line-height:1.15'>{sw_naamval(w)[0]}</div>"
                 f"<div style='color:{TEKST};font-size:17px;margin-top:8px'>"
                 f"{w.get('betekenis', '')}</div>"
                 f"{regel_eig}"
@@ -3356,7 +3428,9 @@ def swpagina():
                 await run.io_bound(g.bewaar, True)
                 ui.navigate.to("/oefenen/structuur")
                 return
-            if sessie.beoordeeld:
+            if sessie.beoordeeld or sessie.vorm == "leer":
+                # Een leerkaart hoef je alleen te bekijken; er valt niets na te kijken
+                # en hij telt niet mee voor je score. De vraag komt hierna vanzelf.
                 sessie.i += 1
                 toon()
                 return
@@ -4429,7 +4503,9 @@ def lijst_verwarparen(g):
 def lijst_structuur(g, zoek):
     regels = []
     for w in sw_woorden(g):
-        grieks = str(w.get("grieks", ""))
+        kaal, naamval = sw_naamval(w)
+        grieks = kaal + (f" <span style='color:{MERK};font-size:12px'>+ {naamval}</span>"
+                         if naamval else "")
         ned = str(w.get("nederlands", "") or w.get("betekenis", ""))
         if zoek and zoek not in grieks.lower() and zoek not in ned.lower():
             continue

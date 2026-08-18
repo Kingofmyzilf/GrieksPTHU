@@ -163,14 +163,6 @@ werkwoordpaspoort erbij.
       zetten van tabbladen. Zolang die er niet is, toont de NiceGUI-app altijd alles;
       de Streamlit-app kent een eenvoudige modus die opties verbergt.
 
-## Nog open — als eerste oppakken
-
-- Op Actief Beheersen is de pagina bij een lange vraag 3px hoger dan het scherm, dus
-  technisch scrolbaar. Onzichtbaar, maar de bedoeling is nul. Het komt niet uit de
-  inhoud (die eindigt op 783 van 812) maar uit de hoogte die Quasar aan `q-page`
-  geeft: die staat op 815. Zoek uit welke regel dat is en zet hem uit; de andere
-  oefenpagina's meten wel gewoon 0.
-
 ## Bekende afwijkingen (bewust)
 
 - Opslaan gebeurt na elke beurt in plaats van elke vijf; kan hier omdat het in een
