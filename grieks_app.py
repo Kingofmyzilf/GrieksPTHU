@@ -68,20 +68,24 @@ ui.add_head_html(f"""
   .inhoud.metbalk {{ padding-bottom:136px; }}
   .smal {{ max-width:420px; margin:0 auto; padding:14px; }}
   .kaart {{ background:{VLAK}; border:1px solid {RAND}; border-radius:12px; padding:14px; }}
-  /* 10px binnenruimte houdt de knop op ~44px hoog: nog steeds prettig te raken met
-     een duim, maar vier stuks passen mét een hint erboven binnen het scherm. */
-  .keuze {{ background:{VLAK}; border:1px solid {RAND}; border-radius:10px; padding:10px 14px;
-            cursor:pointer; font-size:15px; text-align:left; width:100%; color:{TEKST}; }}
+  /* 13px binnenruimte geeft een knop van ~50px hoog: prettig te raken met een duim.
+     Dat kan sinds de hint nog maar één regel is; daarvoor moest hij krapper om vier
+     opties mét hint op het scherm te houden. */
+  .keuze {{ background:{VLAK}; border:1px solid {RAND}; border-radius:10px; padding:13px 14px;
+            cursor:pointer; font-size:16px; text-align:left; width:100%; color:{TEKST}; }}
   .keuze:hover {{ border-color:{MERK}; }}
-  /* Het vraagvak is een toneel van vaste hoogte: de feedback komt eroverheen te liggen
-     in plaats van eronder. Zonder dit groeide de pagina bij elk antwoord, schoven de
-     knoppen weg en stond de uitslag onder de vouw zodra het toetsenbord openstond. */
-  /* Het vak is even hoog als er ruimte is en niet hoger: wat er niet in past scrolt
-     binnen het vak, zodat de pagina zelf stil blijft staan. 392px is wat de kop, de
-     hulpknoppen en de twee balken samen innemen. */
-  .vraagvak {{ position:relative; min-height:280px; max-height:calc(100dvh - 392px);
-               overflow-y:auto; }}
-  .vraagvak.vrij {{ max-height:none; }}   /* de eindsamenvatting mag wél doorlopen */
+  /* Het vraagvak is een toneel: de feedback komt eroverheen te liggen in plaats van
+     eronder. Zonder dit groeide de pagina bij elk antwoord, schoven de knoppen weg en
+     stond de uitslag onder de vouw zodra het toetsenbord openstond.
+
+     De pagina is precies zo hoog als het scherm min de twee vaste balken (92 + 64), en
+     het vraagvak krijgt met flex:1 wat de kop, de hulpknoppen en de rest overlaten. Dat
+     rekent zichzelf uit — een vast getal klopte niet meer zodra er een regel bij kwam
+     of wegviel, en dan viel de onderste antwoordknop half buiten beeld. */
+  .inhoud.metbalk.vast {{ height:calc(100dvh - 156px); padding-bottom:4px;
+                          display:flex; flex-direction:column; }}
+  .vraagvak {{ position:relative; flex:1 1 auto; min-height:0; overflow-y:auto; }}
+  .vraagvak.vrij {{ flex:0 0 auto; }}     /* de eindsamenvatting mag wél doorlopen */
   .vraagvak > .overlay {{ position:absolute; left:0; right:0; top:0; bottom:0;
                           background:{INKT}; overflow-y:auto; }}
   .vraagvak > .overlay:empty {{ display:none; }}
@@ -560,19 +564,18 @@ def bijbelvormen(w, hoeveel=6):
     return uit
 
 
-def _hint(w, kort=False):
+def _hint(w):
     """De hint die je krijgt als je vastloopt: citatievorm, uitspraak en het
     ezelsbruggetje. Zelfde inhoud als de hint in de Streamlit-app — die helpt je het
     woord ophalen, terwijl gemaskeerde letters je alleen laten raden.
 
-    Met kort=True blijft het ezelsbruggetje bij de eerste zin. Die versie komt naast
-    een vraag te staan die zichtbaar moet blijven, en dan telt elke regel."""
+    Het ezelsbruggetje is een icoontje met hoogstens vijf woorden: meestal een
+    Nederlands woord dat van dit Griekse woord komt (cardioloog bij καρδία), anders
+    een kort beeld. Zo past de hele hint op één regel naast de vraag."""
     delen = [str(d).strip() for d in (w.get("lexeem_info") or w.get("grieks_info", ""),
                                       w.get("fonetisch", "")) if str(d or "").strip()]
     beeld = f"{w.get('anker', '') or ''} {w.get('beeld', '') or w.get('opmerking', '') or ''}".strip()
     if beeld:
-        if kort:
-            beeld = beeld.split(".")[0].strip() + "."
         delen.append(beeld)
     return " · ".join(delen) or _letterhint(w)
 
@@ -1233,7 +1236,9 @@ def oefenpagina():
 
     # gap-2 en niet gap-3: met elf tussenruimtes scheelt dat veertig pixels, en dat is
     # net het verschil tussen wel en niet scrollen tijdens een meerkeuzevraag.
-    with ui.column().classes("inhoud metbalk w-full gap-2"):
+    # 'vast': de kolom is precies zo hoog als het scherm min de balken, zodat het
+    # vraagvak eronder met flex:1 exact de overgebleven ruimte krijgt.
+    with ui.column().classes("inhoud metbalk vast w-full gap-2") as kolom:
         with ui.row().classes("w-full items-center justify-between no-wrap"):
             ui.label(sessie.prefs["keuze"]).style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
@@ -1264,7 +1269,7 @@ def oefenpagina():
         with ui.element("div").classes("vraagvak w-full") as vraagvak:
             with ui.column().classes("w-full gap-1 items-stretch") as vraagvlak:
                 woord = ui.label().classes("grieks w-full text-center").style(
-                    f"font-size:52px;line-height:1.1;color:{TEKST};padding:6px 0 2px")
+                    f"font-size:58px;line-height:1.1;color:{TEKST};padding:8px 0 2px")
                 lemma = ui.label().classes("w-full text-center").style(
                     f"color:{ZACHT};font-size:14px")
                 statusbalk = ui.row().classes(
@@ -1453,14 +1458,14 @@ def oefenpagina():
         # Zo compact mogelijk: dit komt bovenop een vraag die blijft staan, en scrollen
         # tijdens het oefenen is precies wat we niet willen. Alles op één regel per
         # gedachte, geen kader, geen herhaling van wat er al staat.
-        delen = [f"<b style='color:{MERK}'>Bijna</b> — {_hint(k, kort=True)}"]
+        delen = [f"<b style='color:{MERK}'>Bijna</b> — {_hint(k)}"]
         # Alleen het meest specifieke: welk woord je antwoord wél was. De bredere
         # 'lijkt op'-lijst bewaren we voor de uitslag, die over de vraag heen mag.
         if bron is not None and bron.get("grieks"):
             delen.append(f"“{antwoord}” hoort bij "
                          f"<span class='grieks'>{bron['grieks']}</span>")
         with naastregel:
-            ui.html(f"<div style='color:{ZACHT};font-size:12.5px;line-height:1.45;"
+            ui.html(f"<div style='color:{ZACHT};font-size:14px;line-height:1.45;"
                     f"text-align:center;padding:2px 4px'>"
                     + "<br>".join(delen) + "</div>")
         if vorm in ("4", "3_typ"):
@@ -1519,6 +1524,7 @@ def oefenpagina():
         # De feedback lag over de vraag heen; nu de vraag weer zichtbaar maken.
         vraagvlak.set_visibility(True)
         vraagvak.classes(remove="vrij")
+        kolom.classes(add="vast")
 
         teken_status(k)
         if k is None:
@@ -1529,7 +1535,10 @@ def oefenpagina():
             teller.text = ""
             zet_balk("Nieuwe ronde")
             teken_streepjes()
-            vraagvak.classes(add="vrij")     # de samenvatting mag zo lang zijn als hij is
+            # De samenvatting mag zo lang zijn als hij is: het vak stopt met krimpen en de
+            # kolom laat zijn vaste hoogte los, zodat de pagina hier wél kan scrollen.
+            vraagvak.classes(add="vrij")
+            kolom.classes(remove="vast")
             with opties:
                 toon_samenvatting()
             return
