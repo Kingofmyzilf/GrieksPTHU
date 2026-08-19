@@ -49,7 +49,19 @@ st.markdown("""
     /* Polytonisch Grieks tekstfont: in het UI-font lopen spiritus, accent en iota subscriptum
        dicht en gloeien ze uit op donker. Gentium is hier voor gemaakt. */
     @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap');
-    .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
+    /* Een leesregel heeft een maximum. Zonder dit liep alles van rand tot rand: op een
+       breed scherm stonden de vier antwoordknoppen van Actief Beheersen duizend pixels
+       uit elkaar, en in de competitietabel lag de naam links en het getal rechts met
+       niets ertussen — je oog gaat dan heen en weer in plaats van naar beneden. 1240px
+       laat het oefenritme-rooster en de drie kolommen van Leesteksten nog gewoon uit. */
+    .block-container, [data-testid="stMainBlockContainer"] {
+        max-width: 1240px; margin-left: auto; margin-right: auto; }
+    /* Hier stond width:100% op de knop. Dat deed niets: .stButton is zelf fit-content, dus
+       elke knop kreeg de breedte van zijn opschrift — 'Start sessie' 78px naast
+       'Start / nieuwe sessie' 625px. Een ondergrens trekt ze gelijk zonder dat een korte
+       knop het halve scherm beslaat; knoppen met use_container_width blijven meerekken. */
+    .stButton>button { border-radius: 10px; height: 3em; font-weight: bold;
+                       min-width: 190px; padding-left: 20px; padding-right: 20px; }
     .stTextInput>div>div>input { font-size: 20px; text-align: center; }
     .grieks-woord { font-family: 'Gentium Book Plus', 'Palatino Linotype', Georgia, serif;
                     font-size: 58px; font-weight: 400; color: #fafafa; text-align: center; padding: 16px 20px; }
@@ -418,6 +430,30 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
 # Eén reeks met gelijke helderheid. Bewust weg van rood en groen (die betekenen in deze app
 # al "fout" en "goed") en weg van de merkkleur #33ccff (die betekent "actief/voortgang").
 _ONTLEED_KLEUR = {"Nom": "#7FB3FF", "Gen": "#E8B44A", "Dat": "#B694FF", "Acc": "#FF8FB1", "Voc": "#5ED3C0"}
+
+
+# Tijden en wijzen krijgen dezelfde behandeling als de naamvallen hierboven: één vaste
+# kleur per term, gelijke helderheid, weg van rood en groen (die betekenen hier al "fout"
+# en "goed") en weg van het merkcyaan. Deze reeks staat gelijk in de snelle oefen-app
+# (GRAM_KLEUREN in grieks_app.py), zodat roze in beide apps "aoristus" betekent. In
+# tegenstelling tot de naamvallen hangt deze reeks nergens aan vast — omgooien mag.
+_GRAM_KLEUR = {
+    "praesens": "#E8EAED", "imperfectum": "#8FD3E8", "futurum": "#FFB067",
+    "aoristus": "#FF9BC4", "perfectum": "#C4A6FF", "plusquamperfectum": "#9B86D9",
+    "indicativus": "#B8C4CF", "coniunctivus": "#E8B44A", "optativus": "#5ED3C0",
+    "imperativus": "#FFB067", "infinitivus": "#7FB3FF", "participium": "#C4A6FF",
+    "nominativus": "#7FB3FF", "genitivus": "#E8B44A", "dativus": "#B694FF",
+    "accusativus": "#FF8FB1", "vocativus": "#5ED3C0",
+}
+_GRAM_ZOEK = re.compile("(?<![A-Za-z])(" + "|".join(
+    sorted(_GRAM_KLEUR, key=len, reverse=True)) + ")(?![A-Za-z])", re.IGNORECASE)
+
+
+def kleur_gram(tekst):
+    """Elke grammaticale term in de tekst zijn eigen kleur geven (HTML)."""
+    return _GRAM_ZOEK.sub(
+        lambda m: f"<span style='color:{_GRAM_KLEUR[m.group(0).lower()]}'>{m.group(0)}</span>",
+        str(tekst or ""))
 
 
 def naamval_legenda(kop="Kleurlegenda"):
@@ -5415,7 +5451,8 @@ def main():
 
                         cols = st.columns(2)
                         for idx, optie in enumerate(st.session_state.huidige_opties):
-                            if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}"):
+                            if cols[idx % 2].button(optie, key=f"btn_{idx}_{item.get('grieks')}",
+                                                 use_container_width=True):
                                 registreer_oefening(item)
                                 # Vangnet: keur ook goed als de gekozen optie qua betekenis identiek is aan
                                 # het juiste antwoord (echte synoniemen). Bij mastery telt de parsing wél mee.
@@ -5586,7 +5623,30 @@ def main():
                 alle_lessen = sorted(list(set(veilig_les_nummer(i) for i in st.session_state.data)))
                 les_filter = st.selectbox("Bekijk les", alle_lessen)
                 df_vocab = pd.DataFrame([i for i in st.session_state.data if veilig_les_nummer(i) == les_filter])
-                if not df_vocab.empty: st.dataframe(df_vocab[[c for c in ['grieks', 'nederlands', 'streak', 'score_goed', 'score_fout', 'laatst_geoefend', 'woordsoort', 'lexeem_info'] if c in df_vocab.columns]], width='stretch')
+                if not df_vocab.empty:
+                    # De kolomnamen komen uit de opslag (score_goed, laatst_geoefend,
+                    # lexeem_info). Dat is de taal van de spreadsheet, niet van een student;
+                    # column_config zet er leesbare koppen boven en maakt van 2026-08-11
+                    # gewoon "11 aug". De onderliggende data verandert niet.
+                    _kol = [c for c in ['grieks', 'nederlands', 'streak', 'score_goed',
+                                        'score_fout', 'laatst_geoefend', 'woordsoort',
+                                        'lexeem_info'] if c in df_vocab.columns]
+                    _toon = df_vocab[_kol].copy()
+                    if 'laatst_geoefend' in _toon.columns:
+                        _toon['laatst_geoefend'] = pd.to_datetime(
+                            _toon['laatst_geoefend'], errors='coerce')
+                    st.dataframe(_toon, width='stretch', hide_index=True, column_config={
+                        'grieks': st.column_config.TextColumn('Grieks'),
+                        'nederlands': st.column_config.TextColumn('Betekenis'),
+                        'streak': st.column_config.NumberColumn(
+                            'Streak', help="Hoe vaak je dit woord achter elkaar goed had."),
+                        'score_goed': st.column_config.NumberColumn('Goed'),
+                        'score_fout': st.column_config.NumberColumn('Fout'),
+                        'laatst_geoefend': st.column_config.DateColumn(
+                            'Laatst geoefend', format="D MMM YYYY"),
+                        'woordsoort': st.column_config.TextColumn('Soort'),
+                        'lexeem_info': st.column_config.TextColumn('Citatievorm'),
+                    })
             elif weergave == "Actief Beheersen (Rijtjes)": st.info("De scores voor actieve rijtjes worden per specifieke cel bijgehouden in je profiel.")
             elif weergave == "Stamtijden":
                 stamtijden_db = laad_stamtijden_db()
@@ -5748,6 +5808,7 @@ def main():
             # hierboven zie je al of je het gehaald hebt.
             _cfg = dagdoel_config()
             _lg = dagdoel_log_vandaag()
+            st.markdown("##### Vandaag")
             with st.expander("🎯 Dagelijks doel instellen", expanded=False):
                 st.caption(f"Doel vandaag: **{_cfg['woorden']} woorden · {_cfg['stam']} stamtijden · {_cfg['struct']} structuurwoorden · {_cfg['actief']} actief-cellen · {_cfg['verzen']} verzen**. Alles telt automatisch mee zodra je goed antwoordt in het betreffende tabblad.")
                 st.write("")
@@ -5790,6 +5851,7 @@ def main():
             # --- 🔎 ONTLEED-ACCURATESSE (uit de Ontleden-tab) ---
             _osa = st.session_state.get('ontleed_stats') or {}
             if any((v.get('g', 0) + v.get('f', 0)) > 0 for v in _osa.values() if isinstance(v, dict)):
+                st.markdown("##### Per onderdeel")
                 with st.expander("🔎 Ontleed-accuratesse per onderdeel", expanded=False):
                     st.caption("Hoe vaak je in de 🔎 Ontleden-tab het onderdeel in één keer goed had — je tentamenmaat.")
                     _dimlabels = {"woordsoort": "Woordsoort", "naamval": "Naamval", "geslacht": "Geslacht",
@@ -6108,6 +6170,7 @@ def main():
             st.write("---")
             
             st.markdown(f"**🏅 Badges: {len(_behaald_nu)}/{len(_badges)} behaald**  ·  🎮 Niveau {_niv_info['niveau']} — {_niv_info['titel']} ({_niv_info['xp_totaal']} XP, over alle onderdelen)")
+            st.markdown("##### Naslag en knelpunten")
             with st.expander("📖 Hoe werken de niveaus en rangen?", expanded=False):
                 st.markdown(RANG_UITLEG)
                 st.caption(f"Je staat nu op rang {_niv_info['rang_nr']} van {_niv_info['rang_totaal']}"
@@ -6665,7 +6728,8 @@ def main():
                                     st.session_state.af_opties = _opts
                                 _mcols = st.columns(2)
                                 for _oi, _opt in enumerate(st.session_state.af_opties):
-                                    if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}"):
+                                    if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}",
+                                                          use_container_width=True):
                                         if _opt == cell['vorm']:
                                             _af_score(cid, 2, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
                                         else:
@@ -7027,11 +7091,17 @@ def main():
                                 if st.session_state.get("kh_gecheckt"):
                                     goed_lemma, goed_tijd = st.session_state.get("kh_res", (False, False))
                                     if goed_lemma and goed_tijd:
-                                        st.success(f"✅ Juist! **{vorm}** = {correct_tijd} van **{correct_prae}** — _{correct_bet}_")
+                                        st.markdown(f"<div style='background:rgba(61,220,151,.10);border:1px solid #3ddc9740;"
+                                                    f"border-radius:8px;padding:10px 14px'>✅ Juist! <b>{vorm}</b> = "
+                                                    f"{kleur_gram(correct_tijd)} van <b>{correct_prae}</b> — <i>{correct_bet}</i></div>",
+                                                    unsafe_allow_html=True)
                                     else:
                                         deel_l = "✓" if goed_lemma else "✗"
                                         deel_t = "✓" if goed_tijd else "✗"
-                                        st.error(f"{deel_l} lemma · {deel_t} tijd — het was **{correct_tijd}** van **{correct_prae}** — _{correct_bet}_")
+                                        st.markdown(f"<div style='background:rgba(255,107,129,.10);border:1px solid #ff6b8140;"
+                                                  f"border-radius:8px;padding:10px 14px'>{deel_l} lemma · {deel_t} tijd — het was "
+                                                  f"<b>{kleur_gram(correct_tijd)}</b> van <b>{correct_prae}</b> — <i>{correct_bet}</i></div>",
+                                                  unsafe_allow_html=True)
                                     morf = basis.get("morfologie", {}); regel = morf.get("mutatieregel", {})
                                     if is_suppletie:
                                         st.warning(f"🔥 **Onregelmatig (suppletie):** {regel.get('toelichting', 'Puur memoriseren.')}")
@@ -7065,7 +7135,10 @@ def main():
                                 if st.session_state.get("kh_gecheckt"):
                                     ok_prae, ok_bet, ok_tijd = st.session_state.get("kh_res_typ", (False, False, False))
                                     if ok_prae and ok_bet and ok_tijd:
-                                        st.success(f"✅ Precies! **{vorm}** = {correct_tijd} van **{correct_prae}** — _{correct_bet}_")
+                                        st.markdown(f"<div style='background:rgba(61,220,151,.10);border:1px solid #3ddc9740;"
+                                                    f"border-radius:8px;padding:10px 14px'>✅ Precies! <b>{vorm}</b> = "
+                                                    f"{kleur_gram(correct_tijd)} van <b>{correct_prae}</b> — <i>{correct_bet}</i></div>",
+                                                    unsafe_allow_html=True)
                                     else:
                                         st.error(f"{'✓' if ok_prae else '✗'} lemma · {'✓' if ok_bet else '✗'} betekenis · {'✓' if ok_tijd else '✗'} tijd  \nCorrect: **{correct_prae}** — _{correct_bet}_ ({correct_tijd})")
                                     morf = basis.get("morfologie", {}); regel = morf.get("mutatieregel", {})
@@ -7886,7 +7959,8 @@ def main():
                                         
                                     cols = st.columns(2)
                                     for c_idx, optie in enumerate(st.session_state[f"mc_opties_{idx}"]):
-                                        if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}"):
+                                        if cols[c_idx % 2].button(optie, key=f"mc_{idx}_{c_idx}_{w['grieks']}",
+                                                               use_container_width=True):
                                             registreer_oefening(basis)
                                             if optie == basis['nederlands']: 
                                                 basis['streak'] = int(basis.get('streak', 0)) + 1; basis['score_goed'] = int(basis.get('score_goed', 0)) + 1; trigger_save()
