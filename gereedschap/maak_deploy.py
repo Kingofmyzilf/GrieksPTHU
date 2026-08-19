@@ -52,6 +52,22 @@ def main():
         sys.exit("Er staan nog ongecommitte wijzigingen. Commit die eerst.")
     hier = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
 
+    # Sta je zelf op de deploytak, dan kan die niet weg en liep het script vast op een
+    # kale 'exit status 128'. Erger is wat eraan voorafgaat: dan zijn je commits óók op de
+    # deploytak beland in plaats van op de werktak, en die wordt hieronder weggegooid.
+    # Dus eerst terug naar de werktak, en pas dan opruimen.
+    if hier == DEPLOYTAK:
+        achter = git("rev-list", "--count", f"{WERKTAK}..{DEPLOYTAK}").stdout.strip()
+        if achter and achter != "0":
+            sys.exit(f"Je staat op {DEPLOYTAK} en daar staan {achter} commits die niet op "
+                     f"{WERKTAK} staan. Die zouden verdwijnen. Zet ze eerst over:\n"
+                     f"    git branch -f {WERKTAK} {DEPLOYTAK}\n"
+                     f"    git checkout {WERKTAK}\n"
+                     f"    git push origin {WERKTAK}")
+        print(f"Je stond op {DEPLOYTAK}; teruggezet naar {WERKTAK}.")
+        hier = WERKTAK
+        git("checkout", "-q", WERKTAK)
+
     git("branch", "-D", DEPLOYTAK, check=False)
     git("checkout", "-q", "-b", DEPLOYTAK, WERKTAK)
 
