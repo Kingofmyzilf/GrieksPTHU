@@ -34,7 +34,13 @@ FINAAL = {"ך": "כ", "ם": "מ", "ן": "נ", "ף": "פ", "ץ": "צ"}
 
 # Voorvoegsels die de parsing apart benoemt. Staat er zo'n code in, dan is de vorm niet
 # kaal en deugt hij niet als lemma-kandidaat.
-VOORVOEGSEL = re.compile(r"\b(Conj-w|Art|Prep-[bklm]|Prep\b)", re.IGNORECASE)
+#
+# Let op het streepje: alleen Prep-b, Prep-k, Prep-l en Prep-m zijn aangeplakte
+# voorzetsels. Een kále 'Prep' is een zelfstandig voorzetsel — עִם, בֵּין, נֶגֶד, תַּחַת —
+# en dat is juist wél een lemma. Stond die hier ook in, dan kwamen die woorden nooit in de
+# index en werden ze op medeklinkers gekoppeld: עִם 'met' werd dan עַם 'volk' en
+# בֵּין 'tussen' werd בִּין 'begrijpen'.
+VOORVOEGSEL = re.compile(r"\b(Conj-w|Art|Prep-[bklm])\b", re.IGNORECASE)
 
 # Deze zes komen nooit los voor; ze plakken altijd aan het volgende woord vast. Ze staan
 # dus niet als eigen regel in de spreadsheet, maar wél als code in de parsing. Zo tellen we
@@ -83,6 +89,22 @@ HANDMATIG = {
     346: ("1157", "voorzetsel בַּעַד; komt vrijwel alleen met achtervoegsel voor"),
     203: ("4397", "de letters staan door elkaar in de PDF (214x)", "מַלְאָךְ"),
     406: ("7993", "alleen Hifil: וַיַּשְׁלֵךְ (125x)"),
+    # Deze tien werden op medeklinkers gekoppeld aan een ánder woord met dezelfde letters.
+    # Dat gaat in het Hebreeuws makkelijk mis, want de klinkers dragen betekenis en een
+    # onvocaliseerde wortel uit de cursuslijst heeft die niet. Elk is nagekeken tegen de
+    # betekenis in de lijst en de vormen in de tekst.
+    114: ("7218", "de letters staan omgekeerd in de PDF; het is רֹאשׁ, hoofd (599x)", "רֹאשׁ"),
+    136: ("5046", "de Hifil הִגִּיד begint met een he, dus de wortel נגד vindt hem niet "
+                  "(370x); 5057 is נָגִיד, de leider"),
+    217: ("6629", "de letters staan omgekeerd; het is צֹאן, kleinvee (274x)", "צֹאן"),
+    218: ("7130", "קֶרֶב staat vrijwel altijd met voorvoegsel (בְּקֶרֶב, 227x); 7126 is het "
+                  "wérkwoord naderen"),
+    230: ("622", "אסף verzamelen (200x); het gekozen 3254 was יָסַף, toevoegen"),
+    243: ("7812", "de Hisjtafel וַיִּשְׁתַּחוּ (172x); op medeklinkers kwam Eva eruit"),
+    246: ("3467", "het werkwoord redden (205x); 3468 is het zelfstandig naamwoord יֶשַׁע"),
+    260: ("7453", "רֵעַ de naaste (187x); op medeklinkers won רָעָה, kwaad"),
+    266: ("7592", "שָׁאַל vragen (173x); op medeklinkers won אֵל, God"),
+    267: ("7650", "de Nifal נִשְׁבַּע zweren (186x); op medeklinkers won שֶׁבַע, zeven"),
 }
 
 
@@ -135,11 +157,13 @@ def lees_sheet():
     werkwoord = collections.Counter()                          # hoe vaak als werkwoord getagd
     vormen = collections.defaultdict(collections.Counter)      # strong -> kale vorm -> n
     lemmas = collections.defaultdict(collections.Counter)      # strong -> vorm zónder voorvoegsel
+    translits = collections.defaultdict(collections.Counter)   # strong -> uitspraak
     plaatsen = collections.defaultdict(list)
     voorvoegsels = collections.Counter()
     vers = ""
     for rij in ws.iter_rows(min_row=2, values_only=True):
-        vorm, parsing, strong, verwijzing = rij[6], rij[9], rij[11], rij[13]
+        vorm, translit, parsing = rij[6], rij[8], rij[9]
+        strong, verwijzing = rij[11], rij[13]
         if verwijzing and str(verwijzing).strip():
             vers = str(verwijzing).strip()
         p = str(parsing or "")
@@ -160,10 +184,14 @@ def lees_sheet():
         vormen[s][v] += 1
         if not VOORVOEGSEL.search(p):
             lemmas[s][v] += 1
+            if translit:
+                # De transliteratie hoort bij de vorm zonder voorvoegsel; anders krijg je
+                # 'wə·hā·’ā·reṣ' waar 'e·reṣ' hoort te staan.
+                translits[s][str(translit).strip()] += 1
         if len(plaatsen[s]) < 3:
             plaatsen[s].append({"vers": vers, "vorm": v})
     wb.close()
-    return telling, werkwoord, vormen, lemmas, plaatsen, voorvoegsels
+    return telling, werkwoord, vormen, lemmas, translits, plaatsen, voorvoegsels
 
 
 def main():
@@ -173,7 +201,7 @@ def main():
         woorden = json.load(f)
 
     print("bijbeltekst inlezen…")
-    telling, werkwoord, vormen, lemmas, plaatsen, voorvoegsels = lees_sheet()
+    telling, werkwoord, vormen, lemmas, translits, plaatsen, voorvoegsels = lees_sheet()
     print(f"  {sum(telling.values())} woordvormen, {len(telling)} Strong-nummers")
 
     # Zoeksleutels: eerst op volledige vocalisatie, daarna op medeklinkers, en dat alles
@@ -298,6 +326,8 @@ def main():
         lemma = lemmas[beste].most_common(1)
         if lemma:
             w["lemma_tekst"] = lemma[0][0]
+        uitspraak = translits[beste].most_common(1)
+        w["translit"] = uitspraak[0][0] if uitspraak else ""
         # Staat de vorm in de lijst aantoonbaar verkeerd — omgekeerd, met een typefout, of
         # met twee klinkertekens op één letter — dan nemen we de vorm uit de bijbeltekst
         # over en bewaren we wat er in de cursuslijst stond.

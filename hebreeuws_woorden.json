@@ -27,6 +27,7 @@
    }
   ],
   "lemma_tekst": "אֱלֹהִים",
+  "translit": "’ĕ·lō·hîm",
   "lijstvorm": "אֱלהִֹים"
  },
  {
@@ -56,7 +57,8 @@
     "vorm": "אֲנִי"
    }
   ],
-  "lemma_tekst": "אֲנִי"
+  "lemma_tekst": "אֲנִי",
+  "translit": "’ă·nî"
  },
  {
   "hebreeuws": "אֲשֶׁר",
@@ -85,7 +87,8 @@
     "vorm": "אֲשֶׁר"
    }
   ],
-  "lemma_tekst": "אֲשֶׁר"
+  "lemma_tekst": "אֲשֶׁר",
+  "translit": "’ă·šer"
  },
  {
   "hebreeuws": "אִישׁ",
@@ -114,7 +117,8 @@
     "vorm": "לְאִישָׁהּ"
    }
   ],
-  "lemma_tekst": "אִישׁ"
+  "lemma_tekst": "אִישׁ",
+  "translit": "’îš"
  },
  {
   "hebreeuws": "אִם",
@@ -143,7 +147,8 @@
     "vorm": "אִם"
    }
   ],
-  "lemma_tekst": "אִם"
+  "lemma_tekst": "אִם",
+  "translit": "’im-"
  },
  {
   "hebreeuws": "אֵת",
@@ -172,7 +177,8 @@
     "vorm": "אֶת"
    }
   ],
-  "lemma_tekst": "אֶת"
+  "lemma_tekst": "אֶת",
+  "translit": "’eṯ-"
  },
  {
   "hebreeuws": "אֶרֶץ",
@@ -201,7 +207,8 @@
     "vorm": "אֶרֶץ"
    }
   ],
-  "lemma_tekst": "אֶרֶץ"
+  "lemma_tekst": "אֶרֶץ",
+  "translit": "’e·reṣ"
  },
  {
   "hebreeuws": "אֶחָד",
@@ -230,7 +237,8 @@
     "vorm": "הָאֶחָד"
    }
   ],
-  "lemma_tekst": "אֶחָד"
+  "lemma_tekst": "אֶחָד",
+  "translit": "’e·ḥāḏ"
  },
  {
   "hebreeuws": "אֶל",
@@ -259,7 +267,8 @@
     "vorm": "אֶל"
    }
   ],
-  "lemma_tekst": "אֵלוֹ"
+  "lemma_tekst": "אֶל",
+  "translit": "’el-"
  },
  {
   "hebreeuws": "אָב",
@@ -288,7 +297,8 @@
     "vorm": "אֲבִי"
    }
   ],
-  "lemma_tekst": "אָבִיו"
+  "lemma_tekst": "אָבִיו",
+  "translit": "’ā·ḇîw"
  },
  {
   "hebreeuws": "אכל",
@@ -321,7 +331,8 @@
     "vorm": "תֹאכַל"
    }
   ],
-  "lemma_tekst": "יֹאכַל"
+  "lemma_tekst": "יֹאכַל",
+  "translit": "yō·ḵal"
  },
  {
   "hebreeuws": "אמר",
@@ -354,7 +365,8 @@
     "vorm": "וַיֹּאמֶר"
    }
   ],
-  "lemma_tekst": "אָמַר"
+  "lemma_tekst": "אָמַר",
+  "translit": "’ā·mar"
  },
  {
   "hebreeuws": "בְּ",
@@ -399,7 +411,8 @@
     "vorm": "בֵּן"
    }
   ],
-  "lemma_tekst": "בְּנֵי"
+  "lemma_tekst": "בְּנֵי",
+  "translit": "ben-"
  },
  {
   "hebreeuws": "בַּיִת",
@@ -428,7 +441,8 @@
     "vorm": "וּמִבֵּית"
    }
   ],
-  "lemma_tekst": "בֵּית"
+  "lemma_tekst": "בֵּית",
+  "translit": "bêṯ"
  },
  {
   "hebreeuws": "בּוֹא",
@@ -460,7 +474,8 @@
     "vorm": "וַיָּבֵא"
    }
   ],
-  "lemma_tekst": "בָּא"
+  "lemma_tekst": "בָּא",
+  "translit": "bā"
  },
  {
   "hebreeuws": "דָּבָר",
@@ -489,7 +504,8 @@
     "vorm": "הַדְּבָרִים"
    }
   ],
-  "lemma_tekst": "דִּבְרֵי"
+  "lemma_tekst": "דִּבְרֵי",
+  "translit": "diḇ·rê"
  },
  {
   "hebreeuws": "דָּוִד",
@@ -518,7 +534,8 @@
     "vorm": "דָּוִד"
    }
   ],
-  "lemma_tekst": "דָּוִד"
+  "lemma_tekst": "דָּוִד",
+  "translit": "dā·wiḏ"
  },
  {
   "hebreeuws": "דבר",
@@ -549,7 +566,8 @@
     "vorm": "הַדֹּבֵר"
    }
   ],
-  "lemma_tekst": "דִּבֶּר"
+  "lemma_tekst": "דִּבֶּר",
+  "translit": "dib·ber"
  },
  {
   "hebreeuws": "הֵן",
@@ -580,7 +598,8 @@
     "vorm": "וְהִנְנִי"
    }
   ],
-  "lemma_tekst": "הִנְנִי"
+  "lemma_tekst": "הִנְנִי",
+  "translit": "hin·nî"
  },
  {
   "hebreeuws": "הַ",
@@ -627,7 +646,8 @@
     "vorm": "וַיְהִי"
    }
   ],
-  "lemma_tekst": "יִהְיֶה"
+  "lemma_tekst": "יִהְיֶה",
+  "translit": "yih·yeh"
  },
  {
   "hebreeuws": "הוּא",
@@ -656,7 +676,8 @@
     "vorm": "הוּא"
    }
   ],
-  "lemma_tekst": "הוּא"
+  "lemma_tekst": "הוּא",
+  "translit": "hū"
  },
  {
   "hebreeuws": "הלך",
@@ -688,7 +709,8 @@
     "vorm": "תֵלֵךְ"
    }
   ],
-  "lemma_tekst": "לֵךְ"
+  "lemma_tekst": "לֵךְ",
+  "translit": "lêḵ"
  },
  {
   "hebreeuws": "וְ",
@@ -733,7 +755,8 @@
     "vorm": "וְזֶה"
    }
   ],
-  "lemma_tekst": "זֶה"
+  "lemma_tekst": "זֶה",
+  "translit": "zeh"
  },
  {
   "hebreeuws": "יְהוָה",
@@ -762,7 +785,8 @@
     "vorm": "יְהוָה"
    }
   ],
-  "lemma_tekst": "יְהוָה"
+  "lemma_tekst": "יְהוָה",
+  "translit": "Yah·weh"
  },
  {
   "hebreeuws": "יְהוּדָה",
@@ -791,7 +815,8 @@
     "vorm": "יְהוּדָה"
    }
   ],
-  "lemma_tekst": "יְהוּדָה"
+  "lemma_tekst": "יְהוּדָה",
+  "translit": "yə·hū·ḏāh"
  },
  {
   "hebreeuws": "יִשְׂרָאֵל",
@@ -820,7 +845,8 @@
     "vorm": "יִשְׂרָאֵלס"
    }
   ],
-  "lemma_tekst": "יִשְׂרָאֵל"
+  "lemma_tekst": "יִשְׂרָאֵל",
+  "translit": "yiś·rā·’êl"
  },
  {
   "hebreeuws": "יָד",
@@ -849,7 +875,8 @@
     "vorm": "יָדֵינוּ"
    }
   ],
-  "lemma_tekst": "יָדוֹ"
+  "lemma_tekst": "יָדוֹ",
+  "translit": "yā·ḏōw"
  },
  {
   "hebreeuws": "יָצָא",
@@ -881,7 +908,8 @@
     "vorm": "יֹצֵא"
    }
   ],
-  "lemma_tekst": "יֵצֵא"
+  "lemma_tekst": "יֵצֵא",
+  "translit": "yê·ṣê"
  },
  {
   "hebreeuws": "ידע",
@@ -914,7 +942,8 @@
     "vorm": "וַיֵּדְעוּ"
    }
   ],
-  "lemma_tekst": "יָדַעְתִּי"
+  "lemma_tekst": "יָדַעְתִּי",
+  "translit": "yā·ḏa‘·tî"
  },
  {
   "hebreeuws": "יוֹם",
@@ -943,7 +972,8 @@
     "vorm": "יוֹם"
    }
   ],
-  "lemma_tekst": "יָמִים"
+  "lemma_tekst": "יָמִים",
+  "translit": "yā·mîm"
  },
  {
   "hebreeuws": "ישׁב",
@@ -976,7 +1006,8 @@
     "vorm": "וַיֵּשְׁבוּ"
    }
   ],
-  "lemma_tekst": "יֹשְׁבֵי"
+  "lemma_tekst": "יֹשְׁבֵי",
+  "translit": "yō·šə·ḇê"
  },
  {
   "hebreeuws": "כְּ",
@@ -1021,7 +1052,8 @@
     "vorm": "כִּי"
    }
   ],
-  "lemma_tekst": "כִּי"
+  "lemma_tekst": "כִּי",
+  "translit": "kî"
  },
  {
   "hebreeuws": "כֹּל",
@@ -1050,7 +1082,8 @@
     "vorm": "כָּל"
    }
   ],
-  "lemma_tekst": "כָּל"
+  "lemma_tekst": "כָּל",
+  "translit": "kāl-"
  },
  {
   "hebreeuws": "לְ",
@@ -1095,7 +1128,8 @@
     "vorm": "לֹא"
    }
   ],
-  "lemma_tekst": "לֹא"
+  "lemma_tekst": "לֹא",
+  "translit": "lō"
  },
  {
   "hebreeuws": "לקח",
@@ -1124,7 +1158,8 @@
     "vorm": "לָקַח"
    }
   ],
-  "lemma_tekst": "קַח"
+  "lemma_tekst": "קַח",
+  "translit": "lā·qaḥ"
  },
  {
   "hebreeuws": "מִן",
@@ -1153,7 +1188,8 @@
     "vorm": "מִן"
    }
   ],
-  "lemma_tekst": "מִן"
+  "lemma_tekst": "מִן",
+  "translit": "min-"
  },
  {
   "hebreeuws": "מֶלֶךְ",
@@ -1182,7 +1218,8 @@
     "vorm": "מֶלֶךְ"
    }
   ],
-  "lemma_tekst": "מֶלֶךְ"
+  "lemma_tekst": "מֶלֶךְ",
+  "translit": "me·leḵ"
  },
  {
   "hebreeuws": "מוּת",
@@ -1214,7 +1251,8 @@
     "vorm": "תְּמֻתוּן"
    }
   ],
-  "lemma_tekst": "מֵת"
+  "lemma_tekst": "מֵת",
+  "translit": "mêṯ"
  },
  {
   "hebreeuws": "נתן",
@@ -1243,7 +1281,8 @@
     "vorm": "וַתִּתֵּן"
    }
   ],
-  "lemma_tekst": "נָתַן"
+  "lemma_tekst": "נָתַן",
+  "translit": "nā·ṯan"
  },
  {
   "hebreeuws": "עִיר",
@@ -1272,7 +1311,8 @@
     "vorm": "הָעִיר"
    }
   ],
-  "lemma_tekst": "עִיר"
+  "lemma_tekst": "עִיר",
+  "translit": "‘îr"
  },
  {
   "hebreeuws": "עִם",
@@ -1285,23 +1325,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "5971",
-  "frequentie": 1868,
+  "strong": "5973",
+  "frequentie": 1049,
   "vindplaatsen": [
    {
-    "vers": "Genesis 11:6",
-    "vorm": "עַם"
+    "vers": "Genesis 3:6",
+    "vorm": "עִמָּהּ"
    },
    {
-    "vers": "Genesis 14:16",
-    "vorm": "הָעָם"
+    "vers": "Genesis 13:1",
+    "vorm": "עִמּוֹ"
    },
    {
-    "vers": "Genesis 17:14",
-    "vorm": "מֵעַמֶּיהָ"
+    "vers": "Genesis 13:14",
+    "vorm": "מֵעִמּוֹ"
    }
   ],
-  "lemma_tekst": "עַמִּי"
+  "lemma_tekst": "עִם",
+  "translit": "‘im-"
  },
  {
   "hebreeuws": "עַיִן",
@@ -1330,7 +1371,8 @@
     "vorm": "עֵינֵי"
    }
   ],
-  "lemma_tekst": "עֵינֶיךָ"
+  "lemma_tekst": "עֵינֶיךָ",
+  "translit": "‘ê·ne·ḵā"
  },
  {
   "hebreeuws": "עַד",
@@ -1359,7 +1401,8 @@
     "vorm": "עַד"
    }
   ],
-  "lemma_tekst": "עַד"
+  "lemma_tekst": "עַד",
+  "translit": "‘aḏ-"
  },
  {
   "hebreeuws": "עַל",
@@ -1388,7 +1431,8 @@
     "vorm": "מֵעַל"
    }
   ],
-  "lemma_tekst": "עַל"
+  "lemma_tekst": "עַל",
+  "translit": "‘al-"
  },
  {
   "hebreeuws": "עַם",
@@ -1417,7 +1461,8 @@
     "vorm": "מֵעַמֶּיהָ"
    }
   ],
-  "lemma_tekst": "עַמִּי"
+  "lemma_tekst": "עַמִּי",
+  "translit": "‘am·mî"
  },
  {
   "hebreeuws": "עָלָה",
@@ -1446,7 +1491,8 @@
     "vorm": "וַיַּעַל"
    }
   ],
-  "lemma_tekst": "עָלָה"
+  "lemma_tekst": "עָלָה",
+  "translit": "‘ā·lāh"
  },
  {
   "hebreeuws": "עָשָׂה",
@@ -1478,7 +1524,8 @@
     "vorm": "עֹשֶׂה"
    }
   ],
-  "lemma_tekst": "עָשָׂה"
+  "lemma_tekst": "עָשָׂה",
+  "translit": "‘ā·śāh"
  },
  {
   "hebreeuws": "פָּנִים",
@@ -1507,7 +1554,8 @@
     "vorm": "פְּנֵי"
    }
   ],
-  "lemma_tekst": "פְּנֵי"
+  "lemma_tekst": "פְּנֵי",
+  "translit": "pə·nê"
  },
  {
   "hebreeuws": "רָאָה",
@@ -1540,7 +1588,8 @@
     "vorm": "וַיַּרְא"
    }
   ],
-  "lemma_tekst": "רָאִיתִי"
+  "lemma_tekst": "רָאִיתִי",
+  "translit": "rā·’î·ṯî"
  },
  {
   "hebreeuws": "שֵׁם",
@@ -1569,7 +1618,8 @@
     "vorm": "וְשֵׁם"
    }
   ],
-  "lemma_tekst": "שֵׁם"
+  "lemma_tekst": "שֵׁם",
+  "translit": "šə·mōw"
  },
  {
   "hebreeuws": "שָׁם",
@@ -1598,7 +1648,8 @@
     "vorm": "שָׁם"
    }
   ],
-  "lemma_tekst": "שָׁם"
+  "lemma_tekst": "שָׁם",
+  "translit": "šām"
  },
  {
   "hebreeuws": "שׁמע",
@@ -1631,7 +1682,8 @@
     "vorm": "שָׁמַעְתָּ"
    }
   ],
-  "lemma_tekst": "שִׁמְעוּ"
+  "lemma_tekst": "שִׁמְעוּ",
+  "translit": "šim·‘ū"
  },
  {
   "hebreeuws": "שָׁנָה",
@@ -1660,7 +1712,8 @@
     "vorm": "שָׁנָה"
    }
   ],
-  "lemma_tekst": "שָׁנָה"
+  "lemma_tekst": "שָׁנָה",
+  "translit": "šā·nāh"
  },
  {
   "hebreeuws": "שׁוּב",
@@ -1692,7 +1745,8 @@
     "vorm": "וַיָּשֻׁבוּ"
    }
   ],
-  "lemma_tekst": "יָשׁוּב"
+  "lemma_tekst": "יָשׁוּב",
+  "translit": "yā·šūḇ"
  },
  {
   "hebreeuws": "שׁלח",
@@ -1725,7 +1779,8 @@
     "vorm": "וַיְשַׁלַּח"
    }
   ],
-  "lemma_tekst": "שָׁלַח"
+  "lemma_tekst": "שָׁלַח",
+  "translit": "šā·laḥ"
  },
  {
   "hebreeuws": "אִשָּׁה",
@@ -1754,7 +1809,8 @@
     "vorm": "בְּאִשְׁתּוֹ"
    }
   ],
-  "lemma_tekst": "אִשָּׁה"
+  "lemma_tekst": "אִשָּׁה",
+  "translit": "’iš·šāh"
  },
  {
   "hebreeuws": "אֵלֶּה",
@@ -1783,7 +1839,8 @@
     "vorm": "אֵלֶּה"
    }
   ],
-  "lemma_tekst": "אֵלֶּה"
+  "lemma_tekst": "אֵלֶּה",
+  "translit": "’êl·leh"
  },
  {
   "hebreeuws": "אֵין",
@@ -1812,7 +1869,8 @@
     "vorm": "אֵינֶנָּה"
    }
   ],
-  "lemma_tekst": "אֵין"
+  "lemma_tekst": "אֵין",
+  "translit": "’ên"
  },
  {
   "hebreeuws": "אֶלֶף",
@@ -1841,7 +1899,8 @@
     "vorm": "אֶלֶף"
    }
   ],
-  "lemma_tekst": "אֶלֶף"
+  "lemma_tekst": "אֶלֶף",
+  "translit": "’e·lep̄"
  },
  {
   "hebreeuws": "אַחֲרֵי",
@@ -1872,7 +1931,8 @@
     "vorm": "אַחֲרֵי"
    }
   ],
-  "lemma_tekst": "אַחַר"
+  "lemma_tekst": "אַחֲרֵי",
+  "translit": "’a·ḥă·rê"
  },
  {
   "hebreeuws": "אַל",
@@ -1901,7 +1961,8 @@
     "vorm": "אַל"
    }
   ],
-  "lemma_tekst": "אַל"
+  "lemma_tekst": "אַל",
+  "translit": "’al-"
  },
  {
   "hebreeuws": "אַרְבַּע",
@@ -1930,7 +1991,8 @@
     "vorm": "וְאַרְבַּע"
    }
   ],
-  "lemma_tekst": "אַרְבַּע"
+  "lemma_tekst": "אַרְבַּע",
+  "translit": "’ar·ba‘"
  },
  {
   "hebreeuws": "אַתָּה",
@@ -1959,7 +2021,8 @@
     "vorm": "וְאַתָּה"
    }
   ],
-  "lemma_tekst": "אַתָּה"
+  "lemma_tekst": "אַתָּה",
+  "translit": "’at·tāh"
  },
  {
   "hebreeuws": "אָדָם",
@@ -1988,7 +2051,8 @@
     "vorm": "וְאָדָם"
    }
   ],
-  "lemma_tekst": "אָדָם"
+  "lemma_tekst": "אָדָם",
+  "translit": "’ā·ḏām"
  },
  {
   "hebreeuws": "אָדוֹן",
@@ -2017,7 +2081,8 @@
     "vorm": "אֲדֹנַי"
    }
   ],
-  "lemma_tekst": "אֲדֹנִי"
+  "lemma_tekst": "אֲדֹנִי",
+  "translit": "’ă·ḏō·nî"
  },
  {
   "hebreeuws": "אָח",
@@ -2046,7 +2111,8 @@
     "vorm": "אָחִיו"
    }
   ],
-  "lemma_tekst": "אָחִיו"
+  "lemma_tekst": "אָחִיו",
+  "translit": "’ā·ḥîw"
  },
  {
   "hebreeuws": "בַּת",
@@ -2075,7 +2141,8 @@
     "vorm": "וּבָנוֹת"
    }
   ],
-  "lemma_tekst": "בַּת"
+  "lemma_tekst": "בַּת",
+  "translit": "baṯ-"
  },
  {
   "hebreeuws": "גַּם",
@@ -2104,7 +2171,8 @@
     "vorm": "גַם"
    }
   ],
-  "lemma_tekst": "גַּם"
+  "lemma_tekst": "גַּם",
+  "translit": "gam-"
  },
  {
   "hebreeuws": "גָּדוֹל",
@@ -2133,7 +2201,8 @@
     "vorm": "הַגְּדֹלִים"
    }
   ],
-  "lemma_tekst": "גָּדוֹל"
+  "lemma_tekst": "גָּדוֹל",
+  "translit": "gā·ḏō·wl"
  },
  {
   "hebreeuws": "גֹּוי",
@@ -2162,7 +2231,8 @@
     "vorm": "בְּגוֹיֵהֶםס"
    }
   ],
-  "lemma_tekst": "גּוֹיִם"
+  "lemma_tekst": "גּוֹיִם",
+  "translit": "gō·w·yim"
  },
  {
   "hebreeuws": "דֶּרֶךְ",
@@ -2191,7 +2261,8 @@
     "vorm": "בְּדֶרֶךְ"
    }
   ],
-  "lemma_tekst": "דֶּרֶךְ"
+  "lemma_tekst": "דֶּרֶךְ",
+  "translit": "de·reḵ"
  },
  {
   "hebreeuws": "הֲ",
@@ -2236,7 +2307,8 @@
     "vorm": "הוּא"
    }
   ],
-  "lemma_tekst": "הוּא"
+  "lemma_tekst": "הוּא",
+  "translit": "hū"
  },
  {
   "hebreeuws": "הֵם",
@@ -2265,7 +2337,8 @@
     "vorm": "הֵמָּה"
    }
   ],
-  "lemma_tekst": "הֵמָּה"
+  "lemma_tekst": "הֵמָּה",
+  "translit": "hêm·māh"
  },
  {
   "hebreeuws": "הַר",
@@ -2294,7 +2367,8 @@
     "vorm": "הָרֵי"
    }
   ],
-  "lemma_tekst": "הַר"
+  "lemma_tekst": "הַר",
+  "translit": "har"
  },
  {
   "hebreeuws": "חָמֵשׁ",
@@ -2323,7 +2397,8 @@
     "vorm": "חָמֵשׁ"
    }
   ],
-  "lemma_tekst": "חֲמִשָּׁה"
+  "lemma_tekst": "חֲמִשָּׁה",
+  "translit": "ḥă·miš·šāh"
  },
  {
   "hebreeuws": "טוֹב",
@@ -2352,7 +2427,8 @@
     "vorm": "טוֹב"
    }
   ],
-  "lemma_tekst": "טוֹב"
+  "lemma_tekst": "טוֹב",
+  "translit": "ṭō·wḇ"
  },
  {
   "hebreeuws": "יְרוּשָׁלַם",
@@ -2381,7 +2457,8 @@
     "vorm": "יְרוּשָׁלִַם"
    }
   ],
-  "lemma_tekst": "יְרוּשָׁלִַם"
+  "lemma_tekst": "יְרוּשָׁלִַם",
+  "translit": "yə·rū·šā·lim"
  },
  {
   "hebreeuws": "ילד",
@@ -2412,7 +2489,8 @@
     "vorm": "לָלֶדֶת"
    }
   ],
-  "lemma_tekst": "הוֹלִיד"
+  "lemma_tekst": "הוֹלִיד",
+  "translit": "hō·w·lîḏ"
  },
  {
   "hebreeuws": "כֵּן",
@@ -2441,7 +2519,8 @@
     "vorm": "כֵן"
    }
   ],
-  "lemma_tekst": "כֵּן"
+  "lemma_tekst": "כֵּן",
+  "translit": "kên"
  },
  {
   "hebreeuws": "כֹּה",
@@ -2470,7 +2549,8 @@
     "vorm": "כֹּה"
    }
   ],
-  "lemma_tekst": "כֹּה"
+  "lemma_tekst": "כֹּה",
+  "translit": "kōh"
  },
  {
   "hebreeuws": "כֹּהֵן",
@@ -2499,7 +2579,8 @@
     "vorm": "כֹּהֵן"
    }
   ],
-  "lemma_tekst": "כֹּהֵן"
+  "lemma_tekst": "כֹּהֵן",
+  "translit": "kō·hên"
  },
  {
   "hebreeuws": "לֵב",
@@ -2528,7 +2609,8 @@
     "vorm": "לִבּוֹ"
    }
   ],
-  "lemma_tekst": "לֵב"
+  "lemma_tekst": "לֵב",
+  "translit": "lêḇ"
  },
  {
   "hebreeuws": "מִצְרַיִם",
@@ -2557,7 +2639,8 @@
     "vorm": "מִצְרַיְמָה"
    }
   ],
-  "lemma_tekst": "מִצְרַיִם"
+  "lemma_tekst": "מִצְרַיִם",
+  "translit": "miṣ·ra·yim"
  },
  {
   "hebreeuws": "מִשְׁמָר",
@@ -2586,7 +2669,8 @@
     "vorm": "בְמִשְׁמַר"
    }
   ],
-  "lemma_tekst": "מִשְׁמָר"
+  "lemma_tekst": "מִשְׁמָר",
+  "translit": "miš·mār"
  },
  {
   "hebreeuws": "מִשְׁפָּט",
@@ -2615,7 +2699,8 @@
     "vorm": "וּמִשְׁפָּט"
    }
   ],
-  "lemma_tekst": "מִשְׁפָּט"
+  "lemma_tekst": "מִשְׁפָּט",
+  "translit": "miš·pāṭ"
  },
  {
   "hebreeuws": "מֵאָה",
@@ -2644,7 +2729,8 @@
     "vorm": "מֵאוֹת"
    }
   ],
-  "lemma_tekst": "מֵאוֹת"
+  "lemma_tekst": "מֵאוֹת",
+  "translit": "mê·’ō·wṯ"
  },
  {
   "hebreeuws": "מַיִם",
@@ -2673,7 +2759,8 @@
     "vorm": "מַיִם"
    }
   ],
-  "lemma_tekst": "מַיִם"
+  "lemma_tekst": "מַיִם",
+  "translit": "ma·yim"
  },
  {
   "hebreeuws": "מֶה",
@@ -2705,7 +2792,8 @@
     "vorm": "לָמָּה"
    }
   ],
-  "lemma_tekst": "מַה"
+  "lemma_tekst": "מַה",
+  "translit": "mah-"
  },
  {
   "hebreeuws": "מָצָא",
@@ -2737,7 +2825,8 @@
     "vorm": "מֹצְאוֹ"
    }
   ],
-  "lemma_tekst": "מָצָאתִי"
+  "lemma_tekst": "מָצָאתִי",
+  "translit": "mā·ṣā·ṯî"
  },
  {
   "hebreeuws": "נֶפֶשׁ",
@@ -2766,7 +2855,8 @@
     "vorm": "נֶפֶשׁ"
    }
   ],
-  "lemma_tekst": "נַפְשִׁי"
+  "lemma_tekst": "נַפְשִׁי",
+  "translit": "nap̄·šî"
  },
  {
   "hebreeuws": "נָכָה",
@@ -2797,7 +2887,8 @@
     "vorm": "וַיַּכּוּ"
    }
   ],
-  "lemma_tekst": "הִכָּה"
+  "lemma_tekst": "הִכָּה",
+  "translit": "hik·kāh"
  },
  {
   "hebreeuws": "נָשָׂא",
@@ -2828,7 +2919,8 @@
     "vorm": "נָשָׂא"
    }
   ],
-  "lemma_tekst": "יִשָּׂא"
+  "lemma_tekst": "יִשָּׂא",
+  "translit": "yiś·śā"
  },
  {
   "hebreeuws": "נפל",
@@ -2860,7 +2952,8 @@
     "vorm": "נָפְלוּ"
    }
   ],
-  "lemma_tekst": "נָפְלוּ"
+  "lemma_tekst": "נָפְלוּ",
+  "translit": "nā·p̄ə·lū"
  },
  {
   "hebreeuws": "עֶבֶד",
@@ -2889,7 +2982,8 @@
     "vorm": "עֶבֶד"
    }
   ],
-  "lemma_tekst": "עַבְדְּךָ"
+  "lemma_tekst": "עַבְדְּךָ",
+  "translit": "‘ă·ḇā·ḏāw"
  },
  {
   "hebreeuws": "עֶשֶׂר",
@@ -2918,7 +3012,8 @@
     "vorm": "עֲשָׂרָה"
    }
   ],
-  "lemma_tekst": "עֲשָׂרָה"
+  "lemma_tekst": "עֲשָׂרָה",
+  "translit": "‘ă·śā·rāh"
  },
  {
   "hebreeuws": "עַתָּה",
@@ -2947,7 +3042,8 @@
     "vorm": "וְעַתָּה"
    }
   ],
-  "lemma_tekst": "עַתָּה"
+  "lemma_tekst": "עַתָּה",
+  "translit": "‘at·tāh"
  },
  {
   "hebreeuws": "עבר",
@@ -2979,7 +3075,8 @@
     "vorm": "עָבַר"
    }
   ],
-  "lemma_tekst": "עֹבֵר"
+  "lemma_tekst": "עֹבֵר",
+  "translit": "‘ō·ḇêr"
  },
  {
   "hebreeuws": "עוֹד",
@@ -3008,7 +3105,8 @@
     "vorm": "עוֹד"
    }
   ],
-  "lemma_tekst": "עוֹד"
+  "lemma_tekst": "עוֹד",
+  "translit": "‘ō·wḏ"
  },
  {
   "hebreeuws": "עוֹלָם",
@@ -3037,7 +3135,8 @@
     "vorm": "מֵעוֹלָם"
    }
   ],
-  "lemma_tekst": "עוֹלָם"
+  "lemma_tekst": "עוֹלָם",
+  "translit": "‘ō·w·lām"
  },
  {
   "hebreeuws": "עמד",
@@ -3069,7 +3168,8 @@
     "vorm": "תַּעֲמֹד"
    }
   ],
-  "lemma_tekst": "עֹמֵד"
+  "lemma_tekst": "עֹמֵד",
+  "translit": "‘ō·mêḏ"
  },
  {
   "hebreeuws": "פֶּה",
@@ -3098,7 +3198,8 @@
     "vorm": "פִּיהָ"
    }
   ],
-  "lemma_tekst": "פִּי"
+  "lemma_tekst": "פִּי",
+  "translit": "pî"
  },
  {
   "hebreeuws": "צָבָא",
@@ -3127,7 +3228,8 @@
     "vorm": "צְבָאוֹ"
    }
   ],
-  "lemma_tekst": "צְבָאוֹת"
+  "lemma_tekst": "צְבָאוֹת",
+  "translit": "ṣə·ḇā·’ō·wṯ"
  },
  {
   "hebreeuws": "צָוָה",
@@ -3158,7 +3260,8 @@
     "vorm": "צִוִּיתִיךָ"
    }
   ],
-  "lemma_tekst": "צִוָּה"
+  "lemma_tekst": "צִוָּה",
+  "translit": "ṣiw·wāh"
  },
  {
   "hebreeuws": "קָרָא",
@@ -3190,6 +3293,7 @@
    }
   ],
   "lemma_tekst": "קָרָא",
+  "translit": "qā·rā",
   "lijstvorm": "קַָרָא"
  },
  {
@@ -3219,7 +3323,8 @@
     "vorm": "קֹדֶשׁ"
    }
   ],
-  "lemma_tekst": "קֹדֶשׁ"
+  "lemma_tekst": "קֹדֶשׁ",
+  "translit": "qō·ḏeš"
  },
  {
   "hebreeuws": "קוֹל",
@@ -3248,7 +3353,8 @@
     "vorm": "לְקוֹל"
    }
   ],
-  "lemma_tekst": "קוֹל"
+  "lemma_tekst": "קוֹל",
+  "translit": "qō·wl"
  },
  {
   "hebreeuws": "קוּם",
@@ -3279,36 +3385,40 @@
     "vorm": "מֵקִים"
    }
   ],
-  "lemma_tekst": "קוּם"
+  "lemma_tekst": "קוּם",
+  "translit": "qūm"
  },
  {
-  "hebreeuws": "שׁאר",
+  "hebreeuws": "רֹאשׁ",
   "nederlands": "hoofd, top; leider",
   "nummer": 114,
   "les": 1,
   "regeert": "",
   "varianten": [],
-  "medeklinkers": "שאר",
+  "medeklinkers": "ראש",
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "7604",
-  "frequentie": 133,
+  "handmatig": "de letters staan omgekeerd in de PDF; het is רֹאשׁ, hoofd (599x)",
+  "lijstvorm": "שׁאר",
+  "strong": "7218",
+  "frequentie": 599,
   "vindplaatsen": [
    {
-    "vers": "Genesis 7:23",
-    "vorm": "וַיִשָּׁאֶר"
+    "vers": "Genesis 2:10",
+    "vorm": "רָאשִׁים"
    },
    {
-    "vers": "Genesis 14:10",
-    "vorm": "וְהַנִּשְׁאָרִים"
+    "vers": "Genesis 3:15",
+    "vorm": "רֹאשׁ"
    },
    {
-    "vers": "Genesis 32:8",
-    "vorm": "הַנִּשְׁאָר"
+    "vers": "Genesis 8:5",
+    "vorm": "רָאשֵׁי"
    }
   ],
-  "lemma_tekst": "הִשְׁאִיר"
+  "lemma_tekst": "רֹאשׁ",
+  "translit": "rōš"
  },
  {
   "hebreeuws": "שִׂים",
@@ -3337,7 +3447,8 @@
     "vorm": "תָּשִׂים"
    }
   ],
-  "lemma_tekst": "שָׂם"
+  "lemma_tekst": "שָׂם",
+  "translit": "śām"
  },
  {
   "hebreeuws": "שְׁנַיִם",
@@ -3366,7 +3477,8 @@
     "vorm": "שְׁנֵיהֶם"
    }
   ],
-  "lemma_tekst": "שְׁנֵי"
+  "lemma_tekst": "שְׁנֵי",
+  "translit": "šə·nê"
  },
  {
   "hebreeuws": "שֶׁבַע",
@@ -3395,7 +3507,8 @@
     "vorm": "שֶׁבַע"
    }
   ],
-  "lemma_tekst": "שִׁבְעַת"
+  "lemma_tekst": "שִׁבְעַת",
+  "translit": "šiḇ·‘aṯ"
  },
  {
   "hebreeuws": "שָׁלשׁ",
@@ -3424,7 +3537,8 @@
     "vorm": "שְׁלֹשָׁה"
    }
   ],
-  "lemma_tekst": "שְׁלֹשָׁה"
+  "lemma_tekst": "שְׁלֹשָׁה",
+  "translit": "šə·lō·šāh"
  },
  {
   "hebreeuws": "שַׂר",
@@ -3453,7 +3567,8 @@
     "vorm": "שַׂר"
    }
   ],
-  "lemma_tekst": "שָׂרֵי"
+  "lemma_tekst": "שָׂרֵי",
+  "translit": "śā·rê"
  },
  {
   "hebreeuws": "תַּחַת",
@@ -3466,23 +3581,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "8480",
-  "frequentie": 6,
+  "strong": "8478",
+  "frequentie": 505,
   "vindplaatsen": [
    {
-    "vers": "Numbers 33:26",
-    "vorm": "בְּתָחַת"
+    "vers": "Genesis 1:7",
+    "vorm": "מִתַּחַת"
    },
    {
-    "vers": "Numbers 33:27",
-    "vorm": "מִתָּחַת"
+    "vers": "Genesis 1:9",
+    "vorm": "מִתַּחַת"
    },
    {
-    "vers": "1 Chronicles 6:24",
-    "vorm": "תַּחַת"
+    "vers": "Genesis 2:21",
+    "vorm": "תַּחְתֶּנָּה"
    }
   ],
-  "lemma_tekst": "תַּחַת"
+  "lemma_tekst": "תַּחַת",
+  "translit": "ta·ḥaṯ"
  },
  {
   "hebreeuws": "שָׂדֶה",
@@ -3511,7 +3627,8 @@
     "vorm": "הַשָּׂדֶה"
    }
   ],
-  "lemma_tekst": "שְׂדֵה"
+  "lemma_tekst": "שְׂדֵה",
+  "translit": "śə·ḏêh"
  },
  {
   "hebreeuws": "שָׁמַיִם",
@@ -3540,7 +3657,8 @@
     "vorm": "הַשָּׁמַיִם"
    }
   ],
-  "lemma_tekst": "שָׁמַיִם"
+  "lemma_tekst": "שָׁמַיִם",
+  "translit": "šā·ma·yim"
  },
  {
   "hebreeuws": "שַׁעַר",
@@ -3569,7 +3687,8 @@
     "vorm": "שַׁעַר"
    }
   ],
-  "lemma_tekst": "שַׁעַר"
+  "lemma_tekst": "שַׁעַר",
+  "translit": "ša·‘ar"
  },
  {
   "hebreeuws": "תָּוֶךְ",
@@ -3598,7 +3717,8 @@
     "vorm": "בְּתוֹךְ"
    }
   ],
-  "lemma_tekst": "תּוֹךְ"
+  "lemma_tekst": "תּוֹךְ",
+  "translit": "tō·wḵ"
  },
  {
   "hebreeuws": "רוּחַ",
@@ -3627,7 +3747,8 @@
     "vorm": "רוּחִי"
    }
   ],
-  "lemma_tekst": "רוּחַ"
+  "lemma_tekst": "רוּחַ",
+  "translit": "rū·aḥ"
  },
  {
   "hebreeuws": "רָעָה",
@@ -3656,7 +3777,8 @@
     "vorm": "וָרָע"
    }
   ],
-  "lemma_tekst": "רָעָה"
+  "lemma_tekst": "רָעָה",
+  "translit": "rā·‘āh"
  },
  {
   "hebreeuws": "רַע",
@@ -3685,7 +3807,8 @@
     "vorm": "וָרָע"
    }
   ],
-  "lemma_tekst": "רָעָה"
+  "lemma_tekst": "רָעָה",
+  "translit": "rā·‘āh"
  },
  {
   "hebreeuws": "רַב",
@@ -3714,7 +3837,8 @@
     "vorm": "רָב"
    }
   ],
-  "lemma_tekst": "רַבִּים"
+  "lemma_tekst": "רַבִּים",
+  "translit": "rab·bîm"
  },
  {
   "hebreeuws": "פקד",
@@ -3745,7 +3869,8 @@
     "vorm": "הִפְקִיד"
    }
   ],
-  "lemma_tekst": "פְּקֻדֵיהֶם"
+  "lemma_tekst": "פְּקֻדֵיהֶם",
+  "translit": "pə·qu·ḏê·hem"
  },
  {
   "hebreeuws": "עָשָׂר",
@@ -3774,7 +3899,8 @@
     "vorm": "עָשָׂר"
    }
   ],
-  "lemma_tekst": "עָשָׂר"
+  "lemma_tekst": "עָשָׂר",
+  "translit": "‘ā·śār"
  },
  {
   "hebreeuws": "עָנָה",
@@ -3805,7 +3931,8 @@
     "vorm": "וַיַּעַן"
    }
   ],
-  "lemma_tekst": "יַעֲנֶה"
+  "lemma_tekst": "יַעֲנֶה",
+  "translit": "ya·‘ă·neh"
  },
  {
   "hebreeuws": "עֵת",
@@ -3834,7 +3961,8 @@
     "vorm": "כָּעֵת"
    }
   ],
-  "lemma_tekst": "עֵת"
+  "lemma_tekst": "עֵת",
+  "translit": "‘êṯ"
  },
  {
   "hebreeuws": "עֵץ",
@@ -3863,7 +3991,8 @@
     "vorm": "הָעֵץ"
    }
   ],
-  "lemma_tekst": "עֵץ"
+  "lemma_tekst": "עֵץ",
+  "translit": "‘êṣ"
  },
  {
   "hebreeuws": "סוּר",
@@ -3895,7 +4024,8 @@
     "vorm": "וַיָּסֻרוּ"
    }
   ],
-  "lemma_tekst": "סָר"
+  "lemma_tekst": "סָר",
+  "translit": "sār"
  },
  {
   "hebreeuws": "סָבִיב",
@@ -3924,7 +4054,8 @@
     "vorm": "סְבִיבֹתֶיהָ"
    }
   ],
-  "lemma_tekst": "סָבִיב"
+  "lemma_tekst": "סָבִיב",
+  "translit": "sā·ḇîḇ"
  },
  {
   "hebreeuws": "נגד",
@@ -3940,15 +4071,25 @@
    "Hofal": "verteld worden"
   },
   "woordsoort": "ww",
-  "strong": "5047",
-  "frequentie": 1,
+  "handmatig": "de Hifil הִגִּיד begint met een he, dus de wortel נגד vindt hem niet (370x); 5057 is נָגִיד, de leider",
+  "strong": "5046",
+  "frequentie": 370,
   "vindplaatsen": [
    {
-    "vers": "Daniel 7:10",
-    "vorm": "נָגֵד"
+    "vers": "Genesis 3:11",
+    "vorm": "הִגִּיד"
+   },
+   {
+    "vers": "Genesis 9:22",
+    "vorm": "וַיַּגֵּד"
+   },
+   {
+    "vers": "Genesis 12:18",
+    "vorm": "הִגַּדְתָּ"
    }
   ],
-  "lemma_tekst": "נָגֵד"
+  "lemma_tekst": "הִגִּיד",
+  "translit": "hig·gîḏ"
  },
  {
   "hebreeuws": "נָבִיא",
@@ -3977,7 +4118,8 @@
     "vorm": "וַיָּבֵא"
    }
   ],
-  "lemma_tekst": "בָּא"
+  "lemma_tekst": "בָּא",
+  "translit": "bā"
  },
  {
   "hebreeuws": "נָא",
@@ -4006,7 +4148,8 @@
     "vorm": "נָא"
    }
   ],
-  "lemma_tekst": "נָא"
+  "lemma_tekst": "נָא",
+  "translit": "nā"
  },
  {
   "hebreeuws": "נְאֻם",
@@ -4035,7 +4178,8 @@
     "vorm": "נְאֻם"
    }
   ],
-  "lemma_tekst": "נְאֻם"
+  "lemma_tekst": "נְאֻם",
+  "translit": "nə·’um-"
  },
  {
   "hebreeuws": "מלך",
@@ -4067,7 +4211,8 @@
     "vorm": "וַיִּמְלֹךְ"
    }
   ],
-  "lemma_tekst": "מָלַךְ"
+  "lemma_tekst": "מָלַךְ",
+  "translit": "mā·laḵ"
  },
  {
   "hebreeuws": "מָקוֹם",
@@ -4096,7 +4241,8 @@
     "vorm": "הַמָּקוֹם"
    }
   ],
-  "lemma_tekst": "מָקוֹם"
+  "lemma_tekst": "מָקוֹם",
+  "translit": "mā·qō·wm"
  },
  {
   "hebreeuws": "מִשְׁפָּחָה",
@@ -4127,7 +4273,8 @@
     "vorm": "מִשְׁפְּחוֹת"
    }
   ],
-  "lemma_tekst": "מִשְׁפַּחַת"
+  "lemma_tekst": "מִשְׁפַּחַת",
+  "translit": "miš·pa·ḥaṯ"
  },
  {
   "hebreeuws": "מִלְחָמָה",
@@ -4156,7 +4303,8 @@
     "vorm": "מִלְחָמָה"
    }
   ],
-  "lemma_tekst": "מִלְחָמָה"
+  "lemma_tekst": "מִלְחָמָה",
+  "translit": "mil·ḥā·māh"
  },
  {
   "hebreeuws": "מִי",
@@ -4185,7 +4333,8 @@
     "vorm": "מִי"
    }
   ],
-  "lemma_tekst": "מִי"
+  "lemma_tekst": "מִי",
+  "translit": "mî"
  },
  {
   "hebreeuws": "מִזְבֵּחַ",
@@ -4214,7 +4363,8 @@
     "vorm": "מִזְבֵּחַ"
    }
   ],
-  "lemma_tekst": "מִזְבַּח"
+  "lemma_tekst": "מִזְבַּח",
+  "translit": "miz·baḥ"
  },
  {
   "hebreeuws": "מְאֹד",
@@ -4243,7 +4393,8 @@
     "vorm": "מְאֹד"
    }
   ],
-  "lemma_tekst": "מְאֹד"
+  "lemma_tekst": "מְאֹד",
+  "translit": "mə·’ōḏ"
  },
  {
   "hebreeuws": "לֶחֶם",
@@ -4272,7 +4423,8 @@
     "vorm": "לֶחֶם"
    }
   ],
-  "lemma_tekst": "לֶחֶם"
+  "lemma_tekst": "לֶחֶם",
+  "translit": "le·ḥem"
  },
  {
   "hebreeuws": "לֵוִי",
@@ -4301,7 +4453,8 @@
     "vorm": "הַלְוִיִּם"
    }
   ],
-  "lemma_tekst": "לֵוִי"
+  "lemma_tekst": "לֵוִי",
+  "translit": "lê·wî"
  },
  {
   "hebreeuws": "כֶּסֶף",
@@ -4330,7 +4483,8 @@
     "vorm": "כַּסְפֶּךָ"
    }
   ],
-  "lemma_tekst": "כֶּסֶף"
+  "lemma_tekst": "כֶּסֶף",
+  "translit": "ke·sep̄"
  },
  {
   "hebreeuws": "כְּלִי",
@@ -4359,7 +4513,8 @@
     "vorm": "כֵלֶיךָ"
    }
   ],
-  "lemma_tekst": "כְּלֵי"
+  "lemma_tekst": "כְּלֵי",
+  "translit": "kə·lê"
  },
  {
   "hebreeuws": "ירד",
@@ -4391,7 +4546,8 @@
     "vorm": "וַיֵּרֶד"
    }
   ],
-  "lemma_tekst": "יָרַד"
+  "lemma_tekst": "יָרַד",
+  "translit": "yā·raḏ"
  },
  {
   "hebreeuws": "יָרֵא",
@@ -4423,7 +4579,8 @@
     "vorm": "יָרֵאָה"
    }
   ],
-  "lemma_tekst": "תִּירָא"
+  "lemma_tekst": "תִּירָא",
+  "translit": "tî·rā"
  },
  {
   "hebreeuws": "יָם",
@@ -4452,7 +4609,8 @@
     "vorm": "הַיָּם"
    }
   ],
-  "lemma_tekst": "יָם"
+  "lemma_tekst": "יָם",
+  "translit": "yām"
  },
  {
   "hebreeuws": "חַטָּאת",
@@ -4481,7 +4639,8 @@
     "vorm": "חַטָּאתִי"
    }
   ],
-  "lemma_tekst": "חַטָּאת"
+  "lemma_tekst": "חַטָּאת",
+  "translit": "ḥaṭ·ṭāṯ"
  },
  {
   "hebreeuws": "חֶרֶב",
@@ -4510,7 +4669,8 @@
     "vorm": "חָרֶב"
    }
   ],
-  "lemma_tekst": "חֶרֶב"
+  "lemma_tekst": "חֶרֶב",
+  "translit": "ḥe·reḇ"
  },
  {
   "hebreeuws": "זָהָב",
@@ -4539,7 +4699,8 @@
     "vorm": "וּבַזָּהָב"
    }
   ],
-  "lemma_tekst": "זָהָב"
+  "lemma_tekst": "זָהָב",
+  "translit": "zā·hāḇ"
  },
  {
   "hebreeuws": "דָּם",
@@ -4568,7 +4729,8 @@
     "vorm": "דָמוֹ"
    }
   ],
-  "lemma_tekst": "דָּם"
+  "lemma_tekst": "דָּם",
+  "translit": "dām"
  },
  {
   "hebreeuws": "ברך",
@@ -4600,7 +4762,8 @@
     "vorm": "וַיְבָרֶךְ"
    }
   ],
-  "lemma_tekst": "בָּרוּךְ"
+  "lemma_tekst": "בָּרוּךְ",
+  "translit": "bā·rūḵ"
  },
  {
   "hebreeuws": "בָּנָה",
@@ -4631,7 +4794,8 @@
     "vorm": "וַיִּבֶן"
    }
   ],
-  "lemma_tekst": "בָּנָה"
+  "lemma_tekst": "בָּנָה",
+  "translit": "bā·nāh"
  },
  {
   "hebreeuws": "בֵּין",
@@ -4644,23 +4808,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "995",
-  "frequentie": 169,
+  "strong": "996",
+  "frequentie": 407,
   "vindplaatsen": [
    {
-    "vers": "Genesis 41:33",
-    "vorm": "נָבוֹן"
+    "vers": "Genesis 1:4",
+    "vorm": "וּבֵין"
    },
    {
-    "vers": "Genesis 41:39",
-    "vorm": "נָבוֹן"
+    "vers": "Genesis 1:4",
+    "vorm": "בֵּין"
    },
    {
-    "vers": "Deuteronomy 1:13",
-    "vorm": "וּנְבֹנִים"
+    "vers": "Genesis 1:6",
+    "vorm": "בֵּין"
    }
   ],
-  "lemma_tekst": "יָבִין"
+  "lemma_tekst": "בֵּין",
+  "translit": "bên"
  },
  {
   "hebreeuws": "בְּתוֹךְ",
@@ -4689,7 +4854,8 @@
     "vorm": "בְּתוֹךְ"
    }
   ],
-  "lemma_tekst": "תּוֹךְ"
+  "lemma_tekst": "תּוֹךְ",
+  "translit": "tō·wḵ"
  },
  {
   "hebreeuws": "אוֹ",
@@ -4718,7 +4884,8 @@
     "vorm": "אוֹ"
    }
   ],
-  "lemma_tekst": "אוֹ"
+  "lemma_tekst": "אוֹ",
+  "translit": "’ōw"
  },
  {
   "hebreeuws": "אֹהֶל",
@@ -4747,7 +4914,8 @@
     "vorm": "בְּאָהֳלֵי"
    }
   ],
-  "lemma_tekst": "אֹהֶל"
+  "lemma_tekst": "אֹהֶל",
+  "translit": "’ō·hel"
  },
  {
   "hebreeuws": "אָנֹכִי",
@@ -4776,7 +4944,8 @@
     "vorm": "אָנֹכִי"
    }
   ],
-  "lemma_tekst": "אָנֹכִי"
+  "lemma_tekst": "אָנֹכִי",
+  "translit": "’ā·nō·ḵî"
  },
  {
   "hebreeuws": "אֵשׁ",
@@ -4805,7 +4974,8 @@
     "vorm": "הָאֵשׁ"
    }
   ],
-  "lemma_tekst": "אֵשׁ"
+  "lemma_tekst": "אֵשׁ",
+  "translit": "’êš"
  },
  {
   "hebreeuws": "אֲדָמָה",
@@ -4834,7 +5004,8 @@
     "vorm": "הָאֲדָמָה"
    }
   ],
-  "lemma_tekst": "אַדְמַת"
+  "lemma_tekst": "אַדְמַת",
+  "translit": "’aḏ·maṯ"
  },
  {
   "hebreeuws": "אֵל",
@@ -4863,7 +5034,8 @@
     "vorm": "אֵל"
    }
   ],
-  "lemma_tekst": "אֵל"
+  "lemma_tekst": "אֵל",
+  "translit": "’êl"
  },
  {
   "hebreeuws": "אֵם",
@@ -4892,7 +5064,8 @@
     "vorm": "אִמִּי"
    }
   ],
-  "lemma_tekst": "אִמּוֹ"
+  "lemma_tekst": "אִמּוֹ",
+  "translit": "’im·mōw"
  },
  {
   "hebreeuws": "אֶבֶן",
@@ -4921,7 +5094,8 @@
     "vorm": "מֵאַבְנֵי"
    }
   ],
-  "lemma_tekst": "אֶבֶן"
+  "lemma_tekst": "אֶבֶן",
+  "translit": "’e·ḇen"
  },
  {
   "hebreeuws": "אַמָּה",
@@ -4950,7 +5124,8 @@
     "vorm": "אַמָּה"
    }
   ],
-  "lemma_tekst": "אַמָּה"
+  "lemma_tekst": "אַמָּה",
+  "translit": "’am·māh"
  },
  {
   "hebreeuws": "אַף",
@@ -4979,7 +5154,8 @@
     "vorm": "בְּאַפָּיו"
    }
   ],
-  "lemma_tekst": "אַף"
+  "lemma_tekst": "אַף",
+  "translit": "’ap·pōw"
  },
  {
   "hebreeuws": "אַתֶּם",
@@ -5008,7 +5184,8 @@
     "vorm": "וְאַתָּה"
    }
   ],
-  "lemma_tekst": "אַתָּה"
+  "lemma_tekst": "אַתָּה",
+  "translit": "’at·tāh"
  },
  {
   "hebreeuws": "אֹיֵב",
@@ -5037,7 +5214,8 @@
     "vorm": "אוֹיֵב"
    }
   ],
-  "lemma_tekst": "אוֹיֵב"
+  "lemma_tekst": "אוֹיֵב",
+  "translit": "’ō·w·yêḇ"
  },
  {
   "hebreeuws": "אָהֵב",
@@ -5068,7 +5246,8 @@
     "vorm": "וַיֶּאֱהַב"
    }
   ],
-  "lemma_tekst": "אֹהֵב"
+  "lemma_tekst": "אֹהֵב",
+  "translit": "’ō·hêḇ"
  },
  {
   "hebreeuws": "בְּרִית",
@@ -5097,7 +5276,8 @@
     "vorm": "בְּרִיתִי"
    }
   ],
-  "lemma_tekst": "בְּרִית"
+  "lemma_tekst": "בְּרִית",
+  "translit": "bə·rîṯ"
  },
  {
   "hebreeuws": "בֵּית",
@@ -5126,7 +5306,8 @@
     "vorm": "וּמִבֵּית"
    }
   ],
-  "lemma_tekst": "בֵּית"
+  "lemma_tekst": "בֵּית",
+  "translit": "bêṯ"
  },
  {
   "hebreeuws": "בֶּגֶד",
@@ -5155,7 +5336,8 @@
     "vorm": "בְּגָדָיו"
    }
   ],
-  "lemma_tekst": "בְּגָדָיו"
+  "lemma_tekst": "בְּגָדָיו",
+  "translit": "bə·ḡā·ḏāw"
  },
  {
   "hebreeuws": "בָּבֶל",
@@ -5184,7 +5366,8 @@
     "vorm": "מִבָּבֶל"
    }
   ],
-  "lemma_tekst": "בָּבֶל"
+  "lemma_tekst": "בָּבֶל",
+  "translit": "bā·ḇel"
  },
  {
   "hebreeuws": "בָּשָׂר",
@@ -5213,7 +5396,8 @@
     "vorm": "מִבְּשָׂרִי"
    }
   ],
-  "lemma_tekst": "בָּשָׂר"
+  "lemma_tekst": "בָּשָׂר",
+  "translit": "bā·śār"
  },
  {
   "hebreeuws": "בֹּקֶר",
@@ -5242,7 +5426,8 @@
     "vorm": "בֹקֶר"
    }
   ],
-  "lemma_tekst": "בֹּקֶר"
+  "lemma_tekst": "בֹּקֶר",
+  "translit": "bō·qer"
  },
  {
   "hebreeuws": "בקשׁ",
@@ -5273,7 +5458,8 @@
     "vorm": "מְבַקֵּשׁ"
    }
   ],
-  "lemma_tekst": "מְבַקֵּשׁ"
+  "lemma_tekst": "מְבַקֵּשׁ",
+  "translit": "mə·ḇaq·qêš"
  },
  {
   "hebreeuws": "גְּבוּל",
@@ -5302,7 +5488,8 @@
     "vorm": "גְבוּל"
    }
   ],
-  "lemma_tekst": "גְּבוּל"
+  "lemma_tekst": "גְּבוּל",
+  "translit": "gə·ḇūl"
  },
  {
   "hebreeuws": "זֶרַע",
@@ -5331,7 +5518,8 @@
     "vorm": "זֶרַע"
    }
   ],
-  "lemma_tekst": "זֶרַע"
+  "lemma_tekst": "זֶרַע",
+  "translit": "ze·ra‘"
  },
  {
   "hebreeuws": "זכר",
@@ -5360,7 +5548,8 @@
     "vorm": "לִזְכֹּר"
    }
   ],
-  "lemma_tekst": "זְכֹר"
+  "lemma_tekst": "זְכֹר",
+  "translit": "zə·ḵōr"
  },
  {
   "hebreeuws": "חֶסֶד",
@@ -5389,7 +5578,8 @@
     "vorm": "כַּחֶסֶד"
    }
   ],
-  "lemma_tekst": "חֶסֶד"
+  "lemma_tekst": "חֶסֶד",
+  "translit": "ḥe·seḏ"
  },
  {
   "hebreeuws": "חַיִל",
@@ -5418,7 +5608,8 @@
     "vorm": "חֵילוֹ"
    }
   ],
-  "lemma_tekst": "חַיִל"
+  "lemma_tekst": "חַיִל",
+  "translit": "ḥa·yil"
  },
  {
   "hebreeuws": "חַי",
@@ -5447,7 +5638,8 @@
     "vorm": "חַיָּה"
    }
   ],
-  "lemma_tekst": "חַי"
+  "lemma_tekst": "חַי",
+  "translit": "ḥay·yîm"
  },
  {
   "hebreeuws": "חָטָא",
@@ -5480,7 +5672,8 @@
     "vorm": "אֲחַטֶּנָּה"
    }
   ],
-  "lemma_tekst": "חָטָא"
+  "lemma_tekst": "חָטָא",
+  "translit": "ḥā·ṭā"
  },
  {
   "hebreeuws": "חָיָה",
@@ -5512,7 +5705,8 @@
     "vorm": "חַי"
    }
   ],
-  "lemma_tekst": "יִחְיֶה"
+  "lemma_tekst": "יִחְיֶה",
+  "translit": "yiḥ·yeh"
  },
  {
   "hebreeuws": "חֹדֶשׁ",
@@ -5541,7 +5735,8 @@
     "vorm": "לַחֹדֶשׁ"
    }
   ],
-  "lemma_tekst": "חֹדֶשׁ"
+  "lemma_tekst": "חֹדֶשׁ",
+  "translit": "ḥō·ḏeš"
  },
  {
   "hebreeuws": "חזק",
@@ -5574,7 +5769,8 @@
     "vorm": "וַיֶּחֱזַק"
    }
   ],
-  "lemma_tekst": "הֶחֱזִיק"
+  "lemma_tekst": "הֶחֱזִיק",
+  "translit": "he·ḥĕ·zîq"
  },
  {
   "hebreeuws": "יסף",
@@ -5605,7 +5801,8 @@
     "vorm": "וַיֹּסֶף"
    }
   ],
-  "lemma_tekst": "יֹסִיף"
+  "lemma_tekst": "יֹסִיף",
+  "translit": "yō·sîp̄"
  },
  {
   "hebreeuws": "ירשׁ",
@@ -5634,7 +5831,8 @@
     "vorm": "יִירָשֶׁךָ"
    }
   ],
-  "lemma_tekst": "הוֹרִישׁ"
+  "lemma_tekst": "הוֹרִישׁ",
+  "translit": "hō·w·rîš"
  },
  {
   "hebreeuws": "כּוּן",
@@ -5667,7 +5865,8 @@
     "vorm": "וַיָּכִינוּ"
    }
   ],
-  "lemma_tekst": "נָכוֹן"
+  "lemma_tekst": "נָכוֹן",
+  "translit": "nā·ḵō·wn"
  },
  {
   "hebreeuws": "כרת",
@@ -5701,7 +5900,8 @@
     "vorm": "וְנִכְרְתָה"
    }
   ],
-  "lemma_tekst": "יִכָּרֵת"
+  "lemma_tekst": "יִכָּרֵת",
+  "translit": "yik·kā·rêṯ"
  },
  {
   "hebreeuws": "כתב",
@@ -5730,7 +5930,8 @@
     "vorm": "כָּתַבְתִּי"
    }
   ],
-  "lemma_tekst": "כְּתוּבִים"
+  "lemma_tekst": "כְּתוּבִים",
+  "translit": "kə·ṯū·ḇîm"
  },
  {
   "hebreeuws": "לְמַעַן",
@@ -5759,7 +5960,8 @@
     "vorm": "לְמַעַן"
    }
   ],
-  "lemma_tekst": "לְמַעַן"
+  "lemma_tekst": "לְמַעַן",
+  "translit": "lə·ma·‘an"
  },
  {
   "hebreeuws": "לֵבָב",
@@ -5788,7 +5990,8 @@
     "vorm": "לְבָבִי"
    }
   ],
-  "lemma_tekst": "לְבַבְכֶם"
+  "lemma_tekst": "לְבַבְכֶם",
+  "translit": "lə·ḇaḇ·ḵem"
  },
  {
   "hebreeuws": "לַיְלָה",
@@ -5817,7 +6020,8 @@
     "vorm": "הַלַּיְלָה"
    }
   ],
-  "lemma_tekst": "לַיְלָה"
+  "lemma_tekst": "לַיְלָה",
+  "translit": "lay·lāh"
  },
  {
   "hebreeuws": "מִדְבָּר",
@@ -5846,7 +6050,8 @@
     "vorm": "בְּמִדְבַּר"
    }
   ],
-  "lemma_tekst": "מִדְבָּר"
+  "lemma_tekst": "מִדְבָּר",
+  "translit": "miḏ·bār"
  },
  {
   "hebreeuws": "מַחֲנֶה",
@@ -5875,7 +6080,8 @@
     "vorm": "הַמַּחֲנֶה"
    }
   ],
-  "lemma_tekst": "מַחֲנֵה"
+  "lemma_tekst": "מַחֲנֵה",
+  "translit": "ma·ḥă·nêh"
  },
  {
   "hebreeuws": "מַטֶּה",
@@ -5904,7 +6110,8 @@
     "vorm": "מַטֶּה"
    }
   ],
-  "lemma_tekst": "מַטֵּה"
+  "lemma_tekst": "מַטֵּה",
+  "translit": "maṭ·ṭêh"
  },
  {
   "hebreeuws": "מַלְאָךְ",
@@ -5935,7 +6142,8 @@
     "vorm": "מַלְאַךְ"
    }
   ],
-  "lemma_tekst": "מַלְאַךְ"
+  "lemma_tekst": "מַלְאַךְ",
+  "translit": "mal·’aḵ"
  },
  {
   "hebreeuws": "מַעֲשֶׂה",
@@ -5964,7 +6172,8 @@
     "vorm": "כַּמִּשְׁפָּט"
    }
   ],
-  "lemma_tekst": "מַעֲשֵׂה"
+  "lemma_tekst": "מַעֲשֵׂה",
+  "translit": "ma·‘ă·śêh"
  },
  {
   "hebreeuws": "מָלֵא",
@@ -5996,7 +6205,8 @@
     "vorm": "וַתִּמָּלֵא"
    }
   ],
-  "lemma_tekst": "מָלְאוּ"
+  "lemma_tekst": "מָלְאוּ",
+  "translit": "mā·lə·’ū"
  },
  {
   "hebreeuws": "מוֹעֵד",
@@ -6025,7 +6235,8 @@
     "vorm": "לַמּוֹעֵד"
    }
   ],
-  "lemma_tekst": "מוֹעֵד"
+  "lemma_tekst": "מוֹעֵד",
+  "translit": "mō·w·‘êḏ"
  },
  {
   "hebreeuws": "נַעַר",
@@ -6054,7 +6265,8 @@
     "vorm": "מִנַּעַר"
    }
   ],
-  "lemma_tekst": "נַעַר"
+  "lemma_tekst": "נַעַר",
+  "translit": "na·‘ar"
  },
  {
   "hebreeuws": "נַחֲלָה",
@@ -6083,7 +6295,8 @@
     "vorm": "נַחֲלָתְךָ"
    }
   ],
-  "lemma_tekst": "נַחֲלָה"
+  "lemma_tekst": "נַחֲלָה",
+  "translit": "na·ḥă·lāh"
  },
  {
   "hebreeuws": "נָטָה",
@@ -6114,7 +6327,8 @@
     "vorm": "וַיֶּט"
    }
   ],
-  "lemma_tekst": "נָטָה"
+  "lemma_tekst": "נָטָה",
+  "translit": "nə·ṭū·yāh"
  },
  {
   "hebreeuws": "נצל",
@@ -6148,7 +6362,8 @@
     "vorm": "הַצִּילֵנִי"
    }
   ],
-  "lemma_tekst": "מַצִּיל"
+  "lemma_tekst": "מַצִּיל",
+  "translit": "maṣ·ṣîl"
  },
  {
   "hebreeuws": "עָוֹן",
@@ -6177,7 +6392,8 @@
     "vorm": "בַּעֲוֺן"
    }
   ],
-  "lemma_tekst": "עֲוֺן"
+  "lemma_tekst": "עֲוֺן",
+  "translit": "‘ă·wōn"
  },
  {
   "hebreeuws": "עֹלָה",
@@ -6206,7 +6422,8 @@
     "vorm": "וַיַּעַל"
    }
   ],
-  "lemma_tekst": "עָלָה"
+  "lemma_tekst": "עָלָה",
+  "translit": "‘ā·lāh"
  },
  {
   "hebreeuws": "עבד",
@@ -6235,7 +6452,8 @@
     "vorm": "עֶבֶד"
    }
   ],
-  "lemma_tekst": "עַבְדְּךָ"
+  "lemma_tekst": "עַבְדְּךָ",
+  "translit": "‘ă·ḇā·ḏāw"
  },
  {
   "hebreeuws": "עזב",
@@ -6266,7 +6484,8 @@
     "vorm": "אֶעֱזָבְךָ"
    }
   ],
-  "lemma_tekst": "עָזְבוּ"
+  "lemma_tekst": "עָזְבוּ",
+  "translit": "‘ā·zə·ḇū"
  },
  {
   "hebreeuws": "פְּלִשְׁתִּי",
@@ -6296,7 +6515,8 @@
     "vorm": "פְּלִשְׁתִּים"
    }
   ],
-  "lemma_tekst": "פְּלִשְׁתִּים"
+  "lemma_tekst": "פְּלִשְׁתִּים",
+  "translit": "pə·liš·tîm"
  },
  {
   "hebreeuws": "פַּרְעֹה",
@@ -6325,36 +6545,40 @@
     "vorm": "פַּרְעֹה"
    }
   ],
-  "lemma_tekst": "פַּרְעֹה"
+  "lemma_tekst": "פַּרְעֹה",
+  "translit": "par·‘ōh"
  },
  {
-  "hebreeuws": "ןאצ",
+  "hebreeuws": "צֹאן",
   "nederlands": "kleinvee (schapen en geiten)",
   "nummer": 217,
   "les": 2,
   "regeert": "",
   "varianten": [],
-  "medeklinkers": "נאצ",
+  "medeklinkers": "צאנ",
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "5006",
-  "frequentie": 25,
+  "handmatig": "de letters staan omgekeerd; het is צֹאן, kleinvee (274x)",
+  "lijstvorm": "ןאצ",
+  "strong": "6629",
+  "frequentie": 274,
   "vindplaatsen": [
    {
-    "vers": "Numbers 14:11",
-    "vorm": "יְנַאֲצֻנִי"
+    "vers": "Genesis 4:2",
+    "vorm": "צֹאן"
    },
    {
-    "vers": "Numbers 14:23",
-    "vorm": "מְנַאֲצַי"
+    "vers": "Genesis 4:4",
+    "vorm": "צֹאנוֹ"
    },
    {
-    "vers": "Numbers 16:30",
-    "vorm": "נִאֲצוּ"
+    "vers": "Genesis 12:16",
+    "vorm": "צֹאן"
    }
   ],
-  "lemma_tekst": "נִאֲצוּ"
+  "lemma_tekst": "צֹאן",
+  "translit": "ṣōn"
  },
  {
   "hebreeuws": "קֶרֶב",
@@ -6367,23 +6591,25 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "7126",
-  "frequentie": 280,
+  "handmatig": "קֶרֶב staat vrijwel altijd met voorvoegsel (בְּקֶרֶב, 227x); 7126 is het wérkwoord naderen",
+  "strong": "7130",
+  "frequentie": 227,
   "vindplaatsen": [
    {
-    "vers": "Genesis 12:11",
-    "vorm": "הִקְרִיב"
+    "vers": "Genesis 18:12",
+    "vorm": "בְּקִרְבָּהּ"
    },
    {
-    "vers": "Genesis 20:4",
-    "vorm": "קָרַב"
+    "vers": "Genesis 18:24",
+    "vorm": "בְּקִרְבָּהּ"
    },
    {
-    "vers": "Genesis 27:41",
-    "vorm": "יִקְרְבוּ"
+    "vers": "Genesis 24:3",
+    "vorm": "בְּקִרְבּוֹ"
    }
   ],
-  "lemma_tekst": "תַּקְרִיב"
+  "lemma_tekst": "קִרְבּוֹ",
+  "translit": "qir·bōw"
  },
  {
   "hebreeuws": "קרב",
@@ -6415,7 +6641,8 @@
     "vorm": "יִקְרְבוּ"
    }
   ],
-  "lemma_tekst": "תַּקְרִיב"
+  "lemma_tekst": "תַּקְרִיב",
+  "translit": "taq·rîḇ"
  },
  {
   "hebreeuws": "רֶגֶל",
@@ -6444,7 +6671,8 @@
     "vorm": "רַגְלֵיכֶם"
    }
   ],
-  "lemma_tekst": "רַגְלָיו"
+  "lemma_tekst": "רַגְלָיו",
+  "translit": "raḡ·lāw"
  },
  {
   "hebreeuws": "רָשָׁע",
@@ -6473,7 +6701,8 @@
     "vorm": "כָּרָשָׁע"
    }
   ],
-  "lemma_tekst": "רְשָׁעִים"
+  "lemma_tekst": "רְשָׁעִים",
+  "translit": "rə·šā·‘îm"
  },
  {
   "hebreeuws": "תּוֹרָה",
@@ -6502,7 +6731,8 @@
     "vorm": "תּוֹרַת"
    }
   ],
-  "lemma_tekst": "תּוֹרַת"
+  "lemma_tekst": "תּוֹרַת",
+  "translit": "tō·w·raṯ"
  },
  {
   "hebreeuws": "שֵׁשׁ",
@@ -6531,7 +6761,8 @@
     "vorm": "וְשֵׁשׁ"
    }
   ],
-  "lemma_tekst": "שֵׁשׁ"
+  "lemma_tekst": "שֵׁשׁ",
+  "translit": "šêš"
  },
  {
   "hebreeuws": "שָׁלוֹם",
@@ -6560,7 +6791,8 @@
     "vorm": "בְּשָׁלוֹם"
    }
   ],
-  "lemma_tekst": "שָׁלוֹם"
+  "lemma_tekst": "שָׁלוֹם",
+  "translit": "šā·lō·wm"
  },
  {
   "hebreeuws": "שָׁתָה",
@@ -6591,7 +6823,8 @@
     "vorm": "שְׁתֵה"
    }
   ],
-  "lemma_tekst": "יִשְׁתּוּ"
+  "lemma_tekst": "יִשְׁתּוּ",
+  "translit": "yiš·tū"
  },
  {
   "hebreeuws": "אֲרוֹן",
@@ -6620,7 +6853,8 @@
     "vorm": "הָאָרֹן"
    }
   ],
-  "lemma_tekst": "אֲרוֹן"
+  "lemma_tekst": "אֲרוֹן",
+  "translit": "’ă·rō·wn"
  },
  {
   "hebreeuws": "אַחֵר",
@@ -6649,7 +6883,8 @@
     "vorm": "אֲחֵרִים"
    }
   ],
-  "lemma_tekst": "אֲחֵרִים"
+  "lemma_tekst": "אֲחֵרִים",
+  "translit": "’ă·ḥê·rîm"
  },
  {
   "hebreeuws": "אֹזֶן",
@@ -6678,7 +6913,8 @@
     "vorm": "בְּאָזְנֵי"
    }
   ],
-  "lemma_tekst": "אֹזֶן"
+  "lemma_tekst": "אֹזֶן",
+  "translit": "’ō·zen"
  },
  {
   "hebreeuws": "אבד",
@@ -6710,7 +6946,8 @@
     "vorm": "וַאֲבַדְתֶּם"
    }
   ],
-  "lemma_tekst": "יֹאבֵדוּ"
+  "lemma_tekst": "יֹאבֵדוּ",
+  "translit": "yō·ḇê·ḏū"
  },
  {
   "hebreeuws": "אסף",
@@ -6726,23 +6963,25 @@
    "Nifal": "bijeenkomen (refl.)"
   },
   "woordsoort": "ww",
-  "strong": "3254",
-  "frequentie": 212,
+  "handmatig": "אסף verzamelen (200x); het gekozen 3254 was יָסַף, toevoegen",
+  "strong": "622",
+  "frequentie": 200,
   "vindplaatsen": [
    {
-    "vers": "Genesis 4:2",
-    "vorm": "וַתֹּסֶף"
+    "vers": "Genesis 6:21",
+    "vorm": "וְאָסַפְתָּ"
    },
    {
-    "vers": "Genesis 4:12",
-    "vorm": "תֹסֵף"
+    "vers": "Genesis 25:8",
+    "vorm": "וַיֵּאָסֶף"
    },
    {
-    "vers": "Genesis 8:10",
-    "vorm": "וַיֹּסֶף"
+    "vers": "Genesis 25:17",
+    "vorm": "וַיֵּאָסֶף"
    }
   ],
-  "lemma_tekst": "יֹסִיף"
+  "lemma_tekst": "נֶאֶסְפוּ",
+  "translit": "ne·’es·p̄ū"
  },
  {
   "hebreeuws": "בְּהֵמָה",
@@ -6771,7 +7010,8 @@
     "vorm": "וּבַבְּהֵמָה"
    }
   ],
-  "lemma_tekst": "בְּהֵמָה"
+  "lemma_tekst": "בְּהֵמָה",
+  "translit": "bə·hê·māh"
  },
  {
   "hebreeuws": "בִּין",
@@ -6804,7 +7044,8 @@
     "vorm": "וּנְבֹנִים"
    }
   ],
-  "lemma_tekst": "יָבִין"
+  "lemma_tekst": "יָבִין",
+  "translit": "yā·ḇîn"
  },
  {
   "hebreeuws": "בָּקָר",
@@ -6833,7 +7074,8 @@
     "vorm": "הַבָּקָר"
    }
   ],
-  "lemma_tekst": "בָּקָר"
+  "lemma_tekst": "בָּקָר",
+  "translit": "bā·qār"
  },
  {
   "hebreeuws": "בחר",
@@ -6862,7 +7104,8 @@
     "vorm": "בָּחוּר"
    }
   ],
-  "lemma_tekst": "יִבְחַר"
+  "lemma_tekst": "יִבְחַר",
+  "translit": "yiḇ·ḥar"
  },
  {
   "hebreeuws": "גָּלָה",
@@ -6894,7 +7137,8 @@
     "vorm": "תִגָּלֶה"
    }
   ],
-  "lemma_tekst": "הֶגְלָה"
+  "lemma_tekst": "הֶגְלָה",
+  "translit": "heḡ·lāh"
  },
  {
   "hebreeuws": "דּוֹר",
@@ -6923,7 +7167,8 @@
     "vorm": "לְדֹרֹת"
    }
   ],
-  "lemma_tekst": "דּוֹר"
+  "lemma_tekst": "דּוֹר",
+  "translit": "dō·wr"
  },
  {
   "hebreeuws": "דרשׁ",
@@ -6952,7 +7197,8 @@
     "vorm": "אֶדְרֹשׁ"
    }
   ],
-  "lemma_tekst": "דִּרְשׁוּ"
+  "lemma_tekst": "דִּרְשׁוּ",
+  "translit": "dir·šū"
  },
  {
   "hebreeuws": "הרג",
@@ -6981,7 +7227,8 @@
     "vorm": "הֹרֵג"
    }
   ],
-  "lemma_tekst": "הָרְגוּ"
+  "lemma_tekst": "הָרְגוּ",
+  "translit": "hā·rə·ḡū"
  },
  {
   "hebreeuws": "זֶבַח",
@@ -7010,7 +7257,8 @@
     "vorm": "זְבָחִים"
    }
   ],
-  "lemma_tekst": "זֶבַח"
+  "lemma_tekst": "זֶבַח",
+  "translit": "ze·ḇaḥ"
  },
  {
   "hebreeuws": "זָקֵן",
@@ -7039,7 +7287,8 @@
     "vorm": "זְקַן"
    }
   ],
-  "lemma_tekst": "זִקְנֵי"
+  "lemma_tekst": "זִקְנֵי",
+  "translit": "ziq·nê"
  },
  {
   "hebreeuws": "חָצֵר",
@@ -7068,7 +7317,8 @@
     "vorm": "חֲצַר"
    }
   ],
-  "lemma_tekst": "חֲצַר"
+  "lemma_tekst": "חֲצַר",
+  "translit": "ḥă·ṣar"
  },
  {
   "hebreeuws": "חוּץ",
@@ -7097,7 +7347,8 @@
     "vorm": "הַחוּצָה"
    }
   ],
-  "lemma_tekst": "חוּצוֹת"
+  "lemma_tekst": "חוּצוֹת",
+  "translit": "ḥū·ṣō·wṯ"
  },
  {
   "hebreeuws": "חוה",
@@ -7110,19 +7361,25 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "2332",
-  "frequentie": 2,
+  "handmatig": "de Hisjtafel וַיִּשְׁתַּחוּ (172x); op medeklinkers kwam Eva eruit",
+  "strong": "7812",
+  "frequentie": 172,
   "vindplaatsen": [
    {
-    "vers": "Genesis 3:20",
-    "vorm": "חַוָּה"
+    "vers": "Genesis 18:2",
+    "vorm": "וַיִּשְׁתַּחוּ"
    },
    {
-    "vers": "Genesis 4:1",
-    "vorm": "חַוָּה"
+    "vers": "Genesis 19:1",
+    "vorm": "וַיִּשְׁתַּחוּ"
+   },
+   {
+    "vers": "Genesis 22:5",
+    "vorm": "וְנִשְׁתַּחֲוֶה"
    }
   ],
-  "lemma_tekst": "חַוָּה"
+  "lemma_tekst": "תִשְׁתַּחֲוֶה",
+  "translit": "ṯiš·ta·ḥă·weh"
  },
  {
   "hebreeuws": "יַרְדֵּן",
@@ -7151,7 +7408,8 @@
     "vorm": "הַיַּרְדֵּן"
    }
   ],
-  "lemma_tekst": "יַרְדֵּן"
+  "lemma_tekst": "יַרְדֵּן",
+  "translit": "yar·dên"
  },
  {
   "hebreeuws": "יָכֹל",
@@ -7182,7 +7440,8 @@
     "vorm": "תּוּכַל"
    }
   ],
-  "lemma_tekst": "יוּכַל"
+  "lemma_tekst": "יוּכַל",
+  "translit": "yū·ḵal"
  },
  {
   "hebreeuws": "ישׁע",
@@ -7198,23 +7457,25 @@
    "Hifil": "helpen, redden"
   },
   "woordsoort": "ww",
-  "strong": "3468",
-  "frequentie": 36,
+  "handmatig": "het werkwoord redden (205x); 3468 is het zelfstandig naamwoord יֶשַׁע",
+  "strong": "3467",
+  "frequentie": 205,
   "vindplaatsen": [
    {
-    "vers": "2 Samuel 22:3",
-    "vorm": "יִשְׁעִי"
+    "vers": "Exodus 2:17",
+    "vorm": "וַיּוֹשִׁעָן"
    },
    {
-    "vers": "2 Samuel 22:36",
-    "vorm": "יִשְׁעֶךָ"
+    "vers": "Exodus 14:30",
+    "vorm": "וַיּוֹשַׁע"
    },
    {
-    "vers": "2 Samuel 22:47",
-    "vorm": "יִשְׁעִי"
+    "vers": "Numbers 10:9",
+    "vorm": "וְנוֹשַׁעְתֶּם"
    }
   ],
-  "lemma_tekst": "יִשְׁעִי"
+  "lemma_tekst": "מוֹשִׁיעַ",
+  "translit": "mō·wō·šî·a‘"
  },
  {
   "hebreeuws": "כַּף",
@@ -7243,7 +7504,8 @@
     "vorm": "כַּפַּי"
    }
   ],
-  "lemma_tekst": "כַּף"
+  "lemma_tekst": "כַּף",
+  "translit": "kap̄"
  },
  {
   "hebreeuws": "כָּבוֹד",
@@ -7272,7 +7534,8 @@
     "vorm": "כְּבֹדִי"
    }
   ],
-  "lemma_tekst": "כְּבוֹד"
+  "lemma_tekst": "כְּבוֹד",
+  "translit": "kə·ḇō·wḏ"
  },
  {
   "hebreeuws": "כָּלָה",
@@ -7301,7 +7564,8 @@
     "vorm": "תְּכַלֶנָּה"
    }
   ],
-  "lemma_tekst": "כִּלָּה"
+  "lemma_tekst": "כִּלָּה",
+  "translit": "kil·lāh"
  },
  {
   "hebreeuws": "לחם",
@@ -7332,7 +7596,8 @@
     "vorm": "נִלְחָם"
    }
   ],
-  "lemma_tekst": "נִלְחַם"
+  "lemma_tekst": "נִלְחַם",
+  "translit": "nil·ḥām"
  },
  {
   "hebreeuws": "מְלָאכָה",
@@ -7361,7 +7626,8 @@
     "vorm": "מְלַאכְתּוֹ"
    }
   ],
-  "lemma_tekst": "מְלָאכָה"
+  "lemma_tekst": "מְלָאכָה",
+  "translit": "mə·lā·ḵāh"
  },
  {
   "hebreeuws": "מִנְחָה",
@@ -7390,7 +7656,8 @@
     "vorm": "מִנְחָתוֹ"
    }
   ],
-  "lemma_tekst": "מִנְחָה"
+  "lemma_tekst": "מִנְחָה",
+  "translit": "min·ḥāh"
  },
  {
   "hebreeuws": "מִצְוָה",
@@ -7419,7 +7686,8 @@
     "vorm": "מִצְוֺתַי"
    }
   ],
-  "lemma_tekst": "מִצְוֺת"
+  "lemma_tekst": "מִצְוֺת",
+  "translit": "miṣ·wōṯ"
  },
  {
   "hebreeuws": "סֵפֶר",
@@ -7448,7 +7716,8 @@
     "vorm": "סֵפֶר"
    }
   ],
-  "lemma_tekst": "סֵפֶר"
+  "lemma_tekst": "סֵפֶר",
+  "translit": "sê·p̄er"
  },
  {
   "hebreeuws": "סבב",
@@ -7481,7 +7750,8 @@
     "vorm": "נָסַבּוּ"
    }
   ],
-  "lemma_tekst": "סְבָבוּנִי"
+  "lemma_tekst": "סְבָבוּנִי",
+  "translit": "sōḇ"
  },
  {
   "hebreeuws": "פֶּתַח",
@@ -7510,7 +7780,8 @@
     "vorm": "פֶּתַח"
    }
   ],
-  "lemma_tekst": "פֶּתַח"
+  "lemma_tekst": "פֶּתַח",
+  "translit": "pe·ṯaḥ"
  },
  {
   "hebreeuws": "צַדִּיק",
@@ -7539,7 +7810,8 @@
     "vorm": "צַדִּיק"
    }
   ],
-  "lemma_tekst": "צַדִּיק"
+  "lemma_tekst": "צַדִּיק",
+  "translit": "ṣad·dîq"
  },
  {
   "hebreeuws": "קדשׁ",
@@ -7571,7 +7843,8 @@
     "vorm": "וְקִדַּשְׁתָּם"
    }
   ],
-  "lemma_tekst": "קַדְּשׁוּ"
+  "lemma_tekst": "קַדְּשׁוּ",
+  "translit": "hiq·dîš"
  },
  {
   "hebreeuws": "רִאשׁוֹן",
@@ -7600,7 +7873,8 @@
     "vorm": "הָרִאשׁוֹן"
    }
   ],
-  "lemma_tekst": "רִאשׁוֹן"
+  "lemma_tekst": "רִאשׁוֹן",
+  "translit": "ri·šō·wn"
  },
  {
   "hebreeuws": "רֵע",
@@ -7613,23 +7887,25 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "7451",
-  "frequentie": 664,
+  "handmatig": "רֵעַ de naaste (187x); op medeklinkers won רָעָה, kwaad",
+  "strong": "7453",
+  "frequentie": 187,
   "vindplaatsen": [
    {
-    "vers": "Genesis 2:9",
-    "vorm": "וָרָע"
+    "vers": "Genesis 11:3",
+    "vorm": "רֵעֵהוּ"
    },
    {
-    "vers": "Genesis 2:17",
-    "vorm": "וָרָע"
+    "vers": "Genesis 11:7",
+    "vorm": "רֵעֵהוּ"
    },
    {
-    "vers": "Genesis 3:5",
-    "vorm": "וָרָע"
+    "vers": "Genesis 15:10",
+    "vorm": "רֵעֵהוּ"
    }
   ],
-  "lemma_tekst": "רָעָה"
+  "lemma_tekst": "רֵעֵהוּ",
+  "translit": "rê·‘ê·hū"
  },
  {
   "hebreeuws": "רָבָה",
@@ -7662,7 +7938,8 @@
     "vorm": "וּרְבוּ"
    }
   ],
-  "lemma_tekst": "הַרְבֵּה"
+  "lemma_tekst": "הַרְבֵּה",
+  "translit": "har·bêh"
  },
  {
   "hebreeuws": "רָעָה",
@@ -7693,7 +7970,8 @@
     "vorm": "וָרָע"
    }
   ],
-  "lemma_tekst": "רָעָה"
+  "lemma_tekst": "רָעָה",
+  "translit": "rā·‘āh"
  },
  {
   "hebreeuws": "רוּם",
@@ -7725,7 +8003,8 @@
     "vorm": "וַיְרִימֶהָ"
    }
   ],
-  "lemma_tekst": "תָּרִימוּ"
+  "lemma_tekst": "תָּרִימוּ",
+  "translit": "tā·rî·mū"
  },
  {
   "hebreeuws": "שֵׁבֶט",
@@ -7754,7 +8033,8 @@
     "vorm": "שִׁבְטֵי"
    }
   ],
-  "lemma_tekst": "שֵׁבֶט"
+  "lemma_tekst": "שֵׁבֶט",
+  "translit": "šê·ḇeṭ"
  },
  {
   "hebreeuws": "שֶׁמֶן",
@@ -7783,7 +8063,8 @@
     "vorm": "שֶׁמֶן"
    }
   ],
-  "lemma_tekst": "שֶׁמֶן"
+  "lemma_tekst": "שֶׁמֶן",
+  "translit": "še·men"
  },
  {
   "hebreeuws": "שׁאל",
@@ -7796,23 +8077,25 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "410",
-  "frequentie": 241,
+  "handmatig": "שָׁאַל vragen (173x); op medeklinkers won אֵל, God",
+  "strong": "7592",
+  "frequentie": 173,
   "vindplaatsen": [
    {
-    "vers": "Genesis 14:18",
-    "vorm": "לְאֵל"
+    "vers": "Genesis 24:47",
+    "vorm": "וָאֶשְׁאַל"
    },
    {
-    "vers": "Genesis 14:19",
-    "vorm": "לְאֵל"
+    "vers": "Genesis 24:57",
+    "vorm": "וְנִשְׁאֲלָה"
    },
    {
-    "vers": "Genesis 14:20",
-    "vorm": "אֵל"
+    "vers": "Genesis 26:7",
+    "vorm": "וַיִּשְׁאֲלוּ"
    }
   ],
-  "lemma_tekst": "אֵל"
+  "lemma_tekst": "שְׁאַל",
+  "translit": "šā·’al"
  },
  {
   "hebreeuws": "שׁבע",
@@ -7827,23 +8110,25 @@
    "Nifal": "zweren"
   },
   "woordsoort": "ww",
-  "strong": "7646",
-  "frequentie": 97,
+  "handmatig": "de Nifal נִשְׁבַּע zweren (186x); op medeklinkers won שֶׁבַע, zeven",
+  "strong": "7650",
+  "frequentie": 186,
   "vindplaatsen": [
    {
-    "vers": "Exodus 16:8",
-    "vorm": "לִשְׂבֹּעַ"
+    "vers": "Genesis 21:23",
+    "vorm": "הִשָּׁבְעָה"
    },
    {
-    "vers": "Exodus 16:12",
-    "vorm": "תִּשְׂבְּעוּ"
+    "vers": "Genesis 21:24",
+    "vorm": "אִשָּׁבֵעַ"
    },
    {
-    "vers": "Leviticus 26:26",
-    "vorm": "תִשְׂבָּעוּס"
+    "vers": "Genesis 21:31",
+    "vorm": "נִשְׁבְּעוּ"
    }
   ],
-  "lemma_tekst": "יִשְׂבַּע"
+  "lemma_tekst": "נִשְׁבַּע",
+  "translit": "niš·ba‘"
  },
  {
   "hebreeuws": "שׁכב",
@@ -7872,7 +8157,8 @@
     "vorm": "וַתִּשְׁכַּב"
    }
   ],
-  "lemma_tekst": "שֹׁכֵב"
+  "lemma_tekst": "שֹׁכֵב",
+  "translit": "šō·ḵêḇ"
  },
  {
   "hebreeuws": "שׁפט",
@@ -7904,7 +8190,8 @@
     "vorm": "וַיִּשְׁפֹּט"
    }
   ],
-  "lemma_tekst": "יִשְׁפֹּט"
+  "lemma_tekst": "יִשְׁפֹּט",
+  "translit": "šō·p̄êṭ"
  },
  {
   "hebreeuws": "שָׂפָה",
@@ -7933,7 +8220,8 @@
     "vorm": "שְׂפָתָם"
    }
   ],
-  "lemma_tekst": "שְׂפַת"
+  "lemma_tekst": "שְׂפַת",
+  "translit": "śə·p̄aṯ"
  },
  {
   "hebreeuws": "אָז",
@@ -7962,7 +8250,8 @@
     "vorm": "אָז"
    }
   ],
-  "lemma_tekst": "אָז"
+  "lemma_tekst": "אָז",
+  "translit": "’āz"
  },
  {
   "hebreeuws": "אַיִל",
@@ -7991,7 +8280,8 @@
     "vorm": "הָאַיִל"
    }
   ],
-  "lemma_tekst": "אֵילִם"
+  "lemma_tekst": "אֵילִם",
+  "translit": "’ê·lim"
  },
  {
   "hebreeuws": "אַךְ",
@@ -8020,7 +8310,8 @@
     "vorm": "וְאַךְ"
    }
   ],
-  "lemma_tekst": "אַךְ"
+  "lemma_tekst": "אַךְ",
+  "translit": "’aḵ"
  },
  {
   "hebreeuws": "אֱמֶת",
@@ -8049,7 +8340,8 @@
     "vorm": "וֶאֱמֶת"
    }
   ],
-  "lemma_tekst": "אֱמֶת"
+  "lemma_tekst": "אֱמֶת",
+  "translit": "’ĕ·meṯ"
  },
  {
   "hebreeuws": "אַף",
@@ -8078,7 +8370,8 @@
     "vorm": "בְּאַפָּיו"
    }
   ],
-  "lemma_tekst": "אַף"
+  "lemma_tekst": "אַף",
+  "translit": "’ap·pōw"
  },
  {
   "hebreeuws": "בַּעַל",
@@ -8107,7 +8400,8 @@
     "vorm": "בַּעַל"
    }
   ],
-  "lemma_tekst": "בַּעֲלֵי"
+  "lemma_tekst": "בַּעֲלֵי",
+  "translit": "ba·‘ă·lê"
  },
  {
   "hebreeuws": "גִּבּוֹר",
@@ -8136,7 +8430,8 @@
     "vorm": "גִבֹּר"
    }
   ],
-  "lemma_tekst": "גִּבּוֹר"
+  "lemma_tekst": "גִּבּוֹר",
+  "translit": "gib·bō·wr"
  },
  {
   "hebreeuws": "הלל",
@@ -8167,7 +8462,8 @@
     "vorm": "וַיִּתְהֹלֵל"
    }
   ],
-  "lemma_tekst": "הַלְלוּ"
+  "lemma_tekst": "הַלְלוּ",
+  "translit": "hal·lū"
  },
  {
   "hebreeuws": "זבח",
@@ -8198,7 +8494,8 @@
     "vorm": "וְנִזְבְּחָה"
    }
   ],
-  "lemma_tekst": "מְזַבְּחִים"
+  "lemma_tekst": "מְזַבְּחִים",
+  "translit": "mə·zab·bə·ḥîm"
  },
  {
   "hebreeuws": "חוֹמָה",
@@ -8227,7 +8524,8 @@
     "vorm": "חוֹמָה"
    }
   ],
-  "lemma_tekst": "חוֹמַת"
+  "lemma_tekst": "חוֹמַת",
+  "translit": "ḥō·w·maṯ"
  },
  {
   "hebreeuws": "חָכָם",
@@ -8256,7 +8554,8 @@
     "vorm": "וְחָכָם"
    }
   ],
-  "lemma_tekst": "חָכָם"
+  "lemma_tekst": "חָכָם",
+  "translit": "ḥā·ḵām"
  },
  {
   "hebreeuws": "חָכְמָה",
@@ -8285,7 +8584,8 @@
     "vorm": "חָכְמָה"
    }
   ],
-  "lemma_tekst": "חָכְמָה"
+  "lemma_tekst": "חָכְמָה",
+  "translit": "ḥāḵ·māh"
  },
  {
   "hebreeuws": "חלל",
@@ -8314,7 +8614,8 @@
     "vorm": "וַיָּחֶל"
    }
   ],
-  "lemma_tekst": "הֵחֵל"
+  "lemma_tekst": "הֵחֵל",
+  "translit": "hê·ḥêl"
  },
  {
   "hebreeuws": "חָנָה",
@@ -8343,7 +8644,8 @@
     "vorm": "וַיַּחֲנוּ"
    }
   ],
-  "lemma_tekst": "יַחֲנוּ"
+  "lemma_tekst": "יַחֲנוּ",
+  "translit": "ya·ḥă·nū"
  },
  {
   "hebreeuws": "חֹק",
@@ -8372,7 +8674,8 @@
     "vorm": "לְחֹק"
    }
   ],
-  "lemma_tekst": "חֹק"
+  "lemma_tekst": "חֹק",
+  "translit": "ḥuq·qe·ḵā"
  },
  {
   "hebreeuws": "טָמֵא",
@@ -8405,7 +8708,8 @@
     "vorm": "טִמְּאוּ"
    }
   ],
-  "lemma_tekst": "יִטְמָא"
+  "lemma_tekst": "יִטְמָא",
+  "translit": "yiṭ·mā"
  },
  {
   "hebreeuws": "יַיִן",
@@ -8434,7 +8738,8 @@
     "vorm": "וָיָיִן"
    }
   ],
-  "lemma_tekst": "יַיִן"
+  "lemma_tekst": "יַיִן",
+  "translit": "ya·yin"
  },
  {
   "hebreeuws": "יָמִין",
@@ -8463,7 +8768,8 @@
     "vorm": "בִּימִינוֹ"
    }
   ],
-  "lemma_tekst": "יָמִין"
+  "lemma_tekst": "יָמִין",
+  "translit": "yə·mî·nōw"
  },
  {
   "hebreeuws": "יֵשׁ",
@@ -8492,7 +8798,8 @@
     "vorm": "הֲיֵשׁ"
    }
   ],
-  "lemma_tekst": "יֵשׁ"
+  "lemma_tekst": "יֵשׁ",
+  "translit": "yêš"
  },
  {
   "hebreeuws": "כֹּח",
@@ -8521,7 +8828,8 @@
     "vorm": "כֹּחִי"
    }
   ],
-  "lemma_tekst": "כֹּחַ"
+  "lemma_tekst": "כֹּחַ",
+  "translit": "kō·aḥ"
  },
  {
   "hebreeuws": "כִּסֵּא",
@@ -8550,7 +8858,8 @@
     "vorm": "כִּסְאוֹ"
    }
   ],
-  "lemma_tekst": "כִּסֵּא"
+  "lemma_tekst": "כִּסֵּא",
+  "translit": "kis·sê"
  },
  {
   "hebreeuws": "כָּסָה",
@@ -8581,7 +8890,8 @@
     "vorm": "וַיְכַסּוּ"
    }
   ],
-  "lemma_tekst": "יְכַסֶּה"
+  "lemma_tekst": "יְכַסֶּה",
+  "translit": "yə·ḵas·seh"
  },
  {
   "hebreeuws": "כְּמוֹ",
@@ -8610,7 +8920,8 @@
     "vorm": "כָּמוֹךָ"
    }
   ],
-  "lemma_tekst": "כְּמוֹהֶם"
+  "lemma_tekst": "כְּמוֹ",
+  "translit": "kə·mōw-"
  },
  {
   "hebreeuws": "לְבַד",
@@ -8639,7 +8950,8 @@
     "vorm": "לְבַדָּנָה"
    }
   ],
-  "lemma_tekst": "בַּדָּיו"
+  "lemma_tekst": "בַּדָּיו",
+  "translit": "bad·dāw"
  },
  {
   "hebreeuws": "מָוֶת",
@@ -8668,7 +8980,8 @@
     "vorm": "מוֹת"
    }
   ],
-  "lemma_tekst": "מָוֶת"
+  "lemma_tekst": "מָוֶת",
+  "translit": "mā·weṯ"
  },
  {
   "hebreeuws": "מִסְפָּר",
@@ -8697,7 +9010,8 @@
     "vorm": "מִסְפַּר"
    }
   ],
-  "lemma_tekst": "מִסְפַּר"
+  "lemma_tekst": "מִסְפַּר",
+  "translit": "mis·par"
  },
  {
   "hebreeuws": "מִשְׁכָּן",
@@ -8726,7 +9040,8 @@
     "vorm": "הַמִּשְׁכָּן"
    }
   ],
-  "lemma_tekst": "מִשְׁכַּן"
+  "lemma_tekst": "מִשְׁכַּן",
+  "translit": "miš·kan"
  },
  {
   "hebreeuws": "מִמַּעַל",
@@ -8755,7 +9070,8 @@
     "vorm": "מִמַּעַל"
    }
   ],
-  "lemma_tekst": "מַעְלָה"
+  "lemma_tekst": "מַעְלָה",
+  "translit": "ma‘·lāh"
  },
  {
   "hebreeuws": "נֶגֶד",
@@ -8768,23 +9084,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "5057",
-  "frequentie": 44,
+  "strong": "5048",
+  "frequentie": 151,
   "vindplaatsen": [
    {
-    "vers": "1 Samuel 9:16",
-    "vorm": "לְנָגִיד"
+    "vers": "Genesis 2:18",
+    "vorm": "כְּנֶגְדּוֹ"
    },
    {
-    "vers": "1 Samuel 10:1",
-    "vorm": "לְנָגִיד"
+    "vers": "Genesis 2:20",
+    "vorm": "כְּנֶגְדּוֹ"
    },
    {
-    "vers": "1 Samuel 13:14",
-    "vorm": "לְנָגִיד"
+    "vers": "Genesis 21:16",
+    "vorm": "מִנֶּגֶד"
    }
   ],
-  "lemma_tekst": "נָגִיד"
+  "lemma_tekst": "נֶגֶד",
+  "translit": "ne·ḡeḏ"
  },
  {
   "hebreeuws": "נגע",
@@ -8817,7 +9134,8 @@
     "vorm": "לִנְגֹּעַ"
    }
   ],
-  "lemma_tekst": "יִגַּע"
+  "lemma_tekst": "יִגַּע",
+  "translit": "yig·ga‘"
  },
  {
   "hebreeuws": "נוּח",
@@ -8850,7 +9168,8 @@
     "vorm": "וַיַּנִּחֻהוּ"
    }
   ],
-  "lemma_tekst": "יָנוּחַ"
+  "lemma_tekst": "יָנוּחַ",
+  "translit": "yā·nū·aḥ"
  },
  {
   "hebreeuws": "נוּס",
@@ -8882,7 +9201,8 @@
     "vorm": "לָנוּס"
    }
   ],
-  "lemma_tekst": "נָס"
+  "lemma_tekst": "נָס",
+  "translit": "nās"
  },
  {
   "hebreeuws": "נַחַל",
@@ -8911,7 +9231,8 @@
     "vorm": "הַנָּחַל"
    }
   ],
-  "lemma_tekst": "נַחַל"
+  "lemma_tekst": "נַחַל",
+  "translit": "na·ḥal"
  },
  {
   "hebreeuws": "נְחֹשֶׁת",
@@ -8940,7 +9261,8 @@
     "vorm": "נְחֹשֶׁת"
    }
   ],
-  "lemma_tekst": "נְחֹשֶׁת"
+  "lemma_tekst": "נְחֹשֶׁת",
+  "translit": "nə·ḥō·šeṯ"
  },
  {
   "hebreeuws": "נסע",
@@ -8972,7 +9294,8 @@
     "vorm": "וְנָסוֹעַ"
    }
   ],
-  "lemma_tekst": "נָסַע"
+  "lemma_tekst": "נָסַע",
+  "translit": "yis·sā·‘ū"
  },
  {
   "hebreeuws": "נָשִׂיא",
@@ -9001,7 +9324,8 @@
     "vorm": "נְשִׂיאִם"
    }
   ],
-  "lemma_tekst": "נָשִׂיא"
+  "lemma_tekst": "נָשִׂיא",
+  "translit": "nā·śî"
  },
  {
   "hebreeuws": "סוּס",
@@ -9030,7 +9354,8 @@
     "vorm": "בַּסּוּסִים"
    }
   ],
-  "lemma_tekst": "סוּסִים"
+  "lemma_tekst": "סוּסִים",
+  "translit": "sū·sîm"
  },
  {
   "hebreeuws": "עֲבֹדָה",
@@ -9059,7 +9384,8 @@
     "vorm": "בַּעֲבֹדָה"
    }
   ],
-  "lemma_tekst": "עֲבֹדַת"
+  "lemma_tekst": "עֲבֹדַת",
+  "translit": "‘ă·ḇō·ḏaṯ"
  },
  {
   "hebreeuws": "עֵדָה",
@@ -9088,7 +9414,8 @@
     "vorm": "מֵעֲדַת"
    }
   ],
-  "lemma_tekst": "עֲדַת"
+  "lemma_tekst": "עֲדַת",
+  "translit": "‘ă·ḏaṯ"
  },
  {
   "hebreeuws": "עֶרֶב",
@@ -9117,7 +9444,8 @@
     "vorm": "עֶרֶב"
    }
   ],
-  "lemma_tekst": "עֶרֶב"
+  "lemma_tekst": "עֶרֶב",
+  "translit": "‘e·reḇ"
  },
  {
   "hebreeuws": "פֶּן",
@@ -9146,7 +9474,8 @@
     "vorm": "פֶּן"
    }
   ],
-  "lemma_tekst": "פֶּן"
+  "lemma_tekst": "פֶּן",
+  "translit": "pen-"
  },
  {
   "hebreeuws": "פָּנָה",
@@ -9178,7 +9507,8 @@
     "vorm": "וְאֶפְנֶה"
    }
   ],
-  "lemma_tekst": "יִפְנֶה"
+  "lemma_tekst": "יִפְנֶה",
+  "translit": "yip̄·neh"
  },
  {
   "hebreeuws": "פַּר",
@@ -9207,7 +9537,8 @@
     "vorm": "פַּר"
    }
   ],
-  "lemma_tekst": "פַּר"
+  "lemma_tekst": "פַּר",
+  "translit": "par"
  },
  {
   "hebreeuws": "פתח",
@@ -9239,7 +9570,8 @@
     "vorm": "וַיְפַתַּח"
    }
   ],
-  "lemma_tekst": "יִפְתַּח"
+  "lemma_tekst": "יִפְתַּח",
+  "translit": "yip·pā·ṯê·aḥ"
  },
  {
   "hebreeuws": "צְדָקָה",
@@ -9268,7 +9600,8 @@
     "vorm": "צִדְקָתִי"
    }
   ],
-  "lemma_tekst": "צְדָקָה"
+  "lemma_tekst": "צְדָקָה",
+  "translit": "ṣə·ḏā·qāh"
  },
  {
   "hebreeuws": "צָפוֹן",
@@ -9297,7 +9630,8 @@
     "vorm": "צָפוֹן"
    }
   ],
-  "lemma_tekst": "צָפוֹן"
+  "lemma_tekst": "צָפוֹן",
+  "translit": "ṣā·p̄ō·wn"
  },
  {
   "hebreeuws": "קבץ",
@@ -9329,7 +9663,8 @@
     "vorm": "הִקָּבְצוּ"
    }
   ],
-  "lemma_tekst": "נִקְבְּצוּ"
+  "lemma_tekst": "נִקְבְּצוּ",
+  "translit": "niq·bə·ṣū"
  },
  {
   "hebreeuws": "קבר",
@@ -9358,7 +9693,8 @@
     "vorm": "קְבֹר"
    }
   ],
-  "lemma_tekst": "קָבְרוּ"
+  "lemma_tekst": "קָבְרוּ",
+  "translit": "qā·ḇə·rū"
  },
  {
   "hebreeuws": "רֹב",
@@ -9387,7 +9723,8 @@
     "vorm": "לָרֹב"
    }
   ],
-  "lemma_tekst": "רֹב"
+  "lemma_tekst": "רֹב",
+  "translit": "rōḇ"
  },
  {
   "hebreeuws": "רדף",
@@ -9416,7 +9753,8 @@
     "vorm": "וַיִּרְדֹּף"
    }
   ],
-  "lemma_tekst": "רֹדֵף"
+  "lemma_tekst": "רֹדֵף",
+  "translit": "rō·ḏêp̄"
  },
  {
   "hebreeuws": "שָׂמֵח",
@@ -9448,7 +9786,8 @@
     "vorm": "וּשְׂמַחְתֶּם"
    }
   ],
-  "lemma_tekst": "יִשְׂמַח"
+  "lemma_tekst": "יִשְׂמַח",
+  "translit": "yiś·maḥ"
  },
  {
   "hebreeuws": "שָׂנֵא",
@@ -9477,7 +9816,8 @@
     "vorm": "שְׂנוּאָה"
    }
   ],
-  "lemma_tekst": "שָׂנֵאתִי"
+  "lemma_tekst": "שָׂנֵאתִי",
+  "translit": "śā·nê·ṯî"
  },
  {
   "hebreeuws": "שׁ",
@@ -9507,7 +9847,8 @@
     "vorm": "אֲשֶׁר"
    }
   ],
-  "lemma_tekst": "אֲשֶׁר"
+  "lemma_tekst": "אֲשֶׁר",
+  "translit": "’ă·šer"
  },
  {
   "hebreeuws": "שׁאר",
@@ -9539,7 +9880,8 @@
     "vorm": "הַנִּשְׁאָר"
    }
   ],
-  "lemma_tekst": "הִשְׁאִיר"
+  "lemma_tekst": "הִשְׁאִיר",
+  "translit": "niš·’ar"
  },
  {
   "hebreeuws": "שׁבר",
@@ -9572,7 +9914,8 @@
     "vorm": "תִשְׁבְּרוּ"
    }
   ],
-  "lemma_tekst": "יִשָּׁבֵר"
+  "lemma_tekst": "יִשָּׁבֵר",
+  "translit": "yiš·šā·ḇêr"
  },
  {
   "hebreeuws": "שׁחת",
@@ -9603,7 +9946,8 @@
     "vorm": "הִשְׁחִית"
    }
   ],
-  "lemma_tekst": "מַשְׁחִית"
+  "lemma_tekst": "מַשְׁחִית",
+  "translit": "maš·ḥîṯ"
  },
  {
   "hebreeuws": "שׁכן",
@@ -9632,7 +9976,8 @@
     "vorm": "שֹׁכֵן"
    }
   ],
-  "lemma_tekst": "יִשְׁכֹּן"
+  "lemma_tekst": "יִשְׁכֹּן",
+  "translit": "yiš·kōn"
  },
  {
   "hebreeuws": "שְׁמֹנֶה",
@@ -9661,7 +10006,8 @@
     "vorm": "וּשְׁמֹנֶה"
    }
   ],
-  "lemma_tekst": "שְׁמֹנֶה"
+  "lemma_tekst": "שְׁמֹנֶה",
+  "translit": "šə·mō·neh"
  },
  {
   "hebreeuws": "שֶׁמֶשׁ",
@@ -9690,7 +10036,8 @@
     "vorm": "הַשֶּׁמֶשׁ"
    }
   ],
-  "lemma_tekst": "שֶׁמֶשׁ"
+  "lemma_tekst": "שֶׁמֶשׁ",
+  "translit": "še·meš"
  },
  {
   "hebreeuws": "שְׁנִי",
@@ -9719,7 +10066,8 @@
     "vorm": "שָׁנִי"
    }
   ],
-  "lemma_tekst": "שָׁנִי"
+  "lemma_tekst": "שָׁנִי",
+  "translit": "šā·nî"
  },
  {
   "hebreeuws": "אוֹר",
@@ -9748,7 +10096,8 @@
     "vorm": "הָאוֹר"
    }
   ],
-  "lemma_tekst": "אוֹר"
+  "lemma_tekst": "אוֹר",
+  "translit": "’ō·wr"
  },
  {
   "hebreeuws": "אָחוֹת",
@@ -9777,7 +10126,8 @@
     "vorm": "אֲחֹתִי"
    }
   ],
-  "lemma_tekst": "אֲחוֹת"
+  "lemma_tekst": "אֲחוֹת",
+  "translit": "’ă·ḥō·ṯî"
  },
  {
   "hebreeuws": "אֲנַחְנוּ",
@@ -9806,7 +10156,8 @@
     "vorm": "אֲנָחְנוּ"
    }
   ],
-  "lemma_tekst": "אֲנַחְנוּ"
+  "lemma_tekst": "אֲנַחְנוּ",
+  "translit": "’ă·naḥ·nū"
  },
  {
   "hebreeuws": "בּוֹשׁ",
@@ -9838,7 +10189,8 @@
     "vorm": "בּוֹשׁ"
    }
   ],
-  "lemma_tekst": "יֵבֹשׁוּ"
+  "lemma_tekst": "יֵבֹשׁוּ",
+  "translit": "yê·ḇō·šū"
  },
  {
   "hebreeuws": "בטח",
@@ -9869,7 +10221,8 @@
     "vorm": "וּבֹטֵחַ"
    }
   ],
-  "lemma_tekst": "בֹּטֵחַ"
+  "lemma_tekst": "בֹּטֵחַ",
+  "translit": "bō·ṭê·aḥ"
  },
  {
   "hebreeuws": "בָּכָה",
@@ -9898,7 +10251,8 @@
     "vorm": "וַיֵּבְךְּ"
    }
   ],
-  "lemma_tekst": "בֹּכֶה"
+  "lemma_tekst": "בֹּכֶה",
+  "translit": "bō·ḵeh"
  },
  {
   "hebreeuws": "בְּכֹרָה",
@@ -9927,7 +10281,8 @@
     "vorm": "בְּכֹרָתוֹ"
    }
   ],
-  "lemma_tekst": "בְּכֹרָתוֹ"
+  "lemma_tekst": "בְּכֹרָתוֹ",
+  "translit": "bə·ḵō·rā·ṯōw"
  },
  {
   "hebreeuws": "בִּלְתִּי",
@@ -9940,23 +10295,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "1101",
-  "frequentie": 43,
+  "strong": "1115",
+  "frequentie": 112,
   "vindplaatsen": [
    {
-    "vers": "Genesis 11:7",
-    "vorm": "וְנָבְלָה"
+    "vers": "Genesis 3:11",
+    "vorm": "לְבִלְתִּי"
    },
    {
-    "vers": "Genesis 11:9",
-    "vorm": "בָּלַל"
+    "vers": "Genesis 4:15",
+    "vorm": "לְבִלְתִּי"
    },
    {
-    "vers": "Exodus 29:2",
-    "vorm": "בְּלוּלֹת"
+    "vers": "Genesis 19:21",
+    "vorm": "לְבִלְתִּי"
    }
   ],
-  "lemma_tekst": "בְּלוּלָה"
+  "lemma_tekst": "בִּלְתִּי",
+  "translit": "bil·tî"
  },
  {
   "hebreeuws": "גדל",
@@ -9988,7 +10344,8 @@
     "vorm": "וַתַּגְדֵּל"
    }
   ],
-  "lemma_tekst": "הִגְדִּיל"
+  "lemma_tekst": "הִגְדִּיל",
+  "translit": "hiḡ·dîl"
  },
  {
   "hebreeuws": "חַי",
@@ -10017,7 +10374,8 @@
     "vorm": "חַיָּה"
    }
   ],
-  "lemma_tekst": "חַי"
+  "lemma_tekst": "חַי",
+  "translit": "ḥay·yîm"
  },
  {
   "hebreeuws": "אֶזְרוֹע",
@@ -10047,7 +10405,8 @@
     "vorm": "זְרוֹעֲךָ"
    }
   ],
-  "lemma_tekst": "זְרוֹעַ"
+  "lemma_tekst": "זְרוֹעַ",
+  "translit": "zə·rō·w·a‘"
  },
  {
   "hebreeuws": "אֱלוֹהּ",
@@ -10076,7 +10435,8 @@
     "vorm": "אֱלֹהַּ"
    }
   ],
-  "lemma_tekst": "אֱלוֹהַּ"
+  "lemma_tekst": "אֱלוֹהַּ",
+  "translit": "’ĕ·lō·w·ah"
  },
  {
   "hebreeuws": "אמן",
@@ -10108,7 +10468,8 @@
     "vorm": "הֶאֱמִין"
    }
   ],
-  "lemma_tekst": "נֶאֱמָן"
+  "lemma_tekst": "נֶאֱמָן",
+  "translit": "ne·’ĕ·mān"
  },
  {
   "hebreeuws": "אֹרֶךְ",
@@ -10139,7 +10500,8 @@
     "vorm": "אָרְכּוֹ"
    }
   ],
-  "lemma_tekst": "אֹרֶךְ"
+  "lemma_tekst": "אֹרֶךְ",
+  "translit": "’ō·reḵ"
  },
  {
   "hebreeuws": "בָּמָה",
@@ -10168,7 +10530,8 @@
     "vorm": "בָּמֹתָם"
    }
   ],
-  "lemma_tekst": "בָּמוֹת"
+  "lemma_tekst": "בָּמוֹת",
+  "translit": "bā·mō·wṯ"
  },
  {
   "hebreeuws": "בַּעַד",
@@ -10197,7 +10560,9 @@
     "vers": "Genesis 20:18",
     "vorm": "בְּעַד"
    }
-  ]
+  ],
+  "lemma_tekst": "בְּעַד",
+  "translit": "bə·‘aḏ"
  },
  {
   "hebreeuws": "גאל",
@@ -10226,7 +10591,8 @@
     "vorm": "גָּאָלְתָּ"
    }
   ],
-  "lemma_tekst": "גֹּאֵל"
+  "lemma_tekst": "גֹּאֵל",
+  "translit": "gō·’êl"
  },
  {
   "hebreeuws": "גֵּר",
@@ -10255,7 +10621,8 @@
     "vorm": "גֵּר"
    }
   ],
-  "lemma_tekst": "גֵּר"
+  "lemma_tekst": "גֵּר",
+  "translit": "gêr"
  },
  {
   "hebreeuws": "דֶּלֶת",
@@ -10284,7 +10651,8 @@
     "vorm": "הַדֶּלֶת"
    }
   ],
-  "lemma_tekst": "דַּלְתוֹת"
+  "lemma_tekst": "דַּלְתוֹת",
+  "translit": "dal·ṯō·wṯ"
  },
  {
   "hebreeuws": "דַּעַת",
@@ -10313,7 +10681,8 @@
     "vorm": "וַיֵּדְעוּ"
    }
   ],
-  "lemma_tekst": "יָדַעְתִּי"
+  "lemma_tekst": "יָדַעְתִּי",
+  "translit": "yā·ḏa‘·tî"
  },
  {
   "hebreeuws": "הֵן",
@@ -10342,7 +10711,8 @@
     "vorm": "וְהִנְנִי"
    }
   ],
-  "lemma_tekst": "הִנְנִי"
+  "lemma_tekst": "הִנְנִי",
+  "translit": "hin·nî"
  },
  {
   "hebreeuws": "הפך",
@@ -10371,7 +10741,8 @@
     "vorm": "וַיַּהֲפֹךְ"
    }
   ],
-  "lemma_tekst": "הָפַךְ"
+  "lemma_tekst": "הָפַךְ",
+  "translit": "hā·p̄aḵ"
  },
  {
   "hebreeuws": "חַיָּה",
@@ -10400,7 +10771,8 @@
     "vorm": "חַיָּה"
    }
   ],
-  "lemma_tekst": "חַי"
+  "lemma_tekst": "חַי",
+  "translit": "ḥay·yîm"
  },
  {
   "hebreeuws": "חֵלֶב",
@@ -10429,7 +10801,8 @@
     "vorm": "חֵלֶב"
    }
   ],
-  "lemma_tekst": "חֵלֶב"
+  "lemma_tekst": "חֵלֶב",
+  "translit": "ḥê·leḇ"
  },
  {
   "hebreeuws": "חָלָל",
@@ -10458,7 +10831,8 @@
     "vorm": "וַחֲלָלָה"
    }
   ],
-  "lemma_tekst": "חֲלָלִים"
+  "lemma_tekst": "חֲלָלִים",
+  "translit": "ḥă·lā·lîm"
  },
  {
   "hebreeuws": "חֲמוֹר",
@@ -10487,7 +10861,8 @@
     "vorm": "הַחֲמוֹר"
    }
   ],
-  "lemma_tekst": "חֲמוֹר"
+  "lemma_tekst": "חֲמוֹר",
+  "translit": "ḥă·mō·wr"
  },
  {
   "hebreeuws": "חֻקָּה",
@@ -10516,7 +10891,8 @@
     "vorm": "חֻקַּת"
    }
   ],
-  "lemma_tekst": "חֻקַּת"
+  "lemma_tekst": "חֻקַּת",
+  "translit": "ḥuq·qaṯ"
  },
  {
   "hebreeuws": "חָרָה",
@@ -10545,7 +10921,8 @@
     "vorm": "יִחַר"
    }
   ],
-  "lemma_tekst": "חָרָה"
+  "lemma_tekst": "חָרָה",
+  "translit": "ḥā·rāh"
  },
  {
   "hebreeuws": "טָהוֹר",
@@ -10574,7 +10951,8 @@
     "vorm": "הַטְּהוֹרָה"
    }
   ],
-  "lemma_tekst": "טָהוֹר"
+  "lemma_tekst": "טָהוֹר",
+  "translit": "ṭā·hō·wr"
  },
  {
   "hebreeuws": "טָהֵר",
@@ -10606,7 +10984,8 @@
     "vorm": "וְטָהֲרָה"
    }
   ],
-  "lemma_tekst": "יִטְהָר"
+  "lemma_tekst": "יִטְהָר",
+  "translit": "yiṭ·hār"
  },
  {
   "hebreeuws": "טָמֵא",
@@ -10635,7 +11014,8 @@
     "vorm": "טִמְּאוּ"
    }
   ],
-  "lemma_tekst": "יִטְמָא"
+  "lemma_tekst": "יִטְמָא",
+  "translit": "yiṭ·mā"
  },
  {
   "hebreeuws": "יַחַד",
@@ -10666,7 +11046,8 @@
     "vorm": "יַחְדָּו"
    }
   ],
-  "lemma_tekst": "יַחְדָּו"
+  "lemma_tekst": "יַחְדָּו",
+  "translit": "yaḥ·dāw"
  },
  {
   "hebreeuws": "יֶלֶד",
@@ -10695,7 +11076,8 @@
     "vorm": "הַיֶּלֶד"
    }
   ],
-  "lemma_tekst": "יְלָדִים"
+  "lemma_tekst": "יְלָדִים",
+  "translit": "yə·lā·ḏîm"
  },
  {
   "hebreeuws": "יַעַן",
@@ -10724,7 +11106,8 @@
     "vorm": "וּבְיַעַן"
    }
   ],
-  "lemma_tekst": "יַעַן"
+  "lemma_tekst": "יַעַן",
+  "translit": "ya·‘an"
  },
  {
   "hebreeuws": "יֶתֶר",
@@ -10753,7 +11136,8 @@
     "vorm": "יֶתֶר"
    }
   ],
-  "lemma_tekst": "יֶתֶר"
+  "lemma_tekst": "יֶתֶר",
+  "translit": "ye·ṯer"
  },
  {
   "hebreeuws": "יתר",
@@ -10785,7 +11169,8 @@
     "vorm": "לָתוּר"
    }
   ],
-  "lemma_tekst": "תַּרְתִּי"
+  "lemma_tekst": "תַּרְתִּי",
+  "translit": "tar·tî"
  },
  {
   "hebreeuws": "יְהוּדִי",
@@ -10814,7 +11199,8 @@
     "vorm": "הַיְּהוּדִים"
    }
   ],
-  "lemma_tekst": "יְהוּדִי"
+  "lemma_tekst": "יְהוּדִי",
+  "translit": "yə·hū·ḏî"
  },
  {
   "hebreeuws": "כֶּבֶשׁ",
@@ -10843,7 +11229,8 @@
     "vorm": "הַכֶּבֶשׂ"
    }
   ],
-  "lemma_tekst": "כְּבָשִׂים"
+  "lemma_tekst": "כְּבָשִׂים",
+  "translit": "kə·ḇā·śîm"
  },
  {
   "hebreeuws": "כפר",
@@ -10874,7 +11261,8 @@
     "vorm": "כֻּפַּר"
    }
   ],
-  "lemma_tekst": "יְכַפֵּר"
+  "lemma_tekst": "יְכַפֵּר",
+  "translit": "yə·ḵap·pêr"
  },
  {
   "hebreeuws": "כְּרוּב",
@@ -10903,7 +11291,8 @@
     "vorm": "כְּרוּב"
    }
   ],
-  "lemma_tekst": "כְּרוּבִים"
+  "lemma_tekst": "כְּרוּבִים",
+  "translit": "kə·rū·ḇîm"
  },
  {
   "hebreeuws": "כֶּרֶם",
@@ -10932,7 +11321,8 @@
     "vorm": "כַּרְמוֹ"
    }
   ],
-  "lemma_tekst": "כֶּרֶם"
+  "lemma_tekst": "כֶּרֶם",
+  "translit": "ke·rem"
  },
  {
   "hebreeuws": "לָבֵשׁ",
@@ -10964,7 +11354,8 @@
     "vorm": "הִלְבִּישָׁה"
    }
   ],
-  "lemma_tekst": "יִלְבְּשׁוּ"
+  "lemma_tekst": "יִלְבְּשׁוּ",
+  "translit": "mə·lub·bā·šîm"
  },
  {
   "hebreeuws": "למד",
@@ -10996,7 +11387,8 @@
     "vorm": "יִלְמְדוּן"
    }
   ],
-  "lemma_tekst": "לַמְּדֵנִי"
+  "lemma_tekst": "לַמְּדֵנִי",
+  "translit": "lam·mə·ḏê·nî"
  },
  {
   "hebreeuws": "מלט",
@@ -11028,7 +11420,8 @@
     "vorm": "לְהִמָּלֵט"
    }
   ],
-  "lemma_tekst": "יִמָּלֵט"
+  "lemma_tekst": "יִמָּלֵט",
+  "translit": "yim·mā·lêṭ"
  },
  {
   "hebreeuws": "מַלְכוּת",
@@ -11057,7 +11450,8 @@
     "vorm": "מַלְכֻתוֹ"
    }
   ],
-  "lemma_tekst": "מַלְכוּת"
+  "lemma_tekst": "מַלְכוּת",
+  "translit": "mal·ḵūṯ"
  },
  {
   "hebreeuws": "חֵמָה",
@@ -11086,7 +11480,8 @@
     "vorm": "חֲמָתִי"
    }
   ],
-  "lemma_tekst": "חֲמָתִי"
+  "lemma_tekst": "חֲמָתִי",
+  "translit": "ḥă·mā·ṯî"
  },
  {
   "hebreeuws": "חֲצִי",
@@ -11115,7 +11510,8 @@
     "vorm": "וַחֲצִי"
    }
   ],
-  "lemma_tekst": "חֲצִי"
+  "lemma_tekst": "חֲצִי",
+  "translit": "ḥă·ṣî"
  },
  {
   "hebreeuws": "חשׁב",
@@ -11148,7 +11544,8 @@
     "vorm": "וַיַּחְשְׁבֶהָ"
    }
   ],
-  "lemma_tekst": "חֹשֵׁב"
+  "lemma_tekst": "חֹשֵׁב",
+  "translit": "ḥō·šêḇ"
  },
  {
   "hebreeuws": "יָדָה",
@@ -11177,7 +11574,8 @@
     "vorm": "יָדֵינוּ"
    }
   ],
-  "lemma_tekst": "יָדוֹ"
+  "lemma_tekst": "יָדוֹ",
+  "translit": "yā·ḏōw"
  },
  {
   "hebreeuws": "יטב",
@@ -11209,7 +11607,8 @@
     "vorm": "יִיטַב"
    }
   ],
-  "lemma_tekst": "יִיטַב"
+  "lemma_tekst": "יִיטַב",
+  "translit": "yî·ṭaḇ"
  },
  {
   "hebreeuws": "יָשָׁר",
@@ -11238,7 +11637,8 @@
     "vorm": "הַיָּשָׁר"
    }
   ],
-  "lemma_tekst": "יְשָׁרִים"
+  "lemma_tekst": "יְשָׁרִים",
+  "translit": "yə·šā·rîm"
  },
  {
   "hebreeuws": "כָּבֵד",
@@ -11270,7 +11670,8 @@
     "vorm": "כָבֵד"
    }
   ],
-  "lemma_tekst": "כָּבֵד"
+  "lemma_tekst": "כָּבֵד",
+  "translit": "kā·ḇêḏ"
  },
  {
   "hebreeuws": "כָּנָף",
@@ -11299,7 +11700,8 @@
     "vorm": "כַּנְפֵי"
    }
   ],
-  "lemma_tekst": "כָּנָף"
+  "lemma_tekst": "כָּנָף",
+  "translit": "kā·nāp̄"
  },
  {
   "hebreeuws": "לכד",
@@ -11328,7 +11730,8 @@
     "vorm": "וַיִּלְכֹּד"
    }
   ],
-  "lemma_tekst": "לָכַד"
+  "lemma_tekst": "לָכַד",
+  "translit": "lā·ḵaḏ"
  },
  {
   "hebreeuws": "לָשׁוֹן",
@@ -11357,7 +11760,8 @@
     "vorm": "לִלְשֹׁנֹתָם"
    }
   ],
-  "lemma_tekst": "לְשׁוֹן"
+  "lemma_tekst": "לְשׁוֹן",
+  "translit": "lə·šō·wn"
  },
  {
   "hebreeuws": "מִגְרָשׁ",
@@ -11386,7 +11790,8 @@
     "vorm": "וּמִגְרְשֵׁיהֶם"
    }
   ],
-  "lemma_tekst": "מִגְרָשֶׁהָ"
+  "lemma_tekst": "מִגְרָשֶׁהָ",
+  "translit": "miḡ·rā·še·hā"
  },
  {
   "hebreeuws": "מַמְלָכָה",
@@ -11415,7 +11820,8 @@
     "vorm": "מַמְלֶכֶת"
    }
   ],
-  "lemma_tekst": "מַמְלְכוֹת"
+  "lemma_tekst": "מַמְלְכוֹת",
+  "translit": "mam·lə·ḵō·wṯ"
  },
  {
   "hebreeuws": "נִבָּא",
@@ -11446,7 +11852,8 @@
     "vorm": "מִתְנַבְּאִים"
    }
   ],
-  "lemma_tekst": "הִנָּבֵא"
+  "lemma_tekst": "הִנָּבֵא",
+  "translit": "hin·nā·ḇê"
  },
  {
   "hebreeuws": "נֶגֶב",
@@ -11475,7 +11882,8 @@
     "vorm": "מִנֶּגֶב"
    }
   ],
-  "lemma_tekst": "נֶגֶב"
+  "lemma_tekst": "נֶגֶב",
+  "translit": "ne·ḡeḇ"
  },
  {
   "hebreeuws": "נגשׁ",
@@ -11504,7 +11912,8 @@
     "vorm": "וַיִּגְּשׁוּ"
    }
   ],
-  "lemma_tekst": "יִגַּשׁ"
+  "lemma_tekst": "יִגַּשׁ",
+  "translit": "yig·gaš"
  },
  {
   "hebreeuws": "נָהָר",
@@ -11533,7 +11942,8 @@
     "vorm": "הַנָּהָר"
    }
   ],
-  "lemma_tekst": "נְהַר"
+  "lemma_tekst": "נְהַר",
+  "translit": "nə·har-"
  },
  {
   "hebreeuws": "נחם",
@@ -11565,7 +11975,8 @@
     "vorm": "נִחַמְתִּי"
    }
   ],
-  "lemma_tekst": "נִחַם"
+  "lemma_tekst": "נִחַם",
+  "translit": "ni·ḥam"
  },
  {
   "hebreeuws": "עַמּוּד",
@@ -11594,7 +12005,8 @@
     "vorm": "עַמּוּד"
    }
   ],
-  "lemma_tekst": "עַמּוּדֵי"
+  "lemma_tekst": "עַמּוּדֵי",
+  "translit": "‘am·mū·ḏê"
  },
  {
   "hebreeuws": "עָפָר",
@@ -11623,7 +12035,8 @@
     "vorm": "עָפָר"
    }
   ],
-  "lemma_tekst": "עָפָר"
+  "lemma_tekst": "עָפָר",
+  "translit": "‘ā·p̄ār"
  },
  {
   "hebreeuws": "עֶצֶם",
@@ -11652,7 +12065,8 @@
     "vorm": "בְּעֶצֶם"
    }
   ],
-  "lemma_tekst": "עַצְמוֹת"
+  "lemma_tekst": "עַצְמוֹת",
+  "translit": "‘aṣ·mō·wṯ"
  },
  {
   "hebreeuws": "פַּעַם",
@@ -11681,7 +12095,8 @@
     "vorm": "פַעֲמַיִם"
    }
   ],
-  "lemma_tekst": "פְּעָמִים"
+  "lemma_tekst": "פְּעָמִים",
+  "translit": "pə·‘ā·mîm"
  },
  {
   "hebreeuws": "פְּרִי",
@@ -11710,7 +12125,8 @@
     "vorm": "פְּרִי"
    }
   ],
-  "lemma_tekst": "פְּרִי"
+  "lemma_tekst": "פְּרִי",
+  "translit": "pə·rî"
  },
  {
   "hebreeuws": "צֶדֶק",
@@ -11739,7 +12155,8 @@
     "vorm": "צֶדֶק"
    }
   ],
-  "lemma_tekst": "צֶדֶק"
+  "lemma_tekst": "צֶדֶק",
+  "translit": "ṣe·ḏeq"
  },
  {
   "hebreeuws": "קָדוֹשׁ",
@@ -11768,7 +12185,8 @@
     "vorm": "קָדֹשׁ"
    }
   ],
-  "lemma_tekst": "קָדוֹשׁ"
+  "lemma_tekst": "קָדוֹשׁ",
+  "translit": "qā·ḏō·wōš"
  },
  {
   "hebreeuws": "קָהָל",
@@ -11797,7 +12215,8 @@
     "vorm": "לִקְהַל"
    }
   ],
-  "lemma_tekst": "קְהַל"
+  "lemma_tekst": "קְהַל",
+  "translit": "qə·hal"
  },
  {
   "hebreeuws": "קטר",
@@ -11828,7 +12247,8 @@
     "vorm": "וְהִקְטַרְתָּ"
    }
   ],
-  "lemma_tekst": "קִטְּרוּ"
+  "lemma_tekst": "קִטְּרוּ",
+  "translit": "mə·qaṭ·ṭə·rîm"
  },
  {
   "hebreeuws": "רֶכֶב",
@@ -11857,7 +12277,8 @@
     "vorm": "רֶכֶב"
    }
   ],
-  "lemma_tekst": "רֶכֶב"
+  "lemma_tekst": "רֶכֶב",
+  "translit": "re·ḵeḇ"
  },
  {
   "hebreeuws": "רַק",
@@ -11886,7 +12307,8 @@
     "vorm": "רַק"
    }
   ],
-  "lemma_tekst": "רַק"
+  "lemma_tekst": "רַק",
+  "translit": "raq"
  },
  {
   "hebreeuws": "שׂרף",
@@ -11915,7 +12337,8 @@
     "vorm": "תִּשְׂרֹפוּ"
    }
   ],
-  "lemma_tekst": "שָׂרַף"
+  "lemma_tekst": "שָׂרַף",
+  "translit": "śā·rap̄"
  },
  {
   "hebreeuws": "שַׁבָּת",
@@ -11944,7 +12367,8 @@
     "vorm": "שַׁבָּת"
    }
   ],
-  "lemma_tekst": "שַׁבַּת"
+  "lemma_tekst": "שַׁבַּת",
+  "translit": "šab·bāṯ"
  },
  {
   "hebreeuws": "שׁלך",
@@ -11976,7 +12400,8 @@
     "vorm": "הַשְׁלִיכוּ"
    }
   ],
-  "lemma_tekst": "הִשְׁלִיךְ"
+  "lemma_tekst": "הִשְׁלִיךְ",
+  "translit": "hiš·lîḵ"
  },
  {
   "hebreeuws": "שָׁלֵם",
@@ -12010,7 +12435,8 @@
     "vorm": "שְׁלֵמִים"
    }
   ],
-  "lemma_tekst": "שָׁלֵם"
+  "lemma_tekst": "שָׁלֵם",
+  "translit": "šā·lêm"
  },
  {
   "hebreeuws": "שׁפך",
@@ -12039,7 +12465,8 @@
     "vorm": "תִּשְׁפְּכוּ"
    }
   ],
-  "lemma_tekst": "יִשְׁפֹּךְ"
+  "lemma_tekst": "יִשְׁפֹּךְ",
+  "translit": "yiš·pōḵ"
  },
  {
   "hebreeuws": "שֶׁקֶר",
@@ -12068,7 +12495,8 @@
     "vorm": "שֶׁקֶר"
    }
   ],
-  "lemma_tekst": "שֶׁקֶר"
+  "lemma_tekst": "שֶׁקֶר",
+  "translit": "še·qer"
  },
  {
   "hebreeuws": "תּוֹעֵבָה",
@@ -12097,6 +12525,7 @@
     "vorm": "תּוֹעֲבַת"
    }
   ],
-  "lemma_tekst": "תּוֹעֲבַת"
+  "lemma_tekst": "תּוֹעֲבַת",
+  "translit": "tō·w·‘ă·ḇaṯ"
  }
 ]
