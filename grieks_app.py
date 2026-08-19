@@ -102,6 +102,12 @@ ui.add_head_html(f"""
                      justify-content:center; gap:3px; font-size:11px; color:{ZACHT};
                      cursor:pointer; user-select:none; text-decoration:none; }}
   .onderbalk .vak.actief {{ color:{MERK}; }}
+  /* NiceGUI zet zelf 16px rondom de inhoud. Daardoor begon de kolom 16px lager dan het
+     scherm terwijl zijn hoogte uit de volle 100dvh werd gerekend, en viel de onderste
+     16px — precies de opslagmelding — achter de vaste antwoordbalk. Je zag alleen de
+     bovenkant van de letters en kon er niet bij, ook niet als het 'opslaan mislukt' was.
+     .inhoud en .smal brengen hun eigen marge mee, dus deze kan weg. */
+  .nicegui-content {{ padding:0; }}
   .inhoud {{ padding:14px 14px 96px; max-width:640px; margin:0 auto; }}
   /* Precies zoveel ruimte onderaan als de twee balken samen innemen, geen pixel minder:
      wat eronder valt is onbereikbaar. */
@@ -737,6 +743,62 @@ def _letterhint(w):
         for deel in eerste.split())
     extra = f"   ({nl.count(',') + nl.count(';') + 1} betekenissen)" if ("," in nl or ";" in nl) else ""
     return f"{gemaskeerd}{extra}"
+
+
+# Elke grammaticale term zijn eigen kleur.
+#
+# De naamvallen zijn NIET vrij te kiezen: die staan zo in de Streamlit-app (_ONTLEED_KLEUR
+# in overhoring_web.py) en zijn daar gekoppeld aan het college. Blijven ze hier gelijk, dan
+# betekent dezelfde kleur in beide apps hetzelfde. Verander je ze daar, verander ze hier mee.
+#
+# De regel waaraan die reeks is opgebouwd geldt ook voor de rest: gelijke helderheid, en
+# bewust weg van rood en groen (die betekenen in deze app al "fout" en "goed") en weg van
+# het merkcyaan #33ccff (dat betekent "actief"). De tijden en wijzen zijn nergens aan
+# gekoppeld; die mag je omgooien als het college er iets anders van maakt.
+NAAMVAL_KLEUREN = {"nominativus": "#7FB3FF", "genitivus": "#E8B44A",
+                   "dativus": "#B694FF", "accusativus": "#FF8FB1",
+                   "vocativus": "#5ED3C0"}
+GRAM_KLEUREN = {
+    **NAAMVAL_KLEUREN,
+    "nom": "#7FB3FF", "gen": "#E8B44A", "dat": "#B694FF", "acc": "#FF8FB1",
+    "voc": "#5ED3C0",
+    # tijden
+    "praesens": "#E8EAED", "imperfectum": "#8FD3E8", "futurum": "#FFB067",
+    "aoristus": "#FF9BC4", "perfectum": "#C4A6FF", "plusquamperfectum": "#9B86D9",
+    # wijzen — indicativus blijft rustig, dat is de gewone wijs
+    "indicativus": "#B8C4CF", "coniunctivus": "#E8B44A", "optativus": "#5ED3C0",
+    "imperativus": "#FFB067", "infinitivus": "#7FB3FF", "participium": "#C4A6FF",
+}
+_GRAM_ZOEK = re.compile("(?<![A-Za-z])(" + "|".join(
+    sorted(GRAM_KLEUREN, key=len, reverse=True)) + ")(?![A-Za-z])",
+                        re.IGNORECASE)
+
+
+def gram_kleur(term):
+    """De kleur van één term, of None als we hem niet kennen."""
+    return GRAM_KLEUREN.get(str(term or "").strip().lower())
+
+
+def kleur_gram(tekst):
+    """Elke grammaticale term in de tekst zijn eigen kleur geven."""
+    return _GRAM_ZOEK.sub(
+        lambda m: f"<span style='color:{GRAM_KLEUREN[m.group(0).lower()]}'>{m.group(0)}</span>",
+        str(tekst or ""))
+
+
+def _goedfout(goed, fout):
+    """Goed en fout als één klein blokje: het groene getal, een schuine streep, het rode.
+
+    Als vakje met het label 'goed/fout' nam dit te veel breedte en werd het afgekapt; als
+    twee gekleurde getallen lees je in één oogopslag hoe dit woord ervoor staat, zonder
+    label. Nul fouten blijft grijs — dan is er niets aan de hand en hoeft het geen
+    aandacht te trekken."""
+    g, f = int(goed or 0), int(fout or 0)
+    if not (g or f):
+        return ""
+    return (f"<span style='color:{GOED}'>{g}</span>"
+            f"<span style='color:{ZACHT}'>/</span>"
+            f"<span style='color:{FOUT if f else ZACHT}'>{f}</span>")
 
 
 def _statusrij(delen):
@@ -1382,6 +1444,13 @@ def oefenpagina():
         with ui.row().classes("w-full items-center justify-between no-wrap"):
             ui.label(sessie.prefs["keuze"]).style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
+                # Hier stond een regel van twee tekstregels: "🌱 Nog 2 nieuwe woorden in
+                # dit level voor een volgende ronde." Die kostte meer ruimte dan hij waard
+                # was. Nu één blaadje met hoeveel er nog wachten; omdat er telkens een
+                # blaadje bij komt zodra een nieuw woord langskomt, wijst het zichzelf uit.
+                if sessie.nieuw_over:
+                    ui.html(f"<span style='color:{GOED};font-size:13px;"
+                            f"white-space:nowrap'>🌱 {sessie.nieuw_over}</span>")
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
                 ui.button("⚙", on_click=instellingen.open, color=None).props("flat dense no-caps").classes(
                     "raakbaar").style(
@@ -1401,9 +1470,7 @@ def oefenpagina():
             f"<span style='color:{MERK}'>{_niv['titel']}</span></span>"
             f"<span style='white-space:nowrap'>{_klaar} levels af · nog "
             f"{_niv['xp_voor_volgend'] - _niv['xp_in_niveau']} XP</span></div>")
-        if sessie.nieuw_over:
-            ui.label(f"🌱 Nog {sessie.nieuw_over} nieuwe woorden in dit level voor een "
-                     f"volgende ronde.").style(f"color:{ZACHT};font-size:13px")
+
         # Eén vast toneel voor de vraag, met de feedback eroverheen in plaats van
         # eronder. Zo groeit en krimpt de pagina niet bij elk antwoord en blijven de
         # knoppen op hun plek staan — dat scheelt zoeken tijdens het oefenen.
@@ -1424,16 +1491,17 @@ def oefenpagina():
                 # niet iets waarop je moet tikken.
                 naastregel = ui.column().classes("w-full gap-1 items-center").style(
                     "padding-top:4px")
-                # De statusregel staat in alle vier de modules op dezelfde plek: onder de
-                # antwoordopties. Stond hij bij de een boven en bij de ander onder, dan
-                # zocht je hem elke module opnieuw — en je blik hoort van het woord naar
-                # de opties naar je duim te lopen, niet over een blok statistiek heen.
-                statusbalk = ui.row().classes(
-                    "w-full gap-2 no-wrap justify-center").style("padding-top:6px")
             terugkoppeling = ui.column().classes(
                 "overlay w-full gap-1 items-center justify-center")
+        # De statusregel staat búiten het vraagvak. Daarbinnen viel hij onder de vouw
+        # zodra het toetsenbord openstond: je moest scrollen om je streak te zien. Hier
+        # staat hij altijd in beeld, laag bij je duim, en in alle vier de modules op
+        # dezelfde plek.
+        statusbalk = ui.row().classes("w-full gap-2 no-wrap justify-center").style(
+            "padding-top:2px")
         hulp = ui.row().classes("w-full gap-2 no-wrap")
-        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+        opslagmelding = ui.label().style(
+            f"color:{ZACHT};font-size:12.5px;min-height:16px;text-align:center;width:100%")
 
     balk = ui.element("div").classes("antwoordbalk")
     with balk:
@@ -1664,6 +1732,7 @@ def oefenpagina():
             ui.html(_statusrij([
                 (fase, "", MERK if fase != "Nieuw" else ZACHT),
                 (int(k.get("streak", 0) or 0), "streak", TEKST),
+                (_goedfout(k.get("score_goed"), k.get("score_fout")), "", TEKST),
                 (len(sessie.wachtrij), "te gaan", ZACHT),
             ]))
 
@@ -1754,7 +1823,9 @@ def oefenpagina():
                         "click", lambda _=None, c=keuze, b=bron: kies(k, c, b))
             return
 
-        vraagsoort.text = "Typ de betekenis"               # typen
+        # Bij typen geen vraagregel: het invoerveld eronder zegt het al, en met het
+        # toetsenbord open is elke regel er een te veel.
+        vraagsoort.text = ""                              # typen
         invoer.value = ""
         zet_balk("Nakijken", typen=True, weet_niet=True)
         invoer.run_method("focus")
@@ -2423,6 +2494,7 @@ def stampagina():
         statusbalk = ui.row().classes("w-full").style("padding-top:6px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:64px;padding-top:8px")
+        hulp = ui.row().classes("w-full gap-2 no-wrap")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     invoer, knop = typbalk("van welk werkwoord? (x = χ, u = υ, h = η)")
@@ -2435,6 +2507,52 @@ def stampagina():
                 kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
                 ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
 
+    def toon_hulp(soort, v):
+        """Hint en Opbouw, net als bij de woordenschat — maar zo dat ze de vraag niet
+        beantwoorden.
+
+        De Hint gaat over het wérkwoord, niet over de tijd: de betekenis en de klasse
+        helpen je bij 'van welk werkwoord?' zonder te verraden welke tijd dit is. De
+        Opbouw laat zien waar de stam ophoudt en de uitgang begint; dat is precies wat je
+        moet leren zien, en het is nog steeds aan jou om te benoemen wat die uitgang
+        betekent."""
+        verb = v.get("verb") or {}
+        morf = verb.get("morfologie") or {}
+        if soort == "Hint":
+            delen = [d for d in (verb.get("betekenis", ""),
+                                 f"klasse {morf['klasse']}" if morf.get("klasse") else "",
+                                 "onregelmatig — uit je hoofd leren"
+                                 if morf.get("memoriseren_vereist") else "") if d]
+            tekst = " · ".join(delen) or "Geen aanwijzing bij dit werkwoord."
+        else:
+            tekst = ""
+            try:
+                regels = motor.deconstrueer_stamtijd_live(
+                    v["vorm"], v["tijd"], v["praesens"])
+                if (isinstance(regels, (tuple, list)) and len(regels) == 2
+                        and all(isinstance(x, str) for x in regels)):
+                    stam, uit = regels
+                    tekst = (f"<span class='grieks' style='color:{TEKST}'>{stam}</span>"
+                             f"<span class='grieks' style='color:{MERK};font-weight:700'>"
+                             f"{uit}</span>")
+            except Exception:                                    # noqa: BLE001
+                pass
+            tekst = tekst or "Deze vorm valt niet in stam en uitgang te splitsen."
+        ui.notify(tekst, position="top", color="dark", multi_line=True,
+                  classes="text-body2", html=True).style("max-width:88vw")
+
+    def teken_hulp(v):
+        hulp.clear()
+        if v is None:
+            return
+        with hulp:
+            for label in ("Hint", "Opbouw"):
+                ui.button(label, on_click=lambda l=label, vv=v: toon_hulp(l, vv),
+                          color=None).props("flat dense no-caps").classes(
+                    "raakbaar").style(
+                    f"flex:1;color:{ZACHT};border:1px solid {RAND};border-radius:8px;"
+                    f"font-size:12.5px")
+
     def teken_tijden():
         """Twee kolommen: vijf knoppen onder elkaar maakt het scherm te lang om de
         vraag en het antwoord zonder scrollen te kunnen zien."""
@@ -2446,9 +2564,13 @@ def stampagina():
                         gekozen = sessie.tijd_keuze == t
                         rand = MERK if gekozen else RAND
                         achter = "rgba(51,204,255,.12)" if gekozen else VLAK
+                        # De kleur van de tijd zit in de tekst, niet in het vlak: zo
+                        # blijft de gekozen knop herkenbaar aan zijn rand én blijft de
+                        # tijd herkenbaar aan zijn kleur.
                         ui.html(f"<button class='keuze' style='background:{achter};"
                                 f"border-color:{rand};font-size:14px;text-align:center;"
-                                f"padding:11px 6px'>{TIJD_KORT[t]}</button>").on(
+                                f"padding:11px 6px'>{kleur_gram(TIJD_KORT[t])}"
+                                f"</button>").on(
                             "click", lambda _=None, tt=t: kies_tijd(tt)).style("flex:1")
 
     async def kies_tijd(t):
@@ -2481,6 +2603,7 @@ def stampagina():
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
             tijdknoppen.clear()
+            hulp.clear()
             toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
@@ -2496,9 +2619,11 @@ def stampagina():
         invoer.value = ""
         teken()
         teken_tijden()
+        teken_hulp(v)
         with statusbalk:
             ui.html(_statusrij([
                 (v["streak"], "streak", TEKST),
+                (_goedfout(v["goed"], v["fout"]), "", TEKST),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
 
@@ -2577,7 +2702,7 @@ def stampagina():
         if not juist:
             wat = []
             if not tijd_ok:
-                wat.append(f"de tijd was <b>{TIJD_KORT[v['tijd']]}</b>")
+                wat.append(f"de tijd was <b>{kleur_gram(TIJD_KORT[v['tijd']])}</b>")
             if not pr_ok:
                 wat.append(f"het werkwoord was <b>{v['praesens']}</b>")
             deel = (f"<div style='color:{ZACHT};font-size:14px;margin-top:10px'>"
@@ -2601,7 +2726,7 @@ def stampagina():
                 f"<div class='grieks' style='font-size:44px;color:{TEKST};"
                 f"margin-top:14px;line-height:1.15'>{v['vorm']}</div>"
                 f"<div style='color:{TEKST};font-size:17px;margin-top:8px'>"
-                f"{TIJD_KORT[v['tijd']]} van "
+                f"{kleur_gram(TIJD_KORT[v['tijd']])} van "
                 f"<span class='grieks' style='font-size:20px'>{v['praesens']}</span></div>"
                 f"<div style='color:{ZACHT};font-size:15px;margin-top:2px'>"
                 f"{v['verb'].get('betekenis', '')}</div>"
@@ -2828,7 +2953,7 @@ def af_paspoort(cellen):
     return "".join(
         f"<div style='display:flex;justify-content:space-between;gap:10px;"
         f"border-top:1px solid {RAND};padding:6px 0;font-size:13px'>"
-        f"<span style='color:{ZACHT}'>{c['label']}</span>"
+        f"<span style='color:{ZACHT}'>{kleur_gram(c['label'])}</span>"
         f"<span class='grieks' style='font-size:17px'>"
         f"<span style='color:{TEKST}'>{c.get('stam', '') or c['vorm']}</span>"
         f"<span style='color:{MERK};font-weight:700'>{c.get('uitgang', '')}</span>"
@@ -3116,9 +3241,9 @@ def afpagina():
                     f"color:{ZACHT};font-size:17px;min-width:32px")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
         paspoort = ui.column().classes("w-full")
-        rijtje = ui.label().classes("w-full text-center").style(
+        rijtje = ui.html().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px;padding-top:4px")
-        gevraagd = ui.label().classes("w-full text-center").style(
+        gevraagd = ui.html().classes("w-full text-center").style(
             f"color:{TEKST};font-size:30px;font-weight:700;line-height:1.2")
         vraagsoort = ui.label().classes("w-full text-center").style(
             f"color:{ZACHT};font-size:13px")
@@ -3146,9 +3271,9 @@ def afpagina():
         for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
             vak.set_visibility(True)
         if c is None:
-            rijtje.text = ""
+            rijtje.set_content("")
             paspoort.clear()
-            gevraagd.text = "✓"
+            gevraagd.set_content("✓")
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
             toon_typveld(invoer, False)
@@ -3156,7 +3281,9 @@ def afpagina():
             teken()
             return
         sessie.vraag_typen = af_vraagt_typen(sessie.prefs["af_vraagvorm"], c["streak"])
-        rijtje.text = f"{c['categorie']} · {c['paradigma']}"
+        # Indicativus, Imperfectum en de rest krijgen hun eigen kleur, zodat je in één
+        # oogopslag ziet welk soort vorm er gevraagd wordt.
+        rijtje.set_content(kleur_gram(f"{c['categorie']} · {c['paradigma']}"))
         # Het hele rijtje kunnen bestuderen zonder de oefening te verlaten: de vaste
         # stam wit, de variabele uitgang cyaan.
         paspoort.clear()
@@ -3164,9 +3291,8 @@ def afpagina():
             with ui.expansion("Bekijk het rijtje").props("dense").classes("w-full").style(
                     f"color:{ZACHT};font-size:12.5px"):
                 ui.html(af_paspoort(c["rijtje"]))
-        gevraagd.text = c["label"]
-        vraagsoort.text = ("Typ deze vorm" if sessie.vraag_typen
-                           else "Welke vorm hoort hierbij?")
+        gevraagd.set_content(kleur_gram(c["label"]))
+        vraagsoort.text = "" if sessie.vraag_typen else "Welke vorm hoort hierbij?"
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
         invoer.value = ""
@@ -3186,6 +3312,7 @@ def afpagina():
         with statusbalk:
             ui.html(_statusrij([
                 (c["streak"], "streak", TEKST),
+                (_goedfout(c["goed"], c["fout"]), "", TEKST),
                 (c["niveau"], "", ZACHT),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
@@ -3230,7 +3357,7 @@ def afpagina():
                 f"<div class='grieks' style='font-size:44px;color:{TEKST};"
                 f"margin-top:14px;line-height:1.15'>{c['vorm']}</div>"
                 f"<div style='color:{TEKST};font-size:16px;margin-top:6px'>{c['label']}</div>"
-                f"<div style='color:{ZACHT};font-size:13.5px'>{c['paradigma']}</div>"
+                f"<div style='font-size:13.5px'>{kleur_gram(c['paradigma'])}</div>"
                 f"{opbouw}{uitleg}"
                 f"<div style='color:{ZACHT};font-size:12.5px;margin-top:18px'>"
                 f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
@@ -3356,7 +3483,8 @@ def sw_nieuw(w):
 def sw_rijtjeregel(w):
     """Eén regel voor 'Leer eerst dit rijtje': woord, naamval, betekenis, categorie."""
     kaal, naamval = sw_naamval(w)
-    achter = (f" <span style='color:{MERK}'>+ {naamval}</span>") if naamval else ""
+    achter = (f" <span style='color:{gram_kleur(naamval) or MERK}'>+ {naamval}</span>"
+              ) if naamval else ""
     return (f"<div style='font-size:13px;line-height:1.7;color:{TEKST}'>"
             f"<span class='grieks' style='font-size:16px'>{kaal}</span>{achter}"
             f" — {w.get('nederlands', '') or w.get('betekenis', '')}"
@@ -3528,10 +3656,48 @@ def swpagina():
         statusbalk = ui.row().classes("w-full").style("padding-top:2px")
         terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
             "min-height:64px;padding-top:8px")
+        hulp = ui.row().classes("w-full gap-2 no-wrap")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     invoer, knop = typbalk("betekenis")
     onderbalk("Oefenen")
+
+    def sw_hint(w):
+        """De hint bij structuurwoorden zet de naamvallen tegenover elkaar.
+
+        Bij διά, κατά, μετά, περί, ὑπέρ, ὑπό, ἐπί, παρά en πρός hangt de betekenis aan de
+        naamval: 'διά + gen' is 'door heen', 'διά + acc' is 'wegens'. Ze los uit je hoofd
+        leren werkt niet; je moet ze naast elkaar zien. Staat er maar één naamval, dan
+        krijg je de categorie en de eigenschap als steun."""
+        kaal, naamval = sw_naamval(w)
+        # Bewust alle naamvallen van dit woord, ook die je nu voor je hebt: het gaat om
+        # het contrast, en dat zie je pas als ze onder elkaar staan.
+        anderen = [x for x in sessie.alles
+                   if sw_naamval(x)[0] == kaal and sw_naamval(x)[1]]
+        if naamval and len(anderen) > 1:
+            regels = [f"<span class='grieks'>{kaal}</span> "
+                      f"<span style='color:{gram_kleur(sw_naamval(x)[1]) or MERK}'>"
+                      f"+ {sw_naamval(x)[1]}</span> — {x.get('betekenis', '')}"
+                      for x in anderen]
+            kop = (f"Dezelfde vorm, andere naamval, andere betekenis. "
+                   f"Jij hebt nu <span style='color:"
+                   f"{gram_kleur(naamval) or MERK}'>{naamval}</span>:")
+            return kop + "<br>" + "<br>".join(regels)
+        delen = [d for d in (w.get("categorie", ""), w.get("eigenschap", "")) if d]
+        return kleur_gram(" · ".join(delen)) or "Geen aanwijzing bij dit woord."
+
+    def teken_hulp(w):
+        hulp.clear()
+        if w is None:
+            return
+        with hulp:
+            ui.button("Hint", color=None,
+                      on_click=lambda _=None, ww=w: ui.notify(
+                          sw_hint(ww), position="top", color="dark", multi_line=True,
+                          classes="text-body2", html=True).style("max-width:88vw")
+                      ).props("flat dense no-caps").classes("raakbaar").style(
+                f"flex:1;color:{ZACHT};border:1px solid {RAND};border-radius:8px;"
+                f"font-size:12.5px")
 
     def teken():
         streepjes.clear()
@@ -3552,6 +3718,7 @@ def swpagina():
             soort.set_content("")
             vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
             teller.text = ""
+            hulp.clear()
             toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
@@ -3561,13 +3728,17 @@ def swpagina():
         woord.style(f"font-size:{woordmaat(kaal, 42)}px")
         # De naamval krijgt de merkkleur en staat vóór de categorie: bij διά, κατά, ἐπί
         # en de andere voorzetsels is juist dát het verschil tussen twee kaarten.
+        # De naamval in zijn eigen kleur: bij διά, κατά en ἐπί is dát het verschil tussen
+        # twee kaarten, en op kleur onthoud je dat sneller dan op het woord alleen.
+        nv_kleur = gram_kleur(naamval) or MERK
         soort.set_content(
-            (f"<span style='color:{MERK};font-size:13px'>+ {naamval}</span>"
+            (f"<span style='color:{nv_kleur};font-size:13px'>+ {naamval}</span>"
              f"<span style='color:{ZACHT};font-size:12.5px'> · </span>" if naamval else "")
             + f"<span style='color:{ZACHT};font-size:12.5px'>"
               f"{w.get('categorie', '')}</span>")
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         teken()
+        teken_hulp(w)
         if sessie.vorm == "leer":
             # Eerste ontmoeting: laten zien in plaats van laten raden.
             sessie.vraag_typen = False
@@ -3587,7 +3758,7 @@ def swpagina():
                     + "</div>")
             return
         sessie.vraag_typen = sw_vraagt_typen(sessie.prefs["sw_vraagvorm"], w["streak"])
-        vraagsoort.text = ("Typ de betekenis" if sessie.vraag_typen
+        vraagsoort.text = ("" if sessie.vraag_typen
                            else "Welke betekenis hoort hierbij?")
         knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
         invoer.value = ""
@@ -3611,6 +3782,7 @@ def swpagina():
         with statusbalk:
             ui.html(_statusrij([
                 (w["streak"], "streak", TEKST),
+                (_goedfout(w["goed"], w["fout"]), "", TEKST),
                 (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
             ]))
         if sessie.vraag_typen:
@@ -3632,8 +3804,8 @@ def swpagina():
             vak.set_visibility(False)
         toon_typveld(invoer, False)
         eig = w.get("eigenschap", "")
-        regel_eig = (f"<div style='color:{MERK};font-size:15px;margin-top:6px'>{eig}</div>"
-                     if eig else "")
+        regel_eig = (f"<div style='color:{gram_kleur(eig) or MERK};font-size:15px;"
+                     f"margin-top:6px'>{eig}</div>" if eig else "")
         kleur = GOED if juist else FOUT
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
         terugkoppeling.clear()
