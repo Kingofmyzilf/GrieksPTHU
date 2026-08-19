@@ -1,0 +1,4796 @@
+[
+ {
+  "hebreeuws": "אֱלהִֹים",
+  "nederlands": "God; goden",
+  "nummer": 1,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אלהימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֲנִי",
+  "nederlands": "ik",
+  "nummer": 2,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אני",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֲשֶׁר",
+  "nederlands": "waarvan geldt dat — geeft relatieve bijzin aan]; dat, toen, omdat, opdat, dat",
+  "nummer": 3,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אשר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אִישׁ",
+  "nederlands": "man, echtgenoot; iemand, men",
+  "nummer": 4,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "איש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אִם",
+  "nederlands": "indien, als; o, dat toch …; in eedszin: niet",
+  "nummer": 5,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֵת",
+  "nederlands": "i [geeft lijdend voorwerp aan]; ii met, bij",
+  "nummer": 6,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "את",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֶ֫רֶץ",
+  "nederlands": "v) land, aarde",
+  "nummer": 7,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ארצ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֶחָד éé",
+  "nederlands": "n; een",
+  "nummer": 8,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אחד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֶל",
+  "nederlands": "naar, tot, aan, aangaande; op",
+  "nummer": 9,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָב",
+  "nederlands": "vader; voorvader",
+  "nummer": 10,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אכל",
+  "nederlands": "G eten; N gegeten worden; H voeden",
+  "nummer": 11,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אכל",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "eten",
+   "Nifal": "gegeten worden",
+   "Hifil": "voeden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "אמר",
+  "nederlands": "G zeggen; (bij zichzelf zeggen &gt;) denken; N gezegd worden; H verklaren",
+  "nummer": 12,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אמר",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zeggen",
+   "Nifal": "gezegd worden",
+   "Hifil": "verklaren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בְּ",
+  "nederlands": "in, op, bij; met, door, tegen",
+  "nummer": 13,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בֵּן",
+  "nederlands": "zoon, nakomeling; (geb. vormook: het ergens-toebehoren)",
+  "nummer": 14,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בַּ֫יִת",
+  "nederlands": "huis; tempel; gezin; houder",
+  "nummer": 15,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בית",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בּוֹא",
+  "nederlands": "G binnengaan, komen; H brengen",
+  "nummer": 16,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בוא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "binnengaan, komen",
+   "Hifil": "brengen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "דָּבָר",
+  "nederlands": "woord, zaak, ding",
+  "nummer": 17,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "דבר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דָּוִד",
+  "nederlands": "PN",
+  "nummer": 18,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "דוד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דבר",
+  "nederlands": "D spreken",
+  "nummer": 19,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "דבר",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "spreken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "הֵן",
+  "nederlands": "zie! wacht! let (maar eens) op!",
+  "nummer": 20,
+  "les": 1,
+  "varianten": [
+   "הִנֵּה"
+  ],
+  "medeklinkers": "הנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הַ",
+  "nederlands": "de, het [lidwoord]",
+  "nummer": 21,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הָיָה",
+  "nederlands": "G zijn; gebeuren",
+  "nummer": 22,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "היה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zijn"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "הוּא",
+  "nederlands": "hij [persl. vnw.]; die [aanw. vnw.]",
+  "nummer": 23,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "הוא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הלך",
+  "nederlands": "G gaan; tD wandelen; H brengen; meenemen",
+  "nummer": 24,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "הלכ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "gaan",
+   "Hifil": "brengen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "וְ",
+  "nederlands": "en; maar",
+  "nummer": 25,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ו",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "זֶה",
+  "nederlands": "deze/dit [aanwijzend vnw.]",
+  "nummer": 26,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "זה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יְהוָה",
+  "nederlands": "HEER",
+  "nummer": 27,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "יהוה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יְהוּדָה",
+  "nederlands": "GeoN; Juda",
+  "nummer": 28,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "יהודה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יִשְׂרָאֵל",
+  "nederlands": "Israël",
+  "nummer": 29,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ישראל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יָד",
+  "nederlands": "v) hand; macht",
+  "nummer": 30,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "יד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יָצָא",
+  "nederlands": "G uitgaan; H doen uitgaan; brengen uit; verkondigen",
+  "nummer": 31,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "יצא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "uitgaan",
+   "Hifil": "doen uitgaan"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "ידע",
+  "nederlands": "G waarnemen, kennen, weten; gemeenschap hebben met; N bekend worden; H bekend maken",
+  "nummer": 32,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ידע",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "waarnemen, kennen, weten",
+   "Nifal": "bekend worden",
+   "Hifil": "bekend maken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יוֹם",
+  "nederlands": "dag",
+  "nummer": 33,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "יומ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "ישׁב",
+  "nederlands": "G zitten; blijven; (be)wonen; N bewoond zijn; H zetten; laten wonen",
+  "nummer": 34,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ישב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zitten",
+   "Nifal": "bewoond zijn",
+   "Hifil": "zetten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כְּ",
+  "nederlands": "zo)als, overeenkomstig; ongeveer, omstreeks; volgens",
+  "nummer": 35,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כִּי",
+  "nederlands": "ja/inderdaad!); omdat; want; (nee/in tegendeel!); hoewel; als; wanneer, toen; dat",
+  "nummer": 36,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֹּל",
+  "nederlands": "ge)heel, alle; elk",
+  "nummer": 37,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לְ",
+  "nederlands": "naar »iets toe«, tot, (behorend) aan, voor;met inf.I: om te, door te",
+  "nummer": 38,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "Ä ל",
+  "nederlands": "niet",
+  "nummer": 39,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לקח",
+  "nederlands": "nemen, halen",
+  "nummer": 40,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "לקח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִן",
+  "nederlands": "van … uit/weg, sedert, wegens; (in “meer dan …” constructies) dan",
+  "nummer": 41,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מֶ֫לֶ",
+  "nederlands": "koning",
+  "nummer": 42,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מוּת",
+  "nederlands": "G sterven; R de laatste klap geven; H doden, ter dood brengen, executeren",
+  "nummer": 43,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מות",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "sterven",
+   "Hifil": "doden, ter dood brengen, executeren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נתן",
+  "nederlands": "Ggeven; stellen, leggen,maken;Ngegevenworden",
+  "nummer": 44,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נתנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עִיר",
+  "nederlands": "v) stad",
+  "nummer": 45,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עיר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עִם",
+  "nederlands": "samen) met, bij",
+  "nummer": 46,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עַ֫יִן",
+  "nederlands": "i oog. ii bron",
+  "nummer": 47,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עינ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עַד",
+  "nederlands": "voortduur; [voorzetsel] tot",
+  "nummer": 48,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עַל",
+  "nederlands": "boven)op, over, bij; tot, tegen; wegens",
+  "nummer": 49,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "על",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עַם",
+  "nederlands": "volk",
+  "nummer": 50,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עָלָה",
+  "nederlands": "Gopstijgen, optrekken;Nzich terugtrekken;Homhoog brengen; ook: offeren",
+  "nummer": 51,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עלה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עָשָׂה",
+  "nederlands": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan worden",
+  "nummer": 52,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עשה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "maken, doen, verschaffen, bereiden",
+   "Nifal": "gedaan worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "פָּנִים",
+  "nederlands": "alleenmv) gezicht; oppervlakte; tegenwoordigheid",
+  "nummer": 53,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "פנימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רָאָה",
+  "nederlands": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wijzen",
+  "nummer": 54,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ראה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zien",
+   "Nifal": "(ook:) verschijnen",
+   "Hifil": "tonen, wijzen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שֵׁם",
+  "nederlands": "naam",
+  "nummer": 55,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׁם",
+  "nederlands": "daar",
+  "nummer": 56,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁמע (בְּ)",
+  "nederlands": "G horen, luisteren (naar); N gehoordworden;H laten horen",
+  "nummer": 57,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שמעב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "horen, luisteren (naar)",
+   "Nifal": "gehoordworden",
+   "Hifil": "laten horen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שָׁנָה",
+  "nederlands": "jaar",
+  "nummer": 58,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שנה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁוּב",
+  "nederlands": "G terugkeren; H terugbrengen",
+  "nummer": 59,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שוב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "terugkeren",
+   "Hifil": "terugbrengen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁלח",
+  "nederlands": "G »de hand« uitstrekken, zenden; D loslaten, wegzenden, uitgeleide doen; H loslaten",
+  "nummer": 60,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שלח",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "»de hand« uitstrekken, zenden",
+   "Piel": "loslaten, wegzenden, uitgeleide doen",
+   "Hifil": "loslaten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "אִשָּׁה",
+  "nederlands": "vrouw; echtgenote",
+  "nummer": 61,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אשה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֵ֫לֶּה",
+  "nederlands": "deze [aanwijzend vnw.] (mv)",
+  "nummer": 62,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אלה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֵין",
+  "nederlands": "het) er niet zijn",
+  "nummer": 63,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אינ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֶ֫לֶף",
+  "nederlands": "i rund; vee; ii duizend",
+  "nummer": 64,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אלפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַחֲרֵי",
+  "nederlands": "achter, na",
+  "nummer": 65,
+  "les": 1,
+  "varianten": [
+   "אַחַר"
+  ],
+  "medeklinkers": "אחרי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַל",
+  "nederlands": "niet",
+  "nummer": 66,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַרְבַּע",
+  "nederlands": "vier",
+  "nummer": 67,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ארבע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַתָּה",
+  "nederlands": "jij; u",
+  "nummer": 68,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אתה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָדָם",
+  "nederlands": "mens; mensheid; Adam",
+  "nummer": 69,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אדמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָדוֹן",
+  "nederlands": "heer",
+  "nummer": 70,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אדונ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָח",
+  "nederlands": "broer",
+  "nummer": 71,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בַּת",
+  "nederlands": "dochter",
+  "nummer": 72,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גַּם",
+  "nederlands": "ook",
+  "nummer": 73,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "גמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גָּדוֹל",
+  "nederlands": "groot",
+  "nummer": 74,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "גדול",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גֹּוי",
+  "nederlands": "volk, natie; mv vooral: heidenen",
+  "nummer": 75,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "גוי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דֶּרֶ",
+  "nederlands": "weg, reis; manier, gewoonte",
+  "nummer": 76,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "דר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הֲ … ?",
+  "nederlands": "vraagpartikel]",
+  "nummer": 77,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הִיא",
+  "nederlands": "zij; die, dat",
+  "nummer": 78,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "היא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הֵם",
+  "nederlands": "zij (mv); die",
+  "nummer": 79,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "המ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הַר",
+  "nederlands": "berg; gebergte",
+  "nummer": 80,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "הר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָמֵשׁ",
+  "nederlands": "vijf",
+  "nummer": 81,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "חמש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "טוֹב",
+  "nederlands": "goed",
+  "nummer": 82,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "טוב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יְרוּשָׁלַם",
+  "nederlands": "GeoN, Jeruzalem",
+  "nummer": 83,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ירושלמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "ילד",
+  "nederlands": "Gvoortbrengen, baren, »een kind« krijgen; verwekken; N geboren worden",
+  "nummer": 84,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ילד",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "geboren worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כֵּן",
+  "nederlands": "zo",
+  "nummer": 85,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֹּה",
+  "nederlands": "zo; hier",
+  "nummer": 86,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֹּהֵן",
+  "nederlands": "priester",
+  "nummer": 87,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כהנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לֵב",
+  "nederlands": "hart",
+  "nummer": 88,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "לב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִצְרַ֫יִם",
+  "nederlands": "Egypte",
+  "nummer": 89,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מצרימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִשְׁמָר",
+  "nederlands": "wacht, bewaring; uitkijk",
+  "nummer": 90,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "משמר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִשְׁפָּט",
+  "nederlands": "gericht, oordeel(-velling), vonnis; rechtsregel, wet, recht; gewoonte; uiterlijk",
+  "nummer": 91,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "משפט",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מֵאָה",
+  "nederlands": "honderd",
+  "nummer": 92,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מאה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מַ֫יִם",
+  "nederlands": "water",
+  "nummer": 93,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מֶה",
+  "nederlands": "wat?",
+  "nummer": 94,
+  "les": 1,
+  "varianten": [
+   "מַה־",
+   "מָה"
+  ],
+  "medeklinkers": "מה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מָצָא",
+  "nederlands": "G vinden; overkomen; N gevonden worden",
+  "nummer": 95,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מצא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vinden",
+   "Nifal": "gevonden worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נֶ֫פֶשׁ",
+  "nederlands": "v.) adem; (het emotionele) leven, (levend)wezen, persoon; ziel; coll. lieden",
+  "nummer": 96,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נפש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נָכָה",
+  "nederlands": "H (ver)slaan",
+  "nummer": 97,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נכה",
+  "geslacht": "",
+  "stammen": {
+   "Hifil": "(ver)slaan"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נָשָׂא",
+  "nederlands": "G opheffen, dragen, (op)brengen; vergeven",
+  "nummer": 98,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נשא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "opheffen, dragen, (op)brengen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נפל",
+  "nederlands": "G vallen; betrekken (van gezicht); H doen vallen",
+  "nummer": 99,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נפל",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vallen",
+   "Hifil": "doen vallen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "עֶ֫בֶד",
+  "nederlands": "slaaf, knecht",
+  "nummer": 100,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עבד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֶ֫שֶׂר",
+  "nederlands": "tien",
+  "nummer": 101,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עשר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עַתָּה",
+  "nederlands": "nu",
+  "nummer": 102,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עתה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עבר",
+  "nederlands": "G zijns weegs gaan, voorbijgaan; door-, overtrekken; H doen voorbijgaan",
+  "nummer": 103,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עבר",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zijns weegs gaan, voorbijgaan",
+   "Hifil": "doen voorbijgaan"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "עוֹד",
+  "nederlands": "nog",
+  "nummer": 104,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עוד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עוֹלָם",
+  "nederlands": "onafzienbare tijd, ‘eeuwigheid’",
+  "nummer": 105,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עולמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עמד",
+  "nederlands": "G staan (blijven); H laten staan",
+  "nummer": 106,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עמד",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "staan (blijven)",
+   "Hifil": "laten staan"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "פֶּה",
+  "nederlands": "mond; bevel",
+  "nummer": 107,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "פה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "צָבָא",
+  "nederlands": "leger(macht)",
+  "nummer": 108,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "צבא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "צָוָה",
+  "nederlands": "D opdragen, bevelen",
+  "nummer": 109,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "צוה",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "opdragen, bevelen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "קַָרָא",
+  "nederlands": "G roepen, noemen; aanroepen; (hardop) lezen",
+  "nummer": 110,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "קרא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "roepen, noemen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "קֹ֫דֶשׁ",
+  "nederlands": "heiligheid; heiligdom",
+  "nummer": 111,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "קדש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קוֹל",
+  "nederlands": "geluid; stem; donder",
+  "nummer": 112,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "קול",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קוּם",
+  "nederlands": "G opstaan, gaan staan H oprichten",
+  "nummer": 113,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "קומ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "opstaan, gaan staan H oprichten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁÄ ר",
+  "nederlands": "hoofd, top; leider",
+  "nummer": 114,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שִׂים (ל)",
+  "nederlands": "leggen; zetten; maken tot, aanstellen (tot)",
+  "nummer": 115,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שימל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שְׁנַיִם",
+  "nederlands": "twee",
+  "nummer": 116,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שנימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שֶׁ֫בַע",
+  "nederlands": "zeven",
+  "nummer": 117,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שבע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׁלשׁ",
+  "nederlands": "drie",
+  "nummer": 118,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שלש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שַׂר",
+  "nederlands": "overste, leider, vorst",
+  "nummer": 119,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "תַּ֫חַת",
+  "nederlands": "het onderste; onder, in plaats van",
+  "nummer": 120,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "תחת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׂדֶה",
+  "nederlands": "veld",
+  "nummer": 121,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שדה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׁמַ֫יִם",
+  "nederlands": "hemel, lucht",
+  "nummer": 122,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שמימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שַׁ֫עַר",
+  "nederlands": "poort",
+  "nummer": 123,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "שער",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "תָּוֶ",
+  "nederlands": "midden",
+  "nummer": 124,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "תו",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רוּחַ",
+  "nederlands": "v) wind; adem; geest",
+  "nummer": 125,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "רוח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רָעָה",
+  "nederlands": "kwaad; (het) kwaad",
+  "nummer": 126,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "רעה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רַע",
+  "nederlands": "slecht; (het) kwaad, onheil",
+  "nummer": 127,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "רע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רַב",
+  "nederlands": "veel, talrijk, groot, lang, genoeg",
+  "nummer": 128,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "רב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פקד",
+  "nederlands": "G zich bekommeren om; ‘bezoeken’ (omzien naar òf straffen)",
+  "nummer": 129,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "פקד",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zich bekommeren om"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "עָשָׂר",
+  "nederlands": "tien",
+  "nummer": 130,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עשר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עָנָה",
+  "nederlands": "i reageren, antwoorden; getuigen. ii gebogen zijn; D onderdrukken; vernederen",
+  "nummer": 131,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ענה",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "onderdrukken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "עֵת",
+  "nederlands": "tijd",
+  "nummer": 132,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֵץ",
+  "nederlands": "boom, geboomte; (stuk) hout",
+  "nummer": 133,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "עצ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "סוּר",
+  "nederlands": "G afbuigen, wijken; H verwijderen",
+  "nummer": 134,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "סור",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "afbuigen, wijken",
+   "Hifil": "verwijderen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "סָבִיב",
+  "nederlands": "rondom",
+  "nummer": 135,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "סביב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נגד",
+  "nederlands": "H aantonen, bekend maken, vertellen; Hp verteld worden",
+  "nummer": 136,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נגד",
+  "geslacht": "",
+  "stammen": {
+   "Hifil": "aantonen, bekend maken, vertellen",
+   "Hofal": "verteld worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נָבִיא",
+  "nederlands": "profeet",
+  "nummer": 137,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נביא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נָא",
+  "nederlands": "toch, zeker",
+  "nummer": 138,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נְאֻם",
+  "nederlands": "uiting; verklaring; godsspraak",
+  "nummer": 139,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "נאמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מלך",
+  "nederlands": "G koning zijn; H koning maken",
+  "nummer": 140,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מלכ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "koning zijn",
+   "Hifil": "koning maken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "מָקוֹם",
+  "nederlands": "stand)plaats",
+  "nummer": 141,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מקומ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִשְׁפָּחָח",
+  "nederlands": "clan, geslacht",
+  "nummer": 142,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "משפחח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִלְחָמָה",
+  "nederlands": "strijd, oorlog",
+  "nummer": 143,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מלחמה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִי",
+  "nederlands": "wie?",
+  "nummer": 144,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִזְבֵּחַ",
+  "nederlands": "altaar",
+  "nummer": 145,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מזבח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מְאֹד",
+  "nederlands": "kracht; zeer",
+  "nummer": 146,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "מאד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לֶ֫חֶם",
+  "nederlands": "brood, voedsel",
+  "nummer": 147,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "לחמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לֵוִי",
+  "nederlands": "Leviet",
+  "nummer": 148,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "לוי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֶּסֶף",
+  "nederlands": "zilver; geld",
+  "nummer": 149,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כספ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כְּלִי",
+  "nederlands": "voorwerp, gerei, vaatwerk, huisraad; wapens",
+  "nummer": 150,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "כלי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "ירד",
+  "nederlands": "G afdalen; H naar beneden brengen",
+  "nummer": 151,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ירד",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "afdalen",
+   "Hifil": "naar beneden brengen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יָרֵא",
+  "nederlands": "G vrezen; N gevreesd worden",
+  "nummer": 152,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ירא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vrezen",
+   "Nifal": "gevreesd worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יָם",
+  "nederlands": "zee; westen",
+  "nummer": 153,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ימ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חַטָּאת",
+  "nederlands": "zonde; zondeoffer",
+  "nummer": 154,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "חטאת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֶ֫רֶב",
+  "nederlands": "v) zwaard",
+  "nummer": 155,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "חרב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "זָהָב",
+  "nederlands": "goud",
+  "nummer": 156,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "זהב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דָּם",
+  "nederlands": "bloed; mv bloedschuld",
+  "nummer": 157,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "דמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "ברך",
+  "nederlands": "G en) D zegenen, prijzen; N elkaar zegen toewensen, gezegend worden",
+  "nummer": 158,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "ברכ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en) D zegenen, prijzen",
+   "Nifal": "elkaar zegen toewensen, gezegend worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בָּנָה",
+  "nederlands": "G bouwen",
+  "nummer": 159,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בנה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "bouwen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בֵּין",
+  "nederlands": "tussen",
+  "nummer": 160,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בינ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בְּתוֹ",
+  "nederlands": "midden) in",
+  "nummer": 161,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "בתו",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אוֹ",
+  "nederlands": "of",
+  "nummer": 162,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "או",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֹ֫הֶל",
+  "nederlands": "tent",
+  "nummer": 163,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אהל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָנֹכִי",
+  "nederlands": "ik",
+  "nummer": 164,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אנכי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֵשׁ",
+  "nederlands": "vuur",
+  "nummer": 165,
+  "les": 1,
+  "varianten": [],
+  "medeklinkers": "אש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֲדָמָה",
+  "nederlands": "aarde, akker, grond",
+  "nummer": 166,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אדמה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֵל",
+  "nederlands": "God; god",
+  "nummer": 167,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֵם",
+  "nederlands": "moeder",
+  "nummer": 168,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֶ֫בֶן",
+  "nederlands": "steen",
+  "nummer": 169,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אבנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַמָּה",
+  "nederlands": "el [lengtemaat]",
+  "nummer": 170,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אמה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַף",
+  "nederlands": "neus(gat); (tv) gezicht; woede, toorn",
+  "nummer": 171,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַתֶּם",
+  "nederlands": "jullie",
+  "nummer": 172,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אתמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֹיֵב",
+  "nederlands": "vijand",
+  "nummer": 173,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "איב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָהֵב",
+  "nederlands": "liefhebben, beminnen",
+  "nummer": 174,
+  "les": 2,
+  "varianten": [
+   "אהב"
+  ],
+  "medeklinkers": "אהב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בְּרִית",
+  "nederlands": "verbond",
+  "nummer": 175,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ברית",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בֵּית",
+  "nederlands": "huis; tempel; gezin; houder",
+  "nummer": 176,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בית",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בֶּגֶד",
+  "nederlands": "kleed, kleding",
+  "nummer": 177,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בגד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בָּבֶל",
+  "nederlands": "Babylon",
+  "nummer": 178,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בבל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בָּשָׂר",
+  "nederlands": "vlees",
+  "nummer": 179,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בשר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בֹּ֫קֶר",
+  "nederlands": "de) morgen, ochtend",
+  "nummer": 180,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בקר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בקשׁ",
+  "nederlands": "D zoeken",
+  "nummer": 181,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בקש",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "zoeken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "גְּבוּל",
+  "nederlands": "grens, gebied",
+  "nummer": 182,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "גבול",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "זֶ֫רַע",
+  "nederlands": "zaad; nageslacht, nakomelingschap",
+  "nummer": 183,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "זרע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "זכר",
+  "nederlands": "Gzichherinneren;gedenken,herdenken;Hinher- innering brengen",
+  "nummer": 184,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "זכר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֶ֫סֶד",
+  "nederlands": "trouw, loyaliteit, “welwillendheid”, weldadigheid",
+  "nummer": 185,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חסד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חַ֫יִל",
+  "nederlands": "kracht; vaardigheid; leger",
+  "nummer": 186,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חיל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חַי",
+  "nederlands": "leven",
+  "nummer": 187,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָטָא",
+  "nederlands": "G zondigen; D ontzondigen; H tot zonde verleiden",
+  "nummer": 188,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חטא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zondigen",
+   "Piel": "ontzondigen",
+   "Hifil": "tot zonde verleiden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "חָיָה",
+  "nederlands": "G (op)leven, herstellen; D en H in leven houden, doen herleven",
+  "nummer": 189,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חיה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "(op)leven, herstellen",
+   "Piel": "en H in leven houden, doen herleven"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "חֹ֫דֶשׁ",
+  "nederlands": "nieuwe maan; maand",
+  "nummer": 190,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חדש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חזק",
+  "nederlands": "G vast, sterk/moedig zijn; D bevestigen; H vastma- ken, grijpen",
+  "nummer": 191,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חזק",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vast, sterk/moedig zijn",
+   "Piel": "bevestigen",
+   "Hifil": "vastma- ken, grijpen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יסף",
+  "nederlands": "G en H toevoegen; blijven …",
+  "nummer": 192,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יספ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en H toevoegen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "ירשׁ",
+  "nederlands": "in bezit nemen; erven; onteigenen",
+  "nummer": 193,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ירש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כּוּן",
+  "nederlands": "N vast zijn; R bevestigen, grondvesten; H vaststel- len, bereiden",
+  "nummer": 194,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כונ",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "vast zijn",
+   "Hifil": "vaststel- len, bereiden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כרת",
+  "nederlands": "G snijden; verdelgen; »een verbond« sluiten; N af- gesneden worden; D omhakken; H uitroeien",
+  "nummer": 195,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כרת",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "snijden",
+   "Nifal": "af- gesneden worden",
+   "Piel": "omhakken",
+   "Hifil": "uitroeien"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כתב",
+  "nederlands": "schrijven",
+  "nummer": 196,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כתב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לְמַ֫עַן",
+  "nederlands": "terwille van, opdat",
+  "nummer": 197,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "למענ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לֵבָב",
+  "nederlands": "hart",
+  "nummer": 198,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לבב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לַ֫יְלָה",
+  "nederlands": "nacht",
+  "nummer": 199,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לילה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִדְבָּר",
+  "nederlands": "steppe, woestijn",
+  "nummer": 200,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מדבר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מַחֲנֶה",
+  "nederlands": "legerplaats, kamp",
+  "nummer": 201,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מחנה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מַטֶּה",
+  "nederlands": "staf; stam",
+  "nummer": 202,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מטה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "ָמַלְא",
+  "nederlands": "bode, engel",
+  "nummer": 203,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מלא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מַעֲשֶׂה",
+  "nederlands": "werk, daad",
+  "nummer": 204,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מעשה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מָלֵא",
+  "nederlands": "G vol zijn van; vullen; D (ver)vullen",
+  "nummer": 205,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מלא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vol zijn van",
+   "Piel": "(ver)vullen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "מוֹעֵד",
+  "nederlands": "trefpunt; bestemde tijd; samenkomst, ontmoeting",
+  "nummer": 206,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מועד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נַ֫עַר",
+  "nederlands": "jongen; knecht",
+  "nummer": 207,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נער",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נַחֲלָה",
+  "nederlands": "aandeel; erfdeel, erfenis; bezit",
+  "nummer": 208,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נחלה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נָטָה",
+  "nederlands": "G en H uitstrekken, uitspannen",
+  "nummer": 209,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נטה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en H uitstrekken, uitspannen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נצל",
+  "nederlands": "N gered worden; zich redden; D redden; H redden, bevrijden",
+  "nummer": 210,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נצל",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "gered worden",
+   "Piel": "redden",
+   "Hifil": "redden, bevrijden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "עָוֹן",
+  "nederlands": "misdragen; schuld",
+  "nummer": 211,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עונ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֹלָה",
+  "nederlands": "brand)offer",
+  "nummer": 212,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עלה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עבד",
+  "nederlands": "werken, dienen, vereren",
+  "nummer": 213,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עבד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עזב",
+  "nederlands": "G verlaten",
+  "nummer": 214,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עזב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "verlaten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "פְּלִשְׁתִּי",
+  "nederlands": "Filistijn",
+  "nummer": 215,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פלשתי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פַּרְעֹה",
+  "nederlands": "Pharao",
+  "nummer": 216,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פרעה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "ןÄצ",
+  "nederlands": "kleinvee (schapen en geiten)",
+  "nummer": 217,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נצ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קֶ֫רֶב",
+  "nederlands": "midden, binnenste",
+  "nummer": 218,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קרב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קרב",
+  "nederlands": "G en N naderen; H dichterbij brengen",
+  "nummer": 219,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קרב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en N naderen",
+   "Hifil": "dichterbij brengen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "רֶגֶל",
+  "nederlands": "voet; keer",
+  "nummer": 220,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רגל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רָשָׁע",
+  "nederlands": "boosaardig; schuldig",
+  "nummer": 221,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רשע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "תּוֹרָה",
+  "nederlands": "onderricht; instructie; leer; Torah",
+  "nummer": 222,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "תורה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שֵׁשׁ",
+  "nederlands": "zes",
+  "nummer": 223,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׁלוֹם",
+  "nederlands": "vrede, heil, welstand",
+  "nummer": 224,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שלומ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׁתָה",
+  "nederlands": "G drinken",
+  "nummer": 225,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שתה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "drinken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "אֲרוֹן",
+  "nederlands": "kist, ark (van het verbond)",
+  "nummer": 226,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ארונ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַחֵר",
+  "nederlands": "ander",
+  "nummer": 227,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אחר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֹ֫זֶן",
+  "nederlands": "oor",
+  "nummer": 228,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אזנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אבד",
+  "nederlands": "G verloren zijn, te gronde gaan; D als verloren op- geven",
+  "nummer": 229,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אבד",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "verloren zijn, te gronde gaan",
+   "Piel": "als verloren op- geven"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "אסף",
+  "nederlands": "G verzamelen; N bijeenkomen (refl.)",
+  "nummer": 230,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אספ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "verzamelen",
+   "Nifal": "bijeenkomen (refl.)"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בְּהֵמָה",
+  "nederlands": "groot) vee",
+  "nummer": 231,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בהמה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בִּין",
+  "nederlands": "G begrijpen; N inzicht hebben; R zorgen voor; H begrijpen, verstaan",
+  "nummer": 232,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בינ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "begrijpen",
+   "Nifal": "inzicht hebben",
+   "Hifil": "begrijpen, verstaan"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בָּקָר",
+  "nederlands": "rundvee",
+  "nummer": 233,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בקר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בחר",
+  "nederlands": "uitkiezen, verkiezen",
+  "nummer": 234,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בחר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גָּלָה",
+  "nederlands": "G openbaren; D onthullen; »de ogen« openen",
+  "nummer": 235,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "גלה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "openbaren",
+   "Piel": "onthullen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "דּוֹר",
+  "nederlands": "generatie, geslacht",
+  "nummer": 236,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "דור",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דרשׁ",
+  "nederlands": "zoeken",
+  "nummer": 237,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "דרש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הרג",
+  "nederlands": "doden",
+  "nummer": 238,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "הרג",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "זֶ֫בַח",
+  "nederlands": "offer",
+  "nummer": 239,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "זבח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "זָקֵן",
+  "nederlands": "oud; oudste; grijsaard",
+  "nummer": 240,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "זקנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָצֵר",
+  "nederlands": "binnenplaats, hof; voorhof",
+  "nummer": 241,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חצר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חוּץ",
+  "nederlands": "buiten; mv. open land, vlakte; straten",
+  "nummer": 242,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חוצ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חוה",
+  "nederlands": "St zich neerbuigen, zich neerwerpen; aanbidden",
+  "nummer": 243,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חוה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יַרְדֵּן",
+  "nederlands": "GeoN]",
+  "nummer": 244,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ירדנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יָכֹל",
+  "nederlands": "G kunnen; overmeesteren",
+  "nummer": 245,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יכל",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "kunnen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "ישׁע",
+  "nederlands": "N overwinnen, hulp krijgen; H helpen, redden",
+  "nummer": 246,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ישע",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "overwinnen, hulp krijgen",
+   "Hifil": "helpen, redden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כַּף",
+  "nederlands": "holle) hand, (hand)palm; (voet)zool; schaal",
+  "nummer": 247,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כָּבוֹד",
+  "nederlands": "gewicht; rijkdom; reputatie; eer, glorie",
+  "nummer": 248,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כבוד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כָּלָה",
+  "nederlands": "Gvoltooid/gereed/teneindezijn;Dophoudenmet",
+  "nummer": 249,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כלה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לחם",
+  "nederlands": "N strijden",
+  "nummer": 250,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לחמ",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "strijden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "מְלָאכָה",
+  "nederlands": "werk; bezigheid",
+  "nummer": 251,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מלאכה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִנְחָה",
+  "nederlands": "geschenk; offer, spijsoffer",
+  "nummer": 252,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מנחה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִצְוָה",
+  "nederlands": "gebod, bevel",
+  "nummer": 253,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מצוה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "סֵ֫פֶר",
+  "nederlands": "brief; boek",
+  "nummer": 254,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ספר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "סבב",
+  "nederlands": "G zich omkeren; omringen; gaan, komen; N van richting veranderen; R een ronde maken om; H af- zwenken; afwenden",
+  "nummer": 255,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "סבב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zich omkeren",
+   "Nifal": "van richting veranderen",
+   "Hifil": "af- zwenken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "פֶּ֫תַח",
+  "nederlands": "opening, ingang",
+  "nummer": 256,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פתח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "צַדִּיק",
+  "nederlands": "rechtvaardig",
+  "nummer": 257,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "צדיק",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קדשׁ",
+  "nederlands": "G heilig zijn; D en H heiligen",
+  "nummer": 258,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קדש",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "heilig zijn",
+   "Piel": "en H heiligen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "רִאשׁוֹן",
+  "nederlands": "eerste, vroegere",
+  "nummer": 259,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ראשונ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רֵע",
+  "nederlands": "vriend; naaste",
+  "nummer": 260,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רָבָה",
+  "nederlands": "G veel zijn, talrijk zijn; groot zijn; D talrijk maken; H talrijk maken; groot maken",
+  "nummer": 261,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רבה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "veel zijn, talrijk zijn",
+   "Piel": "talrijk maken",
+   "Hifil": "talrijk maken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "רָעָה",
+  "nederlands": "G weiden",
+  "nummer": 262,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רעה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "weiden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "רוּם",
+  "nederlands": "G hoog, verheven zijn; H oprichten, oppakken",
+  "nummer": 263,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רומ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "hoog, verheven zijn",
+   "Hifil": "oprichten, oppakken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שֵׁ֫בֶט",
+  "nederlands": "herders)stok, staf; stam",
+  "nummer": 264,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שבט",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שֶׁ֫מֶן",
+  "nederlands": "olijf)olie",
+  "nummer": 265,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שמנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁאל",
+  "nederlands": "vragen; lenen",
+  "nummer": 266,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שאל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁבע",
+  "nederlands": "N zweren",
+  "nummer": 267,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שבע",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "zweren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁכב",
+  "nederlands": "liggen, rusten",
+  "nummer": 268,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שכב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁפט",
+  "nederlands": "G richten, recht verschaffen; N een proces voeren",
+  "nummer": 269,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שפט",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "richten, recht verschaffen",
+   "Nifal": "een proces voeren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שָׂפָה",
+  "nederlands": "lip, rand; taal; oever",
+  "nummer": 270,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שפה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָז",
+  "nederlands": "toen, dan",
+  "nummer": 271,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אז",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַ֫יִל",
+  "nederlands": "ram",
+  "nummer": 272,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "איל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "řַא",
+  "nederlands": "zeker, voorwaar; slechts, toch",
+  "nummer": 273,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "א",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֱמֶת",
+  "nederlands": "trouw; waarheid",
+  "nummer": 274,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אמת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַף",
+  "nederlands": "ook, zelfs",
+  "nummer": 275,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בַּ֫עַל",
+  "nederlands": "eigenaar, heer; Baäl",
+  "nummer": 276,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בעל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גִּבּוֹר",
+  "nederlands": "krachtig, kloek; beroepssoldaat; held",
+  "nummer": 277,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "גבור",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הלל",
+  "nederlands": "D loven, prijzen",
+  "nummer": 278,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "הלל",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "loven, prijzen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "זבח",
+  "nederlands": "G en D slachten, een slachtoffer brengen, offeren",
+  "nummer": 279,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "זבח",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en D slachten, een slachtoffer brengen, offeren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "חוֹמָה",
+  "nederlands": "muur",
+  "nummer": 280,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חומה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָכָם",
+  "nederlands": "wijs",
+  "nummer": 281,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חכמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָכְמָה",
+  "nederlands": "wijsheid",
+  "nummer": 282,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חכמה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חלל",
+  "nederlands": "iNontwijdworden;Dontwijden;Hbeginnen.iiRp doorboord worden",
+  "nummer": 283,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חלל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָנָה",
+  "nederlands": "zich legeren",
+  "nummer": 284,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חנה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֹק",
+  "nederlands": "toegewezen) deel; opdracht; afgesproken tijd; in- zetting, wet; voorschrift, regel(ing)",
+  "nummer": 285,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חק",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "טָמֵא",
+  "nederlands": "G onrein zijn; N zich verontreinigen; D verontrei- nigen",
+  "nummer": 286,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "טמא",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "onrein zijn",
+   "Nifal": "zich verontreinigen",
+   "Piel": "verontrei- nigen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יַ֫יִן",
+  "nederlands": "wijn",
+  "nummer": 287,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יינ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יָמִין",
+  "nederlands": "rechterhand, -kant; zuiden; geluk",
+  "nummer": 288,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ימינ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יֵשׁ",
+  "nederlands": "er is, (het) er zijn",
+  "nummer": 289,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֹּח",
+  "nederlands": "kracht; sterkte",
+  "nummer": 290,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כח",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כִּסֵּא",
+  "nederlands": "zitplaats, zetel; troon",
+  "nummer": 291,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כסא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כָּסָה",
+  "nederlands": "G en) D bedekken, vergeven; tD zich bedekken",
+  "nummer": 292,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כסה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en) D bedekken, vergeven"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כְּמוֹ",
+  "nederlands": "zo)als, overeenkomstig; ongeveer, omstreeks; vol- gens",
+  "nummer": 293,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כמו",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לְבַד",
+  "nederlands": "afzonderlijk, alleen",
+  "nummer": 294,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לבד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מָ֫וֶת",
+  "nederlands": "de) dood",
+  "nummer": 295,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מות",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִסְפָּר",
+  "nederlands": "getal",
+  "nummer": 296,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מספר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִשְׁכָּן",
+  "nederlands": "woning; tabernakel",
+  "nummer": 297,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "משכנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִמַּעַל",
+  "nederlands": "boven",
+  "nummer": 298,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ממעל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נֶ֫גֶד",
+  "nederlands": "tegenover, in tegenwoordigheid van",
+  "nummer": 299,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נגד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נגע",
+  "nederlands": "G aanraken; slaan; D slaan; H treffen",
+  "nummer": 300,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נגע",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "aanraken",
+   "Piel": "slaan",
+   "Hifil": "treffen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נוּח",
+  "nederlands": "G rusten; H i rust geven; ii (neer)leggen",
+  "nummer": 301,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נוח",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "rusten",
+   "Hifil": "i rust geven"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נוּס",
+  "nederlands": "G vluchten; ontsnappen",
+  "nummer": 302,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נוס",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vluchten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נַ֫חַל",
+  "nederlands": "beek(dal), wadi",
+  "nummer": 303,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נחל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נְחֹ֫שֶׁת",
+  "nederlands": "koper, brons",
+  "nummer": 304,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נחשת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נסע",
+  "nederlands": "G opbreken, verdertrekken; H wegnemen, verwij- deren",
+  "nummer": 305,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נסע",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "opbreken, verdertrekken",
+   "Hifil": "wegnemen, verwij- deren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נָשִׂיא",
+  "nederlands": "vorst",
+  "nummer": 306,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נשיא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "סוּס",
+  "nederlands": "paard, hengst",
+  "nummer": 307,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "סוס",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֲבֹדָה",
+  "nederlands": "arbeid, dienst",
+  "nummer": 308,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עבדה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֵדָה",
+  "nederlands": "vergadering; cultusgemeenschap",
+  "nummer": 309,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עדה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֶ֫רֶב",
+  "nederlands": "avond",
+  "nummer": 310,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ערב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פֶּן",
+  "nederlands": "opdat niet; dat",
+  "nummer": 311,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פָּנָה",
+  "nederlands": "G een kant opgaan; D verwijderen, opruimen",
+  "nummer": 312,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פנה",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "een kant opgaan",
+   "Piel": "verwijderen, opruimen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "פַּר",
+  "nederlands": "m: rund, stier(kalf); v: koe",
+  "nummer": 313,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פתח",
+  "nederlands": "G openen; D loslaten; uitdoen; vrijlaten",
+  "nummer": 314,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פתח",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "openen",
+   "Piel": "loslaten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "צְדָקָה",
+  "nederlands": "gerechtigheid; rechtvaardige daad",
+  "nummer": 315,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "צדקה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "צָפוֹן",
+  "nederlands": "f) noorden",
+  "nummer": 316,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "צפונ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קבץ",
+  "nederlands": "G en D verzamelen; N verzameld worden",
+  "nummer": 317,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קבצ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en D verzamelen",
+   "Nifal": "verzameld worden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "קבר",
+  "nederlands": "begraven",
+  "nummer": 318,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קבר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רֹב",
+  "nederlands": "menigte; overvloed",
+  "nummer": 319,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אַחַר)רדף",
+  "nederlands": "achter)volgen, najagen",
+  "nummer": 320,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אחררדפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שָׂמֵח",
+  "nederlands": "G zich verheugen; D verblijden",
+  "nummer": 321,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שמח",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zich verheugen",
+   "Piel": "verblijden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שָׂנֵא",
+  "nederlands": "haten, niet mogen",
+  "nummer": 322,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שנא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁ",
+  "nederlands": "waarvan geldt dat - nota rel.]; dat, toen, omdat, opdat, dat [conjunctie]",
+  "nummer": 323,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁאר",
+  "nederlands": "G en N overblijven; H overlaten",
+  "nummer": 324,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שאר",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en N overblijven",
+   "Hifil": "overlaten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁבר",
+  "nederlands": "G (ver)breken; N gebroken worden; breken [ono- vergankelijk]; D in stukken breken; ii (graan) ko- pen",
+  "nummer": 325,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שבר",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "(ver)breken",
+   "Nifal": "gebroken worden",
+   "Piel": "in stukken breken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁחת",
+  "nederlands": "D en H verdelgen, teisteren",
+  "nummer": 326,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שחת",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "en H verdelgen, teisteren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁכן",
+  "nederlands": "wonen",
+  "nummer": 327,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שכנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שְׁמֹנֶה",
+  "nederlands": "acht",
+  "nummer": 328,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שמנה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שֶׁמֶשׁ",
+  "nederlands": "zon",
+  "nummer": 329,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שמש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שְׁנִי",
+  "nederlands": "tweede",
+  "nummer": 330,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שני",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אוֹר",
+  "nederlands": "het) licht",
+  "nummer": 331,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אור",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אָחוֹת",
+  "nederlands": "zus",
+  "nummer": 332,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אחות",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֲנַחְנוּ",
+  "nederlands": "wij",
+  "nummer": 333,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אנחנו",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בּוֹשׁ",
+  "nederlands": "G zich schamen, beschaamd zijn; H beschamen",
+  "nummer": 334,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בוש",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zich schamen, beschaamd zijn",
+   "Hifil": "beschamen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בטח(ב",
+  "nederlands": "G vertrouwen (op)",
+  "nummer": 335,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בטחב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "vertrouwen (op)"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "בָּכָה",
+  "nederlands": "be)wenen, jammeren",
+  "nummer": 336,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בכה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בְּכֹרָה",
+  "nederlands": "eerstgeboorterecht",
+  "nummer": 337,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בכרה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בִּלְתִּי",
+  "nederlands": "niet",
+  "nummer": 338,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בלתי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גדל",
+  "nederlands": "G groot zijn; D en H groot brengen/maken",
+  "nummer": 339,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "גדל",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "groot zijn",
+   "Piel": "en H groot brengen/maken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "חַי",
+  "nederlands": "levend",
+  "nummer": 340,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֶזְרוֹע",
+  "nederlands": "de) arm (v)",
+  "nummer": 341,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אזרוע",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אֱלוֹהּ",
+  "nederlands": "god",
+  "nummer": 342,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אלוה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "אמן",
+  "nederlands": "N bestendig, betrouwbaar, trouw, vertrouwd zijn; H geloven",
+  "nummer": 343,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אמנ",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "bestendig, betrouwbaar, trouw, vertrouwd zijn",
+   "Hifil": "geloven"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "řֶאֹ֫ר",
+  "nederlands": "lengte",
+  "nummer": 344,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "אר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בָּמָה",
+  "nederlands": "cultushoogte, -plaats",
+  "nummer": 345,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "במה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "בַּ֫עַד",
+  "nederlands": "op afstand, achter; tussen, door, achter; ten gunste van",
+  "nummer": 346,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "בעד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גאל‘",
+  "nederlands": "lossen’, inlossen; verlossen",
+  "nummer": 347,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "גאל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "גֵּר",
+  "nederlands": "vreemdeling",
+  "nummer": 348,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "גר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דֶּ֫לֶת",
+  "nederlands": "deur",
+  "nummer": 349,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "דלת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "דַּ֫עַת",
+  "nederlands": "kennis, begrip",
+  "nummer": 350,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "דעת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הֵן",
+  "nederlands": "zie; als",
+  "nummer": 351,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "הנ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "הפך",
+  "nederlands": "wenden, omkeren; tD rond gaan",
+  "nummer": 352,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "הפכ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חַיָּה",
+  "nederlands": "dieren; wild, roofdieren",
+  "nummer": 353,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חיה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֵלֶב",
+  "nederlands": "beste stuk",
+  "nummer": 354,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חלב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָלָל",
+  "nederlands": "doorboord, verslagen; ontmaagd",
+  "nummer": 355,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חלל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֲמוֹר",
+  "nederlands": "ezel",
+  "nummer": 356,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חמור",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֻקָּה",
+  "nederlands": "wat is voorgeschreven, inzetting, wet",
+  "nummer": 357,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חקה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חָרָה",
+  "nederlands": "ontbranden; kwaad zijn",
+  "nummer": 358,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חרה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "טָהוֹר",
+  "nederlands": "rein",
+  "nummer": 359,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "טהור",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "טָהֵר",
+  "nederlands": "G rein zijn; D reinigen; tD zich reinigen",
+  "nummer": 360,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "טהר",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "rein zijn",
+   "Piel": "reinigen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "טָמֵא",
+  "nederlands": "onrein",
+  "nummer": 361,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "טמא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יַ֫חַד",
+  "nederlands": "gezamenlijk, samen",
+  "nummer": 362,
+  "les": 2,
+  "varianten": [
+   "יַחְדָּו"
+  ],
+  "medeklinkers": "יחד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יֶ֫לֶד",
+  "nederlands": "kind",
+  "nummer": 363,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ילד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יַ֫עַן",
+  "nederlands": "wegens",
+  "nummer": 364,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יענ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יֶ֫תֶר",
+  "nederlands": "rest",
+  "nummer": 365,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יתר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יתר",
+  "nederlands": "N overgelaten worden, overblijven; H overlaten",
+  "nummer": 366,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יתר",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "overgelaten worden, overblijven",
+   "Hifil": "overlaten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יְהוּדִי",
+  "nederlands": "Judeeër; Jood",
+  "nummer": 367,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יהודי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֶּ֫בֶשׁ",
+  "nederlands": "lam",
+  "nummer": 368,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כבש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כפר",
+  "nederlands": "D bedekken, verzoenen",
+  "nummer": 369,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כפר",
+  "geslacht": "",
+  "stammen": {
+   "Piel": "bedekken, verzoenen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כְּרוּב",
+  "nederlands": "cherub",
+  "nummer": 370,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כרוב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כֶּ֫רֶם",
+  "nederlands": "wijngaard, wijnberg",
+  "nummer": 371,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כרמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לָבֵשׁ",
+  "nederlands": "G (bekleed zijn) aantrekken; H bekleden",
+  "nummer": 372,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לבש",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "(bekleed zijn) aantrekken",
+   "Hifil": "bekleden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "למד",
+  "nederlands": "G leren; D onderwijzen",
+  "nummer": 373,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "למד",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "leren",
+   "Piel": "onderwijzen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "מלט",
+  "nederlands": "N zich redden, ontkomen; D redden",
+  "nummer": 374,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מלט",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "zich redden, ontkomen",
+   "Piel": "redden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "מַלְכוּת",
+  "nederlands": "koningschap, regering",
+  "nummer": 375,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מלכות",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֵמָה",
+  "nederlands": "gloed; toorn(gloed)",
+  "nummer": 376,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חמה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חֲצִי",
+  "nederlands": "helft",
+  "nummer": 377,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חצי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "חשׁב",
+  "nederlands": "G achten; denken; N beschouwd worden; D bere- kenen, bedenken",
+  "nummer": 378,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "חשב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "achten",
+   "Nifal": "beschouwd worden",
+   "Piel": "bere- kenen, bedenken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יָדָה",
+  "nederlands": "i G en D werpen, schieten. ii H belijden, loven",
+  "nummer": 379,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ידה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "יטב",
+  "nederlands": "G goed zijn, aangenaam zijn; H goed maken",
+  "nummer": 380,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "יטב",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "goed zijn, aangenaam zijn",
+   "Hifil": "goed maken"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "יָשָׁר",
+  "nederlands": "oprecht, rechtschapen; juist",
+  "nummer": 381,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ישר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "כָּבֵד",
+  "nederlands": "G zwaar zijn; D eren",
+  "nummer": 382,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כבד",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "zwaar zijn",
+   "Piel": "eren"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "כָּנָף",
+  "nederlands": "f) vleugel; uiterste",
+  "nummer": 383,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "כנפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לכד",
+  "nederlands": "veroveren, (ge)vangen (nemen); innemen",
+  "nummer": 384,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לכד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "לָשׁוֹן",
+  "nederlands": "tong; taal",
+  "nummer": 385,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "לשונ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מִגְרָשׁ",
+  "nederlands": "weidegrond",
+  "nummer": 386,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "מגרש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "מַמְלָכָה",
+  "nederlands": "koninkrijk",
+  "nummer": 387,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "ממלכה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נִבָּא",
+  "nederlands": "N en tD in geestvervoering zijn, zich als profeet ge- dragen",
+  "nummer": 388,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נבא",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "en tD in geestvervoering zijn, zich als profeet ge- dragen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "נֶ֫גֶב",
+  "nederlands": "Negeb (GN), (het) Zuiderland",
+  "nummer": 389,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נגב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נגשׁ",
+  "nederlands": "GenNnaderen;Hdoennaderen,dichtbijbrengen",
+  "nummer": 390,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נגש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נָהָר",
+  "nederlands": "stroom, rivier",
+  "nummer": 391,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נהר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "נחם",
+  "nederlands": "N zich troosten, berouw hebben; D troosten; tD wraak beramen; berouw hebben; zich laten troos- ten",
+  "nummer": 392,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "נחמ",
+  "geslacht": "",
+  "stammen": {
+   "Nifal": "zich troosten, berouw hebben",
+   "Piel": "troosten"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "עַמּוּד",
+  "nederlands": "zuil",
+  "nummer": 393,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עמוד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עָפָר",
+  "nederlands": "droge) aarde, stof; graf",
+  "nummer": 394,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עפר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "עֶ֫צֶם",
+  "nederlands": "ge)been(te), bot; (zich)zelf",
+  "nummer": 395,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "עצמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פַּ֫עַם",
+  "nederlands": "v) voet, schrede; keer",
+  "nummer": 396,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פעמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "פְּרִי",
+  "nederlands": "vrucht",
+  "nummer": 397,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "פרי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "צֶ֫דֶק",
+  "nederlands": "gerechtigheid; rechtvaardigheid",
+  "nummer": 398,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "צדק",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קָדוֹשׁ",
+  "nederlands": "heilig",
+  "nummer": 399,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קדוש",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קָהָל",
+  "nederlands": "vergadering, gemeente",
+  "nummer": 400,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קהל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "קטר",
+  "nederlands": "G en D (een offer) in rook doen opgaan",
+  "nummer": 401,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "קטר",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "en D (een offer) in rook doen opgaan"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "רֶ֫כֶב",
+  "nederlands": "strijd)wagen; wagenpark",
+  "nummer": 402,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רכב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "רַק",
+  "nederlands": "slechts, alleen, maar",
+  "nummer": 403,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "רק",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׂרף",
+  "nederlands": "verbranden (trans.)",
+  "nummer": 404,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שרפ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שַׁבָּת",
+  "nederlands": "f.) sabbat",
+  "nummer": 405,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שבת",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שׁלך",
+  "nederlands": "H (weg)werpen, verwerpen",
+  "nummer": 406,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שלכ",
+  "geslacht": "",
+  "stammen": {
+   "Hifil": "(weg)werpen, verwerpen"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שָׁלֵם",
+  "nederlands": "G ‘heel’, volkomen zijn; vrede hebben; D voldoen, betalen, vergelden",
+  "nummer": 407,
+  "les": 2,
+  "varianten": [
+   "שׁלם"
+  ],
+  "medeklinkers": "שלמ",
+  "geslacht": "",
+  "stammen": {
+   "Qal": "‘heel’, volkomen zijn",
+   "Piel": "voldoen, betalen, vergelden"
+  },
+  "woordsoort": "ww"
+ },
+ {
+  "hebreeuws": "שׁפך",
+  "nederlands": "uit)gieten, vergieten",
+  "nummer": 408,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שפכ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "שֶׁ֫קֶר",
+  "nederlands": "leugen",
+  "nummer": 409,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "שקר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ },
+ {
+  "hebreeuws": "תּוֹעֵבָה",
+  "nederlands": "gruwel",
+  "nummer": 410,
+  "les": 2,
+  "varianten": [],
+  "medeklinkers": "תועבה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": ""
+ }
+]

@@ -19,3 +19,9 @@ venv/
 
 # --- gedownloade export uit de app ---
 mijn_grieks_voortgang.csv
+
+# --- Hebreeuws bronmateriaal ---
+# De woordenlijsten (docx/pdf, samen een halve MB) gaan wel mee, zodat
+# gereedschap/bouw_hebreeuws.py overal opnieuw te draaien is. De getagde bijbel is 42 MB
+# en hoort net als de NT-tekst niet in de repo; wat we eruit halen staat in de JSON.
+hebreeuws app/Hele bijbel.xlsx
