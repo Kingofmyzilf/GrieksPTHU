@@ -6414,6 +6414,10 @@ def main():
             if not actief_db:
                 st.warning("Bestand 'actief_beheersen.json' ontbreekt of is niet ingeladen.")
             else:
+                # De oefenkaart komt bovenaan te staan, boven de spiekbrief, de kop en het
+                # niveau-overzicht: je begint met oefenen en de rest staat eronder. Dit vak
+                # wordt verderop gevuld, op de plek waar de kaart in de code staat.
+                _af_vak = st.container()
                 with st.expander("⌨️ Spiekbrief: Hoe typ ik Grieks? (Latijnse toetsen)"):
                     sc1, sc2, sc3 = st.columns(3)
                     sc1.markdown("**Klinkers:**\n* `a` = α\n* `e` = ε\n* `h` = η\n* `i` = ι\n* `o` = ο\n* `u` = υ\n* `w` = ω")
@@ -6610,171 +6614,172 @@ def main():
                                         _alle_cel_idx[x['id']] = x; _alle_cel_sib[x['id']] = _vv
                                         _alle_cel_par[x['id']] = _para_naam
                     _klaar20 = sum(1 for c in cells if _cstreak(c) >= ACTIEF_BEHEERST)
-                    st.markdown(f"### {gekozen_sub}  ({_klaar20}/{len(cells)} cellen beheerst)")
+                    with _af_vak:
+                        st.markdown(f"### {gekozen_sub}  ({_klaar20}/{len(cells)} cellen beheerst)")
 
-                    with st.expander("📖 Bekijk het rijtje", expanded=(_klaar20 == 0)):
-                        for c in cells:
-                            st.markdown(f"- **{c['label']}** — {c.get('stam','')}:blue[{c.get('uitgang','')}]")
-
-                    # De feedback hoort bij de vórige kaart maar wordt hieronder getoond,
-                    # vlak boven de nieuwe vraag. Bovenaan het tabblad viel hij buiten beeld
-                    # zodra het invoerveld de focus pakte en de pagina naar beneden sprong.
-                    def _toon_af_feedback():
-                        _fb = st.session_state.get('af_feedback')
-                        if not _fb:
-                            return
-                        {"success": st.success, "warning": st.warning}.get(
-                            _fb["type"], st.error)(_fb["msg"])
-                        st.session_state.af_feedback = None
-
-                    def _af_score(_cid, _delta, _goed):
-                        _rec = st.session_state.actief_stats.setdefault(_cid, {'g': 0, 'f': 0, 'streak': 0})
-                        if _goed: _rec['g'] = int(_rec.get('g', 0)) + 1
-                        else: _rec['f'] = int(_rec.get('f', 0)) + 1
-                        _rec['streak'] = max(0, int(_rec.get('streak', 0)) + _delta)
-
-                    _pkey = f"{gekozen_niv}|{gekozen_cat}|{gekozen_sub}"
-
-                    if cells and all(_cstreak(c) >= ACTIEF_BEHEERST for c in cells):
-                        # MEESTERPROEF: het hele rijtje in één keer reproduceren.
-                        st.success("💪 Alle cellen beheerst — meesterproef: reproduceer het hele rijtje.")
-                        if st.session_state.get('actief_lp_key') != _pkey:
-                            st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}
-                            st.session_state.actief_lp_key = _pkey
-                        _cols = st.columns(2); _inp = {}
-                        for _i, c in enumerate(cells):
-                            with _cols[_kolom_index(_i, len(cells))]:
-                                _s = st.session_state.actief_lp_state.get(c['id'], {"correct": False, "value": ""})
-                                if _s["correct"]: st.success(f"**{c['label']}:** {c['vorm']}")
-                                else: _inp[c['id']] = st.text_input(f"**{c['label']}**", value=_s["value"], key=f"lpm_{c['id']}")
-                        if not all(s["correct"] for s in st.session_state.actief_lp_state.values()):
-                            if st.button("✓ Nakijken", type="primary", key="lpm_nakijk"):
-                                for c in cells:
-                                    if not st.session_state.actief_lp_state[c['id']]["correct"]:
-                                        if grieks_vorm_ok(_inp.get(c['id'], ""), c['vorm']):
-                                            st.session_state.actief_lp_state[c['id']] = {"correct": True, "value": c['vorm']}
-                                        else:
-                                            st.session_state.actief_lp_state[c['id']]["value"] = ""
-                                            st.session_state.pop(f"lpm_{c['id']}", None)   # veld echt legen
-                                st.rerun()
-                        else:
-                            st.success("🏆 Volledig foutloos — dit paradigma zit écht vast!")
-                            st.balloons()
-                            if st.button("🔄 Opnieuw", key="lpm_reset"):
-                                st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}
-                                for c in cells: st.session_state.pop(f"lpm_{c['id']}", None)   # velden echt legen
-                                st.rerun()
-                    else:
-                        # PER-CEL SCAFFOLD: bouw een rij kaarten op basis van de streak per cel.
-                        def _bouw_q():
-                            _q = []
+                        with st.expander("📖 Bekijk het rijtje", expanded=(_klaar20 == 0)):
                             for c in cells:
-                                s = _cstreak(c)
-                                if s >= ACTIEF_BEHEERST: continue
-                                if s <= 0: _q.append((c['id'], 'Leer')); _q.append((c['id'], 'MC'))
-                                elif s <= 9: _q.append((c['id'], 'MC'))
-                                else: _q.append((c['id'], 'Typen'))
-                            # Retentie: meng een paar al beheerste cellen uit ándere paradigma's erdoorheen,
-                            # zodat oude stof erin blijft zitten.
-                            _huidige_ids = {c['id'] for c in cells}
-                            _beheerst = [cid for cid in _alle_cel_idx
-                                         if cid not in _huidige_ids
-                                         and int((st.session_state.actief_stats.get(cid) or {}).get('streak', 0)) >= ACTIEF_BEHEERST]
-                            if _beheerst and _q:
-                                # ACHTERAAN, niet ertussendoor. Een vorm uit een ander rijtje
-                                # middenin dit paradigma is geen herhaling maar een valstrik:
-                                # je zit in het hoofd van 'jij/jullie' en krijgt dan de acc van
-                                # 'ik/wij'. Eerst dit rijtje afmaken, dan pas ophalen.
-                                _q.extend((_rid, 'Herhaal')
-                                          for _rid in r_engine.sample(_beheerst, min(2, len(_beheerst))))
-                            elif _beheerst:
-                                # Niets nieuws meer te leren in dit rijtje → puur herhaal-modus van oude stof.
-                                _n = min(8, len(_beheerst))
-                                _q = [(rid, 'Herhaal') for rid in r_engine.sample(_beheerst, _n)]
-                            return _q
-                        if st.session_state.get('af_qkey') != _pkey or not st.session_state.get('af_q'):
-                            st.session_state.af_q = _bouw_q()
-                            st.session_state.af_qkey = _pkey
-                            st.session_state.af_opties = None
-                        _q = st.session_state.af_q
-                        if not _q:
-                            st.info("Geen cellen te oefenen in dit paradigma.")
+                                st.markdown(f"- **{c['label']}** — {c.get('stam','')}:blue[{c.get('uitgang','')}]")
+
+                        # De feedback hoort bij de vórige kaart maar wordt hieronder getoond,
+                        # vlak boven de nieuwe vraag. Bovenaan het tabblad viel hij buiten beeld
+                        # zodra het invoerveld de focus pakte en de pagina naar beneden sprong.
+                        def _toon_af_feedback():
+                            _fb = st.session_state.get('af_feedback')
+                            if not _fb:
+                                return
+                            {"success": st.success, "warning": st.warning}.get(
+                                _fb["type"], st.error)(_fb["msg"])
+                            st.session_state.af_feedback = None
+
+                        def _af_score(_cid, _delta, _goed):
+                            _rec = st.session_state.actief_stats.setdefault(_cid, {'g': 0, 'f': 0, 'streak': 0})
+                            if _goed: _rec['g'] = int(_rec.get('g', 0)) + 1
+                            else: _rec['f'] = int(_rec.get('f', 0)) + 1
+                            _rec['streak'] = max(0, int(_rec.get('streak', 0)) + _delta)
+
+                        _pkey = f"{gekozen_niv}|{gekozen_cat}|{gekozen_sub}"
+
+                        if cells and all(_cstreak(c) >= ACTIEF_BEHEERST for c in cells):
+                            # MEESTERPROEF: het hele rijtje in één keer reproduceren.
+                            st.success("💪 Alle cellen beheerst — meesterproef: reproduceer het hele rijtje.")
+                            if st.session_state.get('actief_lp_key') != _pkey:
+                                st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}
+                                st.session_state.actief_lp_key = _pkey
+                            _cols = st.columns(2); _inp = {}
+                            for _i, c in enumerate(cells):
+                                with _cols[_kolom_index(_i, len(cells))]:
+                                    _s = st.session_state.actief_lp_state.get(c['id'], {"correct": False, "value": ""})
+                                    if _s["correct"]: st.success(f"**{c['label']}:** {c['vorm']}")
+                                    else: _inp[c['id']] = st.text_input(f"**{c['label']}**", value=_s["value"], key=f"lpm_{c['id']}")
+                            if not all(s["correct"] for s in st.session_state.actief_lp_state.values()):
+                                if st.button("✓ Nakijken", type="primary", key="lpm_nakijk"):
+                                    for c in cells:
+                                        if not st.session_state.actief_lp_state[c['id']]["correct"]:
+                                            if grieks_vorm_ok(_inp.get(c['id'], ""), c['vorm']):
+                                                st.session_state.actief_lp_state[c['id']] = {"correct": True, "value": c['vorm']}
+                                            else:
+                                                st.session_state.actief_lp_state[c['id']]["value"] = ""
+                                                st.session_state.pop(f"lpm_{c['id']}", None)   # veld echt legen
+                                    st.rerun()
+                            else:
+                                st.success("🏆 Volledig foutloos — dit paradigma zit écht vast!")
+                                st.balloons()
+                                if st.button("🔄 Opnieuw", key="lpm_reset"):
+                                    st.session_state.actief_lp_state = {c['id']: {"correct": False, "value": ""} for c in cells}
+                                    for c in cells: st.session_state.pop(f"lpm_{c['id']}", None)   # velden echt legen
+                                    st.rerun()
                         else:
-                            cid, sub = _q[0]
-                            # Eerst in het HUIDIGE paradigma zoeken: 59 cel-ids komen in meerdere
-                            # paradigma's voor, dus de globale index mag alleen als terugval dienen
-                            # (anders krijg je de vorm van een ander rijtje te zien én beoordeeld).
-                            cell = next((c for c in cells if c['id'] == cid), None) or _alle_cel_idx.get(cid)
-                            if cell is None:
-                                _q.pop(0); st.rerun()
-                            _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen', 'Herhaal': '🔁 Herhaling (oude stof)'}.get(sub, sub)
-                            _celpar = _alle_cel_par.get(cid, gekozen_sub)   # welk rijtje deze cel hoort bij
-                            _arec = st.session_state.actief_stats.get(cid) or {}
-                            st.caption(f"{_slabel} · ✅ {int(_arec.get('g', 0))} / ❌ {int(_arec.get('f', 0))} · "
-                                       f"🔥 streak {_cstreak(cell)}/{ACTIEF_BEHEERST} · nog {len(_q)} kaart(en) in de rij")
-                            if sub == 'Herhaal':
-                                st.caption("↩️ Herhaling van oude stof — even ophalen zodat het erin blijft zitten.")
-                            # Paradigma NAAST het cel-label, zodat 'Gen ev van ἐγώ' niet met 'Gen ev van σύ' verwart.
-                            _toon_af_feedback()
-                            st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']} "
-                                        f"<span style='font-size:17px;color:#9aa3af;font-weight:400'>van {_celpar}</span></div>",
-                                        unsafe_allow_html=True)
-
-                            def _volgende(requeue=False):
-                                if requeue and _q: _q.append(_q[0])
-                                if _q: _q.pop(0)
+                            # PER-CEL SCAFFOLD: bouw een rij kaarten op basis van de streak per cel.
+                            def _bouw_q():
+                                _q = []
+                                for c in cells:
+                                    s = _cstreak(c)
+                                    if s >= ACTIEF_BEHEERST: continue
+                                    if s <= 0: _q.append((c['id'], 'Leer')); _q.append((c['id'], 'MC'))
+                                    elif s <= 9: _q.append((c['id'], 'MC'))
+                                    else: _q.append((c['id'], 'Typen'))
+                                # Retentie: meng een paar al beheerste cellen uit ándere paradigma's erdoorheen,
+                                # zodat oude stof erin blijft zitten.
+                                _huidige_ids = {c['id'] for c in cells}
+                                _beheerst = [cid for cid in _alle_cel_idx
+                                             if cid not in _huidige_ids
+                                             and int((st.session_state.actief_stats.get(cid) or {}).get('streak', 0)) >= ACTIEF_BEHEERST]
+                                if _beheerst and _q:
+                                    # ACHTERAAN, niet ertussendoor. Een vorm uit een ander rijtje
+                                    # middenin dit paradigma is geen herhaling maar een valstrik:
+                                    # je zit in het hoofd van 'jij/jullie' en krijgt dan de acc van
+                                    # 'ik/wij'. Eerst dit rijtje afmaken, dan pas ophalen.
+                                    _q.extend((_rid, 'Herhaal')
+                                              for _rid in r_engine.sample(_beheerst, min(2, len(_beheerst))))
+                                elif _beheerst:
+                                    # Niets nieuws meer te leren in dit rijtje → puur herhaal-modus van oude stof.
+                                    _n = min(8, len(_beheerst))
+                                    _q = [(rid, 'Herhaal') for rid in r_engine.sample(_beheerst, _n)]
+                                return _q
+                            if st.session_state.get('af_qkey') != _pkey or not st.session_state.get('af_q'):
+                                st.session_state.af_q = _bouw_q()
+                                st.session_state.af_qkey = _pkey
                                 st.session_state.af_opties = None
+                            _q = st.session_state.af_q
+                            if not _q:
+                                st.info("Geen cellen te oefenen in dit paradigma.")
+                            else:
+                                cid, sub = _q[0]
+                                # Eerst in het HUIDIGE paradigma zoeken: 59 cel-ids komen in meerdere
+                                # paradigma's voor, dus de globale index mag alleen als terugval dienen
+                                # (anders krijg je de vorm van een ander rijtje te zien én beoordeeld).
+                                cell = next((c for c in cells if c['id'] == cid), None) or _alle_cel_idx.get(cid)
+                                if cell is None:
+                                    _q.pop(0); st.rerun()
+                                _slabel = {'Leer': '🧠 Leer', 'MC': '🔢 Meerkeuze', 'Typen': '⌨️ Typen', 'Herhaal': '🔁 Herhaling (oude stof)'}.get(sub, sub)
+                                _celpar = _alle_cel_par.get(cid, gekozen_sub)   # welk rijtje deze cel hoort bij
+                                _arec = st.session_state.actief_stats.get(cid) or {}
+                                st.caption(f"{_slabel} · ✅ {int(_arec.get('g', 0))} / ❌ {int(_arec.get('f', 0))} · "
+                                           f"🔥 streak {_cstreak(cell)}/{ACTIEF_BEHEERST} · nog {len(_q)} kaart(en) in de rij")
+                                if sub == 'Herhaal':
+                                    st.caption("↩️ Herhaling van oude stof — even ophalen zodat het erin blijft zitten.")
+                                # Paradigma NAAST het cel-label, zodat 'Gen ev van ἐγώ' niet met 'Gen ev van σύ' verwart.
+                                _toon_af_feedback()
+                                st.markdown(f"<div class='grieks-woord' style='font-size:30px'>{cell['label']} "
+                                            f"<span style='font-size:17px;color:#9aa3af;font-weight:400'>van {_celpar}</span></div>",
+                                            unsafe_allow_html=True)
 
-                            if sub == 'Leer':
-                                if cell.get('uitgang'):
-                                    _antw = f"{cell.get('stam','')}**{cell['uitgang']}** = **{cell['vorm']}**"
-                                else:
-                                    _antw = f"**{cell['vorm']}**"
-                                st.info(f"**{cell['label']}** → {_antw}"
-                                        + (f"  \n_{cell.get('toelichting','')}_" if cell.get('toelichting') else ""))
-                                if st.button("Volgende", type="primary", key=f"afl_{cid}"):
-                                    _volgende(); st.rerun()
-                            elif sub == 'MC':
-                                if not st.session_state.get('af_opties'):
-                                    _pool = list({v for v in _alle_cel_sib.get(cid, [c['vorm'] for c in cells]) if v != cell['vorm']})
-                                    r_engine.shuffle(_pool)
-                                    _opts = [cell['vorm']] + _pool[:3]
-                                    r_engine.shuffle(_opts)
-                                    st.session_state.af_opties = _opts
-                                _mcols = st.columns(2)
-                                for _oi, _opt in enumerate(st.session_state.af_opties):
-                                    if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}",
-                                                          use_container_width=True):
-                                        if _opt == cell['vorm']:
-                                            _af_score(cid, 2, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
-                                        else:
-                                            _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
-                                        trigger_save(); st.rerun()
-                            else:  # Typen
-                                forceer_focus()
-                                with st.form(f"aft_{cid}", clear_on_submit=True):
-                                    _in = st.text_input("Typ de vorm (Latijnse toetsen mag)")
-                                    if st.form_submit_button("✓ Nakijken", type="primary"):
-                                        if grieks_vorm_ok(_in, cell['vorm']):
-                                            _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
-                                        else:
-                                            _af_score(cid, -2, False)
-                                            _msg = f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"
-                                            _anders = welke_vorm_typte_je(_in, cells, cid)
-                                            if _anders:
-                                                _msg += (_NR_ZACHT + f"↔ Jij typte de **{_anders}** "
-                                                         f"van {_celpar}. Gevraagd was de "
-                                                         f"**{cell['label']}** — let op de uitgang.")
-                                            st.session_state.af_feedback = {"type": "error", "msg": _msg}
-                                            _volgende(requeue=True)
-                                        trigger_save(); st.rerun()
+                                def _volgende(requeue=False):
+                                    if requeue and _q: _q.append(_q[0])
+                                    if _q: _q.pop(0)
+                                    st.session_state.af_opties = None
 
-                            # 'Ik weet het niet' — toont het antwoord zonder aftrek en zet de kaart weer
-                            # achteraan in de rij, zodat je 'm straks nog een keer echt ophaalt.
-                            if sub != 'Leer':
-                                if st.button("🤔 Ik weet het niet — toon het antwoord", key=f"afweet_{cid}"):
-                                    st.session_state.af_feedback = {"type": "info", "msg": f"💡 {_celpar} · {cell['label']} = **{cell['vorm']}** — geen aftrek, je krijgt 'm zo nog een keer."}
-                                    _volgende(requeue=True); st.rerun()
+                                if sub == 'Leer':
+                                    if cell.get('uitgang'):
+                                        _antw = f"{cell.get('stam','')}**{cell['uitgang']}** = **{cell['vorm']}**"
+                                    else:
+                                        _antw = f"**{cell['vorm']}**"
+                                    st.info(f"**{cell['label']}** → {_antw}"
+                                            + (f"  \n_{cell.get('toelichting','')}_" if cell.get('toelichting') else ""))
+                                    if st.button("Volgende", type="primary", key=f"afl_{cid}"):
+                                        _volgende(); st.rerun()
+                                elif sub == 'MC':
+                                    if not st.session_state.get('af_opties'):
+                                        _pool = list({v for v in _alle_cel_sib.get(cid, [c['vorm'] for c in cells]) if v != cell['vorm']})
+                                        r_engine.shuffle(_pool)
+                                        _opts = [cell['vorm']] + _pool[:3]
+                                        r_engine.shuffle(_opts)
+                                        st.session_state.af_opties = _opts
+                                    _mcols = st.columns(2)
+                                    for _oi, _opt in enumerate(st.session_state.af_opties):
+                                        if _mcols[_oi % 2].button(_opt, key=f"afm_{cid}_{_oi}",
+                                                              use_container_width=True):
+                                            if _opt == cell['vorm']:
+                                                _af_score(cid, 2, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
+                                            else:
+                                                _af_score(cid, -2, False); st.session_state.af_feedback = {"type": "error", "msg": f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}** (jij koos {_opt})"}; _volgende(requeue=True)
+                                            trigger_save(); st.rerun()
+                                else:  # Typen
+                                    forceer_focus()
+                                    with st.form(f"aft_{cid}", clear_on_submit=True):
+                                        _in = st.text_input("Typ de vorm (Latijnse toetsen mag)")
+                                        if st.form_submit_button("✓ Nakijken", type="primary"):
+                                            if grieks_vorm_ok(_in, cell['vorm']):
+                                                _af_score(cid, 4, True); dagdoel_plus('actief'); st.session_state.af_feedback = {"type": "success", "msg": f"✓ Goed! {_celpar} · {cell['label']} = {cell['vorm']}"}; _volgende()
+                                            else:
+                                                _af_score(cid, -2, False)
+                                                _msg = f"✗ {_celpar} · {cell['label']} = **{cell['vorm']}**"
+                                                _anders = welke_vorm_typte_je(_in, cells, cid)
+                                                if _anders:
+                                                    _msg += (_NR_ZACHT + f"↔ Jij typte de **{_anders}** "
+                                                             f"van {_celpar}. Gevraagd was de "
+                                                             f"**{cell['label']}** — let op de uitgang.")
+                                                st.session_state.af_feedback = {"type": "error", "msg": _msg}
+                                                _volgende(requeue=True)
+                                            trigger_save(); st.rerun()
+
+                                # 'Ik weet het niet' — toont het antwoord zonder aftrek en zet de kaart weer
+                                # achteraan in de rij, zodat je 'm straks nog een keer echt ophaalt.
+                                if sub != 'Leer':
+                                    if st.button("🤔 Ik weet het niet — toon het antwoord", key=f"afweet_{cid}"):
+                                        st.session_state.af_feedback = {"type": "info", "msg": f"💡 {_celpar} · {cell['label']} = **{cell['vorm']}** — geen aftrek, je krijgt 'm zo nog een keer."}
+                                        _volgende(requeue=True); st.rerun()
 
                     with st.expander("🗺️ Alle paradigma-levels"):
                         for l in _af_levels:
@@ -6791,6 +6796,10 @@ def main():
             
             if not stamtijden_db: st.warning("Bestand 'stamtijden_verrijkt.json' ontbreekt.")
             else:
+                # De oefenkaart komt helemaal bovenaan, boven de spiekbrief en de kop:
+                # je begint met oefenen, de rest staat eronder. Dit vak wordt verderop
+                # gevuld, ná de instellingen — zie de opmerking daar.
+                _stam_vak = st.container()
                 with st.expander("⌨️ Spiekbrief: Hoe typ ik Grieks? (Latijnse toetsen)"):
                     sc1, sc2, sc3 = st.columns(3)
                     sc1.markdown("**Klinkers:**\n* `a` = α, `e` = ε, `h` = η\n* `i` = ι, `o` = ο, `u` = υ, `w` = ω")
@@ -7167,9 +7176,8 @@ def main():
                                         st.rerun()
 
                 else:
-                    # Zelfde opzet als bij Woordenschat: de oefenkaart bovenaan, de
-                    # instellingen eronder en ingeklapt. st.container() houdt de plek vrij.
-                    _stam_vak = st.container()
+                    # Het vak staat bovenaan het tabblad aangemaakt; hier komen alleen
+                    # de instellingen, ingeklapt zodra je een keer bent begonnen.
                     with st.expander("⚙️ Oefening kiezen en instellen",
                                      expanded=not st.session_state.get('_stam_gestart')):
                         # Leerpad is nu een eigen modus-bolletje; in de andere modi kies je hier de bron.
@@ -7451,10 +7459,10 @@ def main():
             if not struct_db: 
                 st.warning("Bestand 'structuurwoorden.json' ontbreekt.")
             else:
-                st.subheader("🧱 Structuurwoorden Herkennen & Syntaxis")
-                # Oefenkaart bovenaan, instellingen eronder en ingeklapt — zelfde opzet
-                # als bij Woordenschat en Stamtijden.
+                # De oefenkaart bovenaan, boven de kop: je begint met oefenen en de rest
+                # staat eronder. Dit vak wordt verderop gevuld, ná de instellingen.
                 _struct_vak = st.container()
+                st.subheader("🧱 Structuurwoorden Herkennen & Syntaxis")
                 with st.expander("⚙️ Oefening kiezen en instellen",
                                  expanded=not st.session_state.get('_struct_gestart')):
                     # --- DE NIEUWE LEER-SPOOR FILTER ---
