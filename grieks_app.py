@@ -1733,6 +1733,9 @@ def oefenpagina():
                 (fase, "", MERK if fase != "Nieuw" else ZACHT),
                 (int(k.get("streak", 0) or 0), "streak", TEKST),
                 (_goedfout(k.get("score_goed"), k.get("score_fout")), "", TEKST),
+                # Alleen dag en maand: het jaar zegt niets en de volle datum paste niet.
+                (_kort_datum(k.get("laatst_geoefend"))
+                 if k.get("laatst_geoefend") else "", "", ZACHT),
                 (len(sessie.wachtrij), "te gaan", ZACHT),
             ]))
 
@@ -2361,6 +2364,11 @@ class StamSessie:
                                        -int(v["verb"].get("frequentie", 0) or 0)))
         self.prefs = p
         self.vragen = vragen[:int(p["stam_aantal"])]
+        # De selectie bepaalt wélke vormen je krijgt (zwakste eerst, meest voorkomend,
+        # het rijtje van dit werkwoord); de volgorde waarin ze langskomen is daarna
+        # willekeurig. Anders liep je het rijtje in vaste volgorde af en wist je de
+        # volgende tijd voordat je gekeken had — precies wat deze oefening moet trainen.
+        random.shuffle(self.vragen)
         self.i = 0
         self.goed = 0
         self.fout = 0
@@ -2368,6 +2376,7 @@ class StamSessie:
         self.tijd_keuze = None
         self.vraag_praesens = True
         self.bezig = False
+        self.gezien = set()        # vormen waarvan je het antwoord al liet zien
 
     @property
     def huidig(self):
@@ -2656,6 +2665,9 @@ def stampagina():
             # gekozen tijd valt er niets na te kijken; even zeggen wat er nog mist.
             ui.notify("Kies eerst een tijd.", position="top", color="dark")
             return
+        if sessie.tijd_keuze is None:
+            await weet_niet(v)
+            return
         tijd_ok = sessie.tijd_keuze == v["tijd"]
         pr_ok = (not sessie.vraag_praesens
                  or bool(motor.grieks_vorm_ok(invoer.value or "", v["praesens"])))
@@ -2668,7 +2680,11 @@ def stampagina():
         voor = dict(e)
         e["g"] = int(e.get("g", 0)) + int(juist)
         e["f"] = int(e.get("f", 0)) + int(not juist)
-        e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+        # Zag je het antwoord al via 'Ik weet het niet', dan blijft de streak staan waar
+        # hij stond: goed benoemen wat je net gelezen hebt is nog geen kennis. Aftrek is
+        # het ook niet — je was eerlijk.
+        if not (juist and v["sleutel"] in sessie.gezien):
+            e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
         g.tel_dag()
         if juist:
             g.dagdoel_plus("stam")
@@ -2703,10 +2719,21 @@ def stampagina():
             wat = []
             if not tijd_ok:
                 wat.append(f"de tijd was <b>{kleur_gram(TIJD_KORT[v['tijd']])}</b>")
+                # Wat je wél aanklikte, en hoe díé vorm eruit had gezien. Daar leer je van
+                # onderscheiden: je ziet de twee naast elkaar in plaats van alleen te horen
+                # dat je het mis had.
+                gekozen = sessie.tijd_keuze
+                andere = (v["verb"].get("stamtijden") or {}).get(gekozen, "")
+                if gekozen and motor._stam_vorm_ok(andere):
+                    wat.append(f"jij koos {kleur_gram(TIJD_KORT[gekozen])}, en dat is "
+                               f"<span class='grieks'>{andere}</span>")
+                elif gekozen:
+                    wat.append(f"jij koos {kleur_gram(TIJD_KORT[gekozen])}; die vorm "
+                               f"heeft dit werkwoord niet")
             if not pr_ok:
                 wat.append(f"het werkwoord was <b>{v['praesens']}</b>")
-            deel = (f"<div style='color:{ZACHT};font-size:14px;margin-top:10px'>"
-                    f"{' · '.join(wat)}</div>")
+            deel = (f"<div style='color:{ZACHT};font-size:14px;margin-top:10px;"
+                    f"line-height:1.6'>{'<br>'.join(wat)}</div>")
         kleur = GOED if juist else FOUT
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
         # De feedback vervangt de vraag: vijf tijdknoppen plus een antwoordkaart
@@ -2739,6 +2766,40 @@ def stampagina():
                                lambda _=None: toch_goed(v, e, dict(voor)))
         if opgeslagen:
             opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+        _uitslag_staat(sessie)
+
+    async def weet_niet(v):
+        """Eerlijk zeggen dat je het niet weet kost niets.
+
+        Hiervoor telde deze knop meteen als een volle misser: je streak ging in één klap
+        naar nul terwijl je juist eerlijk was. Nu zie je het antwoord, blijft je stand
+        staan, en komt de vorm achteraan in de ronde terug — dan levert hij geen
+        streak-punten meer op, want je hebt hem al gezien. Zelfde afspraak als bij de
+        woordenschat."""
+        sessie.beoordeeld = True
+        sessie.gezien.add(v["sleutel"])
+        sessie.vragen.append(v)
+        tijdknoppen.set_visibility(False)
+        statusbalk.set_visibility(False)
+        vormlabel.set_visibility(False)
+        vraagsoort.set_visibility(False)
+        toon_typveld(invoer, False)
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(f"<div style='background:rgba(51,204,255,.09);border:1px solid "
+                    f"{MERK}40;border-radius:16px;padding:26px 18px;text-align:center;"
+                    f"width:100%'><div style='color:{MERK};font-weight:700;font-size:19px'>"
+                    f"💡 Het antwoord</div>"
+                    f"<div class='grieks' style='font-size:44px;color:{TEKST};"
+                    f"margin-top:14px;line-height:1.15'>{v['vorm']}</div>"
+                    f"<div style='color:{TEKST};font-size:17px;margin-top:8px'>"
+                    f"{kleur_gram(TIJD_KORT[v['tijd']])} van "
+                    f"<span class='grieks' style='font-size:20px'>{v['praesens']}</span>"
+                    f"</div><div style='color:{ZACHT};font-size:15px;margin-top:2px'>"
+                    f"{v['verb'].get('betekenis', '')}</div>"
+                    f"<div style='color:{ZACHT};font-size:12.5px;margin-top:18px'>"
+                    f"Geen aftrek. Deze vorm komt straks nog een keer.</div></div>")
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
