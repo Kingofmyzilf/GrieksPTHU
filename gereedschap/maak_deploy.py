@@ -39,8 +39,12 @@ HOUDEN = {
 
 
 def git(*args, **kw):
+    # encoding expliciet op utf-8: zonder dat pakt Python op Windows de codepagina van het
+    # systeem, en dan komt het bolletje in de Hebreeuwse bestandsnamen er als 'â€¢' uit —
+    # drie tekens waar er één hoort, en dus een pad dat niet bestaat.
     return subprocess.run(["git", "-C", REPO, *args], check=kw.pop("check", True),
-                          capture_output=True, text=True, **kw)
+                          capture_output=True, text=True, encoding="utf-8",
+                          errors="replace", **kw)
 
 
 def bestanden_in(tak):
