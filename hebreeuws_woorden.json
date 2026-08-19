@@ -28,7 +28,9 @@
   ],
   "lemma_tekst": "אֱלֹהִים",
   "translit": "’ĕ·lō·hîm",
-  "lijstvorm": "אֱלהִֹים"
+  "lijstvorm": "אֱלהִֹים",
+  "anker": "⛪",
+  "beeld": "Elohim; de -el in Israël"
  },
  {
   "hebreeuws": "אֲנִי",
@@ -58,7 +60,9 @@
    }
   ],
   "lemma_tekst": "אֲנִי",
-  "translit": "’ă·nî"
+  "translit": "’ă·nî",
+  "anker": "🙋",
+  "beeld": "ani ma'amin: ik geloof"
  },
  {
   "hebreeuws": "אֲשֶׁר",
@@ -88,7 +92,9 @@
    }
   ],
   "lemma_tekst": "אֲשֶׁר",
-  "translit": "’ă·šer"
+  "translit": "’ă·šer",
+  "anker": "🔗",
+  "beeld": "koppelt een bijzin aan"
  },
  {
   "hebreeuws": "אִישׁ",
@@ -118,7 +124,9 @@
    }
   ],
   "lemma_tekst": "אִישׁ",
-  "translit": "’îš"
+  "translit": "’îš",
+  "anker": "👨",
+  "beeld": "isj; een vrouw heet isja"
  },
  {
   "hebreeuws": "אִם",
@@ -148,7 +156,9 @@
    }
   ],
   "lemma_tekst": "אִם",
-  "translit": "’im-"
+  "translit": "’im-",
+  "anker": "🔀",
+  "beeld": "voorwaarde vooraf"
  },
  {
   "hebreeuws": "אֵת",
@@ -178,7 +188,9 @@
    }
   ],
   "lemma_tekst": "אֶת",
-  "translit": "’eṯ-"
+  "translit": "’eṯ-",
+  "anker": "➡️",
+  "beeld": "wijst het lijdend voorwerp aan"
  },
  {
   "hebreeuws": "אֶרֶץ",
@@ -208,7 +220,9 @@
    }
   ],
   "lemma_tekst": "אֶרֶץ",
-  "translit": "’e·reṣ"
+  "translit": "’e·reṣ",
+  "anker": "🌍",
+  "beeld": "Eretz Jisrael"
  },
  {
   "hebreeuws": "אֶחָד",
@@ -238,7 +252,9 @@
    }
   ],
   "lemma_tekst": "אֶחָד",
-  "translit": "’e·ḥāḏ"
+  "translit": "’e·ḥāḏ",
+  "anker": "1️⃣",
+  "beeld": "sjema: JHWH echad"
  },
  {
   "hebreeuws": "אֶל",
@@ -268,7 +284,9 @@
    }
   ],
   "lemma_tekst": "אֶל",
-  "translit": "’el-"
+  "translit": "’el-",
+  "anker": "➡️",
+  "beeld": "beweging ergens naartoe"
  },
  {
   "hebreeuws": "אָב",
@@ -298,7 +316,9 @@
    }
   ],
   "lemma_tekst": "אָבִיו",
-  "translit": "’ā·ḇîw"
+  "translit": "’ā·ḇîw",
+  "anker": "👨",
+  "beeld": "abba, Ab-raham"
  },
  {
   "hebreeuws": "אכל",
@@ -332,7 +352,9 @@
    }
   ],
   "lemma_tekst": "יֹאכַל",
-  "translit": "yō·ḵal"
+  "translit": "yō·ḵal",
+  "anker": "🍽️",
+  "beeld": "aanschuiven aan tafel"
  },
  {
   "hebreeuws": "אמר",
@@ -366,7 +388,9 @@
    }
   ],
   "lemma_tekst": "אָמַר",
-  "translit": "’ā·mar"
+  "translit": "’ā·mar",
+  "anker": "🗣️",
+  "beeld": "wajjomer: en hij zei"
  },
  {
   "hebreeuws": "בְּ",
@@ -382,7 +406,9 @@
   "strong": "",
   "parsing_code": "Prep-b",
   "frequentie": 14265,
-  "vindplaatsen": []
+  "vindplaatsen": [],
+  "anker": "📍",
+  "beeld": "be-resjit: ín het begin"
  },
  {
   "hebreeuws": "בֵּן",
@@ -412,7 +438,9 @@
    }
   ],
   "lemma_tekst": "בְּנֵי",
-  "translit": "ben-"
+  "translit": "ben-",
+  "anker": "👦",
+  "beeld": "Ben-jamin, B'nai B'rith"
  },
  {
   "hebreeuws": "בַּיִת",
@@ -442,7 +470,9 @@
    }
   ],
   "lemma_tekst": "בֵּית",
-  "translit": "bêṯ"
+  "translit": "bêṯ",
+  "anker": "🏠",
+  "beeld": "Beth-lehem, Beth-el"
  },
  {
   "hebreeuws": "בּוֹא",
@@ -475,7 +505,9 @@
    }
   ],
   "lemma_tekst": "בָּא",
-  "translit": "bā"
+  "translit": "bā",
+  "anker": "🚪",
+  "beeld": "naar binnen gaan"
  },
  {
   "hebreeuws": "דָּבָר",
@@ -505,7 +537,9 @@
    }
   ],
   "lemma_tekst": "דִּבְרֵי",
-  "translit": "diḇ·rê"
+  "translit": "diḇ·rê",
+  "anker": "💬",
+  "beeld": "Devarim: Deuteronomium"
  },
  {
   "hebreeuws": "דָּוִד",
@@ -535,7 +569,9 @@
    }
   ],
   "lemma_tekst": "דָּוִד",
-  "translit": "dā·wiḏ"
+  "translit": "dā·wiḏ",
+  "anker": "👑",
+  "beeld": "koning David"
  },
  {
   "hebreeuws": "דבר",
@@ -567,7 +603,9 @@
    }
   ],
   "lemma_tekst": "דִּבֶּר",
-  "translit": "dib·ber"
+  "translit": "dib·ber",
+  "anker": "🗣️",
+  "beeld": "werkwoord bij dabar"
  },
  {
   "hebreeuws": "הֵן",
@@ -599,7 +637,9 @@
    }
   ],
   "lemma_tekst": "הִנְנִי",
-  "translit": "hin·nî"
+  "translit": "hin·nî",
+  "anker": "👀",
+  "beeld": "kijk, let op"
  },
  {
   "hebreeuws": "הַ",
@@ -615,7 +655,9 @@
   "strong": "",
   "parsing_code": "Art",
   "frequentie": 30556,
-  "vindplaatsen": []
+  "vindplaatsen": [],
+  "anker": "👉",
+  "beeld": "wijst één bepaald ding aan"
  },
  {
   "hebreeuws": "הָיָה",
@@ -647,7 +689,9 @@
    }
   ],
   "lemma_tekst": "יִהְיֶה",
-  "translit": "yih·yeh"
+  "translit": "yih·yeh",
+  "anker": "⚪",
+  "beeld": "zit in de naam JHWH"
  },
  {
   "hebreeuws": "הוּא",
@@ -677,7 +721,9 @@
    }
   ],
   "lemma_tekst": "הוּא",
-  "translit": "hū"
+  "translit": "hū",
+  "anker": "👤",
+  "beeld": "wijst naar hem, ginds"
  },
  {
   "hebreeuws": "הלך",
@@ -710,7 +756,9 @@
    }
   ],
   "lemma_tekst": "לֵךְ",
-  "translit": "lêḵ"
+  "translit": "lêḵ",
+  "anker": "🚶",
+  "beeld": "halacha: de weg gaan"
  },
  {
   "hebreeuws": "וְ",
@@ -726,7 +774,9 @@
   "strong": "",
   "parsing_code": "Conj-w",
   "frequentie": 50323,
-  "vindplaatsen": []
+  "vindplaatsen": [],
+  "anker": "➕",
+  "beeld": "plakt alles aan elkaar"
  },
  {
   "hebreeuws": "זֶה",
@@ -756,7 +806,9 @@
    }
   ],
   "lemma_tekst": "זֶה",
-  "translit": "zeh"
+  "translit": "zeh",
+  "anker": "👉",
+  "beeld": "dit hier, vlakbij"
  },
  {
   "hebreeuws": "יְהוָה",
@@ -786,7 +838,9 @@
    }
   ],
   "lemma_tekst": "יְהוָה",
-  "translit": "Yah·weh"
+  "translit": "Yah·weh",
+  "anker": "✡️",
+  "beeld": "JHWH, de Naam"
  },
  {
   "hebreeuws": "יְהוּדָה",
@@ -816,7 +870,9 @@
    }
   ],
   "lemma_tekst": "יְהוּדָה",
-  "translit": "yə·hū·ḏāh"
+  "translit": "yə·hū·ḏāh",
+  "anker": "✡️",
+  "beeld": "Juda, waar Jood vandaan komt"
  },
  {
   "hebreeuws": "יִשְׂרָאֵל",
@@ -846,7 +902,9 @@
    }
   ],
   "lemma_tekst": "יִשְׂרָאֵל",
-  "translit": "yiś·rā·’êl"
+  "translit": "yiś·rā·’êl",
+  "anker": "✡️",
+  "beeld": "Isra-el: strijdt met God"
  },
  {
   "hebreeuws": "יָד",
@@ -876,7 +934,9 @@
    }
   ],
   "lemma_tekst": "יָדוֹ",
-  "translit": "yā·ḏōw"
+  "translit": "yā·ḏōw",
+  "anker": "✋",
+  "beeld": "jad: de leesstok"
  },
  {
   "hebreeuws": "יָצָא",
@@ -909,7 +969,9 @@
    }
   ],
   "lemma_tekst": "יֵצֵא",
-  "translit": "yê·ṣê"
+  "translit": "yê·ṣê",
+  "anker": "🚪",
+  "beeld": "Exodus: jetsi'at Mitsrajim"
  },
  {
   "hebreeuws": "ידע",
@@ -943,7 +1005,9 @@
    }
   ],
   "lemma_tekst": "יָדַעְתִּי",
-  "translit": "yā·ḏa‘·tî"
+  "translit": "yā·ḏa‘·tî",
+  "anker": "🧠",
+  "beeld": "da'at: kennis"
  },
  {
   "hebreeuws": "יוֹם",
@@ -973,7 +1037,9 @@
    }
   ],
   "lemma_tekst": "יָמִים",
-  "translit": "yā·mîm"
+  "translit": "yā·mîm",
+  "anker": "☀️",
+  "beeld": "Jom Kipoer"
  },
  {
   "hebreeuws": "ישׁב",
@@ -1007,7 +1073,9 @@
    }
   ],
   "lemma_tekst": "יֹשְׁבֵי",
-  "translit": "yō·šə·ḇê"
+  "translit": "yō·šə·ḇê",
+  "anker": "🪑",
+  "beeld": "jesjiva: waar men zit"
  },
  {
   "hebreeuws": "כְּ",
@@ -1023,7 +1091,9 @@
   "strong": "",
   "parsing_code": "Prep-k",
   "frequentie": 2904,
-  "vindplaatsen": []
+  "vindplaatsen": [],
+  "anker": "〰️",
+  "beeld": "vergelijkt: net als"
  },
  {
   "hebreeuws": "כִּי",
@@ -1053,7 +1123,9 @@
    }
   ],
   "lemma_tekst": "כִּי",
-  "translit": "kî"
+  "translit": "kî",
+  "anker": "📎",
+  "beeld": "geeft de reden"
  },
  {
   "hebreeuws": "כֹּל",
@@ -1083,7 +1155,9 @@
    }
   ],
   "lemma_tekst": "כָּל",
-  "translit": "kāl-"
+  "translit": "kāl-",
+  "anker": "🌐",
+  "beeld": "kol: alles bijeen"
  },
  {
   "hebreeuws": "לְ",
@@ -1099,7 +1173,9 @@
   "strong": "",
   "parsing_code": "Prep-l",
   "frequentie": 15990,
-  "vindplaatsen": []
+  "vindplaatsen": [],
+  "anker": "➡️",
+  "beeld": "l'chaim: óp het leven"
  },
  {
   "hebreeuws": "לֹא",
@@ -1129,7 +1205,9 @@
    }
   ],
   "lemma_tekst": "לֹא",
-  "translit": "lō"
+  "translit": "lō",
+  "anker": "🚫",
+  "beeld": "lo: streep erdoor"
  },
  {
   "hebreeuws": "לקח",
@@ -1159,7 +1237,9 @@
    }
   ],
   "lemma_tekst": "קַח",
-  "translit": "lā·qaḥ"
+  "translit": "lā·qaḥ",
+  "anker": "🤲",
+  "beeld": "pakken en meenemen"
  },
  {
   "hebreeuws": "מִן",
@@ -1189,7 +1269,9 @@
    }
   ],
   "lemma_tekst": "מִן",
-  "translit": "min-"
+  "translit": "min-",
+  "anker": "📤",
+  "beeld": "vandaan, weg van"
  },
  {
   "hebreeuws": "מֶלֶךְ",
@@ -1219,7 +1301,9 @@
    }
   ],
   "lemma_tekst": "מֶלֶךְ",
-  "translit": "me·leḵ"
+  "translit": "me·leḵ",
+  "anker": "👑",
+  "beeld": "Melchi-sedek, Moloch"
  },
  {
   "hebreeuws": "מוּת",
@@ -1252,7 +1336,9 @@
    }
   ],
   "lemma_tekst": "מֵת",
-  "translit": "mêṯ"
+  "translit": "mêṯ",
+  "anker": "💀",
+  "beeld": "mavet: de dood"
  },
  {
   "hebreeuws": "נתן",
@@ -1282,7 +1368,9 @@
    }
   ],
   "lemma_tekst": "נָתַן",
-  "translit": "nā·ṯan"
+  "translit": "nā·ṯan",
+  "anker": "🎁",
+  "beeld": "Jo-nathan: JHWH gaf"
  },
  {
   "hebreeuws": "עִיר",
@@ -1312,7 +1400,9 @@
    }
   ],
   "lemma_tekst": "עִיר",
-  "translit": "‘îr"
+  "translit": "‘îr",
+  "anker": "🏘️",
+  "beeld": "de ommuurde plaats"
  },
  {
   "hebreeuws": "עִם",
@@ -1342,7 +1432,9 @@
    }
   ],
   "lemma_tekst": "עִם",
-  "translit": "‘im-"
+  "translit": "‘im-",
+  "anker": "🤝",
+  "beeld": "Immanu-el: God mét ons"
  },
  {
   "hebreeuws": "עַיִן",
@@ -1372,7 +1464,9 @@
    }
   ],
   "lemma_tekst": "עֵינֶיךָ",
-  "translit": "‘ê·ne·ḵā"
+  "translit": "‘ê·ne·ḵā",
+  "anker": "👁️",
+  "beeld": "En-gedi: bron én oog"
  },
  {
   "hebreeuws": "עַד",
@@ -1402,7 +1496,9 @@
    }
   ],
   "lemma_tekst": "עַד",
-  "translit": "‘aḏ-"
+  "translit": "‘aḏ-",
+  "anker": "⏳",
+  "beeld": "tot dat punt toe"
  },
  {
   "hebreeuws": "עַל",
@@ -1432,7 +1528,9 @@
    }
   ],
   "lemma_tekst": "עַל",
-  "translit": "‘al-"
+  "translit": "‘al-",
+  "anker": "⬆️",
+  "beeld": "erbovenop, eroverheen"
  },
  {
   "hebreeuws": "עַם",
@@ -1462,7 +1560,9 @@
    }
   ],
   "lemma_tekst": "עַמִּי",
-  "translit": "‘am·mî"
+  "translit": "‘am·mî",
+  "anker": "👥",
+  "beeld": "Am Jisrael chai"
  },
  {
   "hebreeuws": "עָלָה",
@@ -1492,7 +1592,9 @@
    }
   ],
   "lemma_tekst": "עָלָה",
-  "translit": "‘ā·lāh"
+  "translit": "‘ā·lāh",
+  "anker": "⬆️",
+  "beeld": "alija: optrekken naar Israël"
  },
  {
   "hebreeuws": "עָשָׂה",
@@ -1525,7 +1627,9 @@
    }
   ],
   "lemma_tekst": "עָשָׂה",
-  "translit": "‘ā·śāh"
+  "translit": "‘ā·śāh",
+  "anker": "🔨",
+  "beeld": "ma'asé: het gemaakte"
  },
  {
   "hebreeuws": "פָּנִים",
@@ -1555,7 +1659,9 @@
    }
   ],
   "lemma_tekst": "פְּנֵי",
-  "translit": "pə·nê"
+  "translit": "pə·nê",
+  "anker": "😐",
+  "beeld": "panim: altijd meervoud"
  },
  {
   "hebreeuws": "רָאָה",
@@ -1589,7 +1695,9 @@
    }
   ],
   "lemma_tekst": "רָאִיתִי",
-  "translit": "rā·’î·ṯî"
+  "translit": "rā·’î·ṯî",
+  "anker": "👁️",
+  "beeld": "ro'é: ziener"
  },
  {
   "hebreeuws": "שֵׁם",
@@ -1619,7 +1727,9 @@
    }
   ],
   "lemma_tekst": "שֵׁם",
-  "translit": "šə·mōw"
+  "translit": "šə·mōw",
+  "anker": "🏷️",
+  "beeld": "HaSjem: de Naam"
  },
  {
   "hebreeuws": "שָׁם",
@@ -1649,7 +1759,9 @@
    }
   ],
   "lemma_tekst": "שָׁם",
-  "translit": "šām"
+  "translit": "šām",
+  "anker": "📍",
+  "beeld": "ginds, niet hier"
  },
  {
   "hebreeuws": "שׁמע",
@@ -1683,7 +1795,9 @@
    }
   ],
   "lemma_tekst": "שִׁמְעוּ",
-  "translit": "šim·‘ū"
+  "translit": "šim·‘ū",
+  "anker": "👂",
+  "beeld": "Sjema Jisrael"
  },
  {
   "hebreeuws": "שָׁנָה",
@@ -1713,7 +1827,9 @@
    }
   ],
   "lemma_tekst": "שָׁנָה",
-  "translit": "šā·nāh"
+  "translit": "šā·nāh",
+  "anker": "📅",
+  "beeld": "Rosj Hasjana"
  },
  {
   "hebreeuws": "שׁוּב",
@@ -1746,7 +1862,9 @@
    }
   ],
   "lemma_tekst": "יָשׁוּב",
-  "translit": "yā·šūḇ"
+  "translit": "yā·šūḇ",
+  "anker": "🔙",
+  "beeld": "tesjoeva: inkeer, omkeer"
  },
  {
   "hebreeuws": "שׁלח",
@@ -1780,7 +1898,9 @@
    }
   ],
   "lemma_tekst": "שָׁלַח",
-  "translit": "šā·laḥ"
+  "translit": "šā·laḥ",
+  "anker": "✉️",
+  "beeld": "sjaliach: de gezondene"
  },
  {
   "hebreeuws": "אִשָּׁה",
@@ -1810,7 +1930,9 @@
    }
   ],
   "lemma_tekst": "אִשָּׁה",
-  "translit": "’iš·šāh"
+  "translit": "’iš·šāh",
+  "anker": "👩",
+  "beeld": "isja, gevormd uit isj"
  },
  {
   "hebreeuws": "אֵלֶּה",
@@ -1840,7 +1962,9 @@
    }
   ],
   "lemma_tekst": "אֵלֶּה",
-  "translit": "’êl·leh"
+  "translit": "’êl·leh",
+  "anker": "👉",
+  "beeld": "meervoud van deze"
  },
  {
   "hebreeuws": "אֵין",
@@ -1870,7 +1994,9 @@
    }
   ],
   "lemma_tekst": "אֵין",
-  "translit": "’ên"
+  "translit": "’ên",
+  "anker": "🕳️",
+  "beeld": "ein: er is geen"
  },
  {
   "hebreeuws": "אֶלֶף",
@@ -1900,7 +2026,9 @@
    }
   ],
   "lemma_tekst": "אֶלֶף",
-  "translit": "’e·lep̄"
+  "translit": "’e·lep̄",
+  "anker": "🔢",
+  "beeld": "alef, de eerste letter"
  },
  {
   "hebreeuws": "אַחֲרֵי",
@@ -1932,7 +2060,9 @@
    }
   ],
   "lemma_tekst": "אַחֲרֵי",
-  "translit": "’a·ḥă·rê"
+  "translit": "’a·ḥă·rê",
+  "anker": "⬅️",
+  "beeld": "erachteraan, daarna"
  },
  {
   "hebreeuws": "אַל",
@@ -1962,7 +2092,9 @@
    }
   ],
   "lemma_tekst": "אַל",
-  "translit": "’al-"
+  "translit": "’al-",
+  "anker": "🚷",
+  "beeld": "verbod bij een bevel"
  },
  {
   "hebreeuws": "אַרְבַּע",
@@ -1992,7 +2124,9 @@
    }
   ],
   "lemma_tekst": "אַרְבַּע",
-  "translit": "’ar·ba‘"
+  "translit": "’ar·ba‘",
+  "anker": "4️⃣",
+  "beeld": "Kirjat-Arba: vierstad"
  },
  {
   "hebreeuws": "אַתָּה",
@@ -2022,7 +2156,9 @@
    }
   ],
   "lemma_tekst": "אַתָּה",
-  "translit": "’at·tāh"
+  "translit": "’at·tāh",
+  "anker": "👤",
+  "beeld": "ata: jij tegen een man"
  },
  {
   "hebreeuws": "אָדָם",
@@ -2052,7 +2188,9 @@
    }
   ],
   "lemma_tekst": "אָדָם",
-  "translit": "’ā·ḏām"
+  "translit": "’ā·ḏām",
+  "anker": "🧑",
+  "beeld": "Adam, gevormd uit adama"
  },
  {
   "hebreeuws": "אָדוֹן",
@@ -2082,7 +2220,9 @@
    }
   ],
   "lemma_tekst": "אֲדֹנִי",
-  "translit": "’ă·ḏō·nî"
+  "translit": "’ă·ḏō·nî",
+  "anker": "👑",
+  "beeld": "Adonai: mijn Heer"
  },
  {
   "hebreeuws": "אָח",
@@ -2112,7 +2252,9 @@
    }
   ],
   "lemma_tekst": "אָחִיו",
-  "translit": "’ā·ḥîw"
+  "translit": "’ā·ḥîw",
+  "anker": "👬",
+  "beeld": "Achi-melech, Achab"
  },
  {
   "hebreeuws": "בַּת",
@@ -2142,7 +2284,9 @@
    }
   ],
   "lemma_tekst": "בַּת",
-  "translit": "baṯ-"
+  "translit": "baṯ-",
+  "anker": "👧",
+  "beeld": "bat mitswa"
  },
  {
   "hebreeuws": "גַּם",
@@ -2172,7 +2316,9 @@
    }
   ],
   "lemma_tekst": "גַּם",
-  "translit": "gam-"
+  "translit": "gam-",
+  "anker": "➕",
+  "beeld": "erbij, evenzeer"
  },
  {
   "hebreeuws": "גָּדוֹל",
@@ -2202,7 +2348,9 @@
    }
   ],
   "lemma_tekst": "גָּדוֹל",
-  "translit": "gā·ḏō·wl"
+  "translit": "gā·ḏō·wl",
+  "anker": "📏",
+  "beeld": "Kohen Gadol: hogepriester"
  },
  {
   "hebreeuws": "גֹּוי",
@@ -2232,7 +2380,9 @@
    }
   ],
   "lemma_tekst": "גּוֹיִם",
-  "translit": "gō·w·yim"
+  "translit": "gō·w·yim",
+  "anker": "🌍",
+  "beeld": "goj, gojim"
  },
  {
   "hebreeuws": "דֶּרֶךְ",
@@ -2262,7 +2412,9 @@
    }
   ],
   "lemma_tekst": "דֶּרֶךְ",
-  "translit": "de·reḵ"
+  "translit": "de·reḵ",
+  "anker": "🛣️",
+  "beeld": "derech: de weg gaan"
  },
  {
   "hebreeuws": "הֲ",
@@ -2278,7 +2430,9 @@
   "strong": "",
   "parsing_code": "Interrog",
   "frequentie": 1417,
-  "vindplaatsen": []
+  "vindplaatsen": [],
+  "anker": "❓",
+  "beeld": "maakt er een vraag van"
  },
  {
   "hebreeuws": "הִיא",
@@ -2308,7 +2462,9 @@
    }
   ],
   "lemma_tekst": "הוּא",
-  "translit": "hū"
+  "translit": "hū",
+  "anker": "👤",
+  "beeld": "hi: zij, die daar"
  },
  {
   "hebreeuws": "הֵם",
@@ -2338,7 +2494,9 @@
    }
   ],
   "lemma_tekst": "הֵמָּה",
-  "translit": "hêm·māh"
+  "translit": "hêm·māh",
+  "anker": "👥",
+  "beeld": "hem: zij samen"
  },
  {
   "hebreeuws": "הַר",
@@ -2368,7 +2526,9 @@
    }
   ],
   "lemma_tekst": "הַר",
-  "translit": "har"
+  "translit": "har",
+  "anker": "⛰️",
+  "beeld": "Har-Magedon, Armageddon"
  },
  {
   "hebreeuws": "חָמֵשׁ",
@@ -2398,7 +2558,9 @@
    }
   ],
   "lemma_tekst": "חֲמִשָּׁה",
-  "translit": "ḥă·miš·šāh"
+  "translit": "ḥă·miš·šāh",
+  "anker": "5️⃣",
+  "beeld": "Chumasj: de vijf boeken"
  },
  {
   "hebreeuws": "טוֹב",
@@ -2428,7 +2590,9 @@
    }
   ],
   "lemma_tekst": "טוֹב",
-  "translit": "ṭō·wḇ"
+  "translit": "ṭō·wḇ",
+  "anker": "👍",
+  "beeld": "mazzeltov, ki tov"
  },
  {
   "hebreeuws": "יְרוּשָׁלַם",
@@ -2458,7 +2622,9 @@
    }
   ],
   "lemma_tekst": "יְרוּשָׁלִַם",
-  "translit": "yə·rū·šā·lim"
+  "translit": "yə·rū·šā·lim",
+  "anker": "🏛️",
+  "beeld": "Jeru-sjalem, stad van vrede"
  },
  {
   "hebreeuws": "ילד",
@@ -2490,7 +2656,9 @@
    }
   ],
   "lemma_tekst": "הוֹלִיד",
-  "translit": "hō·w·lîḏ"
+  "translit": "hō·w·lîḏ",
+  "anker": "👶",
+  "beeld": "jeled: kind"
  },
  {
   "hebreeuws": "כֵּן",
@@ -2520,7 +2688,9 @@
    }
   ],
   "lemma_tekst": "כֵּן",
-  "translit": "kên"
+  "translit": "kên",
+  "anker": "👆",
+  "beeld": "ken: zó, juist"
  },
  {
   "hebreeuws": "כֹּה",
@@ -2550,7 +2720,9 @@
    }
   ],
   "lemma_tekst": "כֹּה",
-  "translit": "kōh"
+  "translit": "kōh",
+  "anker": "👆",
+  "beeld": "ko amar: zó zegt"
  },
  {
   "hebreeuws": "כֹּהֵן",
@@ -2580,7 +2752,9 @@
    }
   ],
   "lemma_tekst": "כֹּהֵן",
-  "translit": "kō·hên"
+  "translit": "kō·hên",
+  "anker": "🕯️",
+  "beeld": "Cohen, Kohn"
  },
  {
   "hebreeuws": "לֵב",
@@ -2610,7 +2784,9 @@
    }
   ],
   "lemma_tekst": "לֵב",
-  "translit": "lêḇ"
+  "translit": "lêḇ",
+  "anker": "❤️",
+  "beeld": "lev, levav"
  },
  {
   "hebreeuws": "מִצְרַיִם",
@@ -2640,7 +2816,9 @@
    }
   ],
   "lemma_tekst": "מִצְרַיִם",
-  "translit": "miṣ·ra·yim"
+  "translit": "miṣ·ra·yim",
+  "anker": "🏜️",
+  "beeld": "Mitsrajim, het slavenhuis"
  },
  {
   "hebreeuws": "מִשְׁמָר",
@@ -2670,7 +2848,9 @@
    }
   ],
   "lemma_tekst": "מִשְׁמָר",
-  "translit": "miš·mār"
+  "translit": "miš·mār",
+  "anker": "👁️",
+  "beeld": "wie de wacht houdt"
  },
  {
   "hebreeuws": "מִשְׁפָּט",
@@ -2700,7 +2880,9 @@
    }
   ],
   "lemma_tekst": "מִשְׁפָּט",
-  "translit": "miš·pāṭ"
+  "translit": "miš·pāṭ",
+  "anker": "⚖️",
+  "beeld": "misjpat: recht en vonnis"
  },
  {
   "hebreeuws": "מֵאָה",
@@ -2730,7 +2912,9 @@
    }
   ],
   "lemma_tekst": "מֵאוֹת",
-  "translit": "mê·’ō·wṯ"
+  "translit": "mê·’ō·wṯ",
+  "anker": "💯",
+  "beeld": "me'a: een honderdtal"
  },
  {
   "hebreeuws": "מַיִם",
@@ -2760,7 +2944,9 @@
    }
   ],
   "lemma_tekst": "מַיִם",
-  "translit": "ma·yim"
+  "translit": "ma·yim",
+  "anker": "💧",
+  "beeld": "majim, mikwe"
  },
  {
   "hebreeuws": "מֶה",
@@ -2793,7 +2979,9 @@
    }
   ],
   "lemma_tekst": "מַה",
-  "translit": "mah-"
+  "translit": "mah-",
+  "anker": "❓",
+  "beeld": "ma: wat, hoe"
  },
  {
   "hebreeuws": "מָצָא",
@@ -2826,7 +3014,9 @@
    }
   ],
   "lemma_tekst": "מָצָאתִי",
-  "translit": "mā·ṣā·ṯî"
+  "translit": "mā·ṣā·ṯî",
+  "anker": "🔍",
+  "beeld": "matsa: tegenkomen"
  },
  {
   "hebreeuws": "נֶפֶשׁ",
@@ -2856,7 +3046,9 @@
    }
   ],
   "lemma_tekst": "נַפְשִׁי",
-  "translit": "nap̄·šî"
+  "translit": "nap̄·šî",
+  "anker": "💗",
+  "beeld": "nefesj: adem en leven"
  },
  {
   "hebreeuws": "נָכָה",
@@ -2888,7 +3080,9 @@
    }
   ],
   "lemma_tekst": "הִכָּה",
-  "translit": "hik·kāh"
+  "translit": "hik·kāh",
+  "anker": "👊",
+  "beeld": "alleen Hifil: hij sloeg"
  },
  {
   "hebreeuws": "נָשָׂא",
@@ -2920,7 +3114,9 @@
    }
   ],
   "lemma_tekst": "יִשָּׂא",
-  "translit": "yiś·śā"
+  "translit": "yiś·śā",
+  "anker": "🎒",
+  "beeld": "opheffen en meedragen"
  },
  {
   "hebreeuws": "נפל",
@@ -2953,7 +3149,9 @@
    }
   ],
   "lemma_tekst": "נָפְלוּ",
-  "translit": "nā·p̄ə·lū"
+  "translit": "nā·p̄ə·lū",
+  "anker": "⬇️",
+  "beeld": "nefilim: de gevallenen"
  },
  {
   "hebreeuws": "עֶבֶד",
@@ -2983,7 +3181,9 @@
    }
   ],
   "lemma_tekst": "עַבְדְּךָ",
-  "translit": "‘ă·ḇā·ḏāw"
+  "translit": "‘ă·ḇā·ḏāw",
+  "anker": "⛓️",
+  "beeld": "Obadja: knecht van JHWH"
  },
  {
   "hebreeuws": "עֶשֶׂר",
@@ -3013,7 +3213,9 @@
    }
   ],
   "lemma_tekst": "עֲשָׂרָה",
-  "translit": "‘ă·śā·rāh"
+  "translit": "‘ă·śā·rāh",
+  "anker": "🔟",
+  "beeld": "de tien woorden"
  },
  {
   "hebreeuws": "עַתָּה",
@@ -3043,7 +3245,9 @@
    }
   ],
   "lemma_tekst": "עַתָּה",
-  "translit": "‘at·tāh"
+  "translit": "‘at·tāh",
+  "anker": "⏱️",
+  "beeld": "ata: op dit moment"
  },
  {
   "hebreeuws": "עבר",
@@ -3076,7 +3280,9 @@
    }
   ],
   "lemma_tekst": "עֹבֵר",
-  "translit": "‘ō·ḇêr"
+  "translit": "‘ō·ḇêr",
+  "anker": "↔️",
+  "beeld": "Hebreeër: van over de rivier"
  },
  {
   "hebreeuws": "עוֹד",
@@ -3106,7 +3312,9 @@
    }
   ],
   "lemma_tekst": "עוֹד",
-  "translit": "‘ō·wḏ"
+  "translit": "‘ō·wḏ",
+  "anker": "➕",
+  "beeld": "od: er komt nog bij"
  },
  {
   "hebreeuws": "עוֹלָם",
@@ -3136,7 +3344,9 @@
    }
   ],
   "lemma_tekst": "עוֹלָם",
-  "translit": "‘ō·w·lām"
+  "translit": "‘ō·w·lām",
+  "anker": "♾️",
+  "beeld": "le-olam: voor altijd"
  },
  {
   "hebreeuws": "עמד",
@@ -3169,7 +3379,9 @@
    }
   ],
   "lemma_tekst": "עֹמֵד",
-  "translit": "‘ō·mêḏ"
+  "translit": "‘ō·mêḏ",
+  "anker": "🧍",
+  "beeld": "amad: blijven staan"
  },
  {
   "hebreeuws": "פֶּה",
@@ -3199,7 +3411,9 @@
    }
   ],
   "lemma_tekst": "פִּי",
-  "translit": "pî"
+  "translit": "pî",
+  "anker": "👄",
+  "beeld": "pe: mond én bevel"
  },
  {
   "hebreeuws": "צָבָא",
@@ -3229,7 +3443,9 @@
    }
   ],
   "lemma_tekst": "צְבָאוֹת",
-  "translit": "ṣə·ḇā·’ō·wṯ"
+  "translit": "ṣə·ḇā·’ō·wṯ",
+  "anker": "⚔️",
+  "beeld": "Sabaoth: Heer der heerscharen"
  },
  {
   "hebreeuws": "צָוָה",
@@ -3261,7 +3477,9 @@
    }
   ],
   "lemma_tekst": "צִוָּה",
-  "translit": "ṣiw·wāh"
+  "translit": "ṣiw·wāh",
+  "anker": "📜",
+  "beeld": "mitswa: wat bevolen is"
  },
  {
   "hebreeuws": "קָרָא",
@@ -3294,7 +3512,9 @@
   ],
   "lemma_tekst": "קָרָא",
   "translit": "qā·rā",
-  "lijstvorm": "קַָרָא"
+  "lijstvorm": "קַָרָא",
+  "anker": "📣",
+  "beeld": "Wajjikra: Leviticus"
  },
  {
   "hebreeuws": "קֹדֶשׁ",
@@ -3324,7 +3544,9 @@
    }
   ],
   "lemma_tekst": "קֹדֶשׁ",
-  "translit": "qō·ḏeš"
+  "translit": "qō·ḏeš",
+  "anker": "✨",
+  "beeld": "kadosj, kaddisj"
  },
  {
   "hebreeuws": "קוֹל",
@@ -3354,7 +3576,9 @@
    }
   ],
   "lemma_tekst": "קוֹל",
-  "translit": "qō·wl"
+  "translit": "qō·wl",
+  "anker": "🔊",
+  "beeld": "bat kol: hemelse stem"
  },
  {
   "hebreeuws": "קוּם",
@@ -3386,7 +3610,9 @@
    }
   ],
   "lemma_tekst": "קוּם",
-  "translit": "qūm"
+  "translit": "qūm",
+  "anker": "⬆️",
+  "beeld": "koem: sta op"
  },
  {
   "hebreeuws": "רֹאשׁ",
@@ -3418,7 +3644,9 @@
    }
   ],
   "lemma_tekst": "רֹאשׁ",
-  "translit": "rōš"
+  "translit": "rōš",
+  "anker": "👤",
+  "beeld": "Rosj Hasjana: jaarbegin"
  },
  {
   "hebreeuws": "שִׂים",
@@ -3448,7 +3676,9 @@
    }
   ],
   "lemma_tekst": "שָׂם",
-  "translit": "śām"
+  "translit": "śām",
+  "anker": "📦",
+  "beeld": "sim: zetten, plaatsen"
  },
  {
   "hebreeuws": "שְׁנַיִם",
@@ -3478,7 +3708,9 @@
    }
   ],
   "lemma_tekst": "שְׁנֵי",
-  "translit": "šə·nê"
+  "translit": "šə·nê",
+  "anker": "2️⃣",
+  "beeld": "sjenajim; sjeni is tweede"
  },
  {
   "hebreeuws": "שֶׁבַע",
@@ -3508,7 +3740,9 @@
    }
   ],
   "lemma_tekst": "שִׁבְעַת",
-  "translit": "šiḇ·‘aṯ"
+  "translit": "šiḇ·‘aṯ",
+  "anker": "7️⃣",
+  "beeld": "Bathseba, Berseba"
  },
  {
   "hebreeuws": "שָׁלשׁ",
@@ -3538,7 +3772,9 @@
    }
   ],
   "lemma_tekst": "שְׁלֹשָׁה",
-  "translit": "šə·lō·šāh"
+  "translit": "šə·lō·šāh",
+  "anker": "3️⃣",
+  "beeld": "sjalosj, sjelisji"
  },
  {
   "hebreeuws": "שַׂר",
@@ -3568,7 +3804,9 @@
    }
   ],
   "lemma_tekst": "שָׂרֵי",
-  "translit": "śā·rê"
+  "translit": "śā·rê",
+  "anker": "👑",
+  "beeld": "Sar Sjalom: vredevorst"
  },
  {
   "hebreeuws": "תַּחַת",
@@ -3598,7 +3836,9 @@
    }
   ],
   "lemma_tekst": "תַּחַת",
-  "translit": "ta·ḥaṯ"
+  "translit": "ta·ḥaṯ",
+  "anker": "⬇️",
+  "beeld": "tachat: eronder, in plaats"
  },
  {
   "hebreeuws": "שָׂדֶה",
@@ -3628,7 +3868,9 @@
    }
   ],
   "lemma_tekst": "שְׂדֵה",
-  "translit": "śə·ḏêh"
+  "translit": "śə·ḏêh",
+  "anker": "🌾",
+  "beeld": "sade: het open veld"
  },
  {
   "hebreeuws": "שָׁמַיִם",
@@ -3658,7 +3900,9 @@
    }
   ],
   "lemma_tekst": "שָׁמַיִם",
-  "translit": "šā·ma·yim"
+  "translit": "šā·ma·yim",
+  "anker": "☁️",
+  "beeld": "sjamajim, altijd meervoud"
  },
  {
   "hebreeuws": "שַׁעַר",
@@ -3688,7 +3932,9 @@
    }
   ],
   "lemma_tekst": "שַׁעַר",
-  "translit": "ša·‘ar"
+  "translit": "ša·‘ar",
+  "anker": "🚪",
+  "beeld": "sja'ar: de stadspoort"
  },
  {
   "hebreeuws": "תָּוֶךְ",
@@ -3718,7 +3964,9 @@
    }
   ],
   "lemma_tekst": "תּוֹךְ",
-  "translit": "tō·wḵ"
+  "translit": "tō·wḵ",
+  "anker": "➗",
+  "beeld": "be-toch: in het midden"
  },
  {
   "hebreeuws": "רוּחַ",
@@ -3748,7 +3996,9 @@
    }
   ],
   "lemma_tekst": "רוּחַ",
-  "translit": "rū·aḥ"
+  "translit": "rū·aḥ",
+  "anker": "🌬️",
+  "beeld": "ruach: adem en wind"
  },
  {
   "hebreeuws": "רָעָה",
@@ -3778,7 +4028,9 @@
    }
   ],
   "lemma_tekst": "רָעָה",
-  "translit": "rā·‘āh"
+  "translit": "rā·‘āh",
+  "anker": "😈",
+  "beeld": "ra'a: het kwade"
  },
  {
   "hebreeuws": "רַע",
@@ -3808,7 +4060,9 @@
    }
   ],
   "lemma_tekst": "רָעָה",
-  "translit": "rā·‘āh"
+  "translit": "rā·‘āh",
+  "anker": "👎",
+  "beeld": "jetser hara: kwade neiging"
  },
  {
   "hebreeuws": "רַב",
@@ -3838,7 +4092,9 @@
    }
   ],
   "lemma_tekst": "רַבִּים",
-  "translit": "rab·bîm"
+  "translit": "rab·bîm",
+  "anker": "📚",
+  "beeld": "rabbi: mijn grote"
  },
  {
   "hebreeuws": "פקד",
@@ -3870,7 +4126,9 @@
    }
   ],
   "lemma_tekst": "פְּקֻדֵיהֶם",
-  "translit": "pə·qu·ḏê·hem"
+  "translit": "pə·qu·ḏê·hem",
+  "anker": "👁️",
+  "beeld": "pakad: nagaan, omzien naar"
  },
  {
   "hebreeuws": "עָשָׂר",
@@ -3900,7 +4158,9 @@
    }
   ],
   "lemma_tekst": "עָשָׂר",
-  "translit": "‘ā·śār"
+  "translit": "‘ā·śār",
+  "anker": "🔟",
+  "beeld": "zit in de tien-getallen"
  },
  {
   "hebreeuws": "עָנָה",
@@ -3932,7 +4192,9 @@
    }
   ],
   "lemma_tekst": "יַעֲנֶה",
-  "translit": "ya·‘ă·neh"
+  "translit": "ya·‘ă·neh",
+  "anker": "💬",
+  "beeld": "ana: reageren, getuigen"
  },
  {
   "hebreeuws": "עֵת",
@@ -3962,7 +4224,9 @@
    }
   ],
   "lemma_tekst": "עֵת",
-  "translit": "‘êṯ"
+  "translit": "‘êṯ",
+  "anker": "⏱️",
+  "beeld": "et: het juiste moment"
  },
  {
   "hebreeuws": "עֵץ",
@@ -3992,7 +4256,9 @@
    }
   ],
   "lemma_tekst": "עֵץ",
-  "translit": "‘êṣ"
+  "translit": "‘êṣ",
+  "anker": "🌳",
+  "beeld": "ets chajim: levensboom"
  },
  {
   "hebreeuws": "סוּר",
@@ -4025,7 +4291,9 @@
    }
   ],
   "lemma_tekst": "סָר",
-  "translit": "sār"
+  "translit": "sār",
+  "anker": "↩️",
+  "beeld": "soer: opzij gaan"
  },
  {
   "hebreeuws": "סָבִיב",
@@ -4055,7 +4323,9 @@
    }
   ],
   "lemma_tekst": "סָבִיב",
-  "translit": "sā·ḇîḇ"
+  "translit": "sā·ḇîḇ",
+  "anker": "⭕",
+  "beeld": "saviv: eromheen"
  },
  {
   "hebreeuws": "נגד",
@@ -4089,7 +4359,9 @@
    }
   ],
   "lemma_tekst": "הִגִּיד",
-  "translit": "hig·gîḏ"
+  "translit": "hig·gîḏ",
+  "anker": "📣",
+  "beeld": "higgid: bekend maken"
  },
  {
   "hebreeuws": "נָבִיא",
@@ -4119,7 +4391,9 @@
    }
   ],
   "lemma_tekst": "בָּא",
-  "translit": "bā"
+  "translit": "bā",
+  "anker": "📜",
+  "beeld": "Nevi'im: de profeten"
  },
  {
   "hebreeuws": "נָא",
@@ -4149,7 +4423,9 @@
    }
   ],
   "lemma_tekst": "נָא",
-  "translit": "nā"
+  "translit": "nā",
+  "anker": "🙏",
+  "beeld": "na: toch, alsjeblieft"
  },
  {
   "hebreeuws": "נְאֻם",
@@ -4179,7 +4455,9 @@
    }
   ],
   "lemma_tekst": "נְאֻם",
-  "translit": "nə·’um-"
+  "translit": "nə·’um-",
+  "anker": "🗣️",
+  "beeld": "ne'oem JHWH: spreekt de HEER"
  },
  {
   "hebreeuws": "מלך",
@@ -4212,7 +4490,9 @@
    }
   ],
   "lemma_tekst": "מָלַךְ",
-  "translit": "mā·laḵ"
+  "translit": "mā·laḵ",
+  "anker": "👑",
+  "beeld": "werkwoord bij melech"
  },
  {
   "hebreeuws": "מָקוֹם",
@@ -4242,7 +4522,9 @@
    }
   ],
   "lemma_tekst": "מָקוֹם",
-  "translit": "mā·qō·wm"
+  "translit": "mā·qō·wm",
+  "anker": "📍",
+  "beeld": "HaMakom: de Plaats"
  },
  {
   "hebreeuws": "מִשְׁפָּחָה",
@@ -4274,7 +4556,9 @@
    }
   ],
   "lemma_tekst": "מִשְׁפַּחַת",
-  "translit": "miš·pa·ḥaṯ"
+  "translit": "miš·pa·ḥaṯ",
+  "anker": "👨‍👩‍👦",
+  "beeld": "misjpacha: de familie"
  },
  {
   "hebreeuws": "מִלְחָמָה",
@@ -4304,7 +4588,9 @@
    }
   ],
   "lemma_tekst": "מִלְחָמָה",
-  "translit": "mil·ḥā·māh"
+  "translit": "mil·ḥā·māh",
+  "anker": "⚔️",
+  "beeld": "milchama: de strijd"
  },
  {
   "hebreeuws": "מִי",
@@ -4334,7 +4620,9 @@
    }
   ],
   "lemma_tekst": "מִי",
-  "translit": "mî"
+  "translit": "mî",
+  "anker": "❓",
+  "beeld": "Micha-el: wíe is als God"
  },
  {
   "hebreeuws": "מִזְבֵּחַ",
@@ -4364,7 +4652,9 @@
    }
   ],
   "lemma_tekst": "מִזְבַּח",
-  "translit": "miz·baḥ"
+  "translit": "miz·baḥ",
+  "anker": "🔥",
+  "beeld": "mizbeach: waar geslacht wordt"
  },
  {
   "hebreeuws": "מְאֹד",
@@ -4394,7 +4684,9 @@
    }
   ],
   "lemma_tekst": "מְאֹד",
-  "translit": "mə·’ōḏ"
+  "translit": "mə·’ōḏ",
+  "anker": "💪",
+  "beeld": "me'od: met heel je kracht"
  },
  {
   "hebreeuws": "לֶחֶם",
@@ -4424,7 +4716,9 @@
    }
   ],
   "lemma_tekst": "לֶחֶם",
-  "translit": "le·ḥem"
+  "translit": "le·ḥem",
+  "anker": "🍞",
+  "beeld": "Beth-lehem: huis van brood"
  },
  {
   "hebreeuws": "לֵוִי",
@@ -4454,7 +4748,9 @@
    }
   ],
   "lemma_tekst": "לֵוִי",
-  "translit": "lê·wî"
+  "translit": "lê·wî",
+  "anker": "🕯️",
+  "beeld": "Levi, Leviticus"
  },
  {
   "hebreeuws": "כֶּסֶף",
@@ -4484,7 +4780,9 @@
    }
   ],
   "lemma_tekst": "כֶּסֶף",
-  "translit": "ke·sep̄"
+  "translit": "ke·sep̄",
+  "anker": "🪙",
+  "beeld": "kesef: zilver én geld"
  },
  {
   "hebreeuws": "כְּלִי",
@@ -4514,7 +4812,9 @@
    }
   ],
   "lemma_tekst": "כְּלֵי",
-  "translit": "kə·lê"
+  "translit": "kə·lê",
+  "anker": "🏺",
+  "beeld": "keli: vat, gereedschap"
  },
  {
   "hebreeuws": "ירד",
@@ -4547,7 +4847,9 @@
    }
   ],
   "lemma_tekst": "יָרַד",
-  "translit": "yā·raḏ"
+  "translit": "yā·raḏ",
+  "anker": "⬇️",
+  "beeld": "Jarden: de afdalende"
  },
  {
   "hebreeuws": "יָרֵא",
@@ -4580,7 +4882,9 @@
    }
   ],
   "lemma_tekst": "תִּירָא",
-  "translit": "tî·rā"
+  "translit": "tî·rā",
+  "anker": "😨",
+  "beeld": "jir'at JHWH: ontzag"
  },
  {
   "hebreeuws": "יָם",
@@ -4610,7 +4914,9 @@
    }
   ],
   "lemma_tekst": "יָם",
-  "translit": "yām"
+  "translit": "yām",
+  "anker": "🌊",
+  "beeld": "Jam Soef: Schelfzee"
  },
  {
   "hebreeuws": "חַטָּאת",
@@ -4640,7 +4946,9 @@
    }
   ],
   "lemma_tekst": "חַטָּאת",
-  "translit": "ḥaṭ·ṭāṯ"
+  "translit": "ḥaṭ·ṭāṯ",
+  "anker": "🎯",
+  "beeld": "chatat: je doel missen"
  },
  {
   "hebreeuws": "חֶרֶב",
@@ -4670,7 +4978,9 @@
    }
   ],
   "lemma_tekst": "חֶרֶב",
-  "translit": "ḥe·reḇ"
+  "translit": "ḥe·reḇ",
+  "anker": "🗡️",
+  "beeld": "cherev: het zwaard"
  },
  {
   "hebreeuws": "זָהָב",
@@ -4700,7 +5010,9 @@
    }
   ],
   "lemma_tekst": "זָהָב",
-  "translit": "zā·hāḇ"
+  "translit": "zā·hāḇ",
+  "anker": "🥇",
+  "beeld": "zahav: goud"
  },
  {
   "hebreeuws": "דָּם",
@@ -4730,7 +5042,9 @@
    }
   ],
   "lemma_tekst": "דָּם",
-  "translit": "dām"
+  "translit": "dām",
+  "anker": "🩸",
+  "beeld": "dam; adom is rood"
  },
  {
   "hebreeuws": "ברך",
@@ -4763,7 +5077,9 @@
    }
   ],
   "lemma_tekst": "בָּרוּךְ",
-  "translit": "bā·rūḵ"
+  "translit": "bā·rūḵ",
+  "anker": "🙌",
+  "beeld": "baruch ata: gezegend zijt gij"
  },
  {
   "hebreeuws": "בָּנָה",
@@ -4795,7 +5111,9 @@
    }
   ],
   "lemma_tekst": "בָּנָה",
-  "translit": "bā·nāh"
+  "translit": "bā·nāh",
+  "anker": "🧱",
+  "beeld": "bana: bouwen, opbouwen"
  },
  {
   "hebreeuws": "בֵּין",
@@ -4825,7 +5143,9 @@
    }
   ],
   "lemma_tekst": "בֵּין",
-  "translit": "bên"
+  "translit": "bên",
+  "anker": "↔️",
+  "beeld": "bein: ertussenin"
  },
  {
   "hebreeuws": "בְּתוֹךְ",
@@ -4855,7 +5175,9 @@
    }
   ],
   "lemma_tekst": "תּוֹךְ",
-  "translit": "tō·wḵ"
+  "translit": "tō·wḵ",
+  "anker": "➗",
+  "beeld": "be-toch: midden erin"
  },
  {
   "hebreeuws": "אוֹ",
@@ -4885,7 +5207,9 @@
    }
   ],
   "lemma_tekst": "אוֹ",
-  "translit": "’ōw"
+  "translit": "’ōw",
+  "anker": "⚖️",
+  "beeld": "o: keuze tussen twee"
  },
  {
   "hebreeuws": "אֹהֶל",
@@ -4915,7 +5239,9 @@
    }
   ],
   "lemma_tekst": "אֹהֶל",
-  "translit": "’ō·hel"
+  "translit": "’ō·hel",
+  "anker": "⛺",
+  "beeld": "ohel mo'ed: tent der samenkomst"
  },
  {
   "hebreeuws": "אָנֹכִי",
@@ -4945,7 +5271,9 @@
    }
   ],
   "lemma_tekst": "אָנֹכִי",
-  "translit": "’ā·nō·ḵî"
+  "translit": "’ā·nō·ḵî",
+  "anker": "🙋",
+  "beeld": "anochi: ik, nadrukkelijk"
  },
  {
   "hebreeuws": "אֵשׁ",
@@ -4975,7 +5303,9 @@
    }
   ],
   "lemma_tekst": "אֵשׁ",
-  "translit": "’êš"
+  "translit": "’êš",
+  "anker": "🔥",
+  "beeld": "esj: het vuur"
  },
  {
   "hebreeuws": "אֲדָמָה",
@@ -5005,7 +5335,9 @@
    }
   ],
   "lemma_tekst": "אַדְמַת",
-  "translit": "’aḏ·maṯ"
+  "translit": "’aḏ·maṯ",
+  "anker": "🌍",
+  "beeld": "Adam kwam uit adama"
  },
  {
   "hebreeuws": "אֵל",
@@ -5035,7 +5367,9 @@
    }
   ],
   "lemma_tekst": "אֵל",
-  "translit": "’êl"
+  "translit": "’êl",
+  "anker": "⛪",
+  "beeld": "Isra-el, Micha-el, Beth-el"
  },
  {
   "hebreeuws": "אֵם",
@@ -5065,7 +5399,9 @@
    }
   ],
   "lemma_tekst": "אִמּוֹ",
-  "translit": "’im·mōw"
+  "translit": "’im·mōw",
+  "anker": "👩",
+  "beeld": "em, immi: mijn moeder"
  },
  {
   "hebreeuws": "אֶבֶן",
@@ -5095,7 +5431,9 @@
    }
   ],
   "lemma_tekst": "אֶבֶן",
-  "translit": "’e·ḇen"
+  "translit": "’e·ḇen",
+  "anker": "🪨",
+  "beeld": "Eben-Haëzer: steen der hulp"
  },
  {
   "hebreeuws": "אַמָּה",
@@ -5125,7 +5463,9 @@
    }
   ],
   "lemma_tekst": "אַמָּה",
-  "translit": "’am·māh"
+  "translit": "’am·māh",
+  "anker": "📏",
+  "beeld": "amma: de onderarmlengte"
  },
  {
   "hebreeuws": "אַף",
@@ -5155,7 +5495,9 @@
    }
   ],
   "lemma_tekst": "אַף",
-  "translit": "’ap·pōw"
+  "translit": "’ap·pōw",
+  "anker": "😠",
+  "beeld": "af: neus én woede"
  },
  {
   "hebreeuws": "אַתֶּם",
@@ -5185,7 +5527,9 @@
    }
   ],
   "lemma_tekst": "אַתָּה",
-  "translit": "’at·tāh"
+  "translit": "’at·tāh",
+  "anker": "👥",
+  "beeld": "atem: jullie, meervoud"
  },
  {
   "hebreeuws": "אֹיֵב",
@@ -5215,7 +5559,9 @@
    }
   ],
   "lemma_tekst": "אוֹיֵב",
-  "translit": "’ō·w·yêḇ"
+  "translit": "’ō·w·yêḇ",
+  "anker": "⚔️",
+  "beeld": "ojev: de vijand"
  },
  {
   "hebreeuws": "אָהֵב",
@@ -5247,7 +5593,9 @@
    }
   ],
   "lemma_tekst": "אֹהֵב",
-  "translit": "’ō·hêḇ"
+  "translit": "’ō·hêḇ",
+  "anker": "❤️",
+  "beeld": "ahava: liefde"
  },
  {
   "hebreeuws": "בְּרִית",
@@ -5277,7 +5625,9 @@
    }
   ],
   "lemma_tekst": "בְּרִית",
-  "translit": "bə·rîṯ"
+  "translit": "bə·rîṯ",
+  "anker": "🤝",
+  "beeld": "B'nai B'rith: verbondszonen"
  },
  {
   "hebreeuws": "בֵּית",
@@ -5307,7 +5657,9 @@
    }
   ],
   "lemma_tekst": "בֵּית",
-  "translit": "bêṯ"
+  "translit": "bêṯ",
+  "anker": "🏠",
+  "beeld": "Beth-el, Beth-lehem"
  },
  {
   "hebreeuws": "בֶּגֶד",
@@ -5337,7 +5689,9 @@
    }
   ],
   "lemma_tekst": "בְּגָדָיו",
-  "translit": "bə·ḡā·ḏāw"
+  "translit": "bə·ḡā·ḏāw",
+  "anker": "🧥",
+  "beeld": "beged: kleding"
  },
  {
   "hebreeuws": "בָּבֶל",
@@ -5367,7 +5721,9 @@
    }
   ],
   "lemma_tekst": "בָּבֶל",
-  "translit": "bā·ḇel"
+  "translit": "bā·ḇel",
+  "anker": "🏛️",
+  "beeld": "Babel, Babylon"
  },
  {
   "hebreeuws": "בָּשָׂר",
@@ -5397,7 +5753,9 @@
    }
   ],
   "lemma_tekst": "בָּשָׂר",
-  "translit": "bā·śār"
+  "translit": "bā·śār",
+  "anker": "🥩",
+  "beeld": "basar: vlees, lichaam"
  },
  {
   "hebreeuws": "בֹּקֶר",
@@ -5427,7 +5785,9 @@
    }
   ],
   "lemma_tekst": "בֹּקֶר",
-  "translit": "bō·qer"
+  "translit": "bō·qer",
+  "anker": "🌅",
+  "beeld": "boker tov: goedemorgen"
  },
  {
   "hebreeuws": "בקשׁ",
@@ -5459,7 +5819,9 @@
    }
   ],
   "lemma_tekst": "מְבַקֵּשׁ",
-  "translit": "mə·ḇaq·qêš"
+  "translit": "mə·ḇaq·qêš",
+  "anker": "🔍",
+  "beeld": "bakasja: het verzoek"
  },
  {
   "hebreeuws": "גְּבוּל",
@@ -5489,7 +5851,9 @@
    }
   ],
   "lemma_tekst": "גְּבוּל",
-  "translit": "gə·ḇūl"
+  "translit": "gə·ḇūl",
+  "anker": "📏",
+  "beeld": "gevul: grens, gebied"
  },
  {
   "hebreeuws": "זֶרַע",
@@ -5519,7 +5883,9 @@
    }
   ],
   "lemma_tekst": "זֶרַע",
-  "translit": "ze·ra‘"
+  "translit": "ze·ra‘",
+  "anker": "🌱",
+  "beeld": "zera: zaad en nageslacht"
  },
  {
   "hebreeuws": "זכר",
@@ -5549,7 +5915,9 @@
    }
   ],
   "lemma_tekst": "זְכֹר",
-  "translit": "zə·ḵōr"
+  "translit": "zə·ḵōr",
+  "anker": "🧠",
+  "beeld": "Zacharia: JHWH gedenkt"
  },
  {
   "hebreeuws": "חֶסֶד",
@@ -5579,7 +5947,9 @@
    }
   ],
   "lemma_tekst": "חֶסֶד",
-  "translit": "ḥe·seḏ"
+  "translit": "ḥe·seḏ",
+  "anker": "💗",
+  "beeld": "chesed: verbondstrouw"
  },
  {
   "hebreeuws": "חַיִל",
@@ -5609,7 +5979,9 @@
    }
   ],
   "lemma_tekst": "חַיִל",
-  "translit": "ḥa·yil"
+  "translit": "ḥa·yil",
+  "anker": "💪",
+  "beeld": "esjet chajil: sterke vrouw"
  },
  {
   "hebreeuws": "חַי",
@@ -5639,7 +6011,9 @@
    }
   ],
   "lemma_tekst": "חַי",
-  "translit": "ḥay·yîm"
+  "translit": "ḥay·yîm",
+  "anker": "💓",
+  "beeld": "l'chaim: op het leven"
  },
  {
   "hebreeuws": "חָטָא",
@@ -5673,7 +6047,9 @@
    }
   ],
   "lemma_tekst": "חָטָא",
-  "translit": "ḥā·ṭā"
+  "translit": "ḥā·ṭā",
+  "anker": "🎯",
+  "beeld": "werkwoord bij chatat"
  },
  {
   "hebreeuws": "חָיָה",
@@ -5706,7 +6082,9 @@
    }
   ],
   "lemma_tekst": "יִחְיֶה",
-  "translit": "yiḥ·yeh"
+  "translit": "yiḥ·yeh",
+  "anker": "💓",
+  "beeld": "Chava, Eva: leven"
  },
  {
   "hebreeuws": "חֹדֶשׁ",
@@ -5736,7 +6114,9 @@
    }
   ],
   "lemma_tekst": "חֹדֶשׁ",
-  "translit": "ḥō·ḏeš"
+  "translit": "ḥō·ḏeš",
+  "anker": "🌙",
+  "beeld": "chodesj: nieuwe maan"
  },
  {
   "hebreeuws": "חזק",
@@ -5770,7 +6150,9 @@
    }
   ],
   "lemma_tekst": "הֶחֱזִיק",
-  "translit": "he·ḥĕ·zîq"
+  "translit": "he·ḥĕ·zîq",
+  "anker": "💪",
+  "beeld": "chazak: wees sterk"
  },
  {
   "hebreeuws": "יסף",
@@ -5802,7 +6184,9 @@
    }
   ],
   "lemma_tekst": "יֹסִיף",
-  "translit": "yō·sîp̄"
+  "translit": "yō·sîp̄",
+  "anker": "➕",
+  "beeld": "Jozef: hij voege toe"
  },
  {
   "hebreeuws": "ירשׁ",
@@ -5832,7 +6216,9 @@
    }
   ],
   "lemma_tekst": "הוֹרִישׁ",
-  "translit": "hō·w·rîš"
+  "translit": "hō·w·rîš",
+  "anker": "🏡",
+  "beeld": "jerusja: de erfenis"
  },
  {
   "hebreeuws": "כּוּן",
@@ -5866,7 +6252,9 @@
    }
   ],
   "lemma_tekst": "נָכוֹן",
-  "translit": "nā·ḵō·wn"
+  "translit": "nā·ḵō·wn",
+  "anker": "🧱",
+  "beeld": "nachon: het staat vast"
  },
  {
   "hebreeuws": "כרת",
@@ -5901,7 +6289,9 @@
    }
   ],
   "lemma_tekst": "יִכָּרֵת",
-  "translit": "yik·kā·rêṯ"
+  "translit": "yik·kā·rêṯ",
+  "anker": "✂️",
+  "beeld": "een verbond snijden"
  },
  {
   "hebreeuws": "כתב",
@@ -5931,7 +6321,9 @@
    }
   ],
   "lemma_tekst": "כְּתוּבִים",
-  "translit": "kə·ṯū·ḇîm"
+  "translit": "kə·ṯū·ḇîm",
+  "anker": "✍️",
+  "beeld": "Ketuvim: de Geschriften"
  },
  {
   "hebreeuws": "לְמַעַן",
@@ -5961,7 +6353,9 @@
    }
   ],
   "lemma_tekst": "לְמַעַן",
-  "translit": "lə·ma·‘an"
+  "translit": "lə·ma·‘an",
+  "anker": "🎯",
+  "beeld": "lema'an: opdat, terwille van"
  },
  {
   "hebreeuws": "לֵבָב",
@@ -5991,7 +6385,9 @@
    }
   ],
   "lemma_tekst": "לְבַבְכֶם",
-  "translit": "lə·ḇaḇ·ḵem"
+  "translit": "lə·ḇaḇ·ḵem",
+  "anker": "❤️",
+  "beeld": "levav, uitgebreid van lev"
  },
  {
   "hebreeuws": "לַיְלָה",
@@ -6021,7 +6417,9 @@
    }
   ],
   "lemma_tekst": "לַיְלָה",
-  "translit": "lay·lāh"
+  "translit": "lay·lāh",
+  "anker": "🌙",
+  "beeld": "lajla; Lilith is nachtdemon"
  },
  {
   "hebreeuws": "מִדְבָּר",
@@ -6051,7 +6449,9 @@
    }
   ],
   "lemma_tekst": "מִדְבָּר",
-  "translit": "miḏ·bār"
+  "translit": "miḏ·bār",
+  "anker": "🏜️",
+  "beeld": "Bamidbar: Numeri"
  },
  {
   "hebreeuws": "מַחֲנֶה",
@@ -6081,7 +6481,9 @@
    }
   ],
   "lemma_tekst": "מַחֲנֵה",
-  "translit": "ma·ḥă·nêh"
+  "translit": "ma·ḥă·nêh",
+  "anker": "⛺",
+  "beeld": "machane: het kamp"
  },
  {
   "hebreeuws": "מַטֶּה",
@@ -6111,7 +6513,9 @@
    }
   ],
   "lemma_tekst": "מַטֵּה",
-  "translit": "maṭ·ṭêh"
+  "translit": "maṭ·ṭêh",
+  "anker": "🪄",
+  "beeld": "matte: staf én stam"
  },
  {
   "hebreeuws": "מַלְאָךְ",
@@ -6143,7 +6547,9 @@
    }
   ],
   "lemma_tekst": "מַלְאַךְ",
-  "translit": "mal·’aḵ"
+  "translit": "mal·’aḵ",
+  "anker": "👼",
+  "beeld": "Malachi: mijn bode"
  },
  {
   "hebreeuws": "מַעֲשֶׂה",
@@ -6173,7 +6579,9 @@
    }
   ],
   "lemma_tekst": "מַעֲשֵׂה",
-  "translit": "ma·‘ă·śêh"
+  "translit": "ma·‘ă·śêh",
+  "anker": "🔨",
+  "beeld": "ma'asé, van asa"
  },
  {
   "hebreeuws": "מָלֵא",
@@ -6206,7 +6614,9 @@
    }
   ],
   "lemma_tekst": "מָלְאוּ",
-  "translit": "mā·lə·’ū"
+  "translit": "mā·lə·’ū",
+  "anker": "🥛",
+  "beeld": "male: vol, vervullen"
  },
  {
   "hebreeuws": "מוֹעֵד",
@@ -6236,7 +6646,9 @@
    }
   ],
   "lemma_tekst": "מוֹעֵד",
-  "translit": "mō·w·‘êḏ"
+  "translit": "mō·w·‘êḏ",
+  "anker": "📅",
+  "beeld": "mo'ed: de vastgestelde tijd"
  },
  {
   "hebreeuws": "נַעַר",
@@ -6266,7 +6678,9 @@
    }
   ],
   "lemma_tekst": "נַעַר",
-  "translit": "na·‘ar"
+  "translit": "na·‘ar",
+  "anker": "👦",
+  "beeld": "na'ar: jongen, knecht"
  },
  {
   "hebreeuws": "נַחֲלָה",
@@ -6296,7 +6710,9 @@
    }
   ],
   "lemma_tekst": "נַחֲלָה",
-  "translit": "na·ḥă·lāh"
+  "translit": "na·ḥă·lāh",
+  "anker": "🏡",
+  "beeld": "nachala: het erfdeel"
  },
  {
   "hebreeuws": "נָטָה",
@@ -6328,7 +6744,9 @@
    }
   ],
   "lemma_tekst": "נָטָה",
-  "translit": "nə·ṭū·yāh"
+  "translit": "nə·ṭū·yāh",
+  "anker": "🖐️",
+  "beeld": "nata: uitstrekken, uitspannen"
  },
  {
   "hebreeuws": "נצל",
@@ -6363,7 +6781,9 @@
    }
   ],
   "lemma_tekst": "מַצִּיל",
-  "translit": "maṣ·ṣîl"
+  "translit": "maṣ·ṣîl",
+  "anker": "🛟",
+  "beeld": "hatsala: redding"
  },
  {
   "hebreeuws": "עָוֹן",
@@ -6393,7 +6813,9 @@
    }
   ],
   "lemma_tekst": "עֲוֺן",
-  "translit": "‘ă·wōn"
+  "translit": "‘ă·wōn",
+  "anker": "⚖️",
+  "beeld": "avon: schuld en straf"
  },
  {
   "hebreeuws": "עֹלָה",
@@ -6423,7 +6845,9 @@
    }
   ],
   "lemma_tekst": "עָלָה",
-  "translit": "‘ā·lāh"
+  "translit": "‘ā·lāh",
+  "anker": "🔥",
+  "beeld": "ola: wat opstijgt"
  },
  {
   "hebreeuws": "עבד",
@@ -6453,7 +6877,9 @@
    }
   ],
   "lemma_tekst": "עַבְדְּךָ",
-  "translit": "‘ă·ḇā·ḏāw"
+  "translit": "‘ă·ḇā·ḏāw",
+  "anker": "⛓️",
+  "beeld": "avoda: dienst én arbeid"
  },
  {
   "hebreeuws": "עזב",
@@ -6485,7 +6911,9 @@
    }
   ],
   "lemma_tekst": "עָזְבוּ",
-  "translit": "‘ā·zə·ḇū"
+  "translit": "‘ā·zə·ḇū",
+  "anker": "🚪",
+  "beeld": "azav: achterlaten"
  },
  {
   "hebreeuws": "פְּלִשְׁתִּי",
@@ -6516,7 +6944,9 @@
    }
   ],
   "lemma_tekst": "פְּלִשְׁתִּים",
-  "translit": "pə·liš·tîm"
+  "translit": "pə·liš·tîm",
+  "anker": "⚔️",
+  "beeld": "Filistijn; Palestina komt hiervan"
  },
  {
   "hebreeuws": "פַּרְעֹה",
@@ -6546,7 +6976,9 @@
    }
   ],
   "lemma_tekst": "פַּרְעֹה",
-  "translit": "par·‘ōh"
+  "translit": "par·‘ōh",
+  "anker": "👑",
+  "beeld": "Farao van Egypte"
  },
  {
   "hebreeuws": "צֹאן",
@@ -6578,7 +7010,9 @@
    }
   ],
   "lemma_tekst": "צֹאן",
-  "translit": "ṣōn"
+  "translit": "ṣōn",
+  "anker": "🐑",
+  "beeld": "tson: schapen en geiten"
  },
  {
   "hebreeuws": "קֶרֶב",
@@ -6609,7 +7043,9 @@
    }
   ],
   "lemma_tekst": "קִרְבּוֹ",
-  "translit": "qir·bōw"
+  "translit": "qir·bōw",
+  "anker": "➗",
+  "beeld": "be-kerev: te midden van"
  },
  {
   "hebreeuws": "קרב",
@@ -6642,7 +7078,9 @@
    }
   ],
   "lemma_tekst": "תַּקְרִיב",
-  "translit": "taq·rîḇ"
+  "translit": "taq·rîḇ",
+  "anker": "➡️",
+  "beeld": "korban: het offer dat nadert"
  },
  {
   "hebreeuws": "רֶגֶל",
@@ -6672,7 +7110,9 @@
    }
   ],
   "lemma_tekst": "רַגְלָיו",
-  "translit": "raḡ·lāw"
+  "translit": "raḡ·lāw",
+  "anker": "🦶",
+  "beeld": "regel: voet én keer"
  },
  {
   "hebreeuws": "רָשָׁע",
@@ -6702,7 +7142,9 @@
    }
   ],
   "lemma_tekst": "רְשָׁעִים",
-  "translit": "rə·šā·‘îm"
+  "translit": "rə·šā·‘îm",
+  "anker": "😈",
+  "beeld": "rasja: de goddeloze"
  },
  {
   "hebreeuws": "תּוֹרָה",
@@ -6732,7 +7174,9 @@
    }
   ],
   "lemma_tekst": "תּוֹרַת",
-  "translit": "tō·w·raṯ"
+  "translit": "tō·w·raṯ",
+  "anker": "📜",
+  "beeld": "Thora: onderwijzing"
  },
  {
   "hebreeuws": "שֵׁשׁ",
@@ -6762,7 +7206,9 @@
    }
   ],
   "lemma_tekst": "שֵׁשׁ",
-  "translit": "šêš"
+  "translit": "šêš",
+  "anker": "6️⃣",
+  "beeld": "sjesj: zes"
  },
  {
   "hebreeuws": "שָׁלוֹם",
@@ -6792,7 +7238,9 @@
    }
   ],
   "lemma_tekst": "שָׁלוֹם",
-  "translit": "šā·lō·wm"
+  "translit": "šā·lō·wm",
+  "anker": "🕊️",
+  "beeld": "sjalom, Jeru-salem, Ab-salom"
  },
  {
   "hebreeuws": "שָׁתָה",
@@ -6824,7 +7272,9 @@
    }
   ],
   "lemma_tekst": "יִשְׁתּוּ",
-  "translit": "yiš·tū"
+  "translit": "yiš·tū",
+  "anker": "🥤",
+  "beeld": "sjata: drinken"
  },
  {
   "hebreeuws": "אֲרוֹן",
@@ -6854,7 +7304,9 @@
    }
   ],
   "lemma_tekst": "אֲרוֹן",
-  "translit": "’ă·rō·wn"
+  "translit": "’ă·rō·wn",
+  "anker": "📦",
+  "beeld": "aron: de verbondskist"
  },
  {
   "hebreeuws": "אַחֵר",
@@ -6884,7 +7336,9 @@
    }
   ],
   "lemma_tekst": "אֲחֵרִים",
-  "translit": "’ă·ḥê·rîm"
+  "translit": "’ă·ḥê·rîm",
+  "anker": "🔄",
+  "beeld": "acher: een andere"
  },
  {
   "hebreeuws": "אֹזֶן",
@@ -6914,7 +7368,9 @@
    }
   ],
   "lemma_tekst": "אֹזֶן",
-  "translit": "’ō·zen"
+  "translit": "’ō·zen",
+  "anker": "👂",
+  "beeld": "ozen: het oor"
  },
  {
   "hebreeuws": "אבד",
@@ -6947,7 +7403,9 @@
    }
   ],
   "lemma_tekst": "יֹאבֵדוּ",
-  "translit": "yō·ḇê·ḏū"
+  "translit": "yō·ḇê·ḏū",
+  "anker": "💥",
+  "beeld": "avad: te gronde gaan"
  },
  {
   "hebreeuws": "אסף",
@@ -6981,7 +7439,9 @@
    }
   ],
   "lemma_tekst": "נֶאֶסְפוּ",
-  "translit": "ne·’es·p̄ū"
+  "translit": "ne·’es·p̄ū",
+  "anker": "👥",
+  "beeld": "Asaf: hij verzamelt"
  },
  {
   "hebreeuws": "בְּהֵמָה",
@@ -7011,7 +7471,9 @@
    }
   ],
   "lemma_tekst": "בְּהֵמָה",
-  "translit": "bə·hê·māh"
+  "translit": "bə·hê·māh",
+  "anker": "🐄",
+  "beeld": "behemoth: het grote beest"
  },
  {
   "hebreeuws": "בִּין",
@@ -7045,7 +7507,9 @@
    }
   ],
   "lemma_tekst": "יָבִין",
-  "translit": "yā·ḇîn"
+  "translit": "yā·ḇîn",
+  "anker": "🧠",
+  "beeld": "bina: inzicht"
  },
  {
   "hebreeuws": "בָּקָר",
@@ -7075,7 +7539,9 @@
    }
   ],
   "lemma_tekst": "בָּקָר",
-  "translit": "bā·qār"
+  "translit": "bā·qār",
+  "anker": "🐄",
+  "beeld": "bakar: het rundvee"
  },
  {
   "hebreeuws": "בחר",
@@ -7105,7 +7571,9 @@
    }
   ],
   "lemma_tekst": "יִבְחַר",
-  "translit": "yiḇ·ḥar"
+  "translit": "yiḇ·ḥar",
+  "anker": "✅",
+  "beeld": "bachir: de uitverkorene"
  },
  {
   "hebreeuws": "גָּלָה",
@@ -7138,7 +7606,9 @@
    }
   ],
   "lemma_tekst": "הֶגְלָה",
-  "translit": "heḡ·lāh"
+  "translit": "heḡ·lāh",
+  "anker": "🎭",
+  "beeld": "gala: ontdekken; ook ballingschap"
  },
  {
   "hebreeuws": "דּוֹר",
@@ -7168,7 +7638,9 @@
    }
   ],
   "lemma_tekst": "דּוֹר",
-  "translit": "dō·wr"
+  "translit": "dō·wr",
+  "anker": "👨‍👩‍👦",
+  "beeld": "le-dor wa-dor: geslacht na geslacht"
  },
  {
   "hebreeuws": "דרשׁ",
@@ -7198,7 +7670,9 @@
    }
   ],
   "lemma_tekst": "דִּרְשׁוּ",
-  "translit": "dir·šū"
+  "translit": "dir·šū",
+  "anker": "🔍",
+  "beeld": "midrasj: wat je zoekt"
  },
  {
   "hebreeuws": "הרג",
@@ -7228,7 +7702,9 @@
    }
   ],
   "lemma_tekst": "הָרְגוּ",
-  "translit": "hā·rə·ḡū"
+  "translit": "hā·rə·ḡū",
+  "anker": "💀",
+  "beeld": "harag: doden"
  },
  {
   "hebreeuws": "זֶבַח",
@@ -7258,7 +7734,9 @@
    }
   ],
   "lemma_tekst": "זֶבַח",
-  "translit": "ze·ḇaḥ"
+  "translit": "ze·ḇaḥ",
+  "anker": "🔥",
+  "beeld": "zevach: het slachtoffer"
  },
  {
   "hebreeuws": "זָקֵן",
@@ -7288,7 +7766,9 @@
    }
   ],
   "lemma_tekst": "זִקְנֵי",
-  "translit": "ziq·nê"
+  "translit": "ziq·nê",
+  "anker": "🧓",
+  "beeld": "zaken: oud én oudste"
  },
  {
   "hebreeuws": "חָצֵר",
@@ -7318,7 +7798,9 @@
    }
   ],
   "lemma_tekst": "חֲצַר",
-  "translit": "ḥă·ṣar"
+  "translit": "ḥă·ṣar",
+  "anker": "🏛️",
+  "beeld": "chatser: de voorhof"
  },
  {
   "hebreeuws": "חוּץ",
@@ -7348,7 +7830,9 @@
    }
   ],
   "lemma_tekst": "חוּצוֹת",
-  "translit": "ḥū·ṣō·wṯ"
+  "translit": "ḥū·ṣō·wṯ",
+  "anker": "🚪",
+  "beeld": "chuts: buiten, de straat"
  },
  {
   "hebreeuws": "חוה",
@@ -7379,7 +7863,9 @@
    }
   ],
   "lemma_tekst": "תִשְׁתַּחֲוֶה",
-  "translit": "ṯiš·ta·ḥă·weh"
+  "translit": "ṯiš·ta·ḥă·weh",
+  "anker": "🙇",
+  "beeld": "hisjtachawa: zich neerwerpen"
  },
  {
   "hebreeuws": "יַרְדֵּן",
@@ -7409,7 +7895,9 @@
    }
   ],
   "lemma_tekst": "יַרְדֵּן",
-  "translit": "yar·dên"
+  "translit": "yar·dên",
+  "anker": "🌊",
+  "beeld": "Jordaan, de afdalende"
  },
  {
   "hebreeuws": "יָכֹל",
@@ -7441,7 +7929,9 @@
    }
   ],
   "lemma_tekst": "יוּכַל",
-  "translit": "yū·ḵal"
+  "translit": "yū·ḵal",
+  "anker": "💪",
+  "beeld": "jachol: in staat zijn"
  },
  {
   "hebreeuws": "ישׁע",
@@ -7475,7 +7965,9 @@
    }
   ],
   "lemma_tekst": "מוֹשִׁיעַ",
-  "translit": "mō·wō·šî·a‘"
+  "translit": "mō·wō·šî·a‘",
+  "anker": "🛟",
+  "beeld": "Jozua, Jezus, Hosanna"
  },
  {
   "hebreeuws": "כַּף",
@@ -7505,7 +7997,9 @@
    }
   ],
   "lemma_tekst": "כַּף",
-  "translit": "kap̄"
+  "translit": "kap̄",
+  "anker": "✋",
+  "beeld": "kaf: de holle hand"
  },
  {
   "hebreeuws": "כָּבוֹד",
@@ -7535,7 +8029,9 @@
    }
   ],
   "lemma_tekst": "כְּבוֹד",
-  "translit": "kə·ḇō·wḏ"
+  "translit": "kə·ḇō·wḏ",
+  "anker": "✨",
+  "beeld": "kavod; Ikabod: de eer week"
  },
  {
   "hebreeuws": "כָּלָה",
@@ -7565,7 +8061,9 @@
    }
   ],
   "lemma_tekst": "כִּלָּה",
-  "translit": "kil·lāh"
+  "translit": "kil·lāh",
+  "anker": "🏁",
+  "beeld": "kala: ten einde zijn"
  },
  {
   "hebreeuws": "לחם",
@@ -7597,7 +8095,9 @@
    }
   ],
   "lemma_tekst": "נִלְחַם",
-  "translit": "nil·ḥām"
+  "translit": "nil·ḥām",
+  "anker": "⚔️",
+  "beeld": "milchama: de strijd"
  },
  {
   "hebreeuws": "מְלָאכָה",
@@ -7627,7 +8127,9 @@
    }
   ],
   "lemma_tekst": "מְלָאכָה",
-  "translit": "mə·lā·ḵāh"
+  "translit": "mə·lā·ḵāh",
+  "anker": "🔨",
+  "beeld": "melacha: werk, arbeid"
  },
  {
   "hebreeuws": "מִנְחָה",
@@ -7657,7 +8159,9 @@
    }
   ],
   "lemma_tekst": "מִנְחָה",
-  "translit": "min·ḥāh"
+  "translit": "min·ḥāh",
+  "anker": "🎁",
+  "beeld": "mincha: het spijsoffer"
  },
  {
   "hebreeuws": "מִצְוָה",
@@ -7687,7 +8191,9 @@
    }
   ],
   "lemma_tekst": "מִצְוֺת",
-  "translit": "miṣ·wōṯ"
+  "translit": "miṣ·wōṯ",
+  "anker": "📜",
+  "beeld": "bar mitswa: zoon des gebods"
  },
  {
   "hebreeuws": "סֵפֶר",
@@ -7717,7 +8223,9 @@
    }
   ],
   "lemma_tekst": "סֵפֶר",
-  "translit": "sê·p̄er"
+  "translit": "sê·p̄er",
+  "anker": "📕",
+  "beeld": "sefer Thora"
  },
  {
   "hebreeuws": "סבב",
@@ -7751,7 +8259,9 @@
    }
   ],
   "lemma_tekst": "סְבָבוּנִי",
-  "translit": "sōḇ"
+  "translit": "sōḇ",
+  "anker": "⭕",
+  "beeld": "saviv: rondom"
  },
  {
   "hebreeuws": "פֶּתַח",
@@ -7781,7 +8291,9 @@
    }
   ],
   "lemma_tekst": "פֶּתַח",
-  "translit": "pe·ṯaḥ"
+  "translit": "pe·ṯaḥ",
+  "anker": "🚪",
+  "beeld": "petach: de ingang"
  },
  {
   "hebreeuws": "צַדִּיק",
@@ -7811,7 +8323,9 @@
    }
   ],
   "lemma_tekst": "צַדִּיק",
-  "translit": "ṣad·dîq"
+  "translit": "ṣad·dîq",
+  "anker": "⚖️",
+  "beeld": "tsaddik; Melchi-sedek"
  },
  {
   "hebreeuws": "קדשׁ",
@@ -7844,7 +8358,9 @@
    }
   ],
   "lemma_tekst": "קַדְּשׁוּ",
-  "translit": "hiq·dîš"
+  "translit": "hiq·dîš",
+  "anker": "✨",
+  "beeld": "kiddoesj: heiliging"
  },
  {
   "hebreeuws": "רִאשׁוֹן",
@@ -7874,7 +8390,9 @@
    }
   ],
   "lemma_tekst": "רִאשׁוֹן",
-  "translit": "ri·šō·wn"
+  "translit": "ri·šō·wn",
+  "anker": "🥇",
+  "beeld": "risjon; be-resjit: in het begin"
  },
  {
   "hebreeuws": "רֵע",
@@ -7905,7 +8423,9 @@
    }
   ],
   "lemma_tekst": "רֵעֵהוּ",
-  "translit": "rê·‘ê·hū"
+  "translit": "rê·‘ê·hū",
+  "anker": "🤝",
+  "beeld": "re'a: je naaste"
  },
  {
   "hebreeuws": "רָבָה",
@@ -7939,7 +8459,9 @@
    }
   ],
   "lemma_tekst": "הַרְבֵּה",
-  "translit": "har·bêh"
+  "translit": "har·bêh",
+  "anker": "📈",
+  "beeld": "harbe: veel, talrijk"
  },
  {
   "hebreeuws": "רָעָה",
@@ -7971,7 +8493,9 @@
    }
   ],
   "lemma_tekst": "רָעָה",
-  "translit": "rā·‘āh"
+  "translit": "rā·‘āh",
+  "anker": "🐑",
+  "beeld": "ro'e: de herder"
  },
  {
   "hebreeuws": "רוּם",
@@ -8004,7 +8528,9 @@
    }
   ],
   "lemma_tekst": "תָּרִימוּ",
-  "translit": "tā·rî·mū"
+  "translit": "tā·rî·mū",
+  "anker": "⬆️",
+  "beeld": "roem: verheven zijn"
  },
  {
   "hebreeuws": "שֵׁבֶט",
@@ -8034,7 +8560,9 @@
    }
   ],
   "lemma_tekst": "שֵׁבֶט",
-  "translit": "šê·ḇeṭ"
+  "translit": "šê·ḇeṭ",
+  "anker": "🪄",
+  "beeld": "sjevet: staf én stam"
  },
  {
   "hebreeuws": "שֶׁמֶן",
@@ -8064,7 +8592,9 @@
    }
   ],
   "lemma_tekst": "שֶׁמֶן",
-  "translit": "še·men"
+  "translit": "še·men",
+  "anker": "🫒",
+  "beeld": "sjemen: olijfolie"
  },
  {
   "hebreeuws": "שׁאל",
@@ -8095,7 +8625,9 @@
    }
   ],
   "lemma_tekst": "שְׁאַל",
-  "translit": "šā·’al"
+  "translit": "šā·’al",
+  "anker": "❓",
+  "beeld": "sja'al; Saul is de gevraagde"
  },
  {
   "hebreeuws": "שׁבע",
@@ -8128,7 +8660,9 @@
    }
   ],
   "lemma_tekst": "נִשְׁבַּע",
-  "translit": "niš·ba‘"
+  "translit": "niš·ba‘",
+  "anker": "🤞",
+  "beeld": "nisjba: een eed zweren"
  },
  {
   "hebreeuws": "שׁכב",
@@ -8158,7 +8692,9 @@
    }
   ],
   "lemma_tekst": "שֹׁכֵב",
-  "translit": "šō·ḵêḇ"
+  "translit": "šō·ḵêḇ",
+  "anker": "🛏️",
+  "beeld": "sjachav: gaan liggen"
  },
  {
   "hebreeuws": "שׁפט",
@@ -8191,7 +8727,9 @@
    }
   ],
   "lemma_tekst": "יִשְׁפֹּט",
-  "translit": "šō·p̄êṭ"
+  "translit": "šō·p̄êṭ",
+  "anker": "⚖️",
+  "beeld": "Sjoftim: Richteren"
  },
  {
   "hebreeuws": "שָׂפָה",
@@ -8221,7 +8759,9 @@
    }
   ],
   "lemma_tekst": "שְׂפַת",
-  "translit": "śə·p̄aṯ"
+  "translit": "śə·p̄aṯ",
+  "anker": "👄",
+  "beeld": "safa: lip én taal"
  },
  {
   "hebreeuws": "אָז",
@@ -8251,7 +8791,9 @@
    }
   ],
   "lemma_tekst": "אָז",
-  "translit": "’āz"
+  "translit": "’āz",
+  "anker": "⏱️",
+  "beeld": "az: toen, op dat moment"
  },
  {
   "hebreeuws": "אַיִל",
@@ -8281,7 +8823,9 @@
    }
   ],
   "lemma_tekst": "אֵילִם",
-  "translit": "’ê·lim"
+  "translit": "’ê·lim",
+  "anker": "🐏",
+  "beeld": "ajil: de ram"
  },
  {
   "hebreeuws": "אַךְ",
@@ -8311,7 +8855,9 @@
    }
   ],
   "lemma_tekst": "אַךְ",
-  "translit": "’aḵ"
+  "translit": "’aḵ",
+  "anker": "❗",
+  "beeld": "ach: voorwaar, slechts"
  },
  {
   "hebreeuws": "אֱמֶת",
@@ -8341,7 +8887,9 @@
    }
   ],
   "lemma_tekst": "אֱמֶת",
-  "translit": "’ĕ·meṯ"
+  "translit": "’ĕ·meṯ",
+  "anker": "💎",
+  "beeld": "emet; amen komt hiervan"
  },
  {
   "hebreeuws": "אַף",
@@ -8371,7 +8919,9 @@
    }
   ],
   "lemma_tekst": "אַף",
-  "translit": "’ap·pōw"
+  "translit": "’ap·pōw",
+  "anker": "➕",
+  "beeld": "af: ook, zelfs"
  },
  {
   "hebreeuws": "בַּעַל",
@@ -8401,7 +8951,9 @@
    }
   ],
   "lemma_tekst": "בַּעֲלֵי",
-  "translit": "ba·‘ă·lê"
+  "translit": "ba·‘ă·lê",
+  "anker": "👑",
+  "beeld": "Baäl: heer en eigenaar"
  },
  {
   "hebreeuws": "גִּבּוֹר",
@@ -8431,7 +8983,9 @@
    }
   ],
   "lemma_tekst": "גִּבּוֹר",
-  "translit": "gib·bō·wr"
+  "translit": "gib·bō·wr",
+  "anker": "💪",
+  "beeld": "gibbor chajil: dappere held"
  },
  {
   "hebreeuws": "הלל",
@@ -8463,7 +9017,9 @@
    }
   ],
   "lemma_tekst": "הַלְלוּ",
-  "translit": "hal·lū"
+  "translit": "hal·lū",
+  "anker": "🙌",
+  "beeld": "halleluja: looft JHWH"
  },
  {
   "hebreeuws": "זבח",
@@ -8495,7 +9051,9 @@
    }
   ],
   "lemma_tekst": "מְזַבְּחִים",
-  "translit": "mə·zab·bə·ḥîm"
+  "translit": "mə·zab·bə·ḥîm",
+  "anker": "🔥",
+  "beeld": "werkwoord bij zevach"
  },
  {
   "hebreeuws": "חוֹמָה",
@@ -8525,7 +9083,9 @@
    }
   ],
   "lemma_tekst": "חוֹמַת",
-  "translit": "ḥō·w·maṯ"
+  "translit": "ḥō·w·maṯ",
+  "anker": "🧱",
+  "beeld": "choma: de stadsmuur"
  },
  {
   "hebreeuws": "חָכָם",
@@ -8555,7 +9115,9 @@
    }
   ],
   "lemma_tekst": "חָכָם",
-  "translit": "ḥā·ḵām"
+  "translit": "ḥā·ḵām",
+  "anker": "🦉",
+  "beeld": "chacham: de wijze"
  },
  {
   "hebreeuws": "חָכְמָה",
@@ -8585,7 +9147,9 @@
    }
   ],
   "lemma_tekst": "חָכְמָה",
-  "translit": "ḥāḵ·māh"
+  "translit": "ḥāḵ·māh",
+  "anker": "🦉",
+  "beeld": "chochma: de wijsheid"
  },
  {
   "hebreeuws": "חלל",
@@ -8615,7 +9179,9 @@
    }
   ],
   "lemma_tekst": "הֵחֵל",
-  "translit": "hê·ḥêl"
+  "translit": "hê·ḥêl",
+  "anker": "💔",
+  "beeld": "chalal: ontwijden, doorboren"
  },
  {
   "hebreeuws": "חָנָה",
@@ -8645,7 +9211,9 @@
    }
   ],
   "lemma_tekst": "יַחֲנוּ",
-  "translit": "ya·ḥă·nū"
+  "translit": "ya·ḥă·nū",
+  "anker": "⛺",
+  "beeld": "chana; machane is kamp"
  },
  {
   "hebreeuws": "חֹק",
@@ -8675,7 +9243,9 @@
    }
   ],
   "lemma_tekst": "חֹק",
-  "translit": "ḥuq·qe·ḵā"
+  "translit": "ḥuq·qe·ḵā",
+  "anker": "📜",
+  "beeld": "chok: vaste inzetting"
  },
  {
   "hebreeuws": "טָמֵא",
@@ -8709,7 +9279,9 @@
    }
   ],
   "lemma_tekst": "יִטְמָא",
-  "translit": "yiṭ·mā"
+  "translit": "yiṭ·mā",
+  "anker": "🚱",
+  "beeld": "tame: ritueel onrein"
  },
  {
   "hebreeuws": "יַיִן",
@@ -8739,7 +9311,9 @@
    }
   ],
   "lemma_tekst": "יַיִן",
-  "translit": "ya·yin"
+  "translit": "ya·yin",
+  "anker": "🍷",
+  "beeld": "jajin: wijn"
  },
  {
   "hebreeuws": "יָמִין",
@@ -8769,7 +9343,9 @@
    }
   ],
   "lemma_tekst": "יָמִין",
-  "translit": "yə·mî·nōw"
+  "translit": "yə·mî·nōw",
+  "anker": "➡️",
+  "beeld": "Ben-jamin: zoon van rechts"
  },
  {
   "hebreeuws": "יֵשׁ",
@@ -8799,7 +9375,9 @@
    }
   ],
   "lemma_tekst": "יֵשׁ",
-  "translit": "yêš"
+  "translit": "yêš",
+  "anker": "✅",
+  "beeld": "jesj: er is"
  },
  {
   "hebreeuws": "כֹּח",
@@ -8829,7 +9407,9 @@
    }
   ],
   "lemma_tekst": "כֹּחַ",
-  "translit": "kō·aḥ"
+  "translit": "kō·aḥ",
+  "anker": "💪",
+  "beeld": "koach: kracht"
  },
  {
   "hebreeuws": "כִּסֵּא",
@@ -8859,7 +9439,9 @@
    }
   ],
   "lemma_tekst": "כִּסֵּא",
-  "translit": "kis·sê"
+  "translit": "kis·sê",
+  "anker": "🪑",
+  "beeld": "kisse: zetel, troon"
  },
  {
   "hebreeuws": "כָּסָה",
@@ -8891,7 +9473,9 @@
    }
   ],
   "lemma_tekst": "יְכַסֶּה",
-  "translit": "yə·ḵas·seh"
+  "translit": "yə·ḵas·seh",
+  "anker": "🧥",
+  "beeld": "kasa: toedekken"
  },
  {
   "hebreeuws": "כְּמוֹ",
@@ -8921,7 +9505,9 @@
    }
   ],
   "lemma_tekst": "כְּמוֹ",
-  "translit": "kə·mōw-"
+  "translit": "kə·mōw-",
+  "anker": "〰️",
+  "beeld": "kemo: net als"
  },
  {
   "hebreeuws": "לְבַד",
@@ -8951,7 +9537,9 @@
    }
   ],
   "lemma_tekst": "בַּדָּיו",
-  "translit": "bad·dāw"
+  "translit": "bad·dāw",
+  "anker": "1️⃣",
+  "beeld": "levaddo: hij alleen"
  },
  {
   "hebreeuws": "מָוֶת",
@@ -8981,7 +9569,9 @@
    }
   ],
   "lemma_tekst": "מָוֶת",
-  "translit": "mā·weṯ"
+  "translit": "mā·weṯ",
+  "anker": "💀",
+  "beeld": "mavet; muth is sterven"
  },
  {
   "hebreeuws": "מִסְפָּר",
@@ -9011,7 +9601,9 @@
    }
   ],
   "lemma_tekst": "מִסְפַּר",
-  "translit": "mis·par"
+  "translit": "mis·par",
+  "anker": "🔢",
+  "beeld": "mispar: het aantal"
  },
  {
   "hebreeuws": "מִשְׁכָּן",
@@ -9041,7 +9633,9 @@
    }
   ],
   "lemma_tekst": "מִשְׁכַּן",
-  "translit": "miš·kan"
+  "translit": "miš·kan",
+  "anker": "⛺",
+  "beeld": "misjkan; sjachan is wonen"
  },
  {
   "hebreeuws": "מִמַּעַל",
@@ -9071,7 +9665,9 @@
    }
   ],
   "lemma_tekst": "מַעְלָה",
-  "translit": "ma‘·lāh"
+  "translit": "ma‘·lāh",
+  "anker": "⬆️",
+  "beeld": "mi-ma'al: van boven"
  },
  {
   "hebreeuws": "נֶגֶד",
@@ -9101,7 +9697,9 @@
    }
   ],
   "lemma_tekst": "נֶגֶד",
-  "translit": "ne·ḡeḏ"
+  "translit": "ne·ḡeḏ",
+  "anker": "↔️",
+  "beeld": "neged: er recht tegenover"
  },
  {
   "hebreeuws": "נגע",
@@ -9135,7 +9733,9 @@
    }
   ],
   "lemma_tekst": "יִגַּע",
-  "translit": "yig·ga‘"
+  "translit": "yig·ga‘",
+  "anker": "👉",
+  "beeld": "naga: aanraken, treffen"
  },
  {
   "hebreeuws": "נוּח",
@@ -9169,7 +9769,9 @@
    }
   ],
   "lemma_tekst": "יָנוּחַ",
-  "translit": "yā·nū·aḥ"
+  "translit": "yā·nū·aḥ",
+  "anker": "😴",
+  "beeld": "Noach: rust en troost"
  },
  {
   "hebreeuws": "נוּס",
@@ -9202,7 +9804,9 @@
    }
   ],
   "lemma_tekst": "נָס",
-  "translit": "nās"
+  "translit": "nās",
+  "anker": "🏃",
+  "beeld": "noes: op de vlucht"
  },
  {
   "hebreeuws": "נַחַל",
@@ -9232,7 +9836,9 @@
    }
   ],
   "lemma_tekst": "נַחַל",
-  "translit": "na·ḥal"
+  "translit": "na·ḥal",
+  "anker": "🏞️",
+  "beeld": "nachal: de wadi"
  },
  {
   "hebreeuws": "נְחֹשֶׁת",
@@ -9262,7 +9868,9 @@
    }
   ],
   "lemma_tekst": "נְחֹשֶׁת",
-  "translit": "nə·ḥō·šeṯ"
+  "translit": "nə·ḥō·šeṯ",
+  "anker": "🔗",
+  "beeld": "nechosjet; Nechusjtan"
  },
  {
   "hebreeuws": "נסע",
@@ -9295,7 +9903,9 @@
    }
   ],
   "lemma_tekst": "נָסַע",
-  "translit": "yis·sā·‘ū"
+  "translit": "yis·sā·‘ū",
+  "anker": "🚶",
+  "beeld": "nasa: verdertrekken"
  },
  {
   "hebreeuws": "נָשִׂיא",
@@ -9325,7 +9935,9 @@
    }
   ],
   "lemma_tekst": "נָשִׂיא",
-  "translit": "nā·śî"
+  "translit": "nā·śî",
+  "anker": "👑",
+  "beeld": "nasi: de verhevene"
  },
  {
   "hebreeuws": "סוּס",
@@ -9355,7 +9967,9 @@
    }
   ],
   "lemma_tekst": "סוּסִים",
-  "translit": "sū·sîm"
+  "translit": "sū·sîm",
+  "anker": "🐎",
+  "beeld": "soes: het paard"
  },
  {
   "hebreeuws": "עֲבֹדָה",
@@ -9385,7 +9999,9 @@
    }
   ],
   "lemma_tekst": "עֲבֹדַת",
-  "translit": "‘ă·ḇō·ḏaṯ"
+  "translit": "‘ă·ḇō·ḏaṯ",
+  "anker": "⛓️",
+  "beeld": "avoda: dienst én arbeid"
  },
  {
   "hebreeuws": "עֵדָה",
@@ -9415,7 +10031,9 @@
    }
   ],
   "lemma_tekst": "עֲדַת",
-  "translit": "‘ă·ḏaṯ"
+  "translit": "‘ă·ḏaṯ",
+  "anker": "👥",
+  "beeld": "eda: de gemeente"
  },
  {
   "hebreeuws": "עֶרֶב",
@@ -9445,7 +10063,9 @@
    }
   ],
   "lemma_tekst": "עֶרֶב",
-  "translit": "‘e·reḇ"
+  "translit": "‘e·reḇ",
+  "anker": "🌇",
+  "beeld": "erev; Erev Sjabbat"
  },
  {
   "hebreeuws": "פֶּן",
@@ -9475,7 +10095,9 @@
    }
   ],
   "lemma_tekst": "פֶּן",
-  "translit": "pen-"
+  "translit": "pen-",
+  "anker": "🚫",
+  "beeld": "pen: opdat niet"
  },
  {
   "hebreeuws": "פָּנָה",
@@ -9508,7 +10130,9 @@
    }
   ],
   "lemma_tekst": "יִפְנֶה",
-  "translit": "yip̄·neh"
+  "translit": "yip̄·neh",
+  "anker": "↩️",
+  "beeld": "pana; panim is gezicht"
  },
  {
   "hebreeuws": "פַּר",
@@ -9538,7 +10162,9 @@
    }
   ],
   "lemma_tekst": "פַּר",
-  "translit": "par"
+  "translit": "par",
+  "anker": "🐂",
+  "beeld": "par: de jonge stier"
  },
  {
   "hebreeuws": "פתח",
@@ -9571,7 +10197,9 @@
    }
   ],
   "lemma_tekst": "יִפְתַּח",
-  "translit": "yip·pā·ṯê·aḥ"
+  "translit": "yip·pā·ṯê·aḥ",
+  "anker": "🔓",
+  "beeld": "patach; petach is ingang"
  },
  {
   "hebreeuws": "צְדָקָה",
@@ -9601,7 +10229,9 @@
    }
   ],
   "lemma_tekst": "צְדָקָה",
-  "translit": "ṣə·ḏā·qāh"
+  "translit": "ṣə·ḏā·qāh",
+  "anker": "⚖️",
+  "beeld": "tsedaka: gerechtigheid, liefdegave"
  },
  {
   "hebreeuws": "צָפוֹן",
@@ -9631,7 +10261,9 @@
    }
   ],
   "lemma_tekst": "צָפוֹן",
-  "translit": "ṣā·p̄ō·wn"
+  "translit": "ṣā·p̄ō·wn",
+  "anker": "🧭",
+  "beeld": "tsafon: het noorden"
  },
  {
   "hebreeuws": "קבץ",
@@ -9664,7 +10296,9 @@
    }
   ],
   "lemma_tekst": "נִקְבְּצוּ",
-  "translit": "niq·bə·ṣū"
+  "translit": "niq·bə·ṣū",
+  "anker": "👥",
+  "beeld": "kibboets: verzameling"
  },
  {
   "hebreeuws": "קבר",
@@ -9694,7 +10328,9 @@
    }
   ],
   "lemma_tekst": "קָבְרוּ",
-  "translit": "qā·ḇə·rū"
+  "translit": "qā·ḇə·rū",
+  "anker": "🪦",
+  "beeld": "kever: het graf"
  },
  {
   "hebreeuws": "רֹב",
@@ -9724,7 +10360,9 @@
    }
   ],
   "lemma_tekst": "רֹב",
-  "translit": "rōḇ"
+  "translit": "rōḇ",
+  "anker": "📚",
+  "beeld": "rov: de meerderheid"
  },
  {
   "hebreeuws": "רדף",
@@ -9754,7 +10392,9 @@
    }
   ],
   "lemma_tekst": "רֹדֵף",
-  "translit": "rō·ḏêp̄"
+  "translit": "rō·ḏêp̄",
+  "anker": "🏃",
+  "beeld": "radaf: najagen"
  },
  {
   "hebreeuws": "שָׂמֵח",
@@ -9787,7 +10427,9 @@
    }
   ],
   "lemma_tekst": "יִשְׂמַח",
-  "translit": "yiś·maḥ"
+  "translit": "yiś·maḥ",
+  "anker": "😊",
+  "beeld": "Simchat Thora: vreugde"
  },
  {
   "hebreeuws": "שָׂנֵא",
@@ -9817,7 +10459,9 @@
    }
   ],
   "lemma_tekst": "שָׂנֵאתִי",
-  "translit": "śā·nê·ṯî"
+  "translit": "śā·nê·ṯî",
+  "anker": "😠",
+  "beeld": "sane: haten"
  },
  {
   "hebreeuws": "שׁ",
@@ -9848,7 +10492,9 @@
    }
   ],
   "lemma_tekst": "אֲשֶׁר",
-  "translit": "’ă·šer"
+  "translit": "’ă·šer",
+  "anker": "🔗",
+  "beeld": "korte vorm van asjer"
  },
  {
   "hebreeuws": "שׁאר",
@@ -9881,7 +10527,9 @@
    }
   ],
   "lemma_tekst": "הִשְׁאִיר",
-  "translit": "niš·’ar"
+  "translit": "niš·’ar",
+  "anker": "➕",
+  "beeld": "sje'erit: de rest"
  },
  {
   "hebreeuws": "שׁבר",
@@ -9915,7 +10563,9 @@
    }
   ],
   "lemma_tekst": "יִשָּׁבֵר",
-  "translit": "yiš·šā·ḇêr"
+  "translit": "yiš·šā·ḇêr",
+  "anker": "💔",
+  "beeld": "sjavar: stukbreken"
  },
  {
   "hebreeuws": "שׁחת",
@@ -9947,7 +10597,9 @@
    }
   ],
   "lemma_tekst": "מַשְׁחִית",
-  "translit": "maš·ḥîṯ"
+  "translit": "maš·ḥîṯ",
+  "anker": "💥",
+  "beeld": "sjachat: te gronde richten"
  },
  {
   "hebreeuws": "שׁכן",
@@ -9977,7 +10629,9 @@
    }
   ],
   "lemma_tekst": "יִשְׁכֹּן",
-  "translit": "yiš·kōn"
+  "translit": "yiš·kōn",
+  "anker": "⛺",
+  "beeld": "Sjechina; misjkan is woning"
  },
  {
   "hebreeuws": "שְׁמֹנֶה",
@@ -10007,7 +10661,9 @@
    }
   ],
   "lemma_tekst": "שְׁמֹנֶה",
-  "translit": "šə·mō·neh"
+  "translit": "šə·mō·neh",
+  "anker": "8️⃣",
+  "beeld": "sjemone: acht"
  },
  {
   "hebreeuws": "שֶׁמֶשׁ",
@@ -10037,7 +10693,9 @@
    }
   ],
   "lemma_tekst": "שֶׁמֶשׁ",
-  "translit": "še·meš"
+  "translit": "še·meš",
+  "anker": "☀️",
+  "beeld": "Sjimsjon, Simson: zonnetje"
  },
  {
   "hebreeuws": "שְׁנִי",
@@ -10067,7 +10725,9 @@
    }
   ],
   "lemma_tekst": "שָׁנִי",
-  "translit": "šā·nî"
+  "translit": "šā·nî",
+  "anker": "2️⃣",
+  "beeld": "sjeni, van sjnajim"
  },
  {
   "hebreeuws": "אוֹר",
@@ -10097,7 +10757,9 @@
    }
   ],
   "lemma_tekst": "אוֹר",
-  "translit": "’ō·wr"
+  "translit": "’ō·wr",
+  "anker": "💡",
+  "beeld": "or; Uriël: mijn licht"
  },
  {
   "hebreeuws": "אָחוֹת",
@@ -10127,7 +10789,9 @@
    }
   ],
   "lemma_tekst": "אֲחוֹת",
-  "translit": "’ă·ḥō·ṯî"
+  "translit": "’ă·ḥō·ṯî",
+  "anker": "👭",
+  "beeld": "achot, vrouwelijk bij ach"
  },
  {
   "hebreeuws": "אֲנַחְנוּ",
@@ -10157,7 +10821,9 @@
    }
   ],
   "lemma_tekst": "אֲנַחְנוּ",
-  "translit": "’ă·naḥ·nū"
+  "translit": "’ă·naḥ·nū",
+  "anker": "👥",
+  "beeld": "anachnoe: wij"
  },
  {
   "hebreeuws": "בּוֹשׁ",
@@ -10190,7 +10856,9 @@
    }
   ],
   "lemma_tekst": "יֵבֹשׁוּ",
-  "translit": "yê·ḇō·šū"
+  "translit": "yê·ḇō·šū",
+  "anker": "😳",
+  "beeld": "bosj: beschaamd staan"
  },
  {
   "hebreeuws": "בטח",
@@ -10222,7 +10890,9 @@
    }
   ],
   "lemma_tekst": "בֹּטֵחַ",
-  "translit": "bō·ṭê·aḥ"
+  "translit": "bō·ṭê·aḥ",
+  "anker": "🤝",
+  "beeld": "bitachon: vertrouwen"
  },
  {
   "hebreeuws": "בָּכָה",
@@ -10252,7 +10922,9 @@
    }
   ],
   "lemma_tekst": "בֹּכֶה",
-  "translit": "bō·ḵeh"
+  "translit": "bō·ḵeh",
+  "anker": "😢",
+  "beeld": "bacha: huilen"
  },
  {
   "hebreeuws": "בְּכֹרָה",
@@ -10282,7 +10954,9 @@
    }
   ],
   "lemma_tekst": "בְּכֹרָתוֹ",
-  "translit": "bə·ḵō·rā·ṯōw"
+  "translit": "bə·ḵō·rā·ṯōw",
+  "anker": "1️⃣",
+  "beeld": "bechor: de eerstgeborene"
  },
  {
   "hebreeuws": "בִּלְתִּי",
@@ -10312,7 +10986,9 @@
    }
   ],
   "lemma_tekst": "בִּלְתִּי",
-  "translit": "bil·tî"
+  "translit": "bil·tî",
+  "anker": "🚫",
+  "beeld": "bilti: behalve, niet"
  },
  {
   "hebreeuws": "גדל",
@@ -10345,7 +11021,9 @@
    }
   ],
   "lemma_tekst": "הִגְדִּיל",
-  "translit": "hiḡ·dîl"
+  "translit": "hiḡ·dîl",
+  "anker": "📏",
+  "beeld": "gadol: groot"
  },
  {
   "hebreeuws": "חַי",
@@ -10375,7 +11053,9 @@
    }
   ],
   "lemma_tekst": "חַי",
-  "translit": "ḥay·yîm"
+  "translit": "ḥay·yîm",
+  "anker": "💓",
+  "beeld": "chai; l'chaim"
  },
  {
   "hebreeuws": "אֶזְרוֹע",
@@ -10406,7 +11086,9 @@
    }
   ],
   "lemma_tekst": "זְרוֹעַ",
-  "translit": "zə·rō·w·a‘"
+  "translit": "zə·rō·w·a‘",
+  "anker": "💪",
+  "beeld": "zeroa: de uitgestrekte arm"
  },
  {
   "hebreeuws": "אֱלוֹהּ",
@@ -10436,7 +11118,9 @@
    }
   ],
   "lemma_tekst": "אֱלוֹהַּ",
-  "translit": "’ĕ·lō·w·ah"
+  "translit": "’ĕ·lō·w·ah",
+  "anker": "⛪",
+  "beeld": "eloah, enkelvoud van elohim"
  },
  {
   "hebreeuws": "אמן",
@@ -10469,7 +11153,9 @@
    }
   ],
   "lemma_tekst": "נֶאֱמָן",
-  "translit": "ne·’ĕ·mān"
+  "translit": "ne·’ĕ·mān",
+  "anker": "🤝",
+  "beeld": "amen: het staat vast"
  },
  {
   "hebreeuws": "אֹרֶךְ",
@@ -10501,7 +11187,9 @@
    }
   ],
   "lemma_tekst": "אֹרֶךְ",
-  "translit": "’ō·reḵ"
+  "translit": "’ō·reḵ",
+  "anker": "📏",
+  "beeld": "orech: de lengte"
  },
  {
   "hebreeuws": "בָּמָה",
@@ -10531,7 +11219,9 @@
    }
   ],
   "lemma_tekst": "בָּמוֹת",
-  "translit": "bā·mō·wṯ"
+  "translit": "bā·mō·wṯ",
+  "anker": "⛰️",
+  "beeld": "bama: de cultushoogte"
  },
  {
   "hebreeuws": "בַּעַד",
@@ -10562,7 +11252,9 @@
    }
   ],
   "lemma_tekst": "בְּעַד",
-  "translit": "bə·‘aḏ"
+  "translit": "bə·‘aḏ",
+  "anker": "🛡️",
+  "beeld": "be'ad: ten behoeve van"
  },
  {
   "hebreeuws": "גאל",
@@ -10592,7 +11284,9 @@
    }
   ],
   "lemma_tekst": "גֹּאֵל",
-  "translit": "gō·’êl"
+  "translit": "gō·’êl",
+  "anker": "🛟",
+  "beeld": "go'el: de losser"
  },
  {
   "hebreeuws": "גֵּר",
@@ -10622,7 +11316,9 @@
    }
   ],
   "lemma_tekst": "גֵּר",
-  "translit": "gêr"
+  "translit": "gêr",
+  "anker": "🚶",
+  "beeld": "ger: de vreemdeling"
  },
  {
   "hebreeuws": "דֶּלֶת",
@@ -10652,7 +11348,9 @@
    }
   ],
   "lemma_tekst": "דַּלְתוֹת",
-  "translit": "dal·ṯō·wṯ"
+  "translit": "dal·ṯō·wṯ",
+  "anker": "🚪",
+  "beeld": "delet; dalet is de letter"
  },
  {
   "hebreeuws": "דַּעַת",
@@ -10682,7 +11380,9 @@
    }
   ],
   "lemma_tekst": "יָדַעְתִּי",
-  "translit": "yā·ḏa‘·tî"
+  "translit": "yā·ḏa‘·tî",
+  "anker": "🧠",
+  "beeld": "da'at; ets ha-da'at"
  },
  {
   "hebreeuws": "הֵן",
@@ -10712,7 +11412,9 @@
    }
   ],
   "lemma_tekst": "הִנְנִי",
-  "translit": "hin·nî"
+  "translit": "hin·nî",
+  "anker": "👀",
+  "beeld": "hen: zie, kijk"
  },
  {
   "hebreeuws": "הפך",
@@ -10742,7 +11444,9 @@
    }
   ],
   "lemma_tekst": "הָפַךְ",
-  "translit": "hā·p̄aḵ"
+  "translit": "hā·p̄aḵ",
+  "anker": "🔄",
+  "beeld": "hafach: omdraaien"
  },
  {
   "hebreeuws": "חַיָּה",
@@ -10772,7 +11476,9 @@
    }
   ],
   "lemma_tekst": "חַי",
-  "translit": "ḥay·yîm"
+  "translit": "ḥay·yîm",
+  "anker": "🐺",
+  "beeld": "chaja: het levende wild"
  },
  {
   "hebreeuws": "חֵלֶב",
@@ -10802,7 +11508,9 @@
    }
   ],
   "lemma_tekst": "חֵלֶב",
-  "translit": "ḥê·leḇ"
+  "translit": "ḥê·leḇ",
+  "anker": "🥩",
+  "beeld": "chelev: het vet"
  },
  {
   "hebreeuws": "חָלָל",
@@ -10832,7 +11540,9 @@
    }
   ],
   "lemma_tekst": "חֲלָלִים",
-  "translit": "ḥă·lā·lîm"
+  "translit": "ḥă·lā·lîm",
+  "anker": "🗡️",
+  "beeld": "chalal: de gevallene"
  },
  {
   "hebreeuws": "חֲמוֹר",
@@ -10862,7 +11572,9 @@
    }
   ],
   "lemma_tekst": "חֲמוֹר",
-  "translit": "ḥă·mō·wr"
+  "translit": "ḥă·mō·wr",
+  "anker": "🫏",
+  "beeld": "chamor: de ezel"
  },
  {
   "hebreeuws": "חֻקָּה",
@@ -10892,7 +11604,9 @@
    }
   ],
   "lemma_tekst": "חֻקַּת",
-  "translit": "ḥuq·qaṯ"
+  "translit": "ḥuq·qaṯ",
+  "anker": "📜",
+  "beeld": "chukka, vrouwelijk bij chok"
  },
  {
   "hebreeuws": "חָרָה",
@@ -10922,7 +11636,9 @@
    }
   ],
   "lemma_tekst": "חָרָה",
-  "translit": "ḥā·rāh"
+  "translit": "ḥā·rāh",
+  "anker": "🔥",
+  "beeld": "chara: van woede ontbranden"
  },
  {
   "hebreeuws": "טָהוֹר",
@@ -10952,7 +11668,9 @@
    }
   ],
   "lemma_tekst": "טָהוֹר",
-  "translit": "ṭā·hō·wr"
+  "translit": "ṭā·hō·wr",
+  "anker": "🧼",
+  "beeld": "tahor: ritueel rein"
  },
  {
   "hebreeuws": "טָהֵר",
@@ -10985,7 +11703,9 @@
    }
   ],
   "lemma_tekst": "יִטְהָר",
-  "translit": "yiṭ·hār"
+  "translit": "yiṭ·hār",
+  "anker": "🧼",
+  "beeld": "werkwoord bij tahor"
  },
  {
   "hebreeuws": "טָמֵא",
@@ -11015,7 +11735,9 @@
    }
   ],
   "lemma_tekst": "יִטְמָא",
-  "translit": "yiṭ·mā"
+  "translit": "yiṭ·mā",
+  "anker": "🚱",
+  "beeld": "tame: tegendeel van tahor"
  },
  {
   "hebreeuws": "יַחַד",
@@ -11047,7 +11769,9 @@
    }
   ],
   "lemma_tekst": "יַחְדָּו",
-  "translit": "yaḥ·dāw"
+  "translit": "yaḥ·dāw",
+  "anker": "👥",
+  "beeld": "jachad: gezamenlijk"
  },
  {
   "hebreeuws": "יֶלֶד",
@@ -11077,7 +11801,9 @@
    }
   ],
   "lemma_tekst": "יְלָדִים",
-  "translit": "yə·lā·ḏîm"
+  "translit": "yə·lā·ḏîm",
+  "anker": "👶",
+  "beeld": "jeled, van jalad"
  },
  {
   "hebreeuws": "יַעַן",
@@ -11107,7 +11833,9 @@
    }
   ],
   "lemma_tekst": "יַעַן",
-  "translit": "ya·‘an"
+  "translit": "ya·‘an",
+  "anker": "📎",
+  "beeld": "ja'an: omdat, wegens"
  },
  {
   "hebreeuws": "יֶתֶר",
@@ -11137,7 +11865,9 @@
    }
   ],
   "lemma_tekst": "יֶתֶר",
-  "translit": "ye·ṯer"
+  "translit": "ye·ṯer",
+  "anker": "➕",
+  "beeld": "jeter: wat overblijft"
  },
  {
   "hebreeuws": "יתר",
@@ -11170,7 +11900,9 @@
    }
   ],
   "lemma_tekst": "תַּרְתִּי",
-  "translit": "tar·tî"
+  "translit": "tar·tî",
+  "anker": "➕",
+  "beeld": "werkwoord bij jeter"
  },
  {
   "hebreeuws": "יְהוּדִי",
@@ -11200,7 +11932,9 @@
    }
   ],
   "lemma_tekst": "יְהוּדִי",
-  "translit": "yə·hū·ḏî"
+  "translit": "yə·hū·ḏî",
+  "anker": "✡️",
+  "beeld": "Jehoedi: uit Juda"
  },
  {
   "hebreeuws": "כֶּבֶשׁ",
@@ -11230,7 +11964,9 @@
    }
   ],
   "lemma_tekst": "כְּבָשִׂים",
-  "translit": "kə·ḇā·śîm"
+  "translit": "kə·ḇā·śîm",
+  "anker": "🐑",
+  "beeld": "keves: het lam"
  },
  {
   "hebreeuws": "כפר",
@@ -11262,7 +11998,9 @@
    }
   ],
   "lemma_tekst": "יְכַפֵּר",
-  "translit": "yə·ḵap·pêr"
+  "translit": "yə·ḵap·pêr",
+  "anker": "🙏",
+  "beeld": "Jom Kipoer: Grote Verzoendag"
  },
  {
   "hebreeuws": "כְּרוּב",
@@ -11292,7 +12030,9 @@
    }
   ],
   "lemma_tekst": "כְּרוּבִים",
-  "translit": "kə·rū·ḇîm"
+  "translit": "kə·rū·ḇîm",
+  "anker": "👼",
+  "beeld": "cherub, cherubijnen"
  },
  {
   "hebreeuws": "כֶּרֶם",
@@ -11322,7 +12062,9 @@
    }
   ],
   "lemma_tekst": "כֶּרֶם",
-  "translit": "ke·rem"
+  "translit": "ke·rem",
+  "anker": "🍇",
+  "beeld": "kerem: de wijngaard"
  },
  {
   "hebreeuws": "לָבֵשׁ",
@@ -11355,7 +12097,9 @@
    }
   ],
   "lemma_tekst": "יִלְבְּשׁוּ",
-  "translit": "mə·lub·bā·šîm"
+  "translit": "mə·lub·bā·šîm",
+  "anker": "👕",
+  "beeld": "lavasj: kleding aandoen"
  },
  {
   "hebreeuws": "למד",
@@ -11388,7 +12132,9 @@
    }
   ],
   "lemma_tekst": "לַמְּדֵנִי",
-  "translit": "lam·mə·ḏê·nî"
+  "translit": "lam·mə·ḏê·nî",
+  "anker": "🎓",
+  "beeld": "Talmoed: wat geleerd is"
  },
  {
   "hebreeuws": "מלט",
@@ -11421,7 +12167,9 @@
    }
   ],
   "lemma_tekst": "יִמָּלֵט",
-  "translit": "yim·mā·lêṭ"
+  "translit": "yim·mā·lêṭ",
+  "anker": "🏃",
+  "beeld": "malat: zich redden"
  },
  {
   "hebreeuws": "מַלְכוּת",
@@ -11451,7 +12199,9 @@
    }
   ],
   "lemma_tekst": "מַלְכוּת",
-  "translit": "mal·ḵūṯ"
+  "translit": "mal·ḵūṯ",
+  "anker": "👑",
+  "beeld": "malchoet, van melech"
  },
  {
   "hebreeuws": "חֵמָה",
@@ -11481,7 +12231,9 @@
    }
   ],
   "lemma_tekst": "חֲמָתִי",
-  "translit": "ḥă·mā·ṯî"
+  "translit": "ḥă·mā·ṯî",
+  "anker": "🔥",
+  "beeld": "chema: gloeiende toorn"
  },
  {
   "hebreeuws": "חֲצִי",
@@ -11511,7 +12263,9 @@
    }
   ],
   "lemma_tekst": "חֲצִי",
-  "translit": "ḥă·ṣî"
+  "translit": "ḥă·ṣî",
+  "anker": "➗",
+  "beeld": "chatsi: de helft"
  },
  {
   "hebreeuws": "חשׁב",
@@ -11545,7 +12299,9 @@
    }
   ],
   "lemma_tekst": "חֹשֵׁב",
-  "translit": "ḥō·šêḇ"
+  "translit": "ḥō·šêḇ",
+  "anker": "🤔",
+  "beeld": "chasjav: denken, berekenen"
  },
  {
   "hebreeuws": "יָדָה",
@@ -11575,7 +12331,9 @@
    }
   ],
   "lemma_tekst": "יָדוֹ",
-  "translit": "yā·ḏōw"
+  "translit": "yā·ḏōw",
+  "anker": "🙌",
+  "beeld": "Jehoeda, Juda: lofprijzing"
  },
  {
   "hebreeuws": "יטב",
@@ -11608,7 +12366,9 @@
    }
   ],
   "lemma_tekst": "יִיטַב",
-  "translit": "yî·ṭaḇ"
+  "translit": "yî·ṭaḇ",
+  "anker": "👍",
+  "beeld": "jatav; tov is goed"
  },
  {
   "hebreeuws": "יָשָׁר",
@@ -11638,7 +12398,9 @@
    }
   ],
   "lemma_tekst": "יְשָׁרִים",
-  "translit": "yə·šā·rîm"
+  "translit": "yə·šā·rîm",
+  "anker": "📏",
+  "beeld": "jasjar; Jesjoeroen, de oprechte"
  },
  {
   "hebreeuws": "כָּבֵד",
@@ -11671,7 +12433,9 @@
    }
   ],
   "lemma_tekst": "כָּבֵד",
-  "translit": "kā·ḇêḏ"
+  "translit": "kā·ḇêḏ",
+  "anker": "⚖️",
+  "beeld": "kaved; kavod is gewicht"
  },
  {
   "hebreeuws": "כָּנָף",
@@ -11701,7 +12465,9 @@
    }
   ],
   "lemma_tekst": "כָּנָף",
-  "translit": "kā·nāp̄"
+  "translit": "kā·nāp̄",
+  "anker": "🕊️",
+  "beeld": "kanaf: vleugel én zoom"
  },
  {
   "hebreeuws": "לכד",
@@ -11731,7 +12497,9 @@
    }
   ],
   "lemma_tekst": "לָכַד",
-  "translit": "lā·ḵaḏ"
+  "translit": "lā·ḵaḏ",
+  "anker": "🪤",
+  "beeld": "lachad: gevangen nemen"
  },
  {
   "hebreeuws": "לָשׁוֹן",
@@ -11761,7 +12529,9 @@
    }
   ],
   "lemma_tekst": "לְשׁוֹן",
-  "translit": "lə·šō·wn"
+  "translit": "lə·šō·wn",
+  "anker": "👅",
+  "beeld": "lasjon: tong én taal"
  },
  {
   "hebreeuws": "מִגְרָשׁ",
@@ -11791,7 +12561,9 @@
    }
   ],
   "lemma_tekst": "מִגְרָשֶׁהָ",
-  "translit": "miḡ·rā·še·hā"
+  "translit": "miḡ·rā·še·hā",
+  "anker": "🌾",
+  "beeld": "migrasj: de weidegrond"
  },
  {
   "hebreeuws": "מַמְלָכָה",
@@ -11821,7 +12593,9 @@
    }
   ],
   "lemma_tekst": "מַמְלְכוֹת",
-  "translit": "mam·lə·ḵō·wṯ"
+  "translit": "mam·lə·ḵō·wṯ",
+  "anker": "👑",
+  "beeld": "mamlacha, van melech"
  },
  {
   "hebreeuws": "נִבָּא",
@@ -11853,7 +12627,9 @@
    }
   ],
   "lemma_tekst": "הִנָּבֵא",
-  "translit": "hin·nā·ḇê"
+  "translit": "hin·nā·ḇê",
+  "anker": "📜",
+  "beeld": "werkwoord bij navi"
  },
  {
   "hebreeuws": "נֶגֶב",
@@ -11883,7 +12659,9 @@
    }
   ],
   "lemma_tekst": "נֶגֶב",
-  "translit": "ne·ḡeḇ"
+  "translit": "ne·ḡeḇ",
+  "anker": "🏜️",
+  "beeld": "Negev: het droge zuiden"
  },
  {
   "hebreeuws": "נגשׁ",
@@ -11913,7 +12691,9 @@
    }
   ],
   "lemma_tekst": "יִגַּשׁ",
-  "translit": "yig·gaš"
+  "translit": "yig·gaš",
+  "anker": "➡️",
+  "beeld": "nagasj: dichterbij komen"
  },
  {
   "hebreeuws": "נָהָר",
@@ -11943,7 +12723,9 @@
    }
   ],
   "lemma_tekst": "נְהַר",
-  "translit": "nə·har-"
+  "translit": "nə·har-",
+  "anker": "🏞️",
+  "beeld": "nahar: de stroom"
  },
  {
   "hebreeuws": "נחם",
@@ -11976,7 +12758,9 @@
    }
   ],
   "lemma_tekst": "נִחַם",
-  "translit": "ni·ḥam"
+  "translit": "ni·ḥam",
+  "anker": "💗",
+  "beeld": "Nechemja: JHWH troost"
  },
  {
   "hebreeuws": "עַמּוּד",
@@ -12006,7 +12790,9 @@
    }
   ],
   "lemma_tekst": "עַמּוּדֵי",
-  "translit": "‘am·mū·ḏê"
+  "translit": "‘am·mū·ḏê",
+  "anker": "🏛️",
+  "beeld": "ammoed: de pilaar"
  },
  {
   "hebreeuws": "עָפָר",
@@ -12036,7 +12822,9 @@
    }
   ],
   "lemma_tekst": "עָפָר",
-  "translit": "‘ā·p̄ār"
+  "translit": "‘ā·p̄ār",
+  "anker": "🌍",
+  "beeld": "afar: stof en aarde"
  },
  {
   "hebreeuws": "עֶצֶם",
@@ -12066,7 +12854,9 @@
    }
   ],
   "lemma_tekst": "עַצְמוֹת",
-  "translit": "‘aṣ·mō·wṯ"
+  "translit": "‘aṣ·mō·wṯ",
+  "anker": "🦴",
+  "beeld": "etsem: bot én zelf"
  },
  {
   "hebreeuws": "פַּעַם",
@@ -12096,7 +12886,9 @@
    }
   ],
   "lemma_tekst": "פְּעָמִים",
-  "translit": "pə·‘ā·mîm"
+  "translit": "pə·‘ā·mîm",
+  "anker": "👣",
+  "beeld": "pa'am: schrede én keer"
  },
  {
   "hebreeuws": "פְּרִי",
@@ -12126,7 +12918,9 @@
    }
   ],
   "lemma_tekst": "פְּרִי",
-  "translit": "pə·rî"
+  "translit": "pə·rî",
+  "anker": "🍇",
+  "beeld": "peri: de vrucht"
  },
  {
   "hebreeuws": "צֶדֶק",
@@ -12156,7 +12950,9 @@
    }
   ],
   "lemma_tekst": "צֶדֶק",
-  "translit": "ṣe·ḏeq"
+  "translit": "ṣe·ḏeq",
+  "anker": "⚖️",
+  "beeld": "Melchi-sedek: koning der gerechtigheid"
  },
  {
   "hebreeuws": "קָדוֹשׁ",
@@ -12186,7 +12982,9 @@
    }
   ],
   "lemma_tekst": "קָדוֹשׁ",
-  "translit": "qā·ḏō·wōš"
+  "translit": "qā·ḏō·wōš",
+  "anker": "✨",
+  "beeld": "kadosj kadosj kadosj"
  },
  {
   "hebreeuws": "קָהָל",
@@ -12216,7 +13014,9 @@
    }
   ],
   "lemma_tekst": "קְהַל",
-  "translit": "qə·hal"
+  "translit": "qə·hal",
+  "anker": "👥",
+  "beeld": "kahal; kehilla is gemeente"
  },
  {
   "hebreeuws": "קטר",
@@ -12248,7 +13048,9 @@
    }
   ],
   "lemma_tekst": "קִטְּרוּ",
-  "translit": "mə·qaṭ·ṭə·rîm"
+  "translit": "mə·qaṭ·ṭə·rîm",
+  "anker": "🔥",
+  "beeld": "ketoret: het reukoffer"
  },
  {
   "hebreeuws": "רֶכֶב",
@@ -12278,7 +13080,9 @@
    }
   ],
   "lemma_tekst": "רֶכֶב",
-  "translit": "re·ḵeḇ"
+  "translit": "re·ḵeḇ",
+  "anker": "🛞",
+  "beeld": "rechev: de strijdwagen"
  },
  {
   "hebreeuws": "רַק",
@@ -12308,7 +13112,9 @@
    }
   ],
   "lemma_tekst": "רַק",
-  "translit": "raq"
+  "translit": "raq",
+  "anker": "☝️",
+  "beeld": "rak: alleen maar"
  },
  {
   "hebreeuws": "שׂרף",
@@ -12338,7 +13144,9 @@
    }
   ],
   "lemma_tekst": "שָׂרַף",
-  "translit": "śā·rap̄"
+  "translit": "śā·rap̄",
+  "anker": "🔥",
+  "beeld": "seraf, serafijnen: brandenden"
  },
  {
   "hebreeuws": "שַׁבָּת",
@@ -12368,7 +13176,9 @@
    }
   ],
   "lemma_tekst": "שַׁבַּת",
-  "translit": "šab·bāṯ"
+  "translit": "šab·bāṯ",
+  "anker": "🕯️",
+  "beeld": "sabbat, van sjavat: ophouden"
  },
  {
   "hebreeuws": "שׁלך",
@@ -12401,7 +13211,9 @@
    }
   ],
   "lemma_tekst": "הִשְׁלִיךְ",
-  "translit": "hiš·lîḵ"
+  "translit": "hiš·lîḵ",
+  "anker": "🎯",
+  "beeld": "hisjlich: wegwerpen"
  },
  {
   "hebreeuws": "שָׁלֵם",
@@ -12436,7 +13248,9 @@
    }
   ],
   "lemma_tekst": "שָׁלֵם",
-  "translit": "šā·lêm"
+  "translit": "šā·lêm",
+  "anker": "🕊️",
+  "beeld": "sjalem; sjalom is heelheid"
  },
  {
   "hebreeuws": "שׁפך",
@@ -12466,7 +13280,9 @@
    }
   ],
   "lemma_tekst": "יִשְׁפֹּךְ",
-  "translit": "yiš·pōḵ"
+  "translit": "yiš·pōḵ",
+  "anker": "🫗",
+  "beeld": "sjafach: vergieten"
  },
  {
   "hebreeuws": "שֶׁקֶר",
@@ -12496,7 +13312,9 @@
    }
   ],
   "lemma_tekst": "שֶׁקֶר",
-  "translit": "še·qer"
+  "translit": "še·qer",
+  "anker": "🚫",
+  "beeld": "sjeker: de leugen"
  },
  {
   "hebreeuws": "תּוֹעֵבָה",
@@ -12526,6 +13344,8 @@
    }
   ],
   "lemma_tekst": "תּוֹעֲבַת",
-  "translit": "tō·w·‘ă·ḇaṯ"
+  "translit": "tō·w·‘ă·ḇaṯ",
+  "anker": "🤢",
+  "beeld": "to'eva: een gruwel"
  }
 ]
