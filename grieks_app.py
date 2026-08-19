@@ -4075,18 +4075,20 @@ def swpagina():
 
 
 # ============================================================== Hebreeuws
-HEB_STANDAARD = {"heb_aantal": 12, "heb_vraagvorm": "Automatisch", "heb_lijst": "Alles",
+HEB_STANDAARD = {"heb_aantal": 12, "heb_vraagvorm": AUTO, "heb_lijst": "Alles",
                  "heb_keuze": "Zwakste eerst"}
-HEB_VRAAGVORM = ["Automatisch", "Aanwijzen", "Zelf schrijven"]
+HEB_VRAAGVORM = [AUTO, "Alleen meerkeuze", "Alleen typen"]
 HEB_OEFENINGEN = ["Zwakste eerst", "Meest voorkomend eerst", "Alleen wat ik fout deed",
                   "Op volgorde van de lijst"]
 HEB_LIJSTEN = {"Alles": 0, "Hebreeuws 1 · woord 1–165": 1, "Hebreeuws 2 · woord 166–410": 2}
 # Zoveel tekens mag een keuzeknop hebben. Boven de veertig wordt hij twee regels hoog en
 # raakt de lijst van vier uit balans; dan lees je de knoppen niet meer, maar scan je ze.
 HEB_KORT = 42
-# Vanaf deze streak schrijf je het woord zelf in plaats van het aan te wijzen. Zelfde
-# grens als bij structuurwoorden: herkennen eerst, produceren als het begint te zitten.
-HEB_TYP_STREAK = 5
+# De regels zijn die van de Griekse woordenschat, en dat is geen toeval: het is dezelfde
+# vaardigheid. Hierboven staan STREAK_PUNTEN (typen levert 3, aanwijzen 1), STREAK_STRAF
+# (een echte misser kost er 2) en STRAF_STREAK (vanaf 16 telt de eerste misser al mee).
+# De grens tussen aanwijzen en typen is motor.LEERPAD_TYP_STREAK — bij het Grieks precies
+# dezelfde grens, dus een woord gedraagt zich in allebei de talen hetzelfde.
 
 
 def heb_prefs(g):
@@ -4141,6 +4143,30 @@ def heb_betekenis(w):
         snee = kort.rfind(",", 0, HEB_KORT)
         kort = (kort[:snee] if snee > 12 else kort[:HEB_KORT].rsplit(" ", 1)[0]) + "…"
     return kort
+
+
+def heb_antwoorden(w):
+    """De lijst met wat je mag antwoorden. Elk stuk gaat apart langs check_betekenis().
+
+    Waarom apart en niet als één regel: check_betekenis() knipt zelf op komma's en
+    puntkomma's, en vergelijkt alleen de héle tekst of één zo'n stukje. Een betekenis die
+    zelf een komma bevat komt er dan nooit heel doorheen — 'man, echtgenoot' staat als
+    antwoord op de keuzeknop van אִישׁ, maar zou fout gerekend worden zodra je hem intypt.
+    Dat gold voor zeventig van de 410 woorden.
+
+    Wat er in de lijst zit: de hele betekenis (dan is elk los woord eruit ook goed), de
+    korte betekenis van de keuzeknop, en elk stuk tussen de puntkomma's apart. Bij een
+    werkwoord telt zo elke stamformatie mee — wie bij אכל 'voeden' schrijft heeft het
+    woord herkend, ook al is dat de Hifil."""
+    heel = "; ".join(_heb_zonder_codes(deel) for deel in heb_uitleg(w).split(";"))
+    return [heel, heb_betekenis(w)] + [d.strip() for d in heel.split(";") if d.strip()]
+
+
+def heb_goed(antwoord, w):
+    """Is dit getypte antwoord goed? Dezelfde soepelheid als bij het Grieks: een tikfout
+    of twee mag, en één van de betekenissen noemen is genoeg."""
+    return any(motor.check_betekenis(antwoord, kandidaat)
+               for kandidaat in heb_antwoorden(w))
 
 
 def heb_nieuw(w):
@@ -4256,8 +4282,9 @@ def hebpagina():
                            label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
         k_aantal = ui.number("Woorden per ronde", value=int(sessie.prefs["heb_aantal"]),
                              min=4, max=40, step=1).props("outlined dark").classes("w-full")
-        ui.label(f"Automatisch: eerst de betekenis aanwijzen, en vanaf streak "
-                 f"{HEB_TYP_STREAK} het woord zelf schrijven.").style(
+        ui.label(f"Automatisch: nieuwe woorden eerst als leerkaart, daarna aanwijzen, "
+                 f"en vanaf streak {motor.LEERPAD_TYP_STREAK} de betekenis zelf typen. "
+                 f"Precies zoals bij de Griekse woordenschat.").style(
             f"color:{ZACHT};font-size:13px")
 
         async def bewaar_inst():
@@ -4274,22 +4301,11 @@ def hebpagina():
             ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
                 f"background:{MERK};color:{INKT};font-weight:700")
 
-    with ui.dialog() as spiek, ui.card().style(
-            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
-        ui.label("Hebreeuws typen").style("font-size:18px;font-weight:700")
-        ui.html(heb_spiekbrief())
-        with ui.row().classes("w-full justify-end"):
-            ui.button("Duidelijk", on_click=spiek.close, color=None).props(
-                "unelevated no-caps").style(f"background:{MERK};color:{INKT};font-weight:700")
-
     with ui.column().classes("inhoud metbalk w-full gap-3"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
             ui.label("Hebreeuws").style(f"color:{ZACHT};font-size:13px")
             with ui.row().classes("items-center gap-2 no-wrap"):
                 teller = ui.label().style(f"color:{ZACHT};font-size:13px")
-                ui.button("א", on_click=spiek.open, color=None).props(
-                    "flat dense no-caps").classes("raakbaar hebreeuws").style(
-                    f"color:{ZACHT};font-size:17px;min-width:32px")
                 ui.button("⚙", on_click=instellingen.open, color=None).props(
                     "flat dense no-caps").classes("raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
@@ -4308,21 +4324,6 @@ def hebpagina():
 
     invoer, knop = typbalk("betekenis")
     onderbalk("Oefenen")
-
-    def meekijken():
-        """Terwijl je typt laten zien wat eruit komt. Dit is het hele verschil tussen
-        'mlk' als gok en 'mlk' als schrijfwijze: je ziet de letters verschijnen en merkt
-        meteen dat je een medeklinker mist, in plaats van pas bij het nakijken."""
-        if not sessie.vraag_typen or sessie.beoordeeld:
-            return
-        getypt = str(invoer.value or "").strip()
-        if not getypt:
-            woord.text = "־"
-            return
-        woord.text = hebreeuws.naar_hebreeuws(getypt)
-        woord.style(f"font-size:{woordmaat(woord.text, 46)}px")
-
-    invoer.on_value_change(lambda _=None: meekijken())
 
     def teken_hulp(w):
         hulp.clear()
@@ -4392,26 +4393,22 @@ def hebpagina():
                     f"{w.get('anker', '')} {w.get('beeld', '')}</div></div>")
             return
         vorm = sessie.prefs["heb_vraagvorm"]
-        sessie.vraag_typen = (vorm == "Zelf schrijven"
-                              or (vorm == "Automatisch"
-                                  and int(w.get("streak", 0)) >= HEB_TYP_STREAK))
+        sessie.vraag_typen = (vorm == "Alleen typen"
+                              or (vorm == AUTO and int(w.get("streak", 0))
+                                  >= motor.LEERPAD_TYP_STREAK))
         invoer.value = ""
         toon_typveld(invoer, sessie.vraag_typen)
+        # De vraag is altijd dezelfde kant op: het Hebreeuwse woord staat er, jij geeft de
+        # betekenis. Aanwijzen of zelf typen is alleen het verschil tussen herkennen en
+        # het uit je hoofd weten — zelf Hebreeuws schrijven is een ándere vaardigheid en
+        # hoort niet in de woordenschat thuis.
+        woord.text = w["hebreeuws"]
+        woord.style(f"font-size:{woordmaat(w['hebreeuws'], 46)}px")
+        onder.set_content("")
+        vraagsoort.text = "Wat betekent dit?"
         if sessie.vraag_typen:
-            # Andersom: de betekenis staat er, het woord moet jij schrijven.
-            invoer.props(remove="placeholder").props(f'placeholder="mlk, sjlwm, …"')
-            woord.text = "־"
-            woord.style("font-size:46px")
-            onder.set_content(
-                f"<span style='color:{TEKST};font-size:19px'>{heb_betekenis(w)}</span>")
-            vraagsoort.text = "Schrijf het woord — alleen de medeklinkers"
             knop.text = "Nakijken"
         else:
-            invoer.props(remove="placeholder").props('placeholder="betekenis"')
-            woord.text = w["hebreeuws"]
-            woord.style(f"font-size:{woordmaat(w['hebreeuws'], 46)}px")
-            onder.set_content("")
-            vraagsoort.text = "Wat betekent dit?"
             knop.text = "Ik weet het niet"
             juist = heb_betekenis(w)
             anderen = [heb_betekenis(x) for x in sessie.alles
@@ -4439,15 +4436,17 @@ def hebpagina():
         sessie.fout += int(not juist)
         if juist:
             w["score_goed"] = int(w.get("score_goed", 0)) + 1
-            # Zelf schrijven telt zwaarder dan aanwijzen, net als bij de Griekse woorden:
-            # produceren is moeilijker dan herkennen.
-            w["streak"] = int(w.get("streak", 0)) + (2 if sessie.vraag_typen else 1)
+            # Dezelfde opbrengst als bij het Grieks: zelf typen 3, aanwijzen 1.
+            w["streak"] = int(w.get("streak", 0)) + STREAK_PUNTEN["4" if sessie.vraag_typen
+                                                                  else "2"]
         else:
             w["score_fout"] = int(w.get("score_fout", 0)) + 1
             w["laatst_fout"] = gebruikers.vandaag()
-            # Eén stap terug, niet terug naar nul: één misser betekent niet dat je het
-            # woord kwijt bent, en helemaal opnieuw beginnen ontmoedigt meer dan het leert.
-            w["streak"] = max(0, int(w.get("streak", 0)) - 1)
+            # En dezelfde straf: een woord dat je al beheerste (streak 16 of hoger) valt
+            # meteen twee terug. Daaronder kost een misser je streak niets — je hebt het
+            # woord nog niet vast, en dan is terugzetten ontmoedigend zonder dat het leert.
+            if int(w.get("streak", 0)) >= STRAF_STREAK:
+                w["streak"] = max(0, int(w.get("streak", 0)) - STREAK_STRAF)
         g.tel_dag()
         w["laatst_geoefend"] = gebruikers.vandaag()
         if juist:
@@ -4512,7 +4511,7 @@ def hebpagina():
                 toon()
                 return
             if sessie.vraag_typen:
-                await verwerk(w, hebreeuws.vorm_ok(invoer.value or "", w["hebreeuws"]))
+                await verwerk(w, heb_goed(invoer.value or "", w))
             else:
                 await verwerk(w, False)
         finally:

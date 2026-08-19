@@ -15,6 +15,7 @@ klinkt, en die vangt dit script af:
 Draaien:  py gereedschap/bouw_hebreeuws.py
 """
 import glob
+import html
 import json
 import os
 import re
@@ -95,7 +96,11 @@ def regels_uit_docx(pad):
     with zipfile.ZipFile(pad) as z:
         xml = z.read("word/document.xml").decode("utf-8")
     xml = re.sub(r"<w:p[ >]", "\n<w:p ", xml)
-    return [r.strip() for r in re.sub(r"<[^>]+>", "", xml).split("\n") if r.strip()]
+    # Terugvertalen ná het weghalen van de tags: in de XML staat '>' als '&gt;', en zonder
+    # dit blijft die entiteit letterlijk in de betekenis staan — bij אמר las je dan
+    # '(bij zichzelf zeggen &gt;) denken'.
+    kaal = html.unescape(re.sub(r"<[^>]+>", "", xml))
+    return [r.strip() for r in kaal.split("\n") if r.strip()]
 
 
 def regels_uit_pdf(pad):
