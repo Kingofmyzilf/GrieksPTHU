@@ -4693,8 +4693,15 @@ def main():
             if 'vocab_sessie_verzen' not in st.session_state: st.session_state.vocab_sessie_verzen = {}
             if 'vocab_cluster_strongs' not in st.session_state: st.session_state.vocab_cluster_strongs = {}
             
-            col1, col2 = st.columns([1, 2])
-            with col1:
+            # De oefenkaart komt bovenaan te staan en de instellingen eronder, ingeklapt.
+            # st.container() reserveert hier alvast de plek; hij wordt verderop gevuld, ná
+            # de instellingen, zodat die hun waarden gewoon op tijd afgeven. Zo hoeft er
+            # aan de instellingen zelf niets te veranderen. Reden: op een telefoon stond je
+            # eerst een half scherm te scrollen langs keuzes die je meestal niet aanraakt
+            # voordat je aan oefenen toekwam.
+            _kaart_vak = st.container()
+            with st.expander("⚙️ Oefening kiezen en instellen",
+                             expanded=st.session_state.sessie_lijst is None):
                 # --- Wens 7: herstel eerder gekozen instellingen als default (uit ui_prefs) ---
                 _prefs = st.session_state.get('ui_prefs', {}) or {}
 
@@ -4895,7 +4902,15 @@ def main():
                     
                     custom_counts = {'nieuw': val_n, 'incubatie': val_i, 'training': val_t, 'beheerst': val_b, 'mastery': val_m}
                 
-                if st.button("Start sessie", type="primary"):
+                # Bij het openen van de app begint hij vanzelf met de instellingen die je
+                # de vorige keer koos — 'pats boem meteen oefenen'. Alleen de allereerste
+                # keer: is de ronde uit, dan zie je de eindsamenvatting en start je zelf,
+                # anders zou die samenvatting meteen overschreven worden.
+                # None = nog nooit gestart; [] = ronde uit. Alleen bij None starten,
+                # anders zou de eindsamenvatting meteen overschreven worden.
+                _auto_start = st.session_state.sessie_lijst is None
+                if st.button("Start sessie", type="primary",
+                             use_container_width=True) or _auto_start:
                     if doel:
                         st.session_state.gestrafte_woorden_vocab = set()
                         # Vangnet: punten van een eventueel afgebroken vorige sessie alsnog boeken
@@ -5034,7 +5049,7 @@ def main():
                             laad_volgend_woord(); st.rerun()
                     else: st.warning("⚠️ Geen knelpunten of oefenwoorden gevonden in de geselecteerde lessen.")
 
-            with col2:
+            with _kaart_vak:
                 if st.session_state.get('paar_huidig'):
                     # === VERWARPAREN-OEFENING: beide woorden tegelijk; een goed deel wordt onthouden ===
                     wA, wB = st.session_state.paar_huidig
@@ -7152,8 +7167,11 @@ def main():
                                         st.rerun()
 
                 else:
-                    c1, c2 = st.columns([1, 2])
-                    with c1:
+                    # Zelfde opzet als bij Woordenschat: de oefenkaart bovenaan, de
+                    # instellingen eronder en ingeklapt. st.container() houdt de plek vrij.
+                    _stam_vak = st.container()
+                    with st.expander("⚙️ Oefening kiezen en instellen",
+                                     expanded=not st.session_state.get('_stam_gestart')):
                         # Leerpad is nu een eigen modus-bolletje; in de andere modi kies je hier de bron.
                         if "Leerpad" in stam_modus:
                             bron_keuze = "🎮 Leerpad (levels)"
@@ -7232,7 +7250,13 @@ def main():
                                 'beheerst': st.slider("Beheerst (Streak 16–29)", 0, 20, 0), 'mastery': st.slider("Mastery (Streak 30+)", 0, 20, 0)
                             }
 
-                        if st.button("Start sessie", key="btn_start_stam", type="primary"):
+                        # Eén keer per bezoek vanzelf beginnen, met de instellingen van
+                        # de vorige keer. Daarna start je zelf, zodat de eindstand van een
+                        # afgelopen ronde blijft staan.
+                        _stam_auto = not st.session_state.get('_stam_gestart')
+                        st.session_state._stam_gestart = True
+                        if st.button("Start sessie", key="btn_start_stam", type="primary",
+                                     use_container_width=True) or _stam_auto:
                             st.session_state.gestrafte_woorden_stam = set()
                             doel_vormen = []
                             tijden_volgorde = ["Futurum Actief/Medium", "Aoristus Actief/Medium", "Aoristus Passief", "Perfectum Actief", "Perfectum Medium/Passief"]
@@ -7279,7 +7303,7 @@ def main():
                                 laad_volgend_stam_woord(); st.rerun()
                             else: st.warning("⚠️ Geen stamtijden gevonden. Zet hierboven **🔓 Negeer vergrendeling** aan om meteen te oefenen, of breng eerst de basiswoorden op streak ≥ 5 in het Woordenschat-tabblad.")
 
-                    with c2:
+                    with _stam_vak:
                         if st.session_state.stam_huidig:
                             huidig = st.session_state.stam_huidig
                             sub_modus = st.session_state.stam_sub_modus
@@ -7428,9 +7452,11 @@ def main():
                 st.warning("Bestand 'structuurwoorden.json' ontbreekt.")
             else:
                 st.subheader("🧱 Structuurwoorden Herkennen & Syntaxis")
-                c1, c2 = st.columns([1, 2])
-                
-                with c1:
+                # Oefenkaart bovenaan, instellingen eronder en ingeklapt — zelfde opzet
+                # als bij Woordenschat en Stamtijden.
+                _struct_vak = st.container()
+                with st.expander("⚙️ Oefening kiezen en instellen",
+                                 expanded=not st.session_state.get('_struct_gestart')):
                     # --- DE NIEUWE LEER-SPOOR FILTER ---
                     _struct_sporen = [
                         "🎮 Leerpad (levels)",
@@ -7472,7 +7498,10 @@ def main():
                     struct_modus = _pref_keuze(st.radio, "Oefenvorm:", _STRUCT_VORMEN, 'struct_oefenvorm', key="struct_modus_radio",
                                                 help="Automatisch = de app kiest per woord: eerst leren, dan meerkeuze, en typen zodra je het woord kent.")
 
-                    if st.button("Start sessie", key="btn_start_struct", type="primary"):
+                    _struct_auto = not st.session_state.get('_struct_gestart')
+                    st.session_state._struct_gestart = True
+                    if st.button("Start sessie", key="btn_start_struct", type="primary",
+                                 use_container_width=True) or _struct_auto:
                         st.session_state.gestrafte_woorden_struct = set()
                         doel_vormen = []
 
@@ -7520,7 +7549,7 @@ def main():
                             laad_volgend_struct_woord()
                             st.rerun()
 
-                with c2:
+                with _struct_vak:
                     if st.session_state.struct_huidig:
                         huidig = st.session_state.struct_huidig
                         sub_modus = st.session_state.struct_sub_modus
