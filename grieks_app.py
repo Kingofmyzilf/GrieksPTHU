@@ -4433,21 +4433,20 @@ def hebpagina():
         if sessie.vraag_typen:
             invoer.run_method("focus")
 
-    async def verwerk(w, juist, scoor=True):
+    async def verwerk(w, juist):
         sessie.beoordeeld = True
         sessie.goed += int(juist)
         sessie.fout += int(not juist)
-        # Zelf schrijven telt zwaarder dan aanwijzen, net als bij de Griekse woorden:
-        # produceren is moeilijker dan herkennen.
-        punten = 2 if sessie.vraag_typen else 1
         if juist:
-            if scoor:
-                w["score_goed"] = int(w.get("score_goed", 0)) + 1
-                w["streak"] = int(w.get("streak", 0)) + punten
+            w["score_goed"] = int(w.get("score_goed", 0)) + 1
+            # Zelf schrijven telt zwaarder dan aanwijzen, net als bij de Griekse woorden:
+            # produceren is moeilijker dan herkennen.
+            w["streak"] = int(w.get("streak", 0)) + (2 if sessie.vraag_typen else 1)
         else:
-            if scoor:
-                w["score_fout"] = int(w.get("score_fout", 0)) + 1
-                w["laatst_fout"] = gebruikers.vandaag()
+            w["score_fout"] = int(w.get("score_fout", 0)) + 1
+            w["laatst_fout"] = gebruikers.vandaag()
+            # Eén stap terug, niet terug naar nul: één misser betekent niet dat je het
+            # woord kwijt bent, en helemaal opnieuw beginnen ontmoedigt meer dan het leert.
             w["streak"] = max(0, int(w.get("streak", 0)) - 1)
         g.tel_dag()
         w["laatst_geoefend"] = gebruikers.vandaag()

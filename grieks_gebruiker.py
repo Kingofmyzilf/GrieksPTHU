@@ -88,13 +88,12 @@ class Gebruiker:
         """De Hebreeuwse woordenlijst met de opgeslagen scores erop.
 
         Ontbreekt hebreeuws_woorden.json, dan blijft de lijst leeg en laat de app die taal
-        gewoon niet zien — de Griekse kant merkt er niets van. De sleutel is het woord
-        zonder klinkertekens: die staan in de cursuslijst niet altijd hetzelfde genoteerd,
-        en dan zou je voortgang bij een nieuwe uitgave van de lijst kwijt zijn."""
+        gewoon niet zien — de Griekse kant merkt er niets van. Waaronder een woord wordt
+        bewaard staat in hebreeuws.sleutel()."""
         self.hebreeuws = [dict(w) for w in hebreeuws.laad_woorden()]
         scores = self.stats.get("hebr_stats") or {}
         for w in self.hebreeuws:
-            s = scores.get(hebreeuws.medeklinkers(w.get("hebreeuws", ""))) or {}
+            s = scores.get(hebreeuws.sleutel(w)) or {}
             w["streak"] = int(s.get("streak", 0))
             w["score_goed"] = int(s.get("g", 0))
             w["score_fout"] = int(s.get("f", 0))
@@ -113,7 +112,7 @@ class Gebruiker:
                     e["laatst_geoefend"] = l
                 if w.get("laatst_fout"):
                     e["lf"] = w["laatst_fout"]
-                uit[hebreeuws.medeklinkers(w.get("hebreeuws", ""))] = e
+                uit[hebreeuws.sleutel(w)] = e
         return uit
 
     # ---------------------------------------------------------------- scoren

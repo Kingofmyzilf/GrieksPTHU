@@ -26,6 +26,9 @@ HOUDEN = {
     "grieks_app.py", "grieks_motor.py", "grieks_opslag.py", "grieks_gebruiker.py",
     "basis_woorden_verrijkt.json", "actief_beheersen.json", "stamtijden.json",
     "structuurwoorden.json", "verwarparen.json",
+    # Hebreeuws. Zonder deze twee valt de taalknop stil weg (hebreeuws.aanwezig() geeft
+    # dan False) en merk je pas op de live app dat de helft ontbreekt.
+    "hebreeuws.py", "hebreeuws_woorden.json",
     # grammatica_tabellen.json en grammatica_index.json blijven weg: die gebruikt
     # alleen het 'rijtje spieken' bij Ontleden, en dat scherm vervalt zonder de
     # NT-tekst. Zet je die tekst er ooit bij, neem dan deze twee ook weer op.

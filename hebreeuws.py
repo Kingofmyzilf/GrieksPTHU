@@ -124,6 +124,22 @@ def vorm_ok(gegeven, doel):
     return medeklinkers(naar_hebreeuws(gegeven)) == doel_med
 
 
+def sleutel(woord):
+    """Waaronder de voortgang van dit woord wordt bewaard: lijstnummer plus medeklinkers.
+
+    Alleen de medeklinkers is niet genoeg. Dan zouden אִם 'indien' en אֵם 'moeder' dezelfde
+    sleutel krijgen, en ook עִם 'met' naast עַם 'volk', שֵׁם 'naam' naast שָׁם 'daar'. Twee en
+    dertig sleutels bedienden zo vijfenzestig woorden: je zou עַם beheersen door עִם te
+    oefenen. Het lijstnummer maakt ze uit elkaar.
+
+    En andersom: alleen het nummer zou meegaan met een hernummering van de cursuslijst, en
+    dan hing je voortgang stilletjes aan een ánder woord. Nu verandert de sleutel als er
+    iets verschuift — je raakt dan hooguit voortgang kwijt, en dat is de goede kant om
+    fout te gaan. De klinkertekens blijven er bewust buiten: die staan in de lijst niet
+    overal hetzelfde genoteerd."""
+    return f"{int(woord.get('nummer', 0) or 0)}:{medeklinkers(woord.get('hebreeuws', ''))}"
+
+
 # Zoveel Hebreeuwse woordvormen staan er in de Tenach. Geteld in 'Hele bijbel.xlsx' (de
 # WLC-tekst met parsing): 300.670 Hebreeuwse plus 4.826 Aramese vormen. De Aramese delen
 # van Daniël en Ezra tellen niet mee — die staan niet in deze woordenlijst, en ze in de
