@@ -57,7 +57,9 @@ def splits(regel):
         if teken.isascii() and (teken.isalpha() or teken.isdigit()):
             grens = i
             break
-    heb = regel[:grens].strip(" \t,;·([{")
+    # De haakjes blijven staan; verrijk() haalt de groepen er als geheel uit. Zou splits()
+    # ze hier wegstrippen, dan raken ze uit balans en plakt '(אַחַר)רדף' aan elkaar.
+    heb = regel[:grens].strip(" \t,;·")
     # Losse klinkertekens die achter de betekenis zijn beland horen daar niet.
     ned = "".join(t for t in regel[grens:] if not ("֑" <= t <= "ׇ")).strip()
     return heb, ned
@@ -105,14 +107,42 @@ def lees_bestand(pad):
     return woorden
 
 
+# In het bronmateriaal staan drie letters als een teken uit een ander lettertype. Zonder
+# deze vertaling verdwijnen ze bij het opschonen, en dan wordt מֶלֶךְ 'koning' opgeslagen als
+# מֶלֶ — en gekoppeld aan het verkeerde woord. Vijf woorden hangen hierop.
+LETTERS = {"": "ךְ",   # ךְ  slot-kaf met sjewa
+           "ř": "ךְ",   # ךְ  idem, ander lettertype
+           "Ä": "א"}          # א  alef
+
+# Vier regels staan bovendien in leesvolgorde in plaats van in opslagvolgorde, of missen
+# een haakje. Die zijn met de hand hersteld.
+HERSTEL = {"Ä ל": "לֹא",      # לֹא  niet
+           "řַא": "אַךְ",   # אַךְ zeker, voorwaar
+           # Hier staat in de PDF een haakje dat nooit sluit: '(בטח(ב'. Bedoeld is
+           # בטח met het voorzetsel בְ erachter.
+           "(בטח(ב": "בטח"}
+
+
 def verrijk(woord):
     """Wat er uit de betekenis zelf af te leiden valt: varianten, geslacht, stamformaties."""
+    heel = woord["hebreeuws"]
+    for kapot, goed in LETTERS.items():
+        heel = heel.replace(kapot, goed)
+    woord["hebreeuws"] = HERSTEL.get(woord["hebreeuws"], heel)
     heb, ned = woord["hebreeuws"], woord["nederlands"]
     # Een woord kan twee schrijfwijzen hebben: 'אָהֵב ,אהב' of 'אַחֲרֵי /אַחַר'.
     varianten = [v.strip() for v in re.split(r"[,/]", heb) if medeklinkers(v)]
     woord["hebreeuws"] = varianten[0]
+    # 'שׁמע (בְּ)' noemt het voorzetsel dat het werkwoord regeert. Dat hoort bij de uitleg,
+    # niet bij het woord waarop je zoekt; anders zoek je op de medeklinkers שמעב.
+    woord["regeert"] = " ".join(re.findall(r"\(([^)]*)\)", varianten[0])).strip()
+    woord["hebreeuws"] = re.sub(r"\s*\([^)]*\)", "", varianten[0]).strip()
+    # Aanduidingen als 'הֲ … ?' zeggen hoe het woord in een zin staat, maar horen niet in
+    # de vorm waarop we zoeken. Alleen letters, klinkertekens en dagesj blijven over.
+    woord["hebreeuws"] = "".join(
+        t for t in woord["hebreeuws"] if "ְ" <= t <= "ׇ" or "א" <= t <= "ת").strip()
     woord["varianten"] = varianten[1:]
-    woord["medeklinkers"] = medeklinkers(varianten[0])
+    woord["medeklinkers"] = medeklinkers(woord["hebreeuws"])
     # '(v)' achter een zelfstandig naamwoord betekent vrouwelijk.
     woord["geslacht"] = "v" if re.match(r"^\(v\)", ned) else ""
     # 'G eten; N gegeten worden; H voeden' — per stamformatie een eigen betekenis.
