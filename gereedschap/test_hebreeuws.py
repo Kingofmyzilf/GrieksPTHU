@@ -71,9 +71,51 @@ def main():
         for a, b, getypt in botsingen[:10]:
             print(f"  '{getypt}' geeft zowel {a['hebreeuws']} als {b['hebreeuws']}")
 
-    if mis or ongedekt:
+    fouten = opslag_klopt()
+    if mis or ongedekt or fouten:
         sys.exit(1)
     print("GESLAAGD")
+
+
+def opslag_klopt():
+    """Woorden en rijtjescellen delen één opslagdict. Blijven ze allebei staan?
+
+    Ze staan samen in hebr_stats, en dat kan omdat hun sleutels niet op elkaar lijken: een
+    woord heeft '42:מלכ', een cel 'heb_559_v_qal_perf_3ms'. Maar het opslaan bouwt de
+    woorden opnieuw op, en deed dat eerst in een verse dict — waarmee elke opslag de
+    rijtjes wegvaagde. Twee dingen moeten daarom kloppen: de cellen overleven, en het is
+    steeds dezelfde dict, want de oefenpagina houdt er een verwijzing naar vast."""
+    import grieks_gebruiker as gebruikers
+
+    fouten = []
+    g = gebruikers.Gebruiker("proef", "proef")
+    g._laad_hebreeuws()
+    if not g.hebreeuws:
+        return ["geen Hebreeuwse woorden geladen"]
+    vast = g.stats.setdefault("hebr_stats", {})       # zoals de oefenpagina hem vasthoudt
+    vast["heb_559_v_qal_perf_3ms"] = {"g": 3, "f": 0, "streak": 3}
+    g.hebreeuws[0]["streak"] = 4
+    g.hebreeuws[0]["score_goed"] = 2
+
+    uit = g._verzamel_hebreeuws()
+    if uit is not vast:
+        fouten.append("het opslaan maakt een nieuwe dict; de oefenpagina raakt de zijne kwijt")
+    if "heb_559_v_qal_perf_3ms" not in uit:
+        fouten.append("de cel van een rijtje overleeft het opslaan niet")
+    if not any(str(k)[0].isdigit() for k in uit):
+        fouten.append("het woord zelf staat er niet in")
+
+    # Nog een cel erbij, alsof je nog een beurt doet, en dan nog een keer opslaan.
+    vast["heb_1961_v_qal_perf_3ms"] = {"g": 1, "f": 0, "streak": 1}
+    uit2 = g._verzamel_hebreeuws()
+    if "heb_1961_v_qal_perf_3ms" not in uit2 or "heb_559_v_qal_perf_3ms" not in uit2:
+        fouten.append("een cel raakt weg bij de tweede opslag")
+
+    for regel in fouten:
+        print("  MIS:", regel)
+    if not fouten:
+        print("woorden en rijtjescellen blijven samen in hebr_stats staan")
+    return fouten
 
 
 if __name__ == "__main__":

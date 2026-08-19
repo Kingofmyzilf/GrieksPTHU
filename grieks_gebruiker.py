@@ -7,6 +7,7 @@ aan dezelfde afspraken als overhoring_web.py:
   * scores worden op de woordenlijst gezet met dezelfde velden;
   * opslaan gebeurt na elke beurt, in een aparte thread.
 """
+import re
 import threading
 from datetime import date, datetime, timedelta
 
@@ -101,8 +102,20 @@ class Gebruiker:
             w["laatst_fout"] = s.get("lf", "")
 
     def _verzamel_hebreeuws(self):
-        """Andersom: de lijst terug naar het compacte opslagformaat."""
-        uit = {}
+        """Andersom: de lijst terug naar het compacte opslagformaat.
+
+        In dezelfde dict staan ook de cellen van Actief Beheersen. Die worden hier niet
+        opnieuw opgebouwd — ze hangen niet aan de woordenlijst — dus die moeten blijven
+        staan, anders gooit elke opslag ze weg. Ze zijn te herkennen aan hun sleutel: een
+        woord heeft er een als '42:מלכ', een cel een als 'heb_559_v_qal_perf_3ms'.
+
+        En daarom wordt de bestaande dict bijgewerkt in plaats van vervangen. De
+        oefenpagina houdt er zelf een verwijzing naar vast om de cellen in bij te
+        schrijven; zou hier een nieuwe dict uit komen, dan schrijft die pagina na de
+        eerste opslag in een dict waar niemand meer naar kijkt."""
+        uit = self.stats.setdefault("hebr_stats", {})
+        for sleutel in [k for k in uit if re.match(r"^\d+:", str(k))]:
+            del uit[sleutel]
         for w in self.hebreeuws:
             s = int(w.get("streak", 0)); g = int(w.get("score_goed", 0))
             f = int(w.get("score_fout", 0)); l = w.get("laatst_geoefend", "")

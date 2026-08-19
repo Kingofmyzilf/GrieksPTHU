@@ -18,7 +18,9 @@ import functools
 import json
 import os
 
-BESTAND = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hebreeuws_woorden.json")
+_HIER = os.path.dirname(os.path.abspath(__file__))
+BESTAND = os.path.join(_HIER, "hebreeuws_woorden.json")
+RIJTJES = os.path.join(_HIER, "hebreeuws_actief.json")
 
 # Welke Latijnse letters welke Hebreeuwse letter geven. Ruim opgezet: waar twee
 # schrijfwijzen voor de hand liggen worden ze allebei geaccepteerd, want fout rekenen op
@@ -175,6 +177,17 @@ def laad_woorden():
             return json.load(f)
     except (OSError, ValueError):
         return []
+
+
+@functools.lru_cache(maxsize=1)
+def laad_rijtjes():
+    """De vervoegingsrijtjes voor Actief Beheersen, in dezelfde vorm als het Grieks:
+    niveau -> categorie -> rijtje -> cellen. Gemaakt door bouw_hebreeuws_actief.py."""
+    try:
+        with open(RIJTJES, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
 
 
 def aanwezig():

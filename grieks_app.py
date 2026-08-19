@@ -519,11 +519,18 @@ def klaargezet(g):
         return int((g.stats.get("ui_prefs") or {}).get(f"ng_{sleutel}", standaard[sleutel]))
 
     if taal(g) == HEBREEUWS:
-        # Alleen woordenschat: voor de andere oefeningen bestaan geen Hebreeuwse rijtjes.
+        # Woordenschat en de rijtjes; de overige oefeningen zijn Grieks (zie heb_oefenhub).
         hp = heb_prefs(g)
-        return [("Hebreeuwse woorden",
-                 f"{int(hp['heb_aantal'])} woorden · {str(hp['heb_keuze']).lower()}",
-                 "/oefenen/hebreeuws", "hebreeuws", heb_vandaag(g))]
+        log = g.daglog()
+        klaar = [("Hebreeuwse woorden",
+                  f"{int(hp['heb_aantal'])} woorden · {str(hp['heb_keuze']).lower()}",
+                  "/oefenen/hebreeuws", "hebreeuws", heb_vandaag(g))]
+        if hebreeuws.laad_rijtjes():
+            klaar.append(("Actief beheersen",
+                          f"{int(heb_af_prefs(g)['heb_af_aantal'])} cellen uit de rijtjes",
+                          "/oefenen/hebreeuws/actief", "hebreeuws",
+                          int(log.get("hebreeuws", 0) or 0)))
+        return klaar
 
     p = prefs(g)
     if p["keuze"] in PAAR_OEFENINGEN:
@@ -1349,11 +1356,33 @@ def heb_oefenhub(g):
                      f"hoe het klinkt, hoe vaak het in de Tenach staat en waar je het "
                      f"voor het eerst tegenkomt.").style(
                 f"color:{ZACHT};font-size:13px;line-height:1.6")
+        rijtjes = hebreeuws.laad_rijtjes()
+        if rijtjes:
+            aantal = sum(len(paradigmas) for cats in rijtjes.values()
+                         for paradigmas in cats.values())
+            cellen = heb_af_cellen(g)
+            gehad = sum(1 for c in cellen if c["goed"] or c["fout"])
+            ui.label("Vormen beheersen").style(
+                f"color:{ZACHT};font-size:13px;margin-top:6px")
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/oefenen/hebreeuws/actief")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    ui.label("Actief beheersen").style(
+                        f"color:{TEKST};font-size:16px;font-weight:600")
+                    with ui.row().classes("items-center gap-3 no-wrap"):
+                        ui.label(f"{round(100 * gehad / max(1, len(cellen)))}%").style(
+                            f"color:{MERK};font-size:14px")
+                        ui.label("›").style(f"color:{ZACHT};font-size:20px")
+            with ui.element("div").classes("kaart w-full"):
+                ui.label(f"{aantal} rijtjes met {len(cellen)} cellen, afgeleid uit de "
+                         f"bijbeltekst zelf: elke vorm die je hier oefent staat écht "
+                         f"ergens, en je ziet hoe vaak.").style(
+                    f"color:{ZACHT};font-size:13px;line-height:1.6")
         ui.label("Alleen in het Grieks").style(f"color:{ZACHT};font-size:13px;margin-top:10px")
         with ui.element("div").classes("kaart w-full"):
-            ui.label("Stamtijden · Actief beheersen · Structuurwoorden · Ontleden").style(
+            ui.label("Stamtijden · Structuurwoorden · Ontleden").style(
                 f"color:{ZACHT};font-size:13px;line-height:1.6")
-            ui.label("Die oefeningen werken op rijtjes en ontleedcodes; voor het "
+            ui.label("Die oefeningen werken op stamtijden en ontleedcodes; voor het "
                      "Hebreeuws zijn die er nog niet.").style(
                 f"color:{ZACHT};font-size:13px;margin-top:4px")
     onderbalk("Oefenen")
@@ -3127,6 +3156,7 @@ def stamleerpagina():
 
 # ============================================================== actief beheersen
 AF_OEFENINGEN = ["Zwakste eerst", "Leerpad (volgend rijtje)", "Alleen wat ik fout deed"]
+HEB_AF_OEFENINGEN = ["Zwakste eerst", "Rijtje voor rijtje", "Alleen wat ik fout deed"]
 AF_VRAAGVORM = ["Automatisch (aanbevolen)", "Alleen meerkeuze", "Alleen typen"]
 AF_MODI = ["Cel voor cel", "Tentamenrooster (heel rijtje)", "Alleen de uitgangen"]
 AF_ROOSTER_MODI = AF_MODI[1:]      # de twee die het hele rijtje ineens vragen
@@ -4522,6 +4552,334 @@ def hebpagina():
     toon()
 
 
+# ============================================================== Hebreeuws · actief
+# Dezelfde oefening als Actief Beheersen bij het Grieks: je krijgt de cel van een rijtje
+# ('3e m ev' van het perfectum van אמר) en geeft de vorm. Onder streak 10 wijs je aan,
+# daarboven schrijf je hem zelf — precies de grenzen en de punten van AF_*.
+#
+# Eén verschil, en dat is de taal en niet de app: het Hebreeuwse werkwoord vervoegt met
+# voorvoegsels én met uitgangen. Het imperfectum doet allebei tegelijk (תֹּאמְרִי is ת +
+# stam + י). Het Grieks heeft alleen een uitgang nodig; hier staan er twee, allebei in de
+# merkkleur rond de witte stam.
+HEB_AF_STANDAARD = {"heb_af_keuze": "Zwakste eerst", "heb_af_aantal": 10,
+                    "heb_af_vraagvorm": AF_VRAAGVORM[0], "heb_af_categorie": "Alles"}
+
+
+def heb_af_prefs(g):
+    return {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+            for k, v in HEB_AF_STANDAARD.items()}
+
+
+def heb_af_cellen(g):
+    """Alle oefenbare cellen uit hebreeuws_actief.json, met je scores erbij.
+
+    De scores staan in hebr_stats, bij de woorden. Dat kan zonder ze door elkaar te halen:
+    een cel heeft een sleutel als 'heb_559_v_qal_perf_3ms' en een woord een sleutel als
+    '42:מלכ', dus de twee soorten kunnen elkaar niet overschrijven. Het scheelt een
+    vijftiende kolom in de Sheet, en die zou de Streamlit-app óók moeten kennen."""
+    db = hebreeuws.laad_rijtjes() or {}
+    stats = g.stats.get("hebr_stats") or {}
+    uit = []
+    for niveau, categorieen in db.items():
+        for categorie, paradigmas in categorieen.items():
+            for paradigma, cellen in paradigmas.items():
+                for c in cellen:
+                    vorm = str(c.get("vorm", "") or "").strip()
+                    if not vorm:
+                        continue
+                    s = stats.get(c.get("id", "")) or {}
+                    uit.append({
+                        "niveau": niveau, "categorie": categorie, "paradigma": paradigma,
+                        "label": c.get("label", ""), "vorm": vorm,
+                        "stam": c.get("stam", ""), "uitgang": c.get("uitgang", ""),
+                        "voorvoegsel": c.get("voorvoegsel", ""),
+                        "toelichting": c.get("toelichting", ""), "vers": c.get("vers", ""),
+                        "id": c.get("id", ""), "rijtje": cellen,
+                        "streak": int(s.get("streak", 0) or 0),
+                        "goed": int(s.get("g", 0) or 0),
+                        "fout": int(s.get("f", 0) or 0)})
+    return uit
+
+
+def heb_af_vorm(cel, groot=True):
+    """Eén vorm met zijn voorvoegsel en uitgang in de merkkleur, de stam in wit. Zo zie je
+    waar de vervoeging zit zonder dat iemand het hoeft uit te leggen."""
+    voor, stam, uit = cel.get("voorvoegsel", ""), cel.get("stam", ""), cel.get("uitgang", "")
+    heel = cel.get("vorm", "")
+    if not stam or stam not in "".join(t for t in heel if "א" <= t <= "ת"):
+        return f"<span class='hebreeuws'>{heel}</span>"
+    # De klinkertekens zitten tússen de medeklinkers, dus knippen op letterposities.
+    posities = [i for i, t in enumerate(heel) if "א" <= t <= "ת"]
+    a = posities[len(voor)] if len(voor) < len(posities) else len(heel)
+    b = posities[len(voor) + len(stam)] if len(voor) + len(stam) < len(posities) else len(heel)
+    maat = "font-size:17px" if not groot else ""
+    return (f"<span class='hebreeuws' style='{maat}'>"
+            f"<span style='color:{MERK};font-weight:700'>{heel[:a]}</span>"
+            f"<span style='color:{TEKST}'>{heel[a:b]}</span>"
+            f"<span style='color:{MERK};font-weight:700'>{heel[b:]}</span></span>")
+
+
+def heb_af_paspoort(cellen):
+    """Het hele rijtje om te bestuderen, zonder de oefening te verlaten."""
+    return "".join(
+        f"<div style='display:flex;justify-content:space-between;gap:10px;"
+        f"border-top:1px solid {RAND};padding:6px 0;font-size:13px'>"
+        f"<span style='color:{ZACHT}'>{c.get('label', '')}</span>"
+        f"{heb_af_vorm(c, groot=False)}</div>" for c in cellen)
+
+
+class HebAfSessie:
+    def __init__(self, g):
+        p = heb_af_prefs(g)
+        cellen = heb_af_cellen(g)
+        if p["heb_af_categorie"] != "Alles":
+            cellen = [c for c in cellen
+                      if c["categorie"] == p["heb_af_categorie"]] or cellen
+        if p["heb_af_keuze"] == "Alleen wat ik fout deed":
+            cellen = [c for c in cellen if c["fout"] > 0] or cellen
+            cellen.sort(key=lambda c: -c["fout"])
+        elif p["heb_af_keuze"] == "Rijtje voor rijtje":
+            # Het eerstvolgende rijtje waar nog iets in zit dat je niet kent. Zo leer je een
+            # rijtje als geheel in plaats van losse cellen uit tien verschillende rijtjes.
+            per = {}
+            for c in cellen:
+                per.setdefault((c["categorie"], c["paradigma"]), []).append(c)
+            for _sleutel, groep in per.items():
+                if any(x["streak"] < 5 for x in groep):
+                    cellen = groep
+                    break
+        else:
+            cellen.sort(key=lambda c: c["streak"])
+        self.prefs = p
+        self.vragen = cellen[:max(4, int(p["heb_af_aantal"] or 10))]
+        self.i = 0
+        self.goed = 0
+        self.fout = 0
+        self.beoordeeld = False
+        self.bezig = False
+        self.vraag_typen = True
+
+    @property
+    def huidig(self):
+        return self.vragen[self.i] if self.i < len(self.vragen) else None
+
+
+@ui.page("/oefenen/hebreeuws/actief")
+def hebafpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if not hebreeuws.laad_rijtjes():
+        ui.navigate.to("/oefenen")
+        return
+    sessie = HebAfSessie(g)
+    stats = g.stats.setdefault("hebr_stats", {})
+    categorieen = ["Alles"] + sorted({c["categorie"] for c in heb_af_cellen(g)})
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_oef = ui.select(HEB_AF_OEFENINGEN, value=sessie.prefs["heb_af_keuze"],
+                          label="Volgorde").props("outlined dark").classes("w-full")
+        k_cat = ui.select(categorieen, value=sessie.prefs["heb_af_categorie"],
+                          label="Categorie").props("outlined dark").classes("w-full")
+        k_vorm = ui.select(AF_VRAAGVORM, value=sessie.prefs["heb_af_vraagvorm"],
+                           label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
+        k_aantal = ui.number("Cellen per ronde", value=int(sessie.prefs["heb_af_aantal"]),
+                             min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        ui.label(f"Automatisch: eerst aanwijzen, en vanaf streak {AF_TYP_STREAK} de vorm "
+                 f"zelf schrijven. Dezelfde grens als bij het Grieks.").style(
+            f"color:{ZACHT};font-size:13px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("heb_af_keuze", k_oef), ("heb_af_categorie", k_cat),
+                                  ("heb_af_vraagvorm", k_vorm), ("heb_af_aantal", k_aantal)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/hebreeuws/actief")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
+                f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    # Hier is het spiekbriefje wél op zijn plaats: je moet Hebreeuws intypen.
+    with ui.dialog() as spiek, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Hebreeuws typen").style("font-size:18px;font-weight:700")
+        ui.html(heb_spiekbrief())
+        with ui.row().classes("w-full justify-end"):
+            ui.button("Duidelijk", on_click=spiek.close, color=None).props(
+                "unelevated no-caps").style(f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Actief beheersen").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("א", on_click=spiek.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar hebreeuws").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+                ui.button("⚙", on_click=instellingen.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        paspoort = ui.column().classes("w-full")
+        rijtje = ui.html().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px;padding-top:4px")
+        gevraagd = ui.html().classes("w-full text-center").style(
+            f"color:{TEKST};font-size:30px;font-weight:700;line-height:1.2")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:2px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:64px;padding-top:8px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+
+    invoer, knop = typbalk("typ de vorm (mlk → מלך)")
+    onderbalk("Oefenen")
+
+    def teken():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(sessie.vragen)):
+                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+                ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
+
+    def toon():
+        for vak in (opties, terugkoppeling, statusbalk):
+            vak.clear()
+        sessie.beoordeeld = False
+        c = sessie.huidig
+        for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
+            vak.set_visibility(True)
+        if c is None:
+            rijtje.set_content("")
+            gevraagd.set_content("✓")
+            paspoort.clear()
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
+            teller.text = ""
+            toon_typveld(invoer, False)
+            knop.text = "Nieuwe ronde"
+            teken()
+            return
+        sessie.vraag_typen = af_vraagt_typen(sessie.prefs["heb_af_vraagvorm"], c["streak"])
+        rijtje.set_content(f"{c['categorie']} · {c['paradigma']}")
+        paspoort.clear()
+        with paspoort:
+            with ui.expansion("Bekijk het rijtje").props("dense").classes("w-full").style(
+                    f"color:{ZACHT};font-size:12.5px"):
+                ui.html(heb_af_paspoort(c["rijtje"]))
+        gevraagd.set_content(c["label"])
+        vraagsoort.text = "" if sessie.vraag_typen else "Welke vorm hoort hierbij?"
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        knop.text = "Nakijken" if sessie.vraag_typen else "Ik weet het niet"
+        invoer.value = ""
+        toon_typveld(invoer, sessie.vraag_typen)
+        teken()
+        if not sessie.vraag_typen:
+            # Afleiders uit hetzelfde rijtje: zo leer je de cellen onderling onderscheiden.
+            anders = [x.get("vorm", "") for x in c["rijtje"]
+                      if x.get("vorm") and x.get("vorm") != c["vorm"]]
+            keuzes = random.sample(anders, min(3, len(anders))) + [c["vorm"]]
+            random.shuffle(keuzes)
+            with opties:
+                for keuze in keuzes:
+                    ui.html(f"<button class='keuze hebreeuws' style='font-size:20px;"
+                            f"text-align:center;padding:10px 12px'>{keuze}</button>").on(
+                        "click", lambda _=None, kz=keuze: kies(kz))
+        with statusbalk:
+            ui.html(_statusrij([
+                (c["streak"], "streak", TEKST),
+                (_goedfout(c["goed"], c["fout"]), "", TEKST),
+                (c["niveau"], "", ZACHT),
+                (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
+            ]))
+        if sessie.vraag_typen:
+            invoer.run_method("focus")
+
+    async def verwerk(c, juist):
+        sessie.beoordeeld = True
+        sessie.goed += int(juist)
+        sessie.fout += int(not juist)
+        e = stats.setdefault(c["id"], {"g": 0, "f": 0, "streak": 0})
+        e["g"] = int(e.get("g", 0)) + int(juist)
+        e["f"] = int(e.get("f", 0)) + int(not juist)
+        e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+        c["streak"] = e["streak"]
+        g.tel_dag()
+        if juist:
+            g.dagdoel_plus("hebreeuws")
+        opgeslagen = await run.io_bound(g.bewaar)
+        for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
+            vak.set_visibility(False)
+        toon_typveld(invoer, False)
+        vind = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px'>"
+                f"{c['toelichting']}"
+                + (f" · voor het eerst in {c['vers']}" if c["vers"] else "")
+                + "</div>") if c["toelichting"] else ""
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:16px;padding:24px 18px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
+                f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
+                f"<div style='font-size:40px;margin-top:12px;line-height:1.3'>"
+                f"{heb_af_vorm(c)}</div>"
+                f"<div style='color:{ZACHT};font-size:13px;margin-top:6px'>"
+                f"{c['paradigma']} · {c['label']}</div>{vind}"
+                f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
+                f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                f"streak nu {e['streak']}</div></div>")
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+        _uitslag_staat(sessie)
+
+    async def kies(keuze):
+        if sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            c = sessie.huidig
+            await verwerk(c, keuze == c["vorm"])
+        finally:
+            sessie.bezig = False
+
+    async def hoofdknop():
+        if sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            c = sessie.huidig
+            if c is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/hebreeuws/actief")
+                return
+            if sessie.beoordeeld:
+                if te_snel(sessie):
+                    return
+                sessie.i += 1
+                toon()
+                return
+            if sessie.vraag_typen:
+                await verwerk(c, hebreeuws.vorm_ok(invoer.value or "", c["vorm"]))
+            else:
+                await verwerk(c, False)
+        finally:
+            sessie.bezig = False
+
+    knop.on_click(hoofdknop)
+    invoer.on("keydown.enter", hoofdknop)
+    toon()
+
+
 # ============================================================== ontleden
 ONT_STANDAARD = {"ont_niveau": "Grieks 1", "ont_drempel": 5, "ont_kleur": True,
                  "ont_rijtje": True, "ont_vertaalhulp": True, "ont_links": True}
@@ -5320,6 +5678,21 @@ def heb_voortgangpagina(g):
                     f"<div style='width:100%;height:5px;border-radius:3px;background:{RAND};"
                     f"margin:3px 0 9px'><div style='width:{breed:.0f}%;height:5px;"
                     f"border-radius:3px;background:{MERK}'></div></div>")
+
+        cellen = heb_af_cellen(g) if hebreeuws.laad_rijtjes() else []
+        if cellen:
+            af_gehad = sum(1 for c in cellen if c["goed"] or c["fout"])
+            af_vast = sum(1 for c in cellen if c["streak"] >= 5)
+            rijtjes = {(c["categorie"], c["paradigma"]) for c in cellen}
+            ui.label("Rijtjes").style("font-size:15px;font-weight:700;margin-top:6px")
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/oefenen/hebreeuws/actief")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    ui.label(f"{len(rijtjes)} rijtjes · {len(cellen)} cellen").style(
+                        f"color:{TEKST};font-size:14px")
+                    ui.label(f"{af_gehad} gehad").style(f"color:{MERK};font-size:13px")
+                ui.label(f"{af_vast} cellen zitten vast (streak 5 of hoger).").style(
+                    f"color:{ZACHT};font-size:12.5px")
 
         ui.label("Per woordenlijst").style("font-size:15px;font-weight:700;margin-top:6px")
         for les in sorted(per_les):
