@@ -24,18 +24,25 @@ from nicegui import app, run, ui
 import grieks_gebruiker as gebruikers
 import grieks_motor as motor
 import grieks_opslag as opslag
+import hebreeuws
 
 # --- huisstijl (uit .streamlit/config.toml) ---
 INKT, VLAK, RAND = "#0e1117", "#1e1e1e", "#2b3038"
 TEKST, ZACHT = "#fafafa", "#9aa4ae"
 MERK, GOED, FOUT = "#33ccff", "#3ddc97", "#ff6b81"
 GRIEKS_FONT = "'Gentium Book Plus','Palatino Linotype',Georgia,serif"
+# Hebreeuws heeft een eigen letter nodig: Gentium dekt het niet. Noto Serif Hebrew zet de
+# klinkertekens onder de letter waar ze horen; David is de terugval die op Windows al staat.
+HEBREEUWS_FONT = "'Noto Serif Hebrew','David','Times New Roman',serif"
 
 # Tekstmaten. Hieronder stond van alles tussen 10 en 12px; met de telefoon in één hand
 # is dat niet te lezen, en bij Grieks al helemaal niet — een spiritus of iota subscriptum
 # valt dan weg. KLEIN is de ondergrens voor bijzaak (tellers, meldingen, toelichting),
 # BASIS voor gewone begeleidende tekst, GRIEKS_MIN voor alles waar Grieks in staat.
 KLEIN, BASIS, GRIEKS_MIN = "12.5px", "13px", "15px"
+# Hebreeuws mag nog iets groter dan Grieks: de klinkertekens zijn kleine puntjes
+# en streepjes ónder de letter, en die vallen eerder weg dan een spiritus.
+HEBREEUWS_MIN = "17px"
 
 BESTEMMINGEN = [("Vandaag", "●", "/vandaag"), ("Oefenen", "■", "/oefenen"),
                 ("Lezen", "☰", "/lezen"), ("Voortgang", "▲", "/voortgang")]
@@ -52,7 +59,7 @@ APP_OP_MOBIEL = (
 
 ui.add_head_html(f"""
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:wght@400;700&family=Noto+Serif+Hebrew:wght@400;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="{INKT}">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -66,6 +73,19 @@ ui.add_head_html(f"""
      het element zelf (het woord op 58px) wint hier gewoon van. */
   .grieks {{ font-family:{GRIEKS_FONT}; font-weight:400;
              font-size:max(1em, {GRIEKS_MIN}); }}
+  /* Hebreeuws leest van rechts naar links. `direction` regelt dat, maar het is `isolate`
+     dat het werk doet: zonder dat trekt de browser de leesrichting door naar de
+     Nederlandse tekst eromheen, en dan springt een komma of een cijfer naar de verkeerde
+     kant van de regel. Elk stukje Hebreeuws staat dus op zichzelf.
+
+     Gentium heeft geen Hebreeuws; Noto Serif Hebrew wel, en die zet klinkertekens en
+     cantillatie netjes onder de letter in plaats van ernaast. De terugval David staat op
+     vrijwel elke Windows-machine. */
+  .hebreeuws {{ font-family:{HEBREEUWS_FONT}; font-weight:400;
+                direction:rtl; unicode-bidi:isolate;
+                font-size:max(1em, {HEBREEUWS_MIN}); }}
+  /* Een hele regel die met Hebreeuws begint: dan mag de regel zelf ook rechts uitlijnen. */
+  .hebrij {{ direction:rtl; unicode-bidi:isolate; text-align:right; }}
   /* De twee balken staan onder elkaar vast onderaan. dvh volgt het zichtbare deel van
      het scherm, zodat ze meebewegen als de adresbalk in- of uitschuift. */
   /* De drie hoogtes staan in variabelen en alles rekent ermee. Los ingevulde getallen
@@ -425,6 +445,71 @@ def inlogpagina():
     veld_code.on("keydown.enter", probeer)
 
 
+# ============================================================== taal
+# Twee talen in één app. De knop staat op Vandaag, want daar begin je: je ziet in één
+# oogopslag waar de app op staat, en het is één tik om te wisselen.
+#
+# Wat de knop wél en niet doet, expres. Het Hebreeuws heeft een eigen woordenlijst met
+# eigen voortgang (hebr_stats), en die staat naast het Grieks — je verliest dus niets
+# door te wisselen, en je kunt op één dag allebei oefenen. Maar stamtijden, actief
+# beheersen, structuurwoorden en ontleden hébben geen Hebreeuwse gegevens: daar zijn geen
+# rijtjes of ontleedcodes voor. In plaats van lege oefeningen te tonen zegt de app dat
+# gewoon, en wijst hij naar de Griekse kant.
+GRIEKS, HEBREEUWS = "grieks", "hebreeuws"
+
+
+def taal(g):
+    """De taal waar de app op staat. Zonder woordenlijst bestaat de keuze niet."""
+    gekozen = (g.stats.get("ui_prefs") or {}).get("ng_taal", GRIEKS)
+    return HEBREEUWS if (gekozen == HEBREEUWS and g.hebreeuws) else GRIEKS
+
+
+def taalknop(g, na="/vandaag"):
+    """Grieks of Hebreeuws, als twee knoppen naast elkaar. Alleen zichtbaar als de
+    Hebreeuwse lijst er is; anders is er niets te kiezen en zou de knop alleen ruimte
+    kosten."""
+    if not g.hebreeuws:
+        return
+
+    async def wissel(waarde):
+        if taal(g) == waarde:
+            return
+        g.stats.setdefault("ui_prefs", {})["ng_taal"] = waarde
+        await run.io_bound(g.bewaar, True)
+        ui.navigate.to(na)
+
+    huidig = taal(g)
+    with ui.row().classes("gap-0 no-wrap").style(
+            f"border:1px solid {RAND};border-radius:9px;overflow:hidden"):
+        for waarde, label in ((GRIEKS, "Grieks"), (HEBREEUWS, "עברית")):
+            aan = waarde == huidig
+            knop = ui.button(label, color=None,
+                             on_click=lambda _=None, w=waarde: wissel(w)).props(
+                "flat dense no-caps").style(
+                f"min-width:64px;height:30px;font-size:13px;border-radius:0;"
+                f"background:{MERK if aan else 'transparent'};"
+                f"color:{INKT if aan else ZACHT};font-weight:{700 if aan else 400}")
+            if waarde == HEBREEUWS:
+                knop.classes("hebreeuws")
+
+
+def heb_vandaag(g):
+    """Hoeveel verschillende Hebreeuwse woorden je vandaag had. Zelfde maat als bij de
+    Griekse woorden, zodat het dagdoel hetzelfde betekent."""
+    vd = gebruikers.vandaag()
+    return sum(1 for w in g.hebreeuws if w.get("laatst_geoefend") == vd)
+
+
+def heb_samenvatting(g):
+    """Kort overzicht van de Hebreeuwse woordenschat: geoefend, beheerst, totaal.
+    'Beheerst' gebruikt dezelfde streakgrens als het Grieks, zodat de twee getallen
+    naast elkaar hetzelfde zeggen."""
+    geoefend = sum(1 for w in g.hebreeuws
+                   if int(w.get("score_goed", 0)) or int(w.get("score_fout", 0)))
+    beheerst = sum(1 for w in g.hebreeuws if int(w.get("streak", 0)) >= 16)
+    return {"totaal": len(g.hebreeuws), "geoefend": geoefend, "beheerst": beheerst}
+
+
 # ============================================================== vandaag
 def klaargezet(g):
     """Wat er vandaag voor je klaarstaat, per onderdeel: naam, wat je krijgt, waar het
@@ -432,6 +517,13 @@ def klaargezet(g):
     je eigen instellingen, zodat hier staat wat je straks écht voorgeschoteld krijgt."""
     def voorkeur(standaard, sleutel):
         return int((g.stats.get("ui_prefs") or {}).get(f"ng_{sleutel}", standaard[sleutel]))
+
+    if taal(g) == HEBREEUWS:
+        # Alleen woordenschat: voor de andere oefeningen bestaan geen Hebreeuwse rijtjes.
+        hp = heb_prefs(g)
+        return [("Hebreeuwse woorden",
+                 f"{int(hp['heb_aantal'])} woorden · {str(hp['heb_keuze']).lower()}",
+                 "/oefenen/hebreeuws", "hebreeuws", heb_vandaag(g))]
 
     p = prefs(g)
     if p["keuze"] in PAAR_OEFENINGEN:
@@ -460,15 +552,21 @@ def vandaagpagina():
     g = _bewaakt()
     if not g:
         return
-    sam = g.samenvatting()
+    heb = taal(g) == HEBREEUWS
+    sam = heb_samenvatting(g) if heb else g.samenvatting()
     dagen = g.stats.get("dag_stats") or {}
     # Het dagdoel dat je bij Voortgang instelt; 'woorden' telt verschillende woorden.
     doelen = g.dagdoel()
-    doel = max(1, int(doelen.get("woorden", 10) or 10))
-    gedaan = g.woorden_vandaag()
+    doelsleutel = "hebreeuws" if heb else "woorden"
+    doel = max(1, int(doelen.get(doelsleutel, 10) or 10))
+    gedaan = heb_vandaag(g) if heb else g.woorden_vandaag()
 
     with ui.column().classes("inhoud w-full gap-3"):
-        ui.label("Vandaag").style("font-size:26px;font-weight:700")
+        # De taalknop staat naast de titel: zo zie je meteen waar de app op staat, en
+        # kost het één tik om te wisselen.
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Vandaag").style("font-size:26px;font-weight:700")
+            taalknop(g)
         ui.label(nl_datum(date.today())).style(f"color:{ZACHT};font-size:13px")
 
         with ui.element("div").classes("kaart w-full"):
@@ -486,8 +584,10 @@ def vandaagpagina():
             ui.label("Je dagdoel is gehaald." if resterend == 0
                      else f"Nog {resterend} woorden voor je dagdoel.").style(
                 f"color:{TEKST};font-size:14px")
-            ui.label(f"{sam['dagen']} oefendagen · {sam['beheerst']} woorden beheerst").style(
-                f"color:{ZACHT};font-size:12.5px")
+            ui.label(f"{sam['geoefend']} van {sam['totaal']} woorden gehad · "
+                     f"{sam['beheerst']} beheerst" if heb
+                     else f"{sam['dagen']} oefendagen · {sam['beheerst']} woorden "
+                          f"beheerst").style(f"color:{ZACHT};font-size:12.5px")
 
         ui.label("Klaargezet").style("font-size:15px;font-weight:700;margin-top:6px")
         for naam, uitleg, pad, sleutel, gedaan_nu in klaargezet(g):
@@ -1222,11 +1322,51 @@ def _af_pct(g):
     return round(100 * sum(1 for c in cellen if c["streak"] >= 16) / len(cellen))
 
 
+def heb_oefenhub(g):
+    """De oefenlijst als de app op Hebreeuws staat.
+
+    Eerlijk kort: er is één oefening. Stamtijden, actief beheersen, structuurwoorden en
+    ontleden vragen om rijtjes en ontleedcodes, en die zijn er voor het Hebreeuws niet.
+    Een lege oefening tonen zou erger zijn dan hem niet tonen — dan klik je erheen en
+    staat er niets."""
+    sam = heb_samenvatting(g)
+    with ui.column().classes("inhoud w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Oefenen").style("font-size:26px;font-weight:700")
+            taalknop(g, "/oefenen")
+        ui.label("Woorden kennen").style(f"color:{ZACHT};font-size:13px;margin-top:6px")
+        with ui.element("div").classes("kaart w-full").on(
+                "click", lambda: ui.navigate.to("/oefenen/hebreeuws")):
+            with ui.row().classes("w-full items-center justify-between no-wrap"):
+                ui.label("Hebreeuwse woorden").style(
+                    f"color:{TEKST};font-size:16px;font-weight:600")
+                with ui.row().classes("items-center gap-3 no-wrap"):
+                    ui.label(f"{round(100 * sam['geoefend'] / max(1, sam['totaal']))}%").style(
+                        f"color:{MERK};font-size:14px")
+                    ui.label("›").style(f"color:{ZACHT};font-size:20px")
+        with ui.element("div").classes("kaart w-full"):
+            ui.label(f"{sam['totaal']} woorden uit Hebreeuws 1 en 2, met de betekenis, "
+                     f"hoe het klinkt, hoe vaak het in de Tenach staat en waar je het "
+                     f"voor het eerst tegenkomt.").style(
+                f"color:{ZACHT};font-size:13px;line-height:1.6")
+        ui.label("Alleen in het Grieks").style(f"color:{ZACHT};font-size:13px;margin-top:10px")
+        with ui.element("div").classes("kaart w-full"):
+            ui.label("Stamtijden · Actief beheersen · Structuurwoorden · Ontleden").style(
+                f"color:{ZACHT};font-size:13px;line-height:1.6")
+            ui.label("Die oefeningen werken op rijtjes en ontleedcodes; voor het "
+                     "Hebreeuws zijn die er nog niet.").style(
+                f"color:{ZACHT};font-size:13px;margin-top:4px")
+    onderbalk("Oefenen")
+
+
 @ui.page("/oefenen")
 def oefenhub():
     """De lijst met onderdelen, gegroepeerd naar wat je ermee traint (designreview 1d)."""
     g = _bewaakt()
     if not g:
+        return
+    if taal(g) == HEBREEUWS:
+        heb_oefenhub(g)
         return
     sam = g.samenvatting()
     stam_stats = g.stats.get("stam_stats") or {}
@@ -1249,7 +1389,9 @@ def oefenhub():
     nog_niet = ["Klankwetten", "Nederlands → Grieks"] + ([] if BIJBEL else ["Ontleden"])
 
     with ui.column().classes("inhoud w-full gap-3"):
-        ui.label("Oefenen").style("font-size:26px;font-weight:700")
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Oefenen").style("font-size:26px;font-weight:700")
+            taalknop(g, "/oefenen")
         for kop, items in groepen:
             ui.label(kop).style(f"color:{ZACHT};font-size:13px;margin-top:6px")
             for naam, pct, pad in items:
@@ -3932,6 +4074,456 @@ def swpagina():
     toon()
 
 
+# ============================================================== Hebreeuws
+HEB_STANDAARD = {"heb_aantal": 12, "heb_vraagvorm": "Automatisch", "heb_lijst": "Alles",
+                 "heb_keuze": "Zwakste eerst"}
+HEB_VRAAGVORM = ["Automatisch", "Aanwijzen", "Zelf schrijven"]
+HEB_OEFENINGEN = ["Zwakste eerst", "Meest voorkomend eerst", "Alleen wat ik fout deed",
+                  "Op volgorde van de lijst"]
+HEB_LIJSTEN = {"Alles": 0, "Hebreeuws 1 · woord 1–165": 1, "Hebreeuws 2 · woord 166–410": 2}
+# Zoveel tekens mag een keuzeknop hebben. Boven de veertig wordt hij twee regels hoog en
+# raakt de lijst van vier uit balans; dan lees je de knoppen niet meer, maar scan je ze.
+HEB_KORT = 42
+# Vanaf deze streak schrijf je het woord zelf in plaats van het aan te wijzen. Zelfde
+# grens als bij structuurwoorden: herkennen eerst, produceren als het begint te zitten.
+HEB_TYP_STREAK = 5
+
+
+def heb_prefs(g):
+    return {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+            for k, v in HEB_STANDAARD.items()}
+
+
+# De codes waarmee de cursuslijst een betekenis inleidt: 'i'/'ii' voor los uit elkaar
+# gehouden betekenissen, en de stamformaties. 'N en H toevoegen' betekent: in de Nifal én
+# in de Hifil is het 'toevoegen'. Dat is nuttige uitleg, maar geen antwoord op de vraag
+# wat het woord betekent — op een keuzeknop staat gewoon 'toevoegen'.
+_HEB_CODES = {"i", "ii", "iii", "G", "N", "D", "Dp", "H", "Hp", "Ht", "tD", "en"}
+
+
+def _heb_zonder_codes(tekst):
+    """De codes vooraan weghalen, maar nooit het laatste woord: וְ betékent 'en',
+    en dat zou er anders zelf uit gaan.
+
+    Woord voor woord in plaats van met een reguliere uitdrukking. Dat leest hier net zo
+    goed, en het scheelt de vraag waar een woord ophoudt — waarvoor een regex een
+    woordgrens nodig heeft, en dus een backslash."""
+    delen = tekst.strip().split(" ")
+    i = 0
+    while i < len(delen) - 1 and delen[i].strip(".") in _HEB_CODES:
+        i += 1
+    return " ".join(delen[i:])
+
+
+def heb_uitleg(w):
+    """De volledige betekenis zoals hij in de cursuslijst staat, zonder de geslachtscode.
+    Die komt op de leerkaart en op het antwoordscherm te staan: dáár heb je alles nodig."""
+    return re.sub(r"^\((?:v|m)\.?\)\s*", "", str(w.get("nederlands", ""))).strip()
+
+
+def heb_betekenis(w):
+    """De korte betekenis: dít is het antwoord, en dít staat op de keuzeknoppen.
+
+    De cursuslijst geeft vaak een hele reeks. חֹק is '(toegewezen) deel; opdracht;
+    afgesproken tijd; inzetting, wet; voorschrift, regel(ing)' — als knop onleesbaar, en
+    als antwoord onmogelijk. De eerste betekenis is wat je moet weten; de rest hoort bij
+    de uitleg. Bij een werkwoord is dat de Qal, de gewone stam.
+
+    De kaart en het antwoordscherm laten de volledige reeks alsnog zien (heb_uitleg), dus
+    er gaat niets verloren — het staat alleen niet meer in de weg."""
+    stammen = w.get("stammen") or {}
+    kort = ((stammen.get("Qal") or next(iter(stammen.values()))) if stammen
+            else heb_uitleg(w).split(";")[0])
+    kort = _heb_zonder_codes(kort).strip(" ,;.")
+    if len(kort) > HEB_KORT:
+        # Nog te lang: afkappen bij de laatste komma die past, zodat er een hele
+        # betekenis blijft staan en geen half woord.
+        snee = kort.rfind(",", 0, HEB_KORT)
+        kort = (kort[:snee] if snee > 12 else kort[:HEB_KORT].rsplit(" ", 1)[0]) + "…"
+    return kort
+
+
+def heb_nieuw(w):
+    """Nog nooit gezien: dan eerst laten zien in plaats van laten raden."""
+    return not (int(w.get("streak", 0)) or int(w.get("score_goed", 0))
+                or int(w.get("score_fout", 0)))
+
+
+def heb_hint(w):
+    """Wat er te bieden valt zonder het antwoord weg te geven: het beeld erbij, hoe het
+    klinkt, en hoe vaak het in de Tenach staat. Die frequentie is zelf een geheugensteun —
+    wie weet dat een woord 2600 keer voorkomt, weet dat het geen zeldzaam woord kan zijn."""
+    delen = []
+    if w.get("anker") or w.get("beeld"):
+        delen.append(f"{w.get('anker', '')} {w.get('beeld', '')}".strip())
+    if w.get("translit"):
+        delen.append(f"klinkt als <i>{w['translit']}</i>")
+    if w.get("frequentie"):
+        delen.append(f"{w['frequentie']}× in de Tenach")
+    stammen = w.get("stammen") or {}
+    if len(stammen) > 1:
+        delen.append(" · ".join(f"{naam}: {bet}" for naam, bet in stammen.items()))
+    return "<br>".join(delen) or "Geen aanwijzing bij dit woord."
+
+
+class HebSessie:
+    def __init__(self, g):
+        p = heb_prefs(g)
+        woorden = list(g.hebreeuws)
+        les = HEB_LIJSTEN.get(p["heb_lijst"], 0)
+        if les:
+            woorden = [w for w in woorden if int(w.get("les", 0)) == les] or woorden
+        if p["heb_keuze"] == "Alleen wat ik fout deed":
+            woorden = [w for w in woorden if int(w.get("score_fout", 0)) > 0] or woorden
+            woorden.sort(key=lambda w: -int(w.get("score_fout", 0)))
+        elif p["heb_keuze"] == "Meest voorkomend eerst":
+            # De honderd meest voorkomende woorden dekken al een groot deel van de tekst;
+            # wie daarmee begint kan het snelst iets lezen.
+            woorden.sort(key=lambda w: (-int(w.get("frequentie", 0) or 0),
+                                        int(w.get("streak", 0))))
+        elif p["heb_keuze"] == "Op volgorde van de lijst":
+            woorden.sort(key=lambda w: int(w.get("nummer", 0)))
+        else:
+            woorden.sort(key=lambda w: (int(w.get("streak", 0)),
+                                        -int(w.get("frequentie", 0) or 0)))
+        self.prefs = p
+        self.alles = list(g.hebreeuws)
+        self.vragen = self._kaarten(woorden[:max(4, int(p["heb_aantal"] or 12))])
+        self.i = 0
+        self.goed = 0
+        self.fout = 0
+        self.beoordeeld = False
+        self.bezig = False
+        self.vraag_typen = False
+
+    @staticmethod
+    def _kaarten(woorden):
+        kaarten = []
+        for w in woorden:
+            if heb_nieuw(w):
+                kaarten.append((w, "leer"))
+            kaarten.append((w, "vraag"))
+        return kaarten
+
+    @property
+    def huidig(self):
+        return self.vragen[self.i][0] if self.i < len(self.vragen) else None
+
+    @property
+    def vorm(self):
+        return self.vragen[self.i][1] if self.i < len(self.vragen) else None
+
+
+def heb_spiekbrief():
+    """Het schema als tabel. Zonder dit is 'schrijf מלך' een raadsel: op een Nederlands
+    toetsenbord staan geen Hebreeuwse letters, en welke toets welke letter geeft moet je
+    ergens kunnen opzoeken zonder de app te verlaten."""
+    blokken = []
+    for kop, paren in hebreeuws.SPIEKBRIEF:
+        vakjes = "".join(
+            f"<span style='display:inline-flex;align-items:baseline;gap:5px;"
+            f"background:{VLAK};border:1px solid {RAND};border-radius:7px;"
+            f"padding:3px 8px;margin:0 5px 5px 0;white-space:nowrap'>"
+            f"<b style='color:{MERK};font-size:13px'>{toets}</b>"
+            f"<span class='hebreeuws' style='font-size:17px'>{letter}</span></span>"
+            for toets, letter in paren)
+        blokken.append(f"<div style='color:{ZACHT};font-size:12px;margin:8px 0 3px'>"
+                       f"{kop}</div><div>{vakjes}</div>")
+    return ("<div style='color:" + TEKST + ";font-size:13px'>Je typt alléén de "
+            "medeklinkers, net zoals ze in de woordenlijst staan. Slotletters gaan "
+            "vanzelf goed: <b>mlk</b> wordt <span class='hebreeuws'>מלך</span>."
+            "</div>" + "".join(blokken))
+
+
+@ui.page("/oefenen/hebreeuws")
+def hebpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if not g.hebreeuws:
+        ui.navigate.to("/vandaag")
+        return
+    sessie = HebSessie(g)
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_oef = ui.select(HEB_OEFENINGEN, value=sessie.prefs["heb_keuze"],
+                          label="Volgorde").props("outlined dark").classes("w-full")
+        k_lijst = ui.select(list(HEB_LIJSTEN), value=sessie.prefs["heb_lijst"],
+                            label="Woordenlijst").props("outlined dark").classes("w-full")
+        k_vorm = ui.select(HEB_VRAAGVORM, value=sessie.prefs["heb_vraagvorm"],
+                           label="Wat wordt gevraagd").props("outlined dark").classes("w-full")
+        k_aantal = ui.number("Woorden per ronde", value=int(sessie.prefs["heb_aantal"]),
+                             min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        ui.label(f"Automatisch: eerst de betekenis aanwijzen, en vanaf streak "
+                 f"{HEB_TYP_STREAK} het woord zelf schrijven.").style(
+            f"color:{ZACHT};font-size:13px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("heb_keuze", k_oef), ("heb_lijst", k_lijst),
+                                  ("heb_vraagvorm", k_vorm), ("heb_aantal", k_aantal)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/hebreeuws")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props("flat no-caps").style(
+                f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props("unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.dialog() as spiek, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Hebreeuws typen").style("font-size:18px;font-weight:700")
+        ui.html(heb_spiekbrief())
+        with ui.row().classes("w-full justify-end"):
+            ui.button("Duidelijk", on_click=spiek.close, color=None).props(
+                "unelevated no-caps").style(f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Hebreeuws").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("א", on_click=spiek.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar hebreeuws").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+                ui.button("⚙", on_click=instellingen.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        woord = ui.label().classes("hebreeuws w-full text-center").style(
+            f"font-size:46px;line-height:1.25;color:{TEKST};padding:2px 0 0")
+        onder = ui.html().classes("w-full text-center")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px;padding-top:4px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:2px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:64px;padding-top:8px")
+        hulp = ui.row().classes("w-full gap-2 no-wrap")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+
+    invoer, knop = typbalk("betekenis")
+    onderbalk("Oefenen")
+
+    def meekijken():
+        """Terwijl je typt laten zien wat eruit komt. Dit is het hele verschil tussen
+        'mlk' als gok en 'mlk' als schrijfwijze: je ziet de letters verschijnen en merkt
+        meteen dat je een medeklinker mist, in plaats van pas bij het nakijken."""
+        if not sessie.vraag_typen or sessie.beoordeeld:
+            return
+        getypt = str(invoer.value or "").strip()
+        if not getypt:
+            woord.text = "־"
+            return
+        woord.text = hebreeuws.naar_hebreeuws(getypt)
+        woord.style(f"font-size:{woordmaat(woord.text, 46)}px")
+
+    invoer.on_value_change(lambda _=None: meekijken())
+
+    def teken_hulp(w):
+        hulp.clear()
+        if w is None:
+            return
+        with hulp:
+            ui.button("Hint", color=None,
+                      on_click=lambda _=None, ww=w: ui.notify(
+                          heb_hint(ww), position="top", color="dark", multi_line=True,
+                          classes="text-body2", html=True).style("max-width:88vw")
+                      ).props("flat dense no-caps").classes("raakbaar").style(
+                f"flex:1;color:{ZACHT};border:1px solid {RAND};border-radius:8px;"
+                f"font-size:12.5px")
+
+    def teken():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(sessie.vragen)):
+                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+                ui.element("div").style(f"flex:1;height:4px;border-radius:2px;background:{kleur}")
+
+    def toon():
+        for vak in (opties, terugkoppeling, statusbalk):
+            vak.clear()
+        sessie.beoordeeld = False
+        w = sessie.huidig
+        for vak in (woord, onder, vraagsoort, opties, statusbalk):
+            vak.set_visibility(True)
+        woord.classes(add="hebreeuws")
+        if w is None:
+            woord.classes(remove="hebreeuws")
+            woord.text = "✓"
+            woord.style("font-size:46px")
+            onder.set_content("")
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
+            teller.text = ""
+            hulp.clear()
+            toon_typveld(invoer, False)
+            knop.text = "Nieuwe ronde"
+            teken()
+            return
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        teken()
+        teken_hulp(w)
+        if sessie.vorm == "leer":
+            sessie.vraag_typen = False
+            woord.text = w["hebreeuws"]
+            woord.style(f"font-size:{woordmaat(w['hebreeuws'], 46)}px")
+            onder.set_content(
+                f"<span style='color:{ZACHT};font-size:13px'>{w.get('translit', '')}</span>")
+            vraagsoort.text = "Nieuw — bekijk het even"
+            statusbalk.set_visibility(False)
+            toon_typveld(invoer, False)
+            knop.text = "Bekeken"
+            stammen = w.get("stammen") or {}
+            extra = ("".join(f"<div style='color:{ZACHT};font-size:13px;margin-top:3px'>"
+                             f"{naam} — {bet}</div>" for naam, bet in stammen.items())
+                     if len(stammen) > 1 else "")
+            with opties:
+                ui.html(
+                    f"<div style='background:rgba(51,204,255,.09);border:1px solid "
+                    f"{MERK}40;border-radius:12px;padding:14px 16px;text-align:center'>"
+                    f"<div style='color:{ZACHT};font-size:13px'>betekenis</div>"
+                    f"<div style='color:{TEKST};font-size:19px;line-height:1.35;"
+                    f"margin-top:2px'>{heb_uitleg(w)}</div>{extra}"
+                    f"<div style='color:{MERK};font-size:13px;margin-top:8px'>"
+                    f"{w.get('anker', '')} {w.get('beeld', '')}</div></div>")
+            return
+        vorm = sessie.prefs["heb_vraagvorm"]
+        sessie.vraag_typen = (vorm == "Zelf schrijven"
+                              or (vorm == "Automatisch"
+                                  and int(w.get("streak", 0)) >= HEB_TYP_STREAK))
+        invoer.value = ""
+        toon_typveld(invoer, sessie.vraag_typen)
+        if sessie.vraag_typen:
+            # Andersom: de betekenis staat er, het woord moet jij schrijven.
+            invoer.props(remove="placeholder").props(f'placeholder="mlk, sjlwm, …"')
+            woord.text = "־"
+            woord.style("font-size:46px")
+            onder.set_content(
+                f"<span style='color:{TEKST};font-size:19px'>{heb_betekenis(w)}</span>")
+            vraagsoort.text = "Schrijf het woord — alleen de medeklinkers"
+            knop.text = "Nakijken"
+        else:
+            invoer.props(remove="placeholder").props('placeholder="betekenis"')
+            woord.text = w["hebreeuws"]
+            woord.style(f"font-size:{woordmaat(w['hebreeuws'], 46)}px")
+            onder.set_content("")
+            vraagsoort.text = "Wat betekent dit?"
+            knop.text = "Ik weet het niet"
+            juist = heb_betekenis(w)
+            anderen = [heb_betekenis(x) for x in sessie.alles
+                       if x is not w and heb_betekenis(x) != juist]
+            keuzes = random.sample(anderen, min(3, len(anderen))) + [juist]
+            random.shuffle(keuzes)
+            with opties:
+                for keuze in keuzes:
+                    ui.html(f"<button class='keuze' style='font-size:14.5px;"
+                            f"padding:9px 12px;line-height:1.35'>{keuze}</button>").on(
+                        "click", lambda _=None, kz=keuze: kies(kz))
+        with statusbalk:
+            ui.html(_statusrij([
+                (int(w.get("streak", 0)), "streak", TEKST),
+                (_goedfout(int(w.get("score_goed", 0)), int(w.get("score_fout", 0))), "",
+                 TEKST),
+                (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
+            ]))
+        if sessie.vraag_typen:
+            invoer.run_method("focus")
+
+    async def verwerk(w, juist, scoor=True):
+        sessie.beoordeeld = True
+        sessie.goed += int(juist)
+        sessie.fout += int(not juist)
+        # Zelf schrijven telt zwaarder dan aanwijzen, net als bij de Griekse woorden:
+        # produceren is moeilijker dan herkennen.
+        punten = 2 if sessie.vraag_typen else 1
+        if juist:
+            if scoor:
+                w["score_goed"] = int(w.get("score_goed", 0)) + 1
+                w["streak"] = int(w.get("streak", 0)) + punten
+        else:
+            if scoor:
+                w["score_fout"] = int(w.get("score_fout", 0)) + 1
+                w["laatst_fout"] = gebruikers.vandaag()
+            w["streak"] = max(0, int(w.get("streak", 0)) - 1)
+        g.tel_dag()
+        w["laatst_geoefend"] = gebruikers.vandaag()
+        if juist:
+            g.dagdoel_plus("hebreeuws")
+        opgeslagen = await run.io_bound(g.bewaar)
+        for vak in (woord, onder, vraagsoort, opties, statusbalk):
+            vak.set_visibility(False)
+        toon_typveld(invoer, False)
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        stammen = w.get("stammen") or {}
+        extra = ("".join(f"<div style='color:{ZACHT};font-size:13px'>{naam} — {bet}</div>"
+                         for naam, bet in stammen.items()) if len(stammen) > 1 else "")
+        vindplaats = (w.get("vindplaatsen") or [{}])[0]
+        regel_vind = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px'>"
+                      f"<span class='hebreeuws'>{vindplaats.get('vorm', '')}</span> — "
+                      f"{vindplaats.get('vers', '')}</div>" if vindplaats.get("vers") else "")
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:16px;padding:22px 18px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
+                f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
+                f"<div class='hebreeuws' style='font-size:40px;color:{TEKST};"
+                f"margin-top:12px;line-height:1.3'>{w['hebreeuws']}</div>"
+                f"<div style='color:{ZACHT};font-size:13px'>{w.get('translit', '')}</div>"
+                f"<div style='color:{TEKST};font-size:17px;margin-top:6px'>"
+                f"{heb_uitleg(w)}</div>{extra}{regel_vind}"
+                f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
+                f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                f"streak nu {int(w.get('streak', 0))}</div></div>")
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+        _uitslag_staat(sessie)
+
+    async def kies(keuze):
+        if sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            w = sessie.huidig
+            await verwerk(w, keuze == heb_betekenis(w))
+        finally:
+            sessie.bezig = False
+
+    async def hoofdknop():
+        if sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            w = sessie.huidig
+            if w is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/hebreeuws")
+                return
+            if sessie.beoordeeld or sessie.vorm == "leer":
+                if sessie.beoordeeld and te_snel(sessie):
+                    return
+                sessie.i += 1
+                toon()
+                return
+            if sessie.vraag_typen:
+                await verwerk(w, hebreeuws.vorm_ok(invoer.value or "", w["hebreeuws"]))
+            else:
+                await verwerk(w, False)
+        finally:
+            sessie.bezig = False
+
+    knop.on_click(hoofdknop)
+    invoer.on("keydown.enter", hoofdknop)
+    toon()
+
+
 # ============================================================== ontleden
 ONT_STANDAARD = {"ont_niveau": "Grieks 1", "ont_drempel": 5, "ont_kleur": True,
                  "ont_rijtje": True, "ont_vertaalhulp": True, "ont_links": True}
@@ -4665,10 +5257,110 @@ def _uitklap(titel):
         f"color:{TEKST}")
 
 
+def heb_voortgangpagina(g):
+    """Voortgang als de app op Hebreeuws staat.
+
+    Bewust een eigen pagina en niet de Griekse met andere getallen erin: het Grieks heeft
+    XP, levels en een leerpad, en die bestaan hier niet. Wat hier wél is en bij het Grieks
+    niet, is precies hoe vaak elk woord in de Tenach staat — en dat maakt één getal
+    mogelijk dat alle andere overtreft: hoeveel van de tekst je nu kunt lezen."""
+    sam = heb_samenvatting(g)
+    pct = hebreeuws.dekking(g.hebreeuws)
+    doelen = g.dagdoel()
+    fasen = {"Nieuw": 0, "In training": 0, "Beheerst": 0, "Mastery": 0}
+    for w in g.hebreeuws:
+        fasen[gebruikers.fase_van(w.get("streak", 0))] += 1
+    per_les = {}
+    for w in g.hebreeuws:
+        les = int(w.get("les", 0) or 0)
+        vak = per_les.setdefault(les, {"totaal": 0, "geoefend": 0, "beheerst": 0})
+        vak["totaal"] += 1
+        if int(w.get("score_goed", 0)) or int(w.get("score_fout", 0)):
+            vak["geoefend"] += 1
+        if int(w.get("streak", 0)) >= 16:
+            vak["beheerst"] += 1
+
+    with ui.column().classes("inhoud w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Voortgang").style("font-size:26px;font-weight:700")
+            taalknop(g, "/voortgang")
+
+        with ui.element("div").classes("kaart w-full"):
+            ui.label(f"{pct}% van de Tenach").style(
+                f"color:{MERK};font-size:24px;font-weight:700")
+            ui.label("Zoveel van alle woorden in de Hebreeuwse bijbel ken je nu — "
+                     "geteld naar hoe vaak ze er staan, niet hoeveel het er zijn.").style(
+                f"color:{ZACHT};font-size:13px;line-height:1.5")
+            # De hele lijst dekt zeventig procent; dat is dus de bovengrens van deze balk,
+            # en zo blijft het eerlijk: honderd procent haal je met deze 410 woorden niet.
+            deel = min(1.0, pct / 70.1)
+            ui.html(f"<div style='width:100%;height:6px;border-radius:3px;background:{RAND};"
+                    f"margin:10px 0 6px'><div style='width:{deel*100:.0f}%;height:6px;"
+                    f"border-radius:3px;background:{MERK}'></div></div>")
+            ui.label(f"De hele lijst van {sam['totaal']} woorden brengt je op 70%.").style(
+                f"color:{TEKST};font-size:13px")
+
+        tegels = [(sam["geoefend"], "gehad"), (sam["beheerst"], "beheerst"),
+                  (heb_vandaag(g), "vandaag"),
+                  (f"{int(doelen.get('hebreeuws', 10) or 10)}", "dagdoel")]
+        with ui.row().classes("w-full gap-2 no-wrap"):
+            for waarde, label in tegels:
+                with ui.element("div").classes("kaart").style("flex:1;padding:10px 6px"):
+                    ui.label(str(waarde)).style(
+                        f"color:{MERK};font-size:19px;font-weight:700;text-align:center")
+                    ui.label(label).style(
+                        f"color:{ZACHT};font-size:11.5px;text-align:center")
+
+        ui.label("Hoe ver elk woord is").style("font-size:15px;font-weight:700;margin-top:6px")
+        with ui.element("div").classes("kaart w-full"):
+            for naam, aantal in fasen.items():
+                breed = 100 * aantal / max(1, sam["totaal"])
+                ui.html(
+                    f"<div style='display:flex;justify-content:space-between;font-size:13px;"
+                    f"color:{TEKST}'><span>{naam}</span><span style='color:{ZACHT}'>"
+                    f"{aantal}</span></div>"
+                    f"<div style='width:100%;height:5px;border-radius:3px;background:{RAND};"
+                    f"margin:3px 0 9px'><div style='width:{breed:.0f}%;height:5px;"
+                    f"border-radius:3px;background:{MERK}'></div></div>")
+
+        ui.label("Per woordenlijst").style("font-size:15px;font-weight:700;margin-top:6px")
+        for les in sorted(per_les):
+            vak = per_les[les]
+            naam = {1: "Hebreeuws 1 · woord 1–165",
+                    2: "Hebreeuws 2 · woord 166–410"}.get(les, f"Lijst {les}")
+            with ui.element("div").classes("kaart w-full"):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    ui.label(naam).style(f"color:{TEKST};font-size:14px")
+                    ui.label(f"{vak['geoefend']}/{vak['totaal']}").style(
+                        f"color:{MERK};font-size:13px")
+                ui.label(f"{vak['beheerst']} beheerst").style(
+                    f"color:{ZACHT};font-size:12.5px")
+
+        # De woorden waar je het vaakst op struikelt, maar alleen als je ze ook echt hebt
+        # gehad: een lijst met woorden die je nog nooit zag zegt niets over je zwakke plek.
+        zwak = sorted((w for w in g.hebreeuws if int(w.get("score_fout", 0))),
+                      key=lambda w: (-int(w.get("score_fout", 0)), int(w.get("streak", 0))))[:8]
+        if zwak:
+            ui.label("Waar het misgaat").style("font-size:15px;font-weight:700;margin-top:6px")
+            with ui.element("div").classes("kaart w-full"):
+                ui.html("".join(
+                    f"<div style='display:flex;justify-content:space-between;gap:10px;"
+                    f"padding:3px 0;font-size:13.5px'>"
+                    f"<span><span class='hebreeuws' style='font-size:18px'>"
+                    f"{w['hebreeuws']}</span> <span style='color:{ZACHT}'>"
+                    f"{heb_betekenis(w)}</span></span>"
+                    f"<span style='color:{FOUT};white-space:nowrap'>"
+                    f"{int(w.get('score_fout', 0))}×</span></div>" for w in zwak))
+    onderbalk("Voortgang")
+
+
 @ui.page("/voortgang")
 def voortgangpagina():
     g = _bewaakt()
     if not g:
+        return
+    if taal(g) == HEBREEUWS:
+        heb_voortgangpagina(g)
         return
     sam = g.samenvatting()
     cijfers = voortgang_cijfers(g)
@@ -4679,7 +5371,9 @@ def voortgangpagina():
     vandaag_log = dagboek.get(gebruikers.vandaag()) or {}
 
     with ui.column().classes("inhoud w-full gap-3"):
-        ui.label("Voortgang").style("font-size:26px;font-weight:700")
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Voortgang").style("font-size:26px;font-weight:700")
+            taalknop(g, "/voortgang")
 
         with ui.element("div").classes("kaart w-full"):
             ui.label(f"Niveau {niv['niveau']} · {niv['titel']}").style(

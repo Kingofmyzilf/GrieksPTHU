@@ -25,3 +25,6 @@ mijn_grieks_voortgang.csv
 # gereedschap/bouw_hebreeuws.py overal opnieuw te draaien is. De getagde bijbel is 42 MB
 # en hoort net als de NT-tekst niet in de repo; wat we eruit halen staat in de JSON.
 hebreeuws app/Hele bijbel.xlsx
+
+# Werkbestanden van Claude Code; die horen bij deze machine, niet bij het project.
+.claude/

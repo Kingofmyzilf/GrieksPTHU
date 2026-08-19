@@ -12,6 +12,7 @@ from datetime import date, datetime, timedelta
 
 import grieks_motor as motor
 import grieks_opslag as opslag
+import hebreeuws
 
 # Na elke beurt opslaan. Dat kan hier, anders dan in Streamlit: het schrijven draait
 # in een aparte thread terwijl de gebruiker de feedback leest, dus het wachten valt
@@ -22,8 +23,11 @@ STAT_SLEUTELS = [s for s, _ in opslag.SPECS]
 
 # Dagdoel: dezelfde sleutels en standaardwaarden als de Streamlit-app, zodat een doel dat
 # je daar instelt hier gewoon geldt (het staat in dezelfde 'dagdoel'-dict in de Sheet).
+# 'hebreeuws' staat er alleen bij ons: het Hebreeuws oefen je in de mobiele app. De
+# Streamlit-app kent die sleutel niet, maar draagt hem wel door — samenvoegen laat staan
+# wat het niet kent.
 DAGDOEL_STANDAARD = {"woorden": 10, "verwar": 3, "knelpunt": 5, "actief": 5, "stam": 5,
-                     "struct": 5, "verzen": 2, "klank": 5}
+                     "struct": 5, "verzen": 2, "klank": 5, "hebreeuws": 10}
 
 
 def vandaag():
@@ -38,6 +42,10 @@ class Gebruiker:
         self.code = str(code).strip()
         self.sleutel = f"{self.naam}_{self.code}"
         self.woorden = []
+        # De Hebreeuwse lijst staat er los naast, met dezelfde velden (streak, score_goed,
+        # score_fout, laatst_geoefend). Daardoor werkt alles wat op een woord rekent — de
+        # fasen, het uitkiezen, het scoren — voor allebei de talen zonder aanpassing.
+        self.hebreeuws = []
         self.stats = {s: {} for s in STAT_SLEUTELS}
         # Na hoeveel beurten er naar de Sheet wordt geschreven. Elke beurt is het
         # prettigst (je raakt nooit iets kwijt), maar op een trage server wacht je dan
@@ -56,6 +64,7 @@ class Gebruiker:
             raise opslag.OpslagFout("De woordenlijst kon niet worden geladen.")
         self.stats = opslag.laad(self.sleutel)
         self._pas_scores_toe()
+        self._laad_hebreeuws()
         return self
 
     def _pas_scores_toe(self):
@@ -74,6 +83,38 @@ class Gebruiker:
             r["laatst_fout"] = s.get("lf", "")
             if not r.get("lexeem_info"):
                 r["lexeem_info"] = r.get("grieks_info", "")
+
+    def _laad_hebreeuws(self):
+        """De Hebreeuwse woordenlijst met de opgeslagen scores erop.
+
+        Ontbreekt hebreeuws_woorden.json, dan blijft de lijst leeg en laat de app die taal
+        gewoon niet zien — de Griekse kant merkt er niets van. De sleutel is het woord
+        zonder klinkertekens: die staan in de cursuslijst niet altijd hetzelfde genoteerd,
+        en dan zou je voortgang bij een nieuwe uitgave van de lijst kwijt zijn."""
+        self.hebreeuws = [dict(w) for w in hebreeuws.laad_woorden()]
+        scores = self.stats.get("hebr_stats") or {}
+        for w in self.hebreeuws:
+            s = scores.get(hebreeuws.medeklinkers(w.get("hebreeuws", ""))) or {}
+            w["streak"] = int(s.get("streak", 0))
+            w["score_goed"] = int(s.get("g", 0))
+            w["score_fout"] = int(s.get("f", 0))
+            w["laatst_geoefend"] = s.get("laatst_geoefend", "")
+            w["laatst_fout"] = s.get("lf", "")
+
+    def _verzamel_hebreeuws(self):
+        """Andersom: de lijst terug naar het compacte opslagformaat."""
+        uit = {}
+        for w in self.hebreeuws:
+            s = int(w.get("streak", 0)); g = int(w.get("score_goed", 0))
+            f = int(w.get("score_fout", 0)); l = w.get("laatst_geoefend", "")
+            if s or g or f or l:
+                e = {"streak": s, "g": g, "f": f}
+                if l:
+                    e["laatst_geoefend"] = l
+                if w.get("laatst_fout"):
+                    e["lf"] = w["laatst_fout"]
+                uit[hebreeuws.medeklinkers(w.get("hebreeuws", ""))] = e
+        return uit
 
     # ---------------------------------------------------------------- scoren
     def tel_dag(self, woord=None):
@@ -216,6 +257,8 @@ class Gebruiker:
             return False          # er loopt er al een; die schrijft de nieuwste staat weg
         try:
             self.stats["vocab_stats"] = self._verzamel_vocab()
+            if self.hebreeuws:
+                self.stats["hebr_stats"] = self._verzamel_hebreeuws()
             try:
                 opslag.bewaar(self.sleutel, self.stats)
                 self.sinds_opslag = 0

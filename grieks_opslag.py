@@ -47,19 +47,23 @@ except ImportError:
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive"]
 
-# Dezelfde dertien statistiek-dicts als de Streamlit-app, in dezelfde volgorde.
+# Dezelfde veertien statistiek-dicts als de Streamlit-app, in dezelfde volgorde.
+# Die volgorde en die namen moeten daar gelijk aan blijven: allebei de apps schrijven de
+# héle rij weg, dus een sleutel die de ander niet kent wordt bij het volgende opslaan
+# uitgewist. 'hebr_stats' is er als laatste bij gekomen voor de Hebreeuwse woordenschat;
+# de Streamlit-app doet er niets mee maar draagt hem wel netjes door.
 SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
          ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
          ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
          ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
-         ('klank_stats', 'kl_chunks')]
+         ('klank_stats', 'kl_chunks'), ('hebr_stats', 'hb_chunks')]
 MAX_LEN = 40000
 SCOREBORD = "Scorebord"
 
 # Statistieken waarvan de waarden de vorm {sleutel: {'g':.., 'f':.., 'streak':..}} hebben.
 # Voor die vorm geldt de tel-regel bij het samenvoegen (zie samenvoeg_stats).
 TELDICTS = {"vocab_stats", "stam_stats", "struct_stats", "actief_stats",
-            "gram_stats", "prod_stats", "klank_stats", "ontleed_stats"}
+            "gram_stats", "prod_stats", "klank_stats", "ontleed_stats", "hebr_stats"}
 
 
 class OpslagFout(Exception):

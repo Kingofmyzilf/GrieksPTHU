@@ -4164,6 +4164,8 @@ def laad_gebruiker_data(naam):
             st.session_state.actief_stats = reassemble_chunks('actief_stats', 'af_chunks')
             st.session_state.ontleed_stats = reassemble_chunks('ontleed_stats', 'on_chunks')
             st.session_state.klank_stats = reassemble_chunks('klank_stats', 'kl_chunks')
+            # Alleen inlezen en weer meeschrijven; het oefenen zelf gebeurt in de mobiele app.
+            st.session_state.hebr_stats = reassemble_chunks('hebr_stats', 'hb_chunks')
 
         # Eenmalige verhuizing naar de nieuwe, unieke cel-ids van Actief Beheersen.
         try:
@@ -4206,7 +4208,10 @@ _OPSLAG_SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod
                  ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
                  ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
                  ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
-                 ('klank_stats', 'kl_chunks')]
+                 ('klank_stats', 'kl_chunks'), ('hebr_stats', 'hb_chunks')]
+# 'hebr_stats' is van de NiceGUI-app: daar zit de Hebreeuwse woordenschat in. Deze app doet
+# er niets mee, maar moet hem wél kennen — we schrijven de hele rij weg, dus een sleutel die
+# hier ontbreekt wordt bij het volgende opslaan uitgewist.
 
 
 def _bouw_rij_dict(stats=None):

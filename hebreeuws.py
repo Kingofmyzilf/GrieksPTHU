@@ -124,6 +124,33 @@ def vorm_ok(gegeven, doel):
     return medeklinkers(naar_hebreeuws(gegeven)) == doel_med
 
 
+# Zoveel Hebreeuwse woordvormen staan er in de Tenach. Geteld in 'Hele bijbel.xlsx' (de
+# WLC-tekst met parsing): 300.670 Hebreeuwse plus 4.826 Aramese vormen. De Aramese delen
+# van Daniël en Ezra tellen niet mee — die staan niet in deze woordenlijst, en ze in de
+# noemer stoppen zou de dekking laten lijken op iets wat je met deze woorden nooit haalt.
+TENACH_WOORDEN = 300670
+
+
+def dekking(woorden, drempel=16):
+    """Welk deel van de Tenach je met deze woorden kunt lezen, in procenten.
+
+    Niet hoevéél woorden je kent, maar hoe vaak ze er staan — en dat verschilt enorm. Tien
+    woorden dekken al 11% van de tekst, honderd woorden 48%, en de hele lijst van 410 komt
+    op 70%. Dat is het getal dat vooruitgang zichtbaar maakt: bij Grieks is dat de
+    NT-dekking, hier de Tenach.
+
+    Eén Strong-nummer telt één keer, ook als het in de lijst twee keer voorkomt (een
+    werkwoord en het zelfstandig naamwoord ernaast delen soms hun nummer). Zonder dat komt
+    de som boven de honderd procent uit."""
+    per_strong = {}
+    for w in woorden:
+        streak = int(w.get("streak", 0) or 0)
+        strong = str(w.get("strong") or "")
+        if strong and streak >= drempel:
+            per_strong[strong] = int(w.get("frequentie") or 0)
+    return round(100 * sum(per_strong.values()) / TENACH_WOORDEN, 1)
+
+
 @functools.lru_cache(maxsize=1)
 def laad_woorden():
     """De 410 woorden met hun betekenis, hint, frequentie en vindplaatsen."""

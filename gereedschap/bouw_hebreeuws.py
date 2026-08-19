@@ -39,6 +39,25 @@ def hebreeuws(teken):
     return "֐" <= teken <= "׿"
 
 
+def latijns(teken):
+    """Een letter uit ons eigen alfabet, mét accenten.
+
+    Waarom niet gewoon isascii(): de betekenis van אֶחָד is in de bron 'één; een', en é is
+    geen ASCII. De grens tussen Hebreeuws en Nederlands sprong daar overheen, en er bleef
+    'n; een' over — een betekenis waar een student niets aan heeft. Hetzelfde gold voor
+    elke betekenis die met een accentletter begint."""
+    if not teken.isalpha() or hebreeuws(teken) or teken in LETTERS:
+        # LETTERS staat vol met tekens die er Latijns uitzien maar een Hebreeuwse letter
+        # zijn: 'Ä' is een alef en 'ř' een slot-kaf. Zonder die uitzondering begint de
+        # betekenis volgens deze functie meteen bij het eerste teken, blijft er geen
+        # Hebreeuws over, en verdwijnen die woorden uit de lijst.
+        return False
+    try:
+        return unicodedata.name(teken).startswith("LATIN")
+    except ValueError:
+        return False
+
+
 def medeklinkers(tekst):
     """Alleen de letters, slotletters teruggebracht. Dit is de sleutel waarop we later
     aan de bijbeltekst koppelen — klinkertekens staan daar anders dan in een lemma."""
@@ -54,9 +73,16 @@ def splits(regel):
     hoort dus bij het Hebreeuws en wordt er alleen achteraan afgehaald."""
     grens = len(regel)
     for i, teken in enumerate(regel):
-        if teken.isascii() and (teken.isalpha() or teken.isdigit()):
+        if latijns(teken) or (teken.isascii() and teken.isdigit()):
             grens = i
             break
+    # Begint de betekenis met een haakje, dan valt de grens er één te laat: '(' is geen
+    # letter. Dat kostte 37 woorden hun openingshaakje — '(v) land' werd 'v) land',
+    # '(zo)als' werd 'zo)als', en het geslacht werd nergens meer herkend. Een haakje dat
+    # bij het Hebreeuws hoort staat hier nooit: daar is het teken vlak voor de grens de
+    # sluitende ')' van bijvoorbeeld '(אַחַר)רדף'.
+    if grens and regel[grens - 1] == "(":
+        grens -= 1
     # De haakjes blijven staan; verrijk() haalt de groepen er als geheel uit. Zou splits()
     # ze hier wegstrippen, dan raken ze uit balans en plakt '(אַחַר)רדף' aan elkaar.
     heb = regel[:grens].strip(" \t,;·")
@@ -123,12 +149,42 @@ HERSTEL = {"Ä ל": "לֹא",      # לֹא  niet
            "(בטח(ב": "בטח"}
 
 
+# Twee regels zijn in de PDF hun spaties kwijtgeraakt. Automatisch woorden terugvinden in
+# een spatieloze reeks is gokken; deze twee zijn met de hand overgetypt uit de bron.
+BETEKENIS_HERSTEL = {
+    "Gzichherinneren;gedenken,herdenken;Hinher- innering brengen":
+        "G zich herinneren; gedenken, herdenken; H in herinnering brengen",
+    "Gvoltooid/gereed/teneindezijn;Dophoudenmet":
+        "G voltooid/gereed/ten einde zijn; D ophouden met",
+    # Bij vier eigennamen geeft de cursuslijst alleen de categorie: PN is een
+    # persoonsnaam, GeoN een aardrijkskundige. Als betekenis op een oefenkaart zegt 'PN'
+    # niets — de naam zelf is wat je moet weten. Die staat er nu bij.
+    "PN": "David [persoonsnaam]",
+    "GeoN; Juda": "Juda [persoons- en landsnaam]",
+    "GeoN, Jeruzalem": "Jeruzalem",
+    "GeoN]": "Jordaan [rivier]",
+}
+
+
+def herstel_betekenis(ned):
+    """De twee soorten schade die het uitpakken van de PDF's achterlaat.
+
+    Een woord dat aan het eind van een regel is afgebroken komt er als 'vaststel- len' uit.
+    Dat lijmen we weer aan elkaar: een streepje met een spatie erachter, tussen twee kleine
+    letters, is in het Nederlands geen geldige schrijfwijze — het is altijd de afbreking.
+    Een streepje bínnen haakjes ('oordeel(-velling)') blijft dus staan, want daar volgt
+    geen spatie op."""
+    ned = BETEKENIS_HERSTEL.get(ned.strip(), ned)
+    return re.sub(r"(?<=[a-z])- (?=[a-z])", "", ned)
+
+
 def verrijk(woord):
     """Wat er uit de betekenis zelf af te leiden valt: varianten, geslacht, stamformaties."""
     heel = woord["hebreeuws"]
     for kapot, goed in LETTERS.items():
         heel = heel.replace(kapot, goed)
     woord["hebreeuws"] = HERSTEL.get(woord["hebreeuws"], heel)
+    woord["nederlands"] = herstel_betekenis(woord["nederlands"])
     heb, ned = woord["hebreeuws"], woord["nederlands"]
     # Een woord kan twee schrijfwijzen hebben: 'אָהֵב ,אהב' of 'אַחֲרֵי /אַחַר'.
     varianten = [v.strip() for v in re.split(r"[,/]", heb) if medeklinkers(v)]
@@ -143,8 +199,8 @@ def verrijk(woord):
         t for t in woord["hebreeuws"] if "ְ" <= t <= "ׇ" or "א" <= t <= "ת").strip()
     woord["varianten"] = varianten[1:]
     woord["medeklinkers"] = medeklinkers(woord["hebreeuws"])
-    # '(v)' achter een zelfstandig naamwoord betekent vrouwelijk.
-    woord["geslacht"] = "v" if re.match(r"^\(v\)", ned) else ""
+    # '(v)' of '(v.)' achter een zelfstandig naamwoord betekent vrouwelijk.
+    woord["geslacht"] = "v" if re.match(r"^\(v\.?\)", ned) else ""
     # 'G eten; N gegeten worden; H voeden' — per stamformatie een eigen betekenis.
     stammen = {}
     for code, naam in BINYAN.items():

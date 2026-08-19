@@ -194,13 +194,13 @@
  },
  {
   "hebreeuws": "אֶרֶץ",
-  "nederlands": "v) land, aarde",
+  "nederlands": "(v) land, aarde",
   "nummer": 7,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "ארצ",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "776",
@@ -226,7 +226,7 @@
  },
  {
   "hebreeuws": "אֶחָד",
-  "nederlands": "n; een",
+  "nederlands": "één; een",
   "nummer": 8,
   "les": 1,
   "regeert": "",
@@ -543,7 +543,7 @@
  },
  {
   "hebreeuws": "דָּוִד",
-  "nederlands": "PN",
+  "nederlands": "David [persoonsnaam]",
   "nummer": 18,
   "les": 1,
   "regeert": "",
@@ -844,7 +844,7 @@
  },
  {
   "hebreeuws": "יְהוּדָה",
-  "nederlands": "GeoN; Juda",
+  "nederlands": "Juda [persoonsen landsnaam]",
   "nummer": 28,
   "les": 1,
   "regeert": "",
@@ -908,13 +908,13 @@
  },
  {
   "hebreeuws": "יָד",
-  "nederlands": "v) hand; macht",
+  "nederlands": "(v) hand; macht",
   "nummer": 30,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "יד",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "3027",
@@ -1079,7 +1079,7 @@
  },
  {
   "hebreeuws": "כְּ",
-  "nederlands": "zo)als, overeenkomstig; ongeveer, omstreeks; volgens",
+  "nederlands": "(zo)als, overeenkomstig; ongeveer, omstreeks; volgens",
   "nummer": 35,
   "les": 1,
   "regeert": "",
@@ -1097,7 +1097,7 @@
  },
  {
   "hebreeuws": "כִּי",
-  "nederlands": "ja/inderdaad!); omdat; want; (nee/in tegendeel!); hoewel; als; wanneer, toen; dat",
+  "nederlands": "(ja/inderdaad!); omdat; want; (nee/in tegendeel!); hoewel; als; wanneer, toen; dat",
   "nummer": 36,
   "les": 1,
   "regeert": "",
@@ -1129,7 +1129,7 @@
  },
  {
   "hebreeuws": "כֹּל",
-  "nederlands": "ge)heel, alle; elk",
+  "nederlands": "(ge)heel, alle; elk",
   "nummer": 37,
   "les": 1,
   "regeert": "",
@@ -1374,13 +1374,13 @@
  },
  {
   "hebreeuws": "עִיר",
-  "nederlands": "v) stad",
+  "nederlands": "(v) stad",
   "nummer": 45,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "עיר",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "5892",
@@ -1406,7 +1406,7 @@
  },
  {
   "hebreeuws": "עִם",
-  "nederlands": "samen) met, bij",
+  "nederlands": "(samen) met, bij",
   "nummer": 46,
   "les": 1,
   "regeert": "",
@@ -1502,7 +1502,7 @@
  },
  {
   "hebreeuws": "עַל",
-  "nederlands": "boven)op, over, bij; tot, tegen; wegens",
+  "nederlands": "(boven)op, over, bij; tot, tegen; wegens",
   "nummer": 49,
   "les": 1,
   "regeert": "",
@@ -1633,7 +1633,7 @@
  },
  {
   "hebreeuws": "פָּנִים",
-  "nederlands": "alleenmv) gezicht; oppervlakte; tegenwoordigheid",
+  "nederlands": "(alleenmv) gezicht; oppervlakte; tegenwoordigheid",
   "nummer": 53,
   "les": 1,
   "regeert": "",
@@ -1968,7 +1968,7 @@
  },
  {
   "hebreeuws": "אֵין",
-  "nederlands": "het) er niet zijn",
+  "nederlands": "(het) er niet zijn",
   "nummer": 63,
   "les": 1,
   "regeert": "",
@@ -2596,7 +2596,7 @@
  },
  {
   "hebreeuws": "יְרוּשָׁלַם",
-  "nederlands": "GeoN, Jeruzalem",
+  "nederlands": "Jeruzalem",
   "nummer": 83,
   "les": 1,
   "regeert": "",
@@ -3020,13 +3020,13 @@
  },
  {
   "hebreeuws": "נֶפֶשׁ",
-  "nederlands": "v.) adem; (het emotionele) leven, (levend)wezen, persoon; ziel; coll. lieden",
+  "nederlands": "(v.) adem; (het emotionele) leven, (levend)wezen, persoon; ziel; coll. lieden",
   "nummer": 96,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "נפש",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "5315",
@@ -3970,13 +3970,13 @@
  },
  {
   "hebreeuws": "רוּחַ",
-  "nederlands": "v) wind; adem; geest",
+  "nederlands": "(v) wind; adem; geest",
   "nummer": 125,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "רוח",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "7307",
@@ -4496,7 +4496,7 @@
  },
  {
   "hebreeuws": "מָקוֹם",
-  "nederlands": "stand)plaats",
+  "nederlands": "(stand)plaats",
   "nummer": 141,
   "les": 1,
   "regeert": "",
@@ -4952,13 +4952,13 @@
  },
  {
   "hebreeuws": "חֶרֶב",
-  "nederlands": "v) zwaard",
+  "nederlands": "(v) zwaard",
   "nummer": 155,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "חרב",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "2719",
@@ -5048,7 +5048,7 @@
  },
  {
   "hebreeuws": "ברך",
-  "nederlands": "G en) D zegenen, prijzen; N elkaar zegen toewensen, gezegend worden",
+  "nederlands": "(G en) D zegenen, prijzen; N elkaar zegen toewensen, gezegend worden",
   "nummer": 158,
   "les": 1,
   "regeert": "",
@@ -5056,7 +5056,6 @@
   "medeklinkers": "ברכ",
   "geslacht": "",
   "stammen": {
-   "Qal": "en) D zegenen, prijzen",
    "Nifal": "elkaar zegen toewensen, gezegend worden"
   },
   "woordsoort": "ww",
@@ -5149,7 +5148,7 @@
  },
  {
   "hebreeuws": "בְּתוֹךְ",
-  "nederlands": "midden) in",
+  "nederlands": "(midden) in",
   "nummer": 161,
   "les": 1,
   "regeert": "",
@@ -5759,7 +5758,7 @@
  },
  {
   "hebreeuws": "בֹּקֶר",
-  "nederlands": "de) morgen, ochtend",
+  "nederlands": "(de) morgen, ochtend",
   "nummer": 180,
   "les": 2,
   "regeert": "",
@@ -5889,15 +5888,18 @@
  },
  {
   "hebreeuws": "זכר",
-  "nederlands": "Gzichherinneren;gedenken,herdenken;Hinher- innering brengen",
+  "nederlands": "G zich herinneren; gedenken, herdenken; H in herinnering brengen",
   "nummer": 184,
   "les": 2,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "זכר",
   "geslacht": "",
-  "stammen": {},
-  "woordsoort": "",
+  "stammen": {
+   "Qal": "zich herinneren",
+   "Hifil": "in herinnering brengen"
+  },
+  "woordsoort": "ww",
   "strong": "2142",
   "frequentie": 232,
   "vindplaatsen": [
@@ -6120,7 +6122,7 @@
  },
  {
   "hebreeuws": "חזק",
-  "nederlands": "G vast, sterk/moedig zijn; D bevestigen; H vastma- ken, grijpen",
+  "nederlands": "G vast, sterk/moedig zijn; D bevestigen; H vastmaken, grijpen",
   "nummer": 191,
   "les": 2,
   "regeert": "",
@@ -6130,7 +6132,7 @@
   "stammen": {
    "Qal": "vast, sterk/moedig zijn",
    "Piel": "bevestigen",
-   "Hifil": "vastma- ken, grijpen"
+   "Hifil": "vastmaken, grijpen"
   },
   "woordsoort": "ww",
   "strong": "2388",
@@ -6222,7 +6224,7 @@
  },
  {
   "hebreeuws": "כּוּן",
-  "nederlands": "N vast zijn; R bevestigen, grondvesten; H vaststel- len, bereiden",
+  "nederlands": "N vast zijn; R bevestigen, grondvesten; H vaststellen, bereiden",
   "nummer": 194,
   "les": 2,
   "regeert": "",
@@ -6231,7 +6233,7 @@
   "geslacht": "",
   "stammen": {
    "Nifal": "vast zijn",
-   "Hifil": "vaststel- len, bereiden"
+   "Hifil": "vaststellen, bereiden"
   },
   "woordsoort": "ww",
   "handmatig": "holle wortel: staat in de tekst als נָכוֹן, nooit als כּוּן (219x)",
@@ -6258,7 +6260,7 @@
  },
  {
   "hebreeuws": "כרת",
-  "nederlands": "G snijden; verdelgen; »een verbond« sluiten; N af- gesneden worden; D omhakken; H uitroeien",
+  "nederlands": "G snijden; verdelgen; »een verbond« sluiten; N afgesneden worden; D omhakken; H uitroeien",
   "nummer": 195,
   "les": 2,
   "regeert": "",
@@ -6267,7 +6269,7 @@
   "geslacht": "",
   "stammen": {
    "Qal": "snijden",
-   "Nifal": "af- gesneden worden",
+   "Nifal": "afgesneden worden",
    "Piel": "omhakken",
    "Hifil": "uitroeien"
   },
@@ -6819,7 +6821,7 @@
  },
  {
   "hebreeuws": "עֹלָה",
-  "nederlands": "brand)offer",
+  "nederlands": "(brand)offer",
   "nummer": 212,
   "les": 2,
   "regeert": "",
@@ -7374,7 +7376,7 @@
  },
  {
   "hebreeuws": "אבד",
-  "nederlands": "G verloren zijn, te gronde gaan; D als verloren op- geven",
+  "nederlands": "G verloren zijn, te gronde gaan; D als verloren opgeven",
   "nummer": 229,
   "les": 2,
   "regeert": "",
@@ -7383,7 +7385,7 @@
   "geslacht": "",
   "stammen": {
    "Qal": "verloren zijn, te gronde gaan",
-   "Piel": "als verloren op- geven"
+   "Piel": "als verloren opgeven"
   },
   "woordsoort": "ww",
   "strong": "6",
@@ -7445,7 +7447,7 @@
  },
  {
   "hebreeuws": "בְּהֵמָה",
-  "nederlands": "groot) vee",
+  "nederlands": "(groot) vee",
   "nummer": 231,
   "les": 2,
   "regeert": "",
@@ -7869,7 +7871,7 @@
  },
  {
   "hebreeuws": "יַרְדֵּן",
-  "nederlands": "GeoN]",
+  "nederlands": "Jordaan [rivier]",
   "nummer": 244,
   "les": 2,
   "regeert": "",
@@ -7971,7 +7973,7 @@
  },
  {
   "hebreeuws": "כַּף",
-  "nederlands": "holle) hand, (hand)palm; (voet)zool; schaal",
+  "nederlands": "(holle) hand, (hand)palm; (voet)zool; schaal",
   "nummer": 247,
   "les": 2,
   "regeert": "",
@@ -8035,15 +8037,18 @@
  },
  {
   "hebreeuws": "כָּלָה",
-  "nederlands": "Gvoltooid/gereed/teneindezijn;Dophoudenmet",
+  "nederlands": "G voltooid/gereed/ten einde zijn; D ophouden met",
   "nummer": 249,
   "les": 2,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "כלה",
   "geslacht": "",
-  "stammen": {},
-  "woordsoort": "",
+  "stammen": {
+   "Qal": "voltooid/gereed/ten einde zijn",
+   "Piel": "ophouden met"
+  },
+  "woordsoort": "ww",
   "strong": "3615",
   "frequentie": 207,
   "vindplaatsen": [
@@ -8229,7 +8234,7 @@
  },
  {
   "hebreeuws": "סבב",
-  "nederlands": "G zich omkeren; omringen; gaan, komen; N van richting veranderen; R een ronde maken om; H af- zwenken; afwenden",
+  "nederlands": "G zich omkeren; omringen; gaan, komen; N van richting veranderen; R een ronde maken om; H afzwenken; afwenden",
   "nummer": 255,
   "les": 2,
   "regeert": "",
@@ -8239,7 +8244,7 @@
   "stammen": {
    "Qal": "zich omkeren",
    "Nifal": "van richting veranderen",
-   "Hifil": "af- zwenken"
+   "Hifil": "afzwenken"
   },
   "woordsoort": "ww",
   "strong": "5437",
@@ -8534,7 +8539,7 @@
  },
  {
   "hebreeuws": "שֵׁבֶט",
-  "nederlands": "herders)stok, staf; stam",
+  "nederlands": "(herders)stok, staf; stam",
   "nummer": 264,
   "les": 2,
   "regeert": "",
@@ -8566,7 +8571,7 @@
  },
  {
   "hebreeuws": "שֶׁמֶן",
-  "nederlands": "olijf)olie",
+  "nederlands": "(olijf)olie",
   "nummer": 265,
   "les": 2,
   "regeert": "",
@@ -9217,7 +9222,7 @@
  },
  {
   "hebreeuws": "חֹק",
-  "nederlands": "toegewezen) deel; opdracht; afgesproken tijd; in- zetting, wet; voorschrift, regel(ing)",
+  "nederlands": "(toegewezen) deel; opdracht; afgesproken tijd; inzetting, wet; voorschrift, regel(ing)",
   "nummer": 285,
   "les": 2,
   "regeert": "",
@@ -9249,7 +9254,7 @@
  },
  {
   "hebreeuws": "טָמֵא",
-  "nederlands": "G onrein zijn; N zich verontreinigen; D verontrei- nigen",
+  "nederlands": "G onrein zijn; N zich verontreinigen; D verontreinigen",
   "nummer": 286,
   "les": 2,
   "regeert": "",
@@ -9259,7 +9264,7 @@
   "stammen": {
    "Qal": "onrein zijn",
    "Nifal": "zich verontreinigen",
-   "Piel": "verontrei- nigen"
+   "Piel": "verontreinigen"
   },
   "woordsoort": "ww",
   "strong": "2930",
@@ -9445,17 +9450,15 @@
  },
  {
   "hebreeuws": "כָּסָה",
-  "nederlands": "G en) D bedekken, vergeven; tD zich bedekken",
+  "nederlands": "(G en) D bedekken, vergeven; tD zich bedekken",
   "nummer": 292,
   "les": 2,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "כסה",
   "geslacht": "",
-  "stammen": {
-   "Qal": "en) D bedekken, vergeven"
-  },
-  "woordsoort": "ww",
+  "stammen": {},
+  "woordsoort": "",
   "strong": "3680",
   "frequentie": 152,
   "vindplaatsen": [
@@ -9479,7 +9482,7 @@
  },
  {
   "hebreeuws": "כְּמוֹ",
-  "nederlands": "zo)als, overeenkomstig; ongeveer, omstreeks; vol- gens",
+  "nederlands": "(zo)als, overeenkomstig; ongeveer, omstreeks; volgens",
   "nummer": 293,
   "les": 2,
   "regeert": "",
@@ -9543,7 +9546,7 @@
  },
  {
   "hebreeuws": "מָוֶת",
-  "nederlands": "de) dood",
+  "nederlands": "(de) dood",
   "nummer": 295,
   "les": 2,
   "regeert": "",
@@ -9874,7 +9877,7 @@
  },
  {
   "hebreeuws": "נסע",
-  "nederlands": "G opbreken, verdertrekken; H wegnemen, verwij- deren",
+  "nederlands": "G opbreken, verdertrekken; H wegnemen, verwijderen",
   "nummer": 305,
   "les": 2,
   "regeert": "",
@@ -9883,7 +9886,7 @@
   "geslacht": "",
   "stammen": {
    "Qal": "opbreken, verdertrekken",
-   "Hifil": "wegnemen, verwij- deren"
+   "Hifil": "wegnemen, verwijderen"
   },
   "woordsoort": "ww",
   "strong": "5265",
@@ -10235,7 +10238,7 @@
  },
  {
   "hebreeuws": "צָפוֹן",
-  "nederlands": "f) noorden",
+  "nederlands": "(f) noorden",
   "nummer": 316,
   "les": 2,
   "regeert": "",
@@ -10366,7 +10369,7 @@
  },
  {
   "hebreeuws": "רדף",
-  "nederlands": "achter)volgen, najagen",
+  "nederlands": "(achter)volgen, najagen",
   "nummer": 320,
   "les": 2,
   "regeert": "אַחַר",
@@ -10533,7 +10536,7 @@
  },
  {
   "hebreeuws": "שׁבר",
-  "nederlands": "G (ver)breken; N gebroken worden; breken [ono- vergankelijk]; D in stukken breken; ii (graan) ko- pen",
+  "nederlands": "G (ver)breken; N gebroken worden; breken [onovergankelijk]; D in stukken breken; ii (graan) kopen",
   "nummer": 325,
   "les": 2,
   "regeert": "",
@@ -10731,7 +10734,7 @@
  },
  {
   "hebreeuws": "אוֹר",
-  "nederlands": "het) licht",
+  "nederlands": "(het) licht",
   "nummer": 331,
   "les": 2,
   "regeert": "",
@@ -10896,7 +10899,7 @@
  },
  {
   "hebreeuws": "בָּכָה",
-  "nederlands": "be)wenen, jammeren",
+  "nederlands": "(be)wenen, jammeren",
   "nummer": 336,
   "les": 2,
   "regeert": "",
@@ -11059,7 +11062,7 @@
  },
  {
   "hebreeuws": "אֶזְרוֹע",
-  "nederlands": "de) arm (v)",
+  "nederlands": "(de) arm (v)",
   "nummer": 341,
   "les": 2,
   "regeert": "",
@@ -12269,7 +12272,7 @@
  },
  {
   "hebreeuws": "חשׁב",
-  "nederlands": "G achten; denken; N beschouwd worden; D bere- kenen, bedenken",
+  "nederlands": "G achten; denken; N beschouwd worden; D berekenen, bedenken",
   "nummer": 378,
   "les": 2,
   "regeert": "",
@@ -12279,7 +12282,7 @@
   "stammen": {
    "Qal": "achten",
    "Nifal": "beschouwd worden",
-   "Piel": "bere- kenen, bedenken"
+   "Piel": "berekenen, bedenken"
   },
   "woordsoort": "ww",
   "strong": "2803",
@@ -12439,7 +12442,7 @@
  },
  {
   "hebreeuws": "כָּנָף",
-  "nederlands": "f) vleugel; uiterste",
+  "nederlands": "(f) vleugel; uiterste",
   "nummer": 383,
   "les": 2,
   "regeert": "",
@@ -12599,7 +12602,7 @@
  },
  {
   "hebreeuws": "נִבָּא",
-  "nederlands": "N en tD in geestvervoering zijn, zich als profeet ge- dragen",
+  "nederlands": "N en tD in geestvervoering zijn, zich als profeet gedragen",
   "nummer": 388,
   "les": 2,
   "regeert": "",
@@ -12607,7 +12610,7 @@
   "medeklinkers": "נבא",
   "geslacht": "",
   "stammen": {
-   "Nifal": "en tD in geestvervoering zijn, zich als profeet ge- dragen"
+   "Nifal": "en tD in geestvervoering zijn, zich als profeet gedragen"
   },
   "woordsoort": "ww",
   "strong": "5012",
@@ -12729,7 +12732,7 @@
  },
  {
   "hebreeuws": "נחם",
-  "nederlands": "N zich troosten, berouw hebben; D troosten; tD wraak beramen; berouw hebben; zich laten troos- ten",
+  "nederlands": "N zich troosten, berouw hebben; D troosten; tD wraak beramen; berouw hebben; zich laten troosten",
   "nummer": 392,
   "les": 2,
   "regeert": "",
@@ -12796,7 +12799,7 @@
  },
  {
   "hebreeuws": "עָפָר",
-  "nederlands": "droge) aarde, stof; graf",
+  "nederlands": "(droge) aarde, stof; graf",
   "nummer": 394,
   "les": 2,
   "regeert": "",
@@ -12828,7 +12831,7 @@
  },
  {
   "hebreeuws": "עֶצֶם",
-  "nederlands": "ge)been(te), bot; (zich)zelf",
+  "nederlands": "(ge)been(te), bot; (zich)zelf",
   "nummer": 395,
   "les": 2,
   "regeert": "",
@@ -12860,13 +12863,13 @@
  },
  {
   "hebreeuws": "פַּעַם",
-  "nederlands": "v) voet, schrede; keer",
+  "nederlands": "(v) voet, schrede; keer",
   "nummer": 396,
   "les": 2,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "פעמ",
-  "geslacht": "",
+  "geslacht": "v",
   "stammen": {},
   "woordsoort": "",
   "strong": "6471",
@@ -13054,7 +13057,7 @@
  },
  {
   "hebreeuws": "רֶכֶב",
-  "nederlands": "strijd)wagen; wagenpark",
+  "nederlands": "(strijd)wagen; wagenpark",
   "nummer": 402,
   "les": 2,
   "regeert": "",
@@ -13150,7 +13153,7 @@
  },
  {
   "hebreeuws": "שַׁבָּת",
-  "nederlands": "f.) sabbat",
+  "nederlands": "(f.) sabbat",
   "nummer": 405,
   "les": 2,
   "regeert": "",
@@ -13254,7 +13257,7 @@
  },
  {
   "hebreeuws": "שׁפך",
-  "nederlands": "uit)gieten, vergieten",
+  "nederlands": "(uit)gieten, vergieten",
   "nummer": 408,
   "les": 2,
   "regeert": "",
