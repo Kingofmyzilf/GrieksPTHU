@@ -28,3 +28,6 @@ hebreeuws app/Hele bijbel.xlsx
 
 # Werkbestanden van Claude Code; die horen bij deze machine, niet bij het project.
 .claude/
+
+# Reservekopieën van de voortgang: die horen niet in git — het is voortgang van studenten.
+backups/
