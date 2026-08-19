@@ -1,0 +1,15 @@
+# Inloggegevens van de Google-service-account. Deze horen NOOIT in git: de repository is
+# openbaar, en met deze sleutel kan iedereen bij de voortgang van alle studenten.
+.streamlit/secrets.toml
+
+# Voortgang van studenten. Hoort ook niet in een openbare repository.
+backups/
+
+# Grote bronbestanden die alleen lokaal nodig zijn.
+hebreeuws app/Hele bijbel.xlsx
+
+# Werkbestanden
+__pycache__/
+*.pyc
+.claude/
+.nicegui/

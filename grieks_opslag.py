@@ -52,14 +52,17 @@ SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats',
          ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
          ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
          ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
-         ('klank_stats', 'kl_chunks')]
+         ('klank_stats', 'kl_chunks'), ('hebr_stats', 'hb_chunks')]
+# 'hebr_stats' is de Hebreeuwse woordenschat en de rijtjes; die oefen je in de mobiele app.
+# Deze lijst moet in beide apps gelijk zijn, want allebei schrijven ze de héle rij weg —
+# een sleutel die de één niet kent wordt bij het volgende opslaan uitgewist.
 MAX_LEN = 40000
 SCOREBORD = "Scorebord"
 
 # Statistieken waarvan de waarden de vorm {sleutel: {'g':.., 'f':.., 'streak':..}} hebben.
 # Voor die vorm geldt de tel-regel bij het samenvoegen (zie samenvoeg_stats).
 TELDICTS = {"vocab_stats", "stam_stats", "struct_stats", "actief_stats",
-            "gram_stats", "prod_stats", "klank_stats", "ontleed_stats"}
+            "gram_stats", "prod_stats", "klank_stats", "ontleed_stats", "hebr_stats"}
 
 
 class OpslagFout(Exception):
