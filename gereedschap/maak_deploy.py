@@ -44,7 +44,15 @@ def git(*args, **kw):
 
 
 def bestanden_in(tak):
-    return git("ls-tree", "-r", "--name-only", tak).stdout.split("\n")
+    """De bestanden in een tak, gescheiden door een nulbyte.
+
+    Niet op regeleinden splitsen: git zet een pad met een bijzonder teken erin tussen
+    aanhalingstekens en schrijft dat teken als octale escape. De Hebreeuwse PDF's hebben
+    een bolletje in hun naam, en die kwamen zo met aanhalingstekens en al in het volgende
+    commando terecht — als een bestand dat niet bestaat, waarop 'git rm' afhaakte. Met -z
+    laat git dat hele verhaal achterwege en komen de paden er onbewerkt uit."""
+    ruw = git("ls-tree", "-r", "--name-only", "-z", tak).stdout
+    return [p for p in ruw.split("\0") if p]
 
 
 def main():
@@ -86,7 +94,7 @@ def main():
     groot = sum(os.path.getsize(os.path.join(REPO, p))
                 for p in bestanden_in(DEPLOYTAK) if p and
                 os.path.exists(os.path.join(REPO, p)))
-    print(f"{DEPLOYTAK}: {len(bestanden_in(DEPLOYTAK)) - 1} bestanden, "
+    print(f"{DEPLOYTAK}: {len(bestanden_in(DEPLOYTAK))} bestanden, "
           f"{groot / 1048576:.1f} MB ({len(weg)} weggelaten)")
     git("checkout", "-q", hier)
     print(f"Terug op {hier}. Publiceren met:  git push -f origin {DEPLOYTAK}")
