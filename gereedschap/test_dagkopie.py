@@ -18,6 +18,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import grieks_opslag as opslag
 
+import uitvoer
+
+# Vóór de eerste print: anders valt Grieks of Hebreeuws om zodra de uitvoer
+# naar een bestand of een pijp gaat in plaats van naar het scherm.
+uitvoer.zet_utf8()
+
 fouten = []
 
 

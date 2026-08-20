@@ -15,6 +15,12 @@ import json
 import os
 import sys
 
+import uitvoer
+
+# Vóór de eerste print: anders valt Grieks of Hebreeuws om zodra de uitvoer
+# naar een bestand of een pijp gaat in plaats van naar het scherm.
+uitvoer.zet_utf8()
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HINTS = os.path.join(REPO, "gereedschap", "hebreeuws_hints.tsv")
 WOORDEN = os.path.join(REPO, "hebreeuws_woorden.json")

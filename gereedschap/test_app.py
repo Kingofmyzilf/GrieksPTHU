@@ -116,6 +116,12 @@ os.chdir(REPO)
 sys.path.insert(0, REPO)
 
 import importlib.util
+
+import uitvoer
+
+# Vóór de eerste print: anders valt Grieks of Hebreeuws om zodra de uitvoer
+# naar een bestand of een pijp gaat in plaats van naar het scherm.
+uitvoer.zet_utf8()
 _spec = importlib.util.spec_from_file_location("overhoring_web", os.path.join(REPO, "overhoring_web.py"))
 m = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(m)

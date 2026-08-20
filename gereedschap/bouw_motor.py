@@ -6,6 +6,11 @@ oorspronkelijke volgorde, en vervangt de twee cache-decorators door een eigen
 implementatie met dezelfde semantiek.
 """
 import ast, io, os, re, sys
+import uitvoer
+
+# Vóór de eerste print: anders valt Grieks of Hebreeuws om zodra de uitvoer
+# naar een bestand of een pijp gaat in plaats van naar het scherm.
+uitvoer.zet_utf8()
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 BRON = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "overhoring_web.py")

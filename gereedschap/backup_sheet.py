@@ -46,6 +46,12 @@ os.chdir(REPO)
 
 import grieks_opslag as opslag
 
+import uitvoer
+
+# Vóór de eerste print: anders valt Grieks of Hebreeuws om zodra de uitvoer
+# naar een bestand of een pijp gaat in plaats van naar het scherm.
+uitvoer.zet_utf8()
+
 MAP = os.path.join(REPO, "backups")
 # Hoeveel kopieën we bewaren. Dertig dagelijkse kopieën is ruim een maand terug kunnen
 # kijken, en het kost een paar megabyte.
@@ -53,14 +59,15 @@ BEWAREN = 30
 
 
 def tabbladen():
-    """De werkbladen met voortgang: de eigen tab per gebruiker, plus het oude gedeelde."""
+    """De werkbladen met voortgang: de eigen tab per gebruiker, plus het oude gedeelde.
+
+    Het Scorebord blijft eruit — dat is afgeleid en wordt opnieuw opgebouwd. En Backups
+    ook: daar staan de dagelijkse kopieën die de app zelf maakt, en die hier meenemen zou
+    een reservekopie van reservekopieën zijn. Dat verdubbelde het bestand zonder dat er één
+    stand bij kwam die er niet al in stond."""
     sheet = opslag.verbind()
-    uit = []
-    for ws in sheet.worksheets():
-        if ws.title == opslag.SCOREBORD:
-            continue
-        uit.append(ws)
-    return uit
+    overslaan = {opslag.SCOREBORD, opslag.BACKUPBLAD}
+    return [ws for ws in sheet.worksheets() if ws.title not in overslaan]
 
 
 def maak_kopie():

@@ -14,6 +14,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import hebreeuws as H
 
+import uitvoer
+
+# Vóór de eerste print: anders valt Grieks of Hebreeuws om zodra de uitvoer
+# naar een bestand of een pijp gaat in plaats van naar het scherm.
+uitvoer.zet_utf8()
+
 # Hoe wij een letter zouden opschrijven. Eén voorkeur per letter; het schema accepteert er
 # meer, maar voor de proef moet er één vaste keuze zijn.
 SCHRIJF = {"א": "a", "ב": "b", "ג": "g", "ד": "d", "ה": "h", "ו": "w", "ז": "z",
