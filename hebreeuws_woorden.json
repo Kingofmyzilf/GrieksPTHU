@@ -4383,24 +4383,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "935",
-  "frequentie": 2569,
+  "strong": "5030",
+  "frequentie": 316,
   "vindplaatsen": [
    {
-    "vers": "Genesis 2:19",
-    "vorm": "וַיָּבֵא"
+    "vers": "Genesis 20:7",
+    "vorm": "נָבִיא"
    },
    {
-    "vers": "Genesis 2:22",
-    "vorm": "וַיְבִאֶהָ"
+    "vers": "Exodus 7:1",
+    "vorm": "נְבִיאֶךָ"
    },
    {
-    "vers": "Genesis 4:3",
-    "vorm": "וַיָּבֵא"
+    "vers": "Numbers 11:29",
+    "vorm": "נְבִיאִים"
    }
   ],
-  "lemma_tekst": "בָּא",
-  "translit": "bā",
+  "lemma_tekst": "נָבִיא",
+  "translit": "nā·ḇî",
   "anker": "📜",
   "beeld": "Nevi'im: de profeten"
  },
@@ -6840,24 +6840,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "5927",
-  "frequentie": 889,
+  "strong": "5930",
+  "frequentie": 287,
   "vindplaatsen": [
    {
-    "vers": "Genesis 2:6",
-    "vorm": "יַעֲלֶה"
-   },
-   {
     "vers": "Genesis 8:20",
-    "vorm": "וַיַּעַל"
+    "vorm": "עֹלֹת"
    },
    {
-    "vers": "Genesis 13:1",
-    "vorm": "וַיַּעַל"
+    "vers": "Genesis 22:2",
+    "vorm": "לְעֹלָה"
+   },
+   {
+    "vers": "Genesis 22:3",
+    "vorm": "עֹלָה"
    }
   ],
-  "lemma_tekst": "עָלָה",
-  "translit": "‘ā·lāh",
+  "lemma_tekst": "עֹלָה",
+  "translit": "‘ō·lāh",
   "anker": "🔥",
   "beeld": "ola: wat opstijgt"
  },
@@ -10496,8 +10496,6 @@
   "strong": "",
   "frequentie": 0,
   "vindplaatsen": [],
-  "lemma_tekst": "אֲשֶׁר",
-  "translit": "’ă·šer",
   "anker": "🔗",
   "beeld": "korte vorm van asjer"
  },
@@ -11368,24 +11366,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "3045",
-  "frequentie": 946,
+  "strong": "1847",
+  "frequentie": 91,
   "vindplaatsen": [
    {
-    "vers": "Genesis 3:5",
-    "vorm": "יֹדֵעַ"
+    "vers": "Genesis 2:9",
+    "vorm": "הַדַּעַת"
    },
    {
-    "vers": "Genesis 3:5",
-    "vorm": "יֹדְעֵי"
+    "vers": "Genesis 2:17",
+    "vorm": "הַדַּעַת"
    },
    {
-    "vers": "Genesis 3:7",
-    "vorm": "וַיֵּדְעוּ"
+    "vers": "Exodus 31:3",
+    "vorm": "וּבְדַעַת"
    }
   ],
-  "lemma_tekst": "יָדַעְתִּי",
-  "translit": "yā·ḏa‘·tî",
+  "lemma_tekst": "דָעַת",
+  "translit": "ḏā·‘aṯ",
   "anker": "🧠",
   "beeld": "da'at; ets ha-da'at"
  },
@@ -11723,24 +11721,24 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "strong": "2930",
-  "frequentie": 162,
+  "strong": "2931",
+  "frequentie": 88,
   "vindplaatsen": [
    {
-    "vers": "Genesis 34:5",
-    "vorm": "טִמֵּא"
+    "vers": "Leviticus 5:2",
+    "vorm": "טָמֵא"
    },
    {
-    "vers": "Genesis 34:13",
-    "vorm": "טִמֵּא"
+    "vers": "Leviticus 5:2",
+    "vorm": "טְמֵאָה"
    },
    {
-    "vers": "Genesis 34:27",
-    "vorm": "טִמְּאוּ"
+    "vers": "Leviticus 5:2",
+    "vorm": "טְמֵאָה"
    }
   ],
-  "lemma_tekst": "יִטְמָא",
-  "translit": "yiṭ·mā",
+  "lemma_tekst": "טָמֵא",
+  "translit": "ṭā·mê",
   "anker": "🚱",
   "beeld": "tame: tegendeel van tahor"
  },
@@ -13355,5 +13353,445 @@
   "translit": "tō·w·‘ă·ḇaṯ",
   "anker": "🤢",
   "beeld": "to'eva: een gruwel"
+ },
+ {
+  "hebreeuws": "וַיֹּאמֶר",
+  "nederlands": "en hij zei",
+  "nummer": 411,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "ויאמר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 1950,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "💬",
+  "beeld": "wajjomer: en hij zei"
+ },
+ {
+  "hebreeuws": "בְּנֵי",
+  "nederlands": "zonen van",
+  "nummer": 412,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "בני",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 1289,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "👨‍👦",
+  "beeld": "benee: de zonen van"
+ },
+ {
+  "hebreeuws": "לּוֹ",
+  "nederlands": "voor hem",
+  "nummer": 413,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "לו",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 94,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "🫱",
+  "beeld": "lo: voor hem"
+ },
+ {
+  "hebreeuws": "לֵאמֹר",
+  "nederlands": "door te zeggen",
+  "nummer": 414,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "לאמר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 849,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "🗣️",
+  "beeld": "lemor: door te zeggen"
+ },
+ {
+  "hebreeuws": "וַיְהִי",
+  "nederlands": "en het geschiedde",
+  "nummer": 415,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "ויהי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 782,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "📖",
+  "beeld": "wajehie: en het gebeurde"
+ },
+ {
+  "hebreeuws": "הָעָם",
+  "nederlands": "het volk",
+  "nummer": 416,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "העמ",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 727,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "👥",
+  "beeld": "haam: het volk"
+ },
+ {
+  "hebreeuws": "משֶׁה",
+  "nederlands": "Mozes",
+  "nummer": 417,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "משה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 697,
+  "vindplaatsen": [],
+  "geteld": "op de medeklinkers",
+  "anker": "🌊",
+  "beeld": "mosje: door het water"
+ },
+ {
+  "hebreeuws": "הַזֶּה",
+  "nederlands": "deze",
+  "nummer": 418,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "הזה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 656,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "☝️",
+  "beeld": "hazzeh: déze hier"
+ },
+ {
+  "hebreeuws": "וְכָל",
+  "nederlands": "en al(les); en heel",
+  "nummer": 419,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "וכל",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 630,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "➕",
+  "beeld": "wechol: en alles erbij"
+ },
+ {
+  "hebreeuws": "לִי",
+  "nederlands": "voor mij",
+  "nummer": 420,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "לי",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 607,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "🫵",
+  "beeld": "li: voor mij"
+ },
+ {
+  "hebreeuws": "לִפְנֵי",
+  "nederlands": "vóór",
+  "nummer": 421,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "לפני",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": true,
+  "strong": "",
+  "frequentie": 596,
+  "vindplaatsen": [],
+  "geteld": "precies",
+  "anker": "🚶",
+  "beeld": "lifnee: voor je uit"
+ },
+ {
+  "hebreeuws": "הִנֵּה",
+  "nederlands": "Aanschouw/Zie",
+  "nummer": 422,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "הנה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "2009",
+  "frequentie": 842,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 1:29",
+    "vorm": "הִנֵּה"
+   },
+   {
+    "vers": "Genesis 1:31",
+    "vorm": "וְהִנֵּה"
+   },
+   {
+    "vers": "Genesis 6:12",
+    "vorm": "וְהִנֵּה"
+   }
+  ],
+  "lemma_tekst": "הִנֵּה",
+  "translit": "hin·nêh",
+  "anker": "👀",
+  "beeld": "hinneh: kijk daar!"
+ },
+ {
+  "hebreeuws": "הֵבִיא",
+  "nederlands": "brengen",
+  "nummer": 423,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "הביא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "935",
+  "frequentie": 2569,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 2:19",
+    "vorm": "וַיָּבֵא"
+   },
+   {
+    "vers": "Genesis 2:22",
+    "vorm": "וַיְבִאֶהָ"
+   },
+   {
+    "vers": "Genesis 4:3",
+    "vorm": "וַיָּבֵא"
+   }
+  ],
+  "lemma_tekst": "בָּא",
+  "translit": "bā",
+  "anker": "📦",
+  "beeld": "hevi: naar binnen brengen"
+ },
+ {
+  "hebreeuws": "הִכָּה",
+  "nederlands": "slaan",
+  "nummer": 424,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "הכה",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "5221",
+  "frequentie": 499,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 4:15",
+    "vorm": "הַכּוֹת"
+   },
+   {
+    "vers": "Genesis 8:21",
+    "vorm": "לְהַכּוֹת"
+   },
+   {
+    "vers": "Genesis 14:5",
+    "vorm": "וַיַּכּוּ"
+   }
+  ],
+  "lemma_tekst": "הִכָּה",
+  "translit": "hik·kāh",
+  "anker": "👊",
+  "beeld": "hikka: erop slaan"
+ },
+ {
+  "hebreeuws": "שָׁמַר",
+  "nederlands": "bewaken",
+  "nummer": 425,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "שמר",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "8104",
+  "frequentie": 469,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 2:15",
+    "vorm": "וּלְשָׁמְרָהּ"
+   },
+   {
+    "vers": "Genesis 3:24",
+    "vorm": "לִשְׁמֹר"
+   },
+   {
+    "vers": "Genesis 4:9",
+    "vorm": "הֲשֹׁמֵר"
+   }
+  ],
+  "lemma_tekst": "שֹׁמֵר",
+  "translit": "šō·mêr",
+  "anker": "🛡️",
+  "beeld": "sjamar: de wacht houden"
+ },
+ {
+  "hebreeuws": "הֵשִׁיב",
+  "nederlands": "terugbrengen",
+  "nummer": 426,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "השיב",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "7725",
+  "frequentie": 1057,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 3:19",
+    "vorm": "שׁוּבְךָ"
+   },
+   {
+    "vers": "Genesis 3:19",
+    "vorm": "תָּשׁוּב"
+   },
+   {
+    "vers": "Genesis 8:3",
+    "vorm": "וַיָּשֻׁבוּ"
+   }
+  ],
+  "lemma_tekst": "יָשׁוּב",
+  "translit": "yā·šūḇ",
+  "anker": "↩️",
+  "beeld": "heisjiv: terug laten komen"
+ },
+ {
+  "hebreeuws": "הִגִּיד",
+  "nederlands": "melden",
+  "nummer": 427,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "הגיד",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "5046",
+  "frequentie": 370,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 3:11",
+    "vorm": "הִגִּיד"
+   },
+   {
+    "vers": "Genesis 9:22",
+    "vorm": "וַיַּגֵּד"
+   },
+   {
+    "vers": "Genesis 12:18",
+    "vorm": "הִגַּדְתָּ"
+   }
+  ],
+  "lemma_tekst": "הִגִּיד",
+  "translit": "hig·gîḏ",
+  "anker": "📣",
+  "beeld": "higgid: het doorgeven"
+ },
+ {
+  "hebreeuws": "הוֹצִיא",
+  "nederlands": "naar buiten brengen",
+  "nummer": 428,
+  "les": 3,
+  "regeert": "",
+  "varianten": [],
+  "medeklinkers": "הוציא",
+  "geslacht": "",
+  "stammen": {},
+  "woordsoort": "",
+  "is_vorm": false,
+  "strong": "3318",
+  "frequentie": 1068,
+  "vindplaatsen": [
+   {
+    "vers": "Genesis 1:12",
+    "vorm": "וַתּוֹצֵא"
+   },
+   {
+    "vers": "Genesis 1:24",
+    "vorm": "תּוֹצֵא"
+   },
+   {
+    "vers": "Genesis 2:10",
+    "vorm": "יֹצֵא"
+   }
+  ],
+  "lemma_tekst": "יֵצֵא",
+  "translit": "yê·ṣê",
+  "anker": "🚪",
+  "beeld": "hotsi: naar buiten brengen"
  }
 ]

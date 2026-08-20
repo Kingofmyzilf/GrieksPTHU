@@ -245,6 +245,46 @@ def verrijk(woord):
     return woord
 
 
+# Naast de genummerde lijsten 001–410 staan er drie bestanden in de map die er niet in
+# meegenomen worden. Twee ervan zijn gewoon woordenschat en horen er dus wel in:
+#
+#   'D veel voorkomende lexemen'      — 34 woorden, waarvan הִנֵּה nieuw is (842x in de Tenach)
+#   'E Veel voorkomende werkwoorden'  — 40 woorden, waarvan zes nieuw, onder andere
+#                                       שָׁמַר 'bewaken' (469x) en הֵבִיא 'brengen'
+#
+# Het derde, 'C Veel voorkomende vormen', staat er ook bij. Dat zijn vervoegde vormen ('en
+# hij zei', 'zonen van', 'voor hem') en geen woordenboekwoorden — maar het zijn juist de
+# stukjes die je in elk vers tegenkomt, en ze staan in het cursusmateriaal mét betekenis.
+#
+# Ze komen in een eigen lijst 3 terecht, met hun eigen nummers vanaf 411. Zo blijft
+# 'Hebreeuws 1' en 'Hebreeuws 2' precies de genummerde cursuslijst, en begint het leerpad
+# met deze drie bestanden — dat zijn de woorden die je in elk vers nodig hebt.
+# Per bestand: de lijst waarin het komt, en of het om vervoegde vormen gaat. Dat laatste
+# maakt uit bij het koppelen: een vorm als לּוֹ 'voor hem' is geen woordenboekwoord, en het
+# zoeken naar een Strong-nummer levert dan een ander woord op (לֹא 'niet', in dit geval).
+# Bij een vorm telt hoe vaak díe vorm in de tekst staat, en dat is direct te meten.
+EXTRA_LIJSTEN = [("C Veel voorkomende vormen.docx", 3, True),
+                 ("D veel voorkomende lexemen.docx", 3, False),
+                 ("E Veel voorkomende werkwoorden.docx", 3, False)]
+
+
+def lees_extra(pad):
+    """De regels 'hebreeuws = nederlands' uit een van de extra bestanden.
+
+    Die staan anders opgeschreven dan de genummerde lijsten: met een isgelijkteken ertussen
+    in plaats van een spatie, en zonder nummer."""
+    woorden = []
+    for regel in regels_uit_docx(pad):
+        regel = unicodedata.normalize("NFC", regel)
+        if "=" not in regel or not any(hebreeuws(t) for t in regel):
+            continue
+        links, _, rechts = regel.partition("=")
+        heb, ned = links.strip(), rechts.strip()
+        if medeklinkers(heb) and ned:
+            woorden.append({"hebreeuws": heb, "nederlands": ned})
+    return woorden
+
+
 def main():
     bestanden = sorted(glob.glob(os.path.join(MAP, "*.docx"))
                        + glob.glob(os.path.join(MAP, "*.pdf")),
@@ -266,6 +306,26 @@ def main():
             w["les"] = 1 if tot <= 165 else 2        # THB-HEB1 of HEB2
             alles.append(verrijk(w))
 
+    # De extra lijsten erachteraan, en alleen wat er nog niet in staat.
+    gehad = {w["medeklinkers"] for w in alles}
+    nummer = max((w["nummer"] for w in alles), default=410)
+    extra = 0
+    for naam, welke_les, is_vorm in EXTRA_LIJSTEN:
+        pad = os.path.join(MAP, naam)
+        if not os.path.exists(pad):
+            klachten.append(f"{naam} niet gevonden")
+            continue
+        for w in lees_extra(pad):
+            rijk = verrijk(dict(w, nummer=nummer + 1, les=welke_les))
+            rijk["is_vorm"] = is_vorm
+            if rijk["medeklinkers"] in gehad:
+                continue
+            gehad.add(rijk["medeklinkers"])
+            nummer += 1
+            rijk["nummer"] = nummer
+            alles.append(rijk)
+            extra += 1
+
     for regel in klachten:
         print("  let op:", regel)
 
@@ -275,7 +335,8 @@ def main():
     ww = sum(1 for w in alles if w["stammen"])
     var = sum(1 for w in alles if w["varianten"])
     print(f"{len(alles)} woorden weggeschreven naar {os.path.basename(UIT)} "
-          f"({ww} werkwoorden met stamformaties, {var} met een tweede schrijfwijze)")
+          f"({ww} werkwoorden met stamformaties, {var} met een tweede schrijfwijze, "
+          f"{extra} uit de extra lijsten)")
 
 
 if __name__ == "__main__":

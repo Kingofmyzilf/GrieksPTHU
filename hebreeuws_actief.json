@@ -1101,6 +1101,230 @@
      "voorvoegsel": ""
     }
    ],
+   "נתן — Perfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "נָתַן",
+     "id": "heb_5414_v_qal_perf_3ms",
+     "stam": "נת",
+     "uitgang": "ן",
+     "aantal": 185,
+     "vers": "Genesis 24:53",
+     "toelichting": "185× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e v ev",
+     "vorm": "נָתְנָה",
+     "id": "heb_5414_v_qal_perf_3fs",
+     "stam": "נת",
+     "uitgang": "נה",
+     "aantal": 8,
+     "vers": "Genesis 3:12",
+     "toelichting": "8× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "נָתַתָּה",
+     "id": "heb_5414_v_qal_perf_2ms",
+     "stam": "נת",
+     "uitgang": "תה",
+     "aantal": 24,
+     "vers": "Genesis 3:12",
+     "toelichting": "24× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e v ev",
+     "vorm": "נָתַתְּ",
+     "id": "heb_5414_v_qal_perf_2fs",
+     "stam": "נת",
+     "uitgang": "ת",
+     "aantal": 2,
+     "vers": "Ezekiel 16:33",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e ev",
+     "vorm": "נָתַתִּי",
+     "id": "heb_5414_v_qal_perf_1cs",
+     "stam": "נת",
+     "uitgang": "תי",
+     "aantal": 115,
+     "vers": "Genesis 1:29",
+     "toelichting": "115× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e mv",
+     "vorm": "נָתְנוּ",
+     "id": "heb_5414_v_qal_perf_3cp",
+     "stam": "נת",
+     "uitgang": "נו",
+     "aantal": 53,
+     "vers": "Exodus 39:18",
+     "toelichting": "53× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m mv",
+     "vorm": "נְתַתֶּם",
+     "id": "heb_5414_v_qal_perf_2mp",
+     "stam": "נת",
+     "uitgang": "תם",
+     "aantal": 2,
+     "vers": "Judges 21:22",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e mv",
+     "vorm": "נָתַנּוּ",
+     "id": "heb_5414_v_qal_perf_1cp",
+     "stam": "נת",
+     "uitgang": "נו",
+     "aantal": 2,
+     "vers": "1 Chronicles 29:14",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    }
+   ],
+   "נתן — Imperfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "יִתֵּן",
+     "id": "heb_5414_v_qal_imperf_3ms",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 101,
+     "vers": "Genesis 43:14",
+     "toelichting": "101× in de Tenach"
+    },
+    {
+     "label": "3e v ev",
+     "vorm": "תִּתֵּן",
+     "id": "heb_5414_v_qal_imperf_3fs",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 7,
+     "vers": "Psalm 85:12",
+     "toelichting": "7× in de Tenach"
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "תִּתֵּן",
+     "id": "heb_5414_v_qal_imperf_2ms",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 28,
+     "vers": "Genesis 38:17",
+     "toelichting": "28× in de Tenach"
+    },
+    {
+     "label": "2e v ev",
+     "vorm": "תִּתְּנִי",
+     "id": "heb_5414_v_qal_imperf_2fs",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 2,
+     "vers": "Lamentations 2:18",
+     "toelichting": "2× in de Tenach"
+    },
+    {
+     "label": "1e ev",
+     "vorm": "אֶתֵּן",
+     "id": "heb_5414_v_qal_imperf_1cs",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 69,
+     "vers": "Genesis 12:7",
+     "toelichting": "69× in de Tenach"
+    },
+    {
+     "label": "3e m mv",
+     "vorm": "יִתְּנוּ",
+     "id": "heb_5414_v_qal_imperf_3mp",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 17,
+     "vers": "Genesis 24:41",
+     "toelichting": "17× in de Tenach"
+    },
+    {
+     "label": "2e m mv",
+     "vorm": "תִּתְּנוּ",
+     "id": "heb_5414_v_qal_imperf_2mp",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 20,
+     "vers": "Genesis 34:9",
+     "toelichting": "20× in de Tenach"
+    },
+    {
+     "label": "1e mv",
+     "vorm": "נִתֵּן",
+     "id": "heb_5414_v_qal_imperf_1cp",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 6,
+     "vers": "Genesis 34:21",
+     "toelichting": "6× in de Tenach"
+    }
+   ],
+   "נתן — Imperfectum consecutivum (wajjiqtol)": [
+    {
+     "label": "3e m ev",
+     "vorm": "וַיִּתֵּן",
+     "id": "heb_5414_conj_w_v_qal_consecimperf_3ms",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 150,
+     "vers": "Genesis 1:17",
+     "toelichting": "150× in de Tenach"
+    },
+    {
+     "label": "3e v ev",
+     "vorm": "וַתִּתֵּן",
+     "id": "heb_5414_conj_w_v_qal_consecimperf_3fs",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 9,
+     "vers": "Genesis 3:6",
+     "toelichting": "9× in de Tenach"
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "וַתִּתֵּן",
+     "id": "heb_5414_conj_w_v_qal_consecimperf_2ms",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 6,
+     "vers": "1 Chronicles 17:22",
+     "toelichting": "6× in de Tenach"
+    },
+    {
+     "label": "1e ev",
+     "vorm": "וָאֶתֵּן",
+     "id": "heb_5414_conj_w_v_qal_consecimperf_1cs",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 15,
+     "vers": "Genesis 40:11",
+     "toelichting": "15× in de Tenach"
+    },
+    {
+     "label": "3e m mv",
+     "vorm": "וַיִּתְּנוּ",
+     "id": "heb_5414_conj_w_v_qal_consecimperf_3mp",
+     "stam": "",
+     "uitgang": "",
+     "aantal": 55,
+     "vers": "Genesis 35:4",
+     "toelichting": "55× in de Tenach"
+    }
+   ],
    "הלך — Perfectum": [
     {
      "label": "3e m ev",
@@ -2766,6 +2990,221 @@
      "voorvoegsel": "נ"
     }
    ],
+   "עָלָה — Perfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "עָלָה",
+     "id": "heb_5927_v_qal_perf_3ms",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 62,
+     "vers": "Genesis 19:15",
+     "toelichting": "62× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e v ev",
+     "vorm": "עָלְתָה",
+     "id": "heb_5927_v_qal_perf_3fs",
+     "stam": "על",
+     "uitgang": "תה",
+     "aantal": 9,
+     "vers": "Genesis 40:10",
+     "toelichting": "9× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "עָלִיתָ",
+     "id": "heb_5927_v_qal_perf_2ms",
+     "stam": "על",
+     "uitgang": "ית",
+     "aantal": 6,
+     "vers": "Genesis 49:4",
+     "toelichting": "6× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e v ev",
+     "vorm": "עָלִית",
+     "id": "heb_5927_v_qal_perf_2fs",
+     "stam": "על",
+     "uitgang": "ית",
+     "aantal": 3,
+     "vers": "Proverbs 31:29",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e ev",
+     "vorm": "עָלִיתִי",
+     "id": "heb_5927_v_qal_perf_1cs",
+     "stam": "על",
+     "uitgang": "יתי",
+     "aantal": 4,
+     "vers": "2 Kings 18:25",
+     "toelichting": "4× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e mv",
+     "vorm": "עָלוּ",
+     "id": "heb_5927_v_qal_perf_3cp",
+     "stam": "על",
+     "uitgang": "ו",
+     "aantal": 18,
+     "vers": "Exodus 13:18",
+     "toelichting": "18× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m mv",
+     "vorm": "עֲלִיתֶם",
+     "id": "heb_5927_v_qal_perf_2mp",
+     "stam": "על",
+     "uitgang": "יתם",
+     "aantal": 4,
+     "vers": "Deuteronomy 5:5",
+     "toelichting": "4× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e mv",
+     "vorm": "עָלִינוּ",
+     "id": "heb_5927_v_qal_perf_1cp",
+     "stam": "על",
+     "uitgang": "ינו",
+     "aantal": 2,
+     "vers": "Genesis 44:24",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    }
+   ],
+   "עָלָה — Imperfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "יַעֲלֶה",
+     "id": "heb_5927_v_qal_imperf_3ms",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 45,
+     "vers": "Genesis 2:6",
+     "toelichting": "45× in de Tenach",
+     "voorvoegsel": "י"
+    },
+    {
+     "label": "3e v ev",
+     "vorm": "תַּעֲלֶה",
+     "id": "heb_5927_v_qal_imperf_3fs",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 5,
+     "vers": "2 Samuel 11:20",
+     "toelichting": "5× in de Tenach",
+     "voorvoegsel": "ת"
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "תַעֲלֶה",
+     "id": "heb_5927_v_qal_imperf_2ms",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 3,
+     "vers": "Exodus 20:26",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": "ת"
+    },
+    {
+     "label": "1e ev",
+     "vorm": "אֶעֱלֶה",
+     "id": "heb_5927_v_qal_imperf_1cs",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 12,
+     "vers": "Genesis 44:34",
+     "toelichting": "12× in de Tenach",
+     "voorvoegsel": "א"
+    },
+    {
+     "label": "3e m mv",
+     "vorm": "יַעֲלוּ",
+     "id": "heb_5927_v_qal_imperf_3mp",
+     "stam": "על",
+     "uitgang": "ו",
+     "aantal": 20,
+     "vers": "Exodus 8:4",
+     "toelichting": "20× in de Tenach",
+     "voorvoegsel": "י"
+    },
+    {
+     "label": "2e m mv",
+     "vorm": "תַעֲלוּ",
+     "id": "heb_5927_v_qal_imperf_2mp",
+     "stam": "על",
+     "uitgang": "ו",
+     "aantal": 3,
+     "vers": "Deuteronomy 1:42",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": "ת"
+    },
+    {
+     "label": "1e mv",
+     "vorm": "נַעֲלֶה",
+     "id": "heb_5927_v_qal_imperf_1cp",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 7,
+     "vers": "Numbers 13:30",
+     "toelichting": "7× in de Tenach",
+     "voorvoegsel": "נ"
+    }
+   ],
+   "עָלָה — Participium": [
+    {
+     "label": "m ev",
+     "vorm": "עֹלֶה",
+     "id": "heb_5927_v_qal_prtcpl_ms",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 13,
+     "vers": "Genesis 38:13",
+     "toelichting": "13× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "v ev",
+     "vorm": "עֹלָה",
+     "id": "heb_5927_v_qal_prtcpl_fs",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 5,
+     "vers": "Judges 20:31",
+     "toelichting": "5× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "m mv",
+     "vorm": "עֹלִים",
+     "id": "heb_5927_v_qal_prtcpl_mp",
+     "stam": "על",
+     "uitgang": "ים",
+     "aantal": 7,
+     "vers": "Genesis 28:12",
+     "toelichting": "7× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "v mv",
+     "vorm": "עֹלֹת",
+     "id": "heb_5927_v_qal_prtcpl_fp",
+     "stam": "על",
+     "uitgang": "ת",
+     "aantal": 3,
+     "vers": "Genesis 41:2",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": ""
+    }
+   ],
    "שׁלח — Perfectum": [
     {
      "label": "3e m ev",
@@ -4171,6 +4610,63 @@
      "voorvoegsel": "ות"
     }
    ],
+   "ילד — Perfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "יָלַד",
+     "id": "heb_3205_v_qal_perf_3ms",
+     "stam": "ילד",
+     "uitgang": "",
+     "aantal": 19,
+     "vers": "Genesis 4:18",
+     "toelichting": "19× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e v ev",
+     "vorm": "יָלְדָה",
+     "id": "heb_3205_v_qal_perf_3fs",
+     "stam": "ילד",
+     "uitgang": "ה",
+     "aantal": 38,
+     "vers": "Genesis 4:22",
+     "toelichting": "38× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e v ev",
+     "vorm": "יָלַדְתְּ",
+     "id": "heb_3205_v_qal_perf_2fs",
+     "stam": "ילד",
+     "uitgang": "ת",
+     "aantal": 2,
+     "vers": "Judges 13:3",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e ev",
+     "vorm": "יָלַדְתִּי",
+     "id": "heb_3205_v_qal_perf_1cs",
+     "stam": "ילד",
+     "uitgang": "תי",
+     "aantal": 6,
+     "vers": "Genesis 21:7",
+     "toelichting": "6× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e mv",
+     "vorm": "יָלָדוּ",
+     "id": "heb_3205_v_qal_perf_3cp",
+     "stam": "ילד",
+     "uitgang": "ו",
+     "aantal": 2,
+     "vers": "Genesis 31:43",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    }
+   ],
    "מָצָא — Perfectum": [
     {
      "label": "3e m ev",
@@ -5456,6 +5952,98 @@
      "vers": "1 Samuel 6:4",
      "toelichting": "2× in de Tenach",
      "voorvoegsel": "נ"
+    }
+   ],
+   "עָלָה — Perfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "הֶעֱלָה",
+     "id": "heb_5927_v_hifil_perf_3ms",
+     "stam": "העל",
+     "uitgang": "ה",
+     "aantal": 15,
+     "vers": "Numbers 8:3",
+     "toelichting": "15× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "הֶעֱלִיתָ",
+     "id": "heb_5927_v_hifil_perf_2ms",
+     "stam": "העל",
+     "uitgang": "ית",
+     "aantal": 3,
+     "vers": "Exodus 33:1",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e ev",
+     "vorm": "הֶעֱלֵיתִי",
+     "id": "heb_5927_v_hifil_perf_1cs",
+     "stam": "העל",
+     "uitgang": "יתי",
+     "aantal": 6,
+     "vers": "Judges 6:8",
+     "toelichting": "6× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e mv",
+     "vorm": "הֶעֱלוּ",
+     "id": "heb_5927_v_hifil_perf_3cp",
+     "stam": "העל",
+     "uitgang": "ו",
+     "aantal": 7,
+     "vers": "Joshua 24:32",
+     "toelichting": "7× in de Tenach",
+     "voorvoegsel": ""
+    }
+   ],
+   "עָלָה — Imperfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "יַעֲלֶה",
+     "id": "heb_5927_v_hifil_imperf_3ms",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 10,
+     "vers": "Leviticus 17:8",
+     "toelichting": "10× in de Tenach",
+     "voorvoegsel": "י"
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "תַּעֲלֶה",
+     "id": "heb_5927_v_hifil_imperf_2ms",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 3,
+     "vers": "Deuteronomy 12:13",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": "ת"
+    },
+    {
+     "label": "1e ev",
+     "vorm": "אַעֲלֶה",
+     "id": "heb_5927_v_hifil_imperf_1cs",
+     "stam": "על",
+     "uitgang": "ה",
+     "aantal": 7,
+     "vers": "Exodus 3:17",
+     "toelichting": "7× in de Tenach",
+     "voorvoegsel": "א"
+    },
+    {
+     "label": "3e m mv",
+     "vorm": "יַעֲלוּ",
+     "id": "heb_5927_v_hifil_imperf_3mp",
+     "stam": "על",
+     "uitgang": "ו",
+     "aantal": 5,
+     "vers": "Nehemiah 10:38",
+     "toelichting": "5× in de Tenach",
+     "voorvoegsel": "י"
     }
    ],
    "נָכָה — Perfectum": [
@@ -8379,6 +8967,52 @@
      "voorvoegsel": "ת"
     }
    ],
+   "חלל — Perfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "הֵחֵל",
+     "id": "heb_2490_v_hifil_perf_3ms",
+     "stam": "החל",
+     "uitgang": "",
+     "aantal": 16,
+     "vers": "Genesis 6:1",
+     "toelichting": "16× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "הַחִלּוֹתָ",
+     "id": "heb_2490_v_hifil_perf_2ms",
+     "stam": "החל",
+     "uitgang": "ות",
+     "aantal": 2,
+     "vers": "Deuteronomy 3:24",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "1e ev",
+     "vorm": "הַחִלֹּתִי",
+     "id": "heb_2490_v_hifil_perf_1cs",
+     "stam": "החל",
+     "uitgang": "תי",
+     "aantal": 2,
+     "vers": "Deuteronomy 2:31",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e mv",
+     "vorm": "הֵחֵלּוּ",
+     "id": "heb_2490_v_hifil_perf_3cp",
+     "stam": "החל",
+     "uitgang": "ו",
+     "aantal": 7,
+     "vers": "1 Samuel 3:2",
+     "toelichting": "7× in de Tenach",
+     "voorvoegsel": ""
+    }
+   ],
    "אמן — Perfectum": [
     {
      "label": "3e m ev",
@@ -8539,6 +9173,52 @@
      "vers": "Leviticus 19:31",
      "toelichting": "2× in de Tenach",
      "voorvoegsel": "ת"
+    }
+   ],
+   "חלל — Perfectum": [
+    {
+     "label": "3e m ev",
+     "vorm": "חִלֵּל",
+     "id": "heb_2490_v_piel_perf_3ms",
+     "stam": "חלל",
+     "uitgang": "",
+     "aantal": 4,
+     "vers": "Leviticus 19:8",
+     "toelichting": "4× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m ev",
+     "vorm": "חִלַּלְתָּ",
+     "id": "heb_2490_v_piel_perf_2ms",
+     "stam": "חלל",
+     "uitgang": "ת",
+     "aantal": 3,
+     "vers": "Genesis 49:4",
+     "toelichting": "3× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "3e mv",
+     "vorm": "חִלֵּלוּ",
+     "id": "heb_2490_v_piel_perf_3cp",
+     "stam": "חלל",
+     "uitgang": "ו",
+     "aantal": 4,
+     "vers": "Ezekiel 20:16",
+     "toelichting": "4× in de Tenach",
+     "voorvoegsel": ""
+    },
+    {
+     "label": "2e m mv",
+     "vorm": "חִלַּלְתֶּם",
+     "id": "heb_2490_v_piel_perf_2mp",
+     "stam": "חלל",
+     "uitgang": "תם",
+     "aantal": 2,
+     "vers": "Ezekiel 36:22",
+     "toelichting": "2× in de Tenach",
+     "voorvoegsel": ""
     }
    ]
   },

@@ -522,8 +522,15 @@ def klaargezet(g):
         # Woordenschat en de rijtjes; de overige oefeningen zijn Grieks (zie heb_oefenhub).
         hp = heb_prefs(g)
         log = g.daglog()
-        klaar = [("Hebreeuwse woorden",
-                  f"{int(hp['heb_aantal'])} woorden · {str(hp['heb_keuze']).lower()}",
+        if hp["heb_keuze"] == "Leerpad (volgend blokje)":
+            _nu = next((s for s in heb_levels(g)
+                        if s["ontgrendeld"] and not s["voltooid"]), None)
+            _uitleg = (f"blokje {_nu['index']} · {_nu['titel']} "
+                       f"({_nu['klaar']}/{_nu['totaal']})" if _nu
+                       else "alle blokjes af")
+        else:
+            _uitleg = f"{int(hp['heb_aantal'])} woorden · {str(hp['heb_keuze']).lower()}"
+        klaar = [("Hebreeuwse woorden", _uitleg,
                   "/oefenen/hebreeuws", "hebreeuws", heb_vandaag(g))]
         if hebreeuws.laad_rijtjes():
             klaar.append(("Actief beheersen",
@@ -4106,10 +4113,17 @@ def swpagina():
 
 # ============================================================== Hebreeuws
 HEB_STANDAARD = {"heb_aantal": 12, "heb_vraagvorm": AUTO, "heb_lijst": "Alles",
-                 "heb_keuze": "Zwakste eerst"}
+                 "heb_keuze": "Leerpad (volgend blokje)", "heb_level": 0}
 HEB_VRAAGVORM = [AUTO, "Alleen meerkeuze", "Alleen typen"]
-HEB_OEFENINGEN = ["Zwakste eerst", "Meest voorkomend eerst", "Alleen wat ik fout deed",
-                  "Op volgorde van de lijst"]
+HEB_OEFENINGEN = ["Leerpad (volgend blokje)", "Zwakste eerst", "Meest voorkomend eerst",
+                  "Alleen wat ik fout deed", "Op volgorde van de lijst"]
+# Zoveel woorden per blokje. Acht is klein genoeg om in één ronde af te maken en groot
+# genoeg om iets te betekenen; dezelfde gedachte als de blokjes van zes bij structuurwoorden.
+HEB_BLOK = 8
+# Vanaf deze streak telt een woord binnen het blokje als 'af'. Onder de typgrens, dus je
+# hebt hem dan aangewezen maar nog niet zelf getypt — het blokje sluit je af met herkennen,
+# en het produceren komt terug als het woord later in een gewone ronde terugkomt.
+HEB_BLOK_KLAAR = 5
 HEB_LIJSTEN = {"Alles": 0, "Hebreeuws 1 · woord 1–165": 1, "Hebreeuws 2 · woord 166–410": 2}
 # Zoveel tekens mag een keuzeknop hebben. Boven de veertig wordt hij twee regels hoog en
 # raakt de lijst van vier uit balans; dan lees je de knoppen niet meer, maar scan je ze.
@@ -4119,6 +4133,39 @@ HEB_KORT = 42
 # (een echte misser kost er 2) en STRAF_STREAK (vanaf 16 telt de eerste misser al mee).
 # De grens tussen aanwijzen en typen is motor.LEERPAD_TYP_STREAK — bij het Grieks precies
 # dezelfde grens, dus een woord gedraagt zich in allebei de talen hetzelfde.
+
+
+def heb_levels(g):
+    """De Hebreeuwse woorden in blokjes, met per blokje hoever je bent.
+
+    De volgorde is een keuze en geen toeval. Eerst alles uit de drie losse bestanden — 'C
+    Veel voorkomende vormen', 'D veel voorkomende lexemen', 'E Veel voorkomende
+    werkwoorden' — want dat zijn de woorden en vormen die in élk vers staan. וַיֹּאמֶר
+    ('en hij zei') komt 1950 keer voor; wie die kent leest meteen makkelijker. Daarna de
+    rest van de lijst op frequentie, want dan levert elk volgend blokje het meeste op.
+
+    Binnen die twee groepen is de volgorde ook op frequentie, en dat is meetbaar: het staat
+    per woord in de lijst, geteld in de Tenach zelf."""
+    basis = [w for w in g.hebreeuws if int(w.get("les", 0) or 0) == 3]
+    rest = [w for w in g.hebreeuws if int(w.get("les", 0) or 0) != 3]
+    op_freq = lambda w: (-int(w.get("frequentie", 0) or 0), int(w.get("nummer", 0) or 0))
+    geordend = sorted(basis, key=op_freq) + sorted(rest, key=op_freq)
+
+    levels = []
+    vorige_af = True
+    for n, start in enumerate(range(0, len(geordend), HEB_BLOK)):
+        brok = geordend[start:start + HEB_BLOK]
+        klaar = sum(1 for w in brok
+                    if int(w.get("streak", 0) or 0) >= HEB_BLOK_KLAAR)
+        voltooid = bool(brok) and klaar == len(brok)
+        titel = ("De basis: wat in elk vers staat" if brok and
+                 int(brok[0].get("les", 0) or 0) == 3 else
+                 f"vanaf {int(brok[0].get('frequentie', 0) or 0)}×" if brok else "")
+        levels.append({"index": n + 1, "titel": titel, "items": brok,
+                       "klaar": klaar, "totaal": len(brok), "voltooid": voltooid,
+                       "ontgrendeld": vorige_af})
+        vorige_af = voltooid
+    return levels
 
 
 def heb_prefs(g):
@@ -4313,7 +4360,19 @@ class HebSessie:
         les = HEB_LIJSTEN.get(p["heb_lijst"], 0)
         if les:
             woorden = [w for w in woorden if int(w.get("les", 0)) == les] or woorden
-        if p["heb_keuze"] == "Alleen wat ik fout deed":
+        self.level = None
+        if p["heb_keuze"] == "Leerpad (volgend blokje)":
+            # Het gekozen blokje, of anders het eerstvolgende dat nog niet af is.
+            status = heb_levels(g)
+            gekozen = int(p.get("heb_level", 0) or 0)
+            doel = next((s for s in status if s["index"] == gekozen), None) if gekozen else None
+            if doel is None:
+                doel = next((s for s in status
+                             if s["ontgrendeld"] and not s["voltooid"]), None)
+            if doel:
+                self.level = doel
+                woorden = list(doel["items"])
+        elif p["heb_keuze"] == "Alleen wat ik fout deed":
             woorden = [w for w in woorden if int(w.get("score_fout", 0)) > 0] or woorden
             woorden.sort(key=lambda w: -int(w.get("score_fout", 0)))
         elif p["heb_keuze"] == "Meest voorkomend eerst":
@@ -4392,6 +4451,19 @@ def hebpagina():
         ui.label("Instellingen").style("font-size:18px;font-weight:700")
         k_oef = ui.select(HEB_OEFENINGEN, value=sessie.prefs["heb_keuze"],
                           label="Volgorde").props("outlined dark").classes("w-full")
+        # Welke blokjes je al open hebt. Alleen die staan in de lijst; het volgende komt
+        # vrij zodra je het huidige af hebt.
+        _lv = heb_levels(g)
+        _open = {0: "Automatisch (volgend blokje)"}
+        for _st in _lv:
+            if _st["ontgrendeld"]:
+                _open[_st["index"]] = (f"Blokje {_st['index']} · {_st['titel']} "
+                                       f"({_st['klaar']}/{_st['totaal']})")
+        _hl = int(sessie.prefs.get("heb_level", 0) or 0)
+        k_level = ui.select(_open, value=_hl if _hl in _open else 0,
+                            label="Blokje").props("outlined dark").classes("w-full")
+        k_level.bind_visibility_from(k_oef, "value",
+                                     lambda v: v == "Leerpad (volgend blokje)")
         k_lijst = ui.select(list(HEB_LIJSTEN), value=sessie.prefs["heb_lijst"],
                             label="Woordenlijst").props("outlined dark").classes("w-full")
         k_vorm = ui.select(HEB_VRAAGVORM, value=sessie.prefs["heb_vraagvorm"],
@@ -4405,7 +4477,8 @@ def hebpagina():
 
         async def bewaar_inst():
             for sleutel, veld in [("heb_keuze", k_oef), ("heb_lijst", k_lijst),
-                                  ("heb_vraagvorm", k_vorm), ("heb_aantal", k_aantal)]:
+                                  ("heb_vraagvorm", k_vorm), ("heb_aantal", k_aantal),
+                                  ("heb_level", k_level)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -4425,6 +4498,11 @@ def hebpagina():
                 ui.button("⚙", on_click=instellingen.open, color=None).props(
                     "flat dense no-caps").classes("raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
+        if sessie.level:
+            _af = sum(1 for s in heb_levels(g) if s["voltooid"])
+            ui.html(f"<div style='display:flex;justify-content:space-between;font-size:13px;"
+                    f"color:{ZACHT}'><span>Blokje {sessie.level['index']} · "
+                    f"{sessie.level['titel']}</span><span>{_af} blokjes af</span></div>")
         streepjes = ui.row().classes("w-full gap-1 no-wrap")
         woord = ui.label().classes("hebreeuws w-full text-center").style(
             f"font-size:46px;line-height:1.25;color:{TEKST};padding:2px 0 0")

@@ -170,6 +170,7 @@ def lees_sheet():
     wb = openpyxl.load_workbook(SHEET, read_only=True, data_only=True)
     ws = wb["Hebreeuws"]
     telling = collections.Counter()
+    elke_vorm = collections.Counter()
     werkwoord = collections.Counter()                          # hoe vaak als werkwoord getagd
     vormen = collections.defaultdict(collections.Counter)      # strong -> kale vorm -> n
     lemmas = collections.defaultdict(collections.Counter)      # strong -> vorm zónder voorvoegsel
@@ -186,6 +187,10 @@ def lees_sheet():
         for code in VOORVOEGSEL_CODES:
             if re.search(VOORVOEGSEL_ZOEK[code], p):
                 voorvoegsels[code] += 1
+        # Elke vorm tellen, ook die zonder Strong-nummer. Een voorzetsel met een suffix —
+        # לִי 'voor mij', לוֹ 'voor hem' — heeft er geen, en die stonden daardoor op nul.
+        if vorm:
+            elke_vorm[kaal(vorm)] += 1
         if not (vorm and strong):
             continue
         s = str(strong).strip()
@@ -207,7 +212,8 @@ def lees_sheet():
         if len(plaatsen[s]) < 3:
             plaatsen[s].append({"vers": vers, "vorm": v})
     wb.close()
-    return telling, werkwoord, vormen, lemmas, translits, plaatsen, voorvoegsels
+    return (telling, werkwoord, vormen, lemmas, translits, plaatsen, voorvoegsels,
+            elke_vorm)
 
 
 def main():
@@ -217,7 +223,8 @@ def main():
         woorden = json.load(f)
 
     print("bijbeltekst inlezen…")
-    telling, werkwoord, vormen, lemmas, translits, plaatsen, voorvoegsels = lees_sheet()
+    (telling, werkwoord, vormen, lemmas, translits, plaatsen, voorvoegsels,
+     elke_vorm) = lees_sheet()
     print(f"  {sum(telling.values())} woordvormen, {len(telling)} Strong-nummers")
 
     # Zoeksleutels: eerst op volledige vocalisatie, daarna op medeklinkers, en dat alles
@@ -251,6 +258,29 @@ def main():
             w["frequentie"] = voorvoegsels[code]
             w["vindplaatsen"] = []
             raak_voorv += 1
+            continue
+        # Een vervoegde vorm uit 'C Veel voorkomende vormen' is geen woordenboekwoord, en
+        # een Strong-nummer eraan knopen levert een ánder woord op: לּוֹ 'voor hem' kwam op
+        # לֹא 'niet' uit, הַזֶּה 'deze' op een zeldzaam naamwoord. Wat hier wél te meten is,
+        # en ook precies wat je wil weten, is hoe vaak déze vorm in de tekst staat.
+        if w.get("is_vorm"):
+            eigen = unicodedata.normalize("NFC", w["hebreeuws"])
+            # Drie stappen, want de cursuslijst en de bijbeltekst schrijven niet altijd
+            # hetzelfde. לּוֹ staat in de lijst met een dagesj die de tekst niet zet, en משֶׁה
+            # mist er een holam. Eerst precies, dan zonder dagesj, dan op de medeklinkers.
+            # Zo komt er altijd een getal uit, en weet je waarop het geteld is.
+            zonder_dagesj = lambda x: kaal(x).replace("ּ", "")
+            for maat, hoe in ((kaal, "precies"), (zonder_dagesj, "zonder dagesj"),
+                              (medeklinkers, "op de medeklinkers")):
+                doel = maat(eigen)
+                hoevaak = sum(n for v, n in elke_vorm.items() if maat(v) == doel)
+                if hoevaak:
+                    break
+            w["strong"] = ""
+            w["frequentie"] = hoevaak
+            w["vindplaatsen"] = []
+            w["geteld"] = hoe
+            manieren[f"vorm geteld, {hoe}"] += 1
             continue
         kandidaten = set()
         manier = ""
@@ -334,6 +364,31 @@ def main():
         # getagd. Anders zou דבר 'spreken' het zelfstandig naamwoord דָּבָר 'woord' worden,
         # want dat komt vaker voor.
         keuze = list(kandidaten)
+        # Eerst dit, en het weegt zwaarder dan de frequentie: staat de vorm uit de
+        # cursuslijst letterlijk in de tekst als het woordenboekwoord van één van de
+        # kandidaten? Dan is dát het woord. Zonder deze regel koos de frequentie, en dan
+        # werd נָבִיא 'profeet' aan בּוֹא 'komen' geknoopt (dezelfde drie letters, en het
+        # werkwoord komt achtmaal zo vaak voor), עֹלָה '(brand)offer' aan עָלָה 'opstijgen'
+        # en דַּעַת 'kennis' aan ידע 'kennen'. Bij het naamwoord stonden dan de
+        # vindplaatsen van het werkwoord.
+        #
+        # Alleen omgekeerd redeneren — 'geen stamcodes, dus geen werkwoord' — werkt niet:
+        # de lijst geeft bij לקח, כתב en בחר geen stamcodes, en dat zijn wél werkwoorden.
+        # Die belandden dan op een zeldzaam afgeleid naamwoord.
+        eigen_vorm = unicodedata.normalize("NFC", w["hebreeuws"])
+        exact = [s for s in keuze if eigen_vorm in lemmas[s]]
+        if exact:
+            keuze = exact
+            # Staat de vorm bij meer dan één kandidaat als woordenboekvorm, dan geeft de
+            # woordsoort de doorslag. De cursuslijst schrijft een werkwoord als kale
+            # wortel (לקח, כתב) en een naamwoord met klinkertekens (נָבִיא, עֹלָה). Deze
+            # vorm ís gevocaliseerd én staat er als lemma, en er staat geen stamformatie
+            # bij: dan is het het naamwoord. 5030 נָבִיא is 1 van 316 keer als werkwoord
+            # getagd, בּוֹא 2300 van 2569 — dat verschil is geen twijfelgeval.
+            if not w.get("stammen"):
+                geen_ww = [s for s in keuze if werkwoord[s] <= telling[s] / 2]
+                if geen_ww:
+                    keuze = geen_ww
         if w.get("stammen"):
             alleen_ww = [s for s in keuze if werkwoord[s] > telling[s] / 2]
             if alleen_ww:
