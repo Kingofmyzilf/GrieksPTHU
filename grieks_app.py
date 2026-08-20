@@ -537,6 +537,11 @@ def klaargezet(g):
                           f"{int(heb_af_prefs(g)['heb_af_aantal'])} cellen uit de rijtjes",
                           "/oefenen/hebreeuws/actief", "hebreeuws",
                           int(log.get("hebreeuws", 0) or 0)))
+        if hebreeuws.laad_verzen():
+            klaar.append(("Voor- en achtervoegsels",
+                          "wat er vóór en achter het woord geplakt zit",
+                          "/oefenen/hebreeuws/affixen", "hebreeuws",
+                          int(log.get("hebreeuws", 0) or 0)))
         return klaar
 
     p = prefs(g)
@@ -1380,6 +1385,15 @@ def heb_oefenhub(g):
                         ui.label(f"{round(100 * gehad / max(1, len(cellen)))}%").style(
                             f"color:{MERK};font-size:14px")
                         ui.label("›").style(f"color:{ZACHT};font-size:20px")
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/oefenen/hebreeuws/affixen")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    with ui.column().classes("gap-0").style("min-width:0"):
+                        ui.label("Voor- en achtervoegsels").style(
+                            f"color:{TEKST};font-size:16px;font-weight:600")
+                        ui.label("bijna de helft van alle vormen draagt er een").style(
+                            f"color:{ZACHT};font-size:12.5px")
+                    ui.label("›").style(f"color:{ZACHT};font-size:20px")
             with ui.element("div").classes("kaart w-full"):
                 ui.label(f"{aantal} rijtjes met {len(cellen)} cellen, afgeleid uit de "
                          f"bijbeltekst zelf: elke vorm die je hier oefent staat écht "
@@ -6423,6 +6437,284 @@ def lijstpagina():
     onderbalk("Lezen")
 
 
+# ============================================================== Hebreeuws · voor/achtervoegsels
+# Bijna de helft van alle woordvormen in de Tenach draagt een voorvoegsel. Wie die niet
+# herkent, ziet in וְהָאָרֶץ een woord dat hij nooit geleerd heeft — terwijl er gewoon אֶרֶץ
+# staat met 'en' en 'de' ervoor. Daarom een eigen oefening.
+#
+# Herkennen, niet produceren: je krijgt een echte vorm uit de bijbeltekst en zegt wat het
+# voor- of achtervoegsel betekent. Zelf zo'n vorm bouwen is een andere vaardigheid, en die
+# hoort bij Actief Beheersen.
+#
+# De vragen komen uit de verzen die er al zijn — geen nieuw bestand, en elke vorm die je
+# krijgt staat écht ergens. De score gaat per soort voorvoegsel: er zijn er zeventien in
+# totaal, dus dan zie je precies welke je nog niet vast hebt.
+AF_STANDAARD_HEB = {"heb_af2_aantal": 12, "heb_af2_soort": "Allebei"}
+HEB_AFFIX_SOORT = ["Allebei", "Alleen voorvoegsels", "Alleen achtervoegsels"]
+HEB_AFFIX_SLEUTEL = "affix:"
+
+
+def heb_affix_vragen(g, hoeveel, soort):
+    """Vormen uit de verzen die een voor- of achtervoegsel hebben, zwakste soort eerst.
+
+    Per soort houden we de score bij, en de soorten die je het slechtst kent komen als
+    eerste aan de beurt — zo besteed je je tijd waar het nodig is."""
+    verzen = hebreeuws.laad_verzen()
+    if not verzen:
+        return []
+    stats = g.stats.get("hebr_stats") or {}
+
+    def streak(code):
+        return int((stats.get(HEB_AFFIX_SLEUTEL + code) or {}).get("streak", 0) or 0)
+
+    per_code = {}
+    for vers in verzen:
+        for vorm, strong, parsing in vers["woorden"]:
+            voor_codes, _kern, achter = hebreeuws._codes(parsing)
+            voorvoegsel, kern, achtervoegsel = hebreeuws.splits_affixen(vorm, parsing)
+            if soort != "Alleen achtervoegsels" and voor_codes and voorvoegsel:
+                # Alleen het eerste voorvoegsel bevragen: bij twee tegelijk weet je niet
+                # welke van de twee de vraag bedoelt.
+                if len(voor_codes) == 1:
+                    per_code.setdefault(voor_codes[0], []).append(
+                        (vorm, parsing, vers["vers"], voor_codes[0], "voor"))
+            if soort != "Alleen voorvoegsels" and achter and achtervoegsel:
+                per_code.setdefault(achter, []).append(
+                    (vorm, parsing, vers["vers"], achter, "achter"))
+    if not per_code:
+        return []
+    # Eén vraag per soort per ronde, en de zwakste soorten eerst. Anders krijg je twaalf
+    # keer een waw, want die is verreweg het talrijkst.
+    volgorde = sorted(per_code, key=lambda c: (streak(c), -len(per_code[c])))
+    vragen = []
+    ronde = 0
+    while len(vragen) < hoeveel and ronde < 6:
+        for code in volgorde:
+            if len(vragen) >= hoeveel:
+                break
+            if len(per_code[code]) > ronde:
+                vragen.append(random.choice(per_code[code]))
+        ronde += 1
+    return vragen[:hoeveel]
+
+
+def heb_affix_betekenis(code):
+    return (hebreeuws.VOORVOEGSEL_NL.get(code)
+            or hebreeuws.ACHTERVOEGSEL_NL.get(code) or code)
+
+
+class HebAffixSessie:
+    def __init__(self, g):
+        p = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+             for k, v in AF_STANDAARD_HEB.items()}
+        self.prefs = p
+        self.vragen = heb_affix_vragen(g, max(4, int(p["heb_af2_aantal"] or 12)),
+                                       p["heb_af2_soort"])
+        self.i = 0
+        self.goed = 0
+        self.fout = 0
+        self.beoordeeld = False
+        self.bezig = False
+
+    @property
+    def huidig(self):
+        return self.vragen[self.i] if self.i < len(self.vragen) else None
+
+
+@ui.page("/oefenen/hebreeuws/affixen")
+def hebaffixpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    sessie = HebAffixSessie(g)
+    if not sessie.vragen:
+        ui.navigate.to("/oefenen")
+        return
+    stats = g.stats.setdefault("hebr_stats", {})
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_soort = ui.select(HEB_AFFIX_SOORT, value=sessie.prefs["heb_af2_soort"],
+                            label="Wat wil je oefenen").props(
+            "outlined dark").classes("w-full")
+        k_aantal = ui.number("Vragen per ronde", value=int(sessie.prefs["heb_af2_aantal"]),
+                             min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        ui.label("Elke vorm komt uit een vers dat in de app staat, dus wat je hier ziet "
+                 "staat écht ergens.").style(f"color:{ZACHT};font-size:13px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("heb_af2_soort", k_soort), ("heb_af2_aantal", k_aantal)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/hebreeuws/affixen")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props(
+                "flat no-caps").style(f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props(
+                "unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Voor- en achtervoegsels").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        woord = ui.html().classes("w-full text-center").style("padding:8px 0 2px")
+        herkomst = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:12.5px")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px;padding-top:6px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:2px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:64px;padding-top:8px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+
+    balkje = ui.element("div").classes("antwoordbalk")
+    with balkje:
+        with ui.row().classes("w-full gap-2 no-wrap items-center justify-end"):
+            knop = ui.button("Ik weet het niet", color=None).props(
+                "unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
+                f"width:132px;min-width:132px;font-size:14px")
+    onderbalk("Oefenen")
+
+    def teken():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(sessie.vragen)):
+                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+                ui.element("div").style(
+                    f"flex:1;height:4px;border-radius:2px;background:{kleur}")
+
+    def toon():
+        for vak in (opties, terugkoppeling, statusbalk):
+            vak.clear()
+        sessie.beoordeeld = False
+        vraag = sessie.huidig
+        for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
+            vak.set_visibility(True)
+        if vraag is None:
+            woord.set_content(f"<span style='font-size:46px;color:{TEKST}'>✓</span>")
+            herkomst.text = ""
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
+            teller.text = ""
+            knop.text = "Nieuwe ronde"
+            teken()
+            return
+        vorm, parsing, vers, code, soort = vraag
+        # De vorm mét kleur: het stuk waar de vraag over gaat is meteen aangewezen. Dat is
+        # de bedoeling — je moet niet zoeken wélke letter, maar weten wát hij doet.
+        woord.set_content(heb_gekleurd(vorm, parsing, maat=44))
+        herkomst.text = vers
+        vraagsoort.text = ("Wat betekent het gekleurde voorvoegsel?" if soort == "voor"
+                           else "Wat betekent het gekleurde achtervoegsel?")
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        knop.text = "Ik weet het niet"
+        teken()
+        juist = heb_affix_betekenis(code)
+        bron = (hebreeuws.VOORVOEGSEL_NL if soort == "voor"
+                else hebreeuws.ACHTERVOEGSEL_NL)
+        anderen = [v for k, v in bron.items() if v != juist]
+        keuzes = random.sample(anderen, min(3, len(anderen))) + [juist]
+        random.shuffle(keuzes)
+        with opties:
+            for keuze in keuzes:
+                ui.html(f"<button class='keuze' style='font-size:14.5px;"
+                        f"padding:9px 12px;line-height:1.35'>{keuze}</button>").on(
+                    "click", lambda _=None, kz=keuze: kies(kz))
+        e = stats.get(HEB_AFFIX_SLEUTEL + code) or {}
+        with statusbalk:
+            ui.html(_statusrij([
+                (int(e.get("streak", 0) or 0), "streak", TEKST),
+                (_goedfout(int(e.get("g", 0) or 0), int(e.get("f", 0) or 0)), "", TEKST),
+                (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
+            ]))
+
+    async def verwerk(juist, aangeklikt=None):
+        vorm, parsing, vers, code, soort = sessie.huidig
+        sessie.beoordeeld = True
+        sessie.goed += int(juist)
+        sessie.fout += int(not juist)
+        e = stats.setdefault(HEB_AFFIX_SLEUTEL + code, {"g": 0, "f": 0, "streak": 0})
+        e["g"] = int(e.get("g", 0)) + int(juist)
+        e["f"] = int(e.get("f", 0)) + int(not juist)
+        e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+        g.tel_dag()
+        if juist:
+            g.dagdoel_plus("hebreeuws")
+        opgeslagen = await run.io_bound(g.bewaar)
+        for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
+            vak.set_visibility(False)
+        letter = (hebreeuws.VOORVOEGSEL_LETTER.get(code, "") if soort == "voor" else "")
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        gekozen = (f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
+                   f"jij koos <span style='color:{FOUT}'>{aangeklikt}</span></div>"
+                   if not juist and aangeklikt else "")
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:16px;padding:22px 18px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
+                f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
+                f"<div style='font-size:38px;margin-top:12px;line-height:1.3'>"
+                f"{heb_gekleurd(vorm, parsing)}</div>"
+                + (f"<div class='hebreeuws' style='color:{MERK};font-size:24px;"
+                   f"margin-top:6px'>{letter}</div>" if letter else "")
+                + f"<div style='color:{TEKST};font-size:17px;margin-top:4px'>"
+                  f"{heb_affix_betekenis(code)}</div>"
+                  f"<div style='color:{ZACHT};font-size:12.5px;margin-top:6px'>{vers}</div>"
+                + gekozen
+                + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
+                  f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                  f"streak nu {e['streak']}</div></div>")
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+        _uitslag_staat(sessie)
+
+    async def kies(keuze):
+        if sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            _v, _p, _r, code, _s = sessie.huidig
+            await verwerk(keuze == heb_affix_betekenis(code), keuze)
+        finally:
+            sessie.bezig = False
+
+    async def hoofdknop():
+        if sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            if sessie.huidig is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/hebreeuws/affixen")
+                return
+            if sessie.beoordeeld:
+                if te_snel(sessie):
+                    return
+                sessie.i += 1
+                toon()
+                return
+            await verwerk(False)
+        finally:
+            sessie.bezig = False
+
+    knop.on_click(hoofdknop)
+    toon()
+
+
 # ============================================================== Hebreeuws · lezen
 # Waar het hele woordenleren voor bedoeld is: een vers openslaan en het snappen. Er staat
 # geen vertaling bij, en dat is een keuze — met een vertaling ernaast lees je de vertaling.
@@ -6437,6 +6729,38 @@ LEES_SLEUTEL = "lees:"          # zo staan gelezen verzen in hebr_stats
 # Zoveel van de woorden moet je al eens geoefend hebben voordat een vers meedoet. Onder de
 # helft is het geen lezen maar puzzelen.
 LEES_DREMPEL = 0.6
+
+
+# Voor- en achtervoegsels krijgen de merkkleur, de kern blijft wit. Dezelfde taal als bij
+# de rijtjes, waar de uitgang ook cyaan is: wat wisselt is gekleurd, wat vastligt is wit.
+# Zo zie je in וְהָאָרֶץ meteen dat er maar één woord in zit dat je hoeft te kennen.
+def heb_gekleurd(vorm, parsing, maat=None):
+    """De vorm met het voorvoegsel en het achtervoegsel in kleur.
+
+    Lukt het splitsen niet — bij een achtervoegsel dat anders geschreven is dan de tabel
+    kent — dan komt de vorm ongekleurd terug. Liever geen kleur dan de verkeerde letters
+    aanwijzen; daar leer je iets verkeerds van."""
+    voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
+    stijl = f"font-size:{maat}px" if maat else ""
+    if not voor and not achter:
+        return f"<span class='hebreeuws' style='{stijl}'>{vorm}</span>"
+    stukken = []
+    if voor:
+        stukken.append(f"<span style='color:{MERK}'>{voor}</span>")
+    stukken.append(f"<span style='color:{TEKST}'>{kern}</span>")
+    if achter:
+        stukken.append(f"<span style='color:{MERK}'>{achter}</span>")
+    return f"<span class='hebreeuws' style='{stijl}'>" + "".join(stukken) + "</span>"
+
+
+def heb_affix_uitleg(parsing):
+    """Wat de voor- en achtervoegsels van deze vorm betekenen, als losse regels."""
+    voor_codes, _kern, achter = hebreeuws._codes(parsing)
+    uit = [f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}"
+           for c in voor_codes]
+    if achter:
+        uit.append(f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}")
+    return uit
 
 
 def heb_woordinfo(g):
@@ -6603,9 +6927,14 @@ def heblezenpagina():
                 kleur, rand = ZACHT, RAND        # niet in de lijst: dat woord krijg je erbij
             else:
                 kleur, rand = TEKST, (RAND if gekend else FOUT)
+            # Het woord met zijn voorvoegsels in kleur — maar alleen als je hem al hebt
+            # aangetikt of als je 'alles tonen' aan hebt. Anders geeft de kleur het al weg
+            # en valt er niets meer te herkennen.
+            binnen = (heb_gekleurd(vorm, _parsing) if n in open_gezet
+                      else f"<span class='hebreeuws'>{vorm}</span>")
             vakjes.append(
-                f"<span class='leeswoord hebreeuws' data-n='{n}' "
-                f"style='color:{kleur};border-bottom:2px solid {rand}'>{vorm}</span>")
+                f"<span class='leeswoord' data-n='{n}' "
+                f"style='color:{kleur};border-bottom:2px solid {rand}'>{binnen}</span>")
         tekst.set_content(" ".join(vakjes))
         bekend = sum(1 for _v, s, _p in vers["woorden"]
                      if (info.get(s) or {}).get("streak", 0)
@@ -6623,11 +6952,13 @@ def heblezenpagina():
                 w = info.get(strong)
                 betekenis = heb_betekenis(w) if w else "staat niet in de woordenlijst"
                 ontleed = heb_ontleding(parsing)
+                affixen = heb_affix_uitleg(parsing)
                 ui.html(
                     f"<div style='border-top:1px solid {RAND};padding:6px 0'>"
-                    f"<span class='hebreeuws' style='font-size:20px;color:{TEKST}'>"
-                    f"{vorm}</span>"
+                    f"{heb_gekleurd(vorm, parsing, maat=20)}"
                     f"<span style='color:{TEKST};font-size:14px'> — {betekenis}</span>"
+                    + (f"<div style='color:{MERK};font-size:12.5px'>"
+                       f"{' · '.join(affixen)}</div>" if affixen else "")
                     + (f"<div style='color:{ZACHT};font-size:12.5px'>{ontleed}</div>"
                        if ontleed else "")
                     + "</div>")

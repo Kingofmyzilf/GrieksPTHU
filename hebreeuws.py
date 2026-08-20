@@ -127,6 +127,105 @@ def vorm_ok(gegeven, doel):
     return medeklinkers(naar_hebreeuws(gegeven)) == doel_med
 
 
+# --------------------------------------------------------------- voor- en achtervoegsels
+# Bijna de helft van alle woordvormen in de Tenach draagt een voorvoegsel, en dat is precies
+# wat een vers ondoorzichtig maakt als je het niet ziet: וְהָאָרֶץ is וְ + הָ + אָרֶץ, en pas
+# als je die drie uit elkaar haalt herken je אֶרֶץ dat je gewoon geleerd hebt.
+#
+# De ontleedcode zegt wélke eraan zitten ('Conj-w, Art | N-fs'), maar niet waar ze ophouden.
+# Dat leiden we hier af: elk voorvoegsel is één letter, en we lopen ze in volgorde af.
+#
+# Eén ding maakt dat lastiger dan het klinkt, en dat is de assimilerende he. Na בְּ, כְּ of
+# לְ verdwijnt het lidwoord als letter en blijft alleen de klinker over: בַּיּוֹם is בְּ + הַ +
+# יוֹם, met een dagesj in de jod maar zonder he. Staat er dus 'Prep-b, Art' en is er geen he
+# te vinden, dan is dat geen fout maar precies wat er hoort te gebeuren.
+VOORVOEGSEL_LETTER = {"Conj-w": "ו", "Art": "ה", "Interrog": "ה",
+                      "Prep-b": "ב", "Prep-k": "כ", "Prep-l": "ל", "Prep-m": "מ"}
+VOORVOEGSEL_NL = {"Conj-w": "en", "Art": "de/het", "Interrog": "vraagwoord",
+                  "Prep-b": "in, met, door", "Prep-k": "als, zoals",
+                  "Prep-l": "voor, naar, aan", "Prep-m": "uit, van, dan"}
+# De persoonsaanduidingen die als achtervoegsel achter de kern kunnen staan.
+ACHTERVOEGSEL_NL = {"1cs": "mijn / mij", "2ms": "jouw / jou (m)", "2fs": "jouw / jou (v)",
+                    "3ms": "zijn / hem", "3fs": "haar", "1cp": "ons",
+                    "2mp": "jullie (m)", "2fp": "jullie (v)", "3mp": "hun / hen (m)",
+                    "3fp": "hun / hen (v)"}
+
+
+def _codes(parsing):
+    """De ontleedcode uit elkaar: (voorvoegsels, kern, achtervoegsel).
+
+    Op plaats afgaan kan niet: 'N-msc | 3ms' heeft de kern vooraan en 'Conj-w | N-fs' het
+    voorvoegsel. Daarom kijken we naar de code zelf."""
+    voor, kern, achter = [], "", ""
+    for stuk in str(parsing or "").split("|"):
+        for code in stuk.split(","):
+            code = code.strip()
+            if not code:
+                continue
+            if code in VOORVOEGSEL_LETTER:
+                voor.append(code)
+            elif code in ACHTERVOEGSEL_NL:
+                achter = code
+            elif not kern:
+                kern = code
+    return voor, kern, achter
+
+
+def splits_affixen(vorm, parsing):
+    """(voorvoegsel, kern, achtervoegsel) als stukken tekst uit de vorm zelf.
+
+    Alleen wat we met zekerheid kunnen aanwijzen wordt afgesplitst. Vinden we een
+    voorvoegselletter niet waar hij hoort te staan, dan stoppen we — dan is het beter niets
+    te kleuren dan het verkeerde stuk."""
+    tekst = str(vorm or "")
+    voor_codes, _kern, achter_code = _codes(parsing)
+    i = 0
+    letters = [n for n, t in enumerate(tekst) if "א" <= t <= "ת"]
+    gebruikt = 0
+    for code in voor_codes:
+        if gebruikt >= len(letters):
+            break
+        plek = letters[gebruikt]
+        if tekst[plek] != VOORVOEGSEL_LETTER[code]:
+            # De assimilerende he: geen letter, dus niets te consumeren. Elk ánder verschil
+            # betekent dat we het spoor kwijt zijn en dan splitsen we niet verder.
+            if code in ("Art", "Interrog"):
+                continue
+            break
+        gebruikt += 1
+        # Alles tot en met de klinkertekens die bij deze letter horen.
+        volgende = letters[gebruikt] if gebruikt < len(letters) else len(tekst)
+        i = volgende
+    voorvoegsel, rest = tekst[:i], tekst[i:]
+
+    achtervoegsel = ""
+    if achter_code and rest:
+        for einde in ACHTERVOEGSEL_VORMEN.get(achter_code, ()):
+            if rest.endswith(einde) and len(rest) > len(einde) + 1:
+                achtervoegsel = einde
+                rest = rest[:-len(einde)]
+                break
+    return voorvoegsel, rest, achtervoegsel
+
+
+# Hoe een achtervoegsel geschreven wordt. Meer dan één vorm per persoon, want dat hangt af
+# van wat ervoor staat: enkelvoud of meervoud, en welke klinker. Langste eerst, anders zou
+# 'הוּ' al matchen op 'ו'. Wat hier niet in staat wordt niet gekleurd — liever niets dan
+# het verkeerde stuk.
+ACHTERVOEGSEL_VORMEN = {
+    "1cs": ("ַי", "ִי", "ֵנִי", "נִי", "י"),
+    "2ms": ("ֶיךָ", "ְךָ", "ֶךָ", "ָךְ", "ךָ", "ךְ"),
+    "2fs": ("ַיִךְ", "ֵךְ", "ָךְ", "ךְ"),
+    "3ms": ("ֵהוּ", "ָיו", "ֵימוֹ", "הוּ", "וֹ", "ו"),
+    "3fs": ("ֶיהָ", "ָהּ", "הָ"),
+    "1cp": ("ֵינוּ", "ֵנוּ", "נוּ"),
+    "2mp": ("ֵיכֶם", "ְכֶם", "כֶם"),
+    "2fp": ("ֵיכֶן", "ְכֶן", "כֶן"),
+    "3mp": ("ֵיהֶם", "ֵהֶם", "ָם", "הֶם"),
+    "3fp": ("ֵיהֶן", "ֵהֶן", "ָן", "הֶן"),
+}
+
+
 def sleutel(woord):
     """Waaronder de voortgang van dit woord wordt bewaard: lijstnummer plus medeklinkers.
 
