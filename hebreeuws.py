@@ -15,6 +15,7 @@ Twee dingen liggen hier vast, en die bepalen hoe het oefenen voelt:
     woord. Precies zoals de slot-sigma bij Grieks.
 """
 import functools
+import gzip
 import json
 import os
 
@@ -22,6 +23,7 @@ _HIER = os.path.dirname(os.path.abspath(__file__))
 BESTAND = os.path.join(_HIER, "hebreeuws_woorden.json")
 RIJTJES = os.path.join(_HIER, "hebreeuws_actief.json")
 VERZEN = os.path.join(_HIER, "hebreeuws_lezen.json")
+TENACH = os.path.join(_HIER, "tenach")
 
 # Welke Latijnse letters welke Hebreeuwse letter geven. Ruim opgezet: waar twee
 # schrijfwijzen voor de hand liggen worden ze allebei geaccepteerd, want fout rekenen op
@@ -274,6 +276,31 @@ def laad_woorden():
     """De 410 woorden met hun betekenis, hint, frequentie en vindplaatsen."""
     try:
         with open(BESTAND, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+@functools.lru_cache(maxsize=1)
+def tenach_index():
+    """De 39 boeken: hoe ze heten, hoeveel verzen en hoeveel hoofdstukken."""
+    try:
+        with open(os.path.join(TENACH, "index.json"), encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+# Twee boeken tegelijk in het geheugen. Meer hoeft niet: je leest er één, en met twee kun
+# je terugbladeren zonder opnieuw uit te pakken. Het grootste boek is 165 kB ingepakt en
+# ongeveer 3 MB uitgepakt, dus twee is te overzien — de hele Tenach tegelijk zou dat
+# vijftienvoudig doen, en op de gratis laag van Render is 512 MB alles wat er is.
+@functools.lru_cache(maxsize=2)
+def laad_tenach_boek(bestand):
+    """De verzen van één boek: [{'v': '1:1', 'w': [[vorm, strong, parsing], …]}, …]."""
+    pad = os.path.join(TENACH, os.path.basename(str(bestand)))
+    try:
+        with gzip.open(pad, "rt", encoding="utf-8") as f:
             return json.load(f)
     except (OSError, ValueError):
         return []

@@ -86,6 +86,9 @@ ui.add_head_html(f"""
                 font-size:max(1em, {HEBREEUWS_MIN}); }}
   /* Een hele regel die met Hebreeuws begint: dan mag de regel zelf ook rechts uitlijnen. */
   .hebrij {{ direction:rtl; unicode-bidi:isolate; text-align:right; }}
+  /* Een woord in een leestekst: eigen aanraakvlak, met genoeg lucht om te mikken. */
+  .leeswoord {{ font-size:27px; padding:2px 3px 1px; margin:0 2px;
+                cursor:pointer; display:inline-block; }}
   /* De twee balken staan onder elkaar vast onderaan. dvh volgt het zichtbare deel van
      het scherm, zodat ze meebewegen als de adresbalk in- of uitschuift. */
   /* De drie hoogtes staan in variabelen en alles rekent ermee. Los ingevulde getallen
@@ -6715,6 +6718,157 @@ def hebaffixpagina():
     toon()
 
 
+# ============================================================== Tenach doorbladeren
+# De hele Hebreeuwse bijbel, 22.877 verzen: kies een boek en een hoofdstuk en lees. Elk
+# woord is aan te tikken voor de betekenis, de ontleding en zijn voor- en achtervoegsels —
+# dezelfde bouwstenen als bij het losse leesvers, maar dan met de tekst zelf als bron.
+#
+# Per boek één ingepakt bestand, en er worden er hoogstens twee tegelijk geladen. Gemeten:
+# Psalmen is het grootste en kost 6,4 MB uitgepakt, twee boeken samen 12,7 MB. Alles
+# tegelijk zou rond de 100 MB liggen, en op de gratis laag van Render is 512 MB alles wat
+# er is — dus dat scheelt de app het verschil tussen werken en omvallen.
+TENACH_MAX_VERZEN = 40      # zoveel verzen tegelijk; Psalm 119 heeft er 176
+
+
+@ui.page("/tenach")
+def tenachpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    boeken = hebreeuws.tenach_index()
+    if not boeken:
+        ui.navigate.to("/lezen")
+        return
+    info = heb_woordinfo(g)
+    op_naam = {b["nl"]: b for b in boeken}
+    staat = {"boek": boeken[0]["nl"], "hoofdstuk": 1, "vanaf": 0, "open": set()}
+
+    with ui.column().classes("inhoud w-full gap-2"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Tenach").style("font-size:26px;font-weight:700")
+            ui.label(f"{sum(b['verzen'] for b in boeken)} verzen").style(
+                f"color:{ZACHT};font-size:12.5px")
+        with ui.row().classes("w-full gap-2 no-wrap"):
+            kies_boek = ui.select(list(op_naam), value=staat["boek"], label="Boek",
+                                  with_input=True).props(
+                "outlined dense dark").classes("flex-grow")
+            kies_hfst = ui.select([1], value=1, label="Hoofdstuk").props(
+                "outlined dense dark").style("width:116px;min-width:116px")
+        kop = ui.label().style(f"color:{ZACHT};font-size:12.5px")
+        tekst = ui.html().classes("hebrij w-full").style(
+            "padding:4px 0 2px;line-height:2.15")
+        meer = ui.row().classes("w-full justify-center")
+        uitleg = ui.column().classes("w-full gap-0")
+    onderbalk("Lezen")
+
+    def verzen_van_hoofdstuk():
+        boek = op_naam[staat["boek"]]
+        alles = hebreeuws.laad_tenach_boek(boek["bestand"])
+        return [v for v in alles
+                if v["v"].split(":")[0] == str(staat["hoofdstuk"])]
+
+    def teken():
+        verzen = verzen_van_hoofdstuk()
+        vanaf = staat["vanaf"]
+        stuk = verzen[vanaf:vanaf + TENACH_MAX_VERZEN]
+        kop.text = (f"{staat['boek']} {staat['hoofdstuk']} · {len(verzen)} verzen"
+                    + (f" · nu {vanaf + 1}–{vanaf + len(stuk)}"
+                       if len(verzen) > TENACH_MAX_VERZEN else ""))
+        regels = []
+        for v in stuk:
+            nummer = v["v"].split(":")[-1]
+            vakjes = [f"<span style='color:{ZACHT};font-size:12px;"
+                      f"vertical-align:super'>{nummer}</span>"]
+            for n, (vorm, strong, parsing) in enumerate(v["w"]):
+                sleutel = f"{v['v']}#{n}"
+                aan = sleutel in staat["open"]
+                binnen = (heb_gekleurd(vorm, parsing) if aan
+                          else f"<span class='hebreeuws'>{vorm}</span>")
+                vakjes.append(f"<span class='leeswoord' data-w='{sleutel}' "
+                              f"style='color:{MERK if aan else TEKST}'>{binnen}</span>")
+            regels.append(" ".join(vakjes))
+        tekst.set_content(" ".join(regels) or "Geen tekst gevonden.")
+        meer.clear()
+        if len(verzen) > TENACH_MAX_VERZEN:
+            with meer:
+                if vanaf:
+                    ui.button("← eerder", on_click=lambda: blader(-1), color=None).props(
+                        "flat dense no-caps").style(f"color:{MERK};font-size:13px")
+                if vanaf + TENACH_MAX_VERZEN < len(verzen):
+                    ui.button("verder →", on_click=lambda: blader(1), color=None).props(
+                        "flat dense no-caps").style(f"color:{MERK};font-size:13px")
+
+    def blader(richting):
+        staat["vanaf"] = max(0, staat["vanaf"] + richting * TENACH_MAX_VERZEN)
+        staat["open"].clear()
+        teken()
+        teken_uitleg()
+
+    def teken_uitleg():
+        uitleg.clear()
+        if not staat["open"]:
+            return
+        alles = {v["v"]: v for v in verzen_van_hoofdstuk()}
+        with uitleg:
+            for sleutel in sorted(staat["open"]):
+                ref, _, n = sleutel.rpartition("#")
+                v = alles.get(ref)
+                if not v or int(n) >= len(v["w"]):
+                    continue
+                vorm, strong, parsing = v["w"][int(n)]
+                w = info.get(strong)
+                betekenis = (heb_betekenis(w) if w
+                             else "staat niet in je woordenlijst")
+                affixen = heb_affix_uitleg(parsing)
+                ontleed = heb_ontleding(parsing)
+                ui.html(
+                    f"<div style='border-top:1px solid {RAND};padding:6px 0'>"
+                    f"<span style='color:{ZACHT};font-size:12px'>{ref}</span> "
+                    f"{heb_gekleurd(vorm, parsing, maat=20)}"
+                    f"<span style='color:{TEKST};font-size:14px'> — {betekenis}</span>"
+                    + (f"<div style='color:{MERK};font-size:12.5px'>"
+                       f"{' · '.join(affixen)}</div>" if affixen else "")
+                    + (f"<div style='color:{ZACHT};font-size:12.5px'>{ontleed}</div>"
+                       if ontleed else "")
+                    + "</div>")
+
+    def tik(sleutel):
+        if sleutel in staat["open"]:
+            staat["open"].discard(sleutel)
+        else:
+            staat["open"].add(sleutel)
+        teken()
+        teken_uitleg()
+
+    def zet_hoofdstukken():
+        boek = op_naam[staat["boek"]]
+        kies_hfst.options = list(range(1, int(boek["hoofdstukken"]) + 1)) or [1]
+        kies_hfst.update()
+
+    def boek_gewisseld():
+        staat["boek"] = kies_boek.value
+        staat["hoofdstuk"] = 1
+        staat["vanaf"] = 0
+        staat["open"].clear()
+        zet_hoofdstukken()
+        kies_hfst.value = 1
+        teken()
+        teken_uitleg()
+
+    def hoofdstuk_gewisseld():
+        staat["hoofdstuk"] = int(kies_hfst.value or 1)
+        staat["vanaf"] = 0
+        staat["open"].clear()
+        teken()
+        teken_uitleg()
+
+    ui.on("leeswoord", lambda e: tik(str(e.args)))
+    kies_boek.on_value_change(lambda _=None: boek_gewisseld())
+    kies_hfst.on_value_change(lambda _=None: hoofdstuk_gewisseld())
+    zet_hoofdstukken()
+    teken()
+
+
 # ============================================================== Hebreeuws · lezen
 # Waar het hele woordenleren voor bedoeld is: een vers openslaan en het snappen. Er staat
 # geen vertaling bij, en dat is een keuze — met een vertaling ernaast lees je de vertaling.
@@ -6990,23 +7144,7 @@ def heblezenpagina():
             opslagmelding.text = "Voortgang opgeslagen"
         ui.navigate.to("/lezen/hebreeuws")
 
-    ui.add_head_html("""
-    <style>
-      /* Elk woord een eigen aanraakvlak, met genoeg lucht ertussen om te mikken. */
-      .leeswoord { font-size:27px; padding:2px 3px 1px; margin:0 2px;
-                   cursor:pointer; display:inline-block; }
-    </style>""", shared=True)
-    # Eén afhandelaar voor alle woorden: NiceGUI kan geen klik op los stukje html
-    # aanhangen, dus we vangen hem op de omhullende bak en lezen data-n uit.
-    tekst.on("click", lambda e: None)
     ui.on("leeswoord", lambda e: tik(int(e.args)))
-    ui.add_body_html("""
-    <script>
-      document.addEventListener('click', function (e) {
-        const el = e.target.closest('.leeswoord');
-        if (el) { emitEvent('leeswoord', parseInt(el.dataset.n, 10)); }
-      });
-    </script>""")
 
     alles_knop.on_click(alles)
     volgende.on_click(gelezen)
@@ -7024,6 +7162,18 @@ def lezenpagina():
         with ui.row().classes("w-full items-center justify-between no-wrap"):
             ui.label("Lezen").style("font-size:26px;font-weight:700")
             taalknop(g, "/lezen")
+        if heb and hebreeuws.tenach_index():
+            _boeken = hebreeuws.tenach_index()
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/tenach")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    with ui.column().classes("gap-0").style("min-width:0"):
+                        ui.label("Tenach doorbladeren").style(
+                            f"color:{TEKST};font-size:16px;font-weight:600")
+                        ui.label(f"de hele tekst — {len(_boeken)} boeken, "
+                                 f"{sum(b['verzen'] for b in _boeken)} verzen").style(
+                            f"color:{ZACHT};font-size:12.5px")
+                    ui.label("›").style(f"color:{ZACHT};font-size:22px")
         if heb and hebreeuws.laad_verzen():
             verzen = hebreeuws.laad_verzen()
             gelezen = heb_gelezen(g)
@@ -7094,6 +7244,20 @@ MANIFEST = {
          "type": "image/png", "purpose": "maskable"},
     ],
 }
+
+
+# Eén klikafhandelaar voor alle leeswoorden, op de pagina als geheel. NiceGUI kan geen
+# klik aan een los stukje html hangen, dus we vangen hem op en geven door wat er in het
+# data-attribuut staat: een nummer bij het losse leesvers, een verwijzing bij de Tenach.
+ui.add_body_html("""
+<script>
+  document.addEventListener('click', function (e) {
+    const el = e.target.closest('.leeswoord');
+    if (!el) return;
+    emitEvent('leeswoord', el.dataset.w !== undefined
+                           ? el.dataset.w : parseInt(el.dataset.n, 10));
+  });
+</script>""", shared=True)
 
 
 @app.get("/manifest.webmanifest")

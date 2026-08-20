@@ -1,0 +1,314 @@
+[
+ {
+  "boek": "Genesis",
+  "nl": "Genesis",
+  "bestand": "Genesis.json.gz",
+  "verzen": 1533,
+  "woorden": 20613,
+  "hoofdstukken": 50
+ },
+ {
+  "boek": "Exodus",
+  "nl": "Exodus",
+  "bestand": "Exodus.json.gz",
+  "verzen": 1213,
+  "woorden": 16713,
+  "hoofdstukken": 40
+ },
+ {
+  "boek": "Leviticus",
+  "nl": "Leviticus",
+  "bestand": "Leviticus.json.gz",
+  "verzen": 859,
+  "woorden": 11950,
+  "hoofdstukken": 27
+ },
+ {
+  "boek": "Numbers",
+  "nl": "Numeri",
+  "bestand": "Numbers.json.gz",
+  "verzen": 1288,
+  "woorden": 16412,
+  "hoofdstukken": 36
+ },
+ {
+  "boek": "Deuteronomy",
+  "nl": "Deuteronomium",
+  "bestand": "Deuteronomy.json.gz",
+  "verzen": 959,
+  "woorden": 14294,
+  "hoofdstukken": 34
+ },
+ {
+  "boek": "Joshua",
+  "nl": "Jozua",
+  "bestand": "Joshua.json.gz",
+  "verzen": 658,
+  "woorden": 10051,
+  "hoofdstukken": 24
+ },
+ {
+  "boek": "Judges",
+  "nl": "Richteren",
+  "bestand": "Judges.json.gz",
+  "verzen": 618,
+  "woorden": 9885,
+  "hoofdstukken": 21
+ },
+ {
+  "boek": "Ruth",
+  "nl": "Ruth",
+  "bestand": "Ruth.json.gz",
+  "verzen": 85,
+  "woorden": 1294,
+  "hoofdstukken": 4
+ },
+ {
+  "boek": "1 Samuel",
+  "nl": "1 Samuël",
+  "bestand": "1_Samuel.json.gz",
+  "verzen": 810,
+  "woorden": 13264,
+  "hoofdstukken": 31
+ },
+ {
+  "boek": "2 Samuel",
+  "nl": "2 Samuël",
+  "bestand": "2_Samuel.json.gz",
+  "verzen": 695,
+  "woorden": 11039,
+  "hoofdstukken": 24
+ },
+ {
+  "boek": "1 Kings",
+  "nl": "1 Koningen",
+  "bestand": "1_Kings.json.gz",
+  "verzen": 816,
+  "woorden": 13140,
+  "hoofdstukken": 22
+ },
+ {
+  "boek": "2 Kings",
+  "nl": "2 Koningen",
+  "bestand": "2_Kings.json.gz",
+  "verzen": 719,
+  "woorden": 12280,
+  "hoofdstukken": 25
+ },
+ {
+  "boek": "1 Chronicles",
+  "nl": "1 Kronieken",
+  "bestand": "1_Chronicles.json.gz",
+  "verzen": 942,
+  "woorden": 10745,
+  "hoofdstukken": 29
+ },
+ {
+  "boek": "2 Chronicles",
+  "nl": "2 Kronieken",
+  "bestand": "2_Chronicles.json.gz",
+  "verzen": 822,
+  "woorden": 13314,
+  "hoofdstukken": 36
+ },
+ {
+  "boek": "Ezra",
+  "nl": "Ezra",
+  "bestand": "Ezra.json.gz",
+  "verzen": 213,
+  "woorden": 2541,
+  "hoofdstukken": 10
+ },
+ {
+  "boek": "Nehemiah",
+  "nl": "Nehemia",
+  "bestand": "Nehemiah.json.gz",
+  "verzen": 405,
+  "woorden": 5312,
+  "hoofdstukken": 13
+ },
+ {
+  "boek": "Esther",
+  "nl": "Ester",
+  "bestand": "Esther.json.gz",
+  "verzen": 167,
+  "woorden": 3045,
+  "hoofdstukken": 10
+ },
+ {
+  "boek": "Job",
+  "nl": "Job",
+  "bestand": "Job.json.gz",
+  "verzen": 1070,
+  "woorden": 8343,
+  "hoofdstukken": 42
+ },
+ {
+  "boek": "Psalm",
+  "nl": "Psalmen",
+  "bestand": "Psalm.json.gz",
+  "verzen": 2461,
+  "woorden": 19586,
+  "hoofdstukken": 150
+ },
+ {
+  "boek": "Proverbs",
+  "nl": "Spreuken",
+  "bestand": "Proverbs.json.gz",
+  "verzen": 915,
+  "woorden": 6915,
+  "hoofdstukken": 31
+ },
+ {
+  "boek": "Ecclesiastes",
+  "nl": "Prediker",
+  "bestand": "Ecclesiastes.json.gz",
+  "verzen": 222,
+  "woorden": 2987,
+  "hoofdstukken": 12
+ },
+ {
+  "boek": "Song of Solomon",
+  "nl": "Hooglied",
+  "bestand": "Song_of_Solomon.json.gz",
+  "verzen": 117,
+  "woorden": 1250,
+  "hoofdstukken": 8
+ },
+ {
+  "boek": "Isaiah",
+  "nl": "Jesaja",
+  "bestand": "Isaiah.json.gz",
+  "verzen": 1292,
+  "woorden": 16931,
+  "hoofdstukken": 66
+ },
+ {
+  "boek": "Jeremiah",
+  "nl": "Jeremia",
+  "bestand": "Jeremiah.json.gz",
+  "verzen": 1363,
+  "woorden": 21819,
+  "hoofdstukken": 52
+ },
+ {
+  "boek": "Lamentations",
+  "nl": "Klaagliederen",
+  "bestand": "Lamentations.json.gz",
+  "verzen": 154,
+  "woorden": 1542,
+  "hoofdstukken": 5
+ },
+ {
+  "boek": "Ezekiel",
+  "nl": "Ezechiël",
+  "bestand": "Ezekiel.json.gz",
+  "verzen": 1273,
+  "woorden": 18730,
+  "hoofdstukken": 48
+ },
+ {
+  "boek": "Daniel",
+  "nl": "Daniël",
+  "bestand": "Daniel.json.gz",
+  "verzen": 158,
+  "woorden": 2320,
+  "hoofdstukken": 12
+ },
+ {
+  "boek": "Hosea",
+  "nl": "Hosea",
+  "bestand": "Hosea.json.gz",
+  "verzen": 197,
+  "woorden": 2381,
+  "hoofdstukken": 14
+ },
+ {
+  "boek": "Joel",
+  "nl": "Joël",
+  "bestand": "Joel.json.gz",
+  "verzen": 73,
+  "woorden": 957,
+  "hoofdstukken": 3
+ },
+ {
+  "boek": "Amos",
+  "nl": "Amos",
+  "bestand": "Amos.json.gz",
+  "verzen": 146,
+  "woorden": 2042,
+  "hoofdstukken": 9
+ },
+ {
+  "boek": "Obadiah",
+  "nl": "Obadja",
+  "bestand": "Obadiah.json.gz",
+  "verzen": 21,
+  "woorden": 291,
+  "hoofdstukken": 1
+ },
+ {
+  "boek": "Jonah",
+  "nl": "Jona",
+  "bestand": "Jonah.json.gz",
+  "verzen": 48,
+  "woorden": 688,
+  "hoofdstukken": 4
+ },
+ {
+  "boek": "Micah",
+  "nl": "Micha",
+  "bestand": "Micah.json.gz",
+  "verzen": 105,
+  "woorden": 1396,
+  "hoofdstukken": 7
+ },
+ {
+  "boek": "Nahum",
+  "nl": "Nahum",
+  "bestand": "Nahum.json.gz",
+  "verzen": 47,
+  "woorden": 558,
+  "hoofdstukken": 3
+ },
+ {
+  "boek": "Habakkuk",
+  "nl": "Habakuk",
+  "bestand": "Habakkuk.json.gz",
+  "verzen": 56,
+  "woorden": 671,
+  "hoofdstukken": 3
+ },
+ {
+  "boek": "Zephaniah",
+  "nl": "Sefanja",
+  "bestand": "Zephaniah.json.gz",
+  "verzen": 53,
+  "woorden": 767,
+  "hoofdstukken": 3
+ },
+ {
+  "boek": "Haggai",
+  "nl": "Haggai",
+  "bestand": "Haggai.json.gz",
+  "verzen": 38,
+  "woorden": 600,
+  "hoofdstukken": 2
+ },
+ {
+  "boek": "Zechariah",
+  "nl": "Zacharia",
+  "bestand": "Zechariah.json.gz",
+  "verzen": 211,
+  "woorden": 3128,
+  "hoofdstukken": 14
+ },
+ {
+  "boek": "Malachi",
+  "nl": "Maleachi",
+  "bestand": "Malachi.json.gz",
+  "verzen": 55,
+  "woorden": 876,
+  "hoofdstukken": 4
+ }
+]
