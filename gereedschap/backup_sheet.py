@@ -28,6 +28,11 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
+# Naar de map van de repo toe. De inloggegevens worden gezocht op '.streamlit/secrets.toml'
+# — een pad ten opzichte van waar je stáát, niet van waar dit script staat. Vanuit een
+# andere map kwam er dus 'geen inloggegevens gevonden', en een taak in de Taakplanner
+# begint standaard ergens anders. Zo werkt het script van waar je hem ook aanroept.
+os.chdir(REPO)
 
 import grieks_opslag as opslag
 
@@ -51,7 +56,15 @@ def tabbladen():
 def maak_kopie():
     os.makedirs(MAP, exist_ok=True)
     alles = {}
-    for ws in tabbladen():
+    try:
+        bladen = tabbladen()
+    except Exception as e:
+        # Zonder verbinding is er niets te bewaren, en een traceback zegt niet wát er
+        # aan de hand is. De twee dingen die het bijna altijd zijn staan er nu bij.
+        sys.exit(f"Verbinden met de Sheet lukte niet:\n  {e}\n\n"
+                 f"Staat er een geldige sleutel in .streamlit/secrets.toml? Vervangen "
+                 f"gaat met:\n  py gereedschap/zet_sleutel.py <sleutel.json>")
+    for ws in bladen:
         rijen = ws.get_all_records()
         if not rijen:
             print(f"  {ws.title}: leeg, overgeslagen")
