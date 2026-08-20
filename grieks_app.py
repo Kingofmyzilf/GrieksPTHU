@@ -4378,7 +4378,22 @@ class HebSessie:
         if les:
             woorden = [w for w in woorden if int(w.get("les", 0)) == les] or woorden
         self.level = None
-        if p["heb_keuze"] == "Leerpad (volgend blokje)":
+        # Heb je een tekst ingesteld, dan gaan die woorden voor. Dat overrulet de volgorde
+        # met opzet: je hebt dan een hoofdstuk dat je moet kennen, en dan is 'wat komt het
+        # vaakst voor in de hele Tenach' niet meer de vraag die telt.
+        self.tekst = ""
+        self.tekst_aantal = 0
+        _tekst_naam, _tekst_strongs = heb_tekst_keuze(g)
+        if _tekst_strongs:
+            _wil = set(_tekst_strongs)
+            _uit_tekst = [w for w in woorden if str(w.get("strong") or "") in _wil]
+            if _uit_tekst:
+                self.tekst = _tekst_naam
+                self.tekst_aantal = len(_uit_tekst)
+                _uit_tekst.sort(key=lambda w: (int(w.get("streak", 0) or 0),
+                                               -int(w.get("frequentie", 0) or 0)))
+                woorden = _uit_tekst
+        if not self.tekst and p["heb_keuze"] == "Leerpad (volgend blokje)":
             # Het gekozen blokje, of anders het eerstvolgende dat nog niet af is.
             status = heb_levels(g)
             gekozen = int(p.get("heb_level", 0) or 0)
@@ -4515,6 +4530,12 @@ def hebpagina():
                 ui.button("⚙", on_click=instellingen.open, color=None).props(
                     "flat dense no-caps").classes("raakbaar").style(
                     f"color:{ZACHT};font-size:17px;min-width:32px")
+        if sessie.tekst:
+            ui.html(f"<div style='display:flex;justify-content:space-between;"
+                    f"font-size:13px;color:{ZACHT}'><span>Tekst: "
+                    f"<span style='color:{MERK}'>{sessie.tekst}</span></span>"
+                    f"<span>{sessie.tekst_aantal} woorden uit die tekst</span>"
+                    f"</div>")
         if sessie.level:
             _af = sum(1 for s in heb_levels(g) if s["voltooid"])
             ui.html(f"<div style='display:flex;justify-content:space-between;font-size:13px;"
@@ -6718,6 +6739,193 @@ def hebaffixpagina():
     toon()
 
 
+# ============================================================== Tenach · een tekst oefenen
+# Andersom werken dan de woordenlijst. Niet 'leer deze 428 woorden en dan kun je lezen',
+# maar: kies het hoofdstuk dat je aanstaande week moet kennen, en de app zoekt uit welke
+# woorden daarin nog niet zitten. Die zet hij vooraan in je woordenschat.
+#
+# Dat kan omdat elk woord in de tekst zijn Strong-nummer bij zich heeft en de woordenlijst
+# ook. Wat overblijft na het aftrekken is precies wat je nog mist — en met de frequentie
+# erbij weet je meteen welke daarvan het hardst lonen.
+#
+# De gekozen woorden komen in ui_prefs terecht en niet in de statistieken: het is een
+# keuze, geen voortgang. Zo staat hij ook in de Streamlit-app als je daar inlogt.
+TEKST_SLEUTEL = "ng_heb_tekst"          # welk hoofdstuk je hebt gekozen
+TEKST_WOORDEN = "ng_heb_tekstwoorden"   # de Strong-nummers eruit die je wil leren
+
+
+def heb_tekst_keuze(g):
+    """Wat er nu gekozen staat: (beschrijving, lijst met Strong-nummers)."""
+    p = g.stats.get("ui_prefs") or {}
+    woorden = p.get(TEKST_WOORDEN) or []
+    return str(p.get(TEKST_SLEUTEL, "") or ""), [str(s) for s in woorden]
+
+
+def heb_tekst_analyse(g, boek, hoofdstuk):
+    """Wat staat er in dit hoofdstuk, en wat ken je ervan?
+
+    Geeft per Strong-nummer terug hoe vaak het in dít hoofdstuk staat, met het woord uit de
+    lijst erbij als het erin staat. Zo is in één oogopslag te zien wat je mist."""
+    verzen = [v for v in hebreeuws.laad_tenach_boek(boek["bestand"])
+              if v["v"].split(":")[0] == str(hoofdstuk)]
+    info = heb_woordinfo(g)
+    hier = {}
+    for v in verzen:
+        for _vorm, strong, _parsing in v["w"]:
+            if not strong:
+                continue
+            vak = hier.setdefault(strong, {"aantal": 0, "woord": info.get(strong)})
+            vak["aantal"] += 1
+    kent, mist = [], []
+    for strong, vak in hier.items():
+        w = vak["woord"]
+        if w is not None and (int(w.get("streak", 0) or 0)
+                              or int(w.get("score_goed", 0) or 0)):
+            kent.append((strong, vak))
+        else:
+            mist.append((strong, vak))
+    # Wat je mist, eerst de woorden die je vaker in dit hoofdstuk tegenkomt: die leveren
+    # het meeste op voor deze tekst.
+    mist.sort(key=lambda p: (-p[1]["aantal"],
+                             -int((p[1]["woord"] or {}).get("frequentie", 0) or 0)))
+    return verzen, kent, mist
+
+
+@ui.page("/tenach/oefenen")
+def tenachoefenpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    boeken = hebreeuws.tenach_index()
+    if not boeken:
+        ui.navigate.to("/lezen")
+        return
+    op_naam = {b["nl"]: b for b in boeken}
+    gekozen_naam, _woorden = heb_tekst_keuze(g)
+    staat = {"boek": boeken[0]["nl"], "hoofdstuk": 1}
+
+    with ui.column().classes("inhoud w-full gap-2"):
+        ui.label("Een tekst oefenen").style("font-size:26px;font-weight:700")
+        ui.label("Kies het hoofdstuk dat je moet kennen. De app zoekt uit welke woorden "
+                 "daarin nog niet in je woordenschat zitten en zet die vooraan.").style(
+            f"color:{ZACHT};font-size:13px;line-height:1.5")
+        if gekozen_naam:
+            with ui.element("div").classes("kaart w-full"):
+                ui.label(f"Nu ingesteld: {gekozen_naam}").style(
+                    f"color:{MERK};font-size:14px;font-weight:600")
+                ui.label(f"{len(_woorden)} woorden uit die tekst staan vooraan in je "
+                         f"woordenschat.").style(f"color:{ZACHT};font-size:12.5px")
+                ui.button("Weer alle woorden", color=None,
+                          on_click=lambda: wis()).props("flat dense no-caps").style(
+                    f"color:{ZACHT};font-size:12.5px;padding:0")
+        with ui.row().classes("w-full gap-2 no-wrap"):
+            kies_boek = ui.select(list(op_naam), value=staat["boek"], label="Boek",
+                                  with_input=True).props(
+                "outlined dense dark").classes("flex-grow")
+            kies_hfst = ui.select([1], value=1, label="Hoofdstuk").props(
+                "outlined dense dark").style("width:116px;min-width:116px")
+        overzicht = ui.column().classes("w-full gap-2")
+    onderbalk("Lezen")
+
+    async def wis():
+        p = g.stats.setdefault("ui_prefs", {})
+        p.pop(TEKST_SLEUTEL, None)
+        p.pop(TEKST_WOORDEN, None)
+        await run.io_bound(g.bewaar, True)
+        ui.navigate.to("/tenach/oefenen")
+
+    async def instellen(naam, strongs):
+        p = g.stats.setdefault("ui_prefs", {})
+        p[TEKST_SLEUTEL] = naam
+        p[TEKST_WOORDEN] = strongs
+        # De woordenschat werkt op blokjes; met een tekst ingesteld nemen we die volgorde
+        # over, dus zet de oefening op 'Zwakste eerst' — anders zou het leerpad hem
+        # overrulen en krijg je alsnog blokje 1.
+        p["ng_heb_keuze"] = "Zwakste eerst"
+        await run.io_bound(g.bewaar, True)
+        ui.notify(f"{naam} ingesteld — {len(strongs)} woorden staan nu vooraan",
+                  position="top", color="dark")
+        ui.navigate.to("/oefenen/hebreeuws")
+
+    def teken():
+        overzicht.clear()
+        boek = op_naam[staat["boek"]]
+        verzen, kent, mist = heb_tekst_analyse(g, boek, staat["hoofdstuk"])
+        naam = f"{staat['boek']} {staat['hoofdstuk']}"
+        with overzicht:
+            if not verzen:
+                ui.label("Dat hoofdstuk bestaat niet in dit boek.").style(
+                    f"color:{ZACHT};font-size:13px")
+                return
+            totaal = len(kent) + len(mist)
+            in_lijst = [p for p in mist if p[1]["woord"] is not None]
+            buiten = len(mist) - len(in_lijst)
+            with ui.element("div").classes("kaart w-full"):
+                ui.label(f"{naam}: {len(verzen)} verzen, {totaal} verschillende woorden").style(
+                    f"color:{TEKST};font-size:14px;font-weight:600")
+                ui.html(
+                    f"<div style='font-size:13px;line-height:1.7;margin-top:4px'>"
+                    f"<span style='color:{GOED}'>{len(kent)} ken je al</span> · "
+                    f"<span style='color:{MERK}'>{len(in_lijst)} staan in je lijst maar "
+                    f"heb je nog niet gehad</span> · "
+                    f"<span style='color:{ZACHT}'>{buiten} staan niet in de lijst</span>"
+                    f"</div>")
+                if in_lijst:
+                    ui.button(f"Deze {len(in_lijst)} vooraan zetten", color=None,
+                              on_click=lambda: instellen(
+                                  naam, [s for s, _v in in_lijst])).props(
+                        "unelevated no-caps").style(
+                        f"background:{MERK};color:{INKT};font-weight:700;"
+                        f"margin-top:8px")
+                else:
+                    ui.label("Je hebt alle woorden uit dit hoofdstuk die in de lijst "
+                             "staan al gehad.").style(f"color:{GOED};font-size:13px")
+            if in_lijst:
+                with ui.element("div").classes("kaart w-full"):
+                    ui.label("Wat je nog niet had").style(
+                        f"color:{ZACHT};font-size:12.5px;margin-bottom:4px")
+                    ui.html("".join(
+                        f"<div style='display:flex;justify-content:space-between;gap:10px;"
+                        f"border-top:1px solid {RAND};padding:4px 0;font-size:13.5px'>"
+                        f"<span><span class='hebreeuws' style='font-size:18px;"
+                        f"color:{TEKST}'>{v['woord']['hebreeuws']}</span> "
+                        f"<span style='color:{ZACHT}'>"
+                        f"{heb_betekenis(v['woord'])}</span></span>"
+                        f"<span style='color:{MERK};white-space:nowrap'>"
+                        f"{v['aantal']}× hier</span></div>"
+                        for _s, v in in_lijst[:30]))
+                    if len(in_lijst) > 30:
+                        ui.label(f"…en nog {len(in_lijst) - 30}.").style(
+                            f"color:{ZACHT};font-size:12.5px")
+            if buiten:
+                with ui.element("div").classes("kaart w-full"):
+                    ui.label(f"{buiten} woorden in dit hoofdstuk staan niet in de "
+                             f"cursuslijst. Die kun je hier niet oefenen, maar bij het "
+                             f"lezen zie je wel dat ze er zijn.").style(
+                        f"color:{ZACHT};font-size:12.5px;line-height:1.5")
+
+    def zet_hoofdstukken():
+        boek = op_naam[staat["boek"]]
+        kies_hfst.options = list(range(1, int(boek["hoofdstukken"]) + 1)) or [1]
+        kies_hfst.update()
+
+    def boek_gewisseld():
+        staat["boek"] = kies_boek.value
+        staat["hoofdstuk"] = 1
+        zet_hoofdstukken()
+        kies_hfst.value = 1
+        teken()
+
+    def hoofdstuk_gewisseld():
+        staat["hoofdstuk"] = int(kies_hfst.value or 1)
+        teken()
+
+    kies_boek.on_value_change(lambda _=None: boek_gewisseld())
+    kies_hfst.on_value_change(lambda _=None: hoofdstuk_gewisseld())
+    zet_hoofdstukken()
+    teken()
+
+
 # ============================================================== Tenach doorbladeren
 # De hele Hebreeuwse bijbel, 22.877 verzen: kies een boek en een hoofdstuk en lees. Elk
 # woord is aan te tikken voor de betekenis, de ontleding en zijn voor- en achtervoegsels —
@@ -7172,6 +7380,19 @@ def lezenpagina():
                             f"color:{TEKST};font-size:16px;font-weight:600")
                         ui.label(f"de hele tekst — {len(_boeken)} boeken, "
                                  f"{sum(b['verzen'] for b in _boeken)} verzen").style(
+                            f"color:{ZACHT};font-size:12.5px")
+                    ui.label("›").style(f"color:{ZACHT};font-size:22px")
+        if heb and hebreeuws.tenach_index():
+            _naam, _strongs = heb_tekst_keuze(g)
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/tenach/oefenen")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    with ui.column().classes("gap-0").style("min-width:0"):
+                        ui.label("Een tekst oefenen").style(
+                            f"color:{TEKST};font-size:16px;font-weight:600")
+                        ui.label(f"nu: {_naam} · {len(_strongs)} woorden vooraan" if _naam
+                                 else "kies een hoofdstuk; de app haalt de woorden eruit "
+                                      "die je nog mist").style(
                             f"color:{ZACHT};font-size:12.5px")
                     ui.label("›").style(f"color:{ZACHT};font-size:22px")
         if heb and hebreeuws.laad_verzen():
