@@ -11,10 +11,25 @@ geschiedenis om bij te houden. Draaien:
     py gereedschap/maak_deploy.py
 
 Daarna:  git push -f origin nicegui-deploy
+
+Het script raakt je werkmap niet aan: er wordt niet van tak gewisseld en er wordt geen
+bestand verwijderd. Alles gebeurt in een eigen index en met git-plumbing, en aan het eind
+wordt alleen de tak-verwijzing verzet.
+
+Dat is niet uit netheid. Eerst wisselde het script wél van tak, en dat gaf twee problemen
+die allebei zijn voorgekomen:
+
+  * Bleef het halverwege steken, dan stond jij op de deploytak. Je volgende commits kwamen
+    daar terecht in plaats van op de werktak — en die tak gooit dit script weg.
+  * Git op Windows kan de zeven Hebreeuwse PDF's niet verwijderen: hun naam bevat een
+    bolletje, en dan geeft unlink 'Invalid argument'. 'git rm' liet ze dus staan, en
+    daarna kon git niet meer terug naar de werktak omdat er onbeheerde bestanden in de weg
+    stonden. Wat je nooit aanraakt kan ook niet blijven hangen.
 """
 import os
 import subprocess
 import sys
+import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WERKTAK = "nicegui-opslag"
@@ -26,7 +41,7 @@ HOUDEN = {
     "grieks_app.py", "grieks_motor.py", "grieks_opslag.py", "grieks_gebruiker.py",
     "basis_woorden_verrijkt.json", "actief_beheersen.json", "stamtijden.json",
     "structuurwoorden.json", "verwarparen.json",
-    # Hebreeuws. Zonder deze twee valt de taalknop stil weg (hebreeuws.aanwezig() geeft
+    # Hebreeuws. Zonder deze drie valt de taalknop stil weg (hebreeuws.aanwezig() geeft
     # dan False) en merk je pas op de live app dat de helft ontbreekt.
     "hebreeuws.py", "hebreeuws_woorden.json", "hebreeuws_actief.json",
     # grammatica_tabellen.json en grammatica_index.json blijven weg: die gebruikt
@@ -37,71 +52,72 @@ HOUDEN = {
     "HOSTEN.md", "MIGRATIE.md", "OVERDRACHT.md",
 }
 
+BERICHT = (
+    "Deploytak: alleen wat de NiceGUI-app nodig heeft\n"
+    "\n"
+    f"Automatisch gemaakt door gereedschap/maak_deploy.py vanaf {WERKTAK}. Niet met de\n"
+    "hand aanpassen — wijzig de werktak en draai het script opnieuw.\n"
+    "\n"
+    "Zonder de NT-tekst draait de app door; Ontleden en het opzoeken van vormen wijzen\n"
+    "dan naar de Streamlit-app.\n")
 
-def git(*args, **kw):
+
+def git(*args, index=None, invoer=None):
+    """Git aanroepen. `index` zet GIT_INDEX_FILE, zodat we een eigen index gebruiken en
+    die van je werkmap onaangeroerd blijft."""
+    omgeving = dict(os.environ)
+    if index:
+        omgeving["GIT_INDEX_FILE"] = index
     # encoding expliciet op utf-8: zonder dat pakt Python op Windows de codepagina van het
     # systeem, en dan komt het bolletje in de Hebreeuwse bestandsnamen er als 'â€¢' uit —
     # drie tekens waar er één hoort, en dus een pad dat niet bestaat.
-    return subprocess.run(["git", "-C", REPO, *args], check=kw.pop("check", True),
-                          capture_output=True, text=True, encoding="utf-8",
-                          errors="replace", **kw)
+    klaar = subprocess.run(["git", "-C", REPO, *args], capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", env=omgeving, input=invoer)
+    if klaar.returncode:
+        sys.exit(f"git {' '.join(args[:2])} mislukte:\n{klaar.stderr.strip()}")
+    return klaar.stdout
 
 
-def bestanden_in(tak):
-    """De bestanden in een tak, gescheiden door een nulbyte.
+def bestanden_in(wat, index=None):
+    """De bestanden in een tak of boom, gescheiden door een nulbyte.
 
     Niet op regeleinden splitsen: git zet een pad met een bijzonder teken erin tussen
-    aanhalingstekens en schrijft dat teken als octale escape. De Hebreeuwse PDF's hebben
-    een bolletje in hun naam, en die kwamen zo met aanhalingstekens en al in het volgende
-    commando terecht — als een bestand dat niet bestaat, waarop 'git rm' afhaakte. Met -z
-    laat git dat hele verhaal achterwege en komen de paden er onbewerkt uit."""
-    ruw = git("ls-tree", "-r", "--name-only", "-z", tak).stdout
+    aanhalingstekens en schrijft dat teken als octale escape. Met -z laat hij dat
+    achterwege en komen de paden er onbewerkt uit."""
+    ruw = git("ls-tree", "-r", "--name-only", "-z", wat, index=index)
     return [p for p in ruw.split("\0") if p]
 
 
 def main():
-    if git("status", "--porcelain").stdout.strip():
-        sys.exit("Er staan nog ongecommitte wijzigingen. Commit die eerst.")
-    hier = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+    kop = git("rev-parse", WERKTAK).strip()
+    alles = bestanden_in(WERKTAK)
+    weg = [p for p in alles if p.split("/")[0] not in HOUDEN and p not in HOUDEN]
+    houden = [p for p in alles if p not in weg]
 
-    # Sta je zelf op de deploytak, dan kan die niet weg en liep het script vast op een
-    # kale 'exit status 128'. Erger is wat eraan voorafgaat: dan zijn je commits óók op de
-    # deploytak beland in plaats van op de werktak, en die wordt hieronder weggegooid.
-    # Dus eerst terug naar de werktak, en pas dan opruimen.
-    if hier == DEPLOYTAK:
-        achter = git("rev-list", "--count", f"{WERKTAK}..{DEPLOYTAK}").stdout.strip()
-        if achter and achter != "0":
-            sys.exit(f"Je staat op {DEPLOYTAK} en daar staan {achter} commits die niet op "
-                     f"{WERKTAK} staan. Die zouden verdwijnen. Zet ze eerst over:\n"
-                     f"    git branch -f {WERKTAK} {DEPLOYTAK}\n"
-                     f"    git checkout {WERKTAK}\n"
-                     f"    git push origin {WERKTAK}")
-        print(f"Je stond op {DEPLOYTAK}; teruggezet naar {WERKTAK}.")
-        hier = WERKTAK
-        git("checkout", "-q", WERKTAK)
+    # Een eigen index in een tijdelijk bestand: daarin knippen we, en je werkmap merkt er
+    # niets van. Er wordt geen enkel bestand van schijf gehaald.
+    with tempfile.TemporaryDirectory() as tijdelijk:
+        index = os.path.join(tijdelijk, "deploy.index")
+        git("read-tree", kop, index=index)
+        if weg:
+            # --cached: alleen uit de index, niet van schijf. En via stdin, want zeven van
+            # deze paden hebben een bolletje in hun naam en die wil je niet over de
+            # opdrachtregel sturen.
+            git("rm", "-q", "--cached", "--pathspec-from-file=-", "--pathspec-file-nul",
+                index=index, invoer="\0".join(weg))
+        boom = git("write-tree", index=index).strip()
 
-    git("branch", "-D", DEPLOYTAK, check=False)
-    git("checkout", "-q", "-b", DEPLOYTAK, WERKTAK)
+    commit = git("commit-tree", boom, "-p", kop, "-m", BERICHT).strip()
+    git("update-ref", f"refs/heads/{DEPLOYTAK}", commit)
 
-    weg = [p for p in bestanden_in(DEPLOYTAK)
-           if p and p.split("/")[0] not in HOUDEN and p not in HOUDEN]
-    if weg:
-        git("rm", "-q", "--", *weg)
-        git("commit", "-q", "-m",
-            "Deploytak: alleen wat de NiceGUI-app nodig heeft\n\n"
-            "Automatisch gemaakt door gereedschap/maak_deploy.py vanaf "
-            f"{WERKTAK}. Niet met de hand aanpassen — wijzig de werktak en draai\n"
-            "het script opnieuw.\n\n"
-            "Zonder de NT-tekst draait de app door; Ontleden en het opzoeken van\n"
-            "vormen wijzen dan naar de Streamlit-app.")
-
-    groot = sum(os.path.getsize(os.path.join(REPO, p))
-                for p in bestanden_in(DEPLOYTAK) if p and
-                os.path.exists(os.path.join(REPO, p)))
-    print(f"{DEPLOYTAK}: {len(bestanden_in(DEPLOYTAK))} bestanden, "
-          f"{groot / 1048576:.1f} MB ({len(weg)} weggelaten)")
-    git("checkout", "-q", hier)
-    print(f"Terug op {hier}. Publiceren met:  git push -f origin {DEPLOYTAK}")
+    groot = 0
+    for pad in bestanden_in(DEPLOYTAK):
+        blob = git("rev-parse", f"{DEPLOYTAK}:{pad}").strip()
+        groot += int(git("cat-file", "-s", blob).strip())
+    print(f"{DEPLOYTAK}: {len(houden)} bestanden, {groot / 1048576:.1f} MB "
+          f"({len(weg)} weggelaten)")
+    print(f"Je werkmap is niet aangeraakt. Publiceren met:  "
+          f"git push -f origin {DEPLOYTAK}")
 
 
 if __name__ == "__main__":
