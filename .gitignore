@@ -31,3 +31,6 @@ hebreeuws app/Hele bijbel.xlsx
 
 # Reservekopieën van de voortgang: die horen niet in git — het is voortgang van studenten.
 backups/
+
+# Sleutels klaargezet om te kopiëren naar Render en Streamlit Cloud. Weggooien na gebruik.
+sleutel_klaar/
