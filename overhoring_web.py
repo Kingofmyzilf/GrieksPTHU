@@ -4049,8 +4049,43 @@ def render_slide(paginanummer, dpi=120):
 # cache_resource i.p.v. cache_data: de db wordt alleen gelezen, en cache_data zou de
 # 19,5 MB bij elke aanroep opnieuw unpicklen (~0,13 s x 6 aanroepen per rerun).
 @st.cache_resource
+def nt_index():
+    """De 27 boeken met hun bestandsnaam. Leeg als de map nt/ er niet is."""
+    try:
+        with open(os.path.join("nt", "index.json"), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+def laad_bijbel_boek(bestand):
+    """De verzen van één boek uit nt/. Voor wie niet het hele NT nodig heeft."""
+    import gzip
+    try:
+        with gzip.open(os.path.join("nt", os.path.basename(str(bestand))), "rt",
+                       encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
 def laad_bijbel_db():
+    """De hele NT-tekst: {'Matthew 1:1': [{grieks, parsing_info, strong, …}, …], …}.
+
+    De tekst staat per boek in nt/, ingepakt. Dat scheelt aanzienlijk: de twee losse
+    bestanden waren samen 31,5 MB en dit is 2,9 MB. Wat eruit ging is het veld
+    'parsing_code', dat in geen enkel python-bestand van de repo gelezen werd; de leesbare
+    'parsing_info' staat er nog gewoon in.
+
+    De oude bestanden worden nog gelezen als ze er staan, zodat een werkkopie van vóór deze
+    verandering blijft werken. Omzetten gaat met gereedschap/bouw_nt.py.
+    """
     bijbel = {}
+    boeken = nt_index()
+    if boeken:
+        for b in boeken:
+            bijbel.update(laad_bijbel_boek(b["bestand"]))
+        return bijbel
     if os.path.exists("bijbel_nt.json"):
         with open("bijbel_nt.json", "r", encoding="utf-8") as f: bijbel = json.load(f)
     else:

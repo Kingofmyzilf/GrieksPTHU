@@ -34,3 +34,9 @@ backups/
 
 # Sleutels klaargezet om te kopiëren naar Render en Streamlit Cloud. Weggooien na gebruik.
 sleutel_klaar/
+
+# De NT-tekst staat nu per boek ingepakt in nt/ (2,9 MB in plaats van 31,5). Deze twee
+# blijven lokaal staan als bron voor gereedschap/bouw_nt.py, maar horen niet in git.
+bijbel_nt.json
+bijbel_nt_deel1.json
+bijbel_nt_deel2.json

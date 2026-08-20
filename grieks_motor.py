@@ -306,6 +306,27 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
 _ONTLEED_KLEUR = {"Nom": "#7FB3FF", "Gen": "#E8B44A", "Dat": "#B694FF", "Acc": "#FF8FB1", "Voc": "#5ED3C0"}
 
 
+_GRAM_KLEUR = {
+    "praesens": "#E8EAED", "imperfectum": "#8FD3E8", "futurum": "#FFB067",
+    "aoristus": "#FF9BC4", "perfectum": "#C4A6FF", "plusquamperfectum": "#9B86D9",
+    "indicativus": "#B8C4CF", "coniunctivus": "#E8B44A", "optativus": "#5ED3C0",
+    "imperativus": "#FFB067", "infinitivus": "#7FB3FF", "participium": "#C4A6FF",
+    "nominativus": "#7FB3FF", "genitivus": "#E8B44A", "dativus": "#B694FF",
+    "accusativus": "#FF8FB1", "vocativus": "#5ED3C0",
+}
+
+
+_GRAM_ZOEK = re.compile("(?<![A-Za-z])(" + "|".join(
+    sorted(_GRAM_KLEUR, key=len, reverse=True)) + ")(?![A-Za-z])", re.IGNORECASE)
+
+
+def kleur_gram(tekst):
+    """Elke grammaticale term in de tekst zijn eigen kleur geven (HTML)."""
+    return _GRAM_ZOEK.sub(
+        lambda m: f"<span style='color:{_GRAM_KLEUR[m.group(0).lower()]}'>{m.group(0)}</span>",
+        str(tekst or ""))
+
+
 def naamval_legenda(kop="Kleurlegenda"):
     """Eén legenda voor alle plekken, opgebouwd uit _ONTLEED_KLEUR zodat kleur en legenda
     niet uit elkaar kunnen lopen."""
@@ -3345,8 +3366,43 @@ def render_slide(paginanummer, dpi=120):
 
 
 @cache_resource
+def nt_index():
+    """De 27 boeken met hun bestandsnaam. Leeg als de map nt/ er niet is."""
+    try:
+        with open(os.path.join("nt", "index.json"), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+def laad_bijbel_boek(bestand):
+    """De verzen van één boek uit nt/. Voor wie niet het hele NT nodig heeft."""
+    import gzip
+    try:
+        with gzip.open(os.path.join("nt", os.path.basename(str(bestand))), "rt",
+                       encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
 def laad_bijbel_db():
+    """De hele NT-tekst: {'Matthew 1:1': [{grieks, parsing_info, strong, …}, …], …}.
+
+    De tekst staat per boek in nt/, ingepakt. Dat scheelt aanzienlijk: de twee losse
+    bestanden waren samen 31,5 MB en dit is 2,9 MB. Wat eruit ging is het veld
+    'parsing_code', dat in geen enkel python-bestand van de repo gelezen werd; de leesbare
+    'parsing_info' staat er nog gewoon in.
+
+    De oude bestanden worden nog gelezen als ze er staan, zodat een werkkopie van vóór deze
+    verandering blijft werken. Omzetten gaat met gereedschap/bouw_nt.py.
+    """
     bijbel = {}
+    boeken = nt_index()
+    if boeken:
+        for b in boeken:
+            bijbel.update(laad_bijbel_boek(b["bestand"]))
+        return bijbel
     if os.path.exists("bijbel_nt.json"):
         with open("bijbel_nt.json", "r", encoding="utf-8") as f: bijbel = json.load(f)
     else:
