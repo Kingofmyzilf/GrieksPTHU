@@ -50,6 +50,7 @@ HOUDEN = {
     # Hebreeuws. Zonder deze drie valt de taalknop stil weg (hebreeuws.aanwezig() geeft
     # dan False) en merk je pas op de live app dat de helft ontbreekt.
     "hebreeuws.py", "hebreeuws_woorden.json", "hebreeuws_actief.json",
+    "hebreeuws_lezen.json",
     # grammatica_tabellen.json en grammatica_index.json blijven weg: die gebruikt
     # alleen het 'rijtje spieken' bij Ontleden, en dat scherm vervalt zonder de
     # NT-tekst. Zet je die tekst er ooit bij, neem dan deze twee ook weer op.

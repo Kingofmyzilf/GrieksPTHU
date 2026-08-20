@@ -4789,6 +4789,7 @@ def heb_af_cellen(g):
                         "label": c.get("label", ""), "vorm": vorm,
                         "stam": c.get("stam", ""), "uitgang": c.get("uitgang", ""),
                         "voorvoegsel": c.get("voorvoegsel", ""),
+                        "bijzonder": c.get("bijzonder") or [],
                         "toelichting": c.get("toelichting", ""), "vers": c.get("vers", ""),
                         "id": c.get("id", ""), "rijtje": cellen,
                         "streak": int(s.get("streak", 0) or 0),
@@ -4963,7 +4964,11 @@ def hebafpagina():
             teken()
             return
         sessie.vraag_typen = af_vraagt_typen(sessie.prefs["heb_af_vraagvorm"], c["streak"])
-        rijtje.set_content(f"{c['categorie']} · {c['paradigma']}")
+        # De onregelmatigheid erbij: dát is waarom dit rijtje er anders uitziet dan het
+        # boekje. Zonder die uitleg blijft het stampen.
+        _bijz = (f"<div style='color:{MERK};font-size:12.5px'>"
+                 f"{' · '.join(c['bijzonder'])}</div>" if c.get("bijzonder") else "")
+        rijtje.set_content(f"{c['categorie']} · {c['paradigma']}{_bijz}")
         paspoort.clear()
         with paspoort:
             with ui.expansion("Bekijk het rijtje").props("dense").classes("w-full").style(
@@ -6418,14 +6423,292 @@ def lijstpagina():
     onderbalk("Lezen")
 
 
+# ============================================================== Hebreeuws · lezen
+# Waar het hele woordenleren voor bedoeld is: een vers openslaan en het snappen. Er staat
+# geen vertaling bij, en dat is een keuze — met een vertaling ernaast lees je de vertaling.
+# Elk woord is aan te tikken en dan zie je wat het betekent en hoe het ontleed is; in
+# elkaar zetten doe je zelf. Zo werkt Ontleden bij het Grieks ook.
+#
+# Welk vers je krijgt hangt af van wat jíj kent. Van de duizend verzen in het bestand komen
+# alleen die in aanmerking waarvan je genoeg woorden al eens hebt geoefend; daarbinnen eerst
+# de kortste die je nog niet hebt gelezen. Zo begin je bij een vers van vier woorden en niet
+# bij een van veertien.
+LEES_SLEUTEL = "lees:"          # zo staan gelezen verzen in hebr_stats
+# Zoveel van de woorden moet je al eens geoefend hebben voordat een vers meedoet. Onder de
+# helft is het geen lezen maar puzzelen.
+LEES_DREMPEL = 0.6
+
+
+def heb_woordinfo(g):
+    """Strong-nummer -> het woord uit de lijst. Om bij een vorm in de tekst de betekenis
+    te kunnen opzoeken."""
+    uit = {}
+    for w in g.hebreeuws:
+        s = str(w.get("strong") or "")
+        if s and s not in uit:
+            uit[s] = w
+    return uit
+
+
+def heb_gelezen(g):
+    """De verzen die je al hebt gelezen."""
+    stats = g.stats.get("hebr_stats") or {}
+    return {k[len(LEES_SLEUTEL):] for k in stats if str(k).startswith(LEES_SLEUTEL)}
+
+
+def heb_kies_vers(g):
+    """Het volgende vers om te lezen, of None als er niets past.
+
+    Eerst de verzen die je nog niet had, en daarbinnen de kortste met het hoogste aandeel
+    bekende woorden. Heb je alles gehad, dan begint hij opnieuw — herlezen is geen straf."""
+    verzen = hebreeuws.laad_verzen()
+    if not verzen:
+        return None
+    info = heb_woordinfo(g)
+    geoefend = {s for s, w in info.items()
+                if int(w.get("score_goed", 0)) or int(w.get("score_fout", 0))
+                or int(w.get("streak", 0))}
+    gelezen = heb_gelezen(g)
+
+    geschikt = []
+    for vers in verzen:
+        woorden = vers["woorden"]
+        if not woorden:
+            continue
+        bekend = sum(1 for _v, s, _p in woorden if s in geoefend)
+        deel = bekend / len(woorden)
+        if deel < LEES_DREMPEL:
+            continue
+        geschikt.append((vers["vers"] in gelezen, -deel, len(woorden), vers))
+    if not geschikt:
+        # Nog niets geoefend: dan de kortste verzen waarvan élk woord in de lijst staat.
+        # Beter iets te lezen geven dan een leeg scherm met 'oefen eerst maar wat'.
+        geschikt = [(vers["vers"] in gelezen, 0, len(vers["woorden"]), vers)
+                    for vers in verzen
+                    if all(s in info for _v, s, _p in vers["woorden"])]
+    if not geschikt:
+        return None
+    geschikt.sort(key=lambda k: k[:3])
+    # Niet altijd exact hetzelfde vers: uit de tien makkelijkste er één, zodat het niet
+    # elke keer bij hetzelfde blijft hangen als je iets niet afmaakt.
+    return random.choice(geschikt[:10])[3]
+
+
+def heb_ontleding(parsing):
+    """De ontleedcode leesbaar maken: 'Conj-w | V-Qal-ConsecImperf-3ms' wordt
+    'en · Qal wajjiqtol 3e m ev'. Wat we niet kennen laten we staan — dan zie je dat er
+    iets is in plaats van dat het verdwijnt."""
+    if not parsing:
+        return ""
+    delen = []
+    for stuk in str(parsing).split("|"):
+        for code in stuk.split(","):
+            code = code.strip()
+            if not code:
+                continue
+            delen.append(HEB_ONTLEED.get(code) or _heb_ontleed_werkwoord(code) or code)
+    return " · ".join(d for d in delen if d)
+
+
+# De codes die de WLC gebruikt, in gewoon Nederlands. Alleen wat er echt in voorkomt.
+HEB_ONTLEED = {
+    "Conj-w": "en", "Art": "de/het", "Prep-b": "in/met", "Prep-k": "als",
+    "Prep-l": "voor/naar", "Prep-m": "uit/van", "Prep": "voorzetsel",
+    "Interrog": "vraagwoord", "Adv": "bijwoord", "Conj": "voegwoord",
+    "N-ms": "znw m ev", "N-mp": "znw m mv", "N-fs": "znw v ev", "N-fp": "znw v mv",
+    "N-msc": "znw m ev verbonden", "N-mpc": "znw m mv verbonden",
+    "N-fsc": "znw v ev verbonden", "N-fpc": "znw v mv verbonden",
+    "N-proper-ms": "eigennaam", "N-proper-fs": "eigennaam",
+    "Adj-ms": "bnw m ev", "Adj-fs": "bnw v ev", "Adj-mp": "bnw m mv",
+    "Pro-3ms": "hij", "Pro-3fs": "zij", "Pro-2ms": "jij", "Pro-1cs": "ik",
+    "Pro-3mp": "zij mv", "Pro-1cp": "wij", "Pro-2mp": "jullie", "Pro-r": "die/dat",
+    "Pro-ms": "deze", "Pro-fs": "deze", "Pro-cp": "deze mv",
+    "DirObjM": "lijdend voorwerp", "Adv-NegPrt": "niet",
+}
+# De stukjes waaruit een werkwoordcode is opgebouwd.
+HEB_STAM_NL = {"Qal": "Qal", "Nifal": "Nifal", "Piel": "Piel", "Pual": "Pual",
+               "Hifil": "Hifil", "Hofal": "Hofal", "Hitpael": "Hitpael",
+               "QalPassPrtcpl": "Qal passief deelwoord"}
+HEB_TIJD_NL = {"Perf": "perfectum", "Imperf": "imperfectum",
+               "ConsecImperf": "wajjiqtol", "ConjPerf": "wegatal",
+               "Imp": "gebiedende wijs", "Inf": "infinitief",
+               "InfAbs": "infinitivus absolutus", "InfCon": "infinitivus constructus",
+               "Prtcpl": "deelwoord"}
+HEB_PERSOON_NL = {"3ms": "3e m ev", "3fs": "3e v ev", "2ms": "2e m ev", "2fs": "2e v ev",
+                  "1cs": "1e ev", "3mp": "3e m mv", "3fp": "3e v mv", "3cp": "3e mv",
+                  "2mp": "2e m mv", "2fp": "2e v mv", "1cp": "1e mv",
+                  "ms": "m ev", "fs": "v ev", "mp": "m mv", "fp": "v mv"}
+
+
+def _heb_ontleed_werkwoord(code):
+    """'V-Qal-ConsecImperf-3ms' -> 'Qal wajjiqtol 3e m ev'."""
+    if not code.startswith("V-"):
+        return ""
+    delen = []
+    for stuk in code[2:].split("-"):
+        delen.append(HEB_STAM_NL.get(stuk) or HEB_TIJD_NL.get(stuk)
+                     or HEB_PERSOON_NL.get(stuk) or stuk)
+    return " ".join(delen)
+
+
+@ui.page("/lezen/hebreeuws")
+def heblezenpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    if not hebreeuws.laad_verzen():
+        ui.navigate.to("/lezen")
+        return
+    vers = heb_kies_vers(g)
+    if vers is None:
+        ui.navigate.to("/lezen")
+        return
+    info = heb_woordinfo(g)
+    # Welke woorden je al hebt aangetikt. Dat blijft binnen dit ene vers.
+    open_gezet = set()
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Lezen").style(f"color:{ZACHT};font-size:13px")
+            verwijzing = ui.label().style(f"color:{ZACHT};font-size:13px")
+        # Het vers zelf, van rechts naar links, met elk woord als eigen vakje.
+        tekst = ui.html().classes("hebrij w-full").style(
+            "padding:6px 0 2px;line-height:2.1")
+        teller = ui.label().classes("w-full").style(f"color:{ZACHT};font-size:12.5px")
+        uitleg = ui.column().classes("w-full gap-0")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+
+    balk = ui.row()
+    with ui.element("div").classes("antwoordbalk"):
+        with ui.row().classes("w-full gap-2 no-wrap items-center"):
+            alles_knop = ui.button("Alles tonen", color=None).props(
+                "flat no-caps").style(
+                f"flex:1;color:{ZACHT};border:1px solid {RAND};border-radius:8px;"
+                f"height:40px;font-size:13px")
+            volgende = ui.button("Gelezen", color=None).props("unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
+                f"width:132px;min-width:132px;font-size:14px")
+    onderbalk("Lezen")
+
+    def teken():
+        verwijzing.text = vers["vers"]
+        vakjes = []
+        for n, (vorm, strong, _parsing) in enumerate(vers["woorden"]):
+            w = info.get(strong)
+            gekend = w is not None and (int(w.get("streak", 0) or 0)
+                                        or int(w.get("score_goed", 0) or 0))
+            if n in open_gezet:
+                kleur, rand = MERK, MERK
+            elif w is None:
+                kleur, rand = ZACHT, RAND        # niet in de lijst: dat woord krijg je erbij
+            else:
+                kleur, rand = TEKST, (RAND if gekend else FOUT)
+            vakjes.append(
+                f"<span class='leeswoord hebreeuws' data-n='{n}' "
+                f"style='color:{kleur};border-bottom:2px solid {rand}'>{vorm}</span>")
+        tekst.set_content(" ".join(vakjes))
+        bekend = sum(1 for _v, s, _p in vers["woorden"]
+                     if (info.get(s) or {}).get("streak", 0)
+                     or (info.get(s) or {}).get("score_goed", 0))
+        teller.text = (f"{bekend} van de {len(vers['woorden'])} woorden heb je geoefend · "
+                       f"tik een woord aan voor de betekenis")
+
+    def teken_uitleg():
+        uitleg.clear()
+        if not open_gezet:
+            return
+        with uitleg:
+            for n in sorted(open_gezet):
+                vorm, strong, parsing = vers["woorden"][n]
+                w = info.get(strong)
+                betekenis = heb_betekenis(w) if w else "staat niet in de woordenlijst"
+                ontleed = heb_ontleding(parsing)
+                ui.html(
+                    f"<div style='border-top:1px solid {RAND};padding:6px 0'>"
+                    f"<span class='hebreeuws' style='font-size:20px;color:{TEKST}'>"
+                    f"{vorm}</span>"
+                    f"<span style='color:{TEKST};font-size:14px'> — {betekenis}</span>"
+                    + (f"<div style='color:{ZACHT};font-size:12.5px'>{ontleed}</div>"
+                       if ontleed else "")
+                    + "</div>")
+
+    def tik(n):
+        if n in open_gezet:
+            open_gezet.discard(n)
+        else:
+            open_gezet.add(n)
+        teken()
+        teken_uitleg()
+
+    def alles():
+        if len(open_gezet) == len(vers["woorden"]):
+            open_gezet.clear()
+        else:
+            open_gezet.update(range(len(vers["woorden"])))
+        teken()
+        teken_uitleg()
+
+    async def gelezen():
+        stats = g.stats.setdefault("hebr_stats", {})
+        e = stats.setdefault(LEES_SLEUTEL + vers["vers"], {"g": 0, "f": 0})
+        e["g"] = int(e.get("g", 0)) + 1
+        g.tel_dag()
+        g.dagdoel_plus("hebreeuws")
+        opgeslagen = await run.io_bound(g.bewaar)
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        ui.navigate.to("/lezen/hebreeuws")
+
+    ui.add_head_html("""
+    <style>
+      /* Elk woord een eigen aanraakvlak, met genoeg lucht ertussen om te mikken. */
+      .leeswoord { font-size:27px; padding:2px 3px 1px; margin:0 2px;
+                   cursor:pointer; display:inline-block; }
+    </style>""", shared=True)
+    # Eén afhandelaar voor alle woorden: NiceGUI kan geen klik op los stukje html
+    # aanhangen, dus we vangen hem op de omhullende bak en lezen data-n uit.
+    tekst.on("click", lambda e: None)
+    ui.on("leeswoord", lambda e: tik(int(e.args)))
+    ui.add_body_html("""
+    <script>
+      document.addEventListener('click', function (e) {
+        const el = e.target.closest('.leeswoord');
+        if (el) { emitEvent('leeswoord', parseInt(el.dataset.n, 10)); }
+      });
+    </script>""")
+
+    alles_knop.on_click(alles)
+    volgende.on_click(gelezen)
+    teken()
+
+
 # ============================================================== lezen (nog te bouwen)
 @ui.page("/lezen")
 def lezenpagina():
     g = _bewaakt()
     if not g:
         return
+    heb = taal(g) == HEBREEUWS
     with ui.column().classes("inhoud w-full gap-3"):
-        ui.label("Lezen").style("font-size:26px;font-weight:700")
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Lezen").style("font-size:26px;font-weight:700")
+            taalknop(g, "/lezen")
+        if heb and hebreeuws.laad_verzen():
+            verzen = hebreeuws.laad_verzen()
+            gelezen = heb_gelezen(g)
+            with ui.element("div").classes("kaart w-full").on(
+                    "click", lambda: ui.navigate.to("/lezen/hebreeuws")):
+                with ui.row().classes("w-full items-center justify-between no-wrap"):
+                    with ui.column().classes("gap-0"):
+                        ui.label("Een vers lezen").style(
+                            f"color:{TEKST};font-size:16px;font-weight:600")
+                        ui.label(f"{len(verzen)} verzen uit de Tenach die je met deze "
+                                 f"woordenschat aankan").style(
+                            f"color:{ZACHT};font-size:12.5px")
+                    with ui.row().classes("items-center gap-2 no-wrap"):
+                        ui.label(f"{len(gelezen)} gelezen").style(
+                            f"color:{MERK};font-size:13px;white-space:nowrap")
+                        ui.label("›").style(f"color:{ZACHT};font-size:22px")
         with ui.element("div").classes("kaart w-full").on(
                 "click", lambda: ui.navigate.to("/lijst")):
             with ui.row().classes("w-full items-center justify-between no-wrap"):

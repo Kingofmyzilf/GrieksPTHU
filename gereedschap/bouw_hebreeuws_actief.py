@@ -124,6 +124,51 @@ def lees_vormen():
     return per, los, plaats
 
 
+# Waarom een rijtje afwijkt, af te leiden uit de wortelletters zelf. Dit is standaard
+# grammatica en geen gok: welke letter op welke plek staat bepaalt wat er in de vervoeging
+# gebeurt. Een sjewa onder een keelletter kan niet, een nun aan het begin valt weg voor een
+# andere consonant, een he aan het eind verdwijnt bijna altijd.
+#
+# Het staat erbij omdat het de enige uitleg is die een onregelmatig rijtje leerbaar maakt.
+# Wie ziet dat יָשַׁב 'primae waw/jod' is, snapt waarom de imperfectief יֵשֵׁב is en niet
+# יִישַׁב — en hoeft dat dus niet stampen.
+KEELLETTERS = "אהחע"
+
+
+def bijzonderheden(wortel):
+    """De onregelmatigheden van deze wortel, in de bewoording die de grammatica's gebruiken."""
+    w = [t for t in wortel if "א" <= t <= "ת"]
+    if len(w) < 2:
+        return []
+    uit = []
+    if w[0] in "וי":
+        uit.append("primae waw/jod")
+    elif w[0] == "נ":
+        uit.append("primae nun")
+    elif w[0] == "א":
+        uit.append("primae alef")
+    elif w[0] in KEELLETTERS:
+        uit.append("eerste letter keelletter")
+    if len(w) == 3 and w[1] in "וי":
+        # Bewust 'middelste letter waw/jod' en niet 'holle wortel'. Dat eerste is wat de
+        # letters zeggen; het tweede is een indeling, en die geldt hier niet altijd. בּוֹא
+        # is een holle wortel, maar הָיָה heeft ook een jod in het midden en wordt door
+        # geen enkele grammatica hol genoemd. Het verschil zit in wat de letter doet, en
+        # dat valt niet uit de spelling af te leiden — dus zeggen we alleen wat er staat.
+        uit.append("middelste letter waw/jod")
+    elif len(w) >= 2 and w[1] in KEELLETTERS:
+        uit.append("middelste letter keelletter")
+    if w[-1] == "ה":
+        uit.append("tertiae he")
+    elif w[-1] == "א":
+        uit.append("tertiae alef")
+    elif w[-1] in KEELLETTERS:
+        uit.append("laatste letter keelletter")
+    if len(w) == 3 and w[1] == w[2]:
+        uit.append("gemineerd")
+    return uit
+
+
 def cel(label, vorm, aantal, sleutel, vers, toelichting):
     return {"label": label, "vorm": vorm, "id": sleutel, "stam": "", "uitgang": "",
             "aantal": aantal, "vers": vers, "toelichting": toelichting}
@@ -182,11 +227,13 @@ def bouw():
     db = {}
     tel = collections.Counter()
 
-    def zet(niveau, categorie, paradigma, cellen, minimum=MINIMUM):
+    def zet(niveau, categorie, paradigma, cellen, minimum=MINIMUM, bijzonder=None):
         if len(cellen) < minimum:
             tel["te klein"] += 1
             return
         affixen(cellen)
+        for c in cellen:
+            c["bijzonder"] = list(bijzonder or [])
         db.setdefault(niveau, {}).setdefault(categorie, {})[paradigma] = cellen
         tel["rijtjes"] += 1
         tel["cellen"] += len(cellen)
@@ -218,7 +265,8 @@ def bouw():
                         plaats.get((code, vorm), ""),
                         f"{aantal}× in de Tenach"))
                 zet(niveau, f"Werkwoord ({naam_stam})",
-                    f"{w['hebreeuws']} — {rijtje}", cellen)
+                    f"{w['hebreeuws']} — {rijtje}", cellen,
+                    bijzonder=bijzonderheden(w["hebreeuws"]))
 
     # ---------------------------------------------------------------- vaste rijtjes
     for categorie, paradigma, regels in VASTE_RIJTJES:

@@ -21,6 +21,7 @@ import os
 _HIER = os.path.dirname(os.path.abspath(__file__))
 BESTAND = os.path.join(_HIER, "hebreeuws_woorden.json")
 RIJTJES = os.path.join(_HIER, "hebreeuws_actief.json")
+VERZEN = os.path.join(_HIER, "hebreeuws_lezen.json")
 
 # Welke Latijnse letters welke Hebreeuwse letter geven. Ruim opgezet: waar twee
 # schrijfwijzen voor de hand liggen worden ze allebei geaccepteerd, want fout rekenen op
@@ -174,6 +175,20 @@ def laad_woorden():
     """De 410 woorden met hun betekenis, hint, frequentie en vindplaatsen."""
     try:
         with open(BESTAND, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+@functools.lru_cache(maxsize=1)
+def laad_verzen():
+    """De verzen om te lezen: per vers de woorden met hun Strong-nummer en ontleding.
+
+    Er staat geen vertaling bij, en dat is een keuze: met een vertaling ernaast lees je de
+    vertaling. De betekenis van elk los woord staat in de woordenlijst, dus die kan de app
+    erbij zoeken — in elkaar zetten doe je zelf. Gemaakt door bouw_hebreeuws_lezen.py."""
+    try:
+        with open(VERZEN, encoding="utf-8") as f:
             return json.load(f)
     except (OSError, ValueError):
         return []
