@@ -106,8 +106,10 @@ def main():
     print(f"  {os.path.relpath(cloud, REPO)}   -> Streamlit Cloud, app settings > Secrets")
     print()
     print("Gooi die map daarna weg — hij staat in .gitignore, maar hij hoort er niet")
-    print("langer te staan dan nodig:")
+    print("langer te staan dan nodig. In PowerShell:")
     print(f"  Remove-Item -Recurse -Force {os.path.relpath(KLADMAP, REPO)}")
+    print("of in een gewoon opdrachtvenster:")
+    print(f"  rmdir /s /q {os.path.relpath(KLADMAP, REPO)}")
 
 
 if __name__ == "__main__":
