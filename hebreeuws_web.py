@@ -1,18 +1,32 @@
 # -*- coding: utf-8 -*-
 """Het Tenach-tabblad voor de Streamlit-app: Hebreeuws lezen op een breed scherm.
 
-Waarom dit hier staat en niet alleen in de mobiele app: de Tenach lezen is precies waar een
-breed scherm helpt. Op een telefoon tik je woord voor woord aan; hier past een hele tabel
-met alle woorden van een vers ónder de tekst, en dat leest veel sneller.
+Gebouwd als tegenhanger van 📝 Leesteksten, met dezelfde onderdelen:
 
-Het oefenen zelf blijft in de mobiele app — daar zit de woordenschat, de rijtjes en de
-voortgang. Dit tabblad is om te lézen, en om te zien welke woorden je nog mist.
+    Grieks                              Hebreeuws
+    ---------------------------------   ---------------------------------
+    boek / hoofdstuk / meerdere verzen   idem
+    Scavenger Hunt (zwakke woorden)      Zoek een vers met je zwakke woorden
+    Autonome leestekst (100% bekend)     idem
+    🎨 markeer naamvallen                 🎨 markeer woordsoorten
+    🔗 markeer voegwoorden                🔗 markeer voor- en achtervoegsels
+    ⚛️ markeer stamtijden                 ⚛️ markeer stamformaties
+    zwevende tooltip per woord           idem
 
-Los bestand en niet in overhoring_web.py, om twee redenen. Die module wordt door
-gereedschap/bouw_motor.py omgezet naar grieks_motor.py, en alles wat Streamlit aanroept
-moet daar juist buiten blijven. En zo blijft het Hebreeuws bij elkaar: staat hebreeuws.py
-of de map tenach/ er niet, dan verschijnt het tabblad simpelweg niet.
+Twee dingen zijn met opzet anders, omdat de talen verschillen.
+
+De naamval is bij het Grieks wat een woord in de zin doet, en dat kleurt daar. Het
+Hebreeuws heeft geen naamvallen; wat er die rol speelt zijn de voor- en achtervoegsels —
+וְהָאָרֶץ is וְ + הָ + אָרֶץ — en dát is hier dus de kleuring die ertoe doet.
+
+En het oefenen zit hier niet in. De Griekse leestekst heeft vier methodes (lezen,
+meerkeuze, typen, ontleden); voor het Hebreeuws blijft dat in de snelle app, waar de
+woordenschat en je voortgang staan. Dit tabblad is om te lézen.
+
+De tooltip gebruikt .mobile-tooltip uit overhoring_web.py, dezelfde als bij het Grieks:
+zichtbaar bij muis eroverheen, en op een telefoon bij aanraken (tabindex + :focus).
 """
+import random
 import re
 
 import pandas as pd
@@ -20,17 +34,35 @@ import streamlit as st
 
 import hebreeuws
 
-# Zelfde kleuren als de rest van de app (.streamlit/config.toml).
-ZACHT, MERK, FOUT = "#9aa4ae", "#33ccff", "#ff6b81"
+# ---------------------------------------------------------------- kleuren
+# Zelfde gedachte als _ONTLEED_KLEUR en _GRAM_KLEUR in de Griekse app: één vaste kleur per
+# term, gelijke helderheid, weg van rood en groen (die betekenen 'fout' en 'goed') en weg
+# van het merkcyaan. Anders dan bij het Grieks hangt deze reeks nergens aan vast.
+WOORDSOORT_KLEUR = {
+    "werkwoord": "#FF9BC4", "naamwoord": "#7FB3FF", "bijv. naamwoord": "#E8B44A",
+    "voornaamwoord": "#B694FF", "voorzetsel": "#5ED3C0", "bijwoord": "#C7B7A3",
+    "voegwoord": "#FFD700", "lidwoord": "#9AA4AE", "telwoord": "#8FD3E8",
+    "eigennaam": "#D0D0D0",
+}
+STAM_KLEUR = {
+    "Qal": "#E8EAED", "Nifal": "#8FD3E8", "Piel": "#FFB067", "Pual": "#FF9BC4",
+    "Hifil": "#C4A6FF", "Hofal": "#9B86D9", "Hitpael": "#5ED3C0",
+}
+AFFIX_KLEUR = "#33ccff"          # merkcyaan, net als in de snelle app
 
 OPMAAK = """
 <style>
   .hebtekst { direction:rtl; unicode-bidi:isolate; text-align:right;
               font-family:'Noto Serif Hebrew','David','Times New Roman',serif;
-              font-size:27px; line-height:2.15; }
-  .hebnr    { color:#9aa4ae; font-size:12px; vertical-align:super; }
+              font-size:30px; line-height:2.3; padding:14px; }
+  .hebnr    { color:#9aa4ae; font-size:13px; vertical-align:super;
+              font-family:system-ui,sans-serif; }
+  /* Nog niet geoefend: een stippellijn eronder, net als bij het Grieks. */
   .hebnog   { border-bottom:2px solid #ff6b81; }
-  .hebaffix { color:#33ccff; }
+  .hebwoord { border-bottom:1px dotted #555; }
+  /* De tooltip staat links-naar-rechts, ook boven Hebreeuwse tekst. */
+  .hebtekst .tooltiptext { direction:ltr; text-align:left;
+                           font-family:system-ui,sans-serif; font-size:15px; }
 </style>
 """
 
@@ -43,138 +75,7 @@ def beschikbaar():
         return False
 
 
-def korte_betekenis(w):
-    """De betekenis van een woord uit de cursuslijst, kort maar leesbaar.
-
-    Kleine versie van heb_betekenis() uit de mobiele app: de eerste groep die echt
-    betekenissen heeft, met de uitleg tussen haken en de gidstekens eruit, en de stamcodes
-    vooraan eraf. Hier staat hij in een tabel en niet op een keuzeknop, dus hij mag langer
-    zijn dan daar."""
-    codes = {"i", "ii", "iii", "G", "N", "D", "Dp", "H", "Hp", "Ht", "tD", "R", "Rp", "en"}
-    tekst = re.sub(r"^\((?:v|m)\.?\)\s*", "", str(w.get("nederlands", ""))).strip()
-    for segment in tekst.split(";"):
-        segment = re.sub(r"\[[^\]]*\]", " ", segment)
-        segment = re.sub(r"»[^«]*«", " ", segment)
-        # Woord voor woord de codes vooraan eraf. Blijft er niets over, dan stond er in dit
-        # segment alleen uitleg en geen betekenis — bij אֵת is dat 'i [geeft lijdend
-        # voorwerp aan]', en dan hoort de volgende groep het antwoord te leveren.
-        delen = re.sub(r"\s{2,}", " ", segment).strip(" ,;.:").split(" ")
-        while delen and delen[0].strip(".") in codes:
-            delen.pop(0)
-        schoon = " ".join(delen).strip(" ,;.:")
-        if schoon:
-            return schoon[:96]
-    return tekst[:96]
-
-
-def _woorden_op_strong():
-    """Strong-nummer -> het woord uit de cursuslijst, met jouw voortgang eroverheen.
-
-    De voortgang staat in hebr_stats, dezelfde kolom die de mobiele app vult. Deze app
-    schrijft daar niets in; hij leest hem alleen om te laten zien wat je al hebt gehad."""
-    scores = st.session_state.get("hebr_stats") or {}
-    uit = {}
-    for w in hebreeuws.laad_woorden():
-        s = str(w.get("strong") or "")
-        if not s or s in uit:
-            continue
-        e = scores.get(hebreeuws.sleutel(w)) or {}
-        uit[s] = dict(w, streak=int(e.get("streak", 0) or 0),
-                      gehad=bool(int(e.get("g", 0) or 0) or int(e.get("f", 0) or 0)
-                                 or int(e.get("streak", 0) or 0)))
-    return uit
-
-
-def _affixen(parsing):
-    """Wat de voor- en achtervoegsels van deze vorm betekenen, als één regel."""
-    voor, _kern, achter = hebreeuws._codes(parsing)
-    delen = [hebreeuws.VOORVOEGSEL_NL[c] for c in voor]
-    if achter:
-        delen.append(hebreeuws.ACHTERVOEGSEL_NL[achter])
-    return " + ".join(delen)
-
-
-def tab():
-    """Het tabblad. Aanroepen binnen 'with menu[i]:'."""
-    st.header("📜 Tenach")
-    boeken = hebreeuws.tenach_index()
-    if not boeken:
-        st.info("De Hebreeuwse tekst staat niet in deze installatie.")
-        return
-    st.markdown(OPMAAK, unsafe_allow_html=True)
-    op_naam = {b["nl"]: b for b in boeken}
-    per_strong = _woorden_op_strong()
-
-    kol1, kol2, kol3 = st.columns([2, 1, 2])
-    with kol1:
-        boek_naam = st.selectbox("Boek", list(op_naam), key="tenach_boek")
-    boek = op_naam[boek_naam]
-    with kol2:
-        hoofdstuk = st.number_input("Hoofdstuk", min_value=1,
-                                    max_value=max(1, int(boek["hoofdstukken"])),
-                                    value=1, step=1, key="tenach_hfst")
-    verzen = [v for v in hebreeuws.laad_tenach_boek(boek["bestand"])
-              if v["v"].split(":")[0] == str(int(hoofdstuk))]
-    if not verzen:
-        st.info("Dat hoofdstuk staat niet in dit boek.")
-        return
-    with kol3:
-        keuzes = ["Heel hoofdstuk"] + [f"vers {v['v'].split(':')[-1]}" for v in verzen]
-        keuze = st.selectbox(f"{len(verzen)} verzen", keuzes, key="tenach_vers")
-    gekozen = (verzen if keuze == "Heel hoofdstuk"
-               else [v for v in verzen if v["v"].split(":")[-1] == keuze.split()[-1]])
-
-    # De tekst zelf. Wat je nog niet hebt geoefend krijgt een rood streepje: zo zie je in
-    # één oogopslag waar dit hoofdstuk voor jóu spannend wordt.
-    regels = []
-    for v in gekozen:
-        stukken = [f"<span class='hebnr'>{v['v'].split(':')[-1]}</span>"]
-        for vorm, strong, _parsing in v["w"]:
-            w = per_strong.get(strong)
-            klasse = "" if (w and w["gehad"]) else " class='hebnog'"
-            stukken.append(f"<span{klasse}>{vorm}</span>")
-        regels.append(" ".join(stukken))
-    st.markdown(f"<div class='hebtekst'>{' '.join(regels)}</div>", unsafe_allow_html=True)
-
-    rijen = []
-    for v in gekozen:
-        for vorm, strong, parsing in v["w"]:
-            w = per_strong.get(strong)
-            voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
-            rijen.append({
-                "vers": v["v"],
-                "vorm": vorm,
-                "stam": kern if (voor or achter) else "",
-                "betekenis": korte_betekenis(w) if w else "— niet in de cursuslijst",
-                "voor/achter": _affixen(parsing),
-                "ontleding": hebreeuws_ontleding(parsing),
-                "streak": int(w["streak"]) if w else 0,
-            })
-
-    nog = [r for r in rijen
-           if r["streak"] == 0 and not r["betekenis"].startswith("—")]
-    buiten = [r for r in rijen if r["betekenis"].startswith("—")]
-    st.caption(f"{len(rijen)} woorden · rood onderstreept = nog niet geoefend · "
-               f"{len(nog)} staan in je lijst maar had je nog niet · "
-               f"{len(buiten)} staan niet in de cursuslijst")
-    st.dataframe(
-        pd.DataFrame(rijen), use_container_width=True, hide_index=True,
-        column_config={
-            "vers": st.column_config.TextColumn("Vers", width="small"),
-            "vorm": st.column_config.TextColumn("Vorm", width="small"),
-            "stam": st.column_config.TextColumn("Stam", width="small"),
-            "betekenis": st.column_config.TextColumn("Betekenis", width="large"),
-            "voor/achter": st.column_config.TextColumn("Voor/achtervoegsel",
-                                                       width="medium"),
-            "ontleding": st.column_config.TextColumn("Ontleding", width="medium"),
-            "streak": st.column_config.NumberColumn("Streak", width="small"),
-        })
-    st.caption("Oefenen doe je in de snelle app: daar kun je een hoofdstuk kiezen en de "
-               "woorden die je nog mist vooraan in je woordenschat zetten.")
-
-
-# De ontleedcodes in gewoon Nederlands. Dezelfde tabellen als in de mobiele app; hier
-# nagemaakt zodat dit bestand op zichzelf staat en niets uit de NiceGUI-schil hoeft.
+# ---------------------------------------------------------------- ontleedcodes lezen
 _LOS = {"Conj-w": "en", "Art": "de/het", "Prep-b": "in/met", "Prep-k": "als",
         "Prep-l": "voor/naar", "Prep-m": "uit/van", "Prep": "voorzetsel",
         "Interrog": "vraagwoord", "Adv": "bijwoord", "Conj": "voegwoord",
@@ -208,7 +109,7 @@ def _werkwoord(code):
                     for s in code[2:].split("-"))
 
 
-def hebreeuws_ontleding(parsing):
+def ontleding(parsing):
     """De hele ontleedcode leesbaar. Wat we niet kennen blijft staan — dan zie je dat er
     iets is in plaats van dat het stilletjes verdwijnt."""
     if not parsing:
@@ -220,3 +121,363 @@ def hebreeuws_ontleding(parsing):
             if code:
                 delen.append(_LOS.get(code) or _werkwoord(code) or code)
     return " · ".join(d for d in delen if d)
+
+
+def woordsoort(parsing):
+    """De woordsoort van de kern, in gewoon Nederlands. Voor de kleuring."""
+    _voor, kern, _achter = hebreeuws._codes(parsing)
+    if not kern:
+        return ""
+    if kern.startswith("V-"):
+        return "werkwoord"
+    if kern.startswith("N-proper"):
+        return "eigennaam"
+    if kern.startswith("N-"):
+        return "naamwoord"
+    if kern.startswith("Adj"):
+        return "bijv. naamwoord"
+    if kern.startswith("Pro"):
+        return "voornaamwoord"
+    if kern.startswith("Prep"):
+        return "voorzetsel"
+    if kern.startswith("Adv"):
+        return "bijwoord"
+    if kern.startswith("Conj"):
+        return "voegwoord"
+    if kern.startswith("Art"):
+        return "lidwoord"
+    if kern.startswith("Number"):
+        return "telwoord"
+    return ""
+
+
+def stamformatie(parsing):
+    """Qal, Nifal, Piel … van een werkwoordsvorm, of leeg."""
+    _voor, kern, _achter = hebreeuws._codes(parsing)
+    if not kern.startswith("V-"):
+        return ""
+    for stuk in kern.split("-"):
+        if stuk in STAM_KLEUR:
+            return stuk
+    return ""
+
+
+def korte_betekenis(w):
+    """De betekenis van een woord uit de cursuslijst, kort maar leesbaar.
+
+    Kleine versie van heb_betekenis() uit de snelle app: de eerste groep die echt
+    betekenissen heeft, met de uitleg tussen haken en de gidstekens eruit, en de stamcodes
+    vooraan eraf. Blijft er in een groep niets over, dan stond daar alleen uitleg — bij אֵת
+    is dat 'i [geeft lijdend voorwerp aan]' — en levert de volgende groep het antwoord."""
+    codes = {"i", "ii", "iii", "G", "N", "D", "Dp", "H", "Hp", "Ht", "tD", "R", "Rp", "en"}
+    tekst = re.sub(r"^\((?:v|m)\.?\)\s*", "", str(w.get("nederlands", ""))).strip()
+    for segment in tekst.split(";"):
+        segment = re.sub(r"\[[^\]]*\]", " ", segment)
+        segment = re.sub(r"»[^«]*«", " ", segment)
+        delen = re.sub(r"\s{2,}", " ", segment).strip(" ,;.:").split(" ")
+        while delen and delen[0].strip(".") in codes:
+            delen.pop(0)
+        schoon = " ".join(delen).strip(" ,;.:")
+        if schoon:
+            return schoon[:96]
+    return tekst[:96]
+
+
+def _affixen_kort(parsing):
+    """Wat de voor- en achtervoegsels betekenen, als één regel."""
+    voor, _kern, achter = hebreeuws._codes(parsing)
+    delen = [f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}"
+             for c in voor]
+    if achter:
+        delen.append(f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}")
+    return " · ".join(delen)
+
+
+@st.cache_data(show_spinner=False)
+def _lijst_op_strong():
+    """Strong-nummer -> woord uit de cursuslijst. Gecached: dit verandert niet."""
+    uit = {}
+    for w in hebreeuws.laad_woorden():
+        s = str(w.get("strong") or "")
+        if s and s not in uit:
+            uit[s] = w
+    return uit
+
+
+def _voortgang():
+    """Strong-nummer -> (streak, gehad). Uit hebr_stats, dezelfde kolom die de snelle app
+    vult. Deze app schrijft daar niets in; hij leest alleen."""
+    scores = st.session_state.get("hebr_stats") or {}
+    uit = {}
+    for w in hebreeuws.laad_woorden():
+        s = str(w.get("strong") or "")
+        if not s:
+            continue
+        e = scores.get(hebreeuws.sleutel(w)) or {}
+        streak = int(e.get("streak", 0) or 0)
+        gehad = bool(streak or int(e.get("g", 0) or 0) or int(e.get("f", 0) or 0))
+        # Eén Strong kan bij twee lijstwoorden horen; de hoogste stand wint.
+        oud = uit.get(s)
+        if oud is None or streak > oud[0]:
+            uit[s] = (streak, gehad or (oud[1] if oud else False))
+    return uit
+
+
+def legenda(kleuren, kop):
+    """Eén legenda voor alle plekken, opgebouwd uit de kleurtabel zelf zodat kleur en
+    legenda niet uit elkaar kunnen lopen. Zelfde aanpak als naamval_legenda() bij Grieks."""
+    sp = " · ".join(f"<span style='color:{k}'>{n}</span>" for n, k in kleuren.items())
+    return f"<div style='font-size:14px; margin-bottom:4px; opacity:.9'>{kop}: {sp}</div>"
+
+
+def _woord_html(vorm, strong, parsing, lijst, stand, opties):
+    """Eén woord als span, met tooltip en de gekozen markeringen."""
+    w = lijst.get(strong)
+    streak, gehad = stand.get(strong, (0, False))
+
+    # ---- de tooltip: alles wat je over dit woord wil weten
+    regels = []
+    if w:
+        regels.append(f"{w['hebreeuws']} → {korte_betekenis(w)}")
+        if w.get("translit"):
+            regels.append(f"klinkt als {w['translit']}")
+        if w.get("frequentie"):
+            regels.append(f"{w['frequentie']}× in de Tenach · lijst {w.get('les', '?')}")
+        regels.append(f"streak {streak}" if gehad else "nog niet geoefend")
+    else:
+        regels.append("staat niet in de cursuslijst")
+    ont = ontleding(parsing)
+    if ont:
+        regels.append(ont)
+    aff = _affixen_kort(parsing)
+    if aff:
+        regels.append(aff)
+    tooltip = "\n".join(regels).replace("'", "&#39;").replace('"', "&quot;")
+
+    # ---- de kleur van het woord zelf
+    stijl = "color:#888888;"
+    if opties["woordsoort"]:
+        soort = woordsoort(parsing)
+        if soort in WOORDSOORT_KLEUR:
+            stijl = f"color:{WOORDSOORT_KLEUR[soort]};"
+    if opties["stammen"]:
+        stam = stamformatie(parsing)
+        if stam:
+            stijl = f"color:{STAM_KLEUR[stam]};font-weight:600;"
+
+    klassen = "mobile-tooltip hebwoord"
+    if opties["nognietgehad"] and not gehad and w is not None:
+        klassen += " hebnog"
+
+    # ---- de voor- en achtervoegsels apart kleuren, binnen het woord
+    if opties["affixen"]:
+        voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
+        if voor or achter:
+            binnen = (f"<span style='color:{AFFIX_KLEUR}'>{voor}</span>" if voor else "")
+            binnen += f"<span style='{stijl}'>{kern}</span>"
+            binnen += (f"<span style='color:{AFFIX_KLEUR}'>{achter}</span>"
+                       if achter else "")
+        else:
+            binnen = f"<span style='{stijl}'>{vorm}</span>"
+    else:
+        binnen = f"<span style='{stijl}'>{vorm}</span>"
+
+    return (f"<span class='{klassen}' tabindex='0'>{binnen}"
+            f"<span class='tooltiptext'>{tooltip}</span></span> ")
+
+
+# ---------------------------------------------------------------- verzen zoeken
+def _alle_verzen_van(boek):
+    return hebreeuws.laad_tenach_boek(boek["bestand"])
+
+
+def _zoek_bekend(boeken, stand, alles_bekend, hoeveel=1):
+    """Verzen waarvan je (bijna) elk woord kent. De Hebreeuwse tegenhanger van de
+    'Autonome Leestekst' bij het Grieks.
+
+    Doorzoekt niet de hele Tenach maar een handvol boeken per keer: alle 39 inlezen kost
+    honderd megabyte, en met een steekproef vind je binnen een seconde genoeg."""
+    kandidaten = []
+    for boek in random.sample(boeken, min(6, len(boeken))):
+        for v in _alle_verzen_van(boek):
+            if not 4 <= len(v["w"]) <= 16:
+                continue
+            gehad = sum(1 for _f, s, _p in v["w"] if stand.get(s, (0, False))[1])
+            deel = gehad / len(v["w"])
+            if (alles_bekend and deel < 1.0) or (not alles_bekend and deel < 0.6):
+                continue
+            kandidaten.append((deel, boek, v))
+    if not kandidaten:
+        return []
+    kandidaten.sort(key=lambda k: -k[0])
+    return random.sample(kandidaten[:40], min(hoeveel, len(kandidaten[:40])))
+
+
+def _zoek_zwak(boeken, stand, lijst, hoeveel=1):
+    """Een vers dat veel woorden bevat die je nog niet vast hebt. De tegenhanger van de
+    Scavenger Hunt: oefenen waar het pijn doet, maar wel in een vers dat je aankunt."""
+    kandidaten = []
+    for boek in random.sample(boeken, min(6, len(boeken))):
+        for v in _alle_verzen_van(boek):
+            if not 4 <= len(v["w"]) <= 16:
+                continue
+            in_lijst = [s for _f, s, _p in v["w"] if s in lijst]
+            if len(in_lijst) < 3:
+                continue
+            zwak = sum(1 for s in in_lijst if stand.get(s, (0, False))[0] < 5)
+            if not zwak:
+                continue
+            kandidaten.append((zwak, boek, v))
+    if not kandidaten:
+        return []
+    kandidaten.sort(key=lambda k: -k[0])
+    return random.sample(kandidaten[:40], min(hoeveel, len(kandidaten[:40])))
+
+
+# ---------------------------------------------------------------- het tabblad
+def tab():
+    """Het tabblad. Aanroepen binnen 'with menu[i]:'."""
+    st.subheader("📜 Tenach — lezen met betekenis")
+    boeken = hebreeuws.tenach_index()
+    if not boeken:
+        st.info("De Hebreeuwse tekst staat niet in deze installatie.")
+        return
+    st.markdown(OPMAAK, unsafe_allow_html=True)
+    st.caption("Ga met je muis over een woord (of tik het aan) voor de betekenis, de "
+               "ontleding en de voor- en achtervoegsels.")
+
+    lijst = _lijst_op_strong()
+    stand = _voortgang()
+    op_naam = {b["nl"]: b for b in boeken}
+
+    # ---- weergave-opties, zoals de vier vinkjes bij de Griekse leestekst
+    v1, v2, v3, v4 = st.columns(4)
+    with v1:
+        kleur_soort = st.checkbox("🎨 Markeer woordsoorten", key="heb_kl_soort")
+    with v2:
+        kleur_affix = st.checkbox("🔗 Markeer voor/achtervoegsels", value=True,
+                                  key="heb_kl_affix")
+    with v3:
+        kleur_stam = st.checkbox("⚛️ Markeer stamformaties", key="heb_kl_stam")
+    with v4:
+        markeer_nieuw = st.checkbox("❗ Nog niet geoefend", value=True, key="heb_kl_nieuw")
+    opties = {"woordsoort": kleur_soort, "affixen": kleur_affix,
+              "stammen": kleur_stam, "nognietgehad": markeer_nieuw}
+
+    st.write("---")
+    modus = st.radio("Hoe wil je de tekst kiezen?",
+                     ["Kies vers(zen)", "Zoek een vers met mijn zwakke woorden",
+                      "🛡️ Alleen woorden die ik ken"],
+                     horizontal=True, key="heb_leesmodus")
+
+    gekozen, verwijzing = [], ""
+    if modus == "Kies vers(zen)":
+        k1, k2, k3 = st.columns([2, 1, 3])
+        with k1:
+            boek_naam = st.selectbox("Boek", list(op_naam), key="heb_boek")
+        boek = op_naam[boek_naam]
+        with k2:
+            hoofdstuk = st.number_input("Hoofdstuk", min_value=1,
+                                        max_value=max(1, int(boek["hoofdstukken"])),
+                                        value=1, step=1, key="heb_hfst")
+        verzen = [v for v in _alle_verzen_van(boek)
+                  if v["v"].split(":")[0] == str(int(hoofdstuk))]
+        if not verzen:
+            st.info("Dat hoofdstuk staat niet in dit boek.")
+            return
+        nummers = [v["v"].split(":")[-1] for v in verzen]
+        with k3:
+            keuze = st.multiselect(f"Vers(zen) — {len(verzen)} beschikbaar", nummers,
+                                   default=nummers[:1], key="heb_verzen")
+        gekozen = [v for v in verzen if v["v"].split(":")[-1] in keuze] or verzen[:1]
+        verwijzing = f"{boek_naam} {int(hoofdstuk)}:{', '.join(keuze) or nummers[0]}"
+
+    elif modus == "Zoek een vers met mijn zwakke woorden":
+        st.caption("Zoekt in een steekproef van zes boeken naar een vers met veel woorden "
+                   "waarvan je streak nog onder de 5 staat.")
+        if st.button("Zoek een vers", key="heb_zoek_zwak"):
+            st.session_state["heb_gevonden"] = _zoek_zwak(boeken, stand, lijst)
+        gevonden = st.session_state.get("heb_gevonden") or []
+        if gevonden:
+            _n, boek, v = gevonden[0]
+            gekozen, verwijzing = [v], f"{boek['nl']} {v['v']}"
+    else:
+        st.caption("Zoekt verzen waarvan je élk woord al eens hebt geoefend — de "
+                   "Hebreeuwse tegenhanger van de autonome leestekst bij het Grieks.")
+        if st.button("Zoek een vers dat ik helemaal ken", key="heb_zoek_bekend"):
+            st.session_state["heb_gevonden2"] = _zoek_bekend(boeken, stand, True)
+            if not st.session_state["heb_gevonden2"]:
+                st.session_state["heb_gevonden2"] = _zoek_bekend(boeken, stand, False)
+                st.info("Geen vers gevonden waarvan je élk woord kent; hier is er een "
+                        "waarvan je het meeste kent.")
+        gevonden = st.session_state.get("heb_gevonden2") or []
+        if gevonden:
+            _n, boek, v = gevonden[0]
+            gekozen, verwijzing = [v], f"{boek['nl']} {v['v']}"
+
+    if not gekozen:
+        st.info("Kies een vers, of laat de app er een zoeken.")
+        return
+
+    # ---- de tekst
+    if kleur_soort:
+        st.markdown(legenda(WOORDSOORT_KLEUR, "Woordsoorten"), unsafe_allow_html=True)
+    if kleur_stam:
+        st.markdown(legenda(STAM_KLEUR, "Stamformaties"), unsafe_allow_html=True)
+    if kleur_affix:
+        st.markdown(f"<div style='font-size:14px;margin-bottom:4px;opacity:.9'>"
+                    f"<span style='color:{AFFIX_KLEUR}'>Voor- en achtervoegsels</span> "
+                    f"staan in cyaan, de stam in de kleur van het woord.</div>",
+                    unsafe_allow_html=True)
+
+    st.markdown(f"<div style='font-size:14px;color:#f6c23e;margin-bottom:4px'>"
+                f"📖 {verwijzing}</div>", unsafe_allow_html=True)
+    regels = []
+    for v in gekozen:
+        stukken = [f"<span class='hebnr'>{v['v'].split(':')[-1]}</span> "]
+        for vorm, strong, parsing in v["w"]:
+            stukken.append(_woord_html(vorm, strong, parsing, lijst, stand, opties))
+        regels.append("".join(stukken))
+    st.markdown(f"<div class='hebtekst'>{' '.join(regels)}</div>", unsafe_allow_html=True)
+
+    # ---- de cijfers eronder
+    alle = [(f, s, p) for v in gekozen for f, s, p in v["w"]]
+    in_lijst = [x for x in alle if x[1] in lijst]
+    gehad = [x for x in in_lijst if stand.get(x[1], (0, False))[1]]
+    kol = st.columns(4)
+    kol[0].metric("Woorden", len(alle))
+    kol[1].metric("In je lijst", len(in_lijst))
+    kol[2].metric("Al geoefend", len(gehad))
+    kol[3].metric("Nog niet", len(in_lijst) - len(gehad))
+
+    with st.expander("📋 Alle woorden op een rij", expanded=False):
+        rijen = []
+        for v in gekozen:
+            for vorm, strong, parsing in v["w"]:
+                w = lijst.get(strong)
+                voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
+                streak, _gehad = stand.get(strong, (0, False))
+                rijen.append({
+                    "vers": v["v"], "vorm": vorm,
+                    "stam": kern if (voor or achter) else "",
+                    "betekenis": korte_betekenis(w) if w else "— niet in de cursuslijst",
+                    "voor/achter": _affixen_kort(parsing),
+                    "woordsoort": woordsoort(parsing),
+                    "ontleding": ontleding(parsing),
+                    "streak": streak,
+                })
+        st.dataframe(
+            pd.DataFrame(rijen), use_container_width=True, hide_index=True,
+            column_config={
+                "vers": st.column_config.TextColumn("Vers", width="small"),
+                "vorm": st.column_config.TextColumn("Vorm", width="small"),
+                "stam": st.column_config.TextColumn("Stam", width="small"),
+                "betekenis": st.column_config.TextColumn("Betekenis", width="large"),
+                "voor/achter": st.column_config.TextColumn("Voor/achtervoegsel",
+                                                           width="medium"),
+                "woordsoort": st.column_config.TextColumn("Soort", width="small"),
+                "ontleding": st.column_config.TextColumn("Ontleding", width="medium"),
+                "streak": st.column_config.NumberColumn("Streak", width="small"),
+            })
+    st.caption("Oefenen doe je in de snelle app: daar kun je een hoofdstuk kiezen en de "
+               "woorden die je nog mist vooraan in je woordenschat zetten.")
