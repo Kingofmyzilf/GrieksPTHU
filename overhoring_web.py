@@ -3443,6 +3443,10 @@ TAB_KEUZE = [
     ("stam", "⏳ Stamtijden"), ("lezen", "📝 Leesteksten"), ("klank", "🔊 Klankwetten"),
     ("struct", "🧱 Structuurwoorden"), ("voortgang", "📊 Voortgang"), ("lijst", "📖 Lijst"),
     ("gram", "📐 Grammatica"), ("uitleg", "ℹ️ Uitleg & Hulp"), ("nlgr", "✍️ NL → Grieks (productie)"),
+    # Het enige tabblad dat niet over Grieks gaat. Het verschijnt alleen als het Hebreeuws
+    # in deze installatie zit (hebreeuws.py plus de map tenach/); wie het niet wil gebruiken
+    # zet het uit bij ℹ️ Uitleg & Hulp, net als elk ander tabblad.
+    ("tenach", "📜 Tenach (Hebreeuws)"),
 ]
 # Deze twee blijven altijd staan: via Uitleg zet je tabbladen weer aan, en Voortgang is je overzicht.
 TAB_ALTIJD = {"uitleg", "voortgang"}
@@ -3464,7 +3468,19 @@ def nieuwe_gebruiker():
             return False
     return True
 
+def _hebreeuws_erbij():
+    """Zit het Hebreeuws in deze installatie? Zo niet, dan hoort dat tabblad er niet te
+    staan — een tab die 'niet beschikbaar' meldt is erger dan geen tab."""
+    try:
+        import hebreeuws_web
+        return hebreeuws_web.beschikbaar()
+    except Exception:                                            # noqa: BLE001
+        return False
+
+
 def tab_zichtbaar(sleutel):
+    if sleutel == "tenach" and not _hebreeuws_erbij():
+        return False
     if sleutel in TAB_ALTIJD:
         return True
     _p = st.session_state.get('ui_prefs')
@@ -4669,7 +4685,7 @@ def main():
         # sessie simpelweg niet: het content-blok wordt overgeslagen (zie de _TOON-guards hieronder),
         # dus er is ook geen 'app in de app' met verborgen tabjes.
         _MENU_SLEUTELS = ["woorden", "lijst", "voortgang", "actief", "stam", "struct",
-                          "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank"]
+                          "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank", "tenach"]
         _volgorde = list(TAB_KEUZE)
         if nieuwe_gebruiker():
             # Nog niets geoefend? Begin bij de uitleg — Streamlit opent altijd het eerste tabblad.
@@ -10051,6 +10067,22 @@ def main():
                             _naam = ("Basiswoord herkennen" if _s == 'basiswoord'
                                      else _SAMENSMELT_KLASSEN.get(_s, (_s, ''))[0])
                             st.progress(_g2 / (_g2 + _f2), text=f"{_naam}: {_g2}/{_g2 + _f2} goed")
+
+        # ==========================================
+        # TAB: TENACH (HEBREEUWS)
+        # ==========================================
+        # De inhoud staat in hebreeuws_web.py en niet hier. Twee redenen: deze module wordt
+        # door gereedschap/bouw_motor.py omgezet naar grieks_motor.py, en alles wat
+        # Streamlit aanroept moet daar juist buiten blijven — en zo blijft het Hebreeuws bij
+        # elkaar. Ontbreekt hebreeuws.py of de map tenach/, dan staat het tabblad er niet.
+        if _TOON[12] and menu[12] is not None:
+         with menu[12]:
+            try:
+                import hebreeuws_web
+                hebreeuws_web.tab()
+            except Exception as _e:                              # noqa: BLE001
+                st.info("Het Hebreeuws is in deze installatie niet beschikbaar.")
+                st.caption(f"({_e})")
 
 if __name__ == "__main__":
     main()
