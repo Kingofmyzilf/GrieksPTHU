@@ -89,6 +89,22 @@ ui.add_head_html(f"""
   /* Een woord in een leestekst: eigen aanraakvlak, met genoeg lucht om te mikken. */
   .leeswoord {{ font-size:27px; padding:2px 3px 1px; margin:0 2px;
                 cursor:pointer; display:inline-block; }}
+  /* Een versnummer om aan te tikken. Klein, maar met een aanraakvlak van 44 punten
+     eromheen — anders mis je hem op een telefoon. */
+  .versnr {{ color:{ZACHT}; font-size:12px; vertical-align:super; cursor:pointer;
+             padding:6px 4px; margin:0 1px; position:relative; }}
+  .versnr::after {{ content:''; position:absolute; left:50%; top:50%;
+                    width:44px; height:44px; transform:translate(-50%, -50%); }}
+  .versnr.aan {{ color:{MERK}; font-weight:700; }}
+  /* De betekenissen bovenaan, naast elkaar en horizontaal te schuiven. Ze stonden eerst
+     onder de tekst, en dan moet je bij een lang hoofdstuk helemaal naar beneden om te
+     zien wat je net hebt aangetikt. */
+  .uitlegbalk {{ position:sticky; top:0; z-index:15; background:{INKT};
+                 border-bottom:1px solid {RAND}; margin:0 -14px; padding:8px 14px;
+                 display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }}
+  .uitlegbalk::-webkit-scrollbar {{ display:none; }}
+  .uitlegkaart {{ flex:0 0 auto; max-width:74vw; background:{VLAK};
+                  border:1px solid {RAND}; border-radius:10px; padding:7px 10px; }}
   /* De twee balken staan onder elkaar vast onderaan. dvh volgt het zichtbare deel van
      het scherm, zodat ze meebewegen als de adresbalk in- of uitschuift. */
   /* De drie hoogtes staan in variabelen en alles rekent ermee. Los ingevulde getallen
@@ -6949,7 +6965,15 @@ def tenachpagina():
         return
     info = heb_woordinfo(g)
     op_naam = {b["nl"]: b for b in boeken}
-    staat = {"boek": boeken[0]["nl"], "hoofdstuk": 1, "vanaf": 0, "open": set()}
+    staat = {"boek": boeken[0]["nl"], "hoofdstuk": 1, "vanaf": 0, "open": set(),
+             "verzen_aan": set(), "beurt": 0}
+    # In welke volgorde de kaartjes staan: het laatst aangetikte woord vooraan. Zonder een
+    # eigen teller zou het op vers-en-woordnummer gaan, en dan verschuift het kaartje dat
+    # je net opende naar het midden.
+    volgorde = {}
+
+    def _leesorde(sleutel):
+        return volgorde.get(sleutel, 0)
 
     with ui.column().classes("inhoud w-full gap-2"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
@@ -6963,10 +6987,13 @@ def tenachpagina():
             kies_hfst = ui.select([1], value=1, label="Hoofdstuk").props(
                 "outlined dense dark").style("width:116px;min-width:116px")
         kop = ui.label().style(f"color:{ZACHT};font-size:12.5px")
+        # De betekenissen staan bovenaan en blijven staan bij het schuiven: bij een
+        # hoofdstuk van veertig verzen wil je niet naar beneden hoeven om te zien wat je
+        # net hebt aangetikt.
+        uitleg = ui.html()
         tekst = ui.html().classes("hebrij w-full").style(
             "padding:4px 0 2px;line-height:2.15")
         meer = ui.row().classes("w-full justify-center")
-        uitleg = ui.column().classes("w-full gap-0")
     onderbalk("Lezen")
 
     def verzen_van_hoofdstuk():
@@ -6985,8 +7012,11 @@ def tenachpagina():
         regels = []
         for v in stuk:
             nummer = v["v"].split(":")[-1]
-            vakjes = [f"<span style='color:{ZACHT};font-size:12px;"
-                      f"vertical-align:super'>{nummer}</span>"]
+            heel_aan = v["v"] in staat["verzen_aan"]
+            # Het versnummer is zelf een knop: één tik zet alle woorden van dat vers open,
+            # nog een tik doet ze weer dicht. Zo hoef je er niet twaalf los aan te tikken.
+            vakjes = [f"<span class='versnr{' aan' if heel_aan else ''}' "
+                      f"data-v='{v['v']}'>{nummer}</span>"]
             for n, (vorm, strong, parsing) in enumerate(v["w"]):
                 sleutel = f"{v['v']}#{n}"
                 aan = sleutel in staat["open"]
@@ -7009,42 +7039,71 @@ def tenachpagina():
     def blader(richting):
         staat["vanaf"] = max(0, staat["vanaf"] + richting * TENACH_MAX_VERZEN)
         staat["open"].clear()
+        staat["verzen_aan"].clear()
         teken()
         teken_uitleg()
 
     def teken_uitleg():
-        uitleg.clear()
+        """De aangetikte woorden als kaartjes naast elkaar, bovenaan.
+
+        Nieuwste vooraan: wat je net aantikte staat links en is meteen te zien zonder te
+        schuiven. Eerst stonden ze onder de tekst en onder elkaar, en dan moest je bij
+        veertig verzen helemaal naar beneden."""
         if not staat["open"]:
+            uitleg.set_content("")
             return
         alles = {v["v"]: v for v in verzen_van_hoofdstuk()}
-        with uitleg:
-            for sleutel in sorted(staat["open"]):
-                ref, _, n = sleutel.rpartition("#")
-                v = alles.get(ref)
-                if not v or int(n) >= len(v["w"]):
-                    continue
-                vorm, strong, parsing = v["w"][int(n)]
-                w = info.get(strong)
-                betekenis = (heb_betekenis(w) if w
-                             else "staat niet in je woordenlijst")
-                affixen = heb_affix_uitleg(parsing)
-                ontleed = heb_ontleding(parsing)
-                ui.html(
-                    f"<div style='border-top:1px solid {RAND};padding:6px 0'>"
-                    f"<span style='color:{ZACHT};font-size:12px'>{ref}</span> "
-                    f"{heb_gekleurd(vorm, parsing, maat=20)}"
-                    f"<span style='color:{TEKST};font-size:14px'> — {betekenis}</span>"
-                    + (f"<div style='color:{MERK};font-size:12.5px'>"
-                       f"{' · '.join(affixen)}</div>" if affixen else "")
-                    + (f"<div style='color:{ZACHT};font-size:12.5px'>{ontleed}</div>"
-                       if ontleed else "")
-                    + "</div>")
+        kaartjes = []
+        for sleutel in sorted(staat["open"], key=_leesorde, reverse=True):
+            ref, _, n = sleutel.rpartition("#")
+            v = alles.get(ref)
+            if not v or int(n) >= len(v["w"]):
+                continue
+            vorm, strong, parsing = v["w"][int(n)]
+            w = info.get(strong)
+            betekenis = heb_betekenis(w) if w else "staat niet in je woordenlijst"
+            affixen = heb_affix_uitleg(parsing)
+            ontleed = heb_ontleding(parsing)
+            kaartjes.append(
+                f"<div class='uitlegkaart'>"
+                f"<div style='display:flex;align-items:baseline;gap:6px'>"
+                f"{heb_gekleurd(vorm, parsing, maat=19)}"
+                f"<span style='color:{ZACHT};font-size:11px'>{ref}</span></div>"
+                f"<div style='color:{TEKST};font-size:13.5px;line-height:1.35'>"
+                f"{betekenis}</div>"
+                + (f"<div style='color:{MERK};font-size:11.5px'>"
+                   f"{' · '.join(affixen)}</div>" if affixen else "")
+                + (f"<div style='color:{ZACHT};font-size:11.5px'>{ontleed}</div>"
+                   if ontleed else "")
+                + "</div>")
+        uitleg.set_content(f"<div class='uitlegbalk'>{''.join(kaartjes)}</div>")
 
     def tik(sleutel):
         if sleutel in staat["open"]:
             staat["open"].discard(sleutel)
         else:
+            staat["beurt"] += 1
+            volgorde[sleutel] = staat["beurt"]
             staat["open"].add(sleutel)
+        teken()
+        teken_uitleg()
+
+    def tik_vers(ref):
+        """Een heel vers open of dicht. Sneller dan twaalf woorden los aantikken."""
+        alles = {v["v"]: v for v in verzen_van_hoofdstuk()}
+        v = alles.get(ref)
+        if not v:
+            return
+        sleutels = [f"{ref}#{n}" for n in range(len(v["w"]))]
+        if ref in staat["verzen_aan"]:
+            staat["verzen_aan"].discard(ref)
+            staat["open"].difference_update(sleutels)
+        else:
+            staat["verzen_aan"].add(ref)
+            for s in sleutels:
+                staat["beurt"] += 1
+                volgorde[s] = staat["beurt"]
+            staat["open"].update(sleutels)
         teken()
         teken_uitleg()
 
@@ -7058,6 +7117,7 @@ def tenachpagina():
         staat["hoofdstuk"] = 1
         staat["vanaf"] = 0
         staat["open"].clear()
+        staat["verzen_aan"].clear()
         zet_hoofdstukken()
         kies_hfst.value = 1
         teken()
@@ -7067,10 +7127,12 @@ def tenachpagina():
         staat["hoofdstuk"] = int(kies_hfst.value or 1)
         staat["vanaf"] = 0
         staat["open"].clear()
+        staat["verzen_aan"].clear()
         teken()
         teken_uitleg()
 
     ui.on("leeswoord", lambda e: tik(str(e.args)))
+    ui.on("leesvers", lambda e: tik_vers(str(e.args)))
     kies_boek.on_value_change(lambda _=None: boek_gewisseld())
     kies_hfst.on_value_change(lambda _=None: hoofdstuk_gewisseld())
     zet_hoofdstukken()
@@ -7252,16 +7314,20 @@ def heblezenpagina():
     info = heb_woordinfo(g)
     # Welke woorden je al hebt aangetikt. Dat blijft binnen dit ene vers.
     open_gezet = set()
+    # In welke volgorde: het laatst aangetikte woord staat vooraan in de balk.
+    beurt = {}
 
     with ui.column().classes("inhoud metbalk w-full gap-3"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
             ui.label("Lezen").style(f"color:{ZACHT};font-size:13px")
             verwijzing = ui.label().style(f"color:{ZACHT};font-size:13px")
         # Het vers zelf, van rechts naar links, met elk woord als eigen vakje.
+        # Zelfde keuze als bij het doorbladeren: de betekenissen bovenaan en naast
+        # elkaar, niet eronder en onder elkaar.
+        uitleg = ui.html()
         tekst = ui.html().classes("hebrij w-full").style(
             "padding:6px 0 2px;line-height:2.1")
         teller = ui.label().classes("w-full").style(f"color:{ZACHT};font-size:12.5px")
-        uitleg = ui.column().classes("w-full gap-0")
         opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
 
     balk = ui.row()
@@ -7305,30 +7371,34 @@ def heblezenpagina():
                        f"tik een woord aan voor de betekenis")
 
     def teken_uitleg():
-        uitleg.clear()
         if not open_gezet:
+            uitleg.set_content("")
             return
-        with uitleg:
-            for n in sorted(open_gezet):
-                vorm, strong, parsing = vers["woorden"][n]
-                w = info.get(strong)
-                betekenis = heb_betekenis(w) if w else "staat niet in de woordenlijst"
-                ontleed = heb_ontleding(parsing)
-                affixen = heb_affix_uitleg(parsing)
-                ui.html(
-                    f"<div style='border-top:1px solid {RAND};padding:6px 0'>"
-                    f"{heb_gekleurd(vorm, parsing, maat=20)}"
-                    f"<span style='color:{TEKST};font-size:14px'> — {betekenis}</span>"
-                    + (f"<div style='color:{MERK};font-size:12.5px'>"
-                       f"{' · '.join(affixen)}</div>" if affixen else "")
-                    + (f"<div style='color:{ZACHT};font-size:12.5px'>{ontleed}</div>"
-                       if ontleed else "")
-                    + "</div>")
+        kaartjes = []
+        for n in sorted(open_gezet, key=lambda k: -beurt.get(k, 0)):
+            vorm, strong, parsing = vers["woorden"][n]
+            w = info.get(strong)
+            betekenis = heb_betekenis(w) if w else "staat niet in de woordenlijst"
+            ontleed = heb_ontleding(parsing)
+            affixen = heb_affix_uitleg(parsing)
+            kaartjes.append(
+                f"<div class='uitlegkaart'>"
+                f"{heb_gekleurd(vorm, parsing, maat=19)}"
+                f"<div style='color:{TEKST};font-size:13.5px;line-height:1.35'>"
+                f"{betekenis}</div>"
+                + (f"<div style='color:{MERK};font-size:11.5px'>"
+                   f"{' · '.join(affixen)}</div>" if affixen else "")
+                + (f"<div style='color:{ZACHT};font-size:11.5px'>{ontleed}</div>"
+                   if ontleed else "")
+                + "</div>")
+        uitleg.set_content(f"<div class='uitlegbalk'>{''.join(kaartjes)}</div>")
 
     def tik(n):
         if n in open_gezet:
             open_gezet.discard(n)
         else:
+            beurt["nu"] = beurt.get("nu", 0) + 1
+            beurt[n] = beurt["nu"]
             open_gezet.add(n)
         teken()
         teken_uitleg()
@@ -7337,6 +7407,9 @@ def heblezenpagina():
         if len(open_gezet) == len(vers["woorden"]):
             open_gezet.clear()
         else:
+            for n in range(len(vers["woorden"])):
+                beurt["nu"] = beurt.get("nu", 0) + 1
+                beurt[n] = beurt["nu"]
             open_gezet.update(range(len(vers["woorden"])))
         teken()
         teken_uitleg()
@@ -7473,6 +7546,8 @@ MANIFEST = {
 ui.add_body_html("""
 <script>
   document.addEventListener('click', function (e) {
+    const nr = e.target.closest('.versnr');
+    if (nr) { emitEvent('leesvers', nr.dataset.v); return; }
     const el = e.target.closest('.leeswoord');
     if (!el) return;
     emitEvent('leeswoord', el.dataset.w !== undefined
