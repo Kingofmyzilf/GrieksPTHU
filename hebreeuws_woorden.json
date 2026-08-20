@@ -66,7 +66,7 @@
  },
  {
   "hebreeuws": "אֲשֶׁר",
-  "nederlands": "waarvan geldt dat — geeft relatieve bijzin aan]; dat, toen, omdat, opdat, dat",
+  "nederlands": "[waarvan geldt dat — geeft relatieve bijzin aan]; dat, toen, omdat, opdat, dat",
   "nummer": 3,
   "les": 1,
   "regeert": "",
@@ -1161,7 +1161,7 @@
  },
  {
   "hebreeuws": "לְ",
-  "nederlands": "naar »iets toe«, tot, (behorend) aan, voor;met inf.I: om te, door te",
+  "nederlands": "naar »iets toe«, tot, (behorend) aan, voor; met inf. om te, door te",
   "nummer": 38,
   "les": 1,
   "regeert": "",
@@ -1316,7 +1316,8 @@
   "geslacht": "",
   "stammen": {
    "Qal": "sterven",
-   "Hifil": "doden, ter dood brengen, executeren"
+   "Hifil": "doden, ter dood brengen, executeren",
+   "Polel": "de laatste klap geven"
   },
   "woordsoort": "ww",
   "strong": "4191",
@@ -1342,15 +1343,18 @@
  },
  {
   "hebreeuws": "נתן",
-  "nederlands": "Ggeven; stellen, leggen,maken;Ngegevenworden",
+  "nederlands": "G geven; stellen, leggen, maken; N gegeven worden",
   "nummer": 44,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "נתנ",
   "geslacht": "",
-  "stammen": {},
-  "woordsoort": "",
+  "stammen": {
+   "Qal": "geven",
+   "Nifal": "gegeven worden"
+  },
+  "woordsoort": "ww",
   "strong": "5414",
   "frequentie": 2012,
   "vindplaatsen": [
@@ -1566,15 +1570,19 @@
  },
  {
   "hebreeuws": "עָלָה",
-  "nederlands": "Gopstijgen, optrekken;Nzich terugtrekken;Homhoog brengen; ook: offeren",
+  "nederlands": "G opstijgen, optrekken; N zich terugtrekken; H omhoog brengen; ook: offeren",
   "nummer": 51,
   "les": 1,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "עלה",
   "geslacht": "",
-  "stammen": {},
-  "woordsoort": "",
+  "stammen": {
+   "Qal": "opstijgen, optrekken",
+   "Nifal": "zich terugtrekken",
+   "Hifil": "omhoog brengen"
+  },
+  "woordsoort": "ww",
   "strong": "5927",
   "frequentie": 889,
   "vindplaatsen": [
@@ -1765,7 +1773,7 @@
  },
  {
   "hebreeuws": "שׁמע",
-  "nederlands": "G horen, luisteren (naar); N gehoordworden;H laten horen",
+  "nederlands": "G horen, luisteren (naar); N gehoord worden; H laten horen",
   "nummer": 57,
   "les": 1,
   "regeert": "בְּ",
@@ -1774,7 +1782,7 @@
   "geslacht": "",
   "stammen": {
    "Qal": "horen, luisteren (naar)",
-   "Nifal": "gehoordworden",
+   "Nifal": "gehoord worden",
    "Hifil": "laten horen"
   },
   "woordsoort": "ww",
@@ -2418,7 +2426,7 @@
  },
  {
   "hebreeuws": "הֲ",
-  "nederlands": "vraagpartikel]",
+  "nederlands": "[vraagpartikel]",
   "nummer": 77,
   "les": 1,
   "regeert": "",
@@ -2628,7 +2636,7 @@
  },
  {
   "hebreeuws": "ילד",
-  "nederlands": "Gvoortbrengen, baren, »een kind« krijgen; verwekken; N geboren worden",
+  "nederlands": "G voortbrengen, baren, »een kind« krijgen; verwekken; N geboren worden",
   "nummer": 84,
   "les": 1,
   "regeert": "",
@@ -2636,6 +2644,7 @@
   "medeklinkers": "ילד",
   "geslacht": "",
   "stammen": {
+   "Qal": "voortbrengen, baren, »een kind« krijgen",
    "Nifal": "geboren worden"
   },
   "woordsoort": "ww",
@@ -6233,7 +6242,8 @@
   "geslacht": "",
   "stammen": {
    "Nifal": "vast zijn",
-   "Hifil": "vaststellen, bereiden"
+   "Hifil": "vaststellen, bereiden",
+   "Polel": "bevestigen, grondvesten"
   },
   "woordsoort": "ww",
   "handmatig": "holle wortel: staat in de tekst als נָכוֹן, nooit als כּוּן (219x)",
@@ -7489,7 +7499,8 @@
   "stammen": {
    "Qal": "begrijpen",
    "Nifal": "inzicht hebben",
-   "Hifil": "begrijpen, verstaan"
+   "Hifil": "begrijpen, verstaan",
+   "Polel": "zorgen voor"
   },
   "woordsoort": "ww",
   "strong": "995",
@@ -7871,7 +7882,7 @@
  },
  {
   "hebreeuws": "יַרְדֵּן",
-  "nederlands": "Jordaan [rivier]",
+  "nederlands": "[GeoN]",
   "nummer": 244,
   "les": 2,
   "regeert": "",
@@ -8244,7 +8255,8 @@
   "stammen": {
    "Qal": "zich omkeren",
    "Nifal": "van richting veranderen",
-   "Hifil": "afzwenken"
+   "Hifil": "afzwenken",
+   "Polel": "een ronde maken om"
   },
   "woordsoort": "ww",
   "strong": "5437",
@@ -9158,15 +9170,18 @@
  },
  {
   "hebreeuws": "חלל",
-  "nederlands": "iNontwijdworden;Dontwijden;Hbeginnen.iiRp doorboord worden",
+  "nederlands": "i N ontwijd worden; D ontwijden; H beginnen; ii Rp doorboord worden",
   "nummer": 283,
   "les": 2,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "חלל",
   "geslacht": "",
-  "stammen": {},
-  "woordsoort": "",
+  "stammen": {
+   "Piel": "ontwijden",
+   "Hifil": "beginnen"
+  },
+  "woordsoort": "ww",
   "strong": "2490",
   "frequentie": 142,
   "vindplaatsen": [
@@ -10468,7 +10483,7 @@
  },
  {
   "hebreeuws": "שׁ",
-  "nederlands": "waarvan geldt dat - nota rel.]; dat, toen, omdat, opdat, dat [conjunctie]",
+  "nederlands": "[waarvan geldt dat - nota rel.]; dat, toen, omdat, opdat, dat [conjunctie]",
   "nummer": 323,
   "les": 2,
   "regeert": "",
@@ -12668,15 +12683,18 @@
  },
  {
   "hebreeuws": "נגשׁ",
-  "nederlands": "GenNnaderen;Hdoennaderen,dichtbijbrengen",
+  "nederlands": "G en N naderen; H doen naderen, dichtbij brengen",
   "nummer": 390,
   "les": 2,
   "regeert": "",
   "varianten": [],
   "medeklinkers": "נגש",
   "geslacht": "",
-  "stammen": {},
-  "woordsoort": "",
+  "stammen": {
+   "Qal": "en N naderen",
+   "Hifil": "doen naderen, dichtbij brengen"
+  },
+  "woordsoort": "ww",
   "strong": "5066",
   "frequentie": 125,
   "vindplaatsen": [

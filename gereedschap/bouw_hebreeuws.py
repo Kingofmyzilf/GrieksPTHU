@@ -38,8 +38,13 @@ FINAAL = {"ך": "כ", "ם": "מ", "ן": "נ",
           "ף": "פ", "ץ": "צ"}
 
 # De stamformaties zoals de cursus ze afkort, vóór de betekenis van dat stamgebruik.
+# De stamformaties zoals de cursus ze afkort. Dit is de notatie van Jenni en Lettinga:
+# G is de Grundstamm (Qal), D de Doppelungsstamm (Piel), R de Reduplikationsstamm (Polel),
+# en een p erachter maakt het de passieve tegenhanger. Zonder R en Rp bleven vier woorden
+# met een stamcode staan die het script niet kende.
 BINYAN = {"G": "Qal", "N": "Nifal", "D": "Piel", "Dp": "Pual",
-          "H": "Hifil", "Hp": "Hofal", "Ht": "Hitpael"}
+          "H": "Hifil", "Hp": "Hofal", "Ht": "Hitpael",
+          "R": "Polel", "Rp": "Polal"}
 
 
 def hebreeuws(teken):
@@ -83,12 +88,15 @@ def splits(regel):
         if latijns(teken) or (teken.isascii() and teken.isdigit()):
             grens = i
             break
-    # Begint de betekenis met een haakje, dan valt de grens er één te laat: '(' is geen
-    # letter. Dat kostte 37 woorden hun openingshaakje — '(v) land' werd 'v) land',
-    # '(zo)als' werd 'zo)als', en het geslacht werd nergens meer herkend. Een haakje dat
-    # bij het Hebreeuws hoort staat hier nooit: daar is het teken vlak voor de grens de
-    # sluitende ')' van bijvoorbeeld '(אַחַר)רדף'.
-    if grens and regel[grens - 1] == "(":
+    # Begint de betekenis met een haakje, dan valt de grens er één te laat: '(' en '[' zijn
+    # geen letters. Dat kostte 37 woorden hun openingshaakje — '(v) land' werd 'v) land',
+    # '(zo)als' werd 'zo)als', en het geslacht werd nergens meer herkend. Bij אֲשֶׁר kostte
+    # het de vierkante haak, en daarmee het verschil tussen de uitleg en de betekenis: er
+    # bleef 'waarvan geldt dat — geeft relatieve bijzin aan]' als betekenis staan, terwijl
+    # 'dat, toen, omdat, opdat' de eigenlijke betekenissen zijn. Een haakje dat bij het
+    # Hebreeuws hoort staat hier nooit: daar is het teken vlak voor de grens de sluitende
+    # ')' van bijvoorbeeld '(אַחַר)רדף'.
+    if grens and regel[grens - 1] in "([":
         grens -= 1
     # De haakjes blijven staan; verrijk() haalt de groepen er als geheel uit. Zou splits()
     # ze hier wegstrippen, dan raken ze uit balans en plakt '(אַחַר)רדף' aan elkaar.
@@ -167,6 +175,20 @@ BETEKENIS_HERSTEL = {
         "G zich herinneren; gedenken, herdenken; H in herinnering brengen",
     "Gvoltooid/gereed/teneindezijn;Dophoudenmet":
         "G voltooid/gereed/ten einde zijn; D ophouden met",
+    "Ggeven; stellen, leggen,maken;Ngegevenworden":
+        "G geven; stellen, leggen, maken; N gegeven worden",
+    "Gopstijgen, optrekken;Nzich terugtrekken;Homhoog brengen; ook: offeren":
+        "G opstijgen, optrekken; N zich terugtrekken; H omhoog brengen; ook: offeren",
+    "Gvoortbrengen, baren, »een kind« krijgen; verwekken; N geboren worden":
+        "G voortbrengen, baren, »een kind« krijgen; verwekken; N geboren worden",
+    "iNontwijdworden;Dontwijden;Hbeginnen.iiRp doorboord worden":
+        "i N ontwijd worden; D ontwijden; H beginnen; ii Rp doorboord worden",
+    "GenNnaderen;Hdoennaderen,dichtbijbrengen":
+        "G en N naderen; H doen naderen, dichtbij brengen",
+    "G horen, luisteren (naar); N gehoordworden;H laten horen":
+        "G horen, luisteren (naar); N gehoord worden; H laten horen",
+    "naar »iets toe«, tot, (behorend) aan, voor;met inf.I: om te, door te":
+        "naar »iets toe«, tot, (behorend) aan, voor; met inf. om te, door te",
     # Bij vier eigennamen geeft de cursuslijst alleen de categorie: PN is een
     # persoonsnaam, GeoN een aardrijkskundige. Als betekenis op een oefenkaart zegt 'PN'
     # niets — de naam zelf is wat je moet weten. Die staat er nu bij.
