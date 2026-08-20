@@ -4219,7 +4219,10 @@ def heb_betekenis(w):
         for deel in groep["betekenissen"]:
             kandidaat = f"{uit}, {deel}" if uit else deel
             if len(kandidaat) > HEB_KORT:
-                return uit + "…" if uit else kandidaat[:HEB_KORT].rsplit(" ", 1)[0] + "…"
+                # rstrip op de puntjes: de lijst gebruikt zelf ook '…', en dan stond er
+                # bij אִם 'o, dat toch ……' met twee reeksen achter elkaar.
+                kort = (uit if uit else kandidaat[:HEB_KORT].rsplit(" ", 1)[0])
+                return kort.rstrip(" .…,;") + "…"
             uit = kandidaat
         return uit
     # Alleen uitleg en geen betekenis: dan is die uitleg het beste wat we hebben.
@@ -4332,6 +4335,8 @@ class HebSessie:
         self.beoordeeld = False
         self.bezig = False
         self.vraag_typen = False
+        # De paren die je deze ronde door elkaar haalde; die komen op de eindkaart.
+        self.verwar = []
 
     @staticmethod
     def _kaarten(woorden):
@@ -4475,6 +4480,26 @@ def hebpagina():
             toon_typveld(invoer, False)
             knop.text = "Nieuwe ronde"
             teken()
+            # De paren die je in deze ronde door elkaar haalde, naast elkaar. Dát is waar
+            # je ze van uit elkaar gaat houden.
+            if sessie.verwar:
+                with opties:
+                    ui.html(
+                        f"<div style='background:{VLAK};border:1px solid {RAND};"
+                        f"border-radius:12px;padding:14px 16px'>"
+                        f"<div style='color:{ZACHT};font-size:13px;margin-bottom:8px'>"
+                        f"Deze haalde je door elkaar</div>"
+                        + "".join(
+                            f"<div style='padding:5px 0;border-top:1px solid {RAND};"
+                            f"font-size:13.5px'>"
+                            f"<span class='hebreeuws' style='font-size:18px;"
+                            f"color:{TEKST}'>{a['hebreeuws']}</span>"
+                            f"<span style='color:{ZACHT}'> {heb_betekenis(a)}</span><br>"
+                            f"<span class='hebreeuws' style='font-size:18px;"
+                            f"color:{TEKST}'>{b['hebreeuws']}</span>"
+                            f"<span style='color:{ZACHT}'> {heb_betekenis(b)}</span></div>"
+                            for a, b in sessie.verwar[:5])
+                        + "</div>")
             return
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         teken()
@@ -4537,12 +4562,20 @@ def hebpagina():
         if sessie.vraag_typen:
             invoer.run_method("focus")
 
-    async def verwerk(w, juist):
+    async def verwerk(w, juist, aangeklikt=None):
         sessie.beoordeeld = True
         sessie.goed += int(juist)
         sessie.fout += int(not juist)
         if juist:
             w["score_goed"] = int(w.get("score_goed", 0)) + 1
+        # Bij een misser onthouden welk woord jij bedoelde. Twee woorden die je door elkaar
+        # haalt leer je alleen uit elkaar door ze naast elkaar te zien — dat is precies wat
+        # de verwarparen bij het Grieks doen.
+        if not juist and aangeklikt:
+            verward = next((x for x in sessie.alles
+                            if x is not w and heb_betekenis(x) == aangeklikt), None)
+            if verward is not None:
+                sessie.verwar.append((w, verward))
             # Dezelfde opbrengst als bij het Grieks: zelf typen 3, aanwijzen 1.
             w["streak"] = int(w.get("streak", 0)) + STREAK_PUNTEN["4" if sessie.vraag_typen
                                                                   else "2"]
@@ -4564,6 +4597,17 @@ def hebpagina():
         toon_typveld(invoer, False)
         kleur = GOED if juist else FOUT
         achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        # Wat je aanklikte erbij, met het woord waar die betekenis bij hoort. Zonder dat
+        # weet je alleen dát het fout was, niet wat je in gedachten had.
+        gekozen = ""
+        if not juist and aangeklikt:
+            verward = next((x for x in sessie.alles
+                            if x is not w and heb_betekenis(x) == aangeklikt), None)
+            erbij = (f" — dat is <span class='hebreeuws' style='font-size:19px'>"
+                     f"{verward['hebreeuws']}</span>" if verward is not None else "")
+            gekozen = (f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
+                       f"jij koos <span style='color:{FOUT}'>{aangeklikt}</span>"
+                       f"{erbij}</div>")
         vindplaats = (w.get("vindplaatsen") or [{}])[0]
         regel_vind = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px'>"
                       f"<span class='hebreeuws'>{vindplaats.get('vorm', '')}</span> — "
@@ -4579,7 +4623,7 @@ def hebpagina():
                 f"margin-top:12px;line-height:1.3'>{w['hebreeuws']}</div>"
                 f"<div style='color:{ZACHT};font-size:13px'>{w.get('translit', '')}</div>"
                 f"<div style='color:{TEKST};font-size:17px;margin-top:6px;"
-                f"line-height:1.45'>{heb_volledig(w)}</div>{regel_vind}"
+                f"line-height:1.45'>{heb_volledig(w)}</div>{gekozen}{regel_vind}"
                 f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
                 f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                 f"streak nu {int(w.get('streak', 0))}</div></div>")
@@ -4594,7 +4638,7 @@ def hebpagina():
         sessie.bezig = True
         try:
             w = sessie.huidig
-            await verwerk(w, keuze == heb_betekenis(w))
+            await verwerk(w, keuze == heb_betekenis(w), keuze)
         finally:
             sessie.bezig = False
 
@@ -6078,6 +6122,9 @@ def voortgangpagina():
 
 # ============================================================== lijst
 LIJST_SOORTEN = ["Woordenschat", "Mijn verwarwoorden", "Structuurwoorden", "Stamtijden"]
+# Staat de app op Hebreeuws, dan hoort de Griekse woordenschat hier niet: die lijsten gaan
+# over de andere taal. Wat blijft is de Hebreeuwse woordenlijst en de rijtjes.
+LIJST_SOORTEN_HEB = ["Hebreeuwse woorden", "Rijtjes"]
 LIJST_MAX = 200          # zoveel regels tegelijk; meer maakt de pagina onbruikbaar traag
 
 
@@ -6107,6 +6154,56 @@ def lijst_woorden(g, zoek, alleen_geoefend):
         regels.append(_lijstregel(
             f"<span class='grieks' style='font-size:17px;color:{TEKST}'>{grieks}</span>",
             f"streak {streak}", f"{ned[:44]} · les {w.get('les', '?')}",
+            MERK if streak >= 16 else (TEKST if fase != "Nieuw" else ZACHT)))
+    return regels
+
+
+def lijst_heb_rijtjes(g, zoek):
+    """De vervoegingsrijtjes om op te zoeken: per rijtje één regel met hoeveel cellen je
+    al vast hebt."""
+    per = {}
+    for c in heb_af_cellen(g):
+        per.setdefault((c["categorie"], c["paradigma"]), []).append(c)
+    regels = []
+    for (categorie, paradigma), cellen in per.items():
+        if zoek and zoek not in paradigma.lower() and zoek not in categorie.lower() \
+                and zoek not in paradigma:
+            continue
+        vast = sum(1 for c in cellen if c["streak"] >= 5)
+        regels.append(_lijstregel(
+            f"<span class='hebreeuws' style='font-size:17px;color:{TEKST}'>"
+            f"{paradigma.split(' — ')[0]}</span>"
+            f"<span style='color:{ZACHT};font-size:13px'> "
+            f"{paradigma.split(' — ')[-1]}</span>",
+            f"{vast}/{len(cellen)}", categorie,
+            MERK if vast == len(cellen) else (TEKST if vast else ZACHT)))
+    return regels
+
+
+def lijst_hebreeuws(g, zoek, alleen_geoefend):
+    """De Hebreeuwse woorden om op te zoeken. Zelfde opmaak als de Griekse lijst, maar met
+    de frequentie erbij: bij het Hebreeuws is dat het getal dat zegt hoe hard een woord
+    loont om te kennen."""
+    regels = []
+    for w in g.hebreeuws:
+        heb = str(w.get("hebreeuws", ""))
+        ned = heb_uitleg(w)
+        if zoek and zoek not in heb and zoek not in ned.lower() \
+                and zoek not in str(w.get("translit", "")).lower():
+            continue
+        streak = int(w.get("streak", 0) or 0)
+        goed = int(w.get("score_goed", 0) or 0)
+        fout = int(w.get("score_fout", 0) or 0)
+        if alleen_geoefend and not (goed or fout or streak):
+            continue
+        fase = gebruikers.fase_van(streak)
+        freq = int(w.get("frequentie", 0) or 0)
+        onder = f"{heb_betekenis(w)} · lijst {w.get('les', '?')}"
+        if freq:
+            onder += f" · {freq}×"
+        regels.append(_lijstregel(
+            f"<span class='hebreeuws' style='font-size:19px;color:{TEKST}'>{heb}</span>",
+            f"streak {streak}", onder,
             MERK if streak >= 16 else (TEKST if fase != "Nieuw" else ZACHT)))
     return regels
 
@@ -6194,9 +6291,12 @@ def lijstpagina():
         return
     with ui.column().classes("inhoud w-full gap-3"):
         ui.label("Lijst").style("font-size:26px;font-weight:700")
-        kies = ui.select(LIJST_SOORTEN, value=LIJST_SOORTEN[0], label="Wat wil je zien").props(
+        heb = taal(g) == HEBREEUWS
+        soorten = LIJST_SOORTEN_HEB if heb else LIJST_SOORTEN
+        kies = ui.select(soorten, value=soorten[0], label="Wat wil je zien").props(
             "outlined dark dense").classes("w-full")
-        zoekveld = ui.input(placeholder="zoek op Grieks of Nederlands").props(
+        zoekveld = ui.input(placeholder="zoek op Hebreeuws of Nederlands" if heb
+                            else "zoek op Grieks of Nederlands").props(
             "outlined dense dark clearable autocomplete=off").classes("w-full")
         alleen = ui.switch("Alleen wat ik al geoefend heb", value=False)
         for veld in (zoekveld, alleen):
@@ -6207,7 +6307,12 @@ def lijstpagina():
         def teken():
             zoek = str(zoekveld.value or "").strip().lower()
             soort = kies.value
-            if soort == "Mijn verwarwoorden":
+            if soort == "Hebreeuwse woorden":
+                regels = lijst_hebreeuws(g, zoek, bool(alleen.value))
+                leeg = "Niets gevonden."
+            elif soort == "Rijtjes":
+                regels, leeg = lijst_heb_rijtjes(g, zoek), "Niets gevonden."
+            elif soort == "Mijn verwarwoorden":
                 regels = lijst_verwarparen(g)
                 leeg = ("Nog geen verwarparen. Die ontstaan als je in een ronde twee "
                         "woorden door elkaar haalt en dat in de eindsamenvatting bevestigt.")

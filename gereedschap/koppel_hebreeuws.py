@@ -80,6 +80,16 @@ def medeklinkers(tekst):
 # In plaats van de heuristiek nóg slimmer te maken — waarmee je stilletjes fout gaat raden —
 # staan ze hier met de hand vast, elk met het bewijs uit de spreadsheet erbij. Zo is de
 # keuze na te lopen en verandert er niets als het script slimmer wordt.
+# Twee woorden zijn niet te koppelen zonder te gaan liegen over hun frequentie. שֶׁ is de
+# korte vorm van het relativum אֲשֶׁר — een eigen woord, dat vooral in Prediker en het
+# Hooglied staat — maar deze WLC-uitgave tagt hem niet apart: Strong 7945 komt er nul keer
+# in voor. De automatische route koppelde hem daarom aan אֲשֶׁר, en dan claimt שֶׁ ineens
+# 5502 vindplaatsen. Zonder koppeling staat er geen getal, en dat is eerlijker dan een
+# getal dat van een ander woord is.
+GEEN_KOPPELING = {
+    323: "korte vorm van אֲשֶׁר; deze uitgave tagt hem niet apart (Strong 7945 ontbreekt)",
+}
+
 HANDMATIG = {
     142: ("4940", "typefout in de lijst: eindigt op een chet, moet een he zijn (303x)",
           "מִשְׁפָּחָה"),
@@ -246,6 +256,13 @@ def main():
         manier = ""
         # De met de hand nagelopen gevallen gaan vóór alles: die zijn geverifieerd, en een
         # automatische route zou er alleen maar naast kunnen gokken.
+        if w["nummer"] in GEEN_KOPPELING:
+            w["handmatig"] = GEEN_KOPPELING[w["nummer"]]
+            w["strong"] = ""
+            w["frequentie"] = 0
+            w["vindplaatsen"] = []
+            manieren["niet apart geteld"] += 1
+            continue
         if w["nummer"] in HANDMATIG:
             s, waarom, *vorm = HANDMATIG[w["nummer"]]
             if s in telling:

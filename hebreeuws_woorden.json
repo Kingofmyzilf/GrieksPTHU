@@ -3635,7 +3635,7 @@
   "stammen": {},
   "woordsoort": "",
   "handmatig": "de letters staan omgekeerd in de PDF; het is רֹאשׁ, hoofd (599x)",
-  "lijstvorm": "שׁאר",
+  "lijstvorm": "רֹאשׁ",
   "strong": "7218",
   "frequentie": 599,
   "vindplaatsen": [
@@ -4547,7 +4547,7 @@
   "stammen": {},
   "woordsoort": "",
   "handmatig": "typefout in de lijst: eindigt op een chet, moet een he zijn (303x)",
-  "lijstvorm": "מִשְׁפָּחָח",
+  "lijstvorm": "מִשְׁפָּחָה",
   "strong": "4940",
   "frequentie": 303,
   "vindplaatsen": [
@@ -6541,7 +6541,7 @@
   "stammen": {},
   "woordsoort": "",
   "handmatig": "de letters staan door elkaar in de PDF (214x)",
-  "lijstvorm": "ךְָמַלְא",
+  "lijstvorm": "מַלְאָךְ",
   "strong": "4397",
   "frequentie": 214,
   "vindplaatsen": [
@@ -7004,7 +7004,7 @@
   "stammen": {},
   "woordsoort": "",
   "handmatig": "de letters staan omgekeerd; het is צֹאן, kleinvee (274x)",
-  "lijstvorm": "ןאצ",
+  "lijstvorm": "צֹאן",
   "strong": "6629",
   "frequentie": 274,
   "vindplaatsen": [
@@ -10492,23 +10492,10 @@
   "geslacht": "",
   "stammen": {},
   "woordsoort": "",
-  "handmatig": "korte vorm van אֲשֶׁר; plakt als שֶׁ־ aan het volgende woord en heeft daarom geen eigen regel in de tekst",
-  "strong": "834",
-  "frequentie": 5502,
-  "vindplaatsen": [
-   {
-    "vers": "Genesis 1:7",
-    "vorm": "אֲשֶׁר"
-   },
-   {
-    "vers": "Genesis 1:7",
-    "vorm": "אֲשֶׁר"
-   },
-   {
-    "vers": "Genesis 1:11",
-    "vorm": "אֲשֶׁר"
-   }
-  ],
+  "handmatig": "korte vorm van אֲשֶׁר; deze uitgave tagt hem niet apart (Strong 7945 ontbreekt)",
+  "strong": "",
+  "frequentie": 0,
+  "vindplaatsen": [],
   "lemma_tekst": "אֲשֶׁר",
   "translit": "’ă·šer",
   "anker": "🔗",
@@ -11187,7 +11174,7 @@
   "stammen": {},
   "woordsoort": "",
   "handmatig": "beschadigd in de PDF (95x)",
-  "lijstvorm": "ךְֶאֹר",
+  "lijstvorm": "אֹרֶךְ",
   "strong": "753",
   "frequentie": 95,
   "vindplaatsen": [
