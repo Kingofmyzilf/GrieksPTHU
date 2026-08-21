@@ -3465,7 +3465,7 @@ TAB_KEUZE = [
     # in deze installatie zit (hebreeuws.py plus de map tenach/); wie het niet wil gebruiken
     # zet het uit bij ℹ️ Uitleg & Hulp, net als elk ander tabblad.
     ("tenach", "📜 Tenach (Hebreeuws)"),
-    ("hebklank", "🔀 Hebreeuwse klankregels"),
+    ("hebontleed", "🔍 Hebreeuws ontleden"),
 ]
 # Deze twee blijven altijd staan: via Uitleg zet je tabbladen weer aan, en Voortgang is je overzicht.
 TAB_ALTIJD = {"uitleg", "voortgang"}
@@ -3497,12 +3497,12 @@ def _hebreeuws_erbij():
         return False
 
 
-def _hebreeuwse_klanken_erbij():
-    """Is de oefenstof voor de Hebreeuwse klankregels er? Die wordt gemaakt door
-    gereedschap/bouw_hebreeuws_klanken.py en staat in hebreeuws_klanken.json."""
+def _hebreeuws_ontleden_erbij():
+    """Is de oefenstof om Hebreeuwse vormen te ontleden er? Die wordt gemaakt door
+    gereedschap/bouw_hebreeuws_ontleden.py en staat in hebreeuws_ontleden.json."""
     try:
         import hebreeuws_web
-        return hebreeuws_web.klanken_beschikbaar()
+        return hebreeuws_web.ontleden_beschikbaar()
     except Exception:                                            # noqa: BLE001
         return False
 
@@ -3514,8 +3514,8 @@ def tab_reden(sleutel):
     """'' als het tabblad kán, anders waarom niet."""
     if sleutel == "tenach" and not _hebreeuws_erbij():
         return "de Hebreeuwse bijbeltekst zit niet in deze installatie"
-    if sleutel == "hebklank" and not _hebreeuwse_klanken_erbij():
-        return "hebreeuws_klanken.json zit niet in deze installatie"
+    if sleutel == "hebontleed" and not _hebreeuws_ontleden_erbij():
+        return "hebreeuws_ontleden.json zit niet in deze installatie"
     return ""
 
 
@@ -4854,7 +4854,7 @@ def main():
         # dus er is ook geen 'app in de app' met verborgen tabjes.
         _MENU_SLEUTELS = ["woorden", "lijst", "voortgang", "actief", "stam", "struct",
                           "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank", "tenach",
-                          "contractie", "hebklank"]
+                          "contractie", "hebontleed"]
         beginstand_tabs()
         _volgorde = list(TAB_KEUZE)
         if nieuwe_gebruiker():
@@ -10269,11 +10269,11 @@ def main():
                             st.markdown(f"**{regel['begin']}**: {regel['regel']}")
 
         # ==========================================
-        # TAB: HEBREEUWSE KLANKREGELS
+        # TAB: HEBREEUWS ONTLEDEN
         # ==========================================
-        # De tegenhanger van de contractietrainer, en met dezelfde afspraak: hier vórm je
-        # zelf. Herkennen wat er in een woord zit doe je bij 📜 Tenach, waar de woorddelen
-        # gekleurd staan.
+        # Een vorm uit de Tenach en de vraag wat erin zit. Andersom dan de Griekse
+        # contractietrainer, en met opzet: het Hebreeuws is hier om te lézen, en dan kom je
+        # een vorm tegen en moet je zien wat erin zit. Productie hoort bij het Grieks.
         #
         # De inhoud staat in hebreeuws_web.py, net als het Tenach-tabblad: deze module wordt
         # omgezet naar grieks_motor.py en alles wat Streamlit aanroept moet daarbuiten
@@ -10282,10 +10282,9 @@ def main():
          with menu[14]:
             try:
                 import hebreeuws_web
-                hebreeuws_web.tab_klanken(registreer_oefening, trigger_save)
+                hebreeuws_web.tab_ontleden(registreer_oefening, trigger_save)
             except Exception as _e:                              # noqa: BLE001
-                st.info("De Hebreeuwse klankregels zijn in deze installatie niet "
-                        "beschikbaar.")
+                st.info("Het Hebreeuwse ontleden is in deze installatie niet beschikbaar.")
                 st.caption(f"({_e})")
 
 

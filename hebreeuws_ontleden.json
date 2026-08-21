@@ -1,0 +1,6628 @@
+{
+ "groepen": [
+  {
+   "sleutel": "voorvoegsels",
+   "naam": "Welke woordjes zitten erin?",
+   "uitleg": "Het Hebreeuws plakt zijn kleine woordjes vast aan het volgende woord. Let op het lidwoord: na בְּ, כְּ of לְ verdwijnt de ה ervan en blijft alleen zijn klinker over. בַּיּוֹם is dus 'in **de** dag' en niet 'in een dag' — het enige verschil met בְּיוֹם is die ene klinker.",
+   "vraag": "Welke woordjes zitten vooraan in deze vorm?",
+   "vragen": [
+    {
+     "vorm": "לָאוֹר",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "voor/naar",
+      "en + in",
+      "in + vraagwoord?",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 1:5",
+     "verstopt": true,
+     "toelichting": "לָאוֹר = לָ + אוֹר",
+     "betekenis": "(het) licht"
+    },
+    {
+     "vorm": "וְלַחֹשֶׁךְ",
+     "antwoord": "en + voor/naar + de/het",
+     "opties": [
+      "en + voor/naar + de/het",
+      "en + als + de/het",
+      "als + de/het",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 1:5",
+     "verstopt": true,
+     "toelichting": "וְלַחֹשֶׁךְ = וְלַ + חֹשֶׁךְ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "לָרָקִיעַ",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "en + voor/naar",
+      "voor/naar + uit/van",
+      "in + de/het",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 1:7",
+     "verstopt": true,
+     "toelichting": "לָרָקִיעַ = לָ + רָקִיעַ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "לַיַּבָּשָׁה",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "in + de/het",
+      "voor/naar + uit/van",
+      "uit/van + voor/naar",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 1:10",
+     "verstopt": true,
+     "toelichting": "לַיַּבָּשָׁה = לַ + יַּבָּשָׁה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּיּוֹם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "de/het",
+      "in + vraagwoord?",
+      "in + de/het",
+      "en"
+     ],
+     "vers": "Genesis 1:18",
+     "verstopt": true,
+     "toelichting": "בַּיּוֹם = בַּ + יּוֹם",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "וּבַלַּיְלָה",
+     "antwoord": "en + in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "en + voor/naar",
+      "en + de/het",
+      "en + in + de/het"
+     ],
+     "vers": "Genesis 1:18",
+     "verstopt": true,
+     "toelichting": "וּבַלַּיְלָה = וּבַ + לַּיְלָה",
+     "betekenis": "nacht"
+    },
+    {
+     "vorm": "בַּיַּמִּים",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + in",
+      "in + vraagwoord?",
+      "in + de/het",
+      "en + de/het"
+     ],
+     "vers": "Genesis 1:22",
+     "verstopt": true,
+     "toelichting": "בַּיַּמִּים = בַּ + יַּמִּים",
+     "betekenis": "zee; westen"
+    },
+    {
+     "vorm": "בָּאָרֶץ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "voor/naar",
+      "voor/naar + vraagwoord?",
+      "in + de/het",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 1:22",
+     "verstopt": true,
+     "toelichting": "בָּאָרֶץ = בָּ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וּבַבְּהֵמָה",
+     "antwoord": "en + in + de/het",
+     "opties": [
+      "en + de/het",
+      "en + in",
+      "en + in + de/het",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 1:26",
+     "verstopt": true,
+     "toelichting": "וּבַבְּהֵמָה = וּבַ + בְּהֵמ + ָה",
+     "betekenis": "(groot) vee"
+    },
+    {
+     "vorm": "בָאָרֶץ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "uit/van + voor/naar",
+      "als + de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 2:5",
+     "verstopt": true,
+     "toelichting": "בָאָרֶץ = בָ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "לָעֵינַיִם",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "voor/naar + de/het",
+      "voor/naar + uit/van",
+      "en + in",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 3:6",
+     "verstopt": true,
+     "toelichting": "לָעֵינַיִם = לָ + עֵינ + ַיִם",
+     "betekenis": "i oog. ii bron"
+    },
+    {
+     "vorm": "בַּגָּן",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "en + als",
+      "voor/naar + uit/van",
+      "in + de/het"
+     ],
+     "vers": "Genesis 3:8",
+     "verstopt": true,
+     "toelichting": "בַּגָּן = בַּ + גָּן",
+     "betekenis": ""
+    },
+    {
+     "vorm": "לָאִשָּׁה",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "in + de/het",
+      "en + in",
+      "voor/naar + vraagwoord?",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 3:13",
+     "verstopt": true,
+     "toelichting": "לָאִשָּׁה = לָ + אִשָּׁה",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "לַפֶּתַח",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "uit/van + de/het",
+      "voor/naar",
+      "en + vraagwoord?",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 4:7",
+     "verstopt": true,
+     "toelichting": "לַפֶּתַח = לַ + פֶּתַח",
+     "betekenis": "opening, ingang"
+    },
+    {
+     "vorm": "בַּשָּׂדֶה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "voor/naar",
+      "voor/naar + vraagwoord?",
+      "in + vraagwoord?",
+      "in + de/het"
+     ],
+     "vers": "Genesis 4:8",
+     "verstopt": true,
+     "toelichting": "בַּשָּׂדֶה = בַּ + שָּׂדֶה",
+     "betekenis": "veld"
+    },
+    {
+     "vorm": "בָאָדָם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + uit/van",
+      "voor/naar",
+      "in + vraagwoord?",
+      "in + de/het"
+     ],
+     "vers": "Genesis 6:3",
+     "verstopt": true,
+     "toelichting": "בָאָדָם = בָ + אָדָם",
+     "betekenis": "mens; mensheid; Adam"
+    },
+    {
+     "vorm": "בַּיָּמִים",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "en + als",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 6:4",
+     "verstopt": true,
+     "toelichting": "בַּיָּמִים = בַּ + יָּמ + ִים",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "בַּכֹּפֶר",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "en",
+      "in + de/het",
+      "voor/naar"
+     ],
+     "vers": "Genesis 6:14",
+     "verstopt": true,
+     "toelichting": "בַּכֹּפֶר = בַּ + כֹּפֶר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "לַתֵּבָה",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "voor/naar + de/het",
+      "en + vraagwoord?",
+      "en",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 6:16",
+     "verstopt": true,
+     "toelichting": "לַתֵּבָה = לַ + תֵּב + ָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּדּוֹר",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "in + vraagwoord?",
+      "voor/naar + de/het",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 7:1",
+     "verstopt": true,
+     "toelichting": "בַּדּוֹר = בַּ + דּוֹר",
+     "betekenis": "generatie, geslacht"
+    },
+    {
+     "vorm": "בַּחֹדֶשׁ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "uit/van + voor/naar",
+      "in + de/het",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 7:11",
+     "verstopt": true,
+     "toelichting": "בַּחֹדֶשׁ = בַּ + חֹדֶשׁ",
+     "betekenis": "nieuwe maan; maand"
+    },
+    {
+     "vorm": "לַחֹדֶשׁ",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "uit/van + de/het",
+      "en",
+      "voor/naar + de/het",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 7:11",
+     "verstopt": true,
+     "toelichting": "לַחֹדֶשׁ = לַ + חֹדֶשׁ",
+     "betekenis": "nieuwe maan; maand"
+    },
+    {
+     "vorm": "בָּעוֹף",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "voor/naar + vraagwoord?",
+      "en + als",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 7:21",
+     "verstopt": true,
+     "toelichting": "בָּעוֹף = בָּ + עוֹף",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּבַחַיָּה",
+     "antwoord": "en + in + de/het",
+     "opties": [
+      "voor/naar + de/het",
+      "en + in + de/het",
+      "en + als + de/het",
+      "en + voor/naar + de/het"
+     ],
+     "vers": "Genesis 7:21",
+     "verstopt": true,
+     "toelichting": "וּבַחַיָּה = וּבַ + חַיָּה",
+     "betekenis": "leven"
+    },
+    {
+     "vorm": "בֶּחָרָבָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "en + de/het",
+      "en + vraagwoord?",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 7:22",
+     "verstopt": true,
+     "toelichting": "בֶּחָרָבָה = בֶּ + חָרָב + ָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּתֵּבָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "uit/van + de/het",
+      "en + uit/van"
+     ],
+     "vers": "Genesis 7:23",
+     "verstopt": true,
+     "toelichting": "בַּתֵּבָה = בַּ + תֵּב + ָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בָּעֲשִׂירִי",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "en + als",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 8:5",
+     "verstopt": true,
+     "toelichting": "בָּעֲשִׂירִי = בָּ + עֲשִׂירִי",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בָּרִאשׁוֹן",
+     "antwoord": "in + de/het",
+     "opties": [
+      "voor/naar + uit/van",
+      "in + de/het",
+      "in + vraagwoord?",
+      "voor/naar"
+     ],
+     "vers": "Genesis 8:13",
+     "verstopt": true,
+     "toelichting": "בָּרִאשׁוֹן = בָּ + רִאשׁוֹן",
+     "betekenis": "eerste, vroegere"
+    },
+    {
+     "vorm": "וּבַחֹדֶשׁ",
+     "antwoord": "en + in + de/het",
+     "opties": [
+      "en + vraagwoord?",
+      "en + in + de/het",
+      "en + als",
+      "en + als + de/het"
+     ],
+     "vers": "Genesis 8:14",
+     "verstopt": true,
+     "toelichting": "וּבַחֹדֶשׁ = וּבַ + חֹדֶשׁ",
+     "betekenis": "nieuwe maan; maand"
+    },
+    {
+     "vorm": "בַּמִּזְבֵּחַ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + als",
+      "in + vraagwoord?",
+      "voor/naar + de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 8:20",
+     "verstopt": true,
+     "toelichting": "בַּמִּזְבֵּחַ = בַּ + מִּזְבֵּחַ",
+     "betekenis": "altaar"
+    },
+    {
+     "vorm": "בָּאָדָם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "en + vraagwoord?",
+      "de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 9:6",
+     "verstopt": true,
+     "toelichting": "בָּאָדָם = בָּ + אָדָם",
+     "betekenis": "mens; mensheid; Adam"
+    },
+    {
+     "vorm": "בַּבְּהֵמָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "voor/naar",
+      "en + in",
+      "in + vraagwoord?",
+      "in + de/het"
+     ],
+     "vers": "Genesis 9:10",
+     "verstopt": true,
+     "toelichting": "בַּבְּהֵמָה = בַּ + בְּהֵמ + ָה",
+     "betekenis": "(groot) vee"
+    },
+    {
+     "vorm": "בֶּעָנָן",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + in",
+      "in + vraagwoord?",
+      "in + de/het",
+      "en + de/het"
+     ],
+     "vers": "Genesis 9:13",
+     "verstopt": true,
+     "toelichting": "בֶּעָנָן = בֶּ + עָנָן",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּחוּץ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "uit/van + de/het",
+      "in + vraagwoord?",
+      "in + de/het",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 9:22",
+     "verstopt": true,
+     "toelichting": "בַּחוּץ = בַּ + חוּץ",
+     "betekenis": "buiten; mv. open land, vlakte; straten"
+    },
+    {
+     "vorm": "לַחֹמֶר",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "de/het",
+      "voor/naar",
+      "en + voor/naar",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 11:3",
+     "verstopt": true,
+     "toelichting": "לַחֹמֶר = לַ + חֹמֶר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַשָּׁמַיִם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + voor/naar",
+      "in + de/het",
+      "in + vraagwoord?",
+      "voor/naar"
+     ],
+     "vers": "Genesis 11:4",
+     "verstopt": true,
+     "toelichting": "בַשָּׁמַיִם = בַ + שָּׁמַ + יִם",
+     "betekenis": "hemel, lucht"
+    },
+    {
+     "vorm": "בַּמִּקְנֶה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "in + vraagwoord?",
+      "uit/van + de/het",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 13:2",
+     "verstopt": true,
+     "toelichting": "בַּמִּקְנֶה = בַּ + מִּקְנֶה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּכֶּסֶף",
+     "antwoord": "in + de/het",
+     "opties": [
+      "uit/van + voor/naar",
+      "en + vraagwoord?",
+      "in + vraagwoord?",
+      "in + de/het"
+     ],
+     "vers": "Genesis 13:2",
+     "verstopt": true,
+     "toelichting": "בַּכֶּסֶף = בַּ + כֶּסֶף",
+     "betekenis": "zilver; geld"
+    },
+    {
+     "vorm": "וּבַזָּהָב",
+     "antwoord": "en + in + de/het",
+     "opties": [
+      "en + vraagwoord?",
+      "en + in + de/het",
+      "en + voor/naar",
+      "als + de/het"
+     ],
+     "vers": "Genesis 13:2",
+     "verstopt": true,
+     "toelichting": "וּבַזָּהָב = וּבַ + זָּהָב",
+     "betekenis": "goud"
+    },
+    {
+     "vorm": "בַּתְּחִלָּה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + voor/naar",
+      "in + vraagwoord?",
+      "in + de/het",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 13:3",
+     "verstopt": true,
+     "toelichting": "בַּתְּחִלָּה = בַּ + תְּחִלָּה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בָּרִאשֹׁנָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "en + de/het",
+      "in + vraagwoord?",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 13:4",
+     "verstopt": true,
+     "toelichting": "בָּרִאשֹׁנָה = בָּ + רִאשֹׁנ + ָה",
+     "betekenis": "eerste, vroegere"
+    },
+    {
+     "vorm": "בַּמַּחֲזֶה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "voor/naar + uit/van",
+      "en + uit/van"
+     ],
+     "vers": "Genesis 15:1",
+     "verstopt": true,
+     "toelichting": "בַּמַּחֲזֶה = בַּ + מַּחֲזֶה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּתָּוֶךְ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "voor/naar + uit/van",
+      "en + uit/van",
+      "in + de/het"
+     ],
+     "vers": "Genesis 15:10",
+     "verstopt": true,
+     "toelichting": "בַּתָּוֶךְ = בַּ + תָּוֶךְ",
+     "betekenis": "midden"
+    },
+    {
+     "vorm": "בַּמִּדְבָּר",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + als",
+      "in + de/het",
+      "en + uit/van",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 16:7",
+     "verstopt": true,
+     "toelichting": "בַּמִּדְבָּר = בַּ + מִּדְבָּר",
+     "betekenis": "steppe, woestijn"
+    },
+    {
+     "vorm": "בַכֹּל",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "in + vraagwoord?",
+      "en + vraagwoord?",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 16:12",
+     "verstopt": true,
+     "toelichting": "בַכֹּל = בַ + כֹּל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "לַבְּאֵר",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "en",
+      "de/het",
+      "voor/naar + de/het",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 16:14",
+     "verstopt": true,
+     "toelichting": "לַבְּאֵר = לַ + בְּאֵר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "הַלְּבֶן",
+     "antwoord": "de/het + voor/naar",
+     "opties": [
+      "de/het",
+      "en",
+      "de/het + voor/naar",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 17:17",
+     "verstopt": true,
+     "toelichting": "הַלְּבֶן = הַלְּ + בֶן",
+     "betekenis": "zoon, nakomeling; (geb. vormook: het ergens-toebehoren)"
+    },
+    {
+     "vorm": "לַמּוֹעֵד",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "en + vraagwoord?",
+      "voor/naar + uit/van",
+      "uit/van + voor/naar",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 17:21",
+     "verstopt": true,
+     "toelichting": "לַמּוֹעֵד = לַ + מּוֹעֵד",
+     "betekenis": "trefpunt; bestemde tijd; samenkomst, ontmoeting"
+    },
+    {
+     "vorm": "בַּשָּׁנָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en",
+      "in + vraagwoord?",
+      "in + de/het",
+      "en + als"
+     ],
+     "vers": "Genesis 17:21",
+     "verstopt": true,
+     "toelichting": "בַּשָּׁנָה = בַּ + שָּׁנ + ָה",
+     "betekenis": "jaar"
+    },
+    {
+     "vorm": "בָאֹהֶל",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "en + uit/van",
+      "en + in",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 18:9",
+     "verstopt": true,
+     "toelichting": "בָאֹהֶל = בָ + אֹהֶל",
+     "betekenis": "tent"
+    },
+    {
+     "vorm": "כָּעֵת",
+     "antwoord": "als + de/het",
+     "opties": [
+      "en + als",
+      "als + de/het",
+      "als",
+      "voor/naar"
+     ],
+     "vers": "Genesis 18:10",
+     "verstopt": true,
+     "toelichting": "כָּעֵת = כָּ + עֵת",
+     "betekenis": "tijd"
+    },
+    {
+     "vorm": "כַּנָּשִׁים",
+     "antwoord": "als + de/het",
+     "opties": [
+      "en + als",
+      "als",
+      "als + de/het",
+      "voor/naar"
+     ],
+     "vers": "Genesis 18:11",
+     "verstopt": true,
+     "toelichting": "כַּנָּשִׁים = כַּ + נָּשִׁים",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "הַכְּצַעֲקָתָהּ",
+     "antwoord": "de/het + als",
+     "opties": [
+      "uit/van + de/het",
+      "de/het",
+      "de/het + als",
+      "als + de/het"
+     ],
+     "vers": "Genesis 18:21",
+     "verstopt": true,
+     "toelichting": "הַכְּצַעֲקָתָהּ = הַכְּ + צַעֲקָת + ָהּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "לַמָּקוֹם",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "de/het",
+      "en + de/het",
+      "voor/naar + uit/van",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 18:24",
+     "verstopt": true,
+     "toelichting": "לַמָּקוֹם = לַ + מָּקוֹם",
+     "betekenis": "(stand)plaats"
+    },
+    {
+     "vorm": "כַּדָּבָר",
+     "antwoord": "als + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "als",
+      "uit/van + voor/naar",
+      "als + de/het"
+     ],
+     "vers": "Genesis 18:25",
+     "verstopt": true,
+     "toelichting": "כַּדָּבָר = כַּ + דָּבָר",
+     "betekenis": "woord, zaak, ding"
+    },
+    {
+     "vorm": "כַצַּדִּיק",
+     "antwoord": "als + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "als + de/het",
+      "als",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 18:25",
+     "verstopt": true,
+     "toelichting": "כַצַּדִּיק = כַ + צַּדִּיק",
+     "betekenis": "rechtvaardig"
+    },
+    {
+     "vorm": "כָּרָשָׁע",
+     "antwoord": "als + de/het",
+     "opties": [
+      "als + de/het",
+      "als",
+      "en + de/het",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 18:25",
+     "verstopt": true,
+     "toelichting": "כָּרָשָׁע = כָּ + רָשָׁע",
+     "betekenis": "boosaardig; schuldig"
+    },
+    {
+     "vorm": "בַּחֲמִשָּׁה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "uit/van + de/het",
+      "in + vraagwoord?",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 18:28",
+     "verstopt": true,
+     "toelichting": "בַּחֲמִשָּׁה = בַּ + חֲמִשָּׁה",
+     "betekenis": "vijf"
+    },
+    {
+     "vorm": "בָּעֶרֶב",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "voor/naar + uit/van",
+      "als + de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 19:1",
+     "verstopt": true,
+     "toelichting": "בָּעֶרֶב = בָּ + עֶרֶב",
+     "betekenis": "avond"
+    },
+    {
+     "vorm": "בָרְחוֹב",
+     "antwoord": "in + de/het",
+     "opties": [
+      "als + de/het",
+      "de/het",
+      "in + vraagwoord?",
+      "in + de/het"
+     ],
+     "vers": "Genesis 19:2",
+     "verstopt": true,
+     "toelichting": "בָרְחוֹב = בָ + רְחוֹב",
+     "betekenis": ""
+    },
+    {
+     "vorm": "כַּטּוֹב",
+     "antwoord": "als + de/het",
+     "opties": [
+      "voor/naar",
+      "als + de/het",
+      "en + vraagwoord?",
+      "als"
+     ],
+     "vers": "Genesis 19:8",
+     "verstopt": true,
+     "toelichting": "כַּטּוֹב = כַּ + טּוֹב",
+     "betekenis": "goed"
+    },
+    {
+     "vorm": "לָאֲנָשִׁים",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "voor/naar + uit/van",
+      "uit/van + de/het",
+      "voor/naar + de/het",
+      "als + de/het"
+     ],
+     "vers": "Genesis 19:8",
+     "verstopt": true,
+     "toelichting": "לָאֲנָשִׁים = לָ + אֲנָשִׁים",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בָאִישׁ",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + in",
+      "in + vraagwoord?",
+      "voor/naar",
+      "in + de/het"
+     ],
+     "vers": "Genesis 19:9",
+     "verstopt": true,
+     "toelichting": "בָאִישׁ = בָ + אִישׁ",
+     "betekenis": "man, echtgenoot; iemand, men"
+    },
+    {
+     "vorm": "בַּסַּנְוֵרִים",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "de/het",
+      "in + de/het",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 19:11",
+     "verstopt": true,
+     "toelichting": "בַּסַּנְוֵרִים = בַּ + סַּנְוֵר + ִים",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בָּעִיר",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "voor/naar + uit/van",
+      "de/het"
+     ],
+     "vers": "Genesis 19:12",
+     "verstopt": true,
+     "toelichting": "בָּעִיר = בָּ + עִיר",
+     "betekenis": "(v) stad"
+    },
+    {
+     "vorm": "לָעִיר",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "en",
+      "voor/naar + uit/van",
+      "en + de/het",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 19:16",
+     "verstopt": true,
+     "toelichting": "לָעִיר = לָ + עִיר",
+     "betekenis": "(v) stad"
+    },
+    {
+     "vorm": "לַדָּבָר",
+     "antwoord": "voor/naar + de/het",
+     "opties": [
+      "en + uit/van",
+      "voor/naar + de/het",
+      "voor/naar + uit/van",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 19:21",
+     "verstopt": true,
+     "toelichting": "לַדָּבָר = לַ + דָּבָר",
+     "betekenis": "woord, zaak, ding"
+    },
+    {
+     "vorm": "בַּבֹּקֶר",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "voor/naar",
+      "en + in"
+     ],
+     "vers": "Genesis 19:27",
+     "verstopt": true,
+     "toelichting": "בַּבֹּקֶר = בַּ + בֹּקֶר",
+     "betekenis": "(de) morgen, ochtend"
+    },
+    {
+     "vorm": "בָּהָר",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "als + de/het",
+      "voor/naar + vraagwoord?",
+      "in + de/het"
+     ],
+     "vers": "Genesis 19:30",
+     "verstopt": true,
+     "toelichting": "בָּהָר = בָּהָ + ר",
+     "betekenis": "berg; gebergte"
+    },
+    {
+     "vorm": "בַּמְּעָרָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + in",
+      "in + de/het",
+      "voor/naar",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 19:30",
+     "verstopt": true,
+     "toelichting": "בַּמְּעָרָה = בַּ + מְּעָר + ָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּלַּיְלָה",
+     "antwoord": "in + de/het",
+     "opties": [
+      "en + de/het",
+      "in + vraagwoord?",
+      "in + de/het",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 19:33",
+     "verstopt": true,
+     "toelichting": "בַּלַּיְלָה = בַּ + לַּיְלָה",
+     "betekenis": "nacht"
+    },
+    {
+     "vorm": "בַּחֲלוֹם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "als + de/het",
+      "uit/van + voor/naar",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 20:3",
+     "verstopt": true,
+     "toelichting": "בַּחֲלוֹם = בַּ + חֲלוֹם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּחֲלֹם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "in + de/het",
+      "uit/van + voor/naar",
+      "als + de/het"
+     ],
+     "vers": "Genesis 20:6",
+     "verstopt": true,
+     "toelichting": "בַּחֲלֹם = בַּ + חֲלֹם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּמָּקוֹם",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "en + de/het",
+      "de/het",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 20:11",
+     "verstopt": true,
+     "toelichting": "בַּמָּקוֹם = בַּ + מָּקוֹם",
+     "betekenis": "(stand)plaats"
+    },
+    {
+     "vorm": "בַּטּוֹב",
+     "antwoord": "in + de/het",
+     "opties": [
+      "in + de/het",
+      "uit/van + de/het",
+      "in + vraagwoord?",
+      "en"
+     ],
+     "vers": "Genesis 20:15",
+     "verstopt": true,
+     "toelichting": "בַּטּוֹב = בַּ + טּוֹב",
+     "betekenis": "goed"
+    },
+    {
+     "vorm": "וְהָאָרֶץ",
+     "antwoord": "en + de/het",
+     "opties": [
+      "voor/naar + uit/van",
+      "en + voor/naar",
+      "en + de/het",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 1:2",
+     "verstopt": false,
+     "toelichting": "וְהָאָרֶץ = וְהָ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וּלְמִקְוֵה",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + voor/naar",
+      "en + de/het",
+      "en + als",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 1:10",
+     "verstopt": false,
+     "toelichting": "וּלְמִקְוֵה = וּלְ + מִקְוֵה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְמוֹעֲדִים",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "uit/van + de/het",
+      "en",
+      "als + de/het",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 1:14",
+     "verstopt": false,
+     "toelichting": "וּלְמוֹעֲדִים = וּלְ + מוֹעֲד + ִים",
+     "betekenis": "trefpunt; bestemde tijd; samenkomst, ontmoeting"
+    },
+    {
+     "vorm": "וּלְיָמִים",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "uit/van + de/het",
+      "en + in",
+      "en + voor/naar",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 1:14",
+     "verstopt": false,
+     "toelichting": "וּלְיָמִים = וּלְ + יָמ + ִים",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "וְלִמְשֹׁל",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "uit/van + voor/naar",
+      "en + voor/naar",
+      "en + in",
+      "voor/naar"
+     ],
+     "vers": "Genesis 1:18",
+     "verstopt": false,
+     "toelichting": "וְלִמְשֹׁל = וְלִ + מְשֹׁל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלֲהַבְדִּיל",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + als",
+      "als + de/het",
+      "en + voor/naar",
+      "en + vraagwoord?"
+     ],
+     "vers": "Genesis 1:18",
+     "verstopt": false,
+     "toelichting": "וּלֲהַבְדִּיל = וּלֲ + הַבְדִּיל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהָעוֹף",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + als",
+      "en + de/het",
+      "uit/van + voor/naar",
+      "en"
+     ],
+     "vers": "Genesis 1:22",
+     "verstopt": false,
+     "toelichting": "וְהָעוֹף = וְהָ + עוֹף",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּבְעוֹף",
+     "antwoord": "en + in",
+     "opties": [
+      "voor/naar + vraagwoord?",
+      "en + in",
+      "en + de/het",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 1:26",
+     "verstopt": false,
+     "toelichting": "וּבְעוֹף = וּבְ + עוֹף",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּבְכָל",
+     "antwoord": "en + in",
+     "opties": [
+      "voor/naar",
+      "in + de/het",
+      "en + in",
+      "en"
+     ],
+     "vers": "Genesis 1:26",
+     "verstopt": false,
+     "toelichting": "וּבְכָל = וּבְ + כָל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וּלְכָל",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + de/het",
+      "voor/naar + uit/van",
+      "en + voor/naar",
+      "de/het"
+     ],
+     "vers": "Genesis 1:30",
+     "verstopt": false,
+     "toelichting": "וּלְכָל = וּלְ + כָל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וּלְכֹל",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + de/het",
+      "en + voor/naar",
+      "in + de/het",
+      "in + vraagwoord?"
+     ],
+     "vers": "Genesis 1:30",
+     "verstopt": false,
+     "toelichting": "וּלְכֹל = וּלְ + כֹל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וּמִשָּׁם",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "voor/naar + de/het",
+      "en + de/het",
+      "de/het",
+      "en + uit/van"
+     ],
+     "vers": "Genesis 2:10",
+     "verstopt": false,
+     "toelichting": "וּמִשָּׁם = וּמִ + שָּׁם",
+     "betekenis": "daar"
+    },
+    {
+     "vorm": "וְהַנָּהָר",
+     "antwoord": "en + de/het",
+     "opties": [
+      "de/het",
+      "en + de/het",
+      "en + voor/naar",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 2:14",
+     "verstopt": false,
+     "toelichting": "וְהַנָּהָר = וְהַ + נָּהָר",
+     "betekenis": "stroom, rivier"
+    },
+    {
+     "vorm": "וּלְשָׁמְרָהּ",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "de/het",
+      "en + de/het",
+      "als + de/het",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 2:15",
+     "verstopt": false,
+     "toelichting": "וּלְשָׁמְרָהּ = וּלְ + שָׁמְר + ָהּ",
+     "betekenis": "bewaken"
+    },
+    {
+     "vorm": "וּמֵעֵץ",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "voor/naar + vraagwoord?",
+      "uit/van + de/het",
+      "en + de/het",
+      "en + uit/van"
+     ],
+     "vers": "Genesis 2:17",
+     "verstopt": false,
+     "toelichting": "וּמֵעֵץ = וּמֵ + עֵץ",
+     "betekenis": "boom, geboomte; (stuk) hout"
+    },
+    {
+     "vorm": "וּלְעוֹף",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "in + vraagwoord?",
+      "en + voor/naar",
+      "en + vraagwoord?",
+      "de/het"
+     ],
+     "vers": "Genesis 2:20",
+     "verstopt": false,
+     "toelichting": "וּלְעוֹף = וּלְ + עוֹף",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְאָדָם",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + uit/van",
+      "en + voor/naar",
+      "de/het",
+      "als + de/het"
+     ],
+     "vers": "Genesis 2:20",
+     "verstopt": false,
+     "toelichting": "וּלְאָדָם = וּלְ + אָדָם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהַנָּחָשׁ",
+     "antwoord": "en + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "en + de/het",
+      "en + uit/van",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 3:1",
+     "verstopt": false,
+     "toelichting": "וְהַנָּחָשׁ = וְהַ + נָּחָשׁ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמִפְּרִי",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "in + vraagwoord?",
+      "en + de/het",
+      "en + uit/van",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 3:3",
+     "verstopt": false,
+     "toelichting": "וּמִפְּרִי = וּמִ + פְּרִי",
+     "betekenis": "vrucht"
+    },
+    {
+     "vorm": "וּמִכֹּל",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + voor/naar",
+      "en + uit/van",
+      "voor/naar + uit/van",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 3:14",
+     "verstopt": false,
+     "toelichting": "וּמִכֹּל = וּמִ + כֹּל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וּלְאִשְׁתּוֹ",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "voor/naar",
+      "en + in",
+      "en + voor/naar",
+      "en + vraagwoord?"
+     ],
+     "vers": "Genesis 3:21",
+     "verstopt": false,
+     "toelichting": "וּלְאִשְׁתּוֹ = וּלְ + אִשְׁתּ + וֹ",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "וְהָאָדָם",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + de/het",
+      "voor/naar",
+      "voor/naar + vraagwoord?",
+      "en + als"
+     ],
+     "vers": "Genesis 4:1",
+     "verstopt": false,
+     "toelichting": "וְהָאָדָם = וְהָ + אָדָם",
+     "betekenis": "mens; mensheid; Adam"
+    },
+    {
+     "vorm": "וּמֵחֶלְבֵהֶן",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "de/het",
+      "en + de/het",
+      "en + voor/naar",
+      "en + uit/van"
+     ],
+     "vers": "Genesis 4:4",
+     "verstopt": false,
+     "toelichting": "וּמֵחֶלְבֵהֶן = וּמֵ + חֶלְב + ֵהֶן",
+     "betekenis": "beste stuk"
+    },
+    {
+     "vorm": "וְלָמָּה",
+     "antwoord": "en + vraagwoord?",
+     "opties": [
+      "en + uit/van",
+      "voor/naar + vraagwoord?",
+      "en + vraagwoord?",
+      "en"
+     ],
+     "vers": "Genesis 4:6",
+     "verstopt": false,
+     "toelichting": "וְלָמָּה = וְ + לָמָּה",
+     "betekenis": "wat?"
+    },
+    {
+     "vorm": "וּמִפָּנֶיךָ",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + vraagwoord?",
+      "en + voor/naar",
+      "en + uit/van",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 4:14",
+     "verstopt": false,
+     "toelichting": "וּמִפָּנֶיךָ = וּמִ + פָּנ + ֶי + ךָ",
+     "betekenis": "(alleenmv) gezicht; oppervlakte; tegenwoordigheid"
+    },
+    {
+     "vorm": "מִלִּפְנֵי",
+     "antwoord": "uit/van + voor/naar",
+     "opties": [
+      "en + in",
+      "voor/naar",
+      "uit/van + voor/naar",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 4:16",
+     "verstopt": false,
+     "toelichting": "מִלִּפְנֵי = מִלִּ + פְנ + ֵי",
+     "betekenis": "(alleenmv) gezicht; oppervlakte; tegenwoordigheid"
+    },
+    {
+     "vorm": "וּלְשֵׁת",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "voor/naar + vraagwoord?",
+      "en + voor/naar",
+      "en",
+      "als + de/het"
+     ],
+     "vers": "Genesis 4:26",
+     "verstopt": false,
+     "toelichting": "וּלְשֵׁת = וּלְ + שֵׁת",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמֵעִצְּבוֹן",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + de/het",
+      "voor/naar + vraagwoord?",
+      "en + uit/van",
+      "en + als"
+     ],
+     "vers": "Genesis 5:29",
+     "verstopt": false,
+     "toelichting": "וּמֵעִצְּבוֹן = וּמֵ + עִצְּבוֹן",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמִחוּץ",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + uit/van",
+      "als + de/het",
+      "en",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 6:14",
+     "verstopt": false,
+     "toelichting": "וּמִחוּץ = וּמִ + חוּץ",
+     "betekenis": "buiten; mv. open land, vlakte; straten"
+    },
+    {
+     "vorm": "מִלְמַעְלָה",
+     "antwoord": "uit/van + voor/naar",
+     "opties": [
+      "uit/van + voor/naar",
+      "voor/naar + vraagwoord?",
+      "als + de/het",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 6:16",
+     "verstopt": false,
+     "toelichting": "מִלְמַעְלָה = מִלְ + מַעְלָה",
+     "betekenis": "boven"
+    },
+    {
+     "vorm": "וּמִכָּל",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "de/het",
+      "in + vraagwoord?",
+      "en + uit/van",
+      "en"
+     ],
+     "vers": "Genesis 6:19",
+     "verstopt": false,
+     "toelichting": "וּמִכָּל = וּמִ + כָּל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "מֵהָעוֹף",
+     "antwoord": "uit/van + de/het",
+     "opties": [
+      "de/het",
+      "uit/van + de/het",
+      "uit/van + voor/naar",
+      "voor/naar"
+     ],
+     "vers": "Genesis 6:20",
+     "verstopt": false,
+     "toelichting": "מֵהָעוֹף = מֵהָ + עוֹף",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהַמַּבּוּל",
+     "antwoord": "en + de/het",
+     "opties": [
+      "voor/naar + uit/van",
+      "voor/naar + vraagwoord?",
+      "en + de/het",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 7:6",
+     "verstopt": false,
+     "toelichting": "וְהַמַּבּוּל = וְהַ + מַּבּוּל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהַבָּאִים",
+     "antwoord": "en + de/het",
+     "opties": [
+      "voor/naar + uit/van",
+      "en + voor/naar",
+      "in + de/het",
+      "en + de/het"
+     ],
+     "vers": "Genesis 7:16",
+     "verstopt": false,
+     "toelichting": "וְהַבָּאִים = וְהַ + בָּא + ִים",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "וְהַמַּיִם",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + de/het",
+      "en + voor/naar",
+      "in + vraagwoord?",
+      "en"
+     ],
+     "vers": "Genesis 7:19",
+     "verstopt": false,
+     "toelichting": "וְהַמַּיִם = וְהַ + מַּ + יִם",
+     "betekenis": "water"
+    },
+    {
+     "vorm": "וּמִיַּד",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + uit/van",
+      "voor/naar + vraagwoord?",
+      "en + in",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 9:5",
+     "verstopt": false,
+     "toelichting": "וּמִיַּד = וּמִ + יַּד",
+     "betekenis": "(v) hand; macht"
+    },
+    {
+     "vorm": "וּמֵאֵלֶּה",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "in + vraagwoord?",
+      "en + de/het",
+      "en + uit/van",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 9:19",
+     "verstopt": false,
+     "toelichting": "וּמֵאֵלֶּה = וּמֵ + אֵלֶּה",
+     "betekenis": "deze [aanwijzend vnw.] (mv)"
+    },
+    {
+     "vorm": "וּלְשֵׁם",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + vraagwoord?",
+      "en + voor/naar",
+      "de/het",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 10:21",
+     "verstopt": false,
+     "toelichting": "וּלְשֵׁם = וּלְ + שֵׁם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְעֵבֶר",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + vraagwoord?",
+      "en + voor/naar",
+      "uit/van + voor/naar",
+      "en + de/het"
+     ],
+     "vers": "Genesis 10:25",
+     "verstopt": false,
+     "toelichting": "וּלְעֵבֶר = וּלְ + עֵבֶר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהַחֵמָר",
+     "antwoord": "en + de/het",
+     "opties": [
+      "voor/naar",
+      "en + voor/naar",
+      "uit/van + voor/naar",
+      "en + de/het"
+     ],
+     "vers": "Genesis 11:3",
+     "verstopt": false,
+     "toelichting": "וְהַחֵמָר = וְהַ + חֵמָר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמִמּוֹלַדְתְּךָ",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + de/het",
+      "en + in",
+      "en + uit/van",
+      "uit/van + de/het"
+     ],
+     "vers": "Genesis 12:1",
+     "verstopt": false,
+     "toelichting": "וּמִמּוֹלַדְתְּךָ = וּמִ + מּוֹלַדְתְּ + ךָ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמִבֵּית",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "en + vraagwoord?",
+      "voor/naar + vraagwoord?",
+      "en + voor/naar",
+      "en + uit/van"
+     ],
+     "vers": "Genesis 12:1",
+     "verstopt": false,
+     "toelichting": "וּמִבֵּית = וּמִ + בֵּית",
+     "betekenis": "huis; tempel; gezin; houder"
+    },
+    {
+     "vorm": "וְהַכְּנַעֲנִי",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + vraagwoord?",
+      "en + de/het",
+      "voor/naar + vraagwoord?",
+      "voor/naar + uit/van"
+     ],
+     "vers": "Genesis 12:6",
+     "verstopt": false,
+     "toelichting": "וְהַכְּנַעֲנִי = וְהַ + כְּנַעֲנִי",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהָעַי",
+     "antwoord": "en + de/het",
+     "opties": [
+      "in + vraagwoord?",
+      "en + de/het",
+      "uit/van + de/het",
+      "en"
+     ],
+     "vers": "Genesis 12:8",
+     "verstopt": false,
+     "toelichting": "וְהָעַי = וְהָ + עַי",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְאַבְרָם",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + vraagwoord?",
+      "en + voor/naar",
+      "en",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 12:16",
+     "verstopt": false,
+     "toelichting": "וּלְאַבְרָם = וּלְ + אַבְרָם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהַפְּרִזִּי",
+     "antwoord": "en + de/het",
+     "opties": [
+      "voor/naar + uit/van",
+      "en + voor/naar",
+      "en + de/het",
+      "uit/van + voor/naar"
+     ],
+     "vers": "Genesis 13:7",
+     "verstopt": false,
+     "toelichting": "וְהַפְּרִזִּי = וְהַ + פְּרִזִּי",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְזַרְעֲךָ",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + de/het",
+      "als + de/het",
+      "en + voor/naar",
+      "voor/naar + vraagwoord?"
+     ],
+     "vers": "Genesis 13:15",
+     "verstopt": false,
+     "toelichting": "וּלְזַרְעֲךָ = וּלְ + זַרְעֲ + ךָ",
+     "betekenis": "zaad; nageslacht, nakomelingschap"
+    },
+    {
+     "vorm": "וּלְרָחְבָּהּ",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "in + de/het",
+      "en + als",
+      "en + voor/naar",
+      "voor/naar + de/het"
+     ],
+     "vers": "Genesis 13:17",
+     "verstopt": false,
+     "toelichting": "וּלְרָחְבָּהּ = וּלְ + רָחְבָּ + הּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּבְאַרְבַּע",
+     "antwoord": "en + in",
+     "opties": [
+      "en + in",
+      "en + vraagwoord?",
+      "en + als",
+      "en"
+     ],
+     "vers": "Genesis 14:5",
+     "verstopt": false,
+     "toelichting": "וּבְאַרְבַּע = וּבְ + אַרְבַּע",
+     "betekenis": "vier"
+    },
+    {
+     "vorm": "וְהַמְּלָכִים",
+     "antwoord": "en + de/het",
+     "opties": [
+      "uit/van + voor/naar",
+      "de/het",
+      "en + de/het",
+      "en + als"
+     ],
+     "vers": "Genesis 14:5",
+     "verstopt": false,
+     "toelichting": "וְהַמְּלָכִים = וְהַ + מְּלָכ + ִים",
+     "betekenis": "koning"
+    },
+    {
+     "vorm": "וְהַנִּשְׁאָרִים",
+     "antwoord": "en + de/het",
+     "opties": [
+      "uit/van + de/het",
+      "voor/naar + vraagwoord?",
+      "en",
+      "en + de/het"
+     ],
+     "vers": "Genesis 14:10",
+     "verstopt": false,
+     "toelichting": "וְהַנִּשְׁאָרִים = וְהַ + נִּשְׁאָר + ִים",
+     "betekenis": "G en N overblijven; H overlaten"
+    },
+    {
+     "vorm": "וְהָרְכֻשׁ",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + uit/van",
+      "voor/naar",
+      "voor/naar + vraagwoord?",
+      "en + de/het"
+     ],
+     "vers": "Genesis 14:21",
+     "verstopt": false,
+     "toelichting": "וְהָרְכֻשׁ = וְהָ + רְכֻשׁ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "בַּמָּה",
+     "antwoord": "in + vraagwoord?",
+     "opties": [
+      "in + vraagwoord?",
+      "en",
+      "als + de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 15:8",
+     "verstopt": false,
+     "toelichting": "בַּמָּה = בַּ + מָּה",
+     "betekenis": "wat?"
+    },
+    {
+     "vorm": "וְאָנָה",
+     "antwoord": "en + vraagwoord?",
+     "opties": [
+      "en + voor/naar",
+      "de/het",
+      "en",
+      "en + vraagwoord?"
+     ],
+     "vers": "Genesis 16:8",
+     "verstopt": false,
+     "toelichting": "וְאָנָה = וְ + אָנָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְיִשְׁמָעֵאל",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "en + voor/naar",
+      "en + de/het",
+      "de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 17:20",
+     "verstopt": false,
+     "toelichting": "וּלְיִשְׁמָעֵאל = וּלְ + יִשְׁמָעֵאל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְשָׂרָה",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "voor/naar + uit/van",
+      "en + voor/naar",
+      "in + vraagwoord?",
+      "en"
+     ],
+     "vers": "Genesis 18:14",
+     "verstopt": false,
+     "toelichting": "וּלְשָׂרָה = וּלְ + שָׂרָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהַדֶּלֶת",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + uit/van",
+      "en + de/het",
+      "en",
+      "als + de/het"
+     ],
+     "vers": "Genesis 19:6",
+     "verstopt": false,
+     "toelichting": "וְהַדֶּלֶת = וְהַ + דֶּל + ֶת",
+     "betekenis": "deur"
+    },
+    {
+     "vorm": "וּבְיַד",
+     "antwoord": "en + in",
+     "opties": [
+      "de/het",
+      "en + in",
+      "voor/naar + de/het",
+      "en"
+     ],
+     "vers": "Genesis 19:16",
+     "verstopt": false,
+     "toelichting": "וּבְיַד = וּבְ + יַד",
+     "betekenis": "(v) hand; macht"
+    },
+    {
+     "vorm": "וּבְקׄוּמָהּ",
+     "antwoord": "en + in",
+     "opties": [
+      "en + voor/naar",
+      "en + in",
+      "de/het",
+      "en + vraagwoord?"
+     ],
+     "vers": "Genesis 19:33",
+     "verstopt": false,
+     "toelichting": "וּבְקׄוּמָהּ = וּבְ + קׄוּמ + ָהּ",
+     "betekenis": "G opstaan, gaan staan H oprichten"
+    },
+    {
+     "vorm": "וּבְקֻמָהּ",
+     "antwoord": "en + in",
+     "opties": [
+      "in + de/het",
+      "en + in",
+      "en + vraagwoord?",
+      "als + de/het"
+     ],
+     "vers": "Genesis 19:35",
+     "verstopt": false,
+     "toelichting": "וּבְקֻמָהּ = וּבְ + קֻמ + ָהּ",
+     "betekenis": "G opstaan, gaan staan H oprichten"
+    },
+    {
+     "vorm": "וְהַצְּעִירָה",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + uit/van",
+      "uit/van + voor/naar",
+      "uit/van + de/het",
+      "en + de/het"
+     ],
+     "vers": "Genesis 19:38",
+     "verstopt": false,
+     "toelichting": "וְהַצְּעִירָה = וְהַ + צְּעִיר + ָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּבְנִקְיֹן",
+     "antwoord": "en + in",
+     "opties": [
+      "voor/naar",
+      "in + vraagwoord?",
+      "en + de/het",
+      "en + in"
+     ],
+     "vers": "Genesis 20:5",
+     "verstopt": false,
+     "toelichting": "וּבְנִקְיֹן = וּבְ + נִקְיֹן",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמֶה",
+     "antwoord": "en + vraagwoord?",
+     "opties": [
+      "voor/naar",
+      "en + de/het",
+      "voor/naar + de/het",
+      "en + vraagwoord?"
+     ],
+     "vers": "Genesis 20:9",
+     "verstopt": false,
+     "toelichting": "וּמֶה = וּ + מֶה",
+     "betekenis": "wat?"
+    },
+    {
+     "vorm": "וּלְנִינִי",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "als + de/het",
+      "de/het",
+      "en + voor/naar",
+      "en + de/het"
+     ],
+     "vers": "Genesis 21:23",
+     "verstopt": false,
+     "toelichting": "וּלְנִינִי = וּלְ + נִינ + ִי",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּלְנֶכְדִּי",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "als + de/het",
+      "en + voor/naar",
+      "uit/van + de/het",
+      "en"
+     ],
+     "vers": "Genesis 21:23",
+     "verstopt": false,
+     "toelichting": "וּלְנֶכְדִּי = וּלְ + נֶכְדִּ + י",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְהָאֱלֹהִים",
+     "antwoord": "en + de/het",
+     "opties": [
+      "als + de/het",
+      "en + voor/naar",
+      "de/het",
+      "en + de/het"
+     ],
+     "vers": "Genesis 22:1",
+     "verstopt": false,
+     "toelichting": "וְהָאֱלֹהִים = וְהָ + אֱלֹה + ִים",
+     "betekenis": "God; goden"
+    },
+    {
+     "vorm": "וְהַנַּעַר",
+     "antwoord": "en + de/het",
+     "opties": [
+      "als + de/het",
+      "en + de/het",
+      "en + als",
+      "voor/naar"
+     ],
+     "vers": "Genesis 22:5",
+     "verstopt": false,
+     "toelichting": "וְהַנַּעַר = וְהַ + נַּעַר",
+     "betekenis": "jongen; knecht"
+    },
+    {
+     "vorm": "וְהָעֵצִים",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + vraagwoord?",
+      "voor/naar + de/het",
+      "als + de/het",
+      "en + de/het"
+     ],
+     "vers": "Genesis 22:7",
+     "verstopt": false,
+     "toelichting": "וְהָעֵצִים = וְהָ + עֵצ + ִים",
+     "betekenis": "boom, geboomte; (stuk) hout"
+    },
+    {
+     "vorm": "וְאַיֵּה",
+     "antwoord": "en + vraagwoord?",
+     "opties": [
+      "en + vraagwoord?",
+      "en + de/het",
+      "voor/naar + uit/van",
+      "in + de/het"
+     ],
+     "vers": "Genesis 22:7",
+     "verstopt": false,
+     "toelichting": "וְאַיֵּה = וְ + אַיֵּה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְלִבְכֹּתָהּ",
+     "antwoord": "en + voor/naar",
+     "opties": [
+      "voor/naar + vraagwoord?",
+      "en + vraagwoord?",
+      "in + de/het",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 23:2",
+     "verstopt": false,
+     "toelichting": "וְלִבְכֹּתָהּ = וְלִ + בְכֹּת + ָהּ",
+     "betekenis": "(be)wenen, jammeren"
+    },
+    {
+     "vorm": "מִלְּפָנָי",
+     "antwoord": "uit/van + voor/naar",
+     "opties": [
+      "uit/van + de/het",
+      "voor/naar + vraagwoord?",
+      "uit/van + voor/naar",
+      "en + de/het"
+     ],
+     "vers": "Genesis 23:4",
+     "verstopt": false,
+     "toelichting": "מִלְּפָנָי = מִלְּ + פָנ + ָי",
+     "betekenis": "(alleenmv) gezicht; oppervlakte; tegenwoordigheid"
+    },
+    {
+     "vorm": "מִלְּפָנַי",
+     "antwoord": "uit/van + voor/naar",
+     "opties": [
+      "de/het",
+      "uit/van + voor/naar",
+      "uit/van + de/het",
+      "en + in"
+     ],
+     "vers": "Genesis 23:8",
+     "verstopt": false,
+     "toelichting": "מִלְּפָנַי = מִלְּ + פָנ + ַי",
+     "betekenis": "(alleenmv) gezicht; oppervlakte; tegenwoordigheid"
+    },
+    {
+     "vorm": "וְהַמְּעָרָה",
+     "antwoord": "en + de/het",
+     "opties": [
+      "voor/naar + de/het",
+      "uit/van + de/het",
+      "en + de/het",
+      "en + voor/naar"
+     ],
+     "vers": "Genesis 23:11",
+     "verstopt": false,
+     "toelichting": "וְהַמְּעָרָה = וְהַ + מְּעָר + ָה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וּמֵאֶרֶץ",
+     "antwoord": "en + uit/van",
+     "opties": [
+      "voor/naar + uit/van",
+      "en + uit/van",
+      "en + de/het",
+      "in + de/het"
+     ],
+     "vers": "Genesis 24:7",
+     "verstopt": false,
+     "toelichting": "וּמֵאֶרֶץ = וּמֵ + אֶרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וְהַנַּעֲרָ",
+     "antwoord": "en + de/het",
+     "opties": [
+      "en + de/het",
+      "en + uit/van",
+      "en",
+      "en + in"
+     ],
+     "vers": "Genesis 24:16",
+     "verstopt": false,
+     "toelichting": "וְהַנַּעֲרָ = וְהַ + נַּעֲרָ",
+     "betekenis": ""
+    }
+   ]
+  },
+  {
+   "sleutel": "welk_woord",
+   "naam": "Welk woord is dit?",
+   "uitleg": "De vaardigheid waar het bij lezen om gaat: de aanhangsels wegdenken en het woord terugvinden dat je geleerd hebt. Elk antwoord staat in je cursuslijst.",
+   "vraag": "Van welk woord uit je lijst is dit een vorm?",
+   "vragen": [
+    {
+     "vorm": "הַשָּׁמַיִם",
+     "antwoord": "שָׁמַיִם",
+     "opties": [
+      "מִדְבָּר",
+      "יַרְדֵּן",
+      "שָׁמַיִם",
+      "שְׁנַיִם"
+     ],
+     "vers": "Genesis 1:1",
+     "toelichting": "הַ + שָּׁמַ + יִם",
+     "betekenis": "hemel, lucht"
+    },
+    {
+     "vorm": "וְאֵת",
+     "antwoord": "אֵת",
+     "opties": [
+      "עִם",
+      "אַל",
+      "מִן",
+      "אֵת"
+     ],
+     "vers": "Genesis 1:1",
+     "toelichting": "וְ + אֵת",
+     "betekenis": "i [geeft lijdend voorwerp aan]; ii met, bij"
+    },
+    {
+     "vorm": "הָאָרֶץ",
+     "antwoord": "אֶרֶץ",
+     "opties": [
+      "מַיִם",
+      "אֶרֶץ",
+      "אֶלֶף",
+      "רָאָה"
+     ],
+     "vers": "Genesis 1:1",
+     "toelichting": "הָ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וְהָאָרֶץ",
+     "antwoord": "אֶרֶץ",
+     "opties": [
+      "מָצָא",
+      "אֶרֶץ",
+      "אִישׁ",
+      "עַיִן"
+     ],
+     "vers": "Genesis 1:2",
+     "toelichting": "וְהָ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וְרוּחַ",
+     "antwoord": "רוּחַ",
+     "opties": [
+      "יָצָא",
+      "רָאָה",
+      "אֶלֶף",
+      "רוּחַ"
+     ],
+     "vers": "Genesis 1:2",
+     "toelichting": "וְ + רוּחַ",
+     "betekenis": "(v) wind; adem; geest"
+    },
+    {
+     "vorm": "הַמָּיִם",
+     "antwoord": "מַיִם",
+     "opties": [
+      "בּוֹא",
+      "גֹּוי",
+      "מֵאָה",
+      "מַיִם"
+     ],
+     "vers": "Genesis 1:2",
+     "toelichting": "הַ + מָּ + יִם",
+     "betekenis": "water"
+    },
+    {
+     "vorm": "וַיֹּאמֶר",
+     "antwoord": "אמר",
+     "opties": [
+      "עבר",
+      "אכל",
+      "ירד",
+      "אמר"
+     ],
+     "vers": "Genesis 1:3",
+     "toelichting": "וַ + יֹּ + אמֶר",
+     "betekenis": "G zeggen; (bij zichzelf zeggen >) denken; N gezegd worden; H"
+    },
+    {
+     "vorm": "וַיְהִי",
+     "antwoord": "הָיָה",
+     "opties": [
+      "יָצָא",
+      "הָיָה",
+      "אֲנִי",
+      "הִנֵּה"
+     ],
+     "vers": "Genesis 1:3",
+     "toelichting": "וַ + יְ + הִי",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וַיַּרְא",
+     "antwoord": "רָאָה",
+     "opties": [
+      "מַיִם",
+      "רָאָה",
+      "אֲנִי",
+      "רֹאשׁ"
+     ],
+     "vers": "Genesis 1:4",
+     "toelichting": "וַ + יַּ + רְא",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "הָאוֹר",
+     "antwoord": "אוֹר",
+     "opties": [
+      "אֵין",
+      "יוֹם",
+      "שׁמע",
+      "אוֹר"
+     ],
+     "vers": "Genesis 1:4",
+     "toelichting": "הָ + אוֹר",
+     "betekenis": "(het) licht"
+    },
+    {
+     "vorm": "וּבֵין",
+     "antwoord": "בֵּין",
+     "opties": [
+      "הָיָה",
+      "בֵּין",
+      "בּוֹא",
+      "אָדָם"
+     ],
+     "vers": "Genesis 1:4",
+     "toelichting": "וּ + בֵין",
+     "betekenis": "tussen"
+    },
+    {
+     "vorm": "וַיִּקְרָא",
+     "antwoord": "קָרָא",
+     "opties": [
+      "מַיִם",
+      "קֶרֶב",
+      "עָלָה",
+      "קָרָא"
+     ],
+     "vers": "Genesis 1:5",
+     "toelichting": "וַ + יִּ + קְרָא",
+     "betekenis": "G roepen, noemen; aanroepen; (hardop) lezen"
+    },
+    {
+     "vorm": "לָאוֹר",
+     "antwoord": "אוֹר",
+     "opties": [
+      "שׁלח",
+      "ישׁב",
+      "אוֹר",
+      "אֵין"
+     ],
+     "vers": "Genesis 1:5",
+     "toelichting": "לָ + אוֹר",
+     "betekenis": "(het) licht"
+    },
+    {
+     "vorm": "בְּתוֹךְ",
+     "antwoord": "תָּוֶךְ",
+     "opties": [
+      "תַּחַת",
+      "אֵלֶּה",
+      "תָּוֶךְ",
+      "שָׁנָה"
+     ],
+     "vers": "Genesis 1:6",
+     "toelichting": "בְּ + תוֹךְ",
+     "betekenis": "midden"
+    },
+    {
+     "vorm": "וִיהִי",
+     "antwoord": "הָיָה",
+     "opties": [
+      "אִישׁ",
+      "הִנֵּה",
+      "הָיָה",
+      "מָצָא"
+     ],
+     "vers": "Genesis 1:6",
+     "toelichting": "וִ + י + הִי",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "לָמָיִם",
+     "antwoord": "מַיִם",
+     "opties": [
+      "מַיִם",
+      "בּוֹא",
+      "הָיָה",
+      "מֵאָה"
+     ],
+     "vers": "Genesis 1:6",
+     "toelichting": "לָ + מָ + יִם",
+     "betekenis": "water"
+    },
+    {
+     "vorm": "וַיַּעַשׂ",
+     "antwoord": "עָשָׂה",
+     "opties": [
+      "עָשָׂה",
+      "קֹדֶשׁ",
+      "עֶשֶׂר",
+      "דָּוִד"
+     ],
+     "vers": "Genesis 1:7",
+     "toelichting": "וַ + יַּ + עַשׂ",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "הַמַּיִם",
+     "antwoord": "מַיִם",
+     "opties": [
+      "מַיִם",
+      "שׁוּב",
+      "מֵאָה",
+      "אָדָם"
+     ],
+     "vers": "Genesis 1:7",
+     "toelichting": "הַ + מַּ + יִם",
+     "betekenis": "water"
+    },
+    {
+     "vorm": "מִתַּחַת",
+     "antwoord": "תַּחַת",
+     "opties": [
+      "תַּחַת",
+      "נֶפֶשׁ",
+      "תָּוֶךְ",
+      "בַּיִת"
+     ],
+     "vers": "Genesis 1:7",
+     "toelichting": "מִ + תַּחַת",
+     "betekenis": "het onderste; onder, in plaats van"
+    },
+    {
+     "vorm": "מֵעַל",
+     "antwoord": "עַל",
+     "opties": [
+      "עַל",
+      "עַם",
+      "הֵן",
+      "לֹא"
+     ],
+     "vers": "Genesis 1:7",
+     "toelichting": "מֵ + עַל",
+     "betekenis": "(boven)op, over, bij; tot, tegen; wegens"
+    },
+    {
+     "vorm": "וְתֵרָאֶה",
+     "antwoord": "רָאָה",
+     "opties": [
+      "רָאָה",
+      "רֹאשׁ",
+      "אֲנִי",
+      "מֵאָה"
+     ],
+     "vers": "Genesis 1:9",
+     "toelichting": "וְ + תֵ + רָאֶה",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "וַתּוֹצֵא",
+     "antwoord": "יָצָא",
+     "opties": [
+      "אֲנִי",
+      "יָצָא",
+      "אֶחָד",
+      "יָרֵא"
+     ],
+     "vers": "Genesis 1:12",
+     "toelichting": "וַ + תּ + וֹצֵא",
+     "betekenis": "G uitgaan; H doen uitgaan; brengen uit; verkondigen"
+    },
+    {
+     "vorm": "וְעֵץ",
+     "antwoord": "עֵץ",
+     "opties": [
+      "זֶה",
+      "עִם",
+      "יָד",
+      "עֵץ"
+     ],
+     "vers": "Genesis 1:12",
+     "toelichting": "וְ + עֵץ",
+     "betekenis": "boom, geboomte; (stuk) hout"
+    },
+    {
+     "vorm": "הַיּוֹם",
+     "antwoord": "יוֹם",
+     "opties": [
+      "יוֹם",
+      "קוּם",
+      "ירשׁ",
+      "שׁלח"
+     ],
+     "vers": "Genesis 1:14",
+     "toelichting": "הַ + יּוֹם",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "הַלָּיְלָה",
+     "antwoord": "לַיְלָה",
+     "opties": [
+      "לַיְלָה",
+      "גָּדוֹל",
+      "פָּנִים",
+      "לְמַעַן"
+     ],
+     "vers": "Genesis 1:14",
+     "toelichting": "הַ + לָּיְלָה",
+     "betekenis": "nacht"
+    },
+    {
+     "vorm": "וְהָיוּ",
+     "antwoord": "הָיָה",
+     "opties": [
+      "הָיָה",
+      "אֶלֶף",
+      "אֶרֶץ",
+      "הִנֵּה"
+     ],
+     "vers": "Genesis 1:14",
+     "toelichting": "וְ + הָי + וּ",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וּלְמוֹעֲדִים",
+     "antwoord": "מוֹעֵד",
+     "opties": [
+      "אָדוֹן",
+      "מָקוֹם",
+      "נָבִיא",
+      "מוֹעֵד"
+     ],
+     "vers": "Genesis 1:14",
+     "toelichting": "וּלְ + מוֹעֲד + ִים",
+     "betekenis": "trefpunt; bestemde tijd; samenkomst, ontmoeting"
+    },
+    {
+     "vorm": "וּלְיָמִים",
+     "antwoord": "יוֹם",
+     "opties": [
+      "מוּת",
+      "בקשׁ",
+      "יוֹם",
+      "ישׁב"
+     ],
+     "vers": "Genesis 1:14",
+     "toelichting": "וּלְ + יָמ + ִים",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "וְשָׁנִים",
+     "antwoord": "שָׁנָה",
+     "opties": [
+      "מֶלֶךְ",
+      "שֶׁבַע",
+      "כֹּהֵן",
+      "שָׁנָה"
+     ],
+     "vers": "Genesis 1:14",
+     "toelichting": "וְ + שָׁנ + ִים",
+     "betekenis": "jaar"
+    },
+    {
+     "vorm": "הַגְּדֹלִים",
+     "antwoord": "גָּדוֹל",
+     "opties": [
+      "גְּבוּל",
+      "כָּבוֹד",
+      "אָנֹכִי",
+      "גָּדוֹל"
+     ],
+     "vers": "Genesis 1:16",
+     "toelichting": "הַ + גְּדֹל + ִים",
+     "betekenis": "groot"
+    },
+    {
+     "vorm": "הַגָּדֹל",
+     "antwoord": "גָּדוֹל",
+     "opties": [
+      "גָּדוֹל",
+      "גְּבוּל",
+      "מִנְחָה",
+      "לַיְלָה"
+     ],
+     "vers": "Genesis 1:16",
+     "toelichting": "הַ + גָּדֹל",
+     "betekenis": "groot"
+    },
+    {
+     "vorm": "וְאֶת",
+     "antwoord": "אֵת",
+     "opties": [
+      "אַל",
+      "אֶל",
+      "עַד",
+      "אֵת"
+     ],
+     "vers": "Genesis 1:16",
+     "toelichting": "וְ + אֶת",
+     "betekenis": "i [geeft lijdend voorwerp aan]; ii met, bij"
+    },
+    {
+     "vorm": "הַלַּיְלָה",
+     "antwoord": "לַיְלָה",
+     "opties": [
+      "מִצְוָה",
+      "לְמַעַן",
+      "כָּבוֹד",
+      "לַיְלָה"
+     ],
+     "vers": "Genesis 1:16",
+     "toelichting": "הַ + לַּיְלָה",
+     "betekenis": "nacht"
+    },
+    {
+     "vorm": "וַיִּתֵּן",
+     "antwoord": "נתן",
+     "opties": [
+      "נתן",
+      "מלך",
+      "אכל",
+      "נגד"
+     ],
+     "vers": "Genesis 1:17",
+     "toelichting": "וַ + יִּ + תֵּן",
+     "betekenis": "G geven; stellen, leggen, maken; N gegeven worden"
+    },
+    {
+     "vorm": "הַשָּׁמָיִם",
+     "antwoord": "שָׁמַיִם",
+     "opties": [
+      "שָׁמַיִם",
+      "מִמַּעַל",
+      "שְׁמֹנֶה",
+      "מִסְפָּר"
+     ],
+     "vers": "Genesis 1:17",
+     "toelichting": "הַ + שָּׁמָ + יִם",
+     "betekenis": "hemel, lucht"
+    },
+    {
+     "vorm": "בַּיּוֹם",
+     "antwoord": "יוֹם",
+     "opties": [
+      "הוּא",
+      "קוּם",
+      "יוֹם",
+      "ישׁב"
+     ],
+     "vers": "Genesis 1:18",
+     "toelichting": "בַּ + יּוֹם",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "וּבַלַּיְלָה",
+     "antwoord": "לַיְלָה",
+     "opties": [
+      "לַיְלָה",
+      "אַחֲרֵי",
+      "לְמַעַן",
+      "נַחֲלָה"
+     ],
+     "vers": "Genesis 1:18",
+     "toelichting": "וּבַ + לַּיְלָה",
+     "betekenis": "nacht"
+    },
+    {
+     "vorm": "הַחַיָּה",
+     "antwoord": "חַי",
+     "opties": [
+      "אִם",
+      "חֹק",
+      "חַי",
+      "זֶה"
+     ],
+     "vers": "Genesis 1:21",
+     "toelichting": "הַ + חַיָּה",
+     "betekenis": "leven"
+    },
+    {
+     "vorm": "וַיְבָרֶךְ",
+     "antwoord": "ברך",
+     "opties": [
+      "בחר",
+      "נגד",
+      "דבר",
+      "ברך"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "וַ + יְ + בָרֶךְ",
+     "betekenis": "(G en) D zegenen, prijzen; N elkaar zegen toewensen, gezegen"
+    },
+    {
+     "vorm": "לֵאמֹר",
+     "antwoord": "אמר",
+     "opties": [
+      "אמר",
+      "ברך",
+      "אכל",
+      "דבר"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "לֵ + אמֹר",
+     "betekenis": "G zeggen; (bij zichzelf zeggen >) denken; N gezegd worden; H"
+    },
+    {
+     "vorm": "וּרְבוּ",
+     "antwoord": "רָבָה",
+     "opties": [
+      "רָאָה",
+      "אָדָם",
+      "יָצָא",
+      "רָבָה"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "וּ + רְבוּ",
+     "betekenis": "G veel zijn, talrijk zijn; groot zijn; D talrijk maken; H ta"
+    },
+    {
+     "vorm": "וּמִלְאוּ",
+     "antwoord": "מָלֵא",
+     "opties": [
+      "בּוֹא",
+      "מֵאָה",
+      "מָלֵא",
+      "עָלָה"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "וּ + מִלְאוּ",
+     "betekenis": "G vol zijn van; vullen; D (ver)vullen"
+    },
+    {
+     "vorm": "בַּיַּמִּים",
+     "antwoord": "יָם",
+     "opties": [
+      "אִם",
+      "אֶל",
+      "יָם",
+      "יָד"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "בַּ + יַּמִּים",
+     "betekenis": "zee; westen"
+    },
+    {
+     "vorm": "בָּאָרֶץ",
+     "antwoord": "אֶרֶץ",
+     "opties": [
+      "אֲנִי",
+      "אֶרֶץ",
+      "אֶחָד",
+      "עַיִן"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "בָּ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וְחַיְתוֹ",
+     "antwoord": "חַי",
+     "opties": [
+      "אֵת",
+      "חֹק",
+      "חַי",
+      "עַל"
+     ],
+     "vers": "Genesis 1:24",
+     "toelichting": "וְ + חַיְת + וֹ",
+     "betekenis": "leven"
+    },
+    {
+     "vorm": "הַבְּהֵמָה",
+     "antwoord": "בְּהֵמָה",
+     "opties": [
+      "מִדְבָּר",
+      "בְּהֵמָה",
+      "מַעֲשֶׂה",
+      "בְּכֹרָה"
+     ],
+     "vers": "Genesis 1:25",
+     "toelichting": "הַ + בְּהֵמ + ָה",
+     "betekenis": "(groot) vee"
+    },
+    {
+     "vorm": "הָאֲדָמָה",
+     "antwoord": "אֲדָמָה",
+     "opties": [
+      "מִצְוָה",
+      "אַחֲרֵי",
+      "לַיְלָה",
+      "אֲדָמָה"
+     ],
+     "vers": "Genesis 1:25",
+     "toelichting": "הָ + אֲדָמ + ָה",
+     "betekenis": "aarde, akker, grond"
+    },
+    {
+     "vorm": "הַיָּם",
+     "antwoord": "יָם",
+     "opties": [
+      "יָד",
+      "אֶל",
+      "הֵן",
+      "יָם"
+     ],
+     "vers": "Genesis 1:26",
+     "toelichting": "הַ + יָּם",
+     "betekenis": "zee; westen"
+    },
+    {
+     "vorm": "וּבַבְּהֵמָה",
+     "antwoord": "בְּהֵמָה",
+     "opties": [
+      "בְּהֵמָה",
+      "שְׁמֹנֶה",
+      "מִסְפָּר",
+      "בְּכֹרָה"
+     ],
+     "vers": "Genesis 1:26",
+     "toelichting": "וּבַ + בְּהֵמ + ָה",
+     "betekenis": "(groot) vee"
+    },
+    {
+     "vorm": "וּבְכָל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "כֹּה",
+      "דָּם",
+      "שָׁם",
+      "כֹּל"
+     ],
+     "vers": "Genesis 1:26",
+     "toelichting": "וּבְ + כָל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "הָאָדָם",
+     "antwoord": "אָדָם",
+     "opties": [
+      "שׁוּב",
+      "אָדָם",
+      "גֹּוי",
+      "אֲנִי"
+     ],
+     "vers": "Genesis 1:27",
+     "toelichting": "הָ + אָדָם",
+     "betekenis": "mens; mensheid; Adam"
+    },
+    {
+     "vorm": "הָעֵץ",
+     "antwoord": "עֵץ",
+     "opties": [
+      "הֵן",
+      "אַל",
+      "עִם",
+      "עֵץ"
+     ],
+     "vers": "Genesis 1:29",
+     "toelichting": "הָ + עֵץ",
+     "betekenis": "boom, geboomte; (stuk) hout"
+    },
+    {
+     "vorm": "וּלְכָל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "בֵּן",
+      "כֹּל",
+      "בַּת",
+      "כֹּה"
+     ],
+     "vers": "Genesis 1:30",
+     "toelichting": "וּלְ + כָל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וּלְכֹל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "דָּם",
+      "כֹּל",
+      "כֹּה",
+      "בֵּן"
+     ],
+     "vers": "Genesis 1:30",
+     "toelichting": "וּלְ + כֹל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וְהִנֵּה",
+     "antwoord": "הִנֵּה",
+     "opties": [
+      "קֹדֶשׁ",
+      "בַּיִת",
+      "הִנֵּה",
+      "הָיָה"
+     ],
+     "vers": "Genesis 1:31",
+     "toelichting": "וְ + הִנֵּה",
+     "betekenis": "Aanschouw/Zie"
+    },
+    {
+     "vorm": "וַיְכֻלּוּ",
+     "antwoord": "כָּלָה",
+     "opties": [
+      "כָּלָה",
+      "כֹּהֵן",
+      "דָּבָר",
+      "חָמֵשׁ"
+     ],
+     "vers": "Genesis 2:1",
+     "toelichting": "וַ + יְ + כֻלּ + וּ",
+     "betekenis": "G voltooid/gereed/ten einde zijn; D ophouden met"
+    },
+    {
+     "vorm": "וְכָל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "כֵּן",
+      "שַׂר",
+      "דָּם",
+      "כֹּל"
+     ],
+     "vers": "Genesis 2:1",
+     "toelichting": "וְ + כָל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וַיְכַל",
+     "antwoord": "כָּלָה",
+     "opties": [
+      "כֹּהֵן",
+      "מֶלֶךְ",
+      "עֶשֶׂר",
+      "כָּלָה"
+     ],
+     "vers": "Genesis 2:2",
+     "toelichting": "וַ + יְ + כַל",
+     "betekenis": "G voltooid/gereed/ten einde zijn; D ophouden met"
+    },
+    {
+     "vorm": "מִכָּל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "בֵּן",
+      "כֹּל",
+      "אַךְ",
+      "כֹּח"
+     ],
+     "vers": "Genesis 2:2",
+     "toelichting": "מִ + כָּל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וַיְקַדֵּשׁ",
+     "antwoord": "קדשׁ",
+     "opties": [
+      "קדשׁ",
+      "יוֹם",
+      "קוּם",
+      "קוֹל"
+     ],
+     "vers": "Genesis 2:3",
+     "toelichting": "וַ + יְ + קַדֵּשׁ",
+     "betekenis": "G heilig zijn; D en H heiligen"
+    },
+    {
+     "vorm": "לַעֲשׂוֹת",
+     "antwoord": "עָשָׂה",
+     "opties": [
+      "עָשָׂה",
+      "עֶשֶׂר",
+      "אַתָּה",
+      "כֹּהֵן"
+     ],
+     "vers": "Genesis 2:3",
+     "toelichting": "לַ + עֲשׂוֹת",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "בְּיוֹם",
+     "antwoord": "יוֹם",
+     "opties": [
+      "יוֹם",
+      "טוֹב",
+      "קוֹל",
+      "ירשׁ"
+     ],
+     "vers": "Genesis 2:4",
+     "toelichting": "בְּ + יוֹם",
+     "betekenis": "dag"
+    },
+    {
+     "vorm": "וְשָׁמָיִם",
+     "antwoord": "שָׁמַיִם",
+     "opties": [
+      "אַרְבַּע",
+      "שְׁמֹנֶה",
+      "שָׁמַיִם",
+      "פַּרְעֹה"
+     ],
+     "vers": "Genesis 2:4",
+     "toelichting": "וְ + שָׁמָ + יִם",
+     "betekenis": "hemel, lucht"
+    },
+    {
+     "vorm": "וְכֹל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "אַךְ",
+      "יֵשׁ",
+      "כֹּל",
+      "כֵּן"
+     ],
+     "vers": "Genesis 2:5",
+     "toelichting": "וְ + כֹל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "הַשָּׂדֶה",
+     "antwoord": "שָׂדֶה",
+     "opties": [
+      "שָׁנָה",
+      "עַתָּה",
+      "נָשָׂא",
+      "שָׂדֶה"
+     ],
+     "vers": "Genesis 2:5",
+     "toelichting": "הַ + שָּׂדֶה",
+     "betekenis": "veld"
+    },
+    {
+     "vorm": "בָאָרֶץ",
+     "antwoord": "אֶרֶץ",
+     "opties": [
+      "אֶלֶף",
+      "עַיִן",
+      "יָצָא",
+      "אֶרֶץ"
+     ],
+     "vers": "Genesis 2:5",
+     "toelichting": "בָ + אָרֶץ",
+     "betekenis": "(v) land, aarde"
+    },
+    {
+     "vorm": "וְאָדָם",
+     "antwoord": "אָדָם",
+     "opties": [
+      "אָדָם",
+      "אֲנִי",
+      "אֶחָד",
+      "גֹּוי"
+     ],
+     "vers": "Genesis 2:5",
+     "toelichting": "וְ + אָדָם",
+     "betekenis": "mens; mensheid; Adam"
+    },
+    {
+     "vorm": "בְּאַפָּיו",
+     "antwoord": "אַף",
+     "opties": [
+      "אַף",
+      "אִם",
+      "עִם",
+      "לֹא"
+     ],
+     "vers": "Genesis 2:7",
+     "toelichting": "בְּ + אַפָּי + ו",
+     "betekenis": "neus(gat); (tv) gezicht; woede, toorn"
+    },
+    {
+     "vorm": "לְנֶפֶשׁ",
+     "antwoord": "נֶפֶשׁ",
+     "opties": [
+      "אֲשֶׁר",
+      "נֶפֶשׁ",
+      "נָשָׂא",
+      "עָשָׂה"
+     ],
+     "vers": "Genesis 2:7",
+     "toelichting": "לְ + נֶפֶשׁ",
+     "betekenis": "(v.) adem; (het emotionele) leven, (levend)wezen, persoon; z"
+    },
+    {
+     "vorm": "וַיָּשֶׂם",
+     "antwoord": "שִׂים",
+     "opties": [
+      "שׁוּב",
+      "גֹּוי",
+      "עָלָה",
+      "שִׂים"
+     ],
+     "vers": "Genesis 2:8",
+     "toelichting": "וַ + יָּ + שֶׂם",
+     "betekenis": "leggen; zetten; maken tot, aanstellen (tot)"
+    },
+    {
+     "vorm": "וְטוֹב",
+     "antwoord": "טוֹב",
+     "opties": [
+      "שׁלח",
+      "טָמֵא",
+      "טוֹב",
+      "הוּא"
+     ],
+     "vers": "Genesis 2:9",
+     "toelichting": "וְ + טוֹב",
+     "betekenis": "goed"
+    },
+    {
+     "vorm": "הַחַיִּים",
+     "antwoord": "חַי",
+     "opties": [
+      "חַי",
+      "עִם",
+      "חֹק",
+      "עַם"
+     ],
+     "vers": "Genesis 2:9",
+     "toelichting": "הַ + חַיִּים",
+     "betekenis": "leven"
+    },
+    {
+     "vorm": "הַדַּעַת",
+     "antwoord": "דַּעַת",
+     "opties": [
+      "שָׁנָה",
+      "כֹּהֵן",
+      "דַּעַת",
+      "דָּבָר"
+     ],
+     "vers": "Genesis 2:9",
+     "toelichting": "הַ + דַּע + ַת",
+     "betekenis": "kennis, begrip"
+    },
+    {
+     "vorm": "וָרָע",
+     "antwoord": "רָעָה",
+     "opties": [
+      "אֶלֶף",
+      "רָעָה",
+      "אֶחָד",
+      "רָאָה"
+     ],
+     "vers": "Genesis 2:9",
+     "toelichting": "וָ + רָע",
+     "betekenis": "kwaad; (het) kwaad"
+    },
+    {
+     "vorm": "וְנָהָר",
+     "antwoord": "נָהָר",
+     "opties": [
+      "נָהָר",
+      "רָאָה",
+      "נָכָה",
+      "אֶרֶץ"
+     ],
+     "vers": "Genesis 2:10",
+     "toelichting": "וְ + נָהָר",
+     "betekenis": "stroom, rivier"
+    },
+    {
+     "vorm": "וּמִשָּׁם",
+     "antwoord": "שָׁם",
+     "opties": [
+      "שָׁם",
+      "שֵׁם",
+      "פֶּה",
+      "כִּי"
+     ],
+     "vers": "Genesis 2:10",
+     "toelichting": "וּמִ + שָּׁם",
+     "betekenis": "daar"
+    },
+    {
+     "vorm": "וְהָיָה",
+     "antwoord": "הָיָה",
+     "opties": [
+      "מָצָא",
+      "הִנֵּה",
+      "הָיָה",
+      "גֹּוי"
+     ],
+     "vers": "Genesis 2:10",
+     "toelichting": "וְ + הָיָה",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "לְאַרְבָּעָה",
+     "antwoord": "אַרְבַּע",
+     "opties": [
+      "אַרְבַּע",
+      "מִגְרָשׁ",
+      "בְּכֹרָה",
+      "אַחֲרֵי"
+     ],
+     "vers": "Genesis 2:10",
+     "toelichting": "לְ + אַרְבָּעָה",
+     "betekenis": "vier"
+    },
+    {
+     "vorm": "הָאֶחָד",
+     "antwoord": "אֶחָד",
+     "opties": [
+      "אֲנִי",
+      "עַיִן",
+      "שׁוּב",
+      "אֶחָד"
+     ],
+     "vers": "Genesis 2:11",
+     "toelichting": "הָ + אֶחָד",
+     "betekenis": "één; een"
+    },
+    {
+     "vorm": "הַסֹּבֵב",
+     "antwoord": "סבב",
+     "opties": [
+      "סוּר",
+      "סבב",
+      "ידע",
+      "ילד"
+     ],
+     "vers": "Genesis 2:11",
+     "toelichting": "הַ + סֹּבֵב",
+     "betekenis": "G zich omkeren; omringen; gaan, komen; N van richting verand"
+    },
+    {
+     "vorm": "הַזָּהָב",
+     "antwoord": "זָהָב",
+     "opties": [
+      "זֶרַע",
+      "זָהָב",
+      "רָאָה",
+      "אָדָם"
+     ],
+     "vers": "Genesis 2:11",
+     "toelichting": "הַ + זָּהָב",
+     "betekenis": "goud"
+    },
+    {
+     "vorm": "וּזֲהַב",
+     "antwoord": "זָהָב",
+     "opties": [
+      "זָהָב",
+      "גֹּוי",
+      "עַיִן",
+      "זֶרַע"
+     ],
+     "vers": "Genesis 2:12",
+     "toelichting": "וּ + זֲהַב",
+     "betekenis": "goud"
+    },
+    {
+     "vorm": "הַהִוא",
+     "antwoord": "הוּא",
+     "opties": [
+      "הוּא",
+      "צֹאן",
+      "הָיָה",
+      "קוֹל"
+     ],
+     "vers": "Genesis 2:12",
+     "toelichting": "הַ + הִוא",
+     "betekenis": "hij [persl. vnw.]; die [aanw. vnw.]"
+    },
+    {
+     "vorm": "וְאֶבֶן",
+     "antwoord": "אֶבֶן",
+     "opties": [
+      "אֶחָד",
+      "בּוֹא",
+      "מֵאָה",
+      "אֶבֶן"
+     ],
+     "vers": "Genesis 2:12",
+     "toelichting": "וְ + אֶבֶן",
+     "betekenis": "steen"
+    },
+    {
+     "vorm": "וְשֵׁם",
+     "antwoord": "שֵׁם",
+     "opties": [
+      "אַךְ",
+      "כֹּח",
+      "שֵׁם",
+      "שָׁם"
+     ],
+     "vers": "Genesis 2:13",
+     "toelichting": "וְ + שֵׁם",
+     "betekenis": "naam"
+    },
+    {
+     "vorm": "הַנָּהָר",
+     "antwoord": "נָהָר",
+     "opties": [
+      "נָהָר",
+      "רָאָה",
+      "נָכָה",
+      "אֲנִי"
+     ],
+     "vers": "Genesis 2:13",
+     "toelichting": "הַ + נָּהָר",
+     "betekenis": "stroom, rivier"
+    },
+    {
+     "vorm": "הַסּוֹבֵב",
+     "antwoord": "סבב",
+     "opties": [
+      "סבב",
+      "סוּר",
+      "מלך",
+      "אמר"
+     ],
+     "vers": "Genesis 2:13",
+     "toelichting": "הַ + סּוֹבֵב",
+     "betekenis": "G zich omkeren; omringen; gaan, komen; N van richting verand"
+    },
+    {
+     "vorm": "הַהֹלֵךְ",
+     "antwoord": "הלך",
+     "opties": [
+      "הרג",
+      "נתן",
+      "עמד",
+      "הלך"
+     ],
+     "vers": "Genesis 2:14",
+     "toelichting": "הַ + הֹלֵךְ",
+     "betekenis": "G gaan; tD wandelen; H brengen; meenemen"
+    },
+    {
+     "vorm": "וְהַנָּהָר",
+     "antwoord": "נָהָר",
+     "opties": [
+      "אֲנִי",
+      "נָכָה",
+      "נָהָר",
+      "מֵאָה"
+     ],
+     "vers": "Genesis 2:14",
+     "toelichting": "וְהַ + נָּהָר",
+     "betekenis": "stroom, rivier"
+    },
+    {
+     "vorm": "וַיִּקַּח",
+     "antwoord": "לקח",
+     "opties": [
+      "לחם",
+      "הלך",
+      "לקח",
+      "זכר"
+     ],
+     "vers": "Genesis 2:15",
+     "toelichting": "וַ + יִּ + קַּח",
+     "betekenis": "nemen, halen"
+    },
+    {
+     "vorm": "וַיַּנִּחֵהוּ",
+     "antwoord": "נוּח",
+     "opties": [
+      "נוּס",
+      "ירשׁ",
+      "נוּח",
+      "בקשׁ"
+     ],
+     "vers": "Genesis 2:15",
+     "toelichting": "וַ + יַּ + נִּח + ֵהוּ",
+     "betekenis": "G rusten; H i rust geven; ii (neer)leggen"
+    },
+    {
+     "vorm": "וּלְשָׁמְרָהּ",
+     "antwoord": "שָׁמַר",
+     "opties": [
+      "שָׁנָה",
+      "שָׁמַר",
+      "עָשָׂה",
+      "כֹּהֵן"
+     ],
+     "vers": "Genesis 2:15",
+     "toelichting": "וּלְ + שָׁמְר + ָהּ",
+     "betekenis": "bewaken"
+    },
+    {
+     "vorm": "וַיְצַו",
+     "antwoord": "צָוָה",
+     "opties": [
+      "אִישׁ",
+      "צָוָה",
+      "הָיָה",
+      "צָבָא"
+     ],
+     "vers": "Genesis 2:16",
+     "toelichting": "וַ + יְ + צַו",
+     "betekenis": "D opdragen, bevelen"
+    },
+    {
+     "vorm": "מִכֹּל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "כֹּל",
+      "כַּף",
+      "דָּם",
+      "כִּי"
+     ],
+     "vers": "Genesis 2:16",
+     "toelichting": "מִ + כֹּל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וּמֵעֵץ",
+     "antwoord": "עֵץ",
+     "opties": [
+      "עֵץ",
+      "יָד",
+      "עַד",
+      "אָח"
+     ],
+     "vers": "Genesis 2:17",
+     "toelichting": "וּמֵ + עֵץ",
+     "betekenis": "boom, geboomte; (stuk) hout"
+    },
+    {
+     "vorm": "לְבַדּוֹ",
+     "antwoord": "לְבַד",
+     "opties": [
+      "לֶחֶם",
+      "אֶחָד",
+      "לְבַד",
+      "עַיִן"
+     ],
+     "vers": "Genesis 2:18",
+     "toelichting": "לְ + בַדּ + וֹ",
+     "betekenis": "afzonderlijk, alleen"
+    },
+    {
+     "vorm": "כְּנֶגְדּוֹ",
+     "antwoord": "נֶגֶד",
+     "opties": [
+      "עָלָה",
+      "נֶגֶד",
+      "נָכָה",
+      "מַיִם"
+     ],
+     "vers": "Genesis 2:18",
+     "toelichting": "כְּ + נֶגְדּ + וֹ",
+     "betekenis": "tegenover, in tegenwoordigheid van"
+    },
+    {
+     "vorm": "וַיָּבֵא",
+     "antwoord": "בּוֹא",
+     "opties": [
+      "בּוֹא",
+      "שׁוּב",
+      "בֵּין",
+      "מֵאָה"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "וַ + יָּ + בֵא",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "לִרְאוֹת",
+     "antwoord": "רָאָה",
+     "opties": [
+      "רָאָה",
+      "בּוֹא",
+      "אֶרֶץ",
+      "רֹאשׁ"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "לִ + רְאוֹת",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "מַה",
+     "antwoord": "מֶה",
+     "opties": [
+      "עַל",
+      "עִם",
+      "מֶה",
+      "מִן"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "מַה",
+     "betekenis": "wat?"
+    },
+    {
+     "vorm": "לְכָל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "גַּם",
+      "כֹּל",
+      "כֵּן",
+      "כֹּח"
+     ],
+     "vers": "Genesis 2:20",
+     "toelichting": "לְ + כָל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וַיַּפֵּל",
+     "antwoord": "נפל",
+     "opties": [
+      "נתן",
+      "ילד",
+      "נפל",
+      "אמר"
+     ],
+     "vers": "Genesis 2:21",
+     "toelichting": "וַ + יַּ + פֵּל",
+     "betekenis": "G vallen; betrekken (van gezicht); H doen vallen"
+    },
+    {
+     "vorm": "וַיִּבֶן",
+     "antwoord": "בָּנָה",
+     "opties": [
+      "מֶלֶךְ",
+      "בַּיִת",
+      "נֶפֶשׁ",
+      "בָּנָה"
+     ],
+     "vers": "Genesis 2:22",
+     "toelichting": "וַ + יִּ + בֶן",
+     "betekenis": "G bouwen"
+    },
+    {
+     "vorm": "לְאִשָּׁה",
+     "antwoord": "אִשָּׁה",
+     "opties": [
+      "בַּיִת",
+      "כִּסֵּא",
+      "אַתָּה",
+      "אִשָּׁה"
+     ],
+     "vers": "Genesis 2:22",
+     "toelichting": "לְ + אִשָּׁה",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "וַיְבִאֶהָ",
+     "antwoord": "בּוֹא",
+     "opties": [
+      "עָלָה",
+      "בּוֹא",
+      "אֲנִי",
+      "בֵּין"
+     ],
+     "vers": "Genesis 2:22",
+     "toelichting": "וַ + יְ + בִאֶ + הָ",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "הַפַּעַם",
+     "antwoord": "פַּעַם",
+     "opties": [
+      "פַּעַם",
+      "דָּבָר",
+      "שָׁנָה",
+      "פֶּתַח"
+     ],
+     "vers": "Genesis 2:23",
+     "toelichting": "הַ + פַּעַם",
+     "betekenis": "(v) voet, schrede; keer"
+    },
+    {
+     "vorm": "מֵעֲצָמַי",
+     "antwoord": "עֶצֶם",
+     "opties": [
+      "עֶצֶם",
+      "אֶרֶץ",
+      "עַיִן",
+      "רָאָה"
+     ],
+     "vers": "Genesis 2:23",
+     "toelichting": "מֵ + עֲצָמ + ַי",
+     "betekenis": "(ge)been(te), bot; (zich)zelf"
+    },
+    {
+     "vorm": "וּבָשָׂר",
+     "antwoord": "בָּשָׂר",
+     "opties": [
+      "שֶׁמֶשׁ",
+      "מֶלֶךְ",
+      "בַּיִת",
+      "בָּשָׂר"
+     ],
+     "vers": "Genesis 2:23",
+     "toelichting": "וּ + בָשָׂר",
+     "betekenis": "vlees"
+    },
+    {
+     "vorm": "מִבְּשָׂרִי",
+     "antwoord": "בָּשָׂר",
+     "opties": [
+      "בָּשָׂר",
+      "בַּיִת",
+      "תָּוֶךְ",
+      "דָּבָר"
+     ],
+     "vers": "Genesis 2:23",
+     "toelichting": "מִ + בְּשָׂר + ִי",
+     "betekenis": "vlees"
+    },
+    {
+     "vorm": "מֵאִישׁ",
+     "antwoord": "אִישׁ",
+     "opties": [
+      "אָדָם",
+      "הָיָה",
+      "אִישׁ",
+      "אֶחָד"
+     ],
+     "vers": "Genesis 2:23",
+     "toelichting": "מֵ + אִישׁ",
+     "betekenis": "man, echtgenoot; iemand, men"
+    },
+    {
+     "vorm": "בְּאִשְׁתּוֹ",
+     "antwoord": "אִשָּׁה",
+     "opties": [
+      "אֲשֶׁר",
+      "כֶּבֶשׁ",
+      "אִשָּׁה",
+      "דָּבָר"
+     ],
+     "vers": "Genesis 2:24",
+     "toelichting": "בְּ + אִשְׁתּ + וֹ",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "לְבָשָׂר",
+     "antwoord": "בָּשָׂר",
+     "opties": [
+      "שֶׁמֶשׁ",
+      "בָּשָׂר",
+      "מֶלֶךְ",
+      "בַּיִת"
+     ],
+     "vers": "Genesis 2:24",
+     "toelichting": "לְ + בָשָׂר",
+     "betekenis": "vlees"
+    },
+    {
+     "vorm": "וַיִּהְיוּ",
+     "antwoord": "הָיָה",
+     "opties": [
+      "אָדָם",
+      "הָיָה",
+      "הִנֵּה",
+      "רָאָה"
+     ],
+     "vers": "Genesis 2:25",
+     "toelichting": "וַ + יִּ + הְי + וּ",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וְאִשְׁתּוֹ",
+     "antwoord": "אִשָּׁה",
+     "opties": [
+      "שַׁבָּת",
+      "אַתָּה",
+      "דָּוִד",
+      "אִשָּׁה"
+     ],
+     "vers": "Genesis 2:25",
+     "toelichting": "וְ + אִשְׁתּ + וֹ",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "וְלֹא",
+     "antwoord": "לֹא",
+     "opties": [
+      "לֵב",
+      "הַר",
+      "זֶה",
+      "לֹא"
+     ],
+     "vers": "Genesis 2:25",
+     "toelichting": "וְ + לֹא",
+     "betekenis": "niet"
+    },
+    {
+     "vorm": "הָאִשָּׁה",
+     "antwoord": "אִשָּׁה",
+     "opties": [
+      "אֲשֶׁר",
+      "כֶּבֶשׁ",
+      "אִשָּׁה",
+      "דָּבָר"
+     ],
+     "vers": "Genesis 3:1",
+     "toelichting": "הָ + אִשָּׁה",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "וַתֹּאמֶר",
+     "antwoord": "אמר",
+     "opties": [
+      "אכל",
+      "לקח",
+      "אמר",
+      "ברך"
+     ],
+     "vers": "Genesis 3:2",
+     "toelichting": "וַ + תֹּ + אמֶר",
+     "betekenis": "G zeggen; (bij zichzelf zeggen >) denken; N gezegd worden; H"
+    },
+    {
+     "vorm": "מִפְּרִי",
+     "antwoord": "פְּרִי",
+     "opties": [
+      "פֶּתַח",
+      "אֲשֶׁר",
+      "נֶפֶשׁ",
+      "פְּרִי"
+     ],
+     "vers": "Genesis 3:2",
+     "toelichting": "מִ + פְּרִי",
+     "betekenis": "vrucht"
+    },
+    {
+     "vorm": "וּמִפְּרִי",
+     "antwoord": "פְּרִי",
+     "opties": [
+      "דָּוִד",
+      "פֶּתַח",
+      "פְּרִי",
+      "בַּיִת"
+     ],
+     "vers": "Genesis 3:3",
+     "toelichting": "וּמִ + פְּרִי",
+     "betekenis": "vrucht"
+    },
+    {
+     "vorm": "וִהְיִיתֶם",
+     "antwoord": "הָיָה",
+     "opties": [
+      "רָאָה",
+      "הָיָה",
+      "אֶרֶץ",
+      "הִנֵּה"
+     ],
+     "vers": "Genesis 3:5",
+     "toelichting": "וִ + הְיִיתֶם",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "כֵּאלֹהִים",
+     "antwoord": "אֱלֹהִים",
+     "opties": [
+      "אֱלֹהִים",
+      "אֶזְרוֹע",
+      "תּוֹעֵבָה",
+      "יִשְׂרָאֵל"
+     ],
+     "vers": "Genesis 3:5",
+     "toelichting": "כֵּ + אלֹה + ִים",
+     "betekenis": "God; goden"
+    },
+    {
+     "vorm": "וַתֵּרֶא",
+     "antwoord": "רָאָה",
+     "opties": [
+      "עָלָה",
+      "רֹאשׁ",
+      "רָאָה",
+      "מַיִם"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תֵּ + רֶא",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "לָעֵינַיִם",
+     "antwoord": "עַיִן",
+     "opties": [
+      "מַיִם",
+      "עָלָה",
+      "אָדָם",
+      "עַיִן"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "לָ + עֵינ + ַיִם",
+     "betekenis": "i oog. ii bron"
+    },
+    {
+     "vorm": "וַתִּקַּח",
+     "antwoord": "לקח",
+     "opties": [
+      "לחם",
+      "נגד",
+      "לקח",
+      "דבר"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תִּ + קַּח",
+     "betekenis": "nemen, halen"
+    },
+    {
+     "vorm": "מִפִּרְיוֹ",
+     "antwoord": "פְּרִי",
+     "opties": [
+      "פְּרִי",
+      "אַתָּה",
+      "פֶּתַח",
+      "דָּוִד"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "מִ + פִּרְי + וֹ",
+     "betekenis": "vrucht"
+    },
+    {
+     "vorm": "וַתֹּאכַל",
+     "antwoord": "אכל",
+     "opties": [
+      "אמר",
+      "לקח",
+      "ידע",
+      "אכל"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תֹּ + אכַל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "וַתִּתֵּן",
+     "antwoord": "נתן",
+     "opties": [
+      "עמד",
+      "נפל",
+      "נתן",
+      "פקד"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תִּ + תֵּן",
+     "betekenis": "G geven; stellen, leggen, maken; N gegeven worden"
+    },
+    {
+     "vorm": "לְאִישָׁהּ",
+     "antwoord": "אִישׁ",
+     "opties": [
+      "אֲנִי",
+      "עַיִן",
+      "אִישׁ",
+      "בּוֹא"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "לְ + אִישָׁ + הּ",
+     "betekenis": "man, echtgenoot; iemand, men"
+    },
+    {
+     "vorm": "וַיֹּאכַל",
+     "antwoord": "אכל",
+     "opties": [
+      "אמר",
+      "נתן",
+      "אכל",
+      "עמד"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + יֹּ + אכַל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "וַיֵּדְעוּ",
+     "antwoord": "ידע",
+     "opties": [
+      "ילד",
+      "לקח",
+      "מלך",
+      "ידע"
+     ],
+     "vers": "Genesis 3:7",
+     "toelichting": "וַ + יֵּ + דְע + וּ",
+     "betekenis": "G waarnemen, kennen, weten; gemeenschap hebben met; N bekend"
+    },
+    {
+     "vorm": "וַיַּעֲשׂוּ",
+     "antwoord": "עָשָׂה",
+     "opties": [
+      "אֲשֶׁר",
+      "עֶשֶׂר",
+      "בַּיִת",
+      "עָשָׂה"
+     ],
+     "vers": "Genesis 3:7",
+     "toelichting": "וַ + יַּ + עֲשׂ + וּ",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "וַיִּשְׁמְעוּ",
+     "antwoord": "שׁמע",
+     "opties": [
+      "טוֹב",
+      "שׁלח",
+      "עוֹד",
+      "שׁמע"
+     ],
+     "vers": "Genesis 3:8",
+     "toelichting": "וַ + יִּ + שְׁמְע + וּ",
+     "betekenis": "G horen, luisteren (naar); N gehoord worden; H laten horen"
+    },
+    {
+     "vorm": "לְרוּחַ",
+     "antwoord": "רוּחַ",
+     "opties": [
+      "אֶרֶץ",
+      "רָאָה",
+      "רוּחַ",
+      "אִישׁ"
+     ],
+     "vers": "Genesis 3:8",
+     "toelichting": "לְ + רוּחַ",
+     "betekenis": "(v) wind; adem; geest"
+    },
+    {
+     "vorm": "מִפְּנֵי",
+     "antwoord": "פָּנִים",
+     "opties": [
+      "פַּרְעֹה",
+      "פָּנִים",
+      "מִצְוָה",
+      "בְּרִית"
+     ],
+     "vers": "Genesis 3:8",
+     "toelichting": "מִ + פְּנ + ֵי",
+     "betekenis": "(alleenmv) gezicht; oppervlakte; tegenwoordigheid"
+    },
+    {
+     "vorm": "וָאִירָא",
+     "antwoord": "יָרֵא",
+     "opties": [
+      "אֶחָד",
+      "יָצָא",
+      "יָרֵא",
+      "גֹּוי"
+     ],
+     "vers": "Genesis 3:10",
+     "toelichting": "וָ + אִ + ירָא",
+     "betekenis": "G vrezen; N gevreesd worden"
+    },
+    {
+     "vorm": "מִי",
+     "antwoord": "מִי",
+     "opties": [
+      "עִם",
+      "מִי",
+      "מִן",
+      "יָד"
+     ],
+     "vers": "Genesis 3:11",
+     "toelichting": "מִי",
+     "betekenis": "wie?"
+    },
+    {
+     "vorm": "לְבִלְתִּי",
+     "antwoord": "בִּלְתִּי",
+     "opties": [
+      "גִּבּוֹר",
+      "בִּלְתִּי",
+      "שְׁנַיִם",
+      "בְּהֵמָה"
+     ],
+     "vers": "Genesis 3:11",
+     "toelichting": "לְ + בִלְתִּי",
+     "betekenis": "niet"
+    },
+    {
+     "vorm": "וָאֹכֵל",
+     "antwoord": "אכל",
+     "opties": [
+      "אכל",
+      "ילד",
+      "מלך",
+      "אמר"
+     ],
+     "vers": "Genesis 3:12",
+     "toelichting": "וָ + אֹ + כֵל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "לָאִשָּׁה",
+     "antwoord": "אִשָּׁה",
+     "opties": [
+      "כִּסֵּא",
+      "דֶּרֶךְ",
+      "אֲשֶׁר",
+      "אִשָּׁה"
+     ],
+     "vers": "Genesis 3:13",
+     "toelichting": "לָ + אִשָּׁה",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "וּמִכֹּל",
+     "antwoord": "כֹּל",
+     "opties": [
+      "פֶּה",
+      "דָּם",
+      "כֹּל",
+      "כַּף"
+     ],
+     "vers": "Genesis 3:14",
+     "toelichting": "וּמִ + כֹּל",
+     "betekenis": "(ge)heel, alle; elk"
+    },
+    {
+     "vorm": "וְעָפָר",
+     "antwoord": "עָפָר",
+     "opties": [
+      "עָפָר",
+      "אֲנִי",
+      "עַיִן",
+      "אִישׁ"
+     ],
+     "vers": "Genesis 3:14",
+     "toelichting": "וְ + עָפָר",
+     "betekenis": "(droge) aarde, stof; graf"
+    },
+    {
+     "vorm": "וְאַתָּה",
+     "antwoord": "אַתָּה",
+     "opties": [
+      "עָשָׂה",
+      "אַתָּה",
+      "אֲשֶׁר",
+      "נֶפֶשׁ"
+     ],
+     "vers": "Genesis 3:15",
+     "toelichting": "וְ + אַתָּה",
+     "betekenis": "jij; u"
+    },
+    {
+     "vorm": "וְאֶל",
+     "antwoord": "אֶל",
+     "opties": [
+      "עַל",
+      "אָב",
+      "אֶל",
+      "אַל"
+     ],
+     "vers": "Genesis 3:16",
+     "toelichting": "וְ + אֶל",
+     "betekenis": "naar, tot, aan, aangaande; op"
+    },
+    {
+     "vorm": "וְהוּא",
+     "antwoord": "הוּא",
+     "opties": [
+      "הָיָה",
+      "הוּא",
+      "אֵין",
+      "דרשׁ"
+     ],
+     "vers": "Genesis 3:16",
+     "toelichting": "וְ + הוּא",
+     "betekenis": "hij [persl. vnw.]; die [aanw. vnw.]"
+    },
+    {
+     "vorm": "לְקוֹל",
+     "antwoord": "קוֹל",
+     "opties": [
+      "קוּם",
+      "אֵין",
+      "קוֹל",
+      "הוּא"
+     ],
+     "vers": "Genesis 3:17",
+     "toelichting": "לְ + קוֹל",
+     "betekenis": "geluid; stem; donder"
+    },
+    {
+     "vorm": "וְאָכַלְתָּ",
+     "antwoord": "אכל",
+     "opties": [
+      "אכל",
+      "עבר",
+      "אמר",
+      "נתן"
+     ],
+     "vers": "Genesis 3:18",
+     "toelichting": "וְ + אָכַלְ + תָּ",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "וּלְאִשְׁתּוֹ",
+     "antwoord": "אִשָּׁה",
+     "opties": [
+      "אֲשֶׁר",
+      "אִשָּׁה",
+      "עָשָׂה",
+      "שֶׁמֶשׁ"
+     ],
+     "vers": "Genesis 3:21",
+     "toelichting": "וּלְ + אִשְׁתּ + וֹ",
+     "betekenis": "vrouw; echtgenote"
+    },
+    {
+     "vorm": "וַיַּלְבִּשֵׁם",
+     "antwoord": "לָבֵשׁ",
+     "opties": [
+      "לֶחֶם",
+      "לָבֵשׁ",
+      "דָּוִד",
+      "אַתָּה"
+     ],
+     "vers": "Genesis 3:21",
+     "toelichting": "וַ + יַּ + לְבִּשֵׁ + ם",
+     "betekenis": "G (bekleed zijn) aantrekken; H bekleden"
+    },
+    {
+     "vorm": "כְּאַחַד",
+     "antwoord": "אֶחָד",
+     "opties": [
+      "שׁוּב",
+      "אֲנִי",
+      "גֹּוי",
+      "אֶחָד"
+     ],
+     "vers": "Genesis 3:22",
+     "toelichting": "כְּ + אַחַד",
+     "betekenis": "één; een"
+    },
+    {
+     "vorm": "לָדַעַת",
+     "antwoord": "ידע",
+     "opties": [
+      "זכר",
+      "ברך",
+      "ילד",
+      "ידע"
+     ],
+     "vers": "Genesis 3:22",
+     "toelichting": "לָ + דַעַת",
+     "betekenis": "G waarnemen, kennen, weten; gemeenschap hebben met; N bekend"
+    }
+   ]
+  },
+  {
+   "sleutel": "wie_doet_het",
+   "naam": "Wie doet het?",
+   "uitleg": "Bij een imperfectum staat de persoon vooráán: יִכְתֹּב is 'hij zal schrijven', תִּכְתֹּב 'jij zult schrijven'. Dat is het omgekeerde van de perfectum, die het achteraan zet. Die ene letter vooraan is dus het hele verschil tussen 'hij' en 'jij'.",
+   "vraag": "Wie doet het, volgens de letter vooraan?",
+   "vragen": [
+    {
+     "vorm": "וַיֹּאמֶר",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "wij",
+      "jij (m)",
+      "ik",
+      "jullie (m)",
+      "zij (v)",
+      "zij (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:3",
+     "toelichting": "וַ + יֹּ + אמֶר",
+     "betekenis": "G zeggen; (bij zichzelf zeggen >) denken; N gezegd worden; H"
+    },
+    {
+     "vorm": "יְהִי",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "ik",
+      "jullie (m)",
+      "hij",
+      "zij (m)",
+      "wij",
+      "zij (v)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 1:3",
+     "toelichting": "יְ + הִי",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וַיְהִי",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "hij",
+      "wij",
+      "zij (m)",
+      "jij (m)",
+      "jullie (m)",
+      "ik",
+      "zij (v)"
+     ],
+     "vers": "Genesis 1:3",
+     "toelichting": "וַ + יְ + הִי",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וַיַּרְא",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "hij",
+      "jullie (m)",
+      "wij",
+      "jij (v)",
+      "jij (m)",
+      "ik",
+      "zij (m)"
+     ],
+     "vers": "Genesis 1:4",
+     "toelichting": "וַ + יַּ + רְא",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "וַיַּבְדֵּל",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "jij (m)",
+      "hij",
+      "zij (v)",
+      "ik",
+      "zij (m)",
+      "jullie (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:4",
+     "toelichting": "וַ + יַּ + בְדֵּל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּקְרָא",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "jij (m)",
+      "jij (v)",
+      "wij",
+      "zij (m)",
+      "jullie (m)",
+      "ik",
+      "hij"
+     ],
+     "vers": "Genesis 1:5",
+     "toelichting": "וַ + יִּ + קְרָא",
+     "betekenis": "G roepen, noemen; aanroepen; (hardop) lezen"
+    },
+    {
+     "vorm": "וִיהִי",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "wij",
+      "jij (m)",
+      "zij (v)",
+      "jullie (m)",
+      "jij (v)",
+      "ik",
+      "zij (m)"
+     ],
+     "vers": "Genesis 1:6",
+     "toelichting": "וִ + י + הִי",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וַיַּעַשׂ",
+     "antwoord": "hij",
+     "opties": [
+      "jij (m)",
+      "wij",
+      "zij (m)",
+      "hij",
+      "jullie (m)",
+      "ik",
+      "zij (v)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:7",
+     "toelichting": "וַ + יַּ + עַשׂ",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "יִקָּווּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "wij",
+      "zij (v)",
+      "ik",
+      "hij",
+      "zij (m)",
+      "jij (m)",
+      "jullie (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:9",
+     "toelichting": "יִ + קָּו + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וְתֵרָאֶה",
+     "antwoord": "zij (v)",
+     "opties": [
+      "hij",
+      "jij (m)",
+      "zij (v)",
+      "wij",
+      "ik",
+      "zij (m)",
+      "jullie (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:9",
+     "toelichting": "וְ + תֵ + רָאֶה",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "תַּדְשֵׁא",
+     "antwoord": "zij (v)",
+     "opties": [
+      "ik",
+      "zij (m)",
+      "zij (v)",
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "hij",
+      "jij (m)"
+     ],
+     "vers": "Genesis 1:11",
+     "toelichting": "תַּ + דְשֵׁא",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַתּוֹצֵא",
+     "antwoord": "zij (v)",
+     "opties": [
+      "zij (v)",
+      "wij",
+      "jij (v)",
+      "zij (m)",
+      "ik",
+      "jij (m)",
+      "jullie (m)",
+      "hij"
+     ],
+     "vers": "Genesis 1:12",
+     "toelichting": "וַ + תּ + וֹצֵא",
+     "betekenis": "G uitgaan; H doen uitgaan; brengen uit; verkondigen"
+    },
+    {
+     "vorm": "וַיִּתֵּן",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "zij (v)",
+      "jullie (m)",
+      "jij (v)",
+      "wij",
+      "zij (m)",
+      "jij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 1:17",
+     "toelichting": "וַ + יִּ + תֵּן",
+     "betekenis": "G geven; stellen, leggen, maken; N gegeven worden"
+    },
+    {
+     "vorm": "יִשְׁרְצוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (v)",
+      "wij",
+      "ik",
+      "jij (v)",
+      "jullie (m)",
+      "hij",
+      "zij (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 1:20",
+     "toelichting": "יִ + שְׁרְצ + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יְעוֹפֵף",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "jij (v)",
+      "wij",
+      "jullie (m)",
+      "hij",
+      "zij (m)"
+     ],
+     "vers": "Genesis 1:20",
+     "toelichting": "יְ + עוֹפֵף",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּבְרָא",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "zij (v)",
+      "ik",
+      "zij (m)",
+      "jullie (m)",
+      "jij (m)",
+      "wij",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:21",
+     "toelichting": "וַ + יִּ + בְרָא",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיְבָרֶךְ",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "jullie (m)",
+      "ik",
+      "jij (m)",
+      "zij (m)",
+      "hij",
+      "jij (v)",
+      "wij"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "וַ + יְ + בָרֶךְ",
+     "betekenis": "(G en) D zegenen, prijzen; N elkaar zegen toewensen, gezegen"
+    },
+    {
+     "vorm": "יִרֶב",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)",
+      "wij",
+      "jij (v)",
+      "zij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 1:22",
+     "toelichting": "יִ + רֶב",
+     "betekenis": "G veel zijn, talrijk zijn; groot zijn; D talrijk maken; H ta"
+    },
+    {
+     "vorm": "תּוֹצֵא",
+     "antwoord": "zij (v)",
+     "opties": [
+      "wij",
+      "zij (v)",
+      "zij (m)",
+      "hij",
+      "jij (v)",
+      "jullie (m)",
+      "jij (m)",
+      "ik"
+     ],
+     "vers": "Genesis 1:24",
+     "toelichting": "תּ + וֹצֵא",
+     "betekenis": "G uitgaan; H doen uitgaan; brengen uit; verkondigen"
+    },
+    {
+     "vorm": "נַעֲשֶׂה",
+     "antwoord": "wij",
+     "opties": [
+      "ik",
+      "jij (m)",
+      "zij (m)",
+      "jullie (m)",
+      "hij",
+      "wij",
+      "zij (v)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 1:26",
+     "toelichting": "נַ + עֲשֶׂה",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "וְיִרְדּוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "wij",
+      "hij",
+      "zij (v)",
+      "zij (m)",
+      "jij (m)",
+      "jij (v)",
+      "jullie (m)",
+      "ik"
+     ],
+     "vers": "Genesis 1:26",
+     "toelichting": "וְ + יִ + רְדּ + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יִהְיֶה",
+     "antwoord": "hij",
+     "opties": [
+      "zij (m)",
+      "hij",
+      "jullie (m)",
+      "wij",
+      "ik",
+      "jij (v)",
+      "jij (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 1:29",
+     "toelichting": "יִ + הְיֶה",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "וַיְכֻלּוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jij (v)",
+      "hij",
+      "wij",
+      "ik",
+      "jullie (m)",
+      "zij (v)",
+      "jij (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 2:1",
+     "toelichting": "וַ + יְ + כֻלּ + וּ",
+     "betekenis": "G voltooid/gereed/ten einde zijn; D ophouden met"
+    },
+    {
+     "vorm": "וַיְכַל",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "jij (v)",
+      "ik",
+      "wij",
+      "zij (m)",
+      "jullie (m)",
+      "jij (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 2:2",
+     "toelichting": "וַ + יְ + כַל",
+     "betekenis": "G voltooid/gereed/ten einde zijn; D ophouden met"
+    },
+    {
+     "vorm": "וַיִּשְׁבֹּת",
+     "antwoord": "hij",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "jullie (m)",
+      "wij",
+      "zij (m)",
+      "hij",
+      "ik",
+      "jij (v)"
+     ],
+     "vers": "Genesis 2:2",
+     "toelichting": "וַ + יִּ + שְׁבֹּת",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיְקַדֵּשׁ",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "wij",
+      "jij (v)",
+      "zij (m)",
+      "jullie (m)",
+      "jij (m)",
+      "ik",
+      "hij"
+     ],
+     "vers": "Genesis 2:3",
+     "toelichting": "וַ + יְ + קַדֵּשׁ",
+     "betekenis": "G heilig zijn; D en H heiligen"
+    },
+    {
+     "vorm": "יִצְמָח",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "zij (m)",
+      "jij (v)",
+      "wij",
+      "jij (m)",
+      "hij",
+      "jullie (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 2:5",
+     "toelichting": "יִ + צְמָח",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יַעֲלֶה",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "jij (v)",
+      "hij",
+      "jullie (m)",
+      "zij (v)",
+      "zij (m)",
+      "wij",
+      "jij (m)"
+     ],
+     "vers": "Genesis 2:6",
+     "toelichting": "יַ + עֲלֶה",
+     "betekenis": "G opstijgen, optrekken; N zich terugtrekken; H omhoog brenge"
+    },
+    {
+     "vorm": "וַיִּיצֶר",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "ik",
+      "zij (v)",
+      "hij",
+      "jij (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 2:7",
+     "toelichting": "וַ + יִּ + יצֶר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּפַּח",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "zij (v)",
+      "zij (m)",
+      "jij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 2:7",
+     "toelichting": "וַ + יִּ + פַּח",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּטַּע",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "zij (m)",
+      "ik",
+      "jullie (m)",
+      "jij (v)",
+      "jij (m)",
+      "hij",
+      "zij (v)"
+     ],
+     "vers": "Genesis 2:8",
+     "toelichting": "וַ + יִּ + טַּע",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיָּשֶׂם",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "jullie (m)",
+      "zij (m)",
+      "ik",
+      "wij",
+      "jij (m)",
+      "hij",
+      "jij (v)"
+     ],
+     "vers": "Genesis 2:8",
+     "toelichting": "וַ + יָּ + שֶׂם",
+     "betekenis": "leggen; zetten; maken tot, aanstellen (tot)"
+    },
+    {
+     "vorm": "וַיַּצְמַח",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "jij (v)",
+      "jij (m)",
+      "hij",
+      "ik",
+      "wij",
+      "jullie (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 2:9",
+     "toelichting": "וַ + יַּ + צְמַח",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יִפָּרֵד",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "zij (m)",
+      "hij",
+      "jij (m)",
+      "jij (v)",
+      "jullie (m)",
+      "wij",
+      "zij (v)"
+     ],
+     "vers": "Genesis 2:10",
+     "toelichting": "יִ + פָּרֵד",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּקַּח",
+     "antwoord": "hij",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "ik",
+      "jullie (m)",
+      "hij",
+      "zij (m)",
+      "wij",
+      "jij (v)"
+     ],
+     "vers": "Genesis 2:15",
+     "toelichting": "וַ + יִּ + קַּח",
+     "betekenis": "nemen, halen"
+    },
+    {
+     "vorm": "וַיַּנִּחֵהוּ",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "wij",
+      "zij (m)",
+      "jullie (m)",
+      "hij",
+      "jij (v)",
+      "zij (v)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 2:15",
+     "toelichting": "וַ + יַּ + נִּח + ֵהוּ",
+     "betekenis": "G rusten; H i rust geven; ii (neer)leggen"
+    },
+    {
+     "vorm": "וַיְצַו",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "zij (v)",
+      "jij (m)",
+      "wij",
+      "ik",
+      "hij"
+     ],
+     "vers": "Genesis 2:16",
+     "toelichting": "וַ + יְ + צַו",
+     "betekenis": "D opdragen, bevelen"
+    },
+    {
+     "vorm": "תֹּאכֵל",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jij (v)",
+      "zij (v)",
+      "ik",
+      "hij",
+      "zij (m)",
+      "jij (m)",
+      "jullie (m)",
+      "wij"
+     ],
+     "vers": "Genesis 2:16",
+     "toelichting": "תֹּ + אכֵל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "תֹאכַל",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jullie (m)",
+      "zij (v)",
+      "ik",
+      "zij (m)",
+      "hij",
+      "jij (m)",
+      "wij",
+      "jij (v)"
+     ],
+     "vers": "Genesis 2:17",
+     "toelichting": "תֹ + אכַל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "תָּמוּת",
+     "antwoord": "jij (m)",
+     "opties": [
+      "hij",
+      "wij",
+      "zij (m)",
+      "jij (v)",
+      "zij (v)",
+      "jij (m)",
+      "ik",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 2:17",
+     "toelichting": "תָּ + מוּת",
+     "betekenis": "G sterven; R de laatste klap geven; H doden, ter dood brenge"
+    },
+    {
+     "vorm": "אֶעֱשֶׂהּ",
+     "antwoord": "ik",
+     "opties": [
+      "jij (v)",
+      "zij (v)",
+      "jij (m)",
+      "hij",
+      "zij (m)",
+      "ik",
+      "wij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 2:18",
+     "toelichting": "אֶ + עֱשֶׂהּ",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "וַיִּצֶר",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "hij",
+      "jij (v)",
+      "zij (m)",
+      "wij"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "וַ + יִּ + צֶר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיָּבֵא",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "ik",
+      "hij",
+      "wij",
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "וַ + יָּ + בֵא",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "יִּקְרָא",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "zij (v)",
+      "ik",
+      "hij",
+      "wij",
+      "zij (m)"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "יִּ + קְרָא",
+     "betekenis": "G roepen, noemen; aanroepen; (hardop) lezen"
+    },
+    {
+     "vorm": "יִקְרָא",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "jij (m)",
+      "wij",
+      "jij (v)",
+      "ik",
+      "zij (v)",
+      "zij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 2:19",
+     "toelichting": "יִ + קְרָא",
+     "betekenis": "G roepen, noemen; aanroepen; (hardop) lezen"
+    },
+    {
+     "vorm": "וַיַּפֵּל",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "wij",
+      "jullie (m)",
+      "zij (m)",
+      "jij (v)",
+      "jij (m)",
+      "zij (v)",
+      "hij"
+     ],
+     "vers": "Genesis 2:21",
+     "toelichting": "וַ + יַּ + פֵּל",
+     "betekenis": "G vallen; betrekken (van gezicht); H doen vallen"
+    },
+    {
+     "vorm": "וַיִּישָׁן",
+     "antwoord": "hij",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "zij (m)",
+      "hij",
+      "ik",
+      "wij",
+      "jullie (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 2:21",
+     "toelichting": "וַ + יִּ + ישָׁן",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּסְגֹּר",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "zij (m)",
+      "hij",
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "ik",
+      "jij (m)"
+     ],
+     "vers": "Genesis 2:21",
+     "toelichting": "וַ + יִּ + סְגֹּר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּבֶן",
+     "antwoord": "hij",
+     "opties": [
+      "zij (m)",
+      "jullie (m)",
+      "wij",
+      "jij (v)",
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 2:22",
+     "toelichting": "וַ + יִּ + בֶן",
+     "betekenis": "G bouwen"
+    },
+    {
+     "vorm": "וַיְבִאֶהָ",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "zij (m)",
+      "zij (v)",
+      "hij",
+      "ik",
+      "wij",
+      "jij (m)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 2:22",
+     "toelichting": "וַ + יְ + בִאֶ + הָ",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "יִקָּרֵא",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "ik",
+      "hij",
+      "wij",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 2:23",
+     "toelichting": "יִ + קָּרֵא",
+     "betekenis": "G roepen, noemen; aanroepen; (hardop) lezen"
+    },
+    {
+     "vorm": "יַעֲזָב",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "jij (v)",
+      "zij (v)",
+      "hij",
+      "wij",
+      "zij (m)",
+      "ik",
+      "jij (m)"
+     ],
+     "vers": "Genesis 2:24",
+     "toelichting": "יַ + עֲזָב",
+     "betekenis": "G verlaten"
+    },
+    {
+     "vorm": "וַיִּהְיוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "wij",
+      "hij",
+      "ik",
+      "jij (v)",
+      "zij (m)",
+      "jij (m)",
+      "jullie (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 2:25",
+     "toelichting": "וַ + יִּ + הְי + וּ",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "יִתְבֹּשָׁשׁוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (m)",
+      "wij",
+      "zij (v)",
+      "jij (m)",
+      "jij (v)",
+      "ik",
+      "hij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 2:25",
+     "toelichting": "יִ + תְבֹּשָׁשׁ + וּ",
+     "betekenis": "G zich schamen, beschaamd zijn; H beschamen"
+    },
+    {
+     "vorm": "תֹאכְלוּ",
+     "antwoord": "jullie (m)",
+     "opties": [
+      "zij (m)",
+      "ik",
+      "jullie (m)",
+      "jij (v)",
+      "wij",
+      "zij (v)",
+      "jij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 3:1",
+     "toelichting": "תֹ + אכְל + וּ",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "וַתֹּאמֶר",
+     "antwoord": "zij (v)",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "hij",
+      "ik",
+      "zij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "wij"
+     ],
+     "vers": "Genesis 3:2",
+     "toelichting": "וַ + תֹּ + אמֶר",
+     "betekenis": "G zeggen; (bij zichzelf zeggen >) denken; N gezegd worden; H"
+    },
+    {
+     "vorm": "נֹאכֵל",
+     "antwoord": "wij",
+     "opties": [
+      "zij (m)",
+      "ik",
+      "jij (m)",
+      "jij (v)",
+      "jullie (m)",
+      "wij",
+      "zij (v)",
+      "hij"
+     ],
+     "vers": "Genesis 3:2",
+     "toelichting": "נֹ + אכֵל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "תִגְּעוּ",
+     "antwoord": "jullie (m)",
+     "opties": [
+      "ik",
+      "jij (v)",
+      "zij (v)",
+      "jij (m)",
+      "wij",
+      "jullie (m)",
+      "hij",
+      "zij (m)"
+     ],
+     "vers": "Genesis 3:3",
+     "toelichting": "תִ + גְּע + וּ",
+     "betekenis": "G aanraken; slaan; D slaan; H treffen"
+    },
+    {
+     "vorm": "תְּמֻתוּן",
+     "antwoord": "jullie (m)",
+     "opties": [
+      "zij (m)",
+      "zij (v)",
+      "ik",
+      "jij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "hij",
+      "wij"
+     ],
+     "vers": "Genesis 3:3",
+     "toelichting": "תְּ + מֻתוּן",
+     "betekenis": "G sterven; R de laatste klap geven; H doden, ter dood brenge"
+    },
+    {
+     "vorm": "וַתֵּרֶא",
+     "antwoord": "zij (v)",
+     "opties": [
+      "jij (v)",
+      "jij (m)",
+      "wij",
+      "zij (m)",
+      "hij",
+      "zij (v)",
+      "jullie (m)",
+      "ik"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תֵּ + רֶא",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "וַתִּקַּח",
+     "antwoord": "zij (v)",
+     "opties": [
+      "jij (v)",
+      "ik",
+      "zij (m)",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "hij",
+      "wij"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תִּ + קַּח",
+     "betekenis": "nemen, halen"
+    },
+    {
+     "vorm": "וַתֹּאכַל",
+     "antwoord": "zij (v)",
+     "opties": [
+      "jij (v)",
+      "zij (m)",
+      "zij (v)",
+      "jullie (m)",
+      "jij (m)",
+      "hij",
+      "wij",
+      "ik"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תֹּ + אכַל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "וַתִּתֵּן",
+     "antwoord": "zij (v)",
+     "opties": [
+      "hij",
+      "zij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "wij",
+      "ik",
+      "zij (v)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + תִּ + תֵּן",
+     "betekenis": "G geven; stellen, leggen, maken; N gegeven worden"
+    },
+    {
+     "vorm": "וַיֹּאכַל",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "zij (v)",
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "hij",
+      "jij (m)",
+      "ik"
+     ],
+     "vers": "Genesis 3:6",
+     "toelichting": "וַ + יֹּ + אכַל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "וַיֵּדְעוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (m)",
+      "jullie (m)",
+      "hij",
+      "ik",
+      "jij (m)",
+      "jij (v)",
+      "wij",
+      "zij (v)"
+     ],
+     "vers": "Genesis 3:7",
+     "toelichting": "וַ + יֵּ + דְע + וּ",
+     "betekenis": "G waarnemen, kennen, weten; gemeenschap hebben met; N bekend"
+    },
+    {
+     "vorm": "וַיִּתְפְּרוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jullie (m)",
+      "wij",
+      "ik",
+      "zij (m)",
+      "jij (v)",
+      "hij",
+      "zij (v)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:7",
+     "toelichting": "וַ + יִּ + תְפְּר + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיַּעֲשׂוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "ik",
+      "jij (m)",
+      "wij",
+      "zij (v)",
+      "hij"
+     ],
+     "vers": "Genesis 3:7",
+     "toelichting": "וַ + יַּ + עֲשׂ + וּ",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "וַיִּשְׁמְעוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "wij",
+      "zij (m)",
+      "hij",
+      "jij (v)",
+      "zij (v)",
+      "ik",
+      "jullie (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:8",
+     "toelichting": "וַ + יִּ + שְׁמְע + וּ",
+     "betekenis": "G horen, luisteren (naar); N gehoord worden; H laten horen"
+    },
+    {
+     "vorm": "וַיִּתְחַבֵּא",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 3:8",
+     "toelichting": "וַ + יִּ + תְחַבֵּא",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וָאִירָא",
+     "antwoord": "ik",
+     "opties": [
+      "hij",
+      "zij (m)",
+      "jullie (m)",
+      "zij (v)",
+      "jij (m)",
+      "wij",
+      "jij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 3:10",
+     "toelichting": "וָ + אִ + ירָא",
+     "betekenis": "G vrezen; N gevreesd worden"
+    },
+    {
+     "vorm": "וָאֵחָבֵא",
+     "antwoord": "ik",
+     "opties": [
+      "jij (v)",
+      "jullie (m)",
+      "zij (v)",
+      "hij",
+      "jij (m)",
+      "ik",
+      "zij (m)",
+      "wij"
+     ],
+     "vers": "Genesis 3:10",
+     "toelichting": "וָ + אֵ + חָבֵא",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וָאֹכֵל",
+     "antwoord": "ik",
+     "opties": [
+      "zij (v)",
+      "zij (m)",
+      "jij (m)",
+      "jij (v)",
+      "ik",
+      "wij",
+      "hij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 3:12",
+     "toelichting": "וָ + אֹ + כֵל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "תֵלֵךְ",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (v)",
+      "hij",
+      "zij (m)",
+      "jij (m)",
+      "jij (v)",
+      "jullie (m)",
+      "ik",
+      "wij"
+     ],
+     "vers": "Genesis 3:14",
+     "toelichting": "תֵ + לֵךְ",
+     "betekenis": "G gaan; tD wandelen; H brengen; meenemen"
+    },
+    {
+     "vorm": "תֹּאכַל",
+     "antwoord": "jij (m)",
+     "opties": [
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "zij (m)",
+      "jij (v)",
+      "jullie (m)",
+      "wij",
+      "hij"
+     ],
+     "vers": "Genesis 3:14",
+     "toelichting": "תֹּ + אכַל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "אָשִׁית",
+     "antwoord": "ik",
+     "opties": [
+      "jij (m)",
+      "hij",
+      "ik",
+      "zij (m)",
+      "zij (v)",
+      "wij",
+      "jullie (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 3:15",
+     "toelichting": "אָ + שִׁית",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יְשׁוּפְךָ",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "zij (m)",
+      "jullie (m)",
+      "jij (m)",
+      "hij",
+      "jij (v)",
+      "ik",
+      "wij"
+     ],
+     "vers": "Genesis 3:15",
+     "toelichting": "יְ + שׁוּפ + ְךָ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "תְּשׁוּפֶנּוּ",
+     "antwoord": "jij (m)",
+     "opties": [
+      "wij",
+      "ik",
+      "jullie (m)",
+      "zij (m)",
+      "hij",
+      "zij (v)",
+      "jij (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 3:15",
+     "toelichting": "תְּ + שׁוּפ + ֶנּוּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "אַרְבֶּה",
+     "antwoord": "ik",
+     "opties": [
+      "wij",
+      "jullie (m)",
+      "jij (m)",
+      "ik",
+      "zij (m)",
+      "jij (v)",
+      "hij",
+      "zij (v)"
+     ],
+     "vers": "Genesis 3:16",
+     "toelichting": "אַ + רְבֶּה",
+     "betekenis": "G veel zijn, talrijk zijn; groot zijn; D talrijk maken; H ta"
+    },
+    {
+     "vorm": "תֵּלְדִי",
+     "antwoord": "jij (v)",
+     "opties": [
+      "jullie (m)",
+      "jij (v)",
+      "zij (v)",
+      "ik",
+      "hij",
+      "zij (m)",
+      "wij",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:16",
+     "toelichting": "תֵּ + לְד + ִי",
+     "betekenis": "G voortbrengen, baren, »een kind« krijgen; verwekken; N gebo"
+    },
+    {
+     "vorm": "יִמְשָׁל",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "jullie (m)",
+      "ik",
+      "zij (m)",
+      "jij (v)",
+      "zij (v)",
+      "wij",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:16",
+     "toelichting": "יִ + מְשָׁל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "תֹּאכֲלֶנָּה",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (m)",
+      "wij",
+      "hij",
+      "ik",
+      "jullie (m)",
+      "jij (v)",
+      "zij (v)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:17",
+     "toelichting": "תֹּ + אכֲל + ֶנָּה",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "תַּצְמִיחַ",
+     "antwoord": "zij (v)",
+     "opties": [
+      "hij",
+      "jij (v)",
+      "wij",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)",
+      "ik"
+     ],
+     "vers": "Genesis 3:18",
+     "toelichting": "תַּ + צְמִיחַ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "תָּשׁוּב",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jullie (m)",
+      "jij (m)",
+      "zij (v)",
+      "zij (m)",
+      "wij",
+      "hij",
+      "ik",
+      "jij (v)"
+     ],
+     "vers": "Genesis 3:19",
+     "toelichting": "תָּ + שׁוּב",
+     "betekenis": "G terugkeren; H terugbrengen"
+    },
+    {
+     "vorm": "וַיַּלְבִּשֵׁם",
+     "antwoord": "hij",
+     "opties": [
+      "zij (m)",
+      "jij (m)",
+      "ik",
+      "jij (v)",
+      "zij (v)",
+      "wij",
+      "jullie (m)",
+      "hij"
+     ],
+     "vers": "Genesis 3:21",
+     "toelichting": "וַ + יַּ + לְבִּשֵׁ + ם",
+     "betekenis": "G (bekleed zijn) aantrekken; H bekleden"
+    },
+    {
+     "vorm": "יִשְׁלַח",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "zij (v)",
+      "hij",
+      "wij",
+      "ik",
+      "zij (m)",
+      "jij (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 3:22",
+     "toelichting": "יִ + שְׁלַח",
+     "betekenis": "G »de hand« uitstrekken, zenden; D loslaten, wegzenden, uitg"
+    },
+    {
+     "vorm": "וַיְשַׁלְּחֵהוּ",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "hij",
+      "jij (v)",
+      "zij (v)",
+      "zij (m)",
+      "jullie (m)",
+      "ik",
+      "jij (m)"
+     ],
+     "vers": "Genesis 3:23",
+     "toelichting": "וַ + יְ + שַׁלְּח + ֵהוּ",
+     "betekenis": "G »de hand« uitstrekken, zenden; D loslaten, wegzenden, uitg"
+    },
+    {
+     "vorm": "וַיְגָרֶשׁ",
+     "antwoord": "hij",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "zij (m)",
+      "jij (v)",
+      "wij",
+      "ik",
+      "hij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 3:24",
+     "toelichting": "וַ + יְ + גָרֶשׁ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיַּשְׁכֵּן",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "zij (v)",
+      "ik",
+      "wij",
+      "jij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 3:24",
+     "toelichting": "וַ + יַּ + שְׁכֵּן",
+     "betekenis": "wonen"
+    },
+    {
+     "vorm": "וַתַּהַר",
+     "antwoord": "zij (v)",
+     "opties": [
+      "ik",
+      "zij (m)",
+      "wij",
+      "jij (v)",
+      "zij (v)",
+      "hij",
+      "jij (m)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 4:1",
+     "toelichting": "וַ + תַּ + הַר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַתֵּלֶד",
+     "antwoord": "zij (v)",
+     "opties": [
+      "hij",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)",
+      "zij (v)",
+      "wij",
+      "jij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 4:1",
+     "toelichting": "וַ + תֵּ + לֶד",
+     "betekenis": "G voortbrengen, baren, »een kind« krijgen; verwekken; N gebo"
+    },
+    {
+     "vorm": "וַתֹּסֶף",
+     "antwoord": "zij (v)",
+     "opties": [
+      "ik",
+      "hij",
+      "wij",
+      "zij (m)",
+      "jij (m)",
+      "zij (v)",
+      "jij (v)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 4:2",
+     "toelichting": "וַ + תֹּ + סֶף",
+     "betekenis": "G en H toevoegen; blijven …"
+    },
+    {
+     "vorm": "וַיִּשַׁע",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "wij",
+      "jij (m)",
+      "ik",
+      "zij (v)",
+      "zij (m)",
+      "jullie (m)",
+      "hij"
+     ],
+     "vers": "Genesis 4:4",
+     "toelichting": "וַ + יִּ + שַׁע",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּחַר",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "jullie (m)",
+      "zij (m)",
+      "jij (v)",
+      "zij (v)",
+      "jij (m)",
+      "ik",
+      "wij"
+     ],
+     "vers": "Genesis 4:5",
+     "toelichting": "וַ + יִּ + חַר",
+     "betekenis": "ontbranden; kwaad zijn"
+    },
+    {
+     "vorm": "וַיִּפְּלוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jij (v)",
+      "jullie (m)",
+      "jij (m)",
+      "ik",
+      "wij",
+      "zij (v)",
+      "zij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 4:5",
+     "toelichting": "וַ + יִּ + פְּל + וּ",
+     "betekenis": "G vallen; betrekken (van gezicht); H doen vallen"
+    },
+    {
+     "vorm": "תֵּיטִיב",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jullie (m)",
+      "zij (v)",
+      "hij",
+      "ik",
+      "wij",
+      "jij (m)",
+      "zij (m)",
+      "jij (v)"
+     ],
+     "vers": "Genesis 4:7",
+     "toelichting": "תֵּ + יטִיב",
+     "betekenis": "G goed zijn, aangenaam zijn; H goed maken"
+    },
+    {
+     "vorm": "תֵיטִיב",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (v)",
+      "wij",
+      "jullie (m)",
+      "ik",
+      "jij (v)",
+      "hij",
+      "jij (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 4:7",
+     "toelichting": "תֵ + יטִיב",
+     "betekenis": "G goed zijn, aangenaam zijn; H goed maken"
+    },
+    {
+     "vorm": "תִּמְשָׁל",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "wij",
+      "jij (m)",
+      "zij (v)",
+      "ik",
+      "hij"
+     ],
+     "vers": "Genesis 4:7",
+     "toelichting": "תִּ + מְשָׁל",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיָּקָם",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "ik",
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "jij (m)",
+      "wij",
+      "hij"
+     ],
+     "vers": "Genesis 4:8",
+     "toelichting": "וַ + יָּ + קָם",
+     "betekenis": "G opstaan, gaan staan H oprichten"
+    },
+    {
+     "vorm": "וַיַּהַרְגֵהוּ",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)",
+      "wij",
+      "jij (v)",
+      "zij (v)",
+      "hij"
+     ],
+     "vers": "Genesis 4:8",
+     "toelichting": "וַ + יַּ + הַרְג + ֵהוּ",
+     "betekenis": "doden"
+    },
+    {
+     "vorm": "תַעֲבֹד",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "hij",
+      "jullie (m)",
+      "wij",
+      "ik",
+      "jij (v)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 4:12",
+     "toelichting": "תַ + עֲבֹד",
+     "betekenis": ""
+    },
+    {
+     "vorm": "תֹסֵף",
+     "antwoord": "zij (v)",
+     "opties": [
+      "wij",
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "hij",
+      "jij (v)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 4:12",
+     "toelichting": "תֹ + סֵף",
+     "betekenis": "G en H toevoegen; blijven …"
+    },
+    {
+     "vorm": "תִּהְיֶה",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jij (v)",
+      "hij",
+      "ik",
+      "jullie (m)",
+      "zij (v)",
+      "wij",
+      "zij (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 4:12",
+     "toelichting": "תִּ + הְיֶה",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "אֶסָּתֵר",
+     "antwoord": "ik",
+     "opties": [
+      "zij (v)",
+      "hij",
+      "jij (v)",
+      "ik",
+      "jullie (m)",
+      "zij (m)",
+      "wij",
+      "jij (m)"
+     ],
+     "vers": "Genesis 4:14",
+     "toelichting": "אֶ + סָּתֵר",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יַהַרְגֵנִי",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "jij (v)",
+      "zij (m)",
+      "jij (m)",
+      "wij",
+      "hij",
+      "jullie (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 4:14",
+     "toelichting": "יַ + הַרְג + ֵנִי",
+     "betekenis": "doden"
+    },
+    {
+     "vorm": "יֻקָּם",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "jij (v)",
+      "ik",
+      "zij (m)",
+      "jij (m)",
+      "zij (v)",
+      "jullie (m)",
+      "wij"
+     ],
+     "vers": "Genesis 4:15",
+     "toelichting": "יֻ + קָּם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיֵּצֵא",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "ik",
+      "zij (m)",
+      "zij (v)",
+      "wij",
+      "hij"
+     ],
+     "vers": "Genesis 4:16",
+     "toelichting": "וַ + יֵּ + צֵא",
+     "betekenis": "G uitgaan; H doen uitgaan; brengen uit; verkondigen"
+    },
+    {
+     "vorm": "וַיֵּשֶׁב",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "zij (m)",
+      "jij (v)",
+      "zij (v)",
+      "ik",
+      "jij (m)",
+      "hij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 4:16",
+     "toelichting": "וַ + יֵּ + שֶׁב",
+     "betekenis": "G zitten; blijven; (be)wonen; N bewoond zijn; H zetten; late"
+    },
+    {
+     "vorm": "וַיֵּדַע",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "zij (m)",
+      "jij (m)",
+      "zij (v)",
+      "jij (v)",
+      "ik",
+      "hij",
+      "wij"
+     ],
+     "vers": "Genesis 4:17",
+     "toelichting": "וַ + יֵּ + דַע",
+     "betekenis": "G waarnemen, kennen, weten; gemeenschap hebben met; N bekend"
+    },
+    {
+     "vorm": "וַיִּוָּלֵד",
+     "antwoord": "hij",
+     "opties": [
+      "jij (m)",
+      "hij",
+      "zij (m)",
+      "jullie (m)",
+      "wij",
+      "zij (v)",
+      "ik",
+      "jij (v)"
+     ],
+     "vers": "Genesis 4:18",
+     "toelichting": "וַ + יִּ + וָּלֵד",
+     "betekenis": "G voortbrengen, baren, »een kind« krijgen; verwekken; N gebo"
+    },
+    {
+     "vorm": "יֻקַּם",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "ik",
+      "jij (m)",
+      "jij (v)",
+      "hij",
+      "wij",
+      "zij (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 4:24",
+     "toelichting": "יֻ + קַּם",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַתִּקְרָא",
+     "antwoord": "zij (v)",
+     "opties": [
+      "zij (m)",
+      "ik",
+      "zij (v)",
+      "wij",
+      "jij (v)",
+      "jij (m)",
+      "hij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 4:25",
+     "toelichting": "וַ + תִּ + קְרָא",
+     "betekenis": "G roepen, noemen; aanroepen; (hardop) lezen"
+    },
+    {
+     "vorm": "וַיְחִי",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "zij (m)",
+      "zij (v)",
+      "ik",
+      "jij (m)"
+     ],
+     "vers": "Genesis 5:3",
+     "toelichting": "וַ + יְ + חִי",
+     "betekenis": "G (op)leven, herstellen; D en H in leven houden, doen herlev"
+    },
+    {
+     "vorm": "וַיּוֹלֶד",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "jij (v)",
+      "hij",
+      "zij (m)",
+      "jij (m)",
+      "ik",
+      "wij",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 5:3",
+     "toelichting": "וַ + יּ + וֹלֶד",
+     "betekenis": "G voortbrengen, baren, »een kind« krijgen; verwekken; N gebo"
+    },
+    {
+     "vorm": "וַיָּמֹת",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "jullie (m)",
+      "zij (v)",
+      "hij",
+      "jij (v)",
+      "jij (m)",
+      "wij",
+      "zij (m)"
+     ],
+     "vers": "Genesis 5:5",
+     "toelichting": "וַ + יָּ + מֹת",
+     "betekenis": "G sterven; R de laatste klap geven; H doden, ter dood brenge"
+    },
+    {
+     "vorm": "וַיִּתְהַלֵּךְ",
+     "antwoord": "hij",
+     "opties": [
+      "wij",
+      "jij (m)",
+      "zij (v)",
+      "ik",
+      "hij",
+      "jij (v)",
+      "zij (m)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 5:22",
+     "toelichting": "וַ + יִּ + תְהַלֵּךְ",
+     "betekenis": "G gaan; tD wandelen; H brengen; meenemen"
+    },
+    {
+     "vorm": "יְנַחֲמֵנוּ",
+     "antwoord": "hij",
+     "opties": [
+      "zij (m)",
+      "jij (v)",
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "hij",
+      "jullie (m)",
+      "wij"
+     ],
+     "vers": "Genesis 5:29",
+     "toelichting": "יְ + נַחֲמ + ֵנוּ",
+     "betekenis": "N zich troosten, berouw hebben; D troosten; tD wraak beramen"
+    },
+    {
+     "vorm": "וַיִּרְאוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (v)",
+      "ik",
+      "hij",
+      "zij (m)",
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 6:2",
+     "toelichting": "וַ + יִּ + רְא + וּ",
+     "betekenis": "G zien; zich voorzien van; N (ook:) verschijnen; H tonen, wi"
+    },
+    {
+     "vorm": "וַיִּקְחוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jullie (m)",
+      "zij (v)",
+      "ik",
+      "zij (m)",
+      "jij (v)",
+      "jij (m)",
+      "hij",
+      "wij"
+     ],
+     "vers": "Genesis 6:2",
+     "toelichting": "וַ + יִּ + קְח + וּ",
+     "betekenis": "nemen, halen"
+    },
+    {
+     "vorm": "יָדוֹן",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "jij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "zij (m)",
+      "wij",
+      "zij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 6:3",
+     "toelichting": "יָ + דוֹן",
+     "betekenis": ""
+    },
+    {
+     "vorm": "יָבֹאוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jij (v)",
+      "ik",
+      "wij",
+      "hij",
+      "jullie (m)",
+      "zij (m)",
+      "jij (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 6:4",
+     "toelichting": "יָ + בֹא + וּ",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "וַיִּנָּחֶם",
+     "antwoord": "hij",
+     "opties": [
+      "jij (v)",
+      "jij (m)",
+      "wij",
+      "hij",
+      "zij (v)",
+      "ik",
+      "jullie (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 6:6",
+     "toelichting": "וַ + יִּ + נָּחֶם",
+     "betekenis": "N zich troosten, berouw hebben; D troosten; tD wraak beramen"
+    },
+    {
+     "vorm": "וַיִּתְעַצֵּב",
+     "antwoord": "hij",
+     "opties": [
+      "jullie (m)",
+      "hij",
+      "zij (m)",
+      "zij (v)",
+      "ik",
+      "jij (m)",
+      "wij",
+      "jij (v)"
+     ],
+     "vers": "Genesis 6:6",
+     "toelichting": "וַ + יִּ + תְעַצֵּב",
+     "betekenis": ""
+    },
+    {
+     "vorm": "אֶמְחֶה",
+     "antwoord": "ik",
+     "opties": [
+      "jij (m)",
+      "jij (v)",
+      "zij (v)",
+      "jullie (m)",
+      "wij",
+      "zij (m)",
+      "hij",
+      "ik"
+     ],
+     "vers": "Genesis 6:7",
+     "toelichting": "אֶ + מְחֶה",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַתִּשָּׁחֵת",
+     "antwoord": "zij (v)",
+     "opties": [
+      "ik",
+      "jij (v)",
+      "zij (m)",
+      "wij",
+      "hij",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 6:11",
+     "toelichting": "וַ + תִּ + שָּׁחֵת",
+     "betekenis": "D en H verdelgen, teisteren"
+    },
+    {
+     "vorm": "וַתִּמָּלֵא",
+     "antwoord": "zij (v)",
+     "opties": [
+      "hij",
+      "ik",
+      "wij",
+      "jij (m)",
+      "zij (m)",
+      "zij (v)",
+      "jij (v)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 6:11",
+     "toelichting": "וַ + תִּ + מָּלֵא",
+     "betekenis": "G vol zijn van; vullen; D (ver)vullen"
+    },
+    {
+     "vorm": "תַּעֲשֶׂה",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (m)",
+      "hij",
+      "wij",
+      "jij (v)",
+      "ik",
+      "zij (v)",
+      "jij (m)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 6:14",
+     "toelichting": "תַּ + עֲשֶׂה",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "תְּכַלֶנָּה",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jullie (m)",
+      "wij",
+      "zij (v)",
+      "hij",
+      "jij (m)",
+      "zij (m)",
+      "jij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 6:16",
+     "toelichting": "תְּ + כַל + ֶנָּה",
+     "betekenis": "G voltooid/gereed/ten einde zijn; D ophouden met"
+    },
+    {
+     "vorm": "תָּשִׂים",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (v)",
+      "jullie (m)",
+      "wij",
+      "hij",
+      "jij (m)",
+      "jij (v)",
+      "zij (m)",
+      "ik"
+     ],
+     "vers": "Genesis 6:16",
+     "toelichting": "תָּ + שִׂים",
+     "betekenis": "leggen; zetten; maken tot, aanstellen (tot)"
+    },
+    {
+     "vorm": "תַּעֲשֶׂהָ",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (m)",
+      "hij",
+      "wij",
+      "jij (m)",
+      "jij (v)",
+      "ik",
+      "zij (v)",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 6:16",
+     "toelichting": "תַּ + עֲשֶׂ + הָ",
+     "betekenis": "G maken, doen, verschaffen, bereiden; verkrijgen; N gedaan w"
+    },
+    {
+     "vorm": "יִגְוָע",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "zij (m)",
+      "jij (v)",
+      "wij",
+      "ik",
+      "zij (v)",
+      "jullie (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 6:17",
+     "toelichting": "יִ + גְוָע",
+     "betekenis": ""
+    },
+    {
+     "vorm": "תָּבִיא",
+     "antwoord": "jij (m)",
+     "opties": [
+      "zij (m)",
+      "jij (v)",
+      "jij (m)",
+      "hij",
+      "jullie (m)",
+      "ik",
+      "wij",
+      "zij (v)"
+     ],
+     "vers": "Genesis 6:19",
+     "toelichting": "תָּ + בִיא",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "יִהְיוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jij (v)",
+      "wij",
+      "zij (m)",
+      "ik",
+      "jullie (m)",
+      "hij",
+      "jij (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 6:19",
+     "toelichting": "יִ + הְי + וּ",
+     "betekenis": "G zijn; gebeuren"
+    },
+    {
+     "vorm": "יֵאָכֵל",
+     "antwoord": "hij",
+     "opties": [
+      "zij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "wij",
+      "zij (v)",
+      "jij (m)",
+      "ik",
+      "hij"
+     ],
+     "vers": "Genesis 6:21",
+     "toelichting": "יֵ + אָכֵל",
+     "betekenis": "G eten; N gegeten worden; H voeden"
+    },
+    {
+     "vorm": "תִּקַּח",
+     "antwoord": "jij (m)",
+     "opties": [
+      "jij (m)",
+      "zij (v)",
+      "zij (m)",
+      "hij",
+      "wij",
+      "jullie (m)",
+      "jij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 7:2",
+     "toelichting": "תִּ + קַּח",
+     "betekenis": "nemen, halen"
+    },
+    {
+     "vorm": "וַיָּבֹא",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "jij (v)",
+      "hij",
+      "zij (m)",
+      "jullie (m)",
+      "zij (v)",
+      "wij",
+      "jij (m)"
+     ],
+     "vers": "Genesis 7:7",
+     "toelichting": "וַ + יָּ + בֹא",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "וַיָּבֹאוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "hij",
+      "ik",
+      "wij",
+      "jullie (m)",
+      "jij (v)",
+      "zij (v)",
+      "zij (m)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 7:15",
+     "toelichting": "וַ + יָּ + בֹא + וּ",
+     "betekenis": "G binnengaan, komen; H brengen"
+    },
+    {
+     "vorm": "וַיִּרְבּוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (v)",
+      "jij (m)",
+      "zij (m)",
+      "jullie (m)",
+      "wij",
+      "jij (v)",
+      "ik",
+      "hij"
+     ],
+     "vers": "Genesis 7:17",
+     "toelichting": "וַ + יִּ + רְבּ + וּ",
+     "betekenis": "G veel zijn, talrijk zijn; groot zijn; D talrijk maken; H ta"
+    },
+    {
+     "vorm": "וַיִּשְׂאוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "ik",
+      "wij",
+      "zij (v)",
+      "zij (m)",
+      "jullie (m)",
+      "jij (v)",
+      "jij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 7:17",
+     "toelichting": "וַ + יִּ + שְׂא + וּ",
+     "betekenis": "G opheffen, dragen, (op)brengen; vergeven"
+    },
+    {
+     "vorm": "וַתָּרָם",
+     "antwoord": "zij (v)",
+     "opties": [
+      "zij (v)",
+      "jullie (m)",
+      "hij",
+      "zij (m)",
+      "ik",
+      "wij",
+      "jij (v)",
+      "jij (m)"
+     ],
+     "vers": "Genesis 7:17",
+     "toelichting": "וַ + תָּ + רָם",
+     "betekenis": "G hoog, verheven zijn; H oprichten, oppakken"
+    },
+    {
+     "vorm": "וַיִּגְבְּרוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (v)",
+      "hij",
+      "wij",
+      "jij (m)",
+      "jij (v)",
+      "zij (m)",
+      "ik",
+      "jullie (m)"
+     ],
+     "vers": "Genesis 7:18",
+     "toelichting": "וַ + יִּ + גְבְּר + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַתֵּלֶךְ",
+     "antwoord": "zij (v)",
+     "opties": [
+      "jij (m)",
+      "hij",
+      "wij",
+      "jij (v)",
+      "jullie (m)",
+      "ik",
+      "zij (m)",
+      "zij (v)"
+     ],
+     "vers": "Genesis 7:18",
+     "toelichting": "וַ + תֵּ + לֶךְ",
+     "betekenis": "G gaan; tD wandelen; H brengen; meenemen"
+    },
+    {
+     "vorm": "וַיְכֻסּוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jij (v)",
+      "jij (m)",
+      "zij (v)",
+      "wij",
+      "ik",
+      "hij",
+      "jullie (m)",
+      "zij (m)"
+     ],
+     "vers": "Genesis 7:19",
+     "toelichting": "וַ + יְ + כֻסּ + וּ",
+     "betekenis": "(G en) D bedekken, vergeven; tD zich bedekken"
+    },
+    {
+     "vorm": "וַיִּגְוַע",
+     "antwoord": "hij",
+     "opties": [
+      "ik",
+      "zij (m)",
+      "zij (v)",
+      "jij (v)",
+      "hij",
+      "jij (m)",
+      "jullie (m)",
+      "wij"
+     ],
+     "vers": "Genesis 7:21",
+     "toelichting": "וַ + יִּ + גְוַע",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּמַח",
+     "antwoord": "hij",
+     "opties": [
+      "hij",
+      "zij (v)",
+      "jullie (m)",
+      "jij (m)",
+      "ik",
+      "jij (v)",
+      "zij (m)",
+      "wij"
+     ],
+     "vers": "Genesis 7:23",
+     "toelichting": "וַ + יִּ + מַח",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּמָּחוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "jullie (m)",
+      "jij (m)",
+      "zij (m)",
+      "jij (v)",
+      "hij",
+      "wij",
+      "zij (v)",
+      "ik"
+     ],
+     "vers": "Genesis 7:23",
+     "toelichting": "וַ + יִּ + מָּח + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִשָּׁאֶר",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "ik",
+      "jij (m)",
+      "jij (v)",
+      "jullie (m)",
+      "hij",
+      "wij",
+      "zij (m)"
+     ],
+     "vers": "Genesis 7:23",
+     "toelichting": "וַ + יִ + שָּׁאֶר",
+     "betekenis": "G en N overblijven; H overlaten"
+    },
+    {
+     "vorm": "וַיִּזְכֹּר",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "hij",
+      "jij (v)",
+      "jij (m)",
+      "jullie (m)",
+      "zij (m)",
+      "ik",
+      "wij"
+     ],
+     "vers": "Genesis 8:1",
+     "toelichting": "וַ + יִּ + זְכֹּר",
+     "betekenis": "G zich herinneren; gedenken, herdenken; H in herinnering bre"
+    },
+    {
+     "vorm": "וַיַּעֲבֵר",
+     "antwoord": "hij",
+     "opties": [
+      "zij (v)",
+      "ik",
+      "jij (v)",
+      "wij",
+      "zij (m)",
+      "jullie (m)",
+      "jij (m)",
+      "hij"
+     ],
+     "vers": "Genesis 8:1",
+     "toelichting": "וַ + יַּ + עֲבֵר",
+     "betekenis": "G zijns weegs gaan, voorbijgaan; door-, overtrekken; H doen "
+    },
+    {
+     "vorm": "וַיָּשֹׁכּוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (v)",
+      "hij",
+      "jullie (m)",
+      "jij (m)",
+      "wij",
+      "jij (v)",
+      "ik",
+      "zij (m)"
+     ],
+     "vers": "Genesis 8:1",
+     "toelichting": "וַ + יָּ + שֹׁכּ + וּ",
+     "betekenis": ""
+    },
+    {
+     "vorm": "וַיִּסָּכְרוּ",
+     "antwoord": "zij (m)",
+     "opties": [
+      "zij (m)",
+      "zij (v)",
+      "ik",
+      "jij (m)",
+      "jullie (m)",
+      "hij",
+      "wij",
+      "jij (v)"
+     ],
+     "vers": "Genesis 8:2",
+     "toelichting": "וַ + יִּ + סָּכְר + וּ",
+     "betekenis": ""
+    }
+   ]
+  }
+ ]
+}
