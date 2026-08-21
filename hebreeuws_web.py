@@ -522,3 +522,177 @@ def tab():
             })
     st.caption("Oefenen doe je in de snelle app: daar kun je een hoofdstuk kiezen en de "
                "woorden die je nog mist vooraan in je woordenschat zetten.")
+
+
+# ============================================================== Hebreeuwse klankregels
+# De tegenhanger van de Griekse contractietrainer, en met dezelfde afspraak: hier vórm je
+# zelf. Herkennen doe je bij het lezen, waar de woorddelen gekleurd staan.
+#
+# Wat het beter maakt dan de Griekse: die werkt met een regeltabel en een handvol
+# voorbeelden uit het boek. Hier is elke opgave een páár échte vormen van hetzelfde woord
+# uit de Tenach -- één zonder het voorvoegsel en één met -- en de vindplaats staat erbij.
+# Gemaakt door gereedschap/bouw_hebreeuws_klanken.py.
+KLANK_BESTAND = "hebreeuws_klanken.json"
+KLANK_SLEUTEL = "klank::"          # in hebr_stats, naast de woorden en de rijtjes
+
+
+@st.cache_data(show_spinner=False)
+def laad_klanken():
+    """De oefenstof. Leeg als het bestand er niet is; dan verschijnt het tabblad niet."""
+    import json
+    import os
+    try:
+        with open(KLANK_BESTAND, encoding="utf-8") as f:
+            return json.load(f).get("groepen") or []
+    except (OSError, ValueError):
+        return []
+
+
+def klanken_beschikbaar():
+    return bool(laad_klanken())
+
+
+def _klank_stats():
+    """De voortgang, in dezelfde dict die de snelle app gebruikt."""
+    s = st.session_state.get("hebr_stats")
+    if not isinstance(s, dict):
+        s = {}
+        st.session_state.hebr_stats = s
+    return s
+
+
+def _klank_opties(groep, opgave, hoeveel=4):
+    """De keuzemogelijkheden: het goede antwoord plus afleiders uit dezelfde groep.
+
+    Afleiders uit dezelfde groep en niet verzonnen: dan zijn het allemaal vormen die echt
+    bestaan, en moet je op de regel letten in plaats van op wat er vreemd uitziet."""
+    goed = opgave.get("antwoord") or opgave["uitkomst"]
+    vast = groep.get("antwoordopties")
+    if vast:
+        return list(vast)
+    alle = {v.get("antwoord") or v["uitkomst"] for v in groep["vragen"]}
+    afleiders = [x for x in alle if x != goed]
+    random.shuffle(afleiders)
+    keuzes = afleiders[:hoeveel - 1] + [goed]
+    random.shuffle(keuzes)
+    return keuzes
+
+
+def tab_klanken(registreer=None, bewaar=None):
+    """Het tabblad. Aanroepen binnen 'with menu[i]:'.
+
+    registreer en bewaar komen uit overhoring_web (registreer_oefening en trigger_save).
+    Meegeven en niet importeren: dat zou een kringetje worden, want overhoring_web importeert
+    deze module."""
+    st.subheader("🔀 Hebreeuwse klankregels")
+    groepen = laad_klanken()
+    if not groepen:
+        st.info("Het bestand hebreeuws_klanken.json staat niet in deze installatie.")
+        return
+    st.caption("Hier vórm je zelf. Elke opgave is een paar echte vormen uit de Tenach: één "
+               "zonder het voorvoegsel en één met. Herkennen wat er in een woord zit doe je "
+               "bij 📜 Tenach, waar de woorddelen gekleurd staan.")
+
+    op_naam = {g["naam"]: g for g in groepen}
+    k1, k2 = st.columns([3, 2])
+    with k1:
+        keuze = st.radio("Regel", list(op_naam), key="hkl_groep")
+    groep = op_naam[keuze]
+    with k2:
+        niveau = st.radio("Hoe wil je antwoorden?",
+                          ["Kies uit een rijtje", "Zelf typen"], key="hkl_niveau")
+    typen = niveau.startswith("Zelf")
+
+    st.info(groep["uitleg"])
+    st.write("---")
+
+    stats = _klank_stats()
+    sleutel = KLANK_SLEUTEL + groep["sleutel"]
+    staat_sleutel = f"hkl_staat_{groep['sleutel']}_{typen}"
+    if staat_sleutel not in st.session_state:
+        st.session_state[staat_sleutel] = {
+            "i": random.randrange(len(groep["vragen"])), "goed": 0, "totaal": 0,
+            "melding": None, "opties": None, "voor": None}
+    staat = st.session_state[staat_sleutel]
+    opgave = groep["vragen"][staat["i"]]
+    goed_antwoord = opgave.get("antwoord") or opgave["uitkomst"]
+
+    # De melding van de vórige opgave bovenaan, zodat je hem leest voordat je verder gaat.
+    if staat.get("melding"):
+        soort, tekst = staat["melding"]
+        (st.success if soort == "goed" else st.error)(tekst)
+        staat["melding"] = None
+    if staat["totaal"]:
+        st.caption(f"Deze ronde: {staat['goed']}/{staat['totaal']} goed")
+
+    def volgende(goed, melding):
+        staat["totaal"] += 1
+        staat["goed"] += int(goed)
+        staat["melding"] = ("goed" if goed else "fout", melding)
+        staat["i"] = random.randrange(len(groep["vragen"]))
+        staat["opties"] = None
+        rec = stats.setdefault(sleutel, {"g": 0, "f": 0, "streak": 0})
+        rec["g"] = int(rec.get("g", 0)) + int(goed)
+        rec["f"] = int(rec.get("f", 0)) + int(not goed)
+        rec["streak"] = int(rec.get("streak", 0)) + 1 if goed else 0
+        if registreer:
+            registreer()
+        if bewaar:
+            bewaar()
+        st.rerun()
+
+    # ---- de opgave
+    delen = " + ".join(opgave["delen"])
+    woorden = " + ".join(opgave.get("woorden") or [])
+    st.markdown(f"<div class='hebtekst' style='font-size:34px;padding:6px 14px'>"
+                f"{delen}</div>", unsafe_allow_html=True)
+    if woorden:
+        st.caption(f"{woorden} + de stam")
+    st.markdown(f"**{groep['vraag']}**")
+
+    if typen:
+        with st.form(f"hkl_form_{staat['i']}_{groep['sleutel']}"):
+            antwoord = st.text_input("Jouw vorm — Hebreeuws of in gewone letters getypt",
+                                     key=f"hkl_in_{staat['i']}_{groep['sleutel']}")
+            verzonden = st.form_submit_button("✓ Nakijken", type="primary")
+        if verzonden:
+            if not str(antwoord or "").strip():
+                st.warning("Typ eerst een vorm.")
+            else:
+                # Vergelijken op medeklinkers: klinkertekens typen op een gewoon toetsenbord
+                # is niet te doen, en de klankregel zit in de klinker die je niet kúnt typen.
+                # Zelfde soepelheid als de woordenschat in de snelle app.
+                goed = hebreeuws.vorm_ok(antwoord, goed_antwoord)
+                volgende(goed, (f"✅ Juist! {delen} → **{opgave['uitkomst']}** "
+                                f"({opgave['vers']})" if goed else
+                                f"❌ Het was **{goed_antwoord}**. {delen} → "
+                                f"{opgave['uitkomst']} ({opgave['vers']})"))
+    else:
+        if staat.get("voor") != staat["i"]:
+            staat["opties"] = _klank_opties(groep, opgave)
+            staat["voor"] = staat["i"]
+        gekozen = st.radio("Kies", staat["opties"], index=None,
+                           key=f"hkl_kies_{staat['i']}_{groep['sleutel']}")
+        if st.button("✓ Nakijken", key=f"hkl_chk_{staat['i']}_{groep['sleutel']}",
+                     type="primary"):
+            if gekozen is None:
+                st.warning("Kies eerst een optie.")
+            else:
+                goed = gekozen == goed_antwoord
+                volgende(goed, (f"✅ Juist! {delen} → **{opgave['uitkomst']}** "
+                                f"({opgave['vers']})" if goed else
+                                f"❌ Het was **{goed_antwoord}**. {delen} → "
+                                f"{opgave['uitkomst']} ({opgave['vers']})"))
+
+    rec = stats.get(sleutel) or {}
+    if rec:
+        st.caption(f"In totaal: {rec.get('g', 0)} goed, {rec.get('f', 0)} fout · "
+                   f"streak {rec.get('streak', 0)}")
+    with st.expander("📋 Alle opgaven van deze regel", expanded=False):
+        st.caption(f"{len(groep['vragen'])} opgaven, allemaal uit de Tenach.")
+        st.dataframe(pd.DataFrame([
+            {"opbouw": " + ".join(v["delen"]),
+             "wordt": v["uitkomst"],
+             "antwoord": v.get("antwoord") or v["uitkomst"],
+             "vindplaats": v["vers"]} for v in groep["vragen"]]),
+            use_container_width=True, hide_index=True)

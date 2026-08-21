@@ -3452,6 +3452,7 @@ TAB_KEUZE = [
     # in deze installatie zit (hebreeuws.py plus de map tenach/); wie het niet wil gebruiken
     # zet het uit bij ℹ️ Uitleg & Hulp, net als elk ander tabblad.
     ("tenach", "📜 Tenach (Hebreeuws)"),
+    ("hebklank", "🔀 Hebreeuwse klankregels"),
 ]
 # Deze twee blijven altijd staan: via Uitleg zet je tabbladen weer aan, en Voortgang is je overzicht.
 TAB_ALTIJD = {"uitleg", "voortgang"}
@@ -3483,8 +3484,20 @@ def _hebreeuws_erbij():
         return False
 
 
+def _hebreeuwse_klanken_erbij():
+    """Is de oefenstof voor de Hebreeuwse klankregels er? Die wordt gemaakt door
+    gereedschap/bouw_hebreeuws_klanken.py en staat in hebreeuws_klanken.json."""
+    try:
+        import hebreeuws_web
+        return hebreeuws_web.klanken_beschikbaar()
+    except Exception:                                            # noqa: BLE001
+        return False
+
+
 def tab_zichtbaar(sleutel):
     if sleutel == "tenach" and not _hebreeuws_erbij():
+        return False
+    if sleutel == "hebklank" and not _hebreeuwse_klanken_erbij():
         return False
     if sleutel in TAB_ALTIJD:
         return True
@@ -4818,7 +4831,7 @@ def main():
         # dus er is ook geen 'app in de app' met verborgen tabjes.
         _MENU_SLEUTELS = ["woorden", "lijst", "voortgang", "actief", "stam", "struct",
                           "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank", "tenach",
-                          "contractie"]
+                          "contractie", "hebklank"]
         beginstand_tabs()
         _volgorde = list(TAB_KEUZE)
         if nieuwe_gebruiker():
@@ -10218,6 +10231,27 @@ def main():
                     else:
                         for regel in cdb["augment"]:
                             st.markdown(f"**{regel['begin']}**: {regel['regel']}")
+
+        # ==========================================
+        # TAB: HEBREEUWSE KLANKREGELS
+        # ==========================================
+        # De tegenhanger van de contractietrainer, en met dezelfde afspraak: hier vórm je
+        # zelf. Herkennen wat er in een woord zit doe je bij 📜 Tenach, waar de woorddelen
+        # gekleurd staan.
+        #
+        # De inhoud staat in hebreeuws_web.py, net als het Tenach-tabblad: deze module wordt
+        # omgezet naar grieks_motor.py en alles wat Streamlit aanroept moet daarbuiten
+        # blijven.
+        if _TOON[14] and menu[14] is not None:
+         with menu[14]:
+            try:
+                import hebreeuws_web
+                hebreeuws_web.tab_klanken(registreer_oefening, trigger_save)
+            except Exception as _e:                              # noqa: BLE001
+                st.info("De Hebreeuwse klankregels zijn in deze installatie niet "
+                        "beschikbaar.")
+                st.caption(f"({_e})")
+
 
 if __name__ == "__main__":
     main()
