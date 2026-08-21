@@ -122,6 +122,19 @@ st.markdown("""
         visibility: visible;
         opacity: 1;
     }
+    /* De tabbalk mag afbreken naar een tweede regel in plaats van schuiven.
+       Streamlit zet de tabbladen standaard in een strook die horizontaal schuift, met een
+       pijltje aan het eind. Met vijftien tabbladen staat het nieuwste dus achter dat
+       pijltje, en dan lijkt het alsof het er niet is — dat is precies wat er gebeurde toen
+       de Hebreeuwse klankregels erbij kwamen. Afbreken laat alles tegelijk zien. */
+    [data-testid="stTabs"] div[role="tablist"] {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        row-gap: 2px;
+    }
+    [data-testid="stTabs"] div[role="tablist"] button[role="tab"] {
+        flex: 0 0 auto;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -3494,10 +3507,20 @@ def _hebreeuwse_klanken_erbij():
         return False
 
 
-def tab_zichtbaar(sleutel):
+# Waarom een tabblad er niet kan staan, los van je eigen keuze. Zonder dit stond er bij
+# ℹ️ Uitleg & Hulp een gewoon vinkje voor een tabblad dat toch niet verschijnt: je zet hem
+# aan, er gebeurt niets, en je hebt geen idee waarom. Nu staat de reden erbij.
+def tab_reden(sleutel):
+    """'' als het tabblad kán, anders waarom niet."""
     if sleutel == "tenach" and not _hebreeuws_erbij():
-        return False
+        return "de Hebreeuwse bijbeltekst zit niet in deze installatie"
     if sleutel == "hebklank" and not _hebreeuwse_klanken_erbij():
+        return "hebreeuws_klanken.json zit niet in deze installatie"
+    return ""
+
+
+def tab_zichtbaar(sleutel):
+    if tab_reden(sleutel):
         return False
     if sleutel in TAB_ALTIJD:
         return True
@@ -8536,6 +8559,19 @@ def main():
                 if _sl in TAB_ALTIJD:
                     _kol.checkbox(_lab, value=True, disabled=True, key=f"tabzicht_{_sl}",
                                   help="Dit tabblad blijft altijd zichtbaar.")
+                    continue
+                _reden = tab_reden(_sl)
+                if _reden:
+                    # Kan niet verschijnen, wat je hier ook aanvinkt. Uitgeschakeld tonen
+                    # mét de reden; zo weet je dat het aan de installatie ligt en niet aan
+                    # jouw instelling.
+                    _kol.checkbox(_lab, value=False, disabled=True,
+                                  key=f"tabzicht_{_sl}",
+                                  help=f"Kan hier niet: {_reden}.")
+                    # Wél de oude stand doorgeven, anders verschilt _nieuw_verborgen elke
+                    # keer van _verborgen_nu en blijft de app zichzelf herladen.
+                    if _sl in _verborgen_nu:
+                        _nieuw_verborgen.add(_sl)
                     continue
                 _aan = _kol.checkbox(_lab, value=(_sl not in _verborgen_nu), key=f"tabzicht_{_sl}")
                 if not _aan:
