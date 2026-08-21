@@ -95,7 +95,65 @@ def main():
         sys.exit(f"{len(kapot) + len(verkeerd)} echte fouten")
     if met_voor and len(gemist) > met_voor * 0.1:
         sys.exit(f"{len(gemist)} van de {met_voor} voorvoegsels niet gevonden — te veel")
+    if "--alles" in sys.argv:
+        heel_de_tenach()
     print("\nGESLAAGD")
+
+
+def heel_de_tenach():
+    """Dezelfde controle over alle 300.670 woordvormen, plus de andere kant op.
+
+    Duurt een paar minuten en staat daarom achter --alles. Meer dekking is makkelijk als je
+    te gretig knipt, dus hier wordt ook gekeken of er niets wordt afgesplitst waar de
+    ontleding géén achtervoegsel noemt, en of er een woord overblijft."""
+    print("\n=== alle woordvormen van de Tenach ===")
+    n = kapot = zonder_code = korte_stam = met_code = gesplitst = 0
+    per_code = collections.Counter()
+    voorbeelden = []
+    for boek in H.tenach_index():
+        for vers in H.laad_tenach_boek(boek["bestand"]):
+            for w in H.woorden_van(vers):
+                vorm, parsing = w["vorm"], w["parsing"]
+                voor, kern, achter = H.splits_affixen(vorm, parsing)
+                n += 1
+                if voor + kern + achter != vorm:
+                    kapot += 1
+                    if len(voorbeelden) < 5:
+                        voorbeelden.append(f"telt niet op: {vorm!r} -> "
+                                           f"{voor!r}+{kern!r}+{achter!r}")
+                _v, _k, code = H._codes(parsing)
+                if code:
+                    met_code += 1
+                    if achter:
+                        gesplitst += 1
+                        per_code[code] += 1
+                elif achter:
+                    zonder_code += 1
+                    if len(voorbeelden) < 10:
+                        voorbeelden.append(f"achtervoegsel zonder code: {vorm!r} -> "
+                                           f"{achter!r} ({parsing})")
+                if achter and not any("א" <= t <= "ת" for t in kern):
+                    korte_stam += 1
+                    if len(voorbeelden) < 15:
+                        voorbeelden.append(f"stam zonder medeklinker: {vorm!r} -> {kern!r}")
+
+    print(f"  {n} woordvormen")
+    print(f"  stukken tellen niet op tot de vorm      {kapot:6d}")
+    print(f"  achtervoegsel zonder code in de ontleding {zonder_code:6d}")
+    print(f"  stam zonder medeklinker                 {korte_stam:6d}")
+    print(f"  {gesplitst} van de {met_code} achtervoegsels afgesplitst "
+          f"({100 * gesplitst / max(1, met_code):.1f}%)")
+    print("  per persoon:")
+    for code, aantal in sorted(per_code.items()):
+        print(f"    {code:5s} {aantal:7d}  {H.ACHTERVOEGSEL_NL[code]}")
+    for regel in voorbeelden:
+        print(f"    MIS {regel}")
+    if kapot or zonder_code or korte_stam:
+        sys.exit(f"{kapot + zonder_code + korte_stam} echte fouten over de hele Tenach")
+    # Onder deze grens is er iets stuk. De rest die niet lukt is vrijwel alleen de
+    # richtings-he, die dit bestand dezelfde code 3fs geeft als het echte achtervoegsel.
+    if met_code and gesplitst < met_code * 0.9:
+        sys.exit(f"maar {100 * gesplitst / met_code:.1f}% afgesplitst — te weinig")
 
 
 if __name__ == "__main__":

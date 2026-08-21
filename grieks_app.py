@@ -7163,7 +7163,13 @@ def heb_gekleurd(vorm, parsing, maat=None):
         stukken.append(f"<span style='color:{MERK}'>{voor}</span>")
     stukken.append(f"<span style='color:{TEKST}'>{kern}</span>")
     if achter:
-        stukken.append(f"<span style='color:{MERK}'>{achter}</span>")
+        # Het versteken achteraan hoort niet bij het achtervoegsel en krijgt dus ook niet
+        # die kleur. splits_affixen() houdt het erbij omdat de drie stukken samen het hele
+        # woord moeten zijn; hier gaat het er weer even af.
+        einde, staart = hebreeuws.zonder_leesteken(achter)
+        stukken.append(f"<span style='color:{MERK}'>{einde}</span>")
+        if staart:
+            stukken.append(f"<span style='color:{TEKST}'>{staart}</span>")
     return f"<span class='hebreeuws' style='{stijl}'>" + "".join(stukken) + "</span>"
 
 
