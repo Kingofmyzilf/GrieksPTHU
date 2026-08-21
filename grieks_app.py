@@ -7193,6 +7193,10 @@ def heb_leeskaart(wv, info, ref=""):
     betekenis, engels = (heb_betekenis(w) if w else ""), wv["engels"]
     if not betekenis:
         betekenis, engels = engels or "staat niet in je woordenlijst", ""
+    # Het Engels alleen erbij als het iets toevoegt: bij אֱלֹהִים stond er anders 'God'
+    # en daaronder nog eens 'EN: God'.
+    elif engels and engels.lower().strip(" .,;") in betekenis.lower():
+        engels = ""
     affixen = heb_affix_uitleg(parsing)
     ontleed = heb_ontleding(parsing)
     return (
