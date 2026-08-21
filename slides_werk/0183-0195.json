@@ -1,0 +1,80 @@
+[
+{
+  "nr": 183,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<p><span class='oranje'>Vorming</span> indicativus thematische aoristus:<br>augment + onregelmatige <span class='blauw'>aoristusstam</span> + bindvocaal <span class='blauw grieks'>o/ε</span> + <span class='blauw'>persoonsuitgangen II</span> (als impf.)</p><div class='vb'>indic. aor. A 1<sup>e</sup> ev van <span class='grieks'>ἀποθνησκω: ἀπ-έ-θαν-ον</span><br>indic. aor. A 1<sup>e</sup> ev van <span class='grieks'>λέγω: εἶπ-ον</span></div><p><span class='oranje'>Vorming</span> imperativus / infinitivus thematische aoristus:<br>onregelmatige <span class='blauw'>aoristusstam</span> + bindvocaal <span class='blauw grieks'>o/ε</span> + <span class='blauw'>persoonsuitgangen I</span> (als praesens)</p><div class='vb'>infin. aor. A van <span class='grieks'>ἀποθνησκω: ἀποθαν-εῖν</span><br><span style='font-size:14px'>(augment vervalt, circumflexus bij infin. them. aor.)</span><br>imper. aor. A 2<sup>e</sup> ev van <span class='grieks'>λέγω: εἰπ-έ</span><br><span style='font-size:14px'>(stam blijft zonder augment ‘toevallig’ <span class='grieks'>εἰπ</span>, al kun je aan het accent zien dat de tweeklank zonder augment kort is)</span></div>"
+},
+{
+  "nr": 184,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<p>Als voorbeeld voor de thematische aoristus nemen we het werkwoord <span class='grieks'>λάμβανω</span>, ‘(aan)nemen’:</p><table class='par licht groenrij'><thead><tr><th></th><th>indicativus aoristus</th><th>imperativus aoristus</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔλαβον</b></span></td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔλαβες</b></span></td><td><span class='grieks'>λάβε</span></td></tr><tr><th>3<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔλαβε(ν)</b></span></td><td><span class='grieks'>λαβέτω</span></td></tr><tr><th>1<sup>e</sup> mv.</th><td><span class='grieks'><b>ἐλάβομεν</b></span></td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td><span class='grieks'><b>ἐλάβετε</b></span></td><td><span class='grieks'>λάβετε</span></td></tr><tr><th>3<sup>e</sup> mv.</th><td><span class='grieks'><b>ἔλαβον</b></span></td><td><span class='grieks'>λαβέτωσαν</span></td></tr></tbody><tfoot><tr><th colspan='2'>infinitivus aoristus actief</th><td><span class='grieks'>λαβεῖν</span></td></tr></tfoot></table>"
+},
+{
+  "nr": 185,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<p>Let op (1): de afwijkende stam is het enige onderscheid t.o.v. het imperfectum (bij indic.) / t.o.v. het praesens (bij imper./infin.). Deze stam moet je leren.</p><p>Let op (2): als de onregelmatige aoristusstam hetzelfde is als de zuivere stam, en als het een verbum liquidum betreft (asigmatisch futurum) zijn ook de infin. futurum en aoristus gelijk.</p><div class='vb'>Bijv. bij <span class='grieks'>βαλλω</span>: infin. fut. en inf. aor. beide <span class='grieks'>βαλεῖν</span></div><p>Let op (3): de aoristus van <span class='grieks'>λέγω</span> is soms <span class='grieks'>εἶπον, εἶπες, εἶπεν</span>, etc. en soms (ook in het NT) met een alpha als bindvocaal <span class='blauw grieks'>εἶπα, εἶπας,</span> <span class='grieks'>εἶπεν</span> etc. (als <span class='grieks'>ἔλυσα</span>, maar zonder <span class='grieks'>σ</span>). Dit is een uitzondering die bij enkele werkwoorden voorkomt.</p>"
+},
+{
+  "nr": 186,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<p>Een aantal veelvoorkomende werkwoorden met een thematische aoristus:</p><table class='par licht'><thead><tr><th>ind. pres. act.</th><th>pres.-stam</th><th>ind. aor. act.</th><th>aor.-stam</th></tr></thead><tbody><tr><td class='grieks'>ἄγω</td><td class='grieks'>ἀγ-</td><td class='grieks'>ἤγαγον</td><td class='grieks'>ἀγαγ-</td></tr><tr><td class='grieks'>ἁμαρτάνω</td><td class='grieks'>ἁμαρταν-</td><td class='grieks'>ἥμαρτον</td><td class='grieks'>ἁμαρτ-</td></tr><tr><td class='grieks'>βάλλω</td><td class='grieks'>βαλλ-</td><td class='grieks'>ἔβαλον</td><td class='grieks'>βαλ-</td></tr><tr><td class='grieks'>ἐσθίω</td><td class='grieks'>ἐσθι-</td><td class='grieks'>ἔφαγον</td><td class='grieks'>φαγ-</td></tr><tr><td class='grieks'>εὑρίσκω</td><td class='grieks'>εὑρισκ-</td><td class='grieks'>εὗρον/ηὗρον</td><td class='grieks'>εὑρ-</td></tr><tr><td class='grieks'>ἔχω</td><td class='grieks'>ἐχ-</td><td class='grieks'>ἔσχον</td><td class='grieks'>σχ-</td></tr><tr><td class='grieks'>λαμβάνω</td><td class='grieks'>λαμβαν-</td><td class='grieks'>ἔλαβον</td><td class='grieks'>λαβ-</td></tr><tr><td class='grieks'>λέγω</td><td class='grieks'>λεγ-</td><td class='grieks'>εἶπον</td><td class='grieks'>εἰπ-</td></tr><tr><td class='grieks'>πίνω</td><td class='grieks'>πιν-</td><td class='grieks'>ἔπιον</td><td class='grieks'>πι-</td></tr><tr><td class='grieks'>πίπτω</td><td class='grieks'>πιπτ-</td><td class='grieks'>ἔπεσον</td><td class='grieks'>πεσ-</td></tr><tr><td class='grieks'>φέρω</td><td class='grieks'>φερ-</td><td class='grieks'>ἤνεγκον</td><td class='grieks'>ἐνεγκ-</td></tr><tr><td class='grieks'>φεύγω</td><td class='grieks'>φευγ-</td><td class='grieks'>ἔφυγον</td><td class='grieks'>φυγ-</td></tr></tbody></table>"
+},
+{
+  "nr": 187,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<p><span class='groen'>Achtergrond</span> (terzijde, geen leerstof): de thematische aoristusstam is soms zo anders dan de praesensstam, omdat het oorspronkelijk de aoristus van een ander, nu in onbruik geraakt, werkwoord was.</p><p><span class='grieks'>εἶδον</span> komt bijv. oorspronkelijk van <span class='grieks'>ἴδω</span> (dit zie je nog bij imper/infin aor.: <span class='grieks'>ἴδε/ἴδεῖν</span>), maar dit werkwoord is door toevoeging (suppletie) van <span class='grieks'>ὁράω</span> overbodig geworden en in onbruik geraakt.</p><p>Vgl. in het Engels ‘to go’: ‘went’ komt oorspronkelijk van ‘to wend’ en ook dat werkwoord is overbodig geworden in de tegenwoordige tijd.</p>"
+},
+{
+  "nr": 188,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<p>De <span class='oranje'>stamaoristus</span> komt bij vrij weinig werkwoorden in het NT voor, maar deze werkwoorden zijn wel veelvoor-komend. De belangrijkste zijn: <span class='blauw grieks'>βαίνω</span>, ‘gaan’ (aor. stam <span class='grieks'>βη</span>) en <span class='blauw grieks'>γινώσκω</span>, ‘kennen’ (aor. stam <span class='grieks'>γνω</span>). <span class='grieks'>βαίνω</span> komt in het NT alleen in samenstellingen voor (<span class='grieks'>καταβαίνω, παραβαίνω</span>). De uitgangen (die lijken op die van <span class='grieks'>εἰμί</span>) komen <span class='blauw'>direct achter de stam</span>.</p><p><span class='oranje'>Vorming</span> indicativus stamaoristus:<br>augment + onr. aoristusstam + persoonsuitgangen</p><p><span class='oranje'>Vorming</span> imperativus stamaoristus:<br>onregelmatige aoristusstam + persoonsuitgangen</p><p><span class='oranje'>Vorming</span> infinitivus stamaoristus:<br>onregelmatige aoristusstam + uitgang</p>"
+},
+{
+  "nr": 189,
+  "kop": "G24 Thematische aoristus en stamaoristus",
+  "cursus": 2,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>indicativus aoristus</th><th>indicativus aoristus</th><th>imperativus aoristus</th><th>imperativus aoristus</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔβην</b></span></td><td><span class='grieks'><b>ἔγνων</b></span></td><td></td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔβης</b></span></td><td><span class='grieks'><b>ἔγνως</b></span></td><td><span class='grieks'>βῆ<span class='blauw'>θι</span></span></td><td><span class='grieks'>γνῶ<span class='blauw'>θι</span></span></td></tr><tr><th>3<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔβη</b></span></td><td><span class='grieks'><b>ἔγνω</b></span></td><td><span class='grieks'>βήτω</span></td><td><span class='grieks'>γνώτω</span></td></tr><tr><th>1<sup>e</sup> mv.</th><td><span class='grieks'><b>ἔβημεν</b></span></td><td><span class='grieks'><b>ἔγνωμεν</b></span></td><td></td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td><span class='grieks'><b>ἔβητε</b></span></td><td><span class='grieks'><b>ἔγνωτε</b></span></td><td><span class='grieks'>βῆτε</span></td><td><span class='grieks'>γνῶτε</span></td></tr><tr><th>3<sup>e</sup> mv.</th><td><span class='grieks'><b>ἔβη<span class='blauw'>σαν</span></b></span></td><td><span class='grieks'><b>ἔγνω<span class='blauw'>σαν</span></b></span></td><td><span class='grieks'>βήτωσαν</span></td><td><span class='grieks'>γνώτωσαν</span></td></tr></tbody><tfoot><tr><th colspan='3'>infinitivus aoristus</th><td><span class='grieks'>βῆ<span class='blauw'>ναι</span></span></td><td><span class='grieks'>γνῶ<span class='blauw'>ναι</span></span></td></tr></tfoot></table>"
+},
+{
+  "nr": 190,
+  "kop": "G25 Pronomen possessivum",
+  "cursus": 2,
+  "html": "<p><span class='oranje'>Voornaamwoorden</span> (<i>pronomina</i>):</p><p>-&ensp;persoonlijk voornaamwoord (<i>personale</i>)<br>-&ensp;aanwijzend voornaamwoord (<i>demonstrativum</i>)<br>-&ensp;betrekkelijk voornaamwoord (<i>relativum</i>)<br>-&ensp;wederkerend voornaamwoord (<i>reflexivum</i>)<br>-&ensp;wederkerig voornaamwoord (<i>reciprocum</i>)</p><p>-&ensp;<span class='blauw'>bezittelijk voornaamwoord (<i>possessivum</i>)</span><br>-&ensp;vragend voornaamwoord (<i>interrogativum</i>)<br>-&ensp;onbepaald voornaamwoord (<i>indefinitum</i>)<br>-&ensp;corresponderend voornaamwoord (<i>correlativum</i>)</p>"
+},
+{
+  "nr": 191,
+  "kop": "G25 Pronomen possessivum",
+  "cursus": 2,
+  "html": "<p>Om <span class='oranje'>bezit</span> aan te duiden (van hem, haar, hen) wordt in het Grieks soms gewoon het <span class='blauw'>lidwoord</span> gebruikt, dat je dan bezittelijk mag vertalen.</p><div class='vb'><span class='grieks'>οὐ γὰρ ἀπέστειλεν ὁ θεὸς <u>τὸν</u> υἱὸν εἰς τὸν κόσμον ἵνα κρίνῃ τὸν κόσμον</span>, ‘want God zond niet <u>zijn</u> zoon naar de wereld opdat hij de wereld zou oordelen’ (Joh 3.17)</div><p>Ook wordt regelmatig het <span class='blauw'>persoonlijk vnw.</span> (‘van mij, jou, hem, ons, jullie, hen’) of het <span class='blauw'>aanwijzend vnw.</span> <span class='grieks'>ἐκεῖνος</span> (‘van deze(n), die’) in de <span class='blauw'>genitivus</span> gebruikt, zo wordt bezit iets sterker uitgedrukt.</p><div class='vb'><span class='grieks'>Ὁ κύριος μετὰ τοῦ πνεύματός <u>σου</u></span>, ‘De Heer (zij/is) met <u>uw</u> geest’ (2 Tim 4.22)</div>"
+},
+{
+  "nr": 192,
+  "kop": "G25 Pronomen possessivum",
+  "cursus": 2,
+  "html": "<p>Maar het Grieks kent <span class='blauw'>in de 1<sup>e</sup> en 2<sup>e</sup> persoon</span> ook een <span class='oranje'>bezittelijk voornaamwoord</span>, dat nog meer nadruk geeft. In de derde persoon wordt het persoonlijk voornaamwoord in de genitivus gebruikt (<span class='grieks'>αὐτοῦ, αυτής, αὐτῶν</span>). Het <span class='blauw'>geslacht</span> wordt bepaald door het naamwoord waar het bij hoort en mee <span class='blauw'>congrueert</span> (niet door de persoon waar het naar verwijst):</p><div class='vb'><span class='grieks'>κατὰ τὴν <u>ἐμὴν</u> γνώμην</span>, ‘volgens <u>mijn</u> inzicht’<br>(1 Cor 7.44) &gt; verwijst hier naar ….?</div><p>Dit kan ook weer met herhaling van het lidwoord worden gekoppeld aan het naamwoord waar het bij hoort:</p><div class='vb'><span class='grieks'>τὴν γνώμην τὴν <u>ἐμήν</u></span></div>"
+},
+{
+  "nr": 193,
+  "kop": "G25 Pronomen possessivum",
+  "cursus": 2,
+  "html": "<p>Er zijn dus bezittelijk voornaamwoorden voor de <span class='oranje'>1<sup>e</sup> persoon</span> (mijn, onze) en de <span class='oranje'>2<sup>e</sup> persoon</span> (jouw, jullie).</p><p>De volledige verbuiging (naar andere naamvallen en getallen) gaat in het enkelvoud (mijn, jouw) volgens <span class='grieks'>καλός</span>, en in het meervoud (onze/ons, jullie) volgens <span class='grieks'>ἅγιος</span> (<span class='grieks'>ρει</span>-regel). Hier steeds de nom. ev.:</p><table class='par licht'><thead><tr><th></th><th>mannelijk</th><th>vrouwelijk</th><th>onzijdig</th></tr></thead><tbody><tr><th>mijn</th><td class='grieks'>ἐμός</td><td class='grieks'>ἐμή</td><td class='grieks'>ἐμόν</td></tr><tr><th>jouw</th><td class='grieks'>σός</td><td class='grieks'>σή</td><td class='grieks'>σόν</td></tr><tr><th>onze/ons</th><td class='grieks'>ἡμέτερος</td><td class='grieks'>ἡμετέρα</td><td class='grieks'>ἡμέτερον</td></tr><tr><th>jullie</th><td class='grieks'>ὑμέτερος</td><td class='grieks'>ὑμετέρα</td><td class='grieks'>ὑμέτερον</td></tr></tbody></table>"
+},
+{
+  "nr": 194,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<p>Ter herhaling: een Griekse werkwoordsvorm heeft <span class='oranje'>5 verschillende eigenschappen</span>:</p><p>-&ensp;modus: indicativus, infinitivus, imperativus, coniunctivus, optativus, participium<br>-&ensp;tempus: praesens, imperfectum, futurum, aoristus, perfectum, plusquamperfectum<br>-&ensp;<span class='blauw'>diathese: actief, medium, passief</span><br>-&ensp;persoon: 1<sup>e</sup>, 2<sup>e</sup>, 3<sup>e</sup><br>-&ensp;getal: enkelvoud, meervoud</p><p>Het medium is een diathese die we in het Nederlands niet kennen. De diathese heeft in het Grieks te maken met de betrokkenheid van het subject bij de handeling.</p>"
+},
+{
+  "nr": 195,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<p>Het <span class='blauw'>Nederlands</span> kent actieve en passieve gezegdes. Passieve gezegdes worden geconstrueerd met behulp van het hulpwerkwoord ‘worden’. De Nederlandse diathese identificeert of het onderwerp de <span class='groen'><b><i>agens</i></b></span> (uitvoerder) of de <span class='groen'><b><i>patiens</i></b></span> (ontvanger) van de handeling is.</p><p>Qua betekenis kunnen actieve werkwoorden <span class='groen'><b>transitief</b></span> of <span class='groen'><b>intransitief</b></span> zijn. Een transitief werkwoord kan een lijdend voorwerp bij zich hebben. Intransitieve werkwoorden gaan niet samen met een lijdend voorwerp en kunnen niet worden omgezet naar een passief gezegde.</p><div class='vb'>‘ik duw’ &gt; ‘ik duw jou’; ‘ik word geduwd’<br>‘ik blijf’ &gt; ‘<s>ik blijf jou</s>’; ‘<s>ik word gebleven</s>’</div>"
+}
+]

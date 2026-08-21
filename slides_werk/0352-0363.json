@@ -1,0 +1,74 @@
+[
+{
+  "nr": 352,
+  "kop": "G48 Optativus",
+  "cursus": 3,
+  "html": "<p>Dan nu het <span class='oranje'>gebruik</span> en de <span class='oranje'>vertaling</span> van de optativus. De optativus drukt in het algemeen een zekere <span class='blauw'>voorzichtigheid</span> uit. Specifieker betreft het gebruik:</p><ol><li>Optativus <span class='groen'><b>cupitativus:</b></span> vervulbare wens<br><i>vertaling</i>: ‘moge’ (komt het meest voor in NT!)</li><li>Optativus <span class='groen'><b>potentialis</b></span> (+<span class='blauw grieks'>ἄν</span>): onzekere mogelijkheid<br><i>vertaling</i>: ‘zouden (wel) kunnen/willen’</li><li>Optativus <span class='groen'><b>conditionalis</b></span> (+<span class='blauw grieks'>εἰ</span>): hypothetische mogelijkheid<br><i>vertaling</i>: ‘zouden’</li><li>Optativus <span class='groen'><b>obliquus</b></span> (in indirecte rede): andermans gedachten / woorden / daden<br><i>vertaling</i>: evt. met ‘wel’ / ‘mogen’ / ‘zouden’</li></ol>"
+},
+{
+  "nr": 353,
+  "kop": "G48 Optativus",
+  "cursus": 3,
+  "html": "<p>1.&ensp;<span class='oranje'>Optativus cupitativus</span> (vervulbare wens)</p><div class='vb'><span class='grieks'>Ιδοὺ ἡ δούλη Κυρίου· <b>γένοιτό</b> μοι κατὰ τὸ ῥῆμα σου.</span><br>‘Zie de slavin van de Heer: <b>moge</b> mij <b>geschieden</b> naar uw woord.’ (Maria in Lk 1.38)</div><div class='vb'><span class='grieks'>Τί οὖν; ἁμαρτήσωμεν ὅτι οὐκ ἐσμὲν ὑπὸ νόμον ἀλλὰ ὑπὸ χάριν; μὴ <b>γένοιτο</b>.</span><br>‘Wat dan? Laten wij zondigen omdat wij niet niet onder de wet zijn maar onder de genade? <b>Moge het</b> niet <b>zo zijn</b>!’ (Rom 6.15)</div><p>15x komt de uitdrukking <span class='blauw grieks'>μὴ γένοιτο</span> voor in het Nieuwe Testament; vrijer vertaald: ‘geen sprake van!’ (SV: ‘dat zij verre’ / NBV: ‘absoluut niet’)</p>"
+},
+{
+  "nr": 354,
+  "kop": "G48 Optativus",
+  "cursus": 3,
+  "html": "<p>2.&ensp;<span class='oranje'>Optativus potentialis</span> (onzekere mogelijkheid): als er <span class='blauw grieks'>ἄν</span> bij staat!</p><div class='vb'><span class='grieks'>Πῶς γὰρ <b>ἂν δυναίμην</b> ἐὰν μή τις ὁδηγήσει με;</span><br>‘Hoe <b>zou ik</b> (dat) namelijk <b>kunnen</b> als niemand mij de weg zal wijzen?’ (Hd 8.31)</div><p><i>Pas op: de tweeklank <span class='grieks'>αι</span> duidt in dit voorbeeld niet op een optativus van de aoristus maar komt door samentrekking met de stamklinker van het (athematische) werkwoord (de tijd is praesens)!</i></p>"
+},
+{
+  "nr": 355,
+  "kop": "G48 Optativus",
+  "cursus": 3,
+  "html": "<p>3.&ensp;<span class='oranje'>Optativus conditionalis</span> (voorzichtige mogelijkheid): dan moet er <span class='blauw grieks'>εἰ</span> bij staan!</p><div class='vb'><span class='grieks'>.. ἔσπευδεν γὰρ <b>εἰ</b> δυνατὸν <b>εἴη</b> αὐτῷ τὴν ἡμέραν τῆς πεντηκοστῆς γενέσθαι εἰς Ιεροσόλυμα.</span> (Hd 20.16)<br>‘.. want hij hoopte, <b>als</b> dat voor hem mogelijk <b>zou zijn</b>, op de dag van Pinksteren in Jeruzalem te zijn.’</div>"
+},
+{
+  "nr": 356,
+  "kop": "G48 Optativus",
+  "cursus": 3,
+  "html": "<p>4.&ensp;<span class='oranje'>Optativus obliquus</span> (onzekerheid in indirecte rede)</p><div class='vb'><span class='grieks'>Επηρώτων δὲ αὐτὸν οἱ μαθηταὶ αὐτοῦ τίς αὕτη <b>εἴη</b> ἡ παραβολή.</span> (Luk 8.9)<br>Zijn leerlingen vroegen Hem wat (Grieks gebruikt ‘wie’ vanwege geslacht <span class='grieks'>παραβολή</span>) deze gelijkenis <b>mocht betekenen</b> (of: ‘mocht zijn’).</div><div class='vb'><span class='grieks'>διαλογιζομένων πάντων ἐν ταῖς καρδίαις αὐτῶν περὶ τοῦ Ἰωάνου, μή ποτε αὐτὸς <b>εἴη</b> ὁ Χριστός, …</span><br>‘terwijl allen in hun harten zich afvroegen (gen. abs.) met betrekking tot Johannes, of hij niet misschien de Christus <b>zou zijn</b>, …’ (Luk 3.15)</div>"
+},
+{
+  "nr": 357,
+  "kop": "G49 Werkwoorden op -μι: medeklinkerstammen",
+  "cursus": 3,
+  "html": "<p>De meeste werkwoorden in het Grieks zijn in het praesens/imperfectum ‘thematisch’: ze hebben een themavocaal/bindvocaal. Dit geldt voor verba vocalia (<span class='grieks'>λύω</span>), verba contracta, verba muta en verba liquida.</p><p>Er is een kleine groep werkwoorden - die wel veel voorkomen - waarbij de <span class='blauw'>uitgangen in het praesens/imperfectum direct achter de stam</span> komen. In andere woorden: ze zijn in het praesens en imperfectum athematisch. Deze werkwoorden noemen we <span class='oranje'>athematische praesentia</span>.</p>"
+},
+{
+  "nr": 358,
+  "kop": "G49 Werkwoorden op -μι: medeklinkerstammen",
+  "cursus": 3,
+  "html": "<p>We hebben van dit type werkwoorden al het werkwoord <span class='blauw grieks'>δύναμαι</span>, ‘kunnen’ gezien en <span class='blauw grieks'>ἐπίσταμαι</span>, ‘weten’. Dit zijn echter deponentia, dus zij hebben geen afwijkende actieve uitgangen zoals bij de werkwoorden die we nu bespreken. Ook kennen we al <span class='blauw grieks'>εἰμί</span>, maar die wordt (nog) onregelmatig(er) verbogen.</p><p>Als derde kennen we al een ‘athematische aoristus’: de <span class='oranje'>stamaoristus</span>. De werkwoorden met een stamaoristus (<span class='grieks'>βαίνω</span> - <span class='blauw grieks'>ἐβήν</span>, <span class='grieks'>γινώσκω</span> - <span class='blauw grieks'>ἐγνών</span>) zijn echter niet per se athematisch in het praesens. Hoe een werkwoord zich gedraagt in de aoristus staat los van hoe het zich gedraagt in het praesens - en daarmee het imperfectum, want die tijd is altijd van het praesens af te leiden.</p>"
+},
+{
+  "nr": 359,
+  "kop": "G49 Werkwoorden op -μι: medeklinkerstammen",
+  "cursus": 3,
+  "html": "<p>De belangrijkste werkwoorden op <span class='grieks'>–μι</span> uit het NT, waarvan je de vormen ook moet leren herkennen, zijn:</p><table class='par kaal'><tbody><tr><td><span class='oranje'>onregelmatig</span>:</td><td class='grieks'>εἰμί</td><td>zijn (ken je al!)</td></tr><tr><td><span class='oranje'>medeklinkerstam</span>:<br>vaak met <span class='blauw'>praesens-versterking <span class='grieks'>νυ</span></span><br>(of <span class='grieks'>λυ</span>)</td><td><span class='grieks'>δείκ<span class='blauw'><b>νυ</b></span>μι</span><br><span class='grieks'>ἀπόλ<span class='blauw'><b>λυ</b></span>μι</span><br><span class='grieks'>ὄρ<span class='blauw'><b>νυ</b></span>μι</span><br><span class='grieks'>στρών<span class='blauw'><b>νυ</b></span>μι</span></td><td>tonen<br>vernietigen<br>zweren<br>uitspreiden</td></tr><tr><td><span class='oranje'>vocaalstam</span>:<br>vaak met <span class='blauw'>praesens-reduplicatie</span></td><td><span class='grieks'><span class='blauw'><b>δί</b></span>δωμι</span><br><span class='blauw grieks'><b>ἵ</b></span><span class='grieks'>ημι</span><br><span class='grieks'><span class='blauw'><b>ἵ</b></span>στημι</span><br><span class='grieks'><span class='blauw'><b>τί</b></span>θημι</span><br><span class='grieks'><span class='blauw'><b>πί</b></span>μπλημι</span><br><span class='grieks'>φημί</span></td><td>geven<br>zenden<br>stellen, doen staan<br>plaatsen, leggen<br>vullen<br>zeggen</td></tr></tbody></table>"
+},
+{
+  "nr": 360,
+  "kop": "G49 Werkwoorden op -μι: medeklinkerstammen",
+  "cursus": 3,
+  "html": "<p><span class='oranje grieks'>δείκ-νυ-μι</span> is het voorbeeldwerkwoord voor de medeklinkerstammen.<br>zuivere stam = <span class='grieks'>δεικ-</span> (medeklinkerstam)<br>praesensstam = <span class='grieks'>δεικνυ-</span> (praesensversterking = <span class='grieks'>νυ</span>)<br><span class='blauw'>geen bindvocaal</span> in praesens/impf.</p><ul><li>uitgangen praesens/imperfectum medium: als <span class='grieks'>λύω</span></li><li>uitgangen andere tempora: volgens vervoegings-groep of onregelmatig volgens stamtijden</li><li><span class='blauw'>uitgangen praesens/imperfectum activum</span>: leer deze te herkennen</li></ul><p>Om te helpen onthouden: de uitgangen van de 1<sup>e</sup>, 2<sup>e</sup>, 3<sup>e</sup> persoon ev. in het praesens zijn <span class='blauw grieks'>μι - ς - σι(ν)</span> en vormen samen het woord ‘<span class='groen'>missie</span>’.</p>"
+},
+{
+  "nr": 361,
+  "kop": "G49 Werkwoorden op -μι: medeklinkerstammen",
+  "cursus": 3,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>indic. prae. A</th><th>indic. impf. A</th><th>imper. prae. A</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td><span class='grieks'>δείκνυ<span class='blauw'><b>μι</b></span></span></td><td><span class='grieks'>ἐδείκνυ<b>ν</b></span></td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td><span class='grieks'>δείκνυ<b>ς</b></span></td><td><span class='grieks'>ἐδείκνυ<b>ς</b></span></td><td><span class='grieks'>δείκνυ</span></td></tr><tr><th>3<sup>e</sup> ev.</th><td><span class='grieks'>δείκνυ<span class='blauw'><b>σι(ν)</b></span></span></td><td><span class='grieks'>ἐδείκνυ</span></td><td><span class='grieks'>δεικνύ<b>τω</b></span></td></tr><tr><th>1<sup>e</sup> mv.</th><td><span class='grieks'>δείκνυ<b>μεν</b></span></td><td><span class='grieks'>ἐδείκνυ<b>μεν</b></span></td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td><span class='grieks'>δείκνυ<b>τε</b></span></td><td><span class='grieks'>ἐδείκνυ<b>τε</b></span></td><td><span class='grieks'>δείκνυ<b>τε</b></span></td></tr><tr><th>3<sup>e</sup> mv.</th><td><span class='grieks'>δεικνύ<span class='blauw'><b>ασι(ν)</b></span></span></td><td><span class='grieks'>ἐδείκνυ<span class='blauw'><b>σαν</b></span></span></td><td><span class='grieks'>δεικνύ<b>τωσα(ν)</b></span></td></tr></tbody><tfoot><tr><th>infinitivus prae. A:</th><td colspan='3'><span class='grieks'>δείκνυ<span class='blauw'><b>ναι</b></span></span></td></tr><tr><th>participium prae. A:</th><td colspan='3'><span class='grieks'>δείκνυ<span class='blauw'><b>ς</b></span>, δεικνῦ<b>σα</b>, δεικνύ<b>ν</b> (δεικνύ<b>ντος</b>)</span></td></tr></tfoot></table>"
+},
+{
+  "nr": 362,
+  "kop": "G49 Werkwoorden op -μι: medeklinkerstammen",
+  "cursus": 3,
+  "html": "<p>1) Volgens <span class='grieks'>δείκνυμι</span> gaan ook een aantal <span class='blauw'>andere werkwoorden op <span class='grieks'>-νυμι</span></span>, waaronder:</p><table class='par kaal'><tbody><tr><td class='grieks'>ἀπόλλυμι</td><td>te gronde richten (uit <span class='grieks'>ἀπόλνυμι</span>) (92x)</td></tr><tr><td class='grieks'>ὄμνυμι</td><td>zweren (26x)</td></tr><tr><td class='grieks'>στρώννυμι</td><td>uitspreiden (6x)</td></tr></tbody></table><p>2) <span class='grieks'>δείκνυμι</span> is in de <span class='blauw'>andere tempora</span> regelmatig: zie de stamtijdenlijst en G36 voor samentrekkingsregels:<br>fut = <span class='grieks'>δεί<span class='blauw'><b>ξ</b></span>ω</span><br>aor A = <span class='grieks'>ἔδει<span class='blauw'><b>ξ</b></span>α</span>&emsp;|&emsp;aor P = <span class='grieks'>ἐδεί<span class='blauw'><b>χ</b></span>θην</span><br>perf A = <span class='grieks'>δέδει<span class='blauw'><b>χ</b></span>α</span> | perf M = <span class='grieks'>δέδει<span class='blauw'><b>γ</b></span>μαι</span></p><p>3) In het <span class='blauw'>Koinè</span> Grieks worden athematische werkwoor-den soms <span class='blauw'>(ook) thematisch vervoegd</span>. Zo komt ook <span class='grieks'>δεικνύω, ὀμνύω</span> en <span class='grieks'>ἱστάνω</span> voor (vervoeging als <span class='grieks'>λύω</span>).</p>"
+},
+{
+  "nr": 363,
+  "kop": "G50 Werkwoorden op -μι: vocaalstammen",
+  "cursus": 3,
+  "html": "<p>Er zijn ook athematische werkwoorden met een stam die op een klinker (vocaal) eindigt: de zogeheten <span class='oranje'>vocaalstammen</span>. Deze werkwoorden kenmerken zich door een <span class='blauw'>afwisseling tussen korte en lange stam-klinkers</span> en meestal ook door <span class='blauw'>praesens-reduplicatie</span>: verdubbeling eerste stam-medeklinker + <span class='grieks'>ι</span> bij de praesensstam (dus ook in imperfectum). In het NT gaat het daarbij om de volgende werkwoorden:</p><table class='par kaal'><tbody><tr><td><span class='grieks'><span class='blauw'><b>δί</b></span>δωμι</span></td><td>geven</td></tr><tr><td><span class='grieks'><span class='blauw'><b>τί</b></span>θημι</span></td><td>plaatsen, leggen (zonder aspiratie)</td></tr><tr><td><span class='blauw grieks'><b>ἵ</b></span><span class='grieks'>ημι</span></td><td>zenden (beide medeklinkers weggevallen)</td></tr><tr><td><span class='grieks'><span class='blauw'><b>ἵ</b></span>στημι</span></td><td>stellen, doen staan (oorspr. <span class='blauw grieks'>σί</span><span class='grieks'>στημι</span>)</td></tr><tr><td class='grieks'>φημί</td><td>zeggen (geen reduplicatie)</td></tr><tr><td><span class='grieks'><span class='blauw'><b>πί</b></span>μπλημι</span></td><td>vullen (reduplicatie en extra neusklank)</td></tr></tbody></table>"
+}
+]

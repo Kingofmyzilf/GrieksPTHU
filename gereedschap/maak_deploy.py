@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Bouwt de tak `nicegui-deploy`: alles wat de NiceGUI-app nodig heeft, en niets meer.
 
-Een hostingplatform kloont de tak die je aanwijst. Staat de NT-tekst (31 MB), de
-grammatica-PDF (22 MB) en de Streamlit-app er nog in, dan wacht je daar bij elke
-deploy op — en op de gratis laag, die vaak herstart, merk je dat.
+Een hostingplatform kloont de tak die je aanwijst. Staat de NT-tekst en de Streamlit-app er
+nog in, dan wacht je daar bij elke deploy op — en op de gratis laag, die vaak herstart, merk
+je dat.
 
 Deze tak wordt telkens opnieuw gemaakt vanaf de werktak; hij heeft dus geen eigen
 geschiedenis om bij te houden. Draaien:

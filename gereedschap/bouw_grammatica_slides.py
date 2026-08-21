@@ -48,11 +48,21 @@ def lees_werk():
     return slides
 
 
+# Tags die middenin een woord kunnen staan. Die moeten zonder spatie verdwijnen, anders valt
+# het woord uiteen: de slides zetten de uitgang vet (κώμ<b>ης</b>) en 'molenaar' staat op
+# slide 177 als m-o-l-e-n-aa-r met een <b> om elke letter die op een liquida wijst. Met een
+# spatie erbij werd dat 'κώμ ης' en 'm o l e n aa r', en dan vindt zoeken op κώμης of
+# molenaar juist de slide niet waar het over gaat.
+INLINE = {"b", "i", "u", "s", "em", "strong", "span", "sup", "sub", "small"}
+
+
 def plat(html):
     """De tekst zonder opmaak, om op te zoeken."""
-    tekst = re.sub(r"<[^>]+>", " ", str(html or ""))
-    tekst = (tekst.replace("&nbsp;", " ").replace("&amp;", "&")
-             .replace("&lt;", "<").replace("&gt;", ">"))
+    def weg(m):
+        return "" if m.group(1).lower() in INLINE else " "
+    tekst = re.sub(r"</?([a-zA-Z0-9]+)[^>]*>", weg, str(html or ""))
+    tekst = (tekst.replace("&nbsp;", " ").replace("&emsp;", " ").replace("&ensp;", " ")
+             .replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">"))
     return re.sub(r"\s+", " ", tekst).strip()
 
 

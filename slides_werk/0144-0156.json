@@ -1,0 +1,80 @@
+[
+{
+  "nr": 144,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p>In het <span class='oranje'>Nederlands</span> kennen we twee soorten aanwijzende voornaamwoorden, en maken we onderscheid in geslacht/getal:</p><p><span class='blauw'>1.&emsp;deze</span> (man./vro. en onz. mv.), <span class='blauw'>dit</span> (onz.) voor dichtbij zijnde zaken</p><p><span class='blauw'>2.&emsp;die</span> (man./vro. en onz. mv.), <span class='blauw'>dat</span> (onz.) voor verder weg zijnde zaken</p><div class='vb'>Wil je dit boek [dit hier, dichtbij] of dat boek [dat daar, verder weg of voor variatie] hebben?</div><div class='vb'>Zie je deze camera [deze hier, dichtbij spreker]? Welke? O die [die daar, bij de ander]!</div>"
+},
+{
+  "nr": 145,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p>Er zijn drie verschillende aanwijzende voornaam-woorden in het Grieks. In <span class='oranje'>klassiek Grieks</span> waren de functies ook duidelijk onderscheiden:</p><p>1.&emsp;<span class='blauw grieks'>ὅδε</span> (man.), <span class='grieks'>ἥδε</span> (vro.), <span class='grieks'>τοδε</span> (onz.)<br>&emsp;&emsp;&gt; bij spreker of citaat dat volgt<br>2.&emsp;<span class='blauw grieks'>οὗτος</span> (man.), <span class='grieks'>αὕτη</span> (vro.), <span class='grieks'>τοῦτο</span> (onz.)<br>&emsp;&emsp;&gt; bij aangesprokene of citaat dat voorafgaat<br>3.&emsp;<span class='blauw grieks'>ἐκεῖνος</span> (man.), <span class='grieks'>ἐκείνη</span> (vro.), <span class='grieks'>ἐκεῖνο</span> (onz.)<br>&emsp;&emsp;&gt; nog verder weg</p><p>In het <span class='oranje'>Koinē Grieks</span> is het verschil in ‘ver weg’ of ‘dichtbij’ wat minder duidelijk. <span class='grieks'>Οὗτος</span> heeft het gebruik van <span class='grieks'>ὅδε</span> bijna helemaal overgenomen.</p>"
+},
+{
+  "nr": 146,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p><i>Tekening: drie bomen op een horizon, steeds verder weg. Van dichtbij naar ver:</i></p><table class='par kaal'><tbody><tr><td>dichtbij</td><td><span class='grieks'>ὁδε</span><br><span class='grieks'>τοδε το δενδρον</span></td></tr><tr><td>verderop</td><td><span class='grieks'>οὑτος</span><br><span class='grieks'>τουτο το δενδρον</span></td></tr><tr><td>nog verder weg</td><td><span class='grieks'>ἐκεινος</span><br><span class='grieks'>ἐκεινο το δενδρον</span></td></tr></tbody></table>"
+},
+{
+  "nr": 147,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p>In het NT komt vooral <span class='oranje grieks'>οὗτος</span> veelvuldig voor (1388 keer). De uitgangen worden verbogen <span class='blauw'>volgens <span class='grieks'>αὐτός</span></span> (persoonlijk voornaamwoord 3<sup>e</sup> persoon). De stam heeft of een spiritus asper op de eerste tweeklank, of een Tau ervoor (net als bij het lidwoord). Als de uitgang een <span class='grieks'>ο</span> of <span class='grieks'>ω</span> bevat, is de tweeklank in de stam <span class='grieks'>ου</span>. Als de uitgang een <span class='grieks'>α</span> of <span class='grieks'>η</span> bevat, is de tweeklank in de stam <span class='grieks'>αυ</span>.</p><p>Let op:&emsp;<span class='grieks'><b>αὕτη</b></span> (met spiritus asper) = aanw. vnw.<br>&emsp;&emsp;&emsp;&emsp;<span class='grieks'><b>αὐτή</b></span> (met spiritus lenis) = pers. vnw.</p>"
+},
+{
+  "nr": 148,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<table class='par licht'><thead><tr><th></th><th>mannelijk</th><th>vrouwelijk</th><th>onzijdig</th></tr></thead><tbody><tr><th>nom. ev.</th><td><span class='grieks'>οὗτ<b>ος</b></span></td><td><span class='grieks'>αὕτ<b>η</b></span></td><td><span class='grieks'>τοῦτ<b>ο</b></span></td></tr><tr><th>gen. ev.</th><td><span class='grieks'>τούτ<b>ου</b></span></td><td><span class='grieks'>ταύτ<b>ης</b></span></td><td><span class='grieks'>τούτ<b>ου</b></span></td></tr><tr><th>dat. ev.</th><td><span class='grieks'>τούτ<b>ῳ</b></span></td><td><span class='grieks'>ταύτ<b>ῃ</b></span></td><td><span class='grieks'>τούτ<b>ῳ</b></span></td></tr><tr><th>acc. ev.</th><td><span class='grieks'>τουτ<b>ον</b></span></td><td><span class='grieks'>ταυτ<b>ην</b></span></td><td><span class='grieks'>τοῦτ<b>ο</b></span></td></tr><tr><th>nom. mv.</th><td><span class='grieks'>οὗτ<b>οι</b></span></td><td><span class='grieks'>αὗτ<b>αι</b></span></td><td><span class='blauw grieks'>ταῦτ<b>α</b></span></td></tr><tr><th>gen. mv.</th><td><span class='grieks'>τούτ<b>ων</b></span></td><td><span class='blauw grieks'>τούτ<b>ων</b></span></td><td><span class='grieks'>τούτ<b>ων</b></span></td></tr><tr><th>dat. mv.</th><td><span class='grieks'>τούτ<b>οις</b></span></td><td><span class='grieks'>ταύτ<b>αις</b></span></td><td><span class='grieks'>τούτ<b>οις</b></span></td></tr><tr><th>acc. mv.</th><td><span class='grieks'>τούτ<b>ους</b></span></td><td><span class='grieks'>ταύτ<b>ας</b></span></td><td><span class='blauw grieks'>ταῦτ<b>α</b></span></td></tr></tbody></table>"
+},
+{
+  "nr": 149,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p><span class='oranje grieks'>Εκεῖνος</span> komt in het NT 243 keer voor. Dit wordt geheel <span class='blauw'>verbogen als <span class='grieks'>αὐτός</span>.</span></p><p><span class='oranje grieks'>Ὁδε</span> komt maar 10 keer voor, vooral in de constructie:</p><div class='vb'><span class='grieks'><b>Τάδε λέγει</b> …,</span><br>‘hij zegt deze (de volgende) dingen: ….’</div><p>Het wordt verbogen als het <span class='blauw'>lidwoord + <span class='grieks'>δε</span>.</span></p>"
+},
+{
+  "nr": 150,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<table class='par licht'><thead><tr><th></th><th>mannelijk</th><th>vrouwelijk</th><th>onzijdig</th></tr></thead><tbody><tr><th>nom. ev.</th><td><span class='grieks'>ἐκεῖν<b>ος</b></span></td><td><span class='grieks'>ἐκείν<b>η</b></span></td><td><span class='grieks'>ἐκεῖν<b>ο</b></span></td></tr><tr><th>gen. ev.</th><td><span class='grieks'>ἐκείν<b>ου</b></span></td><td><span class='grieks'>ἐκείν<b>ης</b></span></td><td><span class='grieks'>ἐκείν<b>ου</b></span></td></tr><tr><th>dat. ev.</th><td><span class='grieks'>ἐκείν<b>ῳ</b></span></td><td><span class='grieks'>ἐκείν<b>ῃ</b></span></td><td><span class='grieks'>ἐκείν<b>ῳ</b></span></td></tr><tr><th>acc. ev.</th><td><span class='grieks'>ἐκεῖν<b>ον</b></span></td><td><span class='grieks'>ἐκείν<b>ην</b></span></td><td><span class='grieks'>ἐκεῖν<b>ο</b></span></td></tr><tr><th>nom. mv.</th><td><span class='grieks'>ἐκεῖν<b>οι</b></span></td><td><span class='grieks'>ἐκεῖν<b>αι</b></span></td><td><span class='grieks'>ἐκεῖν<b>α</b></span></td></tr><tr><th>gen. mv.</th><td><span class='grieks'>ἐκείν<b>ων</b></span></td><td><span class='grieks'>ἐκείν<b>ων</b></span></td><td><span class='grieks'>ἐκείν<b>ων</b></span></td></tr><tr><th>dat. mv.</th><td><span class='grieks'>ἐκείν<b>οις</b></span></td><td><span class='grieks'>ἐκείν<b>αις</b></span></td><td><span class='grieks'>ἐκείν<b>οις</b></span></td></tr><tr><th>acc. mv.</th><td><span class='grieks'>ἐκείν<b>ους</b></span></td><td><span class='grieks'>ἐκείν<b>ας</b></span></td><td><span class='grieks'>ἐκεῖν<b>α</b></span></td></tr></tbody></table>"
+},
+{
+  "nr": 151,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<table class='par licht'><thead><tr><th></th><th>mannelijk</th><th>vrouwelijk</th><th>onzijdig</th></tr></thead><tbody><tr><th>nom. ev.</th><td><span class='grijs grieks'>ὅδε</span></td><td><span class='grijs grieks'>ἥδε</span></td><td><span class='grijs grieks'>τόδε</span></td></tr><tr><th>gen. ev.</th><td><span class='grijs grieks'>τοῦδε</span></td><td><span class='grijs grieks'>τῆσδε</span></td><td><span class='grijs grieks'>τοῦδε</span></td></tr><tr><th>dat. ev.</th><td><span class='grijs grieks'>τῷδε</span></td><td><span class='grieks'><b>τῇ</b>δε</span></td><td><span class='grijs grieks'>τῷδε</span></td></tr><tr><th>acc. ev.</th><td><span class='grijs grieks'>τόνδε</span></td><td><span class='grieks'><b>τήν</b>δε</span></td><td><span class='grijs grieks'>τόδε</span></td></tr><tr><th>nom. mv.</th><td><span class='grijs grieks'>οἵδε</span></td><td><span class='grijs grieks'>αἵδε</span></td><td><span class='grieks'><b>τά</b>δε</span></td></tr><tr><th>gen. mv.</th><td><span class='grijs grieks'>τῶνδε</span></td><td><span class='grijs grieks'>τῶνδε</span></td><td><span class='grijs grieks'>τῶνδε</span></td></tr><tr><th>dat. mv.</th><td><span class='grijs grieks'>τοῖσδε</span></td><td><span class='grijs grieks'>ταῖσδε</span></td><td><span class='grijs grieks'>τοῖσδε</span></td></tr><tr><th>acc. mv.</th><td><span class='grijs grieks'>τούσδε</span></td><td><span class='grijs grieks'>τάσδε</span></td><td><span class='grieks'><b>τά</b>δε</span></td></tr></tbody></table><p>De grijsgedrukte vormen komen niet voor het in NT.</p>"
+},
+{
+  "nr": 152,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p><span class='oranje'>Gebruik en plaats</span> aanwijzend voornaamwoord:</p><p>a) <span class='blauw'>Zelfstandig</span>: geslacht/getal is afhankelijk van waar het naar verwijst, naamval wordt bepaald door functie (vertaling volgt Nederlands geslacht).</p><div class='vb'><span class='grieks'>Σὺ μαθητὴς εἶ <u>ἐκείνου</u>, ἡμεῖς δὲ τοῦ Μωϋσέως ἐσμὲν μαθηταί</span> (Joh 9.28), ‘Jij bent een leerling <u>van diegene</u>, wij zijn leerlingen van Mozes.’</div><p>Als er geen duidelijk onderscheid wordt gemaakt kan een aanwijzend voornaamwoord ook een zwakkere betekenis hebben en een pers. vnw. vervangen:</p><div class='vb'><span class='grieks'>Γινώσκω τὴν ὁδόν. <u>Ταύτην</u> κηρύσσω τοῖς ἀνθρώποις.</span> ‘Ik ken de weg. Ik verkondig <u>hem</u> aan de mensen.’</div>"
+},
+{
+  "nr": 153,
+  "kop": "G19 Pronomen demonstrativum",
+  "cursus": 1,
+  "html": "<p>b) <span class='blauw'>Bijvoeglijk</span>: plaatsing of voor of achter het [lidwoord + zelfstandig naamwoord] waar het mee congrueert in naamval, geslacht, getal (plaatsing als predicaat).</p><div class='vb'><span class='grieks'><u>ἐκεῖνος</u> ὁ μαθητής</span>, ‘<u>die</u> leerling (daar)’<br><span class='grieks'>ὁ μαθητὴς <u>ἐκεῖνος</u></span>, ‘<u>die</u> leerling (daar)’</div><p>Zo wordt het ook vaak in tijdsaanduidingen gebruikt.</p><div class='vb'><span class='grieks'>Καὶ λέγει αὐτοῖς ἐν <u>ἐκείνῃ</u> τῇ ἡμέρᾳ (…)</span><br>‘En hij zei tegen hen op <u>die</u> dag (…)’ (Mk 4.35)</div>"
+},
+{
+  "nr": 154,
+  "kop": "G20 Verba contracta",
+  "cursus": 1,
+  "html": "<div class='kader zijnoot'>De volledige vervoeging van de voorbeeldwerkwoorden <span class='grieks'>τιμάω, φιλέω, δηλόω</span> (en <span class='grieks'>ζήω</span>) is gegeven in NG <b>10</b>.1.2.</div><p><i>Herhaling</i>:<br>Griekse werkwoorden zijn in te delen in verschillende (vervoegings)groepen (<span class='oranje'>conjugaties</span>) op basis van de laatste letter van de stam:</p><p>verba vocalia: <span class='grieks'>λύω</span><br>verba muta: <span class='grieks'>καλύπτω, φυλάσσω, κομίζω</span><br><span class='blauw'>verba contracta: <span class='grieks'>τιμάω, φιλέω, δηλόω</span></span><br>verba liquida: <span class='grieks'>φαίνω, ἀγγελλω, σπείρω</span></p>"
+},
+{
+  "nr": 155,
+  "kop": "G20 Verba contracta",
+  "cursus": 1,
+  "html": "<p>Verba contracta hebben een <span class='blauw'>stam die eindigt op een <span class='grieks'>ε, α, ο</span> of <span class='grieks'>η</span></span>. In het praesens en imperfectum (bij tempora gebaseerd op de praesensstam), vindt samentrekking (<span class='blauw'>contractie</span>) plaats tussen deze stamklinker en de bindvocaal+uitgang. Dit is vaak aan het accent te zien.</p><p>Verba contracta zijn vaak afgeleid van een zelfstandig naamwoord of bijvoeglijk naamwoord. Dit is een voordeel in het leren van betekenissen, maar een nadeel bij het herkennen: is het een ww. of zelfst. nw.?</p><table class='par kaal'><tbody><tr><td class='groen grieks'>δικαιόω</td><td class='groen'>‘rechtvaardigen’</td><td><span class='groen'>van <span class='grieks'>δίκαιος</span>, ‘rechtvaardig’</span></td></tr><tr><td class='groen grieks'>ἀγαπάω</td><td class='groen'>‘liefhebben’</td><td><span class='groen'>van <span class='grieks'>ἀγάπη</span>, ‘liefde’</span></td></tr><tr><td class='groen grieks'>φιλέω</td><td class='groen'>‘liefhebben’</td><td><span class='groen'>van <span class='grieks'>φιλία</span>, ‘liefde’</span></td></tr></tbody></table>"
+},
+{
+  "nr": 156,
+  "kop": "G20 Verba contracta",
+  "cursus": 1,
+  "html": "<p>Samentrekkingsregels verba contracta:</p><table class='par licht'><thead><tr><th>stam op <span class='grieks'>-ε</span></th><th>stam op <span class='grieks'>-α</span></th><th>stam op <span class='grieks'>-o</span></th><th>stam op <span class='grieks'>-η</span></th></tr></thead><tbody><tr><td class='grieks'>ε + ε &gt; ει</td><td class='grieks'>α + ε &gt; α</td><td class='grieks'>ο + ε &gt; ου</td><td class='grieks'>η + ε &gt; η</td></tr><tr><td class='grieks'>ε + ει &gt; ει</td><td class='grieks'>α + ει &gt; ᾳ</td><td class='grieks'>ο + ει &gt; οι</td><td class='grieks'>η + ει &gt; ῃ</td></tr><tr><td><span class='grijs grieks'>ε + η* &gt; η</span></td><td><span class='grijs grieks'>α + η* &gt; ᾳ</span></td><td><span class='grijs grieks'>ο + η* &gt; οι</span></td><td><span class='grijs grieks'>η + η* &gt; ῃ</span></td></tr><tr><td class='grieks'>ε + ο &gt; ου</td><td class='grieks'>α + ο &gt; ω</td><td class='grieks'>ο + ο &gt; ου</td><td class='grieks'>η + ο &gt; ω</td></tr><tr><td class='grieks'>ε + ου &gt; ου</td><td class='grieks'>α + ου &gt; ω</td><td class='grieks'>ο + ου &gt; ου</td><td class='grieks'>η + ου &gt; ω</td></tr><tr><td class='grieks'>ε + ω &gt; ω</td><td class='grieks'>α + ω &gt; ω</td><td class='grieks'>ο + ω &gt; ω</td><td class='grieks'>η + ω &gt; ω</td></tr></tbody></table><p>* Dit is een (bindvocaal+)uitgang van het medium (Grieks 2).</p>"
+}
+]

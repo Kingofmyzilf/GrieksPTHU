@@ -1,0 +1,80 @@
+[
+{
+  "nr": 313,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>De <span class='oranje'>tweede vormingswijze</span> heeft de volgende uitgangen:</p><p>vergrotende trap: <span class='blauw grieks'>-(ι)ων</span>, genitivus <span class='grieks'>-(ι)ονος</span><br>overtreffende trap: <span class='blauw grieks'>-ιστος</span></p><p>De vergrotende trap wordt verbogen volgens bijv. nw. <span class='blauw grieks'>μέλας</span> (3<sup>e</sup> decl.), maar zonder aparte vrouwelijke vormen en een nom./acc. onz. ev. op <span class='grieks'>-(ι)ον</span>. De overtreffende trap wordt verbogen volgens bijv. nw. <span class='blauw grieks'>καλός</span> (1<sup>e</sup>/2<sup>e</sup> decl).</p><div class='vb'><span class='grieks'>ἡδύς, ἡδίων, ἥδιστος</span>, ‘zoet, zoeter, zoetst’<br>comparativus in acc. man./vro. ev.: <span class='grieks'><b>ἡδίονα</b></span></div><p>Er is geen regel welk bijv. nw. welke uitgangen krijgt, maar bijv. nw. van de 1<sup>e</sup>/2<sup>e</sup> declinatie volgen meestal de eerste vormingswijze.</p>"
+},
+{
+  "nr": 314,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>Soms <span class='oranje'>verandert de stam</span> een beetje, bijvoorbeeld:</p><table class='par kaal'><tbody><tr><td>bijv. nw.:</td><td><span class='grieks'><span class='blauw'><b>καλ</b></span>ός, -ή, -όν</span> (goed, mooi)</td></tr><tr><td>comparativus:</td><td><span class='grieks'><span class='blauw'><b>καλλ</b></span>ίων, -ον</span> (beter, mooier)</td></tr><tr><td>superlativus:</td><td><span class='grieks'><span class='blauw'><b>κάλλ</b></span>ιστος, -η, -ον</span> (best, mooist)</td></tr></tbody></table><p>Deze verschilt nog wat meer:</p><table class='par kaal'><tbody><tr><td>bijv. nw.:</td><td><span class='grieks'><span class='blauw'><b>μέγ</b></span>ας, μεγάλη, μέγα</span> (groot)</td></tr><tr><td>comparativus:</td><td><span class='grieks'><span class='blauw'><b>μείζ</b></span>ων, -ον</span> (groter, meer)</td></tr><tr><td>superlativus:</td><td><span class='grieks'><span class='blauw'><b>μέγ</b></span>ιστος, -η, -ον</span> (grootst, meest)</td></tr></tbody></table><div class='vb'><span class='grieks'>καὶ <b>μείζονα</b> τούτων ποιήσει</span> (Joh 14.12)<br>‘en hij zal <b>grotere dingen</b> (onz. mv.) dan deze (genitivus comparationis) doen’</div>"
+},
+{
+  "nr": 315,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>De volgende stammen zijn nog onregelmatiger.<br>Leer van de volgende <span class='oranje'>onregelmatige trappen</span> van vergelijking de meest frequente (in zwart):</p><table class='par licht'><thead><tr><th>bijv. nw.</th><th>comparativus</th><th>superlativus</th></tr></thead><tbody><tr><td><span class='grieks'>μέγας</span> (‘groot’)</td><td><span class='grieks'>μείζων</span> (48x)</td><td><span class='grijs'><span class='grieks'>μέγιστος</span> (1x)</span></td></tr><tr><td><span class='grieks'>ἀγαθός</span> (‘goed’)</td><td><span class='grieks'>κρείσσων</span> (15x)</td><td><span class='grijs'><span class='grieks'>κράτιστος</span> (4x)</span></td></tr><tr><td><span class='grieks'>κακός</span> (‘slecht’)</td><td><span class='grieks'>χείρων</span> (11x)</td><td><span class='grijs'><span class='grieks'>χείριστος</span> (0x)</span></td></tr><tr><td><span class='grieks'>ὀλίγος</span> (‘klein’)</td><td><span class='grijs'><span class='grieks'>ἐλάσσων</span> (4x)</span></td><td><span class='grieks'>ἐλάχιστος</span> (13x)</td></tr><tr><td><span class='grieks'>πολύς</span> (‘veel’)</td><td><span class='grieks'>πλείων</span> (55x)</td><td><span class='grijs'><span class='grieks'>πλεῖστος</span> (4x)</span></td></tr></tbody></table>"
+},
+{
+  "nr": 316,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>Comparativi en superlativi <span class='blauw'>congrueren</span> net als een bijvoeglijk naamwoord met het zelfstandig naamwoord waar ze bij horen of waar ze naar verwijzen in naamval, geslacht en getal. Ze kennen (net als een bijv. nw.) de volgende typen van <span class='oranje'>gebruik</span>:</p><p>1)&ensp;gesubstantiveerd (verzelfstandigd)<br>2)&ensp;attributief (bijvoeglijk)<br>3)&ensp;predicatief (als predicaatsnomen = naamw. deel van het gezegde)</p><div class='vb'>1)&ensp;<span class='grieks'>οἱ <u>πρεσβύτεροι</u></span>, ‘de ouderen, ouderlingen’<br>2)&ensp;<span class='grieks'>ἐκ ξύλου <u>τιμιωτάτου</u></span>, ‘uit zeer waardevol hout’ (Op 12.18)<br>3)&ensp;<span class='grieks'>ὅτε ἦς</span> (conj. <span class='grieks'>εἰμί</span>) <span class='grieks'><u>νεώτερος</u>, ἐζώννυες σεαυτὸν</span>, ‘toen je jonger was, omgordde je jezelf’ (Joh 21.18)</div>"
+},
+{
+  "nr": 317,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>‘Het kind is kleiner <span class='groen'><b>dan zijn vader</b></span>.’</p><p>Dit type vergelijkingen met een comparativus kunnen in het Grieks op drie manieren worden gezegd:</p><p>1) <span class='blauw'><span class='grieks'>ἤ</span> + nom.</span></p><div class='vb'><span class='grieks'>τὸ τέκνον μικρότερόν ἐστιν <span class='groen'><b>ἢ ὁ πατὴρ αὐτοῦ</b></span>.</span></div><p>2) met een <span class='blauw'>genitivus comparationis</span></p><div class='vb'><span class='grieks'>τὸ τέκνον ἐστὶν μικρότερον <span class='groen'><b>τοῦ πατρὸς αὐτοῦ</b></span>.</span></div><p>3) <span class='blauw'><span class='grieks'>παρὰ/ὑπέρ</span> + acc.</span> (Hebraïsme)</p><div class='vb'><span class='grieks'>τὸ τέκνον μικρότερόν ἐστιν <span class='groen'><b>παρὰ/ὑπέρ τον πατέρα αὐτοῦ</b></span>.</span></div>"
+},
+{
+  "nr": 318,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p><span class='blauw'>Modi/wijzen</span> tot nu toe:</p><ul><li>indicativus = aantonende wijs (G8)</li><li>infinitivus = hele werkwoord (G8)</li><li>imperativus = gebiedende wijs (G8)</li><li>participium = deelwoord (G38-39)</li></ul><p>Hier komt voor Grieks 3 bij:</p><ul><li><span class='oranje'>coniunctivus</span> = aanvoegende wijs (G44-45)</li><li>optativus = ‘wensende wijs’ (G48)</li></ul>"
+},
+{
+  "nr": 319,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p>In het <span class='oranje'>Nederlands</span> is de aanvoegende wijs (of: conjunctief/subjunctief) een werkwoordsvorm die onder meer <span class='blauw'>een wens, toegeving, aanwijzing of aansporing</span> uitdrukt.</p><p>In het hedendaagse Nederlands is het gebruik van de aanvoegende wijs goeddeels beperkt tot vaste, <span class='blauw'>versteende uitdrukkingen</span>. Bijvoorbeeld: <i>kome</i> wat komt, <i>koste</i> wat het kost, zo waarlijk <i>helpe</i> mij God almachtig, de hemel <i>beware</i> me, <i>leve</i> de koningin!, men <i>neme</i>, het <i>zij</i> zo, het <i>ware</i> beter.</p><p><span style='font-size:14px'>zie: https://taaladvies.net/termen-aanvoegende-wijs/</span></p>"
+},
+{
+  "nr": 320,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p>De coniunctivus komt in het Grieks meer voor, maar enkel in de tempora <span class='blauw'>praesens</span> (actief en medium) <span class='blauw'>en aoristus</span> (actief, medium en passief).</p><p><i>Vorming coniunctivus praesens:</i> zoals indicativus met verlengde bindvocalen: <span class='grieks'>ε/η &gt; <span class='blauw'><b>η</b></span></span>&emsp;|&emsp;<span class='grieks'>ο/ου/ω &gt; <span class='blauw'><b>ω</b></span></span></p><p><i>Vorming coniunctivus aoristus:</i> zoals indicativus met de verlengde bindvocalen van de coni. prae. (<span class='blauw grieks'>η/ω</span> in plaats van <span class='grieks'>α</span>). Tijdkenletters blijven (<span class='blauw grieks'>σ/θ</span>) maar er is er <span class='blauw'>geen augment</span> (het is ook geen verleden tijd).</p><table class='par kaal'><tbody><tr><td><i>indic.:</i></td><td class='grieks'>λύεις</td><td><i>coni.:</i></td><td><span class='grieks'>λύ<span class='oranje'><b>ῃς</b></span></span></td><td>(prae A 2<sup>e</sup> ev)</td></tr><tr><td></td><td class='grieks'>ἐλυσάμεθα</td><td></td><td><span class='grieks'>λυσ<span class='oranje'><b>ώμεθα</b></span></span></td><td>(aor M 1<sup>e</sup> mv)</td></tr><tr><td></td><td class='grieks'>ἐλύθην</td><td></td><td><span class='grieks'>λυθ<span class='oranje'><b>ῶ</b></span></span></td><td>(aor P 1<sup>e</sup> ev)</td></tr></tbody></table>"
+},
+{
+  "nr": 321,
+  "kop": "Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>conj. prae. A</th><th>conj. prae. M</th><th>conj. aor. A</th><th>conj. aor. M</th><th>coni. aor. P</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td class='grieks'>λύω</td><td class='grieks'>λύωμαι</td><td class='grieks'>λύσω</td><td class='grieks'>λύσωμαι</td><td class='grieks'>λυθῶ</td></tr><tr><th>2<sup>e</sup> ev.</th><td class='grieks'>λύῃς</td><td class='grieks'>λύῃ</td><td class='grieks'>λύσῃς</td><td class='grieks'>λύσῃ</td><td class='grieks'>λυθῇς</td></tr><tr><th>3<sup>e</sup> ev.</th><td class='grieks'>λύῃ</td><td class='grieks'>λύηται</td><td class='grieks'>λύσῃ</td><td class='grieks'>λύσηται</td><td class='grieks'>λυθῇ</td></tr><tr><th>1<sup>e</sup> mv.</th><td class='grieks'>λύωμεν</td><td class='grieks'>λυώμεθα</td><td class='grieks'>λύσωμεν</td><td class='grieks'>λυσώμεθα</td><td class='grieks'>λυθῶμεν</td></tr><tr><th>2<sup>e</sup> mv.</th><td class='grieks'>λύητε</td><td class='grieks'>λύησθε</td><td class='grieks'>λύσητε</td><td class='grieks'>λύσησθε</td><td class='grieks'>λυθῆτε</td></tr><tr><th>3<sup>e</sup> mv.</th><td class='grieks'>λύωσι(ν)</td><td class='grieks'>λύωνται</td><td class='grieks'>λύσωσι(ν)</td><td class='grieks'>λύσωνται</td><td class='grieks'>λυθῶσι(ν)</td></tr></tbody></table>"
+},
+{
+  "nr": 322,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p>De coni. aor. pas. wordt gevormd door de tijdkenletter <span class='grieks'>θ</span> en dezelfde uitgangen als de coni. aor. act. met circumflexus-accent (<span class='grieks'>λυθῶ, λυθῆς, λύθῇ</span> etc.).</p><p>Sommige coniunctivus-vormen kunnen op meerdere manieren gedetermineerd worden:</p><table class='par licht'><tbody><tr><th class='grieks'>λύω</th><td>ind. prae. A 1<sup>e</sup> ev.</td><td>coni. prae. A 1<sup>e</sup> ev.</td><td></td></tr><tr><th class='grieks'>λύσω</th><td>ind. fut. A. 1<sup>e</sup> ev.</td><td>coni. aor. A 1<sup>e</sup> ev.</td><td></td></tr><tr><th class='grieks'>λύῃ</th><td>ind. prae. M 2<sup>e</sup> ev.</td><td>coni. prae. A 3<sup>e</sup> ev.</td><td>coni. prae. M 2<sup>e</sup> ev.</td></tr><tr><th class='grieks'>λύσῃ</th><td>ind. fut. M. 2<sup>e</sup> ev.</td><td>coni. aor. A 3<sup>e</sup> ev.</td><td>coni. aor. M 2<sup>e</sup> ev.</td></tr></tbody></table><p>De juiste determinatie en vertaling zijn afhankelijk van de context.</p>"
+},
+{
+  "nr": 323,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p>Over het algemeen geldt voor het <span class='oranje'>gebruik</span> van de coniunctivus dat deze modus wordt gebruikt voor zaken die <span class='blauw'>nog niet aan de orde</span> zijn.</p><p>Het verschil in betekenis tussen de twee tempora heeft niet zozeer te maken met wanneer de handeling plaatsvindt (de tijd) maar met het verschillende <span class='oranje'>aspect</span> van deze tempora:</p><p>De coni. aor. duidt <span class='blauw'>iets specifieks / eenmaligs</span> aan en de coni. prae. duidt <span class='blauw'>iets algemeens / langdurigs</span> aan.</p>"
+},
+{
+  "nr": 324,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p>Specifieker hangt het gebruik van een coniunctivus vorm (en dus je vertaling ervan) af van of deze <span class='blauw'>in een hoofdzin of een bijzin</span> staat. We onderscheiden 9 gebruikswijzen.</p><p>Coniunctivus in <span class='oranje'>hoofdzinnen</span>: 3 opties qua gebruik</p><p>1.&ensp;<span class='blauw'>Conjunctivus adhortativus</span> / van aansporing<br>hint: 1e persoon!<br>vertaling: m.b.v. hulpwerkwoord ‘laten’</p><div class='vb'><span class='grieks'><u>προσερχώμεθα</u> οὖν μετὰ παρρησίας τῷ θρόνῳ τῆς χάριτος</span> (Hb 4.16)<br>‘<b><u>Laten</u></b> <u>wij</u> dan <u>gaan</u> met vrijmoedigheid <u>naar</u> de troon van de genade’</div>"
+},
+{
+  "nr": 325,
+  "kop": "G44 Coniunctivus: vorming λύω en gebruik",
+  "cursus": 3,
+  "html": "<p>2. <span class='blauw'>Conjunctivus dubitativus</span> / van twijfel<br>hint: in vraagzin!<br>vertaling: m.b.v. hulpwerkwoord ‘moeten’</p><div class='vb'><span class='grieks'>Τί <u>ποιήσωμεν</u>, ἄνδρες ἀδελφοί;</span> (Hand. 2.37)<br>‘Wat <b><u>moeten</u></b> <u>wij doen</u>, mannen broeders<b>?</b>’</div><p>3. <span class='blauw'>Conjunctivus prohibitivus</span> / van verbod<br>hint: met <span class='grieks'>μη</span>!<br>vertaling: als imperativus (geb. wijs of met ‘moeten’)</p><div class='vb'><span class='grieks'><b>μὴ</b> <u>θαυμάσῃς</u> ὅτι εἶπόν σοι Δεῖ ὑμᾶς γεννηθῆναι ἄνωθεν.</span> (Jh 3.7)<br>‘<u>Verbaas je</u> <b>niet</b> / <u>je</u> <b>moet</b> <u>je</u> <b>niet</b> <u>verbazen</u> dat Ik jou gezegd heb: ‘het is nodig dat jullie opnieuw geboren worden.’</div>"
+}
+]

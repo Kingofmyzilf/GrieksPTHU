@@ -1,0 +1,80 @@
+[
+{
+  "nr": 92,
+  "kop": "G11 Augment",
+  "cursus": 1,
+  "html": "<div class='kader zijnoot'>* De samen-trekking met de uitgang komt aan bod bij G20.</div><p>c) met een <span class='blauw'>tweeklank</span> &gt; ypsilon blijft staan / iota wordt iota subscriptum onder de verlengde eerste klinker:</p><div class='vb'><span class='grieks'>αἰνέω</span>, ‘prijzen’:<br><span class='grieks'>ἐ +αἰνέ + ον = ᾔνουν</span> *</div><p>&gt; of verlenging blijft achterwege (vaak in Koinē):</p><div class='vb'><span class='grieks'>εὐλογέω</span>, ‘prijzen, zegenen’<br><span class='grieks'>ἐ + εὐλογέ + ον = εὐλογοῦν</span> *</div><p>&gt; of beide vormen komen voor:</p><div class='vb'><span class='grieks'>εὕρισκω</span>, ‘vinden’:<br><span class='grieks'>ἐ + εὕρισκ + ον =</span><br><span class='grieks'>εὕρισκον</span> of <span class='grieks'>ηὕρισκον</span></div>"
+},
+{
+  "nr": 93,
+  "kop": "G11 Augment",
+  "cursus": 1,
+  "html": "<p>d) met een <span class='blauw'>voorvoegsel</span> (praepositie) &gt; augment komt tussen voorvoegsel en werkwoord:</p><div class='vb'><span class='grieks'>προσφέρω</span>, ‘brengen naar’<br><span class='grieks'>προσ + ἐ +φερ + ον = προσέφερον</span></div><p>Hierbij vindt vaak <span class='blauw'>elisie</span> (uitstoting) van de eindklinker van het voorvoegsel plaats:</p><div class='vb'><span class='grieks'>ἀναβλέπω</span>, ‘omhoog kijken’<br><span class='grieks'>ἀνα + ἐ + βλεπ + ον = ἀνέβλεπον</span></div><p>behalve bij <span class='grieks'>περι</span> en soms ook niet bij <span class='grieks'>προ</span>:</p><div class='vb'><span class='grieks'>περιβάλλω</span>, ‘aantrekken’<br><span class='grieks'>περι + ἐ + βαλλ + ον = περιέβαλλον</span></div>"
+},
+{
+  "nr": 94,
+  "kop": "G11 Augment",
+  "cursus": 1,
+  "html": "<p>Als het tweede deel van het samengestelde werkwoord zelf met een klinker of tweeklank begint, wordt deze verlengd volgens de regels bij b) en c):</p><div class='vb'><span class='grieks'>ἀφ-ορίζ-ω</span>, ‘afbakenen’:<br><span class='grieks'>ἀφ + ε + ορίζ + ον = ἀφώριζον</span></div><p>Ook wordt vaak het oorspronkelijke voorvoegsel her-steld als deze was samengetrokken met de stam (zie G3):</p><div class='vb'><span class='grieks'>ἐγγράφω</span> (<span class='grieks'>ἐν + γράφω</span>), ‘optekenen’<br><span class='grieks'>ἐν + ἐ + γραφ + ον = ἐνέγραφον</span></div><p>Of deze verandert onder invloed van het augment:</p><div class='vb'><span class='grieks'>ἐκβάλλω</span> (<span class='grieks'>ἐκ/ἐξ+βάλλω</span>), ‘uitwerpen’<br><span class='grieks'>ἐκ + ἐ + βαλλ + ον = ἐξέβαλλον</span></div>"
+},
+{
+  "nr": 95,
+  "kop": "G11 Augment",
+  "cursus": 1,
+  "html": "<div class='kader zijnoot'>* ander soort verlenging<br>** dubbel augment<br>*** driedubbel augment</div><p>e) enkele veelvoorkomende <span class='blauw'>uitzonderingen</span> (onregelmatige augmentvorming):</p><table class='par kaal'><thead><tr><th colspan='2'><i>praesens</i></th><th><i>imperfectum</i></th></tr></thead><tbody><tr><td class='grieks'>ἔχω</td><td>‘hebben’</td><td><span class='grieks'>εἶχον</span>*</td></tr><tr><td class='grieks'>θέλω</td><td>‘willen’</td><td><span class='grieks'>ἤθελον</span>**</td></tr><tr><td class='grieks'>μέλλω</td><td>‘zullen’</td><td><span class='grieks'>ἠμέλλον</span>**, <span class='grieks'>ἐμέλλον</span></td></tr><tr><td class='grieks'>ἀνοίγω</td><td>‘openen’</td><td><span class='grieks'>ἠνοίγον</span>, <span class='grieks'>ἀνέῳγον</span>**, <span class='grieks'>ἠνέῳγον</span>***</td></tr></tbody></table><p>Deze, en andere, onregelmatigheden in de vorming van de verschillende tempora leren we als ‘<span class='blauw'>stamtijden</span>’ vanaf G27 (bij Grieks 2).</p>"
+},
+{
+  "nr": 96,
+  "kop": "G12 Het werkwoord ‘zijn’",
+  "cursus": 1,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>indicativus praesens</th><th colspan='2'>indicativus imperfectum</th><th colspan='2'>imperativus praesens</th></tr><tr><th></th><th><i>Attisch/Koinē</i></th><th><i>Attisch</i></th><th><i>Koinē</i></th><th><i>Attisch</i></th><th><i>Koinē</i></th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td class='grieks'>εἰμί</td><td><span class='grijs grieks'>ἦ(ν)</span></td><td class='grieks'>ἤμην</td><td></td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td class='grieks'>εἶ</td><td class='grieks'>ἦσθα</td><td class='grieks'>ἦς</td><td class='grieks'>ἴσθι</td><td class='grieks'>ἴσθι</td></tr><tr><th>3<sup>e</sup> ev.</th><td class='grieks'>ἐστί(ν)</td><td class='grieks'>ἦν</td><td class='grieks'>ἦν</td><td class='grieks'>ἔστω</td><td class='grieks'>ἤτω</td></tr><tr><th>1<sup>e</sup> mv.</th><td class='grieks'>ἐσμέν</td><td class='grieks'>ἦμεν</td><td class='grieks'>ἤμεθα</td><td></td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td class='grieks'>ἐστέ</td><td class='grieks'>ἦτε</td><td class='grieks'>ἦτε</td><td class='grieks'>ἔστε</td><td class='grieks'>ἔσεσθε</td></tr><tr><th>3<sup>e</sup> mv.</th><td class='grieks'>εἰσί(ν)</td><td class='grieks'>ἦσαν</td><td class='grieks'>ἦσαν</td><td class='grieks'>ἔστωσαν</td><td class='grieks'>ἔστωσαν</td></tr></tbody><tfoot><tr><th colspan='2'>infinitivus praesens</th><td colspan='4' class='grieks'>εἶναι</td></tr></tfoot></table>"
+},
+{
+  "nr": 97,
+  "kop": "G12 Het werkwoord ‘zijn’",
+  "cursus": 1,
+  "html": "<p>Let op het accent bij <span class='blauw grieks'>εἶ</span><span class='blauw'>, ‘jij bent’</span> dat het onderscheidt van <span class='blauw grieks'>εἰ</span><span class='blauw'>, ‘als’</span>.</p><p>In het NT komen de Attische vormen en Koinē vormen beide voor. <span class='grieks'>ἦμεν</span> (8x) komt zelfs vaker voor dan <span class='grieks'>ἤμεθα</span> (5x). Leer dus beide rijtjes.</p><p>Alleen <span class='grieks'>ἦ(ν)</span>, ‘ik was’, (Attisch) komt niet voor in het NT. Als je wel <span class='blauw grieks'>ἤ</span> ziet staan, gaat het om het voegwoord ‘of’.</p>"
+},
+{
+  "nr": 98,
+  "kop": "G13 Negaties",
+  "cursus": 1,
+  "html": "<p>Voor het vormen van een negatie van een naamwoord voeg je het voorvoegsel <span class='oranje grieks'>α-</span> toe: de <span class='blauw'>alpha privans</span>.</p><div class='vb'><span class='grieks'>ἀδικία</span>, ‘onrecht’ (zelfst. nw.)<br><span class='grieks'>ἄπιστος</span>, ‘ontrouw’ (bijv. nw.)</div><p>Een werkwoord kan m.b.v. een bijwoord worden ontkend. Bij een indicativus is het bijwoord van ontkenning <span class='blauw grieks'>οὐ</span>, maar <span class='blauw grieks'>οὐκ</span> voor klinkers en <span class='blauw grieks'>οὐχ</span> voor geaspireerde klinkers.</p><div class='vb'><span class='grieks'>οὐ γράφει</span>, ‘hij schrijft niet’<br><span class='grieks'>οὐκ ἀκούω</span>, ‘ik hoor niet’<br><span class='grieks'>οὐκ αἴρετε</span>, ‘jullie nemen niet op’<br><span class='grieks'>οὐχ ὑγιαίνουσιν</span>, ‘zij zijn niet gezond’<br><span class='grieks'>οὐχ εὑρίσκομεν</span>, ‘wij vinden niet’</div>"
+},
+{
+  "nr": 99,
+  "kop": "G13 Negaties",
+  "cursus": 1,
+  "html": "<p>Bij andere modi (imperativus, infinitivus, coniunctivus of optativus) is het bijwoord van ontkenning <span class='blauw grieks'>μή</span>.</p><div class='vb'><span class='grieks'>μὴ εἶναι</span>, ‘niet zijn’<br><span class='grieks'>μὴ μεταβαίνετε ἐξ οἰκίας εἰς οἰκίαν</span> (Luk 10.7)<br>‘ga niet van huis tot huis’</div><p>In vraagzinnen geeft de keuze voor één van deze twee bijwoorden aan welk antwoord wordt verwacht. Verwacht de vraagsteller een positief antwoord, dan gebruikt deze <span class='blauw grieks'>οὐ / οὐχί</span> en verwacht deze een negatief antwoord <span class='blauw grieks'>μή</span>.</p><div class='vb'><span class='grieks'>μὴ καὶ ἡμεῖς τυφλοί ἐσμεν;</span> ‘Wij zijn toch niet blind?’ (Joh 9.40)<br><span class='grieks'>οὐχ οὗτός ἐστιν ὁ τέκτων;</span> ‘Dit is toch die houtbewerker?’ (Mk 6.3)</div>"
+},
+{
+  "nr": 100,
+  "kop": "G13 Negaties",
+  "cursus": 1,
+  "html": "<p>Negaties komen ook voor in deze combinaties:</p><div class='kader'><table class='par kaal'><tbody><tr><td class='grieks'>οὐδέ / οὔτε / μηδέ / μήτε</td><td>en niet, ook niet, maar niet, zelfs niet, helemaal niet</td></tr><tr><td class='grieks'>οὐδέ… οὐδέ, οὔτε… οὔτε</td><td>noch… noch</td></tr><tr><td class='grieks'>οὐχὶ</td><td>dan niet (in vraagzin, verwacht: ‘ja’)</td></tr><tr><td class='grieks'>οὐ μόνον… ἀλλὰ καί</td><td>niet alleen… maar ook</td></tr><tr><td class='grieks'>οὐκέτι / μηκέτι</td><td>niet meer (<span class='grieks'>ἔτι</span> = meer)</td></tr><tr><td class='grieks'>οὔπω</td><td>nog niet (<span class='grieks'>πω</span> = nog)</td></tr><tr><td class='grieks'>οὔτοτε / μήτοτε</td><td>nooit (<span class='grieks'>τοτε</span> = eens, toen, dan)</td></tr><tr><td class='grieks'>οὐδείς / μηδείς</td><td>niemand (<span class='grieks'>εἵς</span> = één)</td></tr><tr><td class='grieks'>οὐδέν</td><td>niets</td></tr><tr><td class='grieks'>οὐ πώποτε</td><td>nooit meer, nog nooit (niet nog ooit)</td></tr><tr><td class='grieks'>οὐδείς πώποτε</td><td>niemand ooit nog</td></tr><tr><td class='grieks'>μή τις</td><td>niemand (niet iemand)</td></tr><tr><td class='grieks'>μή τι</td><td>niets (niet iets)</td></tr></tbody></table></div>"
+},
+{
+  "nr": 101,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<p>Als je extra informatie wilt toevoegen (=<i>addere</i> in het Latijn) aan woorden in een zin dan kan dat door een <i>modifier</i> te gebruiken: een bijvoeglijk naamwoord (bij zelfst. nw.) of een bijwoord (bij werkwoorden, bijv. nw. en bijwoorden). Bijwoorden (adverba, zie G45) zijn onverbuigbaar. <span class='blauw'>Bijvoeglijk naamwoorden (adjectiva)</span> passen zich aan aan het naamwoord waar ze bij horen.</p><p><span class='oranje'>Congruentieregel</span>: ieder bijvoeglijk naamwoord komt overeen in <span class='blauw'>naamval, geslacht en getal</span> met het naamwoord waar het bij hoort.</p>"
+},
+{
+  "nr": 102,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<p>Het Griekse bijvoeglijk naamwoord (adjectivum) komt qua <span class='oranje'>verbuiging</span> overeen met de zelfstandig naamwoorden van de eerste en tweede declinatie.<br>Ieder bijvoeglijk naamwoord kan echter <span class='blauw'>in drie geslachten</span> worden gebruikt, net als het lidwoord. De uitgangen geven nu niet de declinatie aan maar het geslacht. In een woordenboek wordt de nom. ev. van de drie geslachten weergegeven:</p><div class='vb'><span class='grieks'>καλός, -η, -ον</span>: ‘mooi, goed’</div><p>Daarbij zijn de uitgangen met een nom. ev. op</p><table class='par kaal'><tbody><tr><td class='grieks'>-ος / -ους</td><td>mannelijk,</td></tr><tr><td class='grieks'>-η /-α</td><td>vrouwelijk,</td></tr><tr><td class='grieks'>-ον /-ουν</td><td>onzijdig.</td></tr></tbody></table>"
+},
+{
+  "nr": 103,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<table class='par licht'><thead><tr><th></th><th>mannelijk</th><th>vrouwelijk</th><th>onzijdig</th></tr></thead><tbody><tr><th>nom. ev.</th><td><span class='grieks'>καλ<b>ός</b></span></td><td><span class='grieks'>καλ<b>ή</b></span></td><td><span class='grieks'>καλ<b>όν</b></span></td></tr><tr><th>gen. ev.</th><td><span class='grieks'>καλ<b>οῦ</b></span></td><td><span class='grieks'>καλ<b>ῆς</b></span></td><td><span class='grieks'>καλ<b>οῦ</b></span></td></tr><tr><th>dat. ev.</th><td><span class='grieks'>καλ<b>ῷ</b></span></td><td><span class='grieks'>καλ<b>ῇ</b></span></td><td><span class='grieks'>καλ<b>ῷ</b></span></td></tr><tr><th>acc. ev.</th><td><span class='grieks'>καλ<b>όν</b></span></td><td><span class='grieks'>καλ<b>ήν</b></span></td><td><span class='grieks'>καλ<b>όν</b></span></td></tr><tr><th>nom. mv.</th><td><span class='grieks'>καλ<b>οί</b></span></td><td><span class='grieks'>καλ<b>αί</b></span></td><td><span class='grieks'>καλ<b>ά</b></span></td></tr><tr><th>gen. mv.</th><td><span class='grieks'>καλ<b>ῶν</b></span></td><td><span class='grieks'>καλ<b>ῶν</b></span></td><td><span class='grieks'>καλ<b>ῶν</b></span></td></tr><tr><th>dat. mv.</th><td><span class='grieks'>καλ<b>οῖς</b></span></td><td><span class='grieks'>καλ<b>αῖς</b></span></td><td><span class='grieks'>καλ<b>οῖς</b></span></td></tr><tr><th>acc. mv.</th><td><span class='grieks'>καλ<b>ούς</b></span></td><td><span class='grieks'>καλ<b>άς</b></span></td><td><span class='grieks'>καλ<b>ά</b></span></td></tr></tbody></table>"
+},
+{
+  "nr": 104,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<p>Ook hier geldt de <span class='blauw'><span class='grieks'>ρει</span>-regel</span>: als er voor de uitgang een rho, epsilon of iota staat, staat er een alpha in plaats van een ēta in de uitgangen van het vrouwelijk ev.</p><div class='vb'><span class='grieks'>ἅγιος, ἁγί<b>α</b>, ἅγίον</span>, ‘heilig’</div><p>Eindigt de stam van een bijvoeglijk naamwoord op een klinker, dan vindt er hier ook <span class='blauw'>samentrekking</span> plaats <span class='blauw'>tussen stam en uitgang</span>, te zien aan de nom. en acc. mannelijk en onzijdig en aan het circumflexus- accent.</p><div class='vb'><span class='grieks'>ἁπλ<b>οῦς</b></span> (<span class='grieks'>ἁπλο-ος</span>), <span class='grieks'>ἁπλ<b>ῇ</b></span>, <span class='grieks'>ἁπλ<b>οῦν,</b></span> ‘eenvoudig’</div><p><span class='grieks'>ρει</span>-regel en samentrekking kunnen ook beide opgaan.</p><div class='vb'><span class='grieks'>ἀργυρ<b>οῦς</b></span> (<span class='grieks'>ἀργυρο-ος</span>), <span class='grieks'>ἀργυρ<b>ᾶ</b></span>, <span class='grieks'>ἀργυρ<b>οῦν</b></span>, ‘zilveren’</div>"
+}
+]

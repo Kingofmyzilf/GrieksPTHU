@@ -9,6 +9,12 @@ gelijk is, waren gemeten in het ingebedde plaatje en niet in de pagina zelf, en 
 liggen niet op elkaar. De winst was twee kilobyte per slide en het risico is dat er tekst
 wegvalt zonder dat je het ziet. Dus de hele pagina.
 
+Alle 376 slides staan inmiddels overgetypt in grammatica_slides.json, dus dit script is er
+nu voor nakijken en niet meer voor het overtypen zelf. De pdf staat daarom niet meer in de
+repo; haal hem eerst terug als je hem nodig hebt:
+
+    git show 2af3a4a:grammatica_overzicht.pdf > grammatica_overzicht.pdf
+
 Draaien:  py gereedschap/slides_beelden.py <van> <tot> [map]
 
 Bijvoorbeeld 'py gereedschap/slides_beelden.py 41 50' zet slide 41 tot en met 50 klaar.
@@ -40,6 +46,8 @@ def main():
         if oud.endswith(".png"):
             os.remove(os.path.join(map_uit, oud))
 
+    if not os.path.exists(PDF):
+        sys.exit(f"{PDF} staat niet in de repo (zie de kop van dit bestand).")
     import fitz
     doc = fitz.open(PDF)
     for n in range(van, min(tot, doc.page_count) + 1):

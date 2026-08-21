@@ -46,3 +46,9 @@ bijbel_nt_deel2.json
 # blijft is slides_werk/*.json en het samengevoegde grammatica_slides.json.
 slides_werk/beelden/
 slides_werk/proef.html
+
+# De grammatica-slides staan overgetypt in grammatica_slides.json (624 kB). De pdf van
+# 22 MB is daarmee bron geworden in plaats van bagage en staat niet meer in de repo. Terug
+# te halen uit de geschiedenis als je een slide wilt nakijken:
+#     git show 2af3a4a:grammatica_overzicht.pdf > grammatica_overzicht.pdf
+grammatica_overzicht.pdf

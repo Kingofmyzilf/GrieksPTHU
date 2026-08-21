@@ -3,4 +3,3 @@ pandas
 matplotlib
 st-gsheets-connection
 streamlit-local-storage
-pymupdf

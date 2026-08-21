@@ -1,0 +1,80 @@
+[
+{
+  "nr": 105,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<p>Er bestaat ook een subgroep adjectiva die <span class='blauw'>geen aparte uitgangen voor het vrouwelijk</span> hebben. Vrouwelijke varianten van deze bijv. naamwoorden volgen de mannelijke verbuiging.</p><p>Hier vallen in ieder geval alle samengestelde bijvoeglijk naamwoorden onder.</p><div class='vb'><span class='grieks'>ἄδικος</span> (<span class='grieks'>ἀ-δικος</span>), ‘onrechtvaardig’<br>‘een onrechtvaardig offer’ &gt; <span class='grieks'>θυσία ἄδικος</span></div><p>Er zijn ook een aantal niet-samengestelde bijvoeglijk naamwoorden ‘met twee uitgangen’, onthoud daarvan <span class='blauw grieks'>ἔρημος</span> (‘eenzaam’): 48x in NT.</p>"
+},
+{
+  "nr": 106,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<div class='kader zijnoot'>Zie de voor de volledige verbuiging NG p. 48.</div><p>Tot slot zijn er nog twee veelvoorkomende adjectiva van de 1<sup>e</sup>/2<sup>e</sup> declinatie die een iets <span class='blauw'>andere stam</span> hebben dan je op basis van de nom. man. ev. zou denken en enkele <span class='blauw'>iets andere uitgangen</span> in de nom./acc. man./onz. ev.</p><table class='par kaal'><tbody><tr><td><span class='oranje grieks'>μέγας, μεγάλη, μέγαν</span></td><td>‘groot’</td></tr><tr><td><span class='oranje grieks'>πολύς, πολλή, πολύ</span></td><td>‘veel’</td></tr></tbody></table><p>De bijbehorende stammen zijn: <span class='blauw grieks'>μεγαλ-</span> en <span class='blauw grieks'>πολλ-.</span></p>"
+},
+{
+  "nr": 107,
+  "kop": "G14 Adiectiva 1e/2e declinatie",
+  "cursus": 1,
+  "html": "<p>Een adiectivum kan op drie manieren worden <span class='oranje'>gebruikt</span>:</p><p class='blauw kopje'>a) attributief (bijvoeglijk)</p><table class='par kaal'><tbody><tr><td>-&ensp;<span class='grieks'>τὸ ἀγαθὸν ἔργον</span></td><td>‘het goede werk’</td></tr><tr><td>-&ensp;<span class='grieks'>τὸ ἔργον τὸ ἀγαθόν</span></td><td>‘het goede werk’</td></tr><tr><td>-&ensp;<span class='grieks'>ἔργον ἀγαθόν / ἀγαθόν ἔργον</span></td><td>‘een goed werk’</td></tr></tbody></table><p class='blauw kopje'>b) predicatief (als naamwoordelijk deel)</p><table class='par kaal'><tbody><tr><td>-&ensp;<span class='grieks'>τὸ ἔργον ἐστιν ἀγαθόν.</span></td><td>‘Het werk is goed.’</td></tr><tr><td>-&ensp;<span class='grieks'>τὸ ἔργον ἀγαθόν.</span></td><td>‘Het werk is goed.’</td></tr><tr><td>-&ensp;<span class='grieks'>ἀγαθὸν τὸ ἔργον.</span></td><td>‘Het werk is goed.’</td></tr></tbody></table><p class='blauw kopje'>c) gesubstantiveerd (verzelfstandigd)</p><p><span class='grieks'>οἱ ἀγαθοί</span>, ‘de goeden’ / ‘de goede mensen’</p><p>Let op het verschil tussen a en b. Zo nodig dien je het werkwoord ‘zijn’ aan te vullen bij b (zie G4).</p>"
+},
+{
+  "nr": 108,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<p>We hebben al met drie <span class='groen'>tempora</span> van het werkwoord <span class='grieks'>λύω</span> kennisgemaakt (praesens, imperfectum, futurum). Nu komt daar de <span class='oranje'>aoristus</span> bij, in het NT de meest voorkomende tempus!</p><p>De aoristus is eigenlijk de meest ‘normale’ tempus, de ‘default’ (<span class='grieks'>ἀόριστος</span> = <span class='blauw'>onbepaald</span>). Het wordt veel gebruikt om opeenvolgende gebeurtenissen in een verhaal te vertellen. Tegenover het imperfectum (dat achtergrondinformatie geeft of een duratief aspect heeft) is het aspect over het algemeen meer <span class='blauw'>punctueel</span>: het geeft concrete, kortdurende, afgeronde stappen in een verhaal aan.</p>"
+},
+{
+  "nr": 109,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<p>Ook een meer specifiek aspect is mogelijk bij de indicativus aoristus, zoals een <span class='blauw'>ingressief</span> (‘binnenkomend’) <span class='blauw'>aspect</span>:</p><div class='vb'><span class='grieks'>ἐπίστευσα</span>, ‘ik kwam tot geloof’ / ‘ik begon te geloven’</div><p>En ook een <span class='blauw'>gnomisch</span> (gnome = tegeltjesspreuk) <span class='blauw'>aspect</span> komt voor bij de indicativus aoristus, waarbij een algemene uitspraak, een ‘handeling van alle tijden’ wordt uitgedrukt. Wij vertalen (alleen) dan met <span class='blauw'>o.t.t.</span>:</p><div class='vb'><span class='grieks'>οὐδεὶς γάρ ποτε τὴν ἑαυτοῦ σάρκα <u>ἐμίσησεν</u></span> (Ef 5.29), ‘niemand <u>haat</u> immers ooit zijn eigen lichaam’</div>"
+},
+{
+  "nr": 110,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<div class='kader zijnoot'>* aoristusstam = praesensstam maar zonder evt. reduplicaties en versterkingen</div><p>De tempus aoristus komt voor in de modi indicativus, infinitivus, imperativus, en ook in de coniunctivus en optativus, maar die leren we later.</p><p>Verschillende vormingswijzen van de aoristus:</p><p>-&ensp;<span class='blauw'>sigmatische aoristus (G15)</span><br>-&ensp;pseudosigmatische aoristus (G23)<br>-&ensp;thematische aoristus (G24 - Grieks 2)<br>-&ensp;stamaoristus (G24 - Grieks 2)</p><p><span class='oranje'>Vorming</span> indicativus van de sigmatische aoristus:<br>augment + stam* + <span class='oranje grieks'>σ</span> + bindvocaal <span class='oranje grieks'>α</span> + uitgang</p>"
+},
+{
+  "nr": 111,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<table class='par licht groenrij'><thead><tr><th>indic.</th><th>praesens</th><th>imperf.</th><th>futurum</th><th>aoristus</th><th></th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td class='grieks'>λύω</td><td class='grieks'>ἔλυον</td><td class='grieks'>λύσω</td><td><span class='grieks'><b>ἔλυσα</b></span></td><td>‘ik maakte los’</td></tr><tr><th>2<sup>e</sup> ev.</th><td class='grieks'>λύεις</td><td class='grieks'>ἔλυες</td><td class='grieks'>λύσεις</td><td><span class='grieks'><b>ἔλυσας</b></span></td><td>‘jij maakte los’</td></tr><tr><th>3<sup>e</sup> ev.</th><td class='grieks'>λύει</td><td class='grieks'>ἔλυε(ν)</td><td class='grieks'>λύσει</td><td><span class='grieks'><b>ἔλυσε(ν)</b></span></td><td>‘hij maakte los’</td></tr><tr><th>1<sup>e</sup> mv.</th><td class='grieks'>λύομεν</td><td class='grieks'>ἐλύομεν</td><td class='grieks'>λύσομεν</td><td><span class='grieks'><b>ἐλύσαμεν</b></span></td><td>‘wij maakten los’</td></tr><tr><th>2<sup>e</sup> mv.</th><td class='grieks'>λύετε</td><td class='grieks'>ἐλύετε</td><td class='grieks'>λύσετε</td><td><span class='grieks'><b>ἐλύσατε</b></span></td><td>‘jullie maakten los’</td></tr><tr><th>3<sup>e</sup> mv.</th><td class='grieks'>λύουσι(ν)</td><td class='grieks'>ἔλυον</td><td class='grieks'>λύσουσι(ν)</td><td><span class='grieks'><b>ἔλυσαν</b></span></td><td>‘zij maakten los’</td></tr></tbody></table>"
+},
+{
+  "nr": 112,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<p><span class='oranje'>Vertaling</span> indicativus aoristus: meestal <span class='blauw'>o.v.t</span>, soms <span class='blauw'>v.t.t.</span>, of bij voortijdigheid (zie voorbeeld) <span class='blauw'>v.v.t.</span>, of bij gnomisch aspect <span class='blauw'>o.t.t.</span></p><div class='vb'><span class='grieks'>Οὐκ <span class='groen'>ἐπίστευσαν</span> οὖν οἱ Ἰουδαῖοι περὶ αὐτοῦ ὅτι <span class='rood'>ἦν</span> τυφλὸς καὶ <span class='groen'>ἀνέβλεψεν</span>, ἕως ὅτου <span class='groen'>ἐφώνησαν</span> τοὺς γονεῖς αὐτοῦ τοῦ <span class='groen'>ἀναβλέψαντος</span>.</span> (Jh 9.18)<br>‘De Joden <span class='groen'>geloofden (o.v.t)</span> niet van hem dat hij blind <span class='rood'>was (o.v.t.)</span> en weer ziende <span class='groen'>was geworden (v.v.t)</span>, totdat zij de ouders <span class='groen'>geroepen hadden (v.v.t)</span> van hem die ziende <span class='groen'>geworden was (v.v.t)</span>.’</div><p><span class='rood'>rood</span> = imperfectum, <span class='groen'>groen</span> = aoristus</p><p><i>Zie je het verschil tussen de meer punctuele acties en de achtergrondinformatie/situatieschets?</i></p>"
+},
+{
+  "nr": 113,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<table class='par licht'><tbody><tr><th>imperativus aor. 2<sup>e</sup> ev.</th><td><span class='grieks'>λῦ<span class='groen'>σον</span></span></td><td>‘maak los’ /<br>‘jij moet losmaken’</td></tr><tr><th>imperativus aor. 3<sup>e</sup> ev.</th><td><span class='grieks'><b>λυσάτω</b></span></td><td>‘hij moet losmaken’ /<br>‘laat hij losmaken’</td></tr><tr><th>imperativus aor. 2<sup>e</sup> mv.</th><td><span class='grieks'><b>λύσατε</b></span></td><td>‘maakt los’ /<br>‘jullie moeten losmaken’</td></tr><tr><th>imperativus aor. 3<sup>e</sup> mv.</th><td><span class='grieks'><b>λυσάτωσαν</b></span></td><td>‘zij moeten losmaken’ /<br>‘laten zij losmaken’</td></tr></tbody><tfoot><tr><th>infinitivus aoristus</th><td><span class='grieks'>λῦσαι</span></td><td>‘losmaken’ / ‘los te maken’</td></tr></tfoot></table>"
+},
+{
+  "nr": 114,
+  "kop": "G15 Aoristus",
+  "cursus": 1,
+  "html": "<p>Bij een aoristusvorm in de <span class='blauw'>modi imperativus</span> en <span class='blauw'>infinitivus</span> speelt de (verleden) tijd geen rol. Het augment blijft dan ook achterwege.</p><p>Het onderscheid zit ’m enkel in het <span class='groen'>aspect</span>: praesens wordt vaker gebruikt voor een duratieve of herhaalde handeling, de aoristus voor een punctuele of eenmalige handeling. Je vertaalt deze aoristusvormen net als de praesensvormen.</p><div class='vb'><span class='grieks'><u>δὸς</u> ἡμῖν σήμερον</span> (Mat 6.11), ‘geef ons heden’<br>&gt; imperativus aoristus</div><div class='vb'><span class='grieks'><u>δίδου</u> ἡμῖν τὸ καθ’ ἡμέραν</span> (Luk 11.3), ‘geef ons iedere dag’ &gt; imperativus praesens (medium)</div>"
+},
+{
+  "nr": 115,
+  "kop": "G16 Pronomen personale",
+  "cursus": 1,
+  "html": "<p><span class='oranje'>Voor-naamwoorden</span> (<i>pro-nomina</i>):</p><p>-&ensp;<span class='blauw'>persoonlijk voornaamwoord (<i>personale</i>)</span><br>-&ensp;aanwijzend voornaamwoord (<i>demonstrativum</i>)<br>-&ensp;betrekkelijk voornaamwoord (<i>relativum</i>)<br>-&ensp;wederkerend voornaamwoord (<i>reflexivum</i>)<br>-&ensp;wederkerig voornaamwoord (<i>reciprocum</i>)</p><p>En bij Grieks 2/3:</p><p>-&ensp;bezittelijk voornaamwoord (<i>possessivum</i>)<br>-&ensp;vragend voornaamwoord (<i>interrogativum</i>)<br>-&ensp;onbepaald voornaamwoord (<i>indefinitum</i>)<br>-&ensp;corresponderend voornaamwoord (<i>correlativum</i>)</p>"
+},
+{
+  "nr": 116,
+  "kop": "G16 Pronomen personale",
+  "cursus": 1,
+  "html": "<p>Voornaamwoorden nemen de plaats in van naamwoorden, om herhaling te vermijden.</p><div class='vb'>De man vroeg aan het meisje of de man een boek mocht lenen van het meisje.</div><p>Persoonlijk voornaamwoorden komen in het Nederlands voor in alle drie de ‘personen’ en beide ‘getallen’: ik, jij, hij/zij/het (ev.); wij, jullie, zij (mv.).</p><p>Ook kunnen ze verschillende vormen aannemen, afhankelijk van de functie in de zin (een residu van de Nederlandse naamvallen).</p><div class='vb'>Hij (nom.) gaf haar (dat.) het boek terug.</div>"
+},
+{
+  "nr": 117,
+  "kop": "G16 Pronomen personale",
+  "cursus": 1,
+  "html": "<table class='par licht'><thead><tr><th></th><th>1<sup>e</sup> persoon</th><th>2<sup>e</sup> persoon</th><th>3<sup>e</sup> p. man.</th><th>3<sup>e</sup> p. vro.</th><th>3<sup>e</sup> p. onz.</th></tr></thead><tbody><tr><th>nom. ev.</th><td class='grieks'>ἐγώ</td><td class='grieks'>σύ</td><td class='grieks'>αὐτός</td><td class='grieks'>αὐτή</td><td><span class='grieks'>αὐτ<span class='blauw'>ό</span></span></td></tr><tr><th>gen. ev.</th><td class='grieks'>ἐμοῦ / μου</td><td class='grieks'>σοῦ / σου</td><td class='grieks'>αὐτοῦ</td><td class='grieks'>αὐτῆς</td><td class='grieks'>αὐτοῦ</td></tr><tr><th>dat. ev.</th><td class='grieks'>ἐμοί / μοι</td><td class='grieks'>σοί / σοι</td><td class='grieks'>αὐτῷ</td><td class='grieks'>αὐτῇ</td><td class='grieks'>αὐτῷ</td></tr><tr><th>acc. ev.</th><td class='grieks'>ἐμέ / με</td><td class='grieks'>σέ / σε</td><td class='grieks'>αὐτόν</td><td class='grieks'>αὐτήν</td><td><span class='grieks'>αὐτ<span class='blauw'>ό</span></span></td></tr><tr><th>nom. mv.</th><td class='grieks'>ἡμεῖς</td><td class='grieks'>ὑμεῖς</td><td class='grieks'>αὐτοί</td><td class='grieks'>αὐταί</td><td class='grieks'>αὐτά</td></tr><tr><th>gen. mv.</th><td class='grieks'>ἡμῶν</td><td class='grieks'>ὑμῶν</td><td class='grieks'>αὐτῶν</td><td class='grieks'>αὐτῶν</td><td class='grieks'>αὐτῶν</td></tr><tr><th>dat. mv.</th><td class='grieks'>ἡμῖν</td><td class='grieks'>ὑμῖν</td><td class='grieks'>αὐτοῖς</td><td class='grieks'>αὐταῖς</td><td class='grieks'>αὐτοῖς</td></tr><tr><th>acc. mv.</th><td class='grieks'>ἡμᾶς</td><td class='grieks'>ὑμᾶς</td><td class='grieks'>αὐτούς</td><td class='grieks'>αὐτάς</td><td class='grieks'>αὐτά</td></tr></tbody></table>"
+}
+]

@@ -1,0 +1,80 @@
+[
+{
+  "nr": 196,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<table class='par kaal'><tbody><tr><td>o.t.t. actief:</td><td><span class='blauw'>Ik</span> <b>help</b> <span class='oranje' style='font-weight:400'>mijn broer</span>.</td></tr><tr><td>o.t.t. passief:</td><td><span class='blauw'>Mijn broer</span> <b>wordt</b> <u>geholpen</u> (door mij).</td></tr><tr><td>o.v.t. actief:</td><td><span class='blauw'>Ik</span> <b>hielp</b> <span class='oranje' style='font-weight:400'>mijn broer</span>.</td></tr><tr><td>o.v.t. passief:</td><td><span class='blauw'>Mijn broer</span> <b>werd</b> <u>geholpen</u>.</td></tr><tr><td>v.t.t. actief:</td><td><span class='blauw'>Ik</span> <b>heb</b> <span class='oranje' style='font-weight:400'>mijn broer</span> <u>geholpen</u>.</td></tr><tr><td>v.t.t. passief:</td><td><span class='blauw'>Mijn broer</span> <b>is</b> <u>geholpen (geworden)</u>.</td></tr><tr><td>v.v.t. actief:</td><td><span class='blauw'>Ik</span> <b>had</b> <span class='oranje' style='font-weight:400'>mijn broer</span> <u>geholpen</u>.</td></tr><tr><td>v.v.t. passief:</td><td><span class='blauw'>Mijn broer</span> <b>was</b> <u>geholpen (geworden)</u>.</td></tr><tr><td>o.tk.t. actief:</td><td><span class='blauw'>Ik</span> <b>zal</b> <span class='oranje' style='font-weight:400'>mijn broer</span> <u>helpen</u>.</td></tr><tr><td>o.tk.t. passief:</td><td><span class='blauw'>Mijn broer</span> <b>zal</b> <u>worden geholpen</u>.</td></tr><tr><td>v.tk.t. actief:</td><td><span class='blauw'>Ik</span> <b>zal</b> <span class='oranje' style='font-weight:400'>mijn broer</span> <u>hebben geholpen</u>.</td></tr><tr><td>v.tk.t. passief:</td><td><span class='blauw'>Mijn broer</span> <b>zal</b> <u>zijn geholpen</u>.</td></tr></tbody></table>"
+},
+{
+  "nr": 197,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<p>In het Grieks is de diathese uit de werkwoordsvorm zelf af te leiden, door de andere persoonsuitgangen. Dit zijn de <span class='oranje'>mediale persoonsuitgangen</span>:</p><table class='par groen'><thead><tr><th></th><th>primaire uitgangen</th><th>secundaire uitgangen</th><th>imperativusuitgangen</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td class='grieks'>-μαι</td><td class='grieks'>-μην</td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td class='grieks'>-σαι</td><td class='grieks'>-σο</td><td class='grieks'>-σο</td></tr><tr><th>3<sup>e</sup> ev.</th><td class='grieks'>-ται</td><td class='grieks'>-το</td><td class='grieks'>-σθω</td></tr><tr><th>1<sup>e</sup> mv.</th><td class='grieks'>-μεθα</td><td class='grieks'>-μεθα</td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td class='grieks'>-σθε</td><td class='grieks'>-σθε</td><td class='grieks'>-σθε</td></tr><tr><th>3<sup>e</sup> mv.</th><td class='grieks'>-νται</td><td class='grieks'>-ντο</td><td class='grieks'>-σθωσαν</td></tr></tbody><tfoot><tr><th colspan='2'>infinitivusuitgang</th><td colspan='2' class='grieks'>-σθαι</td></tr></tfoot></table>"
+},
+{
+  "nr": 198,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<p>De Griekse diathese heeft niet direct verband met agens-patiens identificatie maar met <span class='oranje'>betrokkenheid van het onderwerp bij het gezegde</span>.<br>Werkwoorden met actieve uitgangen vertalen we <span class='blauw'>actief</span>.<br>In de aoristus en het futurum bestaan ook passieve uitgangen: deze vormen vertalen we <span class='blauw'>passief</span> (tenzij het deponentia passiva zijn: zie G35). Maar daarnaast kent het Grieks een derde diathese, het <span class='groen'>medium</span>, met eigen mediale uitgangen. Mediale werkwoordsvormen geven aan dat het onderwerp direct betrokken is bij het gezegde. We vertalen soms <span class='blauw'>actief</span> (dan zijn ze doorgaans intransitief), soms <span class='blauw'>mediaal</span> (reflexief/ betrokken/ wederkerig/ toleratief), soms <span class='blauw'>passief</span>. Dit is deels afhankelijk van of er ook actieve en/of passieve varianten bestaan in een bepaalde tempus.</p>"
+},
+{
+  "nr": 199,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>zie NG <b>9</b>.16 (pp. 87-88)</div><p>We maken voor het begrijpen en vertalen van medium-vormen onderscheid tussen drie typen werkwoorden, op basis van de opties die een Griekstalige heeft:</p><p>1) Werkwoorden die <span class='oranje'>in een bepaalde tempus ook als actieve vorm voorkomen</span>. Bijv. <span class='grieks'>λύω</span>. Het medium geeft dan een (iets) andere betekenis. Keuze voor vertaling (op basis van /context) van mediaal tot passief:</p><p><span class='blauw'><b>a) Wederkerend (reflexief)</b></span>: ‘(aan/met) zich(zelf)’ <span class='groen'><span class='grieks'>ἀπήγξατο</span> (Mt 27.5), ‘hij verhing zichzelf’</span> (zeldzaam in NT)</p><p><span class='blauw'><b>b) Betrokken (indirect reflexief)</b></span>: ‘voor zichzelf’, ‘met het oog op zichzelf’, ‘ten behoeve van zichzelf’<div class='vb'><span class='grieks'>οὐ γινώσκετε τί αἰτεῖσθε</span> (Mt 20.22)<br>‘jullie weten niet wat jullie (met het oog op jezelf) vragen’</div></p>"
+},
+{
+  "nr": 200,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<p><span class='blauw'><b>c) Wederkerig</b></span>: ‘(tegen/aan) elkaar’<div class='vb'><span class='grieks'>οἱ πρεσβήτεροι … <u>συνεβουλεύσαντο</u></span> (Mat 26.3-4)<br>‘de oudsten <u>overlegden met elkaar</u>’</div></p><p><span class='blauw'><b>d) Toleratief</b></span>: ‘zich laten’<div class='vb'><span class='grieks'>ἐὰν <u>περιτέμνησθε</u> Χριστὸς ὑμᾶς οὐδὲν ὠφελήσει.</span> (Gal 5.2)<br>‘als <u>jullie je laten besnijden</u> zal Christus jullie niets baten.’</div></p><p><span class='blauw'><b>e) Passief</b></span>: ‘worden’; aanwijzing (maar ook bij toleratief gebruik): ‘door …’ = <span class='grieks'>ὑπό</span> + gen. Pas op: dit geldt alleen voor werkwoorden die in die tempus <u>geen aparte passieve vormen</u> kennen: dus alleen in prae., impf., perf., en plpf.<div class='vb'><span class='grieks'>βαπτιζομαι</span>:&emsp;‘ik word gedoopt’<br>maar <span class='grieks'>ἐλυσάμην</span>: ‘ik maakte (voor) mezelf los’ (aor. med.)<br>want <span class='grieks'>ἐλύθην</span>:&emsp;‘ik werd losgemaakt’ (aor. pas.)</div></p>"
+},
+{
+  "nr": 201,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>zie NG <b>9</b>.17 (pp. 88-89)</div><p>2) Werkwoorden die <span class='oranje'>in een bepaalde tempus geen actieve vormen kennen</span>. Dit zijn <span class='groen'>deponentia</span> (ev. deponens). Hun actieve diathese hebben ze ‘gedeponeerd’ (afgelegd) - of het medium is passender gezien wat wordt uitgedrukt (vaak een <span class='blauw'>intransitieve</span> handeling). Je vertaalt deze mediale vormen <span class='blauw'>actief</span>. Dit komt veel voor in Koinē Grieks en dus ook in het NT. Als werkwoorden in het praesens ook geen actieve vormen kennen, staan ze alleen met een mediumuitgang in de woordenboeken/-lijsten.</p><div class='vb'>Bijv. <span class='grieks'>ἐρχομαι</span>, ‘komen, gaan’, dat mediale vormen kent in praesens, imperfectum en (met onr. stam) futurum, maar actieve in de aoristus (<span class='grieks'>ἤλθον</span>) en perfectum. Toch vertalen we altijd hetzelfde: actief (maar intransitief).</div>"
+},
+{
+  "nr": 202,
+  "kop": "G26 Diathese: actief, medium of passief",
+  "cursus": 2,
+  "html": "<p>3) Werkwoorden die in een bepaalde tempus wel actieve vormen kennen, maar <span class='oranje'>in het medium een afwijkende actieve betekenis</span> hebben. Deze betekenis staat in de woordenlijsten achter (med.) aangegeven. Vaak gaat het om een <span class='blauw'>intransitieve</span> betekenis in het medium (<span class='grieks'>συνάγω, παύω</span>), maar soms is het verschil groter (<span class='grieks'>ἄρχω</span>).</p><div class='vb'><span class='grieks'>συνάγω</span>: (act.) verzamelen; (med./pas.) bijeen/erbij komen<br><span class='grieks'>παύω</span>: (act.) (doen) ophouden; (med.) ophouden, stoppen<br><span class='grieks'>ἄρχω</span>: (act.) heersen, regeren; (med.) beginnen</div>"
+},
+{
+  "nr": 203,
+  "kop": "Vertaling mediumvormen - stroomschema",
+  "cursus": 2,
+  "html": "<p><i>Stroomschema, van boven naar beneden te lezen:</i></p><p class='blauw kopje'>Kent het ww ook actieve vormen <i>in deze tempus</i>?</p><ul><li><span class='groen'><b>ja</b></span> &gt; <b>Kent de actieve variant een aparte betekenis?</b><ul><li><span class='groen'><b>ja</b></span> &gt; <b>Vertaal actief!</b> (vaak intransitief)<br>bijv. <span class='grieks'>παύομαι</span>, ‘ophouden’ (actief: ‘doen ophouden’) en <span class='grieks'>ἄρχομαι</span>, ‘beginnen’ (actief: ‘heersen’)</li><li><span class='rood'><b>nee</b></span> &gt; door naar de vraag over passieve vormen<br>bijv. alle vormen van <span class='grieks'>λύω</span>, ‘losmaken’</li></ul></li><li><span class='rood'><b>nee</b></span> &gt; het ww is dan deponent in deze tempus &gt; <b>Vertaal mediaal!</b> (betrokken, reflexief, wederkerig, toleratief)<br>bijv. <span class='grieks'>δύναμαι</span> ‘kunnen’ in alle tempora, maar ook <span class='grieks'>φεύξομαι</span> ‘vluchten’ (van <span class='grieks'>φεύγω</span>) in het futurum</li></ul><p class='blauw kopje'>Kent het ww ook passieve vormen in deze tempus? <span style='font-size:14px'>(kan alleen bij futurum en aoristus)</span></p><ul><li><span class='groen'><b>ja</b></span> &gt; <b>Vertaal mediaal!</b> (betrokken, reflexief, wederkerig, toleratief)<br>bijv. <span class='grieks'>ἐλυσάμην</span> (aor)</li><li><span class='rood'><b>nee</b></span> &gt; <b>Vertaal mediaal…</b> (betrokken, reflexief, wederkerig, toleratief) <b>of passief!</b><br>bijv. <span class='grieks'>λέλυμαι</span> (pf)</li></ul>"
+},
+{
+  "nr": 204,
+  "kop": "G27 Medium praesens en imperfectum",
+  "cursus": 2,
+  "html": "<p>We starten met het <span class='blauw'>medium in het praesens en imperfectum</span> van de verba vocalia (<span class='grieks'>λύω</span>), de verba contracta, en ook het athematische <span class='grieks'>δύναμαι</span>.</p><p><span class='oranje'>Vorming</span> praesens medium verba vocalia:<br>praesensstam + themavocaal <span class='grieks'>o/ε</span> + <span class='blauw'>mediumuitgangen I</span></p><p><span class='oranje'>Vorming</span> imperfectum medium verba vocalia:<br>augment + praesensstam + themavocaal <span class='grieks'>o/ε</span> + <span class='blauw'>mediumuitgangen II</span></p><p>De <span class='groen'>themavocalen</span> zijn dezelfde als in het activum, maar ze zijn duidelijker te onderscheiden, omdat ze alleen in de 2<sup>e</sup> p. ev. samentrekken met de uitgang.</p>"
+},
+{
+  "nr": 205,
+  "kop": "G27 Medium praesens en imperfectum",
+  "cursus": 2,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>indicativus praesens</th><th>indicativus imperfectum</th><th>imperativus praesens</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td><span class='grieks'>λύ<b>ομαι</b></span></td><td><span class='grieks'>ἐλυ<b>όμην</b></span></td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td><span class='grieks'>λύ<span class='blauw'><b>ῃ</b></span></span></td><td><span class='grieks'>ἐλύ<span class='blauw'><b>ου</b></span></span></td><td><span class='grieks'>λύ<span class='blauw'><b>ου</b></span></span></td></tr><tr><th>3<sup>e</sup> ev.</th><td><span class='grieks'>λύ<b>εται</b></span></td><td><span class='grieks'>ἐλύ<b>ετο</b></span></td><td><span class='grieks'>λυ<b>έσθω</b></span></td></tr><tr><th>1<sup>e</sup> mv.</th><td><span class='grieks'>λυ<b>όμεθα</b></span></td><td><span class='grieks'>ἐλυ<b>όμεθα</b></span></td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td><span class='grieks'>λύ<b>εσθε</b></span></td><td><span class='grieks'>ἐλύ<b>εσθε</b></span></td><td><span class='grieks'>λύ<b>εσθε</b></span></td></tr><tr><th>3<sup>e</sup> mv.</th><td><span class='grieks'>λύ<b>ονται</b></span></td><td><span class='grieks'>ἐλυ<b>οντο</b></span></td><td><span class='grieks'>λυ<b>έσθωσαν</b></span></td></tr></tbody><tfoot><tr><th colspan='2'>infinitivus praesens medium</th><td colspan='2'><span class='grieks'>λύ<b>εσθαι</b></span></td></tr></tfoot></table>"
+},
+{
+  "nr": 206,
+  "kop": "G27 Medium praesens en imperfectum",
+  "cursus": 2,
+  "html": "<p>De meeste werkwoorden kennen voor de uitgang in praesens, imperfectum en futurum een <span class='oranje'>themavocaal</span> (<span class='grieks'>ε/ο</span>). Bij deze thematische werkwoorden vindt er <span class='blauw'>samentrekking</span> plaats tussen themavocaal en uitgang in de 2<sup>e</sup> persoon ev. indic. en imper., omdat daar de sigma van de uitgang is komen te vervallen:</p><table class='par kaal'><tbody><tr><td class='groen'>indic. prae. M 2<sup>e</sup> ev.:</td><td class='groen grieks'>λύ-ε-σαι</td><td class='groen grieks'>&gt; λύεαι</td><td><span class='groen'>&gt; <span class='grieks'><b>λύῃ</b></span></span></td></tr><tr><td class='groen'>imper. prae. M 2<sup>e</sup> ev.:</td><td class='groen grieks'>λύ-ε-σο</td><td class='groen grieks'>&gt; λύεο</td><td><span class='groen'>&gt; <span class='grieks'><b>λύου</b></span></span></td></tr><tr><td class='groen'>indic. impf. 2<sup>e</sup> M ev.:</td><td class='groen grieks'>ἐλύ-ε-σο</td><td class='groen grieks'>&gt; ἐλύεο</td><td><span class='groen'>&gt; <span class='grieks'><b>ἐλύου</b></span></span></td></tr></tbody></table><p>Er bestaan ook <span class='oranje'>athematische praesentia</span>. Bij deze werkwoorden eindigt de stam op een klinker, maar volgt er geen themavocaal. Er vindt dan ook geen samentrekking plaats. Bijv.: <span class='grieks'><b>δύνα - σαι</b></span>, ‘jij kunt’.</p>"
+},
+{
+  "nr": 207,
+  "kop": "G27 Medium praesens en imperfectum",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>zie NG <b>10</b>.1.2.2 (p. 128)</div><p>Bij de verba vocalia, muta en liquida treden in het medium (net als in het activum) in praesens en imperfectum geen veranderingen op aan de stam. Dit gebeurt wel bij de <span class='oranje'>verba contracta</span>: <span class='grieks'>τιμ<span class='oranje'>ά</span>ω, φιλ<span class='oranje'>έ</span>ω, δηλ<span class='oranje'>ό</span>ω, ζ<span class='oranje'>ή</span>ω/χρ<span class='oranje'>ή</span>ομαι</span>.</p><p>Net als in het activum vindt er ook in het medium <span class='blauw'>samentrekking</span> (<i>contractio</i>) plaats tussen de klinker aan het einde van de stam en de bindvocaal in het <span class='blauw'>praesens</span> en <span class='blauw'>imperfectum</span>. Enkele voorbeelden:</p><table class='par kaal'><tbody><tr><td class='groen grieks'>τιμα+ο+μαι</td><td class='groen grieks'>&gt; τιμῶμαι</td><td class='groen'>(o-klank eet alles ooooop)</td></tr><tr><td class='groen grieks'>φιλε+ε+σαι</td><td class='groen grieks'>&gt; φιλε+ε+αι</td><td><span class='groen'>&gt; <span class='grieks'>φιλῇ</span> (sigma vervalt)</span></td></tr><tr><td class='groen grieks'>ἐ+δηλο+ε+σθε</td><td class='groen grieks'>&gt; εδηλοῦσθε</td><td></td></tr><tr><td class='groen grieks'>χρη+ε+σο</td><td class='groen grieks'>&gt; χρη+ε+ο</td><td><span class='groen'>&gt; <span class='grieks'>χρῶ</span> (imper. 2<sup>e</sup> ev.)</span></td></tr></tbody></table>"
+},
+{
+  "nr": 208,
+  "kop": "G28 Stamtijden",
+  "cursus": 2,
+  "html": "<p>Naast de vier regelmatige vervoegingsgroepen (verba vocalia, verba contracta, verba muta, verba liquida), elk met hun eigen eigenaardigheden in verschillende tempora, zijn er veel werkwoorden waarbij in sommige tempora iets onregelmatigs met de stam gebeurt. Deze staan in grammatica’s in een <span class='oranje'>stamtijdenlijst / stamvormenlijst</span>.</p><p>Van de 80 in het NT meest frequente werkwoorden leren we bij Grieks 2 en 3 de stamvormen, steeds van tien werkwoorden per les. Het gaat er uiteindelijk om dat je van een specifieke werkwoordsvorm de tempus, diathese, woordenboekvorm en betekenis kunt benoemen.</p><p>Zie het werkboek, het exceldocument op Canvas/Blackboard en de cursus Stamtijden op Memrise.</p>"
+}
+]

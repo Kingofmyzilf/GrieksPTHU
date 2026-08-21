@@ -1,0 +1,80 @@
+[
+{
+  "nr": 261,
+  "kop": "G36 Medium perfectum en plusquamperfectum",
+  "cursus": 2,
+  "html": "<p>Bij <span class='oranje'>verba muta</span> (stam op een stomme medeklinker: labialen <span class='grieks'>π, β, φ</span>; gutturalen <span class='grieks'>κ, γ, χ</span>; dentalen <span class='grieks'>τ, δ, θ</span>) treden in het perfectum en plusquamperfectum samentrekkingen op tussen deze stam-medeklinkers en de letters die volgen.</p><p>We hebben dit al gezien bij de actieve vormen door de tijdkenletter <span class='blauw grieks'>κ</span>. Maar dit gebeurt ook bij de mediale vormen door de <span class='blauw grieks'>μ, σ, τ</span> <span class='blauw'>of</span> <span class='blauw grieks'>σθ</span> (eerste letter persoonsuitgang). Zie de tabel voor de regels.</p><div class='vb'><span class='grieks'>φυλάσσω</span> (gutt.), ‘bewaken, bewaren’<br>plpf.: <span class='grieks'>ἐ+πε+φύλα<b>κ</b>+<b>μ</b>εθα &gt; ἐπεφύλα<b>γμ</b>εθα</span>,<br>‘wij waren bewaakt’, of: ‘wij hadden onszelf in acht genomen’</div>"
+},
+{
+  "nr": 262,
+  "kop": "G36 Medium perfectum en plusquamperfectum",
+  "cursus": 2,
+  "html": "<p><span class='oranje'>Regels samentrekkingen</span> in perfectum en plusquampf. bij verba muta en verba liquida op <span class='grieks'>-ν</span>:</p><table class='par licht'><thead><tr><th></th><th>+ <span class='grieks'>κ</span></th><th>+ <span class='grieks'>σ</span></th><th>+ <span class='grieks'>μ</span></th><th>+ <span class='grieks'>τ</span></th><th>+(<span class='grieks'>σ</span>)<span class='grieks'>θ</span>*</th></tr></thead><tbody><tr><th>labialen</th><td class='grieks'>φ</td><td class='grieks'>ψ</td><td class='grieks'>μμ</td><td class='grieks'>πτ</td><td class='grieks'>φθ</td></tr><tr><th>gutturalen</th><td class='grieks'>χ</td><td class='grieks'>ξ</td><td class='grieks'>γμ</td><td class='grieks'>κτ</td><td class='grieks'>χθ</td></tr><tr><th>dentalen</th><td><span class='grieks'>κ</span> / <span class='grieks'>θ</span></td><td class='grieks'>σ</td><td class='grieks'>σμ</td><td class='grieks'>στ</td><td class='grieks'>σθ</td></tr><tr><th>liquida op <span class='grieks'>-ν</span></th><td class='grieks'>γκ</td><td class='grieks'>νσ</td><td><span class='grieks'>μμ</span> (klas <span class='grieks'>σμ</span>)</td><td class='grieks'>ντ</td><td class='grieks'>νθ</td></tr></tbody></table><p>* deze samentrekking geldt ook voor aoristus passief</p>"
+},
+{
+  "nr": 263,
+  "kop": "G36 Medium perfectum en plusquamperfectum",
+  "cursus": 2,
+  "html": "<p>Bij <span class='oranje'>verba liquida</span> (stam op vloeiende ‘molenaar’-medeklinker: <span class='grieks'>μ, λ, ν, ρ</span>) treedt in het perfectum en plusquamperfectum treedt <span class='blauw'>samentrekking</span> op <span class='blauw'>als de stam eindigt op een nu</span> (zie G23). Zie de tabel voor de regels.</p><div class='vb'><span class='grieks'>φαίνω</span>, ‘(doen) verschijnen’<br>pf. act: <span class='grieks'>πε+φα<b>ν</b>+<b>κ</b>ε(ν) &gt; πεφα<b>γ</b>κε(ν)</span>, ‘hij maakte zichtbaar’<br>plpf. med.: <span class='grieks'>ἐ+πε+φα<b>ν</b>+<b>μ</b>εθα &gt; ἐπεφα<b>μμ</b>εθα</span>, ‘wij waren verschenen’</div>"
+},
+{
+  "nr": 264,
+  "kop": "G37 Correlativa",
+  "cursus": 2,
+  "html": "<p>Correlativa zijn voornaamwoorden die onderling met elkaar samenhangen. Ze vallen onder drie woordsoorten en ze kunnen o.a. betrekking hebben op <span class='blauw'>grootte/hoeveelheid</span> (herkenbaar aan <span class='blauw grieks'>-σ-</span>) en op <span class='blauw'>hoedanigheid</span> (herkenbaar aan <span class='blauw grieks'>-ι-</span>):</p><p><span class='oranje'>vragende voornaamwoorden</span> (interrogativa):<br>&emsp;hoe groot? hoe veel? / hoe(danig)? wat voor?</p><p><span class='oranje'>aanwijzende voornaamwoorden</span> (demonstrativa):<br>&emsp;zo groot! zo veel! / zo(danig)! zo’n!</p><p><span class='oranje'>betrekkelijke voornaamwoorden</span> (relativa):<br>&emsp;zo groot als, zo veel als / zo(danig) als</p>"
+},
+{
+  "nr": 265,
+  "kop": "G37 Correlativa",
+  "cursus": 2,
+  "html": "<p><span class='oranje'>vragende voornaamwoorden</span> (interrogativa):<br>&emsp;‘hoe groot?’ ‘hoe veel?’&emsp;&emsp;/ ‘hoe(danig)?’ ‘wat voor?’<br>&emsp;<span class='blauw grieks'>πόσος;</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;/ <span class='blauw grieks'>ποῖος; ποταπός;</span><br>Kenmerk: <span class='blauw grieks'>π</span>, verbuiging als bijv. nw. <span class='grieks'>κάλος</span>.</p><p><span class='oranje'>aanwijzende voornaamwoorden</span> (demonstrativa):<br>&emsp;‘zo groot’, ‘zo veel’&emsp;&emsp;&emsp;/ ‘zo(danig)!’ ‘zo’n!’<br>&emsp;<span class='blauw grieks'>τοσοῦτος</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;/ <span class='blauw grieks'>τοιόσδε, τοιοῦτος</span><br>Kenmerk: <span class='blauw grieks'>τ</span>; verbuiging als aanw. vnw. <span class='grieks'>οὗτος</span>.</p><p><span class='oranje'>betrekkelijke voornaamwoorden</span> (relativa):<br>&emsp;‘zo groot als’, ‘zo veel als’&emsp;/ ‘zo(danig) als’<br>&emsp;<span class='blauw grieks'>ὅσος</span>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;/ <span class='blauw grieks'>ὅιος, ὁποῖος</span><br>Kenmerk: spiritus <span class='blauw'>asper</span>; verbuiging als <span class='grieks'>κάλος</span>.</p>"
+},
+{
+  "nr": 266,
+  "kop": "G37 Correlativa",
+  "cursus": 2,
+  "html": "<p>Enkele vaste combinaties van correlativa / idiomatische uitdrukkingen met correlativa:</p><ol><li>zoveel/zo groot als/dat: <span class='blauw grieks'><b>τοσοῦτῳ …. ὅσῳ</b></span></li><li>voor zover als: <span class='blauw grieks'><b>καθ’ ὅσον / εφ’ ὅσον</b></span></li><li>allen die/alles wat: <span class='blauw grieks'><b>πάντες ὅσοι / πάντα ὅσα</b></span></li></ol><p>Voor voorbeelden in zinsverband, zie de oefeningen in het werkboek.</p>"
+},
+{
+  "nr": 267,
+  "kop": "G37 Correlativa",
+  "cursus": 2,
+  "html": "<p>Behalve de correlativa die met grootte of hoedanigheid te maken hebben, zijn er ook andere correlativa (m.b.t. plaats, richting, oorsprong, tijd etc). Deze hoef je niet apart te leren, maar staan deels in de te leren woordenlijsten. Wel kan het nuttig zijn de gedeelde kenmerken te vatten, vandaar hier nog een overzicht.</p><table class='par kaal'><thead><tr><th>Vragend<br><span class='grieks'>π-</span></th><th>Onbepaald<br>- (geen accent)</th><th>Aanwijzend<br>–</th><th>Aanwijzend<br><span class='grieks'>τ-</span></th><th>Aanwijzend<br>–</th><th>Betrekkelijk<br>‘ (spir. asper)</th><th>Indir. vragend<br><span class='grieks'>ὁπ</span></th></tr></thead><tbody><tr><td><span class='grieks'>ποῦ;</span><br><i>waar?</i></td><td><span class='grieks'>που</span><br><i>ergens</i></td><td><span class='grieks'>ἐνθάδε</span><br><i>hier</i></td><td><span class='grieks'>ἐνταῦθα</span><br><i>daar</i></td><td><span class='grieks'>ἐκεῖ</span><br><i>daar</i></td><td><span class='grieks'>οὗ</span><br><i>waar</i></td><td><span class='grieks'>ὅπου</span><br><i>waar (ook)</i></td></tr><tr><td><span class='grieks'>ποῖ;</span><br><i>waarheen?</i></td><td><span class='grieks'>ποι</span><br><i>ergens heen</i></td><td><span class='grieks'>ἐνθάδε</span><br><i>hierheen</i></td><td><span class='grieks'>ἐνταῦθα</span><br><i>daarheen</i></td><td><span class='grieks'>ἐκεῖσε</span><br><i>daarheen</i></td><td><span class='grieks'>οἷ</span><br><i>waarheen</i></td><td><span class='grieks'>ὅποι</span><br><i>waarheen (ook)</i></td></tr><tr><td><span class='grieks'>πόθεν;</span><br><i>vanwaar?</i></td><td><span class='grieks'>ποθεν</span><br><i>ergens vandaan</i></td><td><span class='grieks'>ἐνθένδε</span><br><i>hier vandaan</i></td><td><span class='grieks'>ἐντεῦθεν</span><br><i>daar vandaan</i></td><td><span class='grieks'>ἐκεῖθεν</span><br><i>daar vandaan</i></td><td><span class='grieks'>ὅθεν</span><br><i>vanwaar</i></td><td><span class='grieks'>ὁπόθεν</span><br><i>vanwaar (ook)</i></td></tr><tr><td><span class='grieks'>πῇ;</span><br><i>waarlangs?</i></td><td><span class='grieks'>πη</span><br><i>ergens langs</i></td><td><span class='grieks'>πῇδε</span><br><i>hierlangs</i></td><td><span class='grieks'>ταύτη</span><br><i>daarlangs</i></td><td><span class='grieks'>ἐκείνη</span><br><i>daarlangs</i></td><td><span class='grieks'>ᾗ</span><br><i>waarlangs</i></td><td><span class='grieks'>ὅπη</span><br><i>waarlangs (ook)</i></td></tr><tr><td><span class='grieks'>πότε;</span><br><i>wanneer?</i></td><td><span class='grieks'>ποτε</span><br><i>eens</i></td><td>-</td><td><span class='grieks'>τότε</span><br><i>toen</i></td><td>-</td><td><span class='grieks'>ὅτε</span><br><i>wanneer, toen</i></td><td><span class='grieks'>ὁπότε</span><br><i>wanneer (ook)</i></td></tr><tr><td><span class='grieks'>πῶς;</span><br><i>hoe?</i></td><td><span class='grieks'>πως</span><br><i>op e. of a. manier</i></td><td><span class='grieks'>ὧδε</span><br><i>zo</i></td><td><span class='grieks'>οὕτω(ς)</span><br><i>zo</i></td><td><span class='grieks'>ἐκείνως</span><br><i>zo</i></td><td><span class='grieks'>ὡς</span><br><i>(zo)als</i></td><td><span class='grieks'>ὅπως</span><br><i>hoe (ook)</i></td></tr></tbody></table>"
+},
+{
+  "nr": 268,
+  "kop": "G38 Participium: vorming λύω en gebruik",
+  "cursus": 2,
+  "html": "<p>Zoals we hebben gezien bij het lezen van teksten uit het Nieuwe Testament, maakt het Koinè Grieks veelvuldig gebruik van participia, deelwoorden.</p><p>In het Nederlands is dit minder gebruikelijk, maar we kennen het deelwoord (pars = deel) wel.</p><p class='blauw kopje'>tegenwoordig deelwoord (actief)</p><p>vluchtend(e)</p><p class='groen kopje'>voltooid deelwoord (passief)</p><p>gevlucht (zijnde)</p>"
+},
+{
+  "nr": 269,
+  "kop": "G38 Participium: vorming λύω en gebruik",
+  "cursus": 2,
+  "html": "<p>Deze deelwoorden kunnen in het Nederlands op vier manieren in een zin worden gebruikt:</p><p>a) zelfstandig/gesubstantiveerd<br>de <span class='blauw'>levende</span> / de <span class='groen'>opgestane</span></p><p>b) bijvoeglijk/attributief<br>de <span class='blauw'>rijdende</span> rechter / het <span class='groen'>gegeven</span> paard</p><p>c) dubbelverbonden / predicatief<br>&gt; dan zegt het iets over het gezegde en het onderwerp<br>Hij ging <span class='blauw'>strijdend</span> ten onder.<br><span class='groen'>Verslagen</span> droop ze af.</p><p>d) als deel van het naamwoordelijk/werkw. gezegde:<br>Ik ben <span class='blauw'>afwachtend</span>. / Ik heb <span class='groen'>gelopen</span>.</p>"
+},
+{
+  "nr": 270,
+  "kop": "G38 Participium: vorming λύω en gebruik",
+  "cursus": 2,
+  "html": "<p>Een deelwoord is dus afgeleid van een <span class='oranje'>werkwoord</span>, maar het functioneert (deels ook) als <span class='oranje'>naamwoord</span>.</p><p>Werkwoordelijke eigenschappen:<br>In het Grieks kun je een participium maken in het <span class='blauw'>praesens, futurum, aoristus en perfectum</span>, en ook nog de diathesen <span class='blauw'>actief, medium</span>, en in het geval van de aoristus en het futurum, ook <span class='blauw'>passief</span>.<br>Het kent echter geen persoonsuitgangen.</p><p>Naamwoordelijke eigenschappen:<br>Een participium kent ook de eigenschappen <span class='blauw'>naamval, geslacht en getal</span>. Het wordt dus verbogen, gelukkig grotendeels volgens bekende declinaties.</p>"
+},
+{
+  "nr": 271,
+  "kop": "G38 Participium: vorming λύω en gebruik",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>(v)zz = (voor) zichzelf</div><p>Zo zien de verschillende tempora en diathesen in nom. man. ev. eruit + hun meest letterlijke vertaling:</p><table class='par licht'><tbody><tr><th>prae. A</th><td><span class='grieks'>λύ<b>ων</b></span></td><td>‘losmakend’</td></tr><tr><th>fut. A</th><td><span class='grieks'>λύ<b>σων</b></span></td><td>‘zullende losmaken’</td></tr><tr><th>aor. A</th><td><span class='grieks'>λύ<b>σας</b></span></td><td>‘losmakend’ / ‘hebbende losgemaakt’</td></tr><tr><th>perf. A</th><td><span class='grieks'>λελυ<b>κώς</b></span></td><td>‘hebbende losgemaakt’</td></tr><tr><th>prae. M</th><td><span class='grieks'>λύ<b>ομενος</b></span></td><td>‘(v)zz losmakend’ / ‘wordende losgemaakt’</td></tr><tr><th>fut. M</th><td><span class='grieks'>λυ<b>σόμενος</b></span></td><td>‘zullende (v)zz losmaken’</td></tr><tr><th>aor. M</th><td><span class='grieks'>λυ<b>σάμενος</b></span></td><td>‘(v)zz losmakend’ / ‘hebbende (v)zz losgemaakt’</td></tr><tr><th>perf. M</th><td><span class='grieks'>λελύ<b>μενος</b></span></td><td>‘hebbende (v)zz losgemaakt’ / ‘losgemaakt zijnde’</td></tr><tr><th>fut. P</th><td><span class='grieks'>λυ<b>θησόμενος</b></span></td><td>‘zullende losgemaakt worden’</td></tr><tr><th>aor. P</th><td><span class='grieks'>λυ<b>θεις</b></span></td><td>‘wordende losgemaakt’ / ‘zijnde losgemaakt’</td></tr></tbody></table>"
+},
+{
+  "nr": 272,
+  "kop": "G38 Participium: vorming λύω en gebruik",
+  "cursus": 2,
+  "html": "<p>Over het algemeen geldt qua <span class='oranje'>vormleer</span> het volgende:</p><p>De participia die een uitgang hebben op <span class='groen grieks'>-μενος</span> volgen de <span class='blauw'>1<sup>e</sup>/2<sup>e</sup> declinatie bijvoeglijk naamwoorden</span> in alle drie de geslachten (<span class='grieks'>κάλος, κάλη, κάλον</span>).</p><p>De <span class='groen'>overige participia</span> volgen in het <span class='groen'>mannelijk en onzijdig</span> na een <span class='blauw'>stam op <span class='grieks'>-ντ</span></span> de uitgangen van <span class='blauw'>de 3<sup>e</sup> declinatie</span> (let op dativus mv: <span class='grieks'>ντ</span> valt weg door <span class='grieks'>σ</span> en stamklinker wordt verlengd).</p><p>De <span class='groen'>vrouwelijke vormen</span> van deze overige participia volgen net als de bijv. nw. van de derde declinatie <span class='blauw grieks'>ἡ ἄκανθα</span>, met uitzondering van part. perf. A die <span class='grieks'>ἡ θύρα</span> volgt i.v.m. de <span class='grieks'>ρει</span>-regel.</p>"
+},
+{
+  "nr": 273,
+  "kop": "G38 Participium: vorming λύω en gebruik",
+  "cursus": 2,
+  "html": "<p>Nu volgen dia’s met uitgeschreven <span class='oranje'>verbuigingen</span> van de participia van <span class='grieks'>λύω</span>.</p><p><span class='blauw'>Frequentie</span> in het Nieuwe Testament:</p><table class='par kaal'><tbody><tr><td>participium praesens (A/M):</td><td>3687x</td></tr><tr><td>participium aoristus (A/M/P):</td><td>2289x</td></tr><tr><td>participium futurum (A/M/P):</td><td>13x</td></tr><tr><td>participium perfectum: (A/M):</td><td>673x</td></tr></tbody></table><p><i>Leeradvies:</i> De participia van <span class='grieks'>λύω</span> in praesens (A/M) en aoristus (A/M/P) moet je geheel actief kunnen <span class='blauw'>reproduceren</span>. Van de andere tempora/diathesen moet je alle vormen kunnen <span class='blauw'>herkennen</span>: bedenk dus steeds aan welke kenmerken je de tempus/diathese kunt afleiden.</p>"
+}
+]

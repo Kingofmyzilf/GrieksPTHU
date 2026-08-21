@@ -1,0 +1,80 @@
+[
+{
+  "nr": 300,
+  "kop": "G39 Participium: bijzondere vormingswijzen",
+  "cursus": 2,
+  "html": "<p>Participia van werkwoorden die een <span class='oranje'>stamaoristus</span> kennen worden onregelmatig gevormd. Zorg dat je deze in het NT voorkomende vormen kunt herkennen (<span class='grieks'>βαίνω</span> komt voor in samengestelde werkwoorden):</p><table class='par groen'><thead><tr><th>werkwoord</th><th>aoristus A</th><th>part. aor. A:<br>man., vro., onz. ev.<br>(gen. man. ev.)</th><th>vertaling participium</th></tr></thead><tbody><tr><td class='grieks'>βαίνω</td><td class='grieks'>ἐβήν</td><td><span class='grieks'><b>βάς, βᾶσα, βάν<br>(βάντος)</b></span></td><td>‘gaande’, ‘gegaan zijnde’</td></tr><tr><td class='grieks'>γινώσκω</td><td class='grieks'>ἔγνων</td><td><span class='grieks'><b>γνούς, γνοῦσα, γνοῦν<br>(γνόντος)</b></span></td><td>‘wetende’, ‘geweten hebbende’</td></tr></tbody></table>"
+},
+{
+  "nr": 301,
+  "kop": "G39 Participium: bijzondere vormingswijzen",
+  "cursus": 2,
+  "html": "<p>De <span class='oranje'>athetatische aoristus</span> (aor.2 in het passivum), heeft niet de passivumletter <span class='grieks'>θ</span>. Dit geldt ook voor de van deze aoristusstam afgeleide participia. Deze komen maar 16x voor in het NT, waaronder de volgende die afgeleid zijn van te leren (te herkennen) werkwoorden in de stamtijdenlijst:</p><table class='par groen'><thead><tr><th>werkwoord</th><th>aor. P<br>(zie ST-lijst)</th><th>part. aor. P</th><th>vertaling participium</th></tr></thead><tbody><tr><td><span class='grieks'>σπείρω</span><br>(les 14)</td><td class='grieks'>ἐσπάρην</td><td>nom. man. ev.: <span class='grieks'><b>σπαρείς</b></span> (4x), nom. man. mv.: <span class='grieks'><b>σπαρέντες</b></span> (1x)</td><td>‘gezaaid wordende / zijnde’</td></tr><tr><td><span class='grieks'>ἀποστέλλω</span><br>(les 11)</td><td class='grieks'>ἀπεστάλην</td><td>dat. onz. ev.: <span class='grieks'><b>ἀποσταλέντι</b></span> (1x)</td><td>‘uitgezonden wordende / zijnde’</td></tr></tbody></table>"
+},
+{
+  "nr": 302,
+  "kop": "G39 Participium: bijzondere vormingswijzen",
+  "cursus": 2,
+  "html": "<p>En nog twee afwijkende participia bij twee veelvoorkomende <span class='oranje'>onregelmatige werkwoorden</span>. Denk eraan: de vormen van <span class='grieks'>οἶδα</span> zijn perfectumvormen, de betekenis is praesens (‘toestandsperfectum’). Leer ook deze herkennen.</p><table class='par groen'><thead><tr><th>werkwoord</th><th>part. prae. A: man., vro., onz. ev.<br>(gen. man. ev.)</th><th>vertaling participium</th></tr></thead><tbody><tr><td class='grieks'>ἐιμί</td><td><span class='grieks'><b>ὤν, οὖσα, ὄν<br>(ὄντος)</b></span> (115x)</td><td>‘zijnd(e)’</td></tr><tr><td class='grieks'>οἶδα</td><td><span class='grieks'><b>εἰδώς, εἰδυῖα, εἰδός<br>(εἰδότος)</b></span> (50x)</td><td>‘wetend(e)’</td></tr></tbody></table>"
+},
+{
+  "nr": 303,
+  "kop": "G40 Genitivus absolutus",
+  "cursus": 2,
+  "html": "<p>Tot nu toe had het participium steeds een functie in de hoofdzin (zelfstandig gebruik), congrueerde het met een woord dat een functie heeft in de hoofdzin (bijvoeglijk gebruik) of congrueerde het met het onderwerp van de persoonsvorm (bijwoordelijk/ predicatief gebruik). Kortom, het waren verbonden participia (<span class='blauw'>participium coniunctum</span>).</p><p>Een participium kan echter ook <span class='blauw'>los van de hoofdzin</span> voorkomen: dit is een constructie die <span class='oranje'>genitivus absolutus</span> heet (van absolvere, ‘losmaken’, dus een ‘losgemaakte genitivus’). Dit participium staat altijd in de naamval genitivus en heeft een aparte status in de zin met een eigen onderwerp: een naamwoord dat ook in de genitivus staat.</p>"
+},
+{
+  "nr": 304,
+  "kop": "G40 Genitivus absolutus",
+  "cursus": 2,
+  "html": "<p><i>Hoe herken en vertaal je een genitivus absolutus-constructie?</i></p><p><span class='rood'><b>participium genitivus</b></span> + <span class='blauw'><b>naamwoord genitivus</b></span> + <span class='groen'><b>evt. aanvullingen (lijd. vw., meew. vw., bijw. bep.)</b></span></p><div class='kader'><span class='grieks'><span class='blauw'><b>τοῦ ἀποστόλου</b></span> <span class='rood'><b>βαπτίσαντος</b></span> <span class='groen'><b>τοὺς ἀνθρώπους</b></span><br>ὁ Ἰησοῦς ἐδίδαξε τοὺς ὄχλους.</span></div><p>‘<b>Nadat/terwijl</b> <span class='blauw'><b>de apostel</b></span> <span class='groen'><b>de mensen</b></span> <span class='rood'><b>doopte</b></span>, onderwees Jezus de menigten.’</p><p><i>Welke stappen zijn gezet om tot deze vertaling te komen?</i></p>"
+},
+{
+  "nr": 305,
+  "kop": "G40 Genitivus absolutus",
+  "cursus": 2,
+  "html": "<p>Je vertaalt een genitivus absolutus-constructie het beste als een <span class='oranje'>bijwoordelijke bijzin</span>:</p><p>1. ingeleid door een <b>voegwoord</b> van tijd (let op voortijdig/gelijktijdig), reden, voorwaarde, toegeving<br>2. participium in genitivus &gt; <span class='rood'><b>persoonsvorm</b></span> (let op keuze gelijktijdig/voortijdig)<br>3. naamwoord in genitivus &gt; <span class='blauw'><b>onderwerp</b></span><br>4. aanvullingen &gt; volgens de <span class='groen'><b>functie</b></span> van de naamval</p><p>In het <span class='oranje'>Nederlands</span> kennen we enkele dergelijke losgemaakte participia in versteende uitdrukkingen als ‘IJs en weder dienende, zal ik er zijn’. Omgezet wordt dit: ‘Als ijs en weer dienen, zal ik er zijn.’</p>"
+},
+{
+  "nr": 306,
+  "kop": "G41 Accusativus cum Participio",
+  "cursus": 2,
+  "html": "<p>Op het gebied van <span class='oranje'>syntactische constructies</span> hebben we nu de Accusativus cum Infinitivo en de Genitivus Absolutus behandeld. Nu: de <span class='blauw'>Accusativus cum Participio (AcP).</span></p><p>We hebben gezien dat na een werkwoord van zeggen, denken, menen, doen en laten vaak een AcI volgt. Na werkwoorden van waarnemen (bijv. <span class='grieks'>ὁράω, ἀκούω</span>), weten (bijv. <span class='grieks'>γινώσκω</span>), aantonen (bijv. <span class='grieks'>δεικνύμι, δηλόω</span>) en melden (bijv. <span class='grieks'>ἀγγέλλω</span>) volgt vaak een vergelijkbare constructie, maar dan een <span class='rood'><b>accusativus</b></span> + <span class='groen'><b>participium</b></span>.</p><p>Voorbeeldzin:<br><span class='grieks'>οἱ μαθηταὶ <b>ἔβλεψαν</b> <span class='rood'><b>τὸν Ιησοῦν</b></span> <span class='groen'><b>διδάσκοντα</b></span>.</span></p>"
+},
+{
+  "nr": 307,
+  "kop": "G41 Accusativus cum Participio",
+  "cursus": 2,
+  "html": "<p>De <span class='oranje'>vertaling van een AcP-constructie</span> werkt hetzelfde als bij de AcI-constructie:</p><p><span class='grieks'>οἱ μαθηταὶ <b>ἔβλεψαν</b> &lt;<span class='rood'><b>τὸν Ιησοῦν</b></span> <span class='groen'><b>διδάσκοντα</b></span>&gt;.</span></p><p>1. of je maakt er een <span class='blauw'>‘Nederlandse AcI’</span> van:<br>‘De leerlingen zagen <span class='rood'><b>Jezus</b></span> <span class='groen'><b>onderwijzen</b></span>.’</p><p>2. of je vertaalt met een <span class='blauw'>dat-zin</span> waarbij de accusativus onderwerp wordt en het participium de persoonsvorm (net als bij de AcI):<br>‘De leerlingen zagen <span class='rood'><b>dat Jezus</b></span> <span class='groen'><b>onderwees</b></span>.’</p><p>Maar vertaal het niet letterlijk (‘Jezus onderwijzende’) of predicatief (‘Jezus terwijl hij onderwees’).</p>"
+},
+{
+  "nr": 308,
+  "kop": "G42 Gesubstantiveerde infinitivus + voorzetsel",
+  "cursus": 2,
+  "html": "<p>Een <span class='oranje'>infinitivus</span> kan tot een zelfst. naamwoord worden gemaakt (<span class='oranje'>gesubstantiveerd</span>) door er een lidwoord voor te plaatsen. Net als in het Nederlands is dit altijd een onzijdig lidwoord:</p><div class='vb'><span class='grieks'>τὸ φαγεῖν</span> = ‘het eten’</div><p>Er kan ook een <span class='oranje'>voorzetsel</span> voor worden gebruikt. De infinitivus en het lidwoord krijgen dan de bijpassende naamval:</p><div class='vb'><span class='grieks'>μετὰ τὸ φαγεῖν</span> = ‘na het eten’ (<span class='grieks'>μετὰ</span> + acc.)</div><p>Zo’n voorzetsel krijgt vaak een iets andere betekenis en wordt vaak in de vertaling een <span class='blauw'>voegwoord</span>:</p><div class='vb'><span class='grieks'>ἐν τῳ φαγεῖν</span> = ‘tijdens het eten’ (<span class='grieks'>ἐν</span> + dat.)<br>(letterlijk: ‘bij het eten’)</div>"
+},
+{
+  "nr": 309,
+  "kop": "G42 Gesubstantiveerde infinitivus + voorzetsel",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>Zie ook NG p. 259.</div><p>De meest frequente voorzetsels bij een gesubstantiveerde infinitivus en hun vertaling:</p><table class='par licht'><thead><tr><th>voorzetsel</th><th>normale betekenis</th><th>betekenis bij infinitivus</th></tr></thead><tbody><tr><td><span class='grieks'>διά</span> (+acc.)</td><td>wegens</td><td>omdat</td></tr><tr><td><span class='grieks'>εἰς</span> (+acc.)</td><td>naar, tot, voor, tegen</td><td>om te, waarmee, zodat</td></tr><tr><td><span class='grieks'>ἐν</span> (+dat.)</td><td>in, op, met, door, onder, te midden van</td><td>terwijl, tijdens (inf. prae.); toen (inf. aor.)</td></tr><tr><td><span class='grieks'>πρό</span> (+gen.)</td><td>voor</td><td>voordat, eer, alvorens</td></tr><tr><td><span class='grieks'>μετά</span> (+acc.)</td><td>na</td><td>nadat</td></tr><tr><td><span class='grieks'>πρός</span> (+acc.)</td><td>naar, tegen, bij, tot</td><td>om te, met het oog op</td></tr></tbody></table>"
+},
+{
+  "nr": 310,
+  "kop": "G42 Gesubstantiveerde infinitivus + voorzetsel",
+  "cursus": 2,
+  "html": "<p>In het Grieks kun je in zo’n constructie van voorzetsel + infinitivus ook een onderwerp toevoegen. Dit <span class='oranje'>onderwerp</span> staat dan in de <span class='oranje'>accusativus</span> (net als bij de AcI). Je vertaalt de voorzetselbepaling dan als een <span class='blauw'>bijzin</span>, ingeleid door een voegwoord, en de infinitivus wordt persoonsvorm:</p><div class='vb'><span class='grieks'>ἐν τῳ φαγεῖν Ιησοῦν</span>, ‘terwijl Jezus at / aan het eten was’<br>(‘bij-het-eten-Jezus’)</div><p><span class='blauw'>Twee accusativi</span>? Kies je onderwerp op basis van context (subjectsacc. staat vaak tussen lidw. en infin. en wordt vaak als eerste genoemd):</p><div class='vb'><span class='grieks'>πρὸ τοῦ <b>ὑμᾶς</b> αἰτῆσαι αὐτόν</span> (Mat 6.8),<br>‘voordat <b>jullie</b> Hem (erom) vragen’ (<span class='grieks'>πρό</span> +2)</div>"
+},
+{
+  "nr": 311,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>Van een bijvoeglijk naamwoord (stellende trap) kun je een <span class='oranje'>vergrotende trap (comparativus)</span> en een <span class='oranje'>overtreffende trap (superlativus)</span> maken.</p><p>In het <span class='blauw'>Nederlands</span> vormen we de regelmatige variant van de vergrotende trap door het achtervoegsel -er(e), en de overtreffende trap door het achtervoegsel -st(e) achter de stam van een bijv. nw. te plaatsen.</p><div class='vb'>laat, lat<b>er(e)</b> (van: ‘laater(e)’), laat<b>st(e)</b></div><p>Maar we kennen ook onregelmatige varianten met een verandering in de stam:</p><div class='vb'>veel - mee<b>r</b> - mee<b>st</b><br>goed - bete<b>r</b> - be<b>st</b></div>"
+},
+{
+  "nr": 312,
+  "kop": "G43 Trappen van vergelijking",
+  "cursus": 2,
+  "html": "<p>In het Grieks bestaan er twee <span class='oranje'>vormingswijzen</span>. De <span class='oranje'>eerste</span> wordt gevormd door achter de stam de volgende achtervoegsels te plaatsen:</p><p>vergrotende trap: <span class='blauw grieks'>-τερος</span><br>overtreffende trap: <span class='blauw grieks'>-τατος</span></p><div class='vb'><span class='grieks'>δίκαιος, δικαιότερος, δικαιότατος</span>, ‘rechtvaardig, rechtvaardiger, rechtvaardigst/zeer rechtvaardig’</div><p>Ze worden verbogen volgens het bijv. nw. <span class='blauw grieks'>καλός</span>.<br>Als de lettergreep ervoor kort is, wordt de laatste stamklinker verlengd:</p><div class='vb'><span class='grieks'>ἅγιος, ἅγι<b>ώ</b>τερος, ἅγι<b>ώ</b>τατος</span>, ‘heilig, heiliger, heiligst/zeer heilig’ (de iota is kort)</div>"
+}
+]

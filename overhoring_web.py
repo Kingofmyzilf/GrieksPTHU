@@ -32,11 +32,6 @@ def _nu():
             pass
     return datetime.now()
 
-try:
-    import fitz  # PyMuPDF: rendert de grammatica-slides
-    FITZ_BESCHIKBAAR = True
-except Exception:
-    FITZ_BESCHIKBAAR = False
 
 # --- CONFIGURATIE ---
 st.set_page_config(page_title="Grieks Cloud Tutor", layout="wide")
@@ -4118,29 +4113,86 @@ def laad_contractie_db():
             return json.load(f)
     return None
 
-GRAMMATICA_PDF = "grammatica_overzicht.pdf"
-
-@st.cache_resource
-def open_grammatica_pdf():
-    if FITZ_BESCHIKBAAR and os.path.exists(GRAMMATICA_PDF):
-        try:
-            return fitz.open(GRAMMATICA_PDF)
-        except Exception:
-            return None
-    return None
-
-@st.cache_data(show_spinner=False)
-def render_slide(paginanummer, dpi=120):
-    doc = open_grammatica_pdf()
-    if doc is None:
-        return None
-    idx = paginanummer - 1
-    if idx < 0 or idx >= doc.page_count:
-        return None
+# De 376 grammatica-slides stonden als plaatje in een pdf van 22 MB, één jpeg per pagina.
+# Ze zijn overgetypt naar tekst (grammatica_slides.json, 624 kB). Dat is niet alleen kleiner:
+# zoeken werkt nu op de échte tekst in plaats van op een OCR die het Grieks vermorzelde, en
+# op een telefoon loopt de tekst gewoon door in plaats van dat je in een plaatje van 40 cm
+# breed moet knijpen. Het slidenummer is nog steeds het paginanummer uit de pdf, dus
+# pdf_start/pdf_eind uit grammatica_index.json blijven kloppen.
+@st.cache_data
+def laad_grammatica_slides():
+    """De overgetypte slides, op slidenummer."""
     try:
-        return doc[idx].get_pixmap(dpi=dpi).tobytes("png")
-    except Exception:
-        return None
+        with open("grammatica_slides.json", "r", encoding="utf-8") as f:
+            return {int(s["nr"]): s for s in json.load(f)}
+    except (OSError, ValueError):
+        return {}
+
+
+# De opmaak van de slides. De klassen heten naar de kleur en niet naar de rol, want die rol
+# wisselt: op slide 9 zijn de sublabels groen en op slide 200 blauw. Grijs is wél betekenis:
+# slide 63 en 65 zeggen er letterlijk bij dat de grijze vormen niet geleerd hoeven te worden.
+SLIDE_CSS = """
+<style>
+.gslide { font-family:'Gentium Book Plus','Palatino Linotype',Georgia,serif; font-size:17px;
+          line-height:1.55; overflow-x:auto; }
+.gslide .oranje { color:#ff9d3c; font-weight:700; }
+.gslide .blauw  { color:#4bb6e8; font-weight:700; }
+.gslide .groen  { color:#8bbf6a; }
+.gslide .rood   { color:#ff7d7d; }
+.gslide .paars  { color:#c8a2ff; }
+.gslide .grijs  { color:#9aa4ae; }
+.gslide .grieks { font-family:'Gentium Book Plus','Palatino Linotype',Georgia,serif; }
+.gslide .kopje  { font-size:18px; margin-bottom:2px; }
+.gslide .groot  { font-size:23px; }
+.gslide .vb     { color:#8bbf6a; margin:2px 0 6px 18px; }
+.gslide .teken  { font-size:21px; text-align:center; width:2.2em; }
+.gslide .auteur { color:#9aa4ae; text-align:center; margin-top:18px; }
+/* De inhoudsopgave-slide. Kolombreedte in plaats van een vast aantal, want op een telefoon
+   passen er geen drie naast elkaar. */
+.gslide .inhoud { columns:220px; column-gap:26px; list-style:none; padding:0; font-size:15px; }
+.gslide .inhoud li { break-inside:avoid; margin-bottom:3px; color:#9aa4ae; }
+.gslide table.par { border-collapse:collapse; width:100%; margin:10px 0; font-size:16px; }
+.gslide table.par th { background:#2e7d95; color:#fff; text-align:left; font-weight:400;
+                       padding:7px 10px; vertical-align:bottom; }
+.gslide table.par td { background:rgba(127,127,127,.10); border-top:1px solid #4448;
+                       padding:6px 10px; }
+.gslide table.par.licht th { background:#2f6f82; }
+.gslide table.par.licht tbody th { background:#24596a; font-size:15px; }
+.gslide table.par.licht.groenrij tbody th { background:#5d8c3c; }
+.gslide table.par.groen th { background:#5d8c3c; }
+.gslide table.par.groen tbody th { background:#456a2c; font-size:15px; }
+.gslide table.par.kaal th, .gslide table.par.kaal td { background:none; border:none;
+                                                       padding:3px 12px 3px 0; }
+.gslide .kader { background:rgba(127,127,127,.10); border:1px solid #4448; border-radius:8px;
+                 padding:12px 16px; margin:10px 0; }
+.gslide .kader.groenvlak { background:rgba(120,180,90,.16); border-color:#5d8c3c; }
+/* De beige kadertjes links op de slide: verwijzingen naar het handboek. Naast de tekst als
+   het past, en anders er gewoon boven — op een telefoon is een kolom ernaast onleesbaar. */
+.gslide .kader.zijnoot { float:right; max-width:210px; margin:0 0 10px 16px; font-size:14px;
+                         color:#9aa4ae; }
+@media (max-width:640px) { .gslide .kader.zijnoot { float:none; max-width:none; } }
+.gslide ol, .gslide ul { padding-left:22px; }
+.gslide li { margin-bottom:5px; }
+</style>
+"""
+
+
+def toon_slide(nr, kop=True):
+    """Eén overgetypte slide op het scherm. True als hij bestond.
+
+    SLIDE_CSS staat hier met opzet niet bij: dat gaat één keer bovenaan het tabblad mee.
+    Bij 'alles achter elkaar' worden er tot 24 slides na elkaar getekend, en dan zou je de
+    hele opmaak 24 keer meesturen.
+    """
+    slide = laad_grammatica_slides().get(int(nr))
+    if not slide:
+        st.info(f"Slide {nr} is nog niet overgetypt.")
+        return False
+    titel = f"<h4 style='margin:0 0 10px'>{slide.get('kop', '')}</h4>" if kop else ""
+    st.markdown(f"<div class='gslide'>{titel}{slide.get('html', '')}</div>",
+                unsafe_allow_html=True)
+    return True
 
 @st.cache_resource
 def nt_index():
@@ -8313,14 +8365,16 @@ def main():
             st.subheader("📐 Grammatica")
             gram_db = laad_grammatica_db()
 
+            slides = laad_grammatica_slides()
+
             if gram_db is None:
                 st.warning("Bestand 'grammatica_index.json' ontbreekt of is niet ingeladen.")
-            elif not FITZ_BESCHIKBAAR or open_grammatica_pdf() is None:
-                st.error("De grammatica-slides konden niet worden geopend. Controleer of 'grammatica_overzicht.pdf' aanwezig is en of PyMuPDF is geïnstalleerd (voeg `pymupdf` toe aan requirements.txt).")
+            elif not slides:
+                st.error("Bestand 'grammatica_slides.json' ontbreekt — daar staan de overgetypte slides in.")
             else:
+                st.markdown(SLIDE_CSS, unsafe_allow_html=True)   # één keer per weergave
                 items = gram_db["items"]
                 overzichten = gram_db.get("overzichten", {})
-                slide_index = gram_db.get("slide_index", {})
                 book_toc = gram_db.get("book_toc", [])
 
                 if 'gram_stats' not in st.session_state or st.session_state.gram_stats is None:
@@ -8377,10 +8431,14 @@ def main():
                         for g_str, info in items.items():
                             titel = info["titel"].lower()
                             trefw = " ".join(info.get("trefwoorden", [])).lower()
-                            ocr_all = " ".join(
-                                slide_index.get(str(p), {}).get("ocr", "")
+                            # De volledige tekst van de slides zelf. Dit was een OCR die het
+                            # Grieks vermorzelde ('evayyéatov' voor εὐαγγέλιον); nu staat er
+                            # echte tekst, dus een Griekse zoekterm vindt ook echt iets.
+                            slide_tekst = " ".join(
+                                slides.get(p, {}).get("tekst", "")
                                 for p in range(info["pdf_start"], info["pdf_eind"] + 1)
                             ).lower()
+                            slide_n = _ontaccent(slide_tekst)
                             titel_n = _ontaccent(titel)
                             trefw_n = _ontaccent(trefw)
                             trefw_key = _translit(trefw)
@@ -8393,7 +8451,8 @@ def main():
                                 if w in titel: score += 40
                                 if w in trefw: score += 25
                                 elif wn and wn in trefw_n: score += 22  # accentvrije Griekse match
-                                if w in ocr_all: score += 6
+                                if w in slide_tekst: score += 8
+                                elif wn and wn in slide_n: score += 6   # accentvrij in de slide
                             # fuzzy op titelwoorden (typefouten)
                             for w in q_woorden:
                                 for tw in titel.split():
@@ -8414,16 +8473,23 @@ def main():
                                     kw = info.get("trefwoorden", [])
                                     if kw:
                                         st.caption("Trefwoorden: " + ", ".join(kw[:8]))
-                                    c1, c2 = st.columns([1, 1])
-                                    with c1:
-                                        if st.button(f"📖 Bekijk slides van G{g}", key=f"zoek_naar_{g}", use_container_width=True):
-                                            st.session_state["gram_spring_naar"] = g
-                                            st.session_state["gram_modus_forceer"] = "📖 Bestuderen"
-                                            st.rerun()
-                                    with c2:
-                                        first = render_slide(info["pdf_start"] + (1 if info["aantal"] > 1 else 0), dpi=70)
-                                        if first:
-                                            st.image(first, use_container_width=True)
+                                    # De slides waar de zoekterm echt in staat, zodat je ziet
+                                    # waarom dit onderwerp bovenaan staat.
+                                    _raak = [nr for nr in range(info["pdf_start"], info["pdf_eind"] + 1)
+                                             if any(w in _ontaccent(slides.get(nr, {}).get("tekst", "").lower())
+                                                    for w in qn_woorden if w)]
+                                    if st.button(f"📖 Bekijk slides van G{g}", key=f"zoek_naar_{g}", use_container_width=True):
+                                        st.session_state["gram_spring_naar"] = g
+                                        st.session_state["gram_modus_forceer"] = "📖 Bestuderen"
+                                        # Meteen bij de slide beginnen waar het in staat.
+                                        if _raak:
+                                            st.session_state[f"study_pos_{g}"] = _raak[0]
+                                        st.rerun()
+                                    if _raak:
+                                        st.caption(f"Staat in slide {', '.join(str(n) for n in _raak[:6])}"
+                                                   + (" …" if len(_raak) > 6 else ""))
+                                        with st.expander(f"👀 Slide {_raak[0]}"):
+                                            toon_slide(_raak[0])
                                     toon_boekverwijzingen(info, compact=True)
 
                 # ==========================================================
@@ -8457,30 +8523,41 @@ def main():
                         st.caption(f"Thema: {info['thema']} · {aantal} slide(s)")
                         toon_boekverwijzingen(info, compact=True)
 
-                        bladerkey = f"study_pos_{gekozen_g}"
-                        if bladerkey not in st.session_state:
-                            st.session_state[bladerkey] = start
-                        st.session_state[bladerkey] = max(start, min(eind, st.session_state[bladerkey]))
-                        huidige = st.session_state[bladerkey]
+                        # Nu de slides tekst zijn en geen plaatje meer, past een heel
+                        # onderwerp gewoon op één pagina. Doorlezen is dan prettiger dan
+                        # klikken; wie per slide wil, zet het uit.
+                        alles = st.toggle("Alles achter elkaar", value=(aantal <= 8),
+                                          key=f"gram_alles_{gekozen_g}",
+                                          help="Uit = één slide per keer met vorige/volgende.")
+                        if alles:
+                            for nr in range(start, eind + 1):
+                                with st.container(border=True):
+                                    st.caption(f"slide {nr - start + 1} / {aantal}")
+                                    toon_slide(nr, kop=False)
+                        else:
+                            bladerkey = f"study_pos_{gekozen_g}"
+                            if bladerkey not in st.session_state:
+                                st.session_state[bladerkey] = start
+                            st.session_state[bladerkey] = max(start, min(eind, st.session_state[bladerkey]))
+                            huidige = st.session_state[bladerkey]
 
-                        c_prev, c_mid, c_next = st.columns([1, 2, 1])
-                        with c_prev:
-                            if st.button("⬅️ Vorige", key=f"prev_{gekozen_g}", disabled=(huidige <= start), use_container_width=True):
-                                st.session_state[bladerkey] = huidige - 1; st.rerun()
-                        with c_mid:
-                            st.markdown(f"<div style='text-align:center;padding-top:8px;font-weight:bold;'>Slide {huidige-start+1} / {aantal}</div>", unsafe_allow_html=True)
-                        with c_next:
-                            if st.button("Volgende ➡️", key=f"next_{gekozen_g}", disabled=(huidige >= eind), use_container_width=True):
-                                st.session_state[bladerkey] = huidige + 1; st.rerun()
+                            c_prev, c_mid, c_next = st.columns([1, 2, 1])
+                            with c_prev:
+                                if st.button("⬅️ Vorige", key=f"prev_{gekozen_g}", disabled=(huidige <= start), use_container_width=True):
+                                    st.session_state[bladerkey] = huidige - 1; st.rerun()
+                            with c_mid:
+                                st.markdown(f"<div style='text-align:center;padding-top:8px;font-weight:bold;'>Slide {huidige-start+1} / {aantal}</div>", unsafe_allow_html=True)
+                            with c_next:
+                                if st.button("Volgende ➡️", key=f"next_{gekozen_g}", disabled=(huidige >= eind), use_container_width=True):
+                                    st.session_state[bladerkey] = huidige + 1; st.rerun()
 
-                        png = render_slide(huidige, dpi=130)
-                        if png:
-                            st.image(png, use_container_width=True)
-                        if aantal > 1:
-                            with st.expander(f"📑 Direct naar slide (1–{aantal})"):
-                                spr = st.slider("Slide", 1, aantal, huidige - start + 1, key=f"slider_{gekozen_g}")
-                                if start + spr - 1 != huidige:
-                                    st.session_state[bladerkey] = start + spr - 1; st.rerun()
+                            with st.container(border=True):
+                                toon_slide(huidige, kop=False)
+                            if aantal > 1:
+                                with st.expander(f"📑 Direct naar slide (1–{aantal})"):
+                                    spr = st.slider("Slide", 1, aantal, huidige - start + 1, key=f"slider_{gekozen_g}")
+                                    if start + spr - 1 != huidige:
+                                        st.session_state[bladerkey] = start + spr - 1; st.rerun()
 
                         st.write("---")
                         with st.expander("📚 Losse overzichten & samenvattingen achterin"):
@@ -8488,9 +8565,8 @@ def main():
                                 ov_keys = sorted(overzichten.keys(), key=lambda x: int(x))
                                 gekozen_ov = st.selectbox("Kies een overzicht", ov_keys,
                                     format_func=lambda k: overzichten[k], key="overzicht_keuze")
-                                png_ov = render_slide(int(gekozen_ov), dpi=130)
-                                if png_ov:
-                                    st.image(png_ov, use_container_width=True)
+                                with st.container(border=True):
+                                    toon_slide(int(gekozen_ov))
                             else:
                                 st.caption("Geen losse overzichten gevonden.")
 

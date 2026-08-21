@@ -1,0 +1,80 @@
+[
+{
+  "nr": 222,
+  "kop": "G30 Vragend en onbepaald voornaamwoord",
+  "cursus": 2,
+  "html": "<p>Een <span class='oranje'>vragend voornaamwoord</span> leidt een vraagzin in.<br>a)&ensp;zelfstandig gebruikt: ‘wie?, wat?’<br>b)&ensp;bijvoeglijk gebruikt: ‘welk(e)?’<br>In het Grieks: <span class='blauw grieks'>τίς, τίνος</span> (man/vro); <span class='blauw grieks'>τί, τίνος</span> (onz)</p><p>Een <span class='oranje'>onbepaald voornaamwoord</span> duidt iets onspecifieks aan:<br>a)&ensp;zelfstandig gebruikt: ‘iets, iemand, men, sommigen, enkelen’<br>b)&ensp;bijvoeglijk gebruikt: ‘enig(e), een of ander(e), een zekere, een paar, enkele’<br>In het Grieks: <span class='blauw grieks'>τις, τινος</span> (man/vro); <span class='blauw grieks'>τι, τινος</span> (onz)</p><p>Beide volgen de <span class='blauw'>derde declinatie</span>. Enig verschil is aanwezigheid of afwezigheid van een <span class='blauw'>accent</span>.</p>"
+},
+{
+  "nr": 223,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<p>We kijken eerst naar de vorming van <span class='blauw'>futurum en aoristus medium</span> bij de verba vocalia (<span class='grieks'>λύω</span>).</p><p><span class='oranje'>Vorming</span> indic./infin. futurum medium:<br>zuivere stam + tijdkenletter <span class='grieks'>σ</span> + bindvocaal <span class='grieks'>o/ε</span> + <span class='blauw'>mediumuitgangen I</span> (net als praesens)</p><div class='vb'><span class='grieks'>λύ-σ-ο-μαι</span>, ‘ik zal (voor) mezelf losmaken’<br><span class='grieks'>λύ-σ-ε-σθαι</span>, ‘(voor) mezelf te zullen losmaken’</div><p><span class='oranje'>Vorming</span> indic./imper./infin. sigm. aoristus medium:<br>(augment +) zuivere stam + tijdkenletter <span class='grieks'>σ</span> + bindvocaal <span class='grieks'>α</span> + <span class='blauw'>mediumuitgangen II</span> (net als impf.)</p><div class='vb'><span class='grieks'>ἐ-λυ-σ-ά-μην</span>, ‘ik maakte (voor) mezelf los’<br><span class='grieks'>λυ-σ-ά-σθω</span>, ‘laat hij (voor) zichzelf losmaken’</div>"
+},
+{
+  "nr": 224,
+  "kop": "G31 Medium futurum",
+  "cursus": 2,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>indic. fut. act.</th><th>indic. fut. med.</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td><span class='grieks'><b>λύσω</b></span></td><td><span class='grieks'><b>λύσομαι</b></span></td></tr><tr><th>2<sup>e</sup> ev.</th><td><span class='grieks'><b>λύσεις</b></span></td><td><span class='grieks'><b>λύσ<span class='blauw'>ῃ</span></b></span></td></tr><tr><th>3<sup>e</sup> ev.</th><td><span class='grieks'><b>λύσει</b></span></td><td><span class='grieks'><b>λύσεται</b></span></td></tr><tr><th>1<sup>e</sup> mv.</th><td><span class='grieks'><b>λύσομεν</b></span></td><td><span class='grieks'><b>λυσόμεθα</b></span></td></tr><tr><th>2<sup>e</sup> mv.</th><td><span class='grieks'><b>λύσετε</b></span></td><td><span class='grieks'><b>λύσεσθε</b></span></td></tr><tr><th>3<sup>e</sup> mv.</th><td><span class='grieks'><b>λύσουσι(ν)</b></span></td><td><span class='grieks'><b>λύσονται</b></span></td></tr></tbody><tfoot><tr><th>infin. fut. act.</th><td colspan='2'><span class='grieks'><b>λύσειν</b></span></td></tr><tr><th>infin. fut. med.</th><td colspan='2'><span class='grieks'><b>λύσεσθαι</b></span></td></tr></tfoot></table>"
+},
+{
+  "nr": 225,
+  "kop": "G31 Medium aoristus",
+  "cursus": 2,
+  "html": "<table class='par licht groenrij'><thead><tr><th></th><th>indic. aor. act.</th><th>imper. aor. act.</th><th>indic. aor. med.</th><th>imper. aor. med.</th></tr></thead><tbody><tr><th>1<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔλυσα</b></span></td><td></td><td><span class='grieks'><b>ἐλυσάμην</b></span></td><td></td></tr><tr><th>2<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔλυσας</b></span></td><td><span class='grieks'><b>λῦσον</b></span></td><td><span class='grieks'><b>ἐλύ<span class='blauw'>σω</span></b></span> *</td><td><span class='grieks'><b>λῦ<span class='blauw'>σαι</span></b></span> **</td></tr><tr><th>3<sup>e</sup> ev.</th><td><span class='grieks'><b>ἔλυσε(ν)</b></span></td><td><span class='grieks'><b>λυσάτω</b></span></td><td><span class='grieks'><b>ἐλύσατο</b></span></td><td><span class='grieks'><b>λυσάσθω</b></span></td></tr><tr><th>1<sup>e</sup> mv.</th><td><span class='grieks'><b>ἐλύσαμεν</b></span></td><td></td><td><span class='grieks'><b>ἐλυσάμεθα</b></span></td><td></td></tr><tr><th>2<sup>e</sup> mv.</th><td><span class='grieks'><b>ἐλύσατε</b></span></td><td><span class='grieks'><b>λύσατε</b></span></td><td><span class='grieks'><b>ἐλύσασθε</b></span></td><td><span class='grieks'><b>λύσασθε</b></span></td></tr><tr><th>3<sup>e</sup> mv.</th><td><span class='grieks'><b>ἔλυσαν</b></span></td><td><span class='grieks'><b>λυσάτωσαν</b></span></td><td><span class='grieks'><b>ἐλύσαντο</b></span></td><td><span class='grieks'><b>λυσάσθωσαν</b></span></td></tr></tbody><tfoot><tr><th>infin. aor. act.</th><td><span class='grieks'><b>λῦσαι</b></span></td><th>infin. aor. med.</th><td colspan='2'><span class='grieks'><b>λύσασθαι</b></span></td></tr></tfoot></table>"
+},
+{
+  "nr": 226,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<p>Wat betreft <span class='oranje'>interpretatie en vertaling</span>, in het futurum en de aoristus zijn er <span class='blauw'>ook passieve vormen</span> van het werkwoord. Daarom mag het medium van futurum of aoristus nooit passief worden vertaald. Wel kan een werkwoord in deze tempora <span class='blauw'>deponent</span> zijn (of een andere actieve betekenis hebben dan eenzelfde werkwoordsvorm met actieve diathese). In dat geval vertaal je mediale vormen actief.</p><div class='vb'><span class='grieks'>βουλήσομαι</span>, ‘ik zal willen’ van <span class='grieks'>βουλομαι</span>, ‘willen’<br><span class='grieks'>βήσομαι</span>, ‘ik zal gaan’ van <span class='grieks'>βαίνω</span>, ‘gaan’</div><p>Voor welke werkwoorden dat geldt, moet je leren/opzoeken in woordenboek of stamtijdenlijst (dit is onregelmatig). In de stamtijdenlijst staat dan enkel een mediale vorm in de kolom van futurum / aoristus.</p>"
+},
+{
+  "nr": 227,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<p>Let bij <span class='oranje'>verba muta</span> in de aoristus en het futurum medium op de <span class='blauw'>samentrekkingen met <span class='grieks'>σ</span></span> (vgl. act.).</p><p>gutturaal + <span class='grieks'>σ</span> &gt; <span class='grieks'>ξ</span>:</p><div class='vb'><span class='grieks'>δέχομαι</span> (deponens, ook in fut./aor.: ‘ontvangen’)<br>futurum: <span class='grieks'>δέξομαι</span>, ‘ik zal ontvangen’<br>aoristus: <span class='grieks'>ἐδεξάμην</span>, ‘ik ontving’</div><p>labiaal + <span class='grieks'>σ</span> &gt; <span class='grieks'>ψ</span>:</p><div class='vb'><span class='grieks'>καλύπτω</span> (‘bedekken’)<br>futurum: <span class='grieks'>καλύψομαι</span>, ‘ik zal (voor) mezelf bedekken’<br>aoristus: <span class='grieks'>ἐκαλυψάμην</span>, ‘ik bedekte (voor) mezelf’</div><p>dentaal + <span class='grieks'>σ</span> &gt; <span class='grieks'>σ</span> (dentaal vervalt):</p><div class='vb'><span class='grieks'>ἐργάζομαι</span> (deponens, ook in fut./aor.: ‘werken’)<br>futurum: <span class='grieks'>ἐργάσομαι</span>, ‘ik zal werken’<br>aoristus: <span class='grieks'>ἠργασάμην</span>, ‘ik werkte’</div>"
+},
+{
+  "nr": 228,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<p><span class='oranje'>Verba contracta</span>: <span class='grieks'>τιμ<span class='oranje'>ά</span>ω, φιλ<span class='oranje'>έ</span>ω, δηλ<span class='oranje'>ό</span>ω</span></p><p>In <span class='blauw'>het futurum en de aoristus</span> vindt er door tussenkomst van de tijdkenletter sigma geen samentrekking plaats. Denk wel aan de <span class='blauw'>verlengde stamklinker</span>:</p><table class='par kaal'><tbody><tr><td><span class='groen grieks'>τιμ<b>ή</b>σομαι</span></td><td class='groen'>‘ik zal (voor) mezelf eren’</td></tr><tr><td><span class='groen grieks'>φιλ<b>ή</b>σομαι</span></td><td class='groen'>‘ik zal (voor) mezelf beminnen’</td></tr><tr><td><span class='groen grieks'>δηλ<b>ώ</b>σομαι</span></td><td class='groen'>‘ik zal (voor) mezelf verduidelijken’</td></tr><tr><td><span class='groen grieks'>ἐτιμ<b>η</b>σάμην</span></td><td class='groen'>‘ik eerde (voor) mezelf’</td></tr><tr><td><span class='groen grieks'>ἐφιλ<b>η</b>σάμην</span></td><td class='groen'>‘ik beminde (voor) mezelf’</td></tr><tr><td><span class='groen grieks'>ἐδηλ<b>ω</b>σάμην</span></td><td class='groen'>‘ik verduidelijkte (voor) mezelf’</td></tr></tbody></table>"
+},
+{
+  "nr": 229,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<p>Het futurum medium en de aoristus medium van de <span class='oranje'>verba liquida</span> is net als in het activum <span class='blauw'>asigmatisch</span>. Het futurum maakt achter de zuivere stam gebruik van samengetrokken (medium)uitgangen (als prae. <span class='grieks'>φιλεω</span>):</p><div class='vb'><span class='grieks'>φανεῖ</span>, ‘hij zal tonen’ (<span class='grieks'>φαν-ε-ει</span>)<br><span class='grieks'>φανεῖται</span>, ‘hij zal verschijnen’ (<span class='grieks'>φαν-ε-ε-ται</span>)<br><span class='grieks'>φανοῦνται</span>, ‘zij zullen verschijnen’ (<span class='grieks'>φαν-ε-ο-νται</span>)</div><p>De aoristus medium is ook asigmatisch en krijgt een <span class='blauw'>verlengde stamklinker in de zuivere stam</span>:</p><table class='par kaal'><thead><tr><th class='groen'><i>prae. act.</i></th><th class='groen'><i>aor. act.</i></th><th class='groen'><i>aor. med.</i></th></tr></thead><tbody><tr><td class='groen grieks'>ἀγγέλλει</td><td class='groen grieks'>ἤγγειλε(ν)</td><td class='groen grieks'>ἤγγειλατο</td></tr><tr><td class='groen grieks'>σπείρουσι(ν)</td><td class='groen grieks'>ἔσπειραν</td><td class='groen grieks'>ἐσπειραντο</td></tr></tbody></table>"
+},
+{
+  "nr": 230,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>Zie NG p. 186.</div><p>Het <span class='oranje'>futurum van <span class='grieks'>εἰμί</span></span> is een <span class='blauw'>deponente tempus</span>: de vormen zijn mediaal en er zijn geen actieve varianten, dus we vertalen het actief.</p><p>Het futurum wordt gevormd door de stam <span class='grieks'>ἔ</span> en is verder regelmatig: tijdkenletter <span class='grieks'>σ</span>, bindvocaal <span class='grieks'>o/ε</span> en mediale persoonsuitgangen. Alleen in de derde persoon is de bindvocaal komen te vervallen:</p><p><span class='grieks'>ἔ+σ+ε+ται</span> &gt; <span class='groen grieks'><b>ἔσται</b></span>, ‘hij/zij/het zal zijn’</p><p>De tweede persoon van het futurum kan dienst doen als <span class='blauw'>imperativus</span>: <span class='groen grieks'><b>ἔσῇ</b></span> (uit <span class='grieks'>ἔ-σ-ε-σαι</span>) = ‘jij/gij zal/moet zijn’. Je blijft dit als indic. fut. determineren.</p>"
+},
+{
+  "nr": 231,
+  "kop": "G31 Medium futurum en aoristus",
+  "cursus": 2,
+  "html": "<p>De <span class='oranje'>thematische aoristus</span> (aoristus II) komt ook in het medium voor. De vorming is zoals je zou verwachten gezien het activum.</p><p><span class='blauw'>Vorming</span> indicativus: augment + onregelmatige stam + bindvocaal <span class='grieks'>o/ε</span> + mediumuitgangen II</p><div class='vb'><span class='grieks'>ἐ-γεν-ό-μεθα</span>, ‘wij werden/waren/kwamen’<br><span style='font-size:14px'>van <span class='grieks'>γι(γ)νομαι</span>, ‘worden, zijn, komen’ (deponens), stamtijdenlijst: <span class='grieks'>ἐγενόμην</span>, dus aoristusstam = <span class='grieks'>γεν</span></span></div><p><span class='blauw'>Vorming</span> imperativus en infinitivus: onregelmatige stam + bindvocaal <span class='grieks'>o/ε</span> + mediumuitgangen I</p><div class='vb'><span class='grieks'>γέν-ου</span> (uit <span class='grieks'>γεν-ε-σο</span>), ‘word/wees/kom!’<br><span class='grieks'>γέν-ε-σθαι</span>, ‘te worden/zijn/komen’</div>"
+},
+{
+  "nr": 232,
+  "kop": "G32 Telwoorden",
+  "cursus": 2,
+  "html": "<p>Het Grieks kent net als in het Nederlands <span class='oranje'>hoofdtelwoorden</span> (zoals ‘één’), <span class='oranje'>rangtelwoorden</span> (die als bijvoeglijk naamwoord fungeren, zoals ‘eerste’) en getallen die als <span class='oranje'>bijwoord van frequentie</span> (zoals ‘eenmaal’) worden gebruikt.</p><p>Leeradvies bij volgende dia’s: ga niet actief reproduceren maar zorg dat je de volgende categorieën kunt herkennen in de voorkomende vormen (grijs = niet in NT):</p><ul><li>de <span class='blauw'>hoofdtelwoorden 1-12</span></li><li>de <span class='blauw'>achtervoegsels</span> voor tientallen en honderdtallen</li><li>de <span class='blauw'>eerste twaalf rangtelwoorden</span></li><li>de <span class='blauw'>bijwoorden</span></li></ul>"
+},
+{
+  "nr": 233,
+  "kop": "G32 Telwoorden",
+  "cursus": 2,
+  "html": "<table class='par licht'><thead><tr><th></th><th>hoofdtelwoorden<br>(één, twee …)</th><th>rangtelwoorden<br>(eerste, tweede …)</th><th>bijwoord van frequentie<br>(eenmaal, tweemaal …)</th></tr></thead><tbody><tr><th>1</th><td><span class='grieks'>εἷς, μία, ἕν</span> (m, v, o)</td><td class='grieks'>πρῶτος –η –ον</td><td class='grieks'>ἅπαξ</td></tr><tr><th>2</th><td class='grieks'>δύο</td><td class='grieks'>δεύτερος –α –ον</td><td class='grieks'>δίς</td></tr><tr><th>3</th><td><span class='grieks'>τρεῖς, τρία</span> (m/v, o)</td><td class='grieks'>τρίτος –η –ον</td><td class='grieks'>τρίς</td></tr><tr><th>4</th><td><span class='grieks'>τέσσαρες, -α</span> (m/v, o)</td><td class='grieks'>τέταρτος –η –ον</td><td><span class='grijs grieks'>τετράκις</span></td></tr><tr><th>5</th><td class='grieks'>πέντε</td><td class='grieks'>πέμπτος –η –ον</td><td class='grieks'>πεντάκις</td></tr><tr><th>6</th><td class='grieks'>ἕξ</td><td class='grieks'>ἕκτος –η –ον</td><td><span class='grijs grieks'>ἑξάκις</span></td></tr><tr><th>7</th><td class='grieks'>ἑπτά</td><td class='grieks'>ἕβδομος –η –ον</td><td class='grieks'>ἑπτάκις</td></tr><tr><th>8</th><td class='grieks'>ὀκτώ</td><td class='grieks'>ὄγδοος –η –ον</td><td><span class='grijs grieks'>ὀκτάκις</span></td></tr><tr><th>9</th><td class='grieks'>ἐννέα</td><td class='grieks'>ἔνατος –η –ον</td><td><span class='grijs grieks'>ἐνάκις</span></td></tr><tr><th>10</th><td class='grieks'>δέκα</td><td class='grieks'>δέκατος –η –ον</td><td><span class='grijs grieks'>δεκάκις</span></td></tr><tr><th>11</th><td class='grieks'>ἕνδεκα</td><td class='grieks'>ἑνδέκατος –η –ον</td><td><span class='grijs grieks'>ἑνδεκάκις</span></td></tr><tr><th>12</th><td class='grieks'>δώδεκα</td><td class='grieks'>δωδέκατος –η –ον</td><td><span class='grijs grieks'>δωδεκάκις</span></td></tr></tbody></table>"
+},
+{
+  "nr": 234,
+  "kop": "G32 Telwoorden",
+  "cursus": 2,
+  "html": "<div class='kader zijnoot'>Zie de voor de volledige verbuigingen: NG pp. 80-81.</div><p>De meeste <span class='oranje'>hoofdtelwoorden</span> zijn indeclinabel, maar de hoofdtelwoorden <span class='blauw'>1, 2, 3 en 4 worden verbogen</span>, grotendeels volgens de derde declinatie.<br>De verbuiging van <span class='grieks'>εἷς, μία, ἕν</span> geldt ook voor de samenstellingen <span class='blauw grieks'>οὐδείς</span>, <span class='grieks'>οὐδεμία, οὐδέν</span> en <span class='blauw grieks'>μηδείς</span>, <span class='grieks'>μηδεμία, μηδέν</span>.</p><div class='vb'><span class='grieks'>Ὅρα <b>μηδενὶ</b> <u>μηδὲν</u> εἴπῃς</span>, ‘Zie toe dat je <b>tegen niemand</b> <u>iets</u> (Grieks: ‘niets’) zegt’ (Mk 1.44)</div><p>Tientallen krijgen het achtervoegsel <span class='blauw grieks'>-κοντα</span>.<br>Honderdtallen krijgen het achtervoegsel <span class='blauw grieks'>-κόσιοι</span>.<br>Duizendtallen krijgen het achtervoegsel <span class='blauw grieks'>-χίλιοι</span>.<br>De honderdtallen vanaf 200 en de duizendtallen volgen de 1<sup>e</sup>/2<sup>e</sup> declinatie in het meervoud.</p><div class='vb'>Bijv. <span class='grieks'>τριάκοντα</span> = ?</div>"
+}
+]
