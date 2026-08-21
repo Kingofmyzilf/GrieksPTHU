@@ -1,15 +1,42 @@
-# Inloggegevens van de Google-service-account. Deze horen NOOIT in git: de repository is
-# openbaar, en met deze sleutel kan iedereen bij de voortgang van alle studenten.
+# --- geheimen: NOOIT committen ---
 .streamlit/secrets.toml
+secrets.toml
+*.credentials.json
+service_account*.json
+.env
 
-# Voortgang van studenten. Hoort ook niet in een openbare repository.
-backups/
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
 
-# Grote bronbestanden die alleen lokaal nodig zijn.
+# --- NiceGUI-werkmap (sessieopslag) ---
+.nicegui/
+
+# --- Office-tijdelijke bestanden ---
+~$*
+
+# --- gedownloade export uit de app ---
+mijn_grieks_voortgang.csv
+
+# --- Hebreeuws bronmateriaal ---
+# De woordenlijsten (docx/pdf, samen een halve MB) gaan wel mee, zodat
+# gereedschap/bouw_hebreeuws.py overal opnieuw te draaien is. De getagde bijbel is 42 MB
+# en hoort net als de NT-tekst niet in de repo; wat we eruit halen staat in de JSON.
 hebreeuws app/Hele bijbel.xlsx
 
-# Werkbestanden
-__pycache__/
-*.pyc
+# Werkbestanden van Claude Code; die horen bij deze machine, niet bij het project.
 .claude/
-.nicegui/
+
+# Reservekopieën van de voortgang: die horen niet in git — het is voortgang van studenten.
+backups/
+
+# Sleutels klaargezet om te kopiëren naar Render en Streamlit Cloud. Weggooien na gebruik.
+sleutel_klaar/
+
+# De NT-tekst staat nu per boek ingepakt in nt/ (2,9 MB in plaats van 31,5). Deze twee
+# blijven lokaal staan als bron voor gereedschap/bouw_nt.py, maar horen niet in git.
+bijbel_nt.json
+bijbel_nt_deel1.json
+bijbel_nt_deel2.json

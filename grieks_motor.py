@@ -12,10 +12,26 @@ import functools
 import json
 import math
 import os
-import pandas as pd
 import random as r_engine
 import re
 import unicodedata
+
+
+# --- omgeving ------------------------------------------------------------
+# Deze twee staan in de bron in een try-blok (optionele afhankelijkheden) en
+# worden daarom apart meegegeven in plaats van uit de broncode gekopieerd.
+try:
+    from zoneinfo import ZoneInfo
+    _TIJDZONE = ZoneInfo("Europe/Amsterdam")
+except Exception:
+    _TIJDZONE = None
+
+try:
+    import fitz  # PyMuPDF: rendert de grammatica-slides
+    FITZ_BESCHIKBAAR = True
+except Exception:
+    fitz = None
+    FITZ_BESCHIKBAAR = False
 
 
 # --- cache ---------------------------------------------------------------
@@ -103,15 +119,45 @@ def naar_grieks_transliteratie(tekst):
     return res
 
 
+def _heeft_waarde(waarde):
+    """True als er echt iets staat. Doet wat pandas' notna() deed: None en NaN tellen
+    niet mee. Zo hoeft de NiceGUI-schil pandas niet te laden — dat scheelt zeventig
+    megabyte geheugen op de server, voor deze ene controle. NaN is het enige dat
+    ongelijk aan zichzelf is; daar herken je het aan."""
+    return waarde is not None and waarde == waarde
+
+
 @functools.lru_cache(maxsize=200000)
 def normaliseer_accent(woord):
-    if pd.notna(woord) and str(woord).strip() != "":
+    if _heeft_waarde(woord) and str(woord).strip() != "":
         w = str(woord).strip().lower()
         w = ''.join(c for c in unicodedata.normalize('NFD', w) if unicodedata.category(c) != 'Mn')
         w = w.replace('a', 'α').replace('e', 'ε').replace('i', 'ι').replace('o', 'ο').replace('u', 'υ')
         w = w.replace('(ν)', '').replace('(ν', '').replace('ν)', '')
         return w.strip()
     return ""
+
+
+def welke_vorm_typte_je(typed, cellen, juiste_id=None):
+    """Zoekt in hetzelfde rijtje welke cel je wél hebt getypt.
+
+    Typ je sou waar soi werd gevraagd, dan is dat geen willekeurige fout maar een
+    verwisseling van naamval — en juist dat wil je weten. Geeft het label van die
+    cel terug, of None als je invoer nergens in het rijtje voorkomt.
+    """
+    if not str(typed or "").strip():
+        return None
+    ing = normaliseer_accent(naar_grieks_transliteratie(typed))
+    if not ing:
+        return None
+    for c in (cellen or []):
+        if juiste_id is not None and c.get("id") == juiste_id:
+            continue
+        # een cel kan varianten hebben, bv. 'emou / mou'
+        for deel in re.split(r"[/,]", str(c.get("vorm", "") or "")):
+            if deel.strip() and normaliseer_accent(deel.strip()) == ing:
+                return c.get("label", "")
+    return None
 
 
 def grieks_vorm_ok(typed, correct):
@@ -260,6 +306,27 @@ def check_bijbel_parsing_uitgebreid(p_soort, p_naam, p_get, p_ges, p_tijd, p_wij
 _ONTLEED_KLEUR = {"Nom": "#7FB3FF", "Gen": "#E8B44A", "Dat": "#B694FF", "Acc": "#FF8FB1", "Voc": "#5ED3C0"}
 
 
+_GRAM_KLEUR = {
+    "praesens": "#E8EAED", "imperfectum": "#8FD3E8", "futurum": "#FFB067",
+    "aoristus": "#FF9BC4", "perfectum": "#C4A6FF", "plusquamperfectum": "#9B86D9",
+    "indicativus": "#B8C4CF", "coniunctivus": "#E8B44A", "optativus": "#5ED3C0",
+    "imperativus": "#FFB067", "infinitivus": "#7FB3FF", "participium": "#C4A6FF",
+    "nominativus": "#7FB3FF", "genitivus": "#E8B44A", "dativus": "#B694FF",
+    "accusativus": "#FF8FB1", "vocativus": "#5ED3C0",
+}
+
+
+_GRAM_ZOEK = re.compile("(?<![A-Za-z])(" + "|".join(
+    sorted(_GRAM_KLEUR, key=len, reverse=True)) + ")(?![A-Za-z])", re.IGNORECASE)
+
+
+def kleur_gram(tekst):
+    """Elke grammaticale term in de tekst zijn eigen kleur geven (HTML)."""
+    return _GRAM_ZOEK.sub(
+        lambda m: f"<span style='color:{_GRAM_KLEUR[m.group(0).lower()]}'>{m.group(0)}</span>",
+        str(tekst or ""))
+
+
 def naamval_legenda(kop="Kleurlegenda"):
     """Eén legenda voor alle plekken, opgebouwd uit _ONTLEED_KLEUR zodat kleur en legenda
     niet uit elkaar kunnen lopen."""
@@ -378,6 +445,28 @@ _OPB_VOORVOEGSELS = ["προσ", "παρα", "περι", "κατα", "μετα",
 
 
 _OPB_TIJD_MET_AUGMENT = ("Imperfectum", "Aoristus", "Plusquamperfectum")
+
+
+_VOORZETSEL_INFO = {
+    "απο": ("ἀπό", "van(af), weg"), "απ": ("ἀπό", "van(af), weg"), "αφ": ("ἀπό", "van(af), weg"),
+    "εκ": ("ἐκ", "uit"), "εξ": ("ἐκ", "uit"),
+    "εισ": ("εἰς", "in, naar"),
+    "εν": ("ἐν", "in"), "εγ": ("ἐν", "in"), "εμ": ("ἐν", "in"),
+    "προσ": ("πρός", "naar…toe, bij"),
+    "προ": ("πρό", "voor(af)"),
+    "παρα": ("παρά", "naast, langs, bij"), "παρ": ("παρά", "naast, langs, bij"),
+    "περι": ("περί", "rondom, over"),
+    "κατα": ("κατά", "neer, tegen, volgens"), "καθ": ("κατά", "neer, tegen, volgens"),
+    "μετα": ("μετά", "met, na"), "μεθ": ("μετά", "met, na"),
+    "ανα": ("ἀνά", "omhoog, opnieuw"),
+    "επι": ("ἐπί", "op, bij, tegen"), "επ": ("ἐπί", "op, bij, tegen"), "εφ": ("ἐπί", "op, bij, tegen"),
+    "υπερ": ("ὑπέρ", "boven, voor"),
+    "υπο": ("ὑπό", "onder"), "υπ": ("ὑπό", "onder"), "υφ": ("ὑπό", "onder"),
+    "δια": ("διά", "door(heen), uiteen"),
+    "συν": ("σύν", "samen, met"), "συγ": ("σύν", "samen, met"), "συμ": ("σύν", "samen, met"),
+    "αντι": ("ἀντί", "tegen(over), in plaats van"),
+    "αμφι": ("ἀμφί", "aan beide kanten"),
+}
 
 
 def _opb_prefix_len(a, b):
@@ -3277,8 +3366,43 @@ def render_slide(paginanummer, dpi=120):
 
 
 @cache_resource
+def nt_index():
+    """De 27 boeken met hun bestandsnaam. Leeg als de map nt/ er niet is."""
+    try:
+        with open(os.path.join("nt", "index.json"), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+def laad_bijbel_boek(bestand):
+    """De verzen van één boek uit nt/. Voor wie niet het hele NT nodig heeft."""
+    import gzip
+    try:
+        with gzip.open(os.path.join("nt", os.path.basename(str(bestand))), "rt",
+                       encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
 def laad_bijbel_db():
+    """De hele NT-tekst: {'Matthew 1:1': [{grieks, parsing_info, strong, …}, …], …}.
+
+    De tekst staat per boek in nt/, ingepakt. Dat scheelt aanzienlijk: de twee losse
+    bestanden waren samen 31,5 MB en dit is 2,9 MB. Wat eruit ging is het veld
+    'parsing_code', dat in geen enkel python-bestand van de repo gelezen werd; de leesbare
+    'parsing_info' staat er nog gewoon in.
+
+    De oude bestanden worden nog gelezen als ze er staan, zodat een werkkopie van vóór deze
+    verandering blijft werken. Omzetten gaat met gereedschap/bouw_nt.py.
+    """
     bijbel = {}
+    boeken = nt_index()
+    if boeken:
+        for b in boeken:
+            bijbel.update(laad_bijbel_boek(b["bestand"]))
+        return bijbel
     if os.path.exists("bijbel_nt.json"):
         with open("bijbel_nt.json", "r", encoding="utf-8") as f: bijbel = json.load(f)
     else:
@@ -3294,31 +3418,3 @@ def _ws_naam(naam):
     kan die van een ander nooit overschrijven."""
     schoon = re.sub(r'[^0-9A-Za-z_]', '_', str(naam or ''))
     return ("u_" + schoon)[:95]
-
-
-@cache_data(ttl=120, show_spinner=False)
-def lees_scorebord(cache_key):
-    """Lees het Scorebord-tabblad en bouw de competitie-metrics. Gecached (2 min) zodat de
-    competitie-tab het niet bij elke rerun opnieuw ophaalt; met 'Ververs' direct te verversen."""
-    try:
-        df = conn.read(worksheet="Scorebord", ttl=0)
-    except Exception:
-        return []
-    if df is None or 'gebruiker' not in getattr(df, 'columns', []):
-        return []
-    _labels = {'woorden': '📘 Woorden', 'actief': '🎓 Actief', 'stam': '⏳ Stamtijden', 'struct': '🧱 Structuur'}
-    out = []
-    for _, r in df.iterrows():
-        naam = str(r.get('gebruiker', '')).strip()
-        if not naam:
-            continue
-        def _i(k):
-            try: return int(float(r.get(k, 0)))
-            except Exception: return 0
-        ond = {'woorden': {'beh': _i('w_beh'), 'pog': _i('w_pog')}, 'actief': {'beh': _i('a_beh'), 'pog': _i('a_pog')},
-               'stam': {'beh': _i('s_beh'), 'pog': _i('s_pog')}, 'struct': {'beh': _i('r_beh'), 'pog': _i('r_pog')}}
-        gedaan = [_labels[k] for k in ['woorden', 'actief', 'stam', 'struct'] if ond[k]['pog'] > 0]
-        out.append({'naam': naam, 'xp': _i('xp'), 'niveau': _i('niveau'), 'titel': str(r.get('titel', '')),
-                    'week': _i('week'), 'totaal': _i('totaal'), 'badges': _i('badges'),
-                    'onderdelen': ond, 'gedaan': gedaan})
-    return out

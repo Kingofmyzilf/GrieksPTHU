@@ -1,0 +1,164 @@
+[
+ {
+  "boek": "Matthew",
+  "bestand": "Matthew.json.gz",
+  "verzen": 1067,
+  "woorden": 18373
+ },
+ {
+  "boek": "Mark",
+  "bestand": "Mark.json.gz",
+  "verzen": 673,
+  "woorden": 11286
+ },
+ {
+  "boek": "Luke",
+  "bestand": "Luke.json.gz",
+  "verzen": 1149,
+  "woorden": 19508
+ },
+ {
+  "boek": "John",
+  "bestand": "John.json.gz",
+  "verzen": 877,
+  "woorden": 15660
+ },
+ {
+  "boek": "Acts",
+  "bestand": "Acts.json.gz",
+  "verzen": 1003,
+  "woorden": 18459
+ },
+ {
+  "boek": "Romans",
+  "bestand": "Romans.json.gz",
+  "verzen": 432,
+  "woorden": 7120
+ },
+ {
+  "boek": "1 Corinthians",
+  "bestand": "1_Corinthians.json.gz",
+  "verzen": 437,
+  "woorden": 6838
+ },
+ {
+  "boek": "2 Corinthians",
+  "bestand": "2_Corinthians.json.gz",
+  "verzen": 257,
+  "woorden": 4477
+ },
+ {
+  "boek": "Galatians",
+  "bestand": "Galatians.json.gz",
+  "verzen": 149,
+  "woorden": 2231
+ },
+ {
+  "boek": "Ephesians",
+  "bestand": "Ephesians.json.gz",
+  "verzen": 154,
+  "woorden": 2423
+ },
+ {
+  "boek": "Philippians",
+  "bestand": "Philippians.json.gz",
+  "verzen": 104,
+  "woorden": 1631
+ },
+ {
+  "boek": "Colossians",
+  "bestand": "Colossians.json.gz",
+  "verzen": 95,
+  "woorden": 1584
+ },
+ {
+  "boek": "1 Thessalonians",
+  "bestand": "1_Thessalonians.json.gz",
+  "verzen": 89,
+  "woorden": 1481
+ },
+ {
+  "boek": "2 Thessalonians",
+  "bestand": "2_Thessalonians.json.gz",
+  "verzen": 47,
+  "woorden": 824
+ },
+ {
+  "boek": "1 Timothy",
+  "bestand": "1_Timothy.json.gz",
+  "verzen": 113,
+  "woorden": 1592
+ },
+ {
+  "boek": "2 Timothy",
+  "bestand": "2_Timothy.json.gz",
+  "verzen": 83,
+  "woorden": 1239
+ },
+ {
+  "boek": "Titus",
+  "bestand": "Titus.json.gz",
+  "verzen": 46,
+  "woorden": 659
+ },
+ {
+  "boek": "Philemon",
+  "bestand": "Philemon.json.gz",
+  "verzen": 25,
+  "woorden": 335
+ },
+ {
+  "boek": "Hebrews",
+  "bestand": "Hebrews.json.gz",
+  "verzen": 303,
+  "woorden": 4960
+ },
+ {
+  "boek": "James",
+  "bestand": "James.json.gz",
+  "verzen": 108,
+  "woorden": 1743
+ },
+ {
+  "boek": "1 Peter",
+  "bestand": "1_Peter.json.gz",
+  "verzen": 105,
+  "woorden": 1685
+ },
+ {
+  "boek": "2 Peter",
+  "bestand": "2_Peter.json.gz",
+  "verzen": 61,
+  "woorden": 1102
+ },
+ {
+  "boek": "1 John",
+  "bestand": "1_John.json.gz",
+  "verzen": 105,
+  "woorden": 2141
+ },
+ {
+  "boek": "2 John",
+  "bestand": "2_John.json.gz",
+  "verzen": 13,
+  "woorden": 245
+ },
+ {
+  "boek": "3 John",
+  "bestand": "3_John.json.gz",
+  "verzen": 14,
+  "woorden": 219
+ },
+ {
+  "boek": "Jude",
+  "bestand": "Jude.json.gz",
+  "verzen": 25,
+  "woorden": 460
+ },
+ {
+  "boek": "Revelation",
+  "bestand": "Revelation.json.gz",
+  "verzen": 404,
+  "woorden": 9856
+ }
+]

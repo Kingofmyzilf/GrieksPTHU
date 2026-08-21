@@ -8,6 +8,7 @@ import random as r_engine
 import re
 import math
 import os
+import time
 import unicodedata
 import difflib
 import functools
@@ -4064,8 +4065,43 @@ def render_slide(paginanummer, dpi=120):
 # cache_resource i.p.v. cache_data: de db wordt alleen gelezen, en cache_data zou de
 # 19,5 MB bij elke aanroep opnieuw unpicklen (~0,13 s x 6 aanroepen per rerun).
 @st.cache_resource
+def nt_index():
+    """De 27 boeken met hun bestandsnaam. Leeg als de map nt/ er niet is."""
+    try:
+        with open(os.path.join("nt", "index.json"), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
+def laad_bijbel_boek(bestand):
+    """De verzen van één boek uit nt/. Voor wie niet het hele NT nodig heeft."""
+    import gzip
+    try:
+        with gzip.open(os.path.join("nt", os.path.basename(str(bestand))), "rt",
+                       encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
 def laad_bijbel_db():
+    """De hele NT-tekst: {'Matthew 1:1': [{grieks, parsing_info, strong, …}, …], …}.
+
+    De tekst staat per boek in nt/, ingepakt. Dat scheelt aanzienlijk: de twee losse
+    bestanden waren samen 31,5 MB en dit is 2,9 MB. Wat eruit ging is het veld
+    'parsing_code', dat in geen enkel python-bestand van de repo gelezen werd; de leesbare
+    'parsing_info' staat er nog gewoon in.
+
+    De oude bestanden worden nog gelezen als ze er staan, zodat een werkkopie van vóór deze
+    verandering blijft werken. Omzetten gaat met gereedschap/bouw_nt.py.
+    """
     bijbel = {}
+    boeken = nt_index()
+    if boeken:
+        for b in boeken:
+            bijbel.update(laad_bijbel_boek(b["bestand"]))
+        return bijbel
     if os.path.exists("bijbel_nt.json"):
         with open("bijbel_nt.json", "r", encoding="utf-8") as f: bijbel = json.load(f)
     else:
@@ -4189,18 +4225,7 @@ def laad_gebruiker_data(naam):
         except Exception:
             pass   # nooit het inloggen laten stranden op een migratie
 
-        for r in basis:
-            stats = st.session_state.vocab_stats.get(r['grieks'], {})
-            if 'm4' in stats or 'm1' in stats:
-                m1 = stats.get('m1', 0); m2 = stats.get('m2', 0); m3 = stats.get('m3', 0); m4 = stats.get('m4', 0)
-                r['streak'] = (m1 * 0) + (m2 * 1) + (m3 * 2) + (m4 * 4)
-            else: r['streak'] = stats.get('streak', 0)
-            
-            r['score_goed'] = stats.get('g', 0)
-            r['score_fout'] = stats.get('f', 0)
-            r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
-            r['laatst_fout'] = stats.get('lf', "")
-            if 'lexeem_info' not in r or not r['lexeem_info']: r['lexeem_info'] = r.get('grieks_info', '')
+        _pas_scores_toe(basis)
         st.session_state.laad_fout = None  # succesvol geladen
         # Migratie: stond je data nog in het oude gedeelde werkblad, zet 'm nu over naar je eigen tab.
         if migreren:
@@ -4214,6 +4239,24 @@ def laad_gebruiker_data(naam):
         st.session_state.laad_fout = str(_e)
         return None
 
+
+def _pas_scores_toe(basis):
+    """De opgeslagen scores op de woordenlijst zetten. Staat apart omdat het twee keer
+    nodig is: bij het inloggen, en zodra we de voortgang opnieuw uit de Sheet halen."""
+    for r in basis:
+        stats = st.session_state.vocab_stats.get(r['grieks'], {})
+        if 'm4' in stats or 'm1' in stats:
+            m1 = stats.get('m1', 0); m2 = stats.get('m2', 0); m3 = stats.get('m3', 0); m4 = stats.get('m4', 0)
+            r['streak'] = (m1 * 0) + (m2 * 1) + (m3 * 2) + (m4 * 4)
+        else: r['streak'] = stats.get('streak', 0)
+
+        r['score_goed'] = stats.get('g', 0)
+        r['score_fout'] = stats.get('f', 0)
+        r['laatst_geoefend'] = stats.get('laatst_geoefend', "")
+        r['laatst_fout'] = stats.get('lf', "")
+        if 'lexeem_info' not in r or not r['lexeem_info']: r['lexeem_info'] = r.get('grieks_info', '')
+
+
 def _ws_naam(naam):
     """Werkbladnaam (tab) voor één gebruiker. Elke student z'n eigen tab → een opslag van de één
     kan die van een ander nooit overschrijven."""
@@ -4225,8 +4268,9 @@ _OPSLAG_SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod
                  ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
                  ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
                  ('klank_stats', 'kl_chunks'), ('hebr_stats', 'hb_chunks')]
-# 'hebr_stats' is van de mobiele app: daar zit de Hebreeuwse woordenschat in. Deze app doet
-# er niets mee, maar moet hem wél kennen — we schrijven de hele rij weg, dus een sleutel die
+# 'hebr_stats' is van de mobiele app: daar zit de Hebreeuwse woordenschat in. Deze app
+# leest hem wel (het Tenach-tabblad laat je streak per woord zien) maar schrijft er niets
+# in. Kennen moet hij hem in elk geval — we schrijven de hele rij weg, dus een sleutel die
 # hier ontbreekt wordt bij het volgende opslaan uitgewist.
 
 
@@ -4361,10 +4405,53 @@ def _samengevoegde_stats():
         return mijn
 
 
+# Hoe lang de voortgang in het geheugen mag staan voordat we hem opnieuw ophalen. Deze
+# app en de mobiele app schrijven naar dezelfde rij, dus wat hier op het scherm staat kan
+# achterlopen zodra je op je telefoon oefent. Zes weken lang liet deze app een stand van
+# 3 juli zien terwijl de Sheet allang bij was — hij las namelijk maar één keer, bij het
+# inloggen, en daarna nooit meer.
+#
+# Vijf minuten is een afweging: korter kost een leesactie per handeling, langer en je ziet
+# je eigen telefoonwerk te laat terug. Bij het opslaan wordt er sowieso ververst, dus
+# tijdens het oefenen loop je nooit achter.
+VERVERS_NA = 300
+
+
+def _ververs_uit_sheet():
+    """De voortgang opnieuw uit de Sheet halen en met de onze samenvoegen.
+
+    Samenvoegen en niet vervangen: dan kan er niets verloren gaan. Per woord wint de kant
+    met de meeste pogingen, dagtellers nemen het hoogste — dezelfde regels als bij het
+    opslaan, want het is dezelfde functie. Wat jij net deed blijft dus staan, en wat je op
+    je telefoon deed komt erbij."""
+    if not st.session_state.get('last_user'):
+        return False
+    try:
+        samen = _samengevoegde_stats()
+    except Exception:
+        return False                     # geen verbinding: gewoon doorwerken met wat we hebben
+    for sleutel, _teller in _OPSLAG_SPECS:
+        if sleutel in samen:
+            st.session_state[sleutel] = samen[sleutel]
+    if st.session_state.get('data'):
+        _pas_scores_toe(st.session_state.data)
+    st.session_state.geladen_op = time.time()
+    return True
+
+
 def opslaan_naar_cloud(update_scorebord=True):
     if not st.session_state.get('last_user'): return
     try:
-        rij = _bouw_rij_dict(_samengevoegde_stats())
+        samen = _samengevoegde_stats()
+        # Het samengevoegde resultaat is wat er in de Sheet komt te staan; zet het ook in
+        # het geheugen, anders blijft het scherm de eigen — mogelijk oudere — stand tonen.
+        for _sleutel, _teller in _OPSLAG_SPECS:
+            if _sleutel in samen:
+                st.session_state[_sleutel] = samen[_sleutel]
+        if st.session_state.get('data'):
+            _pas_scores_toe(st.session_state.data)
+        st.session_state.geladen_op = time.time()
+        rij = _bouw_rij_dict(samen)
         df_row = pd.DataFrame([rij])
         ws = _ws_naam(st.session_state.last_user)
         # Schrijf naar het EIGEN tabblad (geen kruis-overschrijving). Bestaat de tab nog niet →
@@ -4610,6 +4697,11 @@ def main():
         if st.session_state.data is None or st.session_state.last_user != auto_user:
             st.session_state.last_user = auto_user
             st.session_state.data = laad_gebruiker_data(auto_user)
+            st.session_state.geladen_op = time.time()
+        elif time.time() - float(st.session_state.get('geladen_op', 0) or 0) > VERVERS_NA:
+            # Staat dit scherm al een tijd open, dan is er intussen misschien op de
+            # telefoon geoefend. Even bijhalen; samenvoegen kan niets kwijtmaken.
+            _ververs_uit_sheet()
 
     if st.session_state.data is None:
         # Inloggen staat in de hoofdkolom, niet in de zijbalk: op een telefoon is de zijbalk

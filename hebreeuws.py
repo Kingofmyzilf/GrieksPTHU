@@ -18,6 +18,8 @@ import functools
 import gzip
 import json
 import os
+import re
+import unicodedata
 
 _HIER = os.path.dirname(os.path.abspath(__file__))
 BESTAND = os.path.join(_HIER, "hebreeuws_woorden.json")
@@ -180,7 +182,7 @@ def splits_affixen(vorm, parsing):
     voorvoegselletter niet waar hij hoort te staan, dan stoppen we — dan is het beter niets
     te kleuren dan het verkeerde stuk."""
     tekst = str(vorm or "")
-    voor_codes, _kern, achter_code = _codes(parsing)
+    voor_codes, kern_code, achter_code = _codes(parsing)
     i = 0
     letters = [n for n, t in enumerate(tekst) if "א" <= t <= "ת"]
     gebruikt = 0
@@ -202,30 +204,93 @@ def splits_affixen(vorm, parsing):
 
     achtervoegsel = ""
     if achter_code and rest:
+        # De leestekens gaan er eerst af en daarna weer aan. Zonder dit mislukte het bij
+        # het laatste woord van élk vers: לְפָנֶיךָ splitst wel en לְפָנֶיךָ׃ niet, en
+        # dat is de helft van alle mislukkingen.
+        romp, staart = zonder_leesteken(rest)
+        # Vergelijken op de genormaliseerde vorm. De klinkertekens staan in de tekst niet
+        # altijd in dezelfde volgorde als hoe ik ze hier intyp — in אַרְאֶךָּ staat het
+        # dagesj vóór de qamats — en dan mislukt een vergelijking teken voor teken zonder
+        # dat je ziet waarom. NFC zet ze bij allebei in dezelfde volgorde en verandert de
+        # lengte niet, dus het afsnijden mag daarna op de oorspronkelijke tekst.
+        plat = _canon(romp)
+        werkwoord = str(kern_code).startswith("V-")
         for einde in ACHTERVOEGSEL_VORMEN.get(achter_code, ()):
-            if rest.endswith(einde) and len(rest) > len(einde) + 1:
-                achtervoegsel = einde
-                rest = rest[:-len(einde)]
-                break
+            # De energieke nun hoort bij werkwoorden: יַהַרְגֵנִי is 'hij zal mij doden'.
+            # Op een naamwoord is die nun deel van de stam — בְּנִי is בֵּן plus 'mijn' en
+            # niet בְּ plus 'nî'. Zonder deze regel bleef er van 'mijn zoon' een losse בְּ
+            # over, en bij בֵּינִי ('tussen mij') een בֵּי.
+            if einde in ALLEEN_BIJ_WERKWOORD.get(achter_code, ()) and not werkwoord:
+                continue
+            if not plat.endswith(_canon(einde)):
+                continue
+            stam = romp[:len(romp) - len(einde)]
+            # Er moet een woord overblijven, en dat betekent minstens één medeklinker.
+            # Eén is genoeg: לוֹ is het voorzetsel ל plus 'hem', en dat is echt zo.
+            if not any("א" <= t <= "ת" for t in stam):
+                continue
+            achtervoegsel = romp[len(stam):] + staart
+            rest = stam
+            break
     return voorvoegsel, rest, achtervoegsel
 
 
+# Sof pasuq (het dubbelpuntje aan het eind van een vers), de maqaf en de paseq (het streepje
+# dat woorden scheidt). De letters פ en ס die een alinea afsluiten staan altijd ná een sof
+# pasuq — los zijn het gewone letters, dus die mogen alleen in dat gezelschap weg.
+_LEESTEKEN = re.compile(r"(׃[פס]*|[־׀])$")
+
+
+def zonder_leesteken(tekst):
+    """('לְפָנֶיךָ׃') -> ('לְפָנֶיךָ', '׃'). Wat eraf ging komt er ongewijzigd bij terug,
+    zodat de drie stukken samen nog steeds het hele woord zijn."""
+    treffer = _LEESTEKEN.search(str(tekst or ""))
+    if not treffer:
+        return tekst, ""
+    return tekst[:treffer.start()], treffer.group()
+
+
+def _canon(tekst):
+    """Klinkertekens in vaste volgorde, zodat vergelijken werkt. Zie splits_affixen()."""
+    return unicodedata.normalize("NFC", str(tekst or ""))
+
+
 # Hoe een achtervoegsel geschreven wordt. Meer dan één vorm per persoon, want dat hangt af
-# van wat ervoor staat: enkelvoud of meervoud, en welke klinker. Langste eerst, anders zou
-# 'הוּ' al matchen op 'ו'. Wat hier niet in staat wordt niet gekleurd — liever niets dan
-# het verkeerde stuk.
+# van wat ervoor staat: enkelvoud of meervoud, en welke klinker. De reeks wordt hieronder
+# op lengte gesorteerd, want anders zou 'ִי' al matchen binnen 'ֵנִי' en bleef er een losse
+# nun achter. Wat hier niet in staat wordt niet gekleurd — liever niets dan het verkeerde
+# stuk.
+#
+# De laatste in elke reeks is de kale medeklinker. Die mag zo kaal, want we komen hier
+# alleen als de ontleding al zegt dát er een achtervoegsel van deze persoon staat; dan is
+# de laatste medeklinker van het woord die van het achtervoegsel. Bij מְאַסְתִּים ('ik
+# verwierp hen') is dat gewoon de ם.
+#
+# Eén ontbreekt met opzet: de kale ה voor 3fs. Dit bestand geeft de richtings-he dezelfde
+# code als het bezittelijke achtervoegsel — סְדֹמָה staat er als 'N-proper-fs | 3fs' maar
+# betekent 'naar Sodom' en niet 'haar Sodom'. Wat ze in de tekst onderscheidt is het puntje
+# in de ה: הּ is 'haar', ה niet. Vandaar wel 'ָהּ' en niet 'ָה'.
 ACHTERVOEGSEL_VORMEN = {
-    "1cs": ("ַי", "ִי", "ֵנִי", "נִי", "י"),
-    "2ms": ("ֶיךָ", "ְךָ", "ֶךָ", "ָךְ", "ךָ", "ךְ"),
-    "2fs": ("ַיִךְ", "ֵךְ", "ָךְ", "ךְ"),
-    "3ms": ("ֵהוּ", "ָיו", "ֵימוֹ", "הוּ", "וֹ", "ו"),
-    "3fs": ("ֶיהָ", "ָהּ", "הָ"),
-    "1cp": ("ֵינוּ", "ֵנוּ", "נוּ"),
-    "2mp": ("ֵיכֶם", "ְכֶם", "כֶם"),
-    "2fp": ("ֵיכֶן", "ְכֶן", "כֶן"),
-    "3mp": ("ֵיהֶם", "ֵהֶם", "ָם", "הֶם"),
-    "3fp": ("ֵיהֶן", "ֵהֶן", "ָן", "הֶן"),
+    "1cs": ("ֵנִי", "ַנִי", "נִּי", "נִי", "ַי", "ָי", "ִי", "י"),
+    "2ms": ("ֶיךָ", "ֵיךָ", "ְךָ", "ֶךָ", "ָךְ", "כָּה", "כָה", "ךָּ", "ךָ", "ךְ", "ך"),
+    "2fs": ("ַיִךְ", "ֵךְ", "ָךְ", "ֵךָ", "ךְ", "ך"),
+    # 'ֹה' is de oude spelling van 'zijn': אָהֳלֹה naast אָהֳלוֹ.
+    "3ms": ("ֵימוֹ", "ֶנּוּ", "ַנּוּ", "ֵהוּ", "ָיו", "ִיו", "הוּ", "נּוּ", "וֹ", "ֹה", "ו"),
+    "3fs": ("ֶיהָ", "ָיהָ", "ֶנָּה", "ַנָּה", "נָּה", "ָהּ", "הּ", "הָ"),
+    "1cp": ("ֵינוּ", "ֶנּוּ", "ַנּוּ", "ֵנוּ", "נּוּ", "נוּ"),
+    "2mp": ("ֵיכֶם", "ְכֶם", "כֶּם", "כֶם"),
+    "2fp": ("ֵיכֶן", "ְכֶן", "כֶּן", "כֶן"),
+    "3mp": ("ֵיהֶם", "ֵהֶם", "ָמוֹ", "הֶם", "מוֹ", "ָם", "ם"),
+    "3fp": ("ֵיהֶן", "ֵהֶן", "ָנָה", "הֶן", "ָן", "ן"),
 }
+# Langste eerst. Handmatig op orde houden gaat een keer mis, dus dat doet de computer.
+ACHTERVOEGSEL_VORMEN = {code: tuple(sorted(set(vormen), key=len, reverse=True))
+                        for code, vormen in ACHTERVOEGSEL_VORMEN.items()}
+
+# Deze spellingen mogen alleen bij een werkwoord: het is de energieke nun, die tussen een
+# werkwoord en zijn lijdend voorwerp komt. Zonder dagesj, want 'נִּי' (מִמֶּנִּי, 'van mij')
+# kan wel overal.
+ALLEEN_BIJ_WERKWOORD = {"1cs": ("ֵנִי", "ַנִי", "נִי")}
 
 
 def sleutel(woord):

@@ -47,17 +47,22 @@ except ImportError:
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive"]
 
-# Dezelfde dertien statistiek-dicts als de Streamlit-app, in dezelfde volgorde.
+# Dezelfde veertien statistiek-dicts als de Streamlit-app, in dezelfde volgorde.
+# Die volgorde en die namen moeten daar gelijk aan blijven: allebei de apps schrijven de
+# héle rij weg, dus een sleutel die de ander niet kent wordt bij het volgende opslaan
+# uitgewist. 'hebr_stats' is er als laatste bij gekomen voor de Hebreeuwse woordenschat;
+# de Streamlit-app doet er niets mee maar draagt hem wel netjes door.
 SPECS = [('vocab_stats', 'v_chunks'), ('gram_stats', 'g_chunks'), ('prod_stats', 'pr_chunks'),
          ('stam_stats', 'st_chunks'), ('struct_stats', 'sr_chunks'), ('dag_stats', 'd_chunks'),
          ('verwar_stats', 'vw_chunks'), ('ui_prefs', 'ui_chunks'), ('badges', 'bd_chunks'),
          ('dagdoel', 'dd_chunks'), ('actief_stats', 'af_chunks'), ('ontleed_stats', 'on_chunks'),
          ('klank_stats', 'kl_chunks'), ('hebr_stats', 'hb_chunks')]
-# 'hebr_stats' is de Hebreeuwse woordenschat en de rijtjes; die oefen je in de mobiele app.
-# Deze lijst moet in beide apps gelijk zijn, want allebei schrijven ze de héle rij weg —
-# een sleutel die de één niet kent wordt bij het volgende opslaan uitgewist.
 MAX_LEN = 40000
 SCOREBORD = "Scorebord"
+BACKUPBLAD = "Backups"
+# Zoveel dagelijkse kopieën blijven staan. Veertien is twee weken terug kunnen; verder
+# terug heb je in de praktijk niet nodig, en het houdt het tabblad klein.
+BACKUP_DAGEN = 14
 
 # Statistieken waarvan de waarden de vorm {sleutel: {'g':.., 'f':.., 'streak':..}} hebben.
 # Voor die vorm geldt de tel-regel bij het samenvoegen (zie samenvoeg_stats).
@@ -380,6 +385,80 @@ def huidige_stats(gebruiker):
         return None
 
 
+def _vandaag():
+    return time.strftime("%Y-%m-%d")
+
+
+def dagkopie(gebruiker, in_sheet):
+    """Eén keer per dag de stand uit de Sheet apart wegzetten, in het tabblad Backups.
+
+    Waarom hier: dit is de stand zoals die in de Sheet stáát, vóór het samenvoegen met wat
+    de app in het geheugen heeft. Dat is precies wat je terug wil kunnen halen als er
+    vandaag iets misgaat — een kopie ná het schrijven zou de schade meebewaren.
+
+    Wie de eerste is die vandaag opslaat, maakt de kopie. Of dat jij op je telefoon bent of
+    een student maakt niet uit; het gaat per gebruiker, en iedereen heeft zijn eigen rij.
+    De vlag staat in 'badges' onder een sleutel met een liggend streepje ervoor, net als de
+    tellers die daar al staan; bij het samenvoegen blijft die staan omdat badges per
+    sleutel worden overgenomen.
+
+    Alles hier is bijzaak: mislukt het, dan gebeurt er niets en gaat het opslaan gewoon
+    door. Een reservekopie mag nooit de reden zijn dat je voortgang niet wordt bewaard.
+    """
+    if not isinstance(in_sheet, dict) or not in_sheet:
+        return False                       # niets te bewaren
+    vandaag = _vandaag()
+    if str((in_sheet.get("badges") or {}).get("_backup_op", "")) == vandaag:
+        return False                       # vandaag al gedaan
+    rij = bouw_rij(gebruiker, in_sheet)
+    tab = _tab(BACKUPBLAD, maak=True)
+    kop = ["dag"] + list(rij)
+    bestaand = tab.row_values(1)
+    if not bestaand:
+        tab.update([kop], "A1")
+        bestaand = kop
+    # Op naam invullen en niet op volgorde: komt er later een statistiek bij, dan schuift
+    # de kolomindeling en zouden de oude rijen scheef gaan staan.
+    rij["dag"] = vandaag
+    tab.append_row([str(rij.get(naam, "")) for naam in bestaand],
+                   value_input_option="RAW")
+    in_sheet.setdefault("badges", {})["_backup_op"] = vandaag
+    _oude_kopieen_weg(tab)
+    return True
+
+
+def _oude_kopieen_weg(tab):
+    """De oudste dagen weggooien zodra er meer dan BACKUP_DAGEN verschillende dagen staan.
+
+    Per dag kunnen er meerdere rijen staan — één per gebruiker — dus er wordt op dagen
+    geteld en niet op rijen."""
+    dagen = tab.col_values(1)[1:]           # kolom 'dag', zonder de kopregel
+    unieke = sorted(set(d for d in dagen if d))
+    if len(unieke) <= BACKUP_DAGEN:
+        return
+    weg = set(unieke[:len(unieke) - BACKUP_DAGEN])
+    # Van onder naar boven verwijderen, anders verschuiven de rijnummers onder je handen.
+    for nummer in sorted((i + 2 for i, d in enumerate(dagen) if d in weg), reverse=True):
+        tab.delete_rows(nummer)
+
+
+def lees_kopieen(gebruiker=None):
+    """De dagelijkse kopieën uit het tabblad Backups: [(dag, gebruikersnaam, stats), …]."""
+    tab = _tab(BACKUPBLAD)
+    if tab is None:
+        return []
+    uit = []
+    for rij in tab.get_all_records():
+        naam = str(rij.get("gebruikersnaam", "")).strip()
+        if gebruiker and naam.lower() != str(gebruiker).strip().lower():
+            continue
+        try:
+            uit.append((str(rij.get("dag", "")), naam, lees_rij(rij)))
+        except OpslagFout:
+            continue                        # één onleesbare kopie mag de rest niet blokkeren
+    return sorted(uit, key=lambda x: x[0])
+
+
 def bewaar(gebruiker, stats, pogingen=3, samenvoegen=True):
     """Voortgang wegschrijven. Probeert het bij een quota-fout een paar keer opnieuw.
 
@@ -389,7 +468,12 @@ def bewaar(gebruiker, stats, pogingen=3, samenvoegen=True):
     voortgang blijft dan in het geheugen staan en de volgende beurt probeert het weer.
     """
     if samenvoegen:
-        stats = samenvoeg_stats(huidige_stats(gebruiker), stats)
+        in_sheet = huidige_stats(gebruiker)
+        try:
+            dagkopie(gebruiker, in_sheet)
+        except Exception:                                        # noqa: BLE001
+            pass          # een reservekopie mag het opslaan nooit tegenhouden
+        stats = samenvoeg_stats(in_sheet, stats)
     rij = bouw_rij(gebruiker, stats)
     kolommen = list(rij)
     tab = _tab(werkblad_naam(gebruiker), maak=True)
