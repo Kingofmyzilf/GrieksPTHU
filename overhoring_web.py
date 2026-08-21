@@ -3466,6 +3466,7 @@ TAB_KEUZE = [
     # zet het uit bij ℹ️ Uitleg & Hulp, net als elk ander tabblad.
     ("tenach", "📜 Tenach (Hebreeuws)"),
     ("hebontleed", "🔍 Hebreeuws ontleden"),
+    ("hebwoorden", "🅰️ Hebreeuwse woorden"),
 ]
 # Deze twee blijven altijd staan: via Uitleg zet je tabbladen weer aan, en Voortgang is je overzicht.
 TAB_ALTIJD = {"uitleg", "voortgang"}
@@ -3497,6 +3498,15 @@ def _hebreeuws_erbij():
         return False
 
 
+def _hebreeuwse_woorden_erbij():
+    """Is de Hebreeuwse woordenlijst er?"""
+    try:
+        import hebreeuws_web
+        return hebreeuws_web.woorden_beschikbaar()
+    except Exception:                                            # noqa: BLE001
+        return False
+
+
 def _hebreeuws_ontleden_erbij():
     """Is de oefenstof om Hebreeuwse vormen te ontleden er? Die wordt gemaakt door
     gereedschap/bouw_hebreeuws_ontleden.py en staat in hebreeuws_ontleden.json."""
@@ -3516,6 +3526,8 @@ def tab_reden(sleutel):
         return "de Hebreeuwse bijbeltekst zit niet in deze installatie"
     if sleutel == "hebontleed" and not _hebreeuws_ontleden_erbij():
         return "hebreeuws_ontleden.json zit niet in deze installatie"
+    if sleutel == "hebwoorden" and not _hebreeuwse_woorden_erbij():
+        return "hebreeuws_woorden.json zit niet in deze installatie"
     return ""
 
 
@@ -4854,7 +4866,7 @@ def main():
         # dus er is ook geen 'app in de app' met verborgen tabjes.
         _MENU_SLEUTELS = ["woorden", "lijst", "voortgang", "actief", "stam", "struct",
                           "lezen", "gram", "uitleg", "nlgr", "ontleden", "klank", "tenach",
-                          "contractie", "hebontleed"]
+                          "contractie", "hebontleed", "hebwoorden"]
         beginstand_tabs()
         _volgorde = list(TAB_KEUZE)
         if nieuwe_gebruiker():
@@ -10285,6 +10297,27 @@ def main():
                 hebreeuws_web.tab_ontleden(registreer_oefening, trigger_save)
             except Exception as _e:                              # noqa: BLE001
                 st.info("Het Hebreeuwse ontleden is in deze installatie niet beschikbaar.")
+                st.caption(f"({_e})")
+
+
+        # ==========================================
+        # TAB: HEBREEUWSE WOORDEN
+        # ==========================================
+        # Dezelfde oefening als in de snelle app, maar op een toetsenbord. Wie alleen deze
+        # app gebruikt kon de Hebreeuwse woorden helemaal niet oefenen, en een Nederlands
+        # antwoord typen gaat op een laptop nu eenmaal prettiger dan op een telefoon.
+        #
+        # De regels komen uit hebreeuws.py en zijn dus letterlijk dezelfde, en het schrijft
+        # naar dezelfde plek in hebr_stats — dus wat je hier doet zie je daar terug en
+        # omgekeerd. check_betekenis gaat mee omdat die functie in elke app apart staat.
+        if _TOON[15] and menu[15] is not None:
+         with menu[15]:
+            try:
+                import hebreeuws_web
+                hebreeuws_web.tab_woorden(registreer_oefening, trigger_save,
+                                          check_betekenis)
+            except Exception as _e:                              # noqa: BLE001
+                st.info("De Hebreeuwse woorden zijn in deze installatie niet beschikbaar.")
                 st.caption(f"({_e})")
 
 

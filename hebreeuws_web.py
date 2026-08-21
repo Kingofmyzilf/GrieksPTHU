@@ -650,3 +650,285 @@ def tab_ontleden(registreer=None, bewaar=None):
             {"vorm": v["vorm"], "antwoord": v["antwoord"],
              "opbouw": v.get("toelichting", ""), "vindplaats": v["vers"]}
             for v in groep["vragen"]]), use_container_width=True, hide_index=True)
+
+
+# ============================================================== Hebreeuwse woordenschat
+# Dezelfde oefening als in de snelle app, maar op een toetsenbord. Waarom hij hier ook
+# staat: wie alleen deze app gebruikt kon de Hebreeuwse woorden helemaal niet oefenen, en
+# een Nederlands antwoord typen gaat op een laptop nu eenmaal prettiger dan op een telefoon.
+#
+# De regels komen uit hebreeuws.py en zijn dus letterlijk dezelfde als in de snelle app: de
+# betekenis van een knop, wat er als antwoord goed is, en de streak-punten. Ze schrijven ook
+# naar dezelfde plek — hebr_stats, met hebreeuws.sleutel(w) als sleutel — dus wat je hier
+# doet zie je daar terug en omgekeerd.
+WOORD_BLOK = 8                # zoveel woorden in een blokje
+WOORD_BLOK_KLAAR = 5          # vanaf deze streak telt een woord als 'af' voor het blokje
+WOORD_TYP_STREAK = 3          # vanaf hier moet je het antwoord typen in plaats van kiezen
+WOORD_PUNTEN_TYP = 3          # zelf typen levert er drie op
+WOORD_PUNTEN_KEUS = 1         # aanwijzen één
+WOORD_STRAF = 2               # en een misser kost er twee
+WOORD_STRAF_VANAF = 16        # maar alleen bij een woord dat je al beheerste
+WOORD_LIJSTEN = {"Alles": 0, "Hebreeuws 1 · woord 1–165": 1,
+                 "Hebreeuws 2 · woord 166–410": 2}
+
+
+def _woord_scores():
+    """De voortgang, in dezelfde dict die de snelle app gebruikt."""
+    s = st.session_state.get("hebr_stats")
+    if not isinstance(s, dict):
+        s = {}
+        st.session_state.hebr_stats = s
+    return s
+
+
+@st.cache_data(show_spinner=False)
+def _woordenlijst():
+    """De 410 woorden zoals ze in het bestand staan. Zonder voortgang — die wisselt."""
+    return [dict(w) for w in hebreeuws.laad_woorden()]
+
+
+def woorden_beschikbaar():
+    return bool(_woordenlijst())
+
+
+def woorden_met_scores(lijst_nr=0):
+    """De woorden met je streak erop, in leervolgorde.
+
+    Die volgorde is een keuze: eerst alles uit lijst 3 — de bestanden C, D en E met de
+    vormen die in élk vers staan — en daarna de rest op frequentie. וַיֹּאמֶר komt 1950 keer
+    voor; wie die kent leest meteen makkelijker. Zelfde volgorde als de snelle app."""
+    scores = _woord_scores()
+    uit = []
+    for w in _woordenlijst():
+        w = dict(w)
+        e = scores.get(hebreeuws.sleutel(w)) or {}
+        w["streak"] = int(e.get("streak", 0) or 0)
+        w["score_goed"] = int(e.get("g", 0) or 0)
+        w["score_fout"] = int(e.get("f", 0) or 0)
+        nummer = int(w.get("nummer", 0) or 0)
+        if lijst_nr == 1 and nummer > 165:
+            continue
+        if lijst_nr == 2 and nummer <= 165:
+            continue
+        uit.append(w)
+    basis = [w for w in uit if int(w.get("les", 0) or 0) == 3]
+    rest = [w for w in uit if int(w.get("les", 0) or 0) != 3]
+    op_freq = lambda w: (-int(w.get("frequentie", 0) or 0), int(w.get("nummer", 0) or 0))
+    return sorted(basis, key=op_freq) + sorted(rest, key=op_freq)
+
+
+def woord_blokjes(woorden):
+    """De woorden in blokjes van acht, met per blokje hoever je bent."""
+    blokjes = []
+    for n, start in enumerate(range(0, len(woorden), WOORD_BLOK)):
+        brok = woorden[start:start + WOORD_BLOK]
+        klaar = sum(1 for w in brok if w["streak"] >= WOORD_BLOK_KLAAR)
+        titel = ("De basis: wat in elk vers staat"
+                 if brok and int(brok[0].get("les", 0) or 0) == 3
+                 else f"vanaf {int(brok[0].get('frequentie', 0) or 0)}x" if brok else "")
+        blokjes.append({"nr": n + 1, "titel": titel, "items": brok,
+                        "klaar": klaar, "voltooid": bool(brok) and klaar == len(brok)})
+    return blokjes
+
+
+def _woord_keuzes(woord, alle, hoeveel=4):
+    """Vier betekenissen om uit te kiezen, met het goede antwoord erbij.
+
+    Afleiders met ongeveer even lange betekenissen, want anders springt het goede antwoord
+    eruit doordat het langer is dan de rest. Dezelfde les als bij het ontleden: een afleider
+    die je op zijn vórm kunt uitsluiten is geen afleider."""
+    goed = hebreeuws.heb_betekenis(woord)
+    lengte = len(goed)
+    eigen = hebreeuws.sleutel(woord)
+    anderen = {hebreeuws.heb_betekenis(w) for w in alle
+               if hebreeuws.sleutel(w) != eigen}
+    anderen = sorted((b for b in anderen if b and b != goed),
+                     key=lambda b: abs(len(b) - lengte))
+    keuzes = anderen[:max(hoeveel * 3, 10)]
+    random.shuffle(keuzes)
+    keuzes = keuzes[:hoeveel - 1] + [goed]
+    random.shuffle(keuzes)
+    return keuzes
+
+
+def _vandaag():
+    from datetime import date
+    return date.today().isoformat()
+
+
+def tab_woorden(registreer=None, bewaar=None, vergelijk=None):
+    """Het tabblad. Aanroepen binnen 'with menu[i]:'.
+
+    registreer, bewaar en vergelijk komen uit overhoring_web: registreer_oefening,
+    trigger_save en check_betekenis. Meegeven en niet importeren, want dat zou een kringetje
+    worden — overhoring_web importeert deze module."""
+    st.subheader("🅰️ Hebreeuwse woorden")
+    if not woorden_beschikbaar():
+        st.info("De Hebreeuwse woordenlijst staat niet in deze installatie.")
+        return
+    st.markdown(OPMAAK, unsafe_allow_html=True)
+
+    modus = st.radio("Wat wil je doen?", ["🚀 Oefenen", "📖 Lijst bekijken"],
+                     horizontal=True, key="hw_modus")
+    lijst_naam = st.selectbox("Welke woorden", list(WOORD_LIJSTEN), key="hw_lijst")
+    woorden = woorden_met_scores(WOORD_LIJSTEN[lijst_naam])
+    if not woorden:
+        st.info("Geen woorden in deze selectie.")
+        return
+
+    if modus.startswith("📖"):
+        _woordenlijst_tonen(woorden)
+        return
+
+    blokjes = woord_blokjes(woorden)
+    # Het eerste blokje dat nog niet af is; daar wil je bijna altijd zijn.
+    eerste_open = next((b["nr"] for b in blokjes if not b["voltooid"]), 1)
+    namen = [f"Blokje {b['nr']} · {b['titel']} — {b['klaar']}/{len(b['items'])} af"
+             for b in blokjes]
+    keuze = st.selectbox("Welk blokje", namen, index=eerste_open - 1, key="hw_blok")
+    blok = blokjes[namen.index(keuze)]
+    st.caption(f"{sum(1 for b in blokjes if b['voltooid'])} van de {len(blokjes)} blokjes "
+               f"af · je oefent Hebreeuws naar Nederlands, net als in de snelle app, en het "
+               f"is dezelfde voortgang.")
+    st.write("---")
+
+    scores = _woord_scores()
+    staat_sleutel = f"hw_staat_{lijst_naam}_{blok['nr']}"
+    if staat_sleutel not in st.session_state:
+        st.session_state[staat_sleutel] = {"i": 0, "goed": 0, "totaal": 0,
+                                          "melding": None, "keuzes": None, "voor": None}
+    staat = st.session_state[staat_sleutel]
+    if staat["i"] >= len(blok["items"]):
+        staat["i"] = 0
+
+    if staat.get("melding"):
+        soort, tekst = staat["melding"]
+        (st.success if soort == "goed" else st.error)(tekst)
+        staat["melding"] = None
+    if staat["totaal"]:
+        st.caption(f"Deze ronde: {staat['goed']}/{staat['totaal']} goed")
+
+    woord = blok["items"][staat["i"]]
+    sleutel = hebreeuws.sleutel(woord)
+    typen = woord["streak"] >= WOORD_TYP_STREAK
+
+    def volgende(juist, gegeven=""):
+        staat["totaal"] += 1
+        staat["goed"] += int(juist)
+        rec = scores.setdefault(sleutel, {"g": 0, "f": 0, "streak": 0})
+        oude = int(rec.get("streak", 0) or 0)
+        if juist:
+            rec["g"] = int(rec.get("g", 0)) + 1
+            rec["streak"] = oude + (WOORD_PUNTEN_TYP if typen else WOORD_PUNTEN_KEUS)
+        else:
+            rec["f"] = int(rec.get("f", 0)) + 1
+            # Een woord dat je al beheerste valt twee terug; daaronder kost een misser je
+            # streak niets — je hebt het woord nog niet vast, en dan is terugzetten
+            # ontmoedigend zonder dat het leert. Zelfde regel als bij het Grieks.
+            if oude >= WOORD_STRAF_VANAF:
+                rec["streak"] = max(0, oude - WOORD_STRAF)
+            rec["lf"] = _vandaag()
+        rec["laatst_geoefend"] = _vandaag()
+        gekozen = f" Jij gaf: *{gegeven}*." if not juist and gegeven else ""
+        staat["melding"] = (
+            "goed" if juist else "fout",
+            f"✅ Juist! **{woord['hebreeuws']}** — {hebreeuws.heb_volledig(woord)} · "
+            f"streak nu {rec['streak']}" if juist else
+            f"❌ **{woord['hebreeuws']}** betekent: {hebreeuws.heb_volledig(woord)}."
+            f"{gekozen} Streak {rec['streak']}.")
+        staat["i"] = (staat["i"] + 1) % len(blok["items"])
+        staat["keuzes"] = None
+        if registreer:
+            registreer()
+        if bewaar:
+            bewaar()
+        st.rerun()
+
+    # ---- de vraag
+    st.markdown(f"<div class='hebtekst' style='font-size:52px;padding:4px 14px'>"
+                f"{woord['hebreeuws']}</div>", unsafe_allow_html=True)
+    onder = []
+    if woord.get("translit"):
+        onder.append(f"klinkt als {woord['translit']}")
+    if woord.get("frequentie"):
+        onder.append(f"{woord['frequentie']}x in de Tenach")
+    onder.append(f"streak {woord['streak']}" if woord["streak"] else "nog niet geoefend")
+    st.caption(" · ".join(onder))
+
+    if typen:
+        st.markdown("**Wat betekent dit? Typ je antwoord.**")
+        with st.form(f"hw_form_{sleutel}_{staat['i']}"):
+            antwoord = st.text_input("Betekenis", key=f"hw_in_{sleutel}_{staat['i']}")
+            k1, k2 = st.columns([1, 4])
+            verzonden = k1.form_submit_button("✓ Nakijken", type="primary")
+            weet_niet = k2.form_submit_button("Ik weet het niet")
+        if weet_niet:
+            volgende(False)
+        elif verzonden:
+            if not str(antwoord or "").strip():
+                st.warning("Typ eerst een antwoord.")
+            else:
+                goed = hebreeuws.heb_goed(antwoord, woord, vergelijk or _simpel_gelijk)
+                volgende(goed, antwoord)
+    else:
+        st.markdown("**Wat betekent dit?**")
+        if staat.get("voor") != [sleutel, staat["i"]]:
+            staat["keuzes"] = _woord_keuzes(woord, woorden)
+            staat["voor"] = [sleutel, staat["i"]]
+        gekozen_optie = st.radio("Kies", staat["keuzes"] or [], index=None,
+                                 key=f"hw_kies_{sleutel}_{staat['i']}")
+        k1, k2 = st.columns([1, 4])
+        if k1.button("✓ Nakijken", key=f"hw_chk_{sleutel}_{staat['i']}", type="primary"):
+            if gekozen_optie is None:
+                st.warning("Kies eerst een betekenis.")
+            else:
+                volgende(gekozen_optie == hebreeuws.heb_betekenis(woord), gekozen_optie)
+        if k2.button("Ik weet het niet", key=f"hw_niet_{sleutel}_{staat['i']}"):
+            volgende(False)
+
+    st.caption(f"Woord {staat['i'] + 1} van de {len(blok['items'])} in dit blokje. "
+               + ("Je typt het antwoord omdat je streak 3 of hoger is."
+                  if typen else
+                  f"Vanaf streak {WOORD_TYP_STREAK} ga je het antwoord typen."))
+
+
+def _simpel_gelijk(gegeven, doel):
+    """Terugval als er geen check_betekenis is meegegeven: gelijk op kleine letters.
+
+    De echte vergelijking staat in de app en laat een tikfout of twee door; deze is er
+    alleen zodat het tabblad ook zonder die functie werkt in plaats van om te vallen."""
+    return str(gegeven or "").strip().lower() == str(doel or "").strip().lower()
+
+
+def _woordenlijst_tonen(woorden):
+    """De woordenlijst om in op te zoeken. Met de frequentie erbij, want bij het Hebreeuws
+    is dat het getal dat zegt hoe hard een woord loont om te kennen."""
+    zoek = st.text_input("Zoek op Hebreeuws, Nederlands of hoe het klinkt", key="hw_zoek")
+    q = str(zoek or "").strip().lower()
+    rijen = []
+    for w in woorden:
+        ned = hebreeuws.heb_uitleg(w)
+        if q and q not in str(w.get("hebreeuws", "")) and q not in ned.lower() \
+                and q not in str(w.get("translit", "")).lower():
+            continue
+        rijen.append({
+            "woord": w.get("hebreeuws", ""),
+            "klinkt": w.get("translit", ""),
+            "betekenis": ned,
+            "lijst": w.get("les", ""),
+            "tenach": int(w.get("frequentie", 0) or 0),
+            "streak": w["streak"],
+            "goed": w["score_goed"],
+            "fout": w["score_fout"],
+        })
+    vast = sum(1 for r in rijen if r["streak"] >= WOORD_STRAF_VANAF)
+    st.caption(f"{len(rijen)} woorden · {vast} met streak {WOORD_STRAF_VANAF} of hoger")
+    st.dataframe(pd.DataFrame(rijen), use_container_width=True, hide_index=True,
+                 column_config={
+                     "woord": st.column_config.TextColumn("Woord", width="small"),
+                     "klinkt": st.column_config.TextColumn("Klinkt als", width="small"),
+                     "betekenis": st.column_config.TextColumn("Betekenis", width="large"),
+                     "lijst": st.column_config.TextColumn("Lijst", width="small"),
+                     "tenach": st.column_config.NumberColumn("In de Tenach", width="small"),
+                     "streak": st.column_config.NumberColumn("Streak", width="small"),
+                 })
