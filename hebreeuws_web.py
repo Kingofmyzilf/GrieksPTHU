@@ -289,10 +289,15 @@ def _woord_html(wv, lijst, stand, opties):
     if opties["affixen"]:
         voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
         if voor or achter:
+            # Het versteken achteraan hoort niet bij het achtervoegsel en krijgt dus ook
+            # niet die kleur. splits_affixen() houdt het erbij omdat de drie stukken samen
+            # het hele woord moeten zijn; hier gaat het er weer even af.
+            einde, staart = hebreeuws.zonder_leesteken(achter)
             binnen = (f"<span style='color:{AFFIX_KLEUR}'>{voor}</span>" if voor else "")
             binnen += f"<span style='{stijl}'>{kern}</span>"
-            binnen += (f"<span style='color:{AFFIX_KLEUR}'>{achter}</span>"
-                       if achter else "")
+            binnen += (f"<span style='color:{AFFIX_KLEUR}'>{einde}</span>"
+                       if einde else "")
+            binnen += f"<span style='{stijl}'>{staart}</span>" if staart else ""
         else:
             binnen = f"<span style='{stijl}'>{vorm}</span>"
     else:

@@ -2943,6 +2943,16 @@ def leerpad_kaart_volgorde(sampled):
     return kaarten
 
 
+def _hebreeuws_erbij():
+    """Zit het Hebreeuws in deze installatie? Zo niet, dan hoort dat tabblad er niet te
+    staan — een tab die 'niet beschikbaar' meldt is erger dan geen tab."""
+    try:
+        import hebreeuws_web
+        return hebreeuws_web.beschikbaar()
+    except Exception:                                            # noqa: BLE001
+        return False
+
+
 def _vandaag_str():
     try:
         return str(_nu().date())
@@ -3386,6 +3396,7 @@ def laad_bijbel_boek(bestand):
         return {}
 
 
+@cache_resource
 def laad_bijbel_db():
     """De hele NT-tekst: {'Matthew 1:1': [{grieks, parsing_info, strong, …}, …], …}.
 
