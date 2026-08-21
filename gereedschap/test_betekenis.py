@@ -23,20 +23,20 @@ import grieks_motor as motor
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def haal_functies():
-    """De betekenis-functies uit grieks_app.py halen zonder de app te starten.
+# Deze functies stonden eerst in grieks_app.py, en dan moest dit bestand het stuk broncode
+# eruit knippen en uitvoeren -- de app start namelijk de server zodra je hem importeert.
+# Sinds de Streamlit-app ze ook nodig heeft staan ze in hebreeuws.py en kan het gewoon met
+# een import. heb_goed krijgt de Nederlandse vergelijking van de motor mee.
+import hebreeuws as H
 
-    De app roept ui.run() aan zodra je hem importeert, en dan blijft hij draaien. Dit
-    knipt alleen het stuk eruit dat over betekenissen gaat."""
-    bron = open(os.path.join(REPO, "grieks_app.py"), encoding="utf-8").read()
-    begin = bron.index("# ---------------------------------------------------------------- de betekenis uitlezen")
-    eind = bron.index("def heb_nieuw(")
-    ns = {"re": re, "motor": motor, "HEB_KORT": 42, "ZACHT": "#9aa4ae"}
-    exec(bron[begin:eind], ns)
-    return ns
-
-
-NS = haal_functies()
+NS = {
+    "heb_uitleg": H.heb_uitleg,
+    "heb_groepen": H.heb_groepen,
+    "heb_betekenis": H.heb_betekenis,
+    "heb_antwoorden": H.heb_antwoorden,
+    "heb_volledig": H.heb_volledig,
+    "heb_goed": lambda antwoord, w: H.heb_goed(antwoord, w, motor.check_betekenis),
+}
 
 # Wat er op de keuzeknop moet staan. Per woord: het nummer in de lijst, en wat we
 # verwachten. Alle zeven kwamen naar boven door ze in de app tegen te komen.

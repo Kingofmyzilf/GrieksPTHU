@@ -681,6 +681,172 @@ def laad_rijtjes():
         return {}
 
 
+# ========================================================================== de betekenis uitlezen
+# Zoveel tekens mag een keuzeknop hebben. Boven de veertig wordt hij twee regels hoog en
+# raakt een rijtje van vier uit balans; dan lees je de knoppen niet meer, maar scan je ze.
+HEB_KORT = 42
+
+# Verhuisd uit grieks_app.py, zodat de Streamlit-app ze ook kan
+# gebruiken: die kan dat bestand niet importeren, want het start de
+# NiceGUI-server zodra je het inleest. Het is taalkennis en geen
+# schermwerk, dus hier is de juiste plek.
+# ---------------------------------------------------------------- de betekenis uitlezen
+# De Hebreeuwse woordenlijst gebruikt een andere notatie dan de Griekse, en dat is geen
+# slordigheid maar een verschil tussen de twee talen. Bij het Grieks scheidt een puntkomma
+# de naamvallen: 'διά (+gen.) door(heen); (+acc.) door, wegens' — dat zijn echt twee dingen.
+# Bij het Hebreeuws staat de puntkomma daar waar het Grieks een komma zet: bij עַל is
+# '(boven)op, over, bij; tot, tegen; wegens' één rij gelijkwaardige betekenissen.
+#
+# De Hebreeuwse tegenhanger van de Griekse naamval is de stamformatie, en die staat er als
+# code vóór het segment: 'G eten; N gegeten worden; H voeden'. Dáár scheidt de puntkomma
+# wel iets grammaticaals.
+#
+# Vandaar deze regel: een puntkomma begint alleen een nieuwe groep als er een stamcode of
+# een romeins cijfer voor staat. Staat er niets voor, dan is het een zwaardere komma en
+# horen de betekenissen bij elkaar. Zonder die regel stond er op de keuzeknop van בְּ
+# alleen 'in, op, bij' en vielen 'met, door, tegen' weg — allemaal even goede antwoorden.
+#
+# Verder kent de lijst drie soorten toevoeging, en die betekenen alle drie iets anders:
+#   [ ... ]   uitleg over de functie, geen betekenis. Bij אֵת is dat
+#             '[geeft lijdend voorwerp aan]' — dat hoort niet op een keuzeknop.
+#   ( ... )   een deel dat je mag weglaten: '(boven)op' is zowel 'bovenop' als 'op'.
+#   » ... «   het voorwerp dat je erbij denkt: '»de hand« uitstrekken'. Voor het nakijken
+#             gaat dat eruit, anders wordt 'uitstrekken' fout gerekend.
+HEB_STAMCODES = {"G": "Qal", "N": "Nifal", "D": "Piel", "Dp": "Pual", "H": "Hifil",
+                 "Hp": "Hofal", "Ht": "Hitpael", "tD": "Hitpael", "R": "Polel",
+                 "Rp": "Polal"}
+HEB_CIJFERS = {"i": "I", "ii": "II", "iii": "III"}
+
+
+def _heb_haakjes_weg(tekst, ook_rond=False):
+    """Toevoegingen weghalen. De vierkante haken en de gidshaken altijd; de ronde alleen
+    als je de korte vorm wil ('(boven)op' -> 'op')."""
+    uit = re.sub(r"\[[^\]]*\]", " ", tekst)
+    uit = re.sub(r"»[^«]*«", " ", uit)
+    if ook_rond:
+        uit = re.sub(r"\([^)]*\)", " ", uit)
+    return re.sub(r"\s{2,}", " ", uit).strip(" ,;.:")
+
+
+def heb_groepen(w):
+    """De betekenis uit elkaar: een lijst groepen, elk met stam, cijfer, betekenissen, uitleg.
+
+    Een groep begint bij een stamcode of een romeins cijfer. Een segment zonder zo'n
+    aanduiding hoort bij de groep ervoor — bij סבב is 'omringen' nog steeds de Qal."""
+    groepen = []
+    for segment in heb_uitleg(w).split(";"):
+        segment = segment.strip()
+        if not segment:
+            continue
+        stam, cijfer = "", ""
+        # De codes staan vooraan, en er kunnen er twee staan: 'G en N naderen'.
+        while True:
+            m = re.match(r"^(i{1,3}|Rp|Dp|Hp|Ht|tD|[GNDHR])\b[\s.]*(en\s+)?", segment)
+            if not m:
+                break
+            teken = m.group(1)
+            if teken in HEB_CIJFERS:
+                cijfer = HEB_CIJFERS[teken]
+            elif teken in HEB_STAMCODES:
+                stam = stam or HEB_STAMCODES[teken]
+            segment = segment[m.end():].lstrip()
+        noten = re.findall(r"\[([^\]]*)\]", segment)
+        kaal = _heb_haakjes_weg(segment)
+        betekenissen = [d.strip(" .:") for d in kaal.split(",") if d.strip(" .:")]
+        if (stam or cijfer) or not groepen:
+            groepen.append({"stam": stam, "cijfer": cijfer,
+                            "betekenissen": betekenissen, "noten": list(noten)})
+        else:
+            # Geen aanduiding: dit hoort bij de vorige groep.
+            groepen[-1]["betekenissen"].extend(betekenissen)
+            groepen[-1]["noten"].extend(noten)
+    return groepen
+
+
+def heb_uitleg(w):
+    """De volledige betekenis zoals hij in de cursuslijst staat, zonder de geslachtscode.
+    Die komt op de leerkaart en op het antwoordscherm te staan: dáár heb je alles nodig."""
+    return re.sub(r"^\((?:v|m)\.?\)\s*", "", str(w.get("nederlands", ""))).strip()
+
+
+def heb_betekenis(w):
+    """De korte betekenis: dít staat op de keuzeknoppen, en dít is het antwoord.
+
+    De eerste groep die echt betekenissen heeft. Bij een werkwoord is dat de Qal; bij אֵת
+    slaat hij de eerste groep over, want daar staat alleen '[geeft lijdend voorwerp aan]'
+    en dat is uitleg. Er worden zoveel betekenissen bijgezet als er passen — afkappen gaat
+    dus per betekenis en nooit midden in een woord."""
+    for groep in heb_groepen(w):
+        if not groep["betekenissen"]:
+            continue
+        uit = ""
+        for deel in groep["betekenissen"]:
+            kandidaat = f"{uit}, {deel}" if uit else deel
+            if len(kandidaat) > HEB_KORT:
+                # rstrip op de puntjes: de lijst gebruikt zelf ook '…', en dan stond er
+                # bij אִם 'o, dat toch ……' met twee reeksen achter elkaar.
+                kort = (uit if uit else kandidaat[:HEB_KORT].rsplit(" ", 1)[0])
+                return kort.rstrip(" .…,;") + "…"
+            uit = kandidaat
+        return uit
+    # Alleen uitleg en geen betekenis: dan is die uitleg het beste wat we hebben.
+    noten = [n for g in heb_groepen(w) for n in g["noten"]]
+    return (noten[0] if noten else heb_uitleg(w))[:HEB_KORT]
+
+
+def heb_antwoorden(w):
+    """Alles wat als getypt antwoord goed mag zijn. Elk stuk gaat apart langs
+    check_betekenis(), want die knipt zelf op komma's en vergelijkt dan alleen de héle
+    tekst of één zo'n stukje — een betekenis met een komma erin komt er nooit heel door.
+
+    Alle groepen tellen mee, dus ook de andere stamformaties: wie bij אכל 'voeden'
+    schrijft heeft het woord herkend, ook al is dat de Hifil. En van elke betekenis komt er
+    een vorm zonder de ronde haakjes bij, zodat '(boven)op' ook op 'op' matcht."""
+    uit = [heb_betekenis(w)]
+    for groep in heb_groepen(w):
+        for deel in groep["betekenissen"]:
+            uit.append(deel)
+            zonder = _heb_haakjes_weg(deel, ook_rond=True)
+            if zonder and zonder != deel:
+                uit.append(zonder)
+            # '(boven)op' zonder haakjes is 'bovenop': ook dat is een goed antwoord.
+            heel = deel.replace("(", "").replace(")", "")
+            if heel != deel:
+                uit.append(heel)
+    return [d for d in dict.fromkeys(uit) if d]
+
+
+def heb_goed(antwoord, w, vergelijk):
+    """Is dit getypte antwoord goed? Dezelfde soepelheid als bij het Grieks: een tikfout
+    of twee mag, en één van de betekenissen noemen is genoeg.
+
+    'vergelijk' is de functie die twee Nederlandse betekenissen tegen elkaar houdt --
+    check_betekenis. Die staat in elke app apart (de ene is uit de andere gegenereerd) en
+    kan hier dus niet geïmporteerd worden; vandaar dat hij wordt meegegeven."""
+    return any(vergelijk(antwoord, kandidaat)
+               for kandidaat in heb_antwoorden(w))
+
+
+def heb_volledig(w):
+    """De hele betekenis om te laten zien, met de stamcodes uitgeschreven.
+
+    Op de kaart staat 'Qal' en niet 'G'. Die code is een afkorting voor wie de lijst al
+    kent; wie het woord nog aan het leren is heeft de naam nodig."""
+    delen = []
+    for groep in heb_groepen(w):
+        kop = " ".join(x for x in (groep["cijfer"], groep["stam"]) if x)
+        tekst = ", ".join(groep["betekenissen"])
+        noot = "; ".join(groep["noten"])
+        regel = tekst
+        if kop:
+            regel = f"<b>{kop}</b> {tekst}" if tekst else f"<b>{kop}</b>"
+        if noot:
+            regel += f" <span style='color:{ZACHT}'>[{noot}]</span>" if regel \
+                else f"<span style='color:{ZACHT}'>{noot}</span>"
+        if regel:
+            delen.append(regel)
+    return " · ".join(delen) or heb_uitleg(w)
+
 def aanwezig():
     """Is de Hebreeuwse woordenlijst er? Zo niet, dan laat de app die taal niet zien."""
     return bool(laad_woorden())
