@@ -16,7 +16,19 @@ Waarom per boek en niet één bestand. Gemeten:
 Eén ingepakt bestand van 1,5 MB is het kleinst, maar dan moet de app bij het openen van
 één vers de hele Tenach uitpakken en in het geheugen zetten. Op de gratis laag van Render
 is 512 MB alles wat er is. Per boek is samen wat groter maar laadt de app alleen wat je
-leest: het grootste boek is Psalmen met 170 kB ingepakt.
+leest.
+
+Er staan vijf velden per woord in. De laatste twee kwamen er later bij, omdat de Griekse
+kant ze ook heeft: hoe het woord klinkt, en hoe de Berean Standard Bible dít woord
+vertaalt. Wat dat kost, gemeten over de hele Tenach:
+
+    vorm, strong, ontleedcode                    2,2 MB
+    daarbij hoe het klinkt en het Engels         4,4 MB
+
+Het is dus twee keer zo groot, en dat is het waard: van de 300.670 woordvormen staan er
+maar 410 in de cursuslijst. Zonder het Engels is de rest een woord zonder betekenis; nu
+heeft 88% van álle woorden een vertaling en 100% een uitspraak. Het grootste boek is
+Psalmen met 357 kB ingepakt.
 
 Draaien:  py gereedschap/bouw_tenach.py
 """
@@ -66,6 +78,21 @@ def schoon(vorm):
     return "".join(t for t in str(vorm or "").strip() if ord(t) not in WEG)
 
 
+def engels(cel):
+    """De Engelse vertaling van dít woord, uit de Berean Standard Bible.
+
+    De spreadsheet zet de BSB woord voor woord naast de Hebreeuwse tekst, en dat is precies
+    wat de Griekse kant ook gebruikt (het veld vertaling_bsb). Het staat er met ruimte
+    eromheen, en waar de BSB een woord niet apart vertaalt staat er een streepje of een
+    reeks puntjes; dat is niets om te tonen, dus dat wordt leeg.
+
+    Voor 14% van de woordvormen is er geen los Engels woord — vrijwel altijd omdat het in
+    een woordgroep vertaald is (het lijdend-voorwerpteken אֵת bijvoorbeeld staat nooit
+    apart in een Engelse vertaling)."""
+    tekst = re.sub(r"\s+", " ", str(cel or "")).strip()
+    return "" if tekst in ("", "-", "--", "...", ". . .", "vvv") else tekst
+
+
 def bestandsnaam(boek):
     """'1 Samuel' -> '1_Samuel'. Geen spaties of bijzondere tekens in bestandsnamen: die
     hebben bij de Hebreeuwse PDF's al genoeg problemen gegeven."""
@@ -94,7 +121,7 @@ def main():
         # rij[1] is 'Heb Sort'. Nodig: het bestand staat in de Engelse woordvolgorde.
         huidig.setdefault(boek, collections.OrderedDict()).setdefault(vers, []).append(
             (int(rij[1] or 0), schoon(rij[6]), str(rij[11] or "").strip(),
-             str(rij[9] or "").strip()))
+             str(rij[9] or "").strip(), schoon(rij[8]), engels(rij[19])))
     per_boek = huidig
 
     os.makedirs(MAP, exist_ok=True)
@@ -108,8 +135,11 @@ def main():
         stuk = []
         for ref, woorden in verzen.items():
             woorden.sort(key=lambda w: w[0])
+            # Vijf velden per woord: vorm, Strong-nummer, ontleedcode, hoe het klinkt, en
+            # de Engelse vertaling. Lijstjes en geen dicts, want de veldnamen zouden er
+            # 300.670 keer bij staan. hebreeuws.woorden_van() maakt er weer dicts van.
             stuk.append({"v": ref.rsplit(" ", 1)[-1],      # alleen 'hoofdstuk:vers'
-                         "w": [[w[1], w[2], w[3]] for w in woorden]})
+                         "w": [[w[1], w[2], w[3], w[4], w[5]] for w in woorden]})
         naam = bestandsnaam(boek) + ".json.gz"
         pad = os.path.join(MAP, naam)
         ruw = json.dumps(stuk, ensure_ascii=False, separators=(",", ":")).encode("utf-8")

@@ -297,13 +297,43 @@ def tenach_index():
 # vijftienvoudig doen, en op de gratis laag van Render is 512 MB alles wat er is.
 @functools.lru_cache(maxsize=2)
 def laad_tenach_boek(bestand):
-    """De verzen van één boek: [{'v': '1:1', 'w': [[vorm, strong, parsing], …]}, …]."""
+    """De verzen van één boek: [{'v': '1:1', 'w': [[vorm, strong, parsing, …], …]}, …].
+
+    Pak de woorden uit met woorden_van(); dan hoeft niemand te weten hoeveel velden er in
+    een lijstje staan."""
     pad = os.path.join(TENACH, os.path.basename(str(bestand)))
     try:
         with gzip.open(pad, "rt", encoding="utf-8") as f:
             return json.load(f)
     except (OSError, ValueError):
         return []
+
+
+# De velden van één woord, in de volgorde waarin bouw_tenach.py ze wegschrijft.
+TENACH_VELDEN = ("vorm", "strong", "parsing", "translit", "engels")
+
+
+def woorden_van(vers):
+    """De woorden van één vers als dicts, met altijd alle velden.
+
+    In het bestand staat elk woord als een lijstje en niet als een dict: de veldnamen
+    zouden er 300.670 keer bij staan, en dat is bijna de helft van het bestand. Hier gaan
+    ze weer aan, zodat de app w['engels'] kan schrijven in plaats van w[4].
+
+    Werkt op beide leesbestanden: de boeken uit tenach/ noemen het veld 'w', en de duizend
+    uitgezochte verzen in hebreeuws_lezen.json noemen het 'woorden'.
+
+    Een bestand dat nog van vóór het Engels is heeft maar drie velden. Die krijgen hier een
+    leeg veld, zodat een oude werkkopie blijft werken in plaats van om te vallen op een
+    'not enough values to unpack'."""
+    rijen = vers.get("w")
+    if rijen is None:
+        rijen = vers.get("woorden")
+    uit = []
+    for rij in rijen or ():
+        rij = list(rij) + [""] * (len(TENACH_VELDEN) - len(rij))
+        uit.append(dict(zip(TENACH_VELDEN, rij)))
+    return uit
 
 
 @functools.lru_cache(maxsize=1)

@@ -39,7 +39,8 @@ def main():
     kapot, gemist, verkeerd = [], [], []
     per_code = collections.Counter()
     for vers in verzen:
-        for vorm, _strong, parsing in vers["woorden"]:
+        for w in H.woorden_van(vers):
+            vorm, parsing = w["vorm"], w["parsing"]
             totaal += 1
             voor_codes, _kern, achter_code = H._codes(parsing)
             voorvoegsel, kern, achtervoegsel = H.splits_affixen(vorm, parsing)
