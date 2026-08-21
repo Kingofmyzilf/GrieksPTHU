@@ -4586,21 +4586,21 @@ def snelle_app_url(gebruiker=""):
     return f"{adres}/?u={quote(str(gebruiker))}" if gebruiker else adres
 
 
-def _snelle_app_balk(gebruiker=""):
-    """Verwijzing naar de snelle oefen-app, boven de tabbladen. Bewust niet in de
-    zijbalk: die is op een telefoon ingeklapt, en juist daar is deze tip bedoeld."""
+def _snelle_app_link(gebruiker=""):
+    """Eén regel naar de snelle oefen-app, in de zijbalk.
+
+    Stond eerst als een kader boven de tabbladen, in de hoofdkolom. Dat was juist op een
+    telefoon een probleem: daar besloeg het een derde van het scherm en moest je er bij
+    elke paginavernieuwing langs. En het staat al uitgelegd op de inlogpagina, dus twee keer
+    hetzelfde vertellen hoefde niet — hier blijft alleen de verwijzing over, voor wie al
+    ingelogd is en er alsnog heen wil."""
     adres = snelle_app_url(gebruiker)
     if not adres:
         return
     st.markdown(
-        f"<div style='background:#1e1e1e; border:1px solid #2b3038; border-radius:10px; "
-        f"padding:10px 14px; margin-bottom:10px; font-size:13.5px; line-height:1.6; "
-        f"color:#9aa4ae;'>📱 <b style='color:#fafafa;'>Even snel oefenen op je telefoon?</b> "
-        f"Woorden, rijtjes en stamtijden gaan een stuk prettiger in de "
-        f"<a href='{adres}' target='_blank' style='color:#33ccff; text-decoration:none;'>"
-        f"snelle oefen-app</a> — die is voor mobiel gemaakt. Dit is de uitgebreide app, "
-        f"met de bijbeltekst erbij: ontleden, leesteksten en grammatica. Je voortgang is "
-        f"in allebei dezelfde.</div>",
+        f"<div style='font-size:13px; color:#9aa4ae; margin-top:6px;'>📱 Even snel "
+        f"oefenen? <a href='{adres}' target='_blank' style='color:#33ccff; "
+        f"text-decoration:none;'>snelle oefen-app</a></div>",
         unsafe_allow_html=True)
 
 
@@ -4669,6 +4669,7 @@ def main():
     else:
         with st.sidebar:
             st.success(f"👋 Welkom, {st.session_state.last_user.split('_')[0]}!")
+            _snelle_app_link(st.session_state.get('last_user', ''))
             if st.button("🚪 Uitloggen"):
                 trigger_save(forceer=True); st.session_state.data = None; st.session_state.last_user = None
                 if "u" in st.query_params: del st.query_params["u"]
@@ -4691,7 +4692,6 @@ def main():
             # Nog niets geoefend? Begin bij de uitleg — Streamlit opent altijd het eerste tabblad.
             _volgorde.sort(key=lambda t: 0 if t[0] == "uitleg" else 1)
         _zichtbaar = [(_sl, _lab) for _sl, _lab in _volgorde if tab_zichtbaar(_sl)]
-        _snelle_app_balk(st.session_state.get('last_user', ''))
         _tabs_z = st.tabs([_lab for _sl, _lab in _zichtbaar])
         _tab_van_sleutel = {_sl: _tabs_z[_i] for _i, (_sl, _lab) in enumerate(_zichtbaar)}
         # menu[i] = het content-blok zoals het in de code staat; None (en overgeslagen) als het uit staat.

@@ -12,6 +12,7 @@ Gebouwd als tegenhanger van 📝 Leesteksten, met dezelfde onderdelen:
     🔗 markeer voegwoorden                🔗 markeer voor- en achtervoegsels
     ⚛️ markeer stamtijden                 ⚛️ markeer stamformaties
     zwevende tooltip per woord           idem
+    vertaling_nl, met EN: als anker      idem, met de BSB uit de spreadsheet
 
 Twee dingen zijn met opzet anders, omdat de talen verschillen.
 
@@ -230,22 +231,37 @@ def legenda(kleuren, kop):
     return f"<div style='font-size:14px; margin-bottom:4px; opacity:.9'>{kop}: {sp}</div>"
 
 
-def _woord_html(vorm, strong, parsing, lijst, stand, opties):
-    """Eén woord als span, met tooltip en de gekozen markeringen."""
+def _woord_html(wv, lijst, stand, opties):
+    """Eén woord als span, met tooltip en de gekozen markeringen.
+
+    wv is een dict van hebreeuws.woorden_van(): vorm, strong, parsing, translit, engels."""
+    vorm, strong, parsing = wv["vorm"], wv["strong"], wv["parsing"]
     w = lijst.get(strong)
     streak, gehad = stand.get(strong, (0, False))
 
     # ---- de tooltip: alles wat je over dit woord wil weten
+    #
+    # De eerste regel geeft altijd antwoord op 'wat betekent dit woord'. Uit je cursuslijst
+    # als het erin staat, en anders uit de Engelse vertaling die in de spreadsheet naast
+    # dít woord staat (de Berean Standard Bible, dezelfde bron als vertaling_bsb bij het
+    # Grieks). Dat maakt het verschil tussen 410 woorden met een betekenis en 300.670.
     regels = []
+    nederlands = korte_betekenis(w) if w else ""
+    engels = wv["engels"]
+    regels.append(f"{vorm} → {nederlands or engels or '?'}")
+    if wv["translit"]:
+        regels.append(f"klinkt als {wv['translit']}")
+    # Het Engels alleen als anker erbij als het iets toevoegt: bij אֱלֹהִים stond er
+    # anders 'God' en daaronder 'EN: God'.
+    if nederlands and engels and engels.lower().strip(" .,;") not in nederlands.lower():
+        regels.append(f"EN: {engels}")
     if w:
-        regels.append(f"{w['hebreeuws']} → {korte_betekenis(w)}")
-        if w.get("translit"):
-            regels.append(f"klinkt als {w['translit']}")
         if w.get("frequentie"):
             regels.append(f"{w['frequentie']}× in de Tenach · lijst {w.get('les', '?')}")
         regels.append(f"streak {streak}" if gehad else "nog niet geoefend")
     else:
-        regels.append("staat niet in de cursuslijst")
+        regels.append("Engels uit de BSB · niet in de cursuslijst" if engels
+                      else "staat niet in de cursuslijst")
     ont = ontleding(parsing)
     if ont:
         regels.append(ont)
@@ -302,7 +318,10 @@ def _zoek_bekend(boeken, stand, alles_bekend, hoeveel=1):
         for v in _alle_verzen_van(boek):
             if not 4 <= len(v["w"]) <= 16:
                 continue
-            gehad = sum(1 for _f, s, _p in v["w"] if stand.get(s, (0, False))[1])
+            # rij[1] is het Strong-nummer. Hier met de hand geïndexeerd en niet via
+            # woorden_van(): dit loopt over tienduizenden verzen, en dan is het zonde om
+            # voor elk woord een dict te bouwen dat je daarna weggooit.
+            gehad = sum(1 for rij in v["w"] if stand.get(rij[1], (0, False))[1])
             deel = gehad / len(v["w"])
             if (alles_bekend and deel < 1.0) or (not alles_bekend and deel < 0.6):
                 continue
@@ -321,7 +340,7 @@ def _zoek_zwak(boeken, stand, lijst, hoeveel=1):
         for v in _alle_verzen_van(boek):
             if not 4 <= len(v["w"]) <= 16:
                 continue
-            in_lijst = [s for _f, s, _p in v["w"] if s in lijst]
+            in_lijst = [rij[1] for rij in v["w"] if rij[1] in lijst]
             if len(in_lijst) < 3:
                 continue
             zwak = sum(1 for s in in_lijst if stand.get(s, (0, False))[0] < 5)
@@ -435,32 +454,37 @@ def tab():
     regels = []
     for v in gekozen:
         stukken = [f"<span class='hebnr'>{v['v'].split(':')[-1]}</span> "]
-        for vorm, strong, parsing in v["w"]:
-            stukken.append(_woord_html(vorm, strong, parsing, lijst, stand, opties))
+        for wv in hebreeuws.woorden_van(v):
+            stukken.append(_woord_html(wv, lijst, stand, opties))
         regels.append("".join(stukken))
     st.markdown(f"<div class='hebtekst'>{' '.join(regels)}</div>", unsafe_allow_html=True)
 
     # ---- de cijfers eronder
-    alle = [(f, s, p) for v in gekozen for f, s, p in v["w"]]
-    in_lijst = [x for x in alle if x[1] in lijst]
-    gehad = [x for x in in_lijst if stand.get(x[1], (0, False))[1]]
-    kol = st.columns(4)
+    alle = [wv for v in gekozen for wv in hebreeuws.woorden_van(v)]
+    in_lijst = [x for x in alle if x["strong"] in lijst]
+    gehad = [x for x in in_lijst if stand.get(x["strong"], (0, False))[1]]
+    met_engels = [x for x in alle if x["engels"]]
+    kol = st.columns(5)
     kol[0].metric("Woorden", len(alle))
     kol[1].metric("In je lijst", len(in_lijst))
     kol[2].metric("Al geoefend", len(gehad))
     kol[3].metric("Nog niet", len(in_lijst) - len(gehad))
+    kol[4].metric("Met Engels", len(met_engels))
 
     with st.expander("📋 Alle woorden op een rij", expanded=False):
         rijen = []
         for v in gekozen:
-            for vorm, strong, parsing in v["w"]:
+            for wv in hebreeuws.woorden_van(v):
+                vorm, strong, parsing = wv["vorm"], wv["strong"], wv["parsing"]
                 w = lijst.get(strong)
                 voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
                 streak, _gehad = stand.get(strong, (0, False))
                 rijen.append({
                     "vers": v["v"], "vorm": vorm,
+                    "klinkt": wv["translit"],
                     "stam": kern if (voor or achter) else "",
                     "betekenis": korte_betekenis(w) if w else "— niet in de cursuslijst",
+                    "engels": wv["engels"],
                     "voor/achter": _affixen_kort(parsing),
                     "woordsoort": woordsoort(parsing),
                     "ontleding": ontleding(parsing),
@@ -471,8 +495,10 @@ def tab():
             column_config={
                 "vers": st.column_config.TextColumn("Vers", width="small"),
                 "vorm": st.column_config.TextColumn("Vorm", width="small"),
+                "klinkt": st.column_config.TextColumn("Klinkt als", width="small"),
                 "stam": st.column_config.TextColumn("Stam", width="small"),
-                "betekenis": st.column_config.TextColumn("Betekenis", width="large"),
+                "betekenis": st.column_config.TextColumn("Betekenis", width="medium"),
+                "engels": st.column_config.TextColumn("Engels (BSB)", width="medium"),
                 "voor/achter": st.column_config.TextColumn("Voor/achtervoegsel",
                                                            width="medium"),
                 "woordsoort": st.column_config.TextColumn("Soort", width="small"),
