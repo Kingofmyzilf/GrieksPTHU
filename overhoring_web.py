@@ -6058,6 +6058,33 @@ def main():
                         if _zwak[0] < 70:
                             st.info(f"💡 **{_zwak[1]}** gaat nog het minst goed ({_zwak[0]}%). Zet in de "
                                     "🔊 Klankwetten-tab alleen die klanksoort aan om er gericht mee te oefenen.")
+
+            # --- 🔀 CONTRACTIETRAINER: hier en niet in het oefen-tabblad zelf ---
+            # De trainer is een eigen tabblad geworden, maar de voortgang hoort hier bij de
+            # rest — dan zie je in één scherm waar je staat in plaats van per tabblad te
+            # moeten kijken. Direct onder de klankwetten, want het is hetzelfde soort werk.
+            _csa = st.session_state.get('gram_stats') or {}
+            _contr_soorten = ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)",
+                              "Augment (verleden tijd)"]
+            if any(str(_k).startswith("contr::") for _k in _csa):
+                with st.expander("🔀 Contractietrainer per soort", expanded=False):
+                    st.caption("Je rondes in de 🔀 Contractietrainer-tab tellen hier mee, "
+                               "en ook die je in de snelle app doet. Vanaf 3 goed op rij is "
+                               "het 'op weg', vanaf 8 'beheerst'.")
+                    _crijen = []
+                    for _cs in _contr_soorten:
+                        _cv = _csa.get(f"contr::{_cs}") or {}
+                        _cstrk = int(_cv.get('streak', 0) or 0)
+                        _cg, _cf = int(_cv.get('g', 0) or 0), int(_cv.get('f', 0) or 0)
+                        if _cstrk >= 8: _cst = "🟢 Beheerst"
+                        elif _cstrk >= 3: _cst = "🟡 Op weg"
+                        elif _cstrk or _cg or _cf: _cst = "🟠 Begonnen"
+                        else: _cst = "⚪ Nog niet"
+                        _crijen.append({"Oefenstof": _cs, "Streak": _cstrk, "Goed": _cg,
+                                        "Fout": _cf, "Status": _cst})
+                    st.dataframe(pd.DataFrame(_crijen), use_container_width=True,
+                                 hide_index=True)
+
             with st.expander("📉 Gedetailleerde voortgang per onderdeel (uitklappen)", expanded=False):
                 # --- DE LEKKENDE EMMER ---
                 lekkende_woorden = [w for w in st.session_state.data if 16 <= int(w.get('streak', 0)) <= 17]
@@ -10200,26 +10227,8 @@ def main():
                             st.markdown(f"**{regel['begin']}**: {regel['regel']}")
 
 
-                st.write("---")
-                st.markdown("### 📊 Jouw voortgang")
-                st.caption("Vanaf 3 goed op rij is 'op weg', vanaf 8 'beheerst'. "
-                           "Deze telling overleeft het herladen en een niveauwissel, "
-                           "anders dan de sessieteller hierboven.")
-                _contr_soorten = ["σ-samensmelting (fut./aor.)",
-                                  "Verba contracta (klinkers)", "Augment (verleden tijd)"]
-                _gstats = st.session_state.get('gram_stats') or {}
-                _crijen = []
-                for _cs in _contr_soorten:
-                    _s = _gstats.get(f"contr::{_cs}", {})
-                    _strk = int(_s.get("streak", 0))
-                    if _strk >= 8: _st = "🟢 Beheerst"
-                    elif _strk >= 3: _st = "🟡 Op weg"
-                    elif _strk >= 1 or int(_s.get("g", 0)) or int(_s.get("f", 0)): _st = "🟠 Begonnen"
-                    else: _st = "⚪ Nog niet"
-                    _crijen.append({"Oefenstof": _cs, "Streak": _strk,
-                                    "Goed": int(_s.get("g", 0)), "Fout": int(_s.get("f", 0)),
-                                    "Status": _st})
-                st.dataframe(pd.DataFrame(_crijen), use_container_width=True, hide_index=True)
+                st.caption("Je voortgang per soort staat bij 📊 Voortgang, onder de "
+                           "klankwetten — daar zie je in één scherm waar je staat.")
 
 if __name__ == "__main__":
     main()

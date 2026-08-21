@@ -51,9 +51,19 @@ HOUDEN = {
     # dan False) en merk je pas op de live app dat de helft ontbreekt.
     "hebreeuws.py", "hebreeuws_woorden.json", "hebreeuws_actief.json",
     "hebreeuws_lezen.json", "tenach",
-    # grammatica_tabellen.json en grammatica_index.json blijven weg: die gebruikt
-    # alleen het 'rijtje spieken' bij Ontleden, en dat scherm vervalt zonder de
-    # NT-tekst. Zet je die tekst er ooit bij, neem dan deze twee ook weer op.
+    # De NT-tekst gaat wél mee. Die bleef er eerst uit omdat hij 31,5 MB was, verdeeld over
+    # twee bestanden. Sinds hij per boek ingepakt in nt/ staat is het 2,9 MB, en dat is
+    # ruimschoots de moeite waard: hiermee werken Ontleden, de klankwetten en het lezen van
+    # een Griekse tekst in de app zelf in plaats van dat ze naar Streamlit wijzen.
+    #
+    # Let op: dit is niet alleen een kwestie van meesturen. bijbel_aanwezig() in
+    # grieks_app.py keek alleen naar de oude bestandsnamen, dus na de opsplitsing stond de
+    # halve app stil zonder dat er een foutmelding kwam.
+    "nt",
+    # Deze twee horen bij het 'rijtje spieken' bij Ontleden. Ze bleven weg zolang dat
+    # scherm er niet was; nu de NT-tekst meegaat, gaan ze weer mee.
+    "grammatica_tabellen.json", "grammatica_index.json",
+    "contractie_data.json",   # de contractietrainer
     "static",                 # de iconen voor het webmanifest
     "requirements-nicegui.txt", "render.yaml", ".gitignore", ".python-version",
     "HOSTEN.md", "MIGRATIE.md", "OVERDRACHT.md",
@@ -65,8 +75,9 @@ BERICHT = (
     f"Automatisch gemaakt door gereedschap/maak_deploy.py vanaf {WERKTAK}. Niet met de\n"
     "hand aanpassen — wijzig de werktak en draai het script opnieuw.\n"
     "\n"
-    "Zonder de NT-tekst draait de app door; Ontleden en het opzoeken van vormen wijzen\n"
-    "dan naar de Streamlit-app.\n")
+    "De NT-tekst gaat mee sinds die per boek ingepakt in nt/ staat: 2,9 MB in plaats van\n"
+    "31,5. Daarmee werken Ontleden, de klankwetten en het lezen van een Griekse tekst in\n"
+    "de app zelf.\n")
 
 
 def git(*args, index=None, invoer=None):

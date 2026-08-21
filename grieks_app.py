@@ -8,6 +8,7 @@ zonder paginaherlaad.
 Starten:  py grieks_app.py
 """
 import csv
+import difflib
 import io
 import json
 import math
@@ -248,8 +249,17 @@ STREAMLIT_URL = os.environ.get(
 
 
 def bijbel_aanwezig():
-    return any(os.path.exists(naam) for naam in
-               ("bijbel_nt.json", "bijbel_nt_deel1.json", "bijbel_nt_deel2.json"))
+    """Is de Griekse bijbeltekst er? Zonder die tekst vervallen Ontleden, de klankwetten en
+    het lezen van een Griekse tekst.
+
+    Let op de eerste regel. De tekst staat sinds de opsplitsing per boek ingepakt in nt/,
+    en deze functie keek alleen naar de drie oude bestandsnamen. Die staan in .gitignore,
+    dus op elke verse kloon — en dus ook op de gehoste app — was dit False en viel de halve
+    app stil zonder één foutmelding. Wie hier iets verandert: zet de nieuwe plek erbij,
+    haal de oude niet weg, want een oude werkkopie moet blijven werken."""
+    return (os.path.exists(os.path.join("nt", "index.json"))
+            or any(os.path.exists(naam) for naam in
+                   ("bijbel_nt.json", "bijbel_nt_deel1.json", "bijbel_nt_deel2.json")))
 
 
 BIJBEL = bijbel_aanwezig()
@@ -1428,6 +1438,24 @@ def heb_oefenhub(g):
     onderbalk("Oefenen")
 
 
+def _klank_pct(g):
+    """Hoeveel klanksoorten je vast hebt: streak 5 of hoger, van de zeven."""
+    stats = g.stats.get(KLANK_SLEUTEL) or {}
+    soorten = list(motor._SAMENSMELT_KLASSEN)
+    vast = sum(1 for s in soorten
+               if int((stats.get(s) or {}).get("streak", 0) or 0) >= 5)
+    return f"{round(100 * vast / max(1, len(soorten)))}%"
+
+
+def _contr_pct(g):
+    """Hoeveel van de drie soorten contracties je vast hebt. Zelfde grens als de
+    uitgebreide app gebruikt voor 'beheerst'."""
+    stats = g.stats.get("gram_stats") or {}
+    vast = sum(1 for s in CONTR_SOORTEN
+               if int((stats.get(f"contr::{s}") or {}).get("streak", 0) or 0) >= 8)
+    return f"{round(100 * vast / len(CONTR_SOORTEN))}%"
+
+
 @ui.page("/oefenen")
 def oefenhub():
     """De lijst met onderdelen, gegroepeerd naar wat je ermee traint (designreview 1d)."""
@@ -1453,9 +1481,17 @@ def oefenhub():
              "/oefenen/stamtijden"),
             ("Actief beheersen", f"{_af_pct(g)}%", "/oefenen/actief"),
         ] + ([("Ontleden", _ont_pct(g), "/oefenen/ontleden")] if BIJBEL else [])),
+        # Klankwetten en contracties horen bij elkaar: allebei een regel herkennen en dan
+        # zelf toepassen. De klankwetten hebben de NT-tekst nodig -- die vormen komen uit
+        # echte verzen -- en vervallen dus als die er niet is.
+        ("Regels herkennen",
+         ([("Klankwetten", _klank_pct(g), "/oefenen/klankwetten")] if BIJBEL else [])
+         + [("Contracties", _contr_pct(g), "/oefenen/contracties")]),
     ]
-    # Zonder de NT-tekst vervalt Ontleden; die staat dan bij wat in de volledige app zit.
-    nog_niet = ["Klankwetten", "Nederlands → Grieks"] + ([] if BIJBEL else ["Ontleden"])
+    # Zonder de NT-tekst vervalt Ontleden en de klankwetten; die staan dan bij wat in de
+    # volledige app zit.
+    nog_niet = ["Nederlands → Grieks"] + ([] if BIJBEL else ["Ontleden",
+                                                                 "Klankwetten"])
 
     with ui.column().classes("inhoud w-full gap-3"):
         with ui.row().classes("w-full items-center justify-between no-wrap"):
@@ -7334,6 +7370,621 @@ def _heb_ontleed_werkwoord(code):
         delen.append(HEB_STAM_NL.get(stuk) or HEB_TIJD_NL.get(stuk)
                      or HEB_PERSOON_NL.get(stuk) or stuk)
     return " ".join(delen)
+
+
+# ============================================================== Klankwetten
+# Waarom dit hier kan en niet zwaar is: de klankwet-index wordt opgebouwd uit de NT-tekst,
+# en die staat al in het geheugen voor ontleden en de leesteksten. Gemeten kost de index er
+# 6 MB en een halve seconde bovenop, eenmalig, en alleen als je deze pagina opent.
+#
+# De oefening zelf is dezelfde als in de uitgebreide app: een echte vorm uit het NT, en de
+# vraag is welke klankwet daar aan het werk is. De afleiders komen eerst uit dezelfde
+# klanksoort, want kappa, gamma en chi door elkaar halen is de klassieke fout.
+KLANK_SLEUTEL = "klank_stats"
+KLANK_STANDAARD = {"kl_aantal": 12, "kl_drempel": 1}
+
+
+def klank_bron(g):
+    """Strong-nummer -> het woord uit je lijst. Nodig om de vormen te kunnen uitleggen."""
+    uit = {}
+    for w in g.woorden:
+        s = str(w.get("strong") or "")
+        if s and s not in uit:
+            uit[s] = w
+    return uit
+
+
+def klank_voorraad(g, drempel):
+    """De vormen waarmee je kunt oefenen: alleen woorden die je al kent.
+
+    Zonder die grens krijg je klankwetten te zien op woorden die je nooit gezien hebt, en
+    dan oefen je twee dingen tegelijk. Hetzelfde uitgangspunt als in de uitgebreide app."""
+    if not BIJBEL:
+        return []
+    bron = klank_bron(g)
+    streak = {s: int(w.get("streak", 0) or 0) for s, w in bron.items()}
+    try:
+        index = motor.klankwet_index(motor.laad_bijbel_db(), bron)
+    except Exception:                                            # noqa: BLE001
+        return []
+    uit = []
+    for sleutel, rijen in index.items():
+        for (vorm, lemma, info, ref, strong) in rijen:
+            if streak.get(strong, 0) < drempel:
+                continue
+            uit.append((sleutel, vorm, lemma, info, ref, strong))
+    return uit
+
+
+class KlankSessie:
+    def __init__(self, g):
+        self.prefs = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+                      for k, v in KLANK_STANDAARD.items()}
+        drempel = max(0, int(self.prefs["kl_drempel"] or 0))
+        voorraad = klank_voorraad(g, drempel)
+        stats = g.stats.get(KLANK_SLEUTEL) or {}
+        # Klanksoorten die je vaker fout doet komen vaker aan de beurt.
+        gewicht = []
+        for rij in voorraad:
+            e = stats.get(rij[0]) or {}
+            fout, goed = int(e.get("f", 0) or 0), int(e.get("g", 0) or 0)
+            gewicht.append(1 + min(6, 2 * fout) + (2 if goed + fout == 0 else 0))
+        aantal = max(4, int(self.prefs["kl_aantal"] or 12))
+        self.vragen = []
+        if voorraad:
+            gekozen = random.choices(voorraad, weights=gewicht,
+                                     k=min(aantal, len(voorraad) * 2))
+            gezien = set()
+            for rij in gekozen:
+                if rij[1] in gezien:
+                    continue
+                gezien.add(rij[1])
+                self.vragen.append(rij)
+        self.i = 0
+        self.goed = 0
+        self.fout = 0
+        self.beoordeeld = False
+        self.bezig = False
+
+    @property
+    def huidig(self):
+        return self.vragen[self.i] if self.i < len(self.vragen) else None
+
+
+def klank_analyse(g, vorm, lemma, info, strong, sleutel):
+    """(de klankwet van deze vraag, de andere klankwetten in dezelfde vorm)."""
+    w = klank_bron(g).get(strong) or {}
+    alles = motor.samensmeltingen_alle(
+        vorm, lemma, info, grieks_info=str(w.get("grieks_info", "") or ""),
+        corpus_stam=motor.corpus_stam_van(strong, info))
+    deze = next((a for a in alles if a.get("sleutel") == sleutel), None)
+    if deze is None:
+        deze = alles[0] if alles else {}
+    return deze, [a for a in alles if a is not deze]
+
+
+@ui.page("/oefenen/klankwetten")
+def klankpagina():
+    g = _bewaakt()
+    if not g:
+        return
+    sessie = KlankSessie(g)
+    stats = g.stats.setdefault(KLANK_SLEUTEL, {})
+    try:
+        formules = motor.klankwet_formule_index(motor.laad_bijbel_db(), klank_bron(g))
+    except Exception:                                            # noqa: BLE001
+        formules = {}
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_aantal = ui.number("Vragen per ronde", value=int(sessie.prefs["kl_aantal"]),
+                             min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        k_drempel = ui.number("Alleen woorden met streak vanaf",
+                              value=int(sessie.prefs["kl_drempel"]), min=0, max=16,
+                              step=1).props("outlined dark").classes("w-full")
+        ui.label("Je oefent met vormen van woorden die je al kent. Zet de drempel op 0 om "
+                 "alles mee te nemen.").style(f"color:{ZACHT};font-size:13px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("kl_aantal", k_aantal), ("kl_drempel", k_drempel)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/klankwetten")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props(
+                "flat no-caps").style(f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props(
+                "unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label("Klankwetten").style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        woord = ui.html().classes("w-full text-center").style("padding:8px 0 2px")
+        herkomst = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:12.5px")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px;padding-top:6px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:2px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:64px;padding-top:8px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+
+    with ui.element("div").classes("antwoordbalk"):
+        with ui.row().classes("w-full gap-2 no-wrap items-center justify-end"):
+            knop = ui.button("Ik weet het niet", color=None).props(
+                "unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
+                f"width:132px;min-width:132px;font-size:14px")
+    onderbalk("Oefenen")
+
+    if not sessie.vragen:
+        woord.set_content(f"<span style='font-size:34px;color:{TEKST}'>—</span>")
+        vraagsoort.text = ("Nog geen oefenvormen. Oefen eerst wat woorden, of zet de "
+                           "streak-drempel lager bij ⚙."
+                           if BIJBEL else "Hiervoor is de NT-tekst nodig.")
+        knop.text = "Terug"
+        knop.on_click(lambda: ui.navigate.to("/oefenen"))
+        return
+
+    def teken():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(sessie.vragen)):
+                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+                ui.element("div").style(
+                    f"flex:1;height:4px;border-radius:2px;background:{kleur}")
+
+    def toon():
+        for vak in (opties, terugkoppeling, statusbalk):
+            vak.clear()
+        sessie.beoordeeld = False
+        vraag = sessie.huidig
+        for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
+            vak.set_visibility(True)
+        if vraag is None:
+            woord.set_content(f"<span style='font-size:46px;color:{TEKST}'>✓</span>")
+            herkomst.text = ""
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
+            teller.text = ""
+            knop.text = "Nieuwe ronde"
+            teken()
+            return
+        sleutel, vorm, lemma, info, ref, strong = vraag
+        woord.set_content(f"<span class='grieks' style='font-size:40px;color:{TEKST}'>"
+                          f"{vorm}</span>")
+        herkomst.text = f"{ref} · van {lemma}"
+        vraagsoort.text = "Welke klankwet is hier aan het werk?"
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        knop.text = "Ik weet het niet"
+        teken()
+        deze, _rest = klank_analyse(g, vorm, lemma, info, strong, sleutel)
+        juist = deze.get("formule", "")
+        afleiders = motor.klank_afleiders(sleutel, juist, formules, random, aantal=3)
+        keuzes = [juist] + list(afleiders)
+        random.shuffle(keuzes)
+        with opties:
+            for keuze in keuzes:
+                ui.html(f"<button class='keuze grieks' style='font-size:15px;"
+                        f"padding:9px 12px;line-height:1.35'>{keuze}</button>").on(
+                    "click", lambda _=None, kz=keuze: kies(kz))
+        e = stats.get(sleutel) or {}
+        with statusbalk:
+            ui.html(_statusrij([
+                (int(e.get("streak", 0) or 0), "streak", TEKST),
+                (_goedfout(int(e.get("g", 0) or 0), int(e.get("f", 0) or 0)), "", TEKST),
+                (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
+            ]))
+
+    async def verwerk(juist, aangeklikt=None):
+        sleutel, vorm, lemma, info, ref, strong = sessie.huidig
+        sessie.beoordeeld = True
+        sessie.goed += int(juist)
+        sessie.fout += int(not juist)
+        e = stats.setdefault(sleutel, {"g": 0, "f": 0, "streak": 0})
+        e["g"] = int(e.get("g", 0)) + int(juist)
+        e["f"] = int(e.get("f", 0)) + int(not juist)
+        e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+        g.tel_dag()
+        opgeslagen = await run.io_bound(g.bewaar)
+        for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
+            vak.set_visibility(False)
+        deze, rest = klank_analyse(g, vorm, lemma, info, strong, sleutel)
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        naam = motor._SAMENSMELT_KLASSEN.get(sleutel, (sleutel, ""))[0]
+        gekozen = (f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
+                   f"jij koos <span style='color:{FOUT}'>{aangeklikt}</span></div>"
+                   if not juist and aangeklikt else "")
+        erbij = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:8px'>"
+                 f"in deze vorm zit ook: "
+                 f"{' · '.join(a.get('formule', '') for a in rest)}</div>"
+                 if rest else "")
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:16px;padding:22px 18px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
+                f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
+                f"<div class='grieks' style='font-size:34px;margin-top:12px;"
+                f"line-height:1.3;color:{TEKST}'>{vorm}</div>"
+                f"<div class='grieks' style='color:{MERK};font-size:20px;margin-top:6px'>"
+                f"{deze.get('formule', '')}</div>"
+                f"<div style='color:{TEKST};font-size:15px;margin-top:4px'>{naam}</div>"
+                + (f"<div style='color:{ZACHT};font-size:13.5px;margin-top:6px'>"
+                   f"{_streepjes_naar_html(deze.get('uitleg', ''))}</div>"
+                   if deze.get("uitleg") else "")
+                + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:6px'>"
+                  f"{ref} · van {lemma}</div>"
+                + gekozen + erbij
+                + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
+                  f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                  f"streak nu {e['streak']}</div></div>")
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+        _uitslag_staat(sessie)
+
+    async def kies(keuze):
+        if sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            sleutel, vorm, lemma, info, _ref, strong = sessie.huidig
+            deze, _rest = klank_analyse(g, vorm, lemma, info, strong, sleutel)
+            await verwerk(keuze == deze.get("formule", ""), keuze)
+        finally:
+            sessie.bezig = False
+
+    async def hoofdknop():
+        if sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            if sessie.huidig is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/klankwetten")
+                return
+            if sessie.beoordeeld:
+                if te_snel(sessie):
+                    return
+                sessie.i += 1
+                toon()
+                return
+            await verwerk(False)
+        finally:
+            sessie.bezig = False
+
+    knop.on_click(hoofdknop)
+    toon()
+
+
+# ============================================================== Contractietrainer
+# Drie niveaus, oplopend: eerst de regel herkennen, dan de uitkomst voorspellen, dan zelf
+# typen. Dezelfde opzet en dezelfde voortgang als in de uitgebreide app -- de sleutels in
+# gram_stats zijn gelijk ('contr::<soort>'), dus wat je hier doet zie je daar ook.
+CONTR_SOORTEN = ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)",
+                 "Augment (verleden tijd)"]
+CONTR_NIVEAUS = ["1 · Herken de regel", "2 · Voorspel de uitkomst",
+                 "3 · Vorm zelf (typen)"]
+CONTR_STANDAARD = {"co_soort": CONTR_SOORTEN[0], "co_niveau": CONTR_NIVEAUS[0],
+                   "co_aantal": 12}
+
+
+def contr_opgaven(cdb, soort):
+    """De opgaven voor deze soort. De hint bevat nooit het antwoord."""
+    uit = []
+    if soort.startswith("σ"):
+        for regel in cdb.get("sigma", []):
+            for (van, naar, bet) in regel["vb"]:
+                uit.append({"van": van, "naar": naar, "hint": bet,
+                            "klasse": regel["klasse"], "regel": regel["regel"],
+                            "uitkomst": regel["uitkomst"]})
+    elif soort.startswith("Verba"):
+        for regel in cdb.get("contracta", []):
+            uit.append({"van": regel["combo"], "naar": regel["uitkomst"],
+                        "hint": f"stam op -{regel['stam']}",
+                        "klasse": f"stam op -{regel['stam']}",
+                        "regel": f"{regel['combo']} → {regel['uitkomst']}",
+                        "uitkomst": regel["uitkomst"]})
+    else:
+        for regel in cdb.get("augment", []):
+            for (van, naar) in regel["vb"]:
+                uit.append({"van": van, "naar": naar,
+                            "hint": f"begint met {regel['begin']}",
+                            "klasse": f"begint met {regel['begin']}",
+                            "regel": regel["regel"], "uitkomst": naar})
+    return uit
+
+
+class ContrSessie:
+    def __init__(self, g):
+        self.prefs = {k: (g.stats.get("ui_prefs") or {}).get(f"ng_{k}", v)
+                      for k, v in CONTR_STANDAARD.items()}
+        self.soort = self.prefs["co_soort"] if self.prefs["co_soort"] in CONTR_SOORTEN \
+            else CONTR_SOORTEN[0]
+        self.niveau = self.prefs["co_niveau"] if self.prefs["co_niveau"] in CONTR_NIVEAUS \
+            else CONTR_NIVEAUS[0]
+        self.cdb = motor.laad_contractie_db() or {}
+        alles = contr_opgaven(self.cdb, self.soort)
+        aantal = max(4, int(self.prefs["co_aantal"] or 12))
+        self.alles = alles
+        self.vragen = random.sample(alles, min(aantal, len(alles))) if alles else []
+        self.i = 0
+        self.goed = 0
+        self.fout = 0
+        self.beoordeeld = False
+        self.bezig = False
+
+    @property
+    def huidig(self):
+        return self.vragen[self.i] if self.i < len(self.vragen) else None
+
+
+@ui.page("/oefenen/contracties")
+def contractiepagina():
+    g = _bewaakt()
+    if not g:
+        return
+    sessie = ContrSessie(g)
+    stats = g.stats.setdefault("gram_stats", {})
+    typen = sessie.niveau.startswith("3")
+
+    with ui.dialog() as instellingen, ui.card().style(
+            f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
+        ui.label("Instellingen").style("font-size:18px;font-weight:700")
+        k_soort = ui.select(CONTR_SOORTEN, value=sessie.soort,
+                            label="Oefenstof").props("outlined dark").classes("w-full")
+        k_niveau = ui.select(CONTR_NIVEAUS, value=sessie.niveau,
+                             label="Niveau").props("outlined dark").classes("w-full")
+        k_aantal = ui.number("Vragen per ronde", value=int(sessie.prefs["co_aantal"]),
+                             min=4, max=40, step=1).props("outlined dark").classes("w-full")
+        ui.label("Niveau 1 is de regel herkennen, 2 de uitkomst voorspellen, 3 zelf "
+                 "typen.").style(f"color:{ZACHT};font-size:13px")
+
+        async def bewaar_inst():
+            for sleutel, veld in [("co_soort", k_soort), ("co_niveau", k_niveau),
+                                  ("co_aantal", k_aantal)]:
+                g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
+            instellingen.close()
+            await run.io_bound(g.bewaar, True)
+            ui.navigate.to("/oefenen/contracties")
+
+        with ui.row().classes("w-full justify-end gap-2"):
+            ui.button("Annuleren", on_click=instellingen.close, color=None).props(
+                "flat no-caps").style(f"color:{ZACHT}")
+            ui.button("Toepassen", on_click=bewaar_inst, color=None).props(
+                "unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700")
+
+    with ui.column().classes("inhoud metbalk w-full gap-3"):
+        with ui.row().classes("w-full items-center justify-between no-wrap"):
+            ui.label(sessie.soort).style(f"color:{ZACHT};font-size:13px")
+            with ui.row().classes("items-center gap-2 no-wrap"):
+                teller = ui.label().style(f"color:{ZACHT};font-size:13px")
+                ui.button("⚙", on_click=instellingen.open, color=None).props(
+                    "flat dense no-caps").classes("raakbaar").style(
+                    f"color:{ZACHT};font-size:17px;min-width:32px")
+        streepjes = ui.row().classes("w-full gap-1 no-wrap")
+        woord = ui.html().classes("w-full text-center").style("padding:8px 0 2px")
+        herkomst = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:12.5px")
+        vraagsoort = ui.label().classes("w-full text-center").style(
+            f"color:{ZACHT};font-size:13px;padding-top:6px")
+        opties = ui.column().classes("keuzevak w-full gap-2").style("padding-top:6px")
+        statusbalk = ui.row().classes("w-full").style("padding-top:2px")
+        terugkoppeling = ui.column().classes("w-full items-center justify-center").style(
+            "min-height:64px;padding-top:8px")
+        opslagmelding = ui.label().style(f"color:{ZACHT};font-size:12.5px;min-height:16px")
+
+    with ui.element("div").classes("antwoordbalk"):
+        with ui.row().classes("w-full gap-2 no-wrap items-center"):
+            invoer = ui.input(placeholder="de gevormde vorm").props(
+                "outlined dense dark autocomplete=off").classes("flex-grow")
+            invoer.set_visibility(typen)
+            knop = ui.button("Nakijken" if typen else "Ik weet het niet",
+                             color=None).props("unelevated no-caps").style(
+                f"background:{MERK};color:{INKT};font-weight:700;height:40px;"
+                f"width:132px;min-width:132px;font-size:14px")
+    onderbalk("Oefenen")
+
+    if not sessie.vragen:
+        woord.set_content(f"<span style='font-size:34px;color:{TEKST}'>—</span>")
+        vraagsoort.text = "Het bestand contractie_data.json ontbreekt."
+        knop.text = "Terug"
+        knop.on_click(lambda: ui.navigate.to("/oefenen"))
+        return
+
+    def teken():
+        streepjes.clear()
+        with streepjes:
+            for n in range(len(sessie.vragen)):
+                kleur = MERK if n < sessie.i else (TEKST if n == sessie.i else RAND)
+                ui.element("div").style(
+                    f"flex:1;height:4px;border-radius:2px;background:{kleur}")
+
+    def juist_antwoord(opg):
+        """Wat er goed is, per niveau. Niveau 1 vraagt de regel, 2 en 3 de vorm."""
+        if sessie.niveau.startswith("1"):
+            if sessie.soort.startswith("Verba"):
+                return opg["uitkomst"]
+            return opg["klasse"] if sessie.soort.startswith("σ") else opg["regel"]
+        return opg["naar"]
+
+    def keuzelijst(opg):
+        goed = juist_antwoord(opg)
+        if sessie.niveau.startswith("1"):
+            if sessie.soort.startswith("σ"):
+                alle = [r["klasse"] for r in sessie.cdb.get("sigma", [])]
+            elif sessie.soort.startswith("Verba"):
+                alle = sorted({r["uitkomst"] for r in sessie.cdb.get("contracta", [])})
+            else:
+                alle = [r["regel"] for r in sessie.cdb.get("augment", [])]
+        else:
+            alle = list({o["naar"] for o in sessie.alles})
+        afleiders = [x for x in alle if x != goed]
+        random.shuffle(afleiders)
+        keuzes = afleiders[:3] + [goed]
+        random.shuffle(keuzes)
+        return keuzes
+
+    def toon():
+        for vak in (opties, terugkoppeling, statusbalk):
+            vak.clear()
+        sessie.beoordeeld = False
+        opg = sessie.huidig
+        for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
+            vak.set_visibility(True)
+        invoer.set_visibility(typen)
+        if opg is None:
+            woord.set_content(f"<span style='font-size:46px;color:{TEKST}'>✓</span>")
+            herkomst.text = ""
+            vraagsoort.text = f"Klaar — {sessie.goed} goed, {sessie.fout} fout."
+            teller.text = ""
+            invoer.set_visibility(False)
+            knop.text = "Nieuwe ronde"
+            teken()
+            return
+        woord.set_content(f"<span class='grieks' style='font-size:38px;color:{TEKST}'>"
+                          f"{opg['van']}</span>"
+                          f"<span style='color:{ZACHT};font-size:30px'> → ?</span>")
+        herkomst.text = opg["hint"]
+        vraagsoort.text = ("Welke regel geldt hier?" if sessie.niveau.startswith("1")
+                           else "Welke vorm ontstaat er?" if sessie.niveau.startswith("2")
+                           else "Typ de gevormde vorm.")
+        teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
+        knop.text = "Nakijken" if typen else "Ik weet het niet"
+        invoer.value = ""
+        teken()
+        if not typen:
+            with opties:
+                for keuze in keuzelijst(opg):
+                    ui.html(f"<button class='keuze grieks' style='font-size:16px;"
+                            f"padding:9px 12px;line-height:1.35'>{keuze}</button>").on(
+                        "click", lambda _=None, kz=keuze: kies(kz))
+        else:
+            invoer.run_method("focus")
+        e = stats.get(f"contr::{sessie.soort}") or {}
+        with statusbalk:
+            ui.html(_statusrij([
+                (int(e.get("streak", 0) or 0), "streak", TEKST),
+                (_goedfout(int(e.get("g", 0) or 0), int(e.get("f", 0) or 0)), "", TEKST),
+                (len(sessie.vragen) - sessie.i - 1, "te gaan", ZACHT),
+            ]))
+
+    async def verwerk(juist, aangeklikt=None):
+        opg = sessie.huidig
+        sessie.beoordeeld = True
+        sessie.goed += int(juist)
+        sessie.fout += int(not juist)
+        # Dezelfde sleutel als de uitgebreide app, zodat het één voortgang is.
+        e = stats.setdefault(f"contr::{sessie.soort}", {"g": 0, "f": 0, "streak": 0})
+        e["g"] = int(e.get("g", 0)) + int(juist)
+        e["f"] = int(e.get("f", 0)) + int(not juist)
+        e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
+        g.tel_dag()
+        opgeslagen = await run.io_bound(g.bewaar)
+        for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
+            vak.set_visibility(False)
+        invoer.set_visibility(False)
+        kleur = GOED if juist else FOUT
+        achter = "rgba(61,220,151,.10)" if juist else "rgba(255,107,129,.10)"
+        gekozen = (f"<div style='color:{ZACHT};font-size:13px;margin-top:8px'>"
+                   f"jij koos <span style='color:{FOUT}'>{aangeklikt}</span></div>"
+                   if not juist and aangeklikt else "")
+        terugkoppeling.clear()
+        with terugkoppeling:
+            ui.html(
+                f"<div style='background:{achter};border:1px solid {kleur}40;"
+                f"border-radius:16px;padding:22px 18px;text-align:center;width:100%'>"
+                f"<div style='color:{kleur};font-weight:700;font-size:19px'>"
+                f"{'✓ Goed!' if juist else '✗ Niet goed'}</div>"
+                f"<div class='grieks' style='font-size:32px;margin-top:12px;"
+                f"line-height:1.3;color:{TEKST}'>{opg['van']} → {opg['naar']}</div>"
+                f"<div style='color:{MERK};font-size:16px;margin-top:6px'>"
+                f"{opg['regel']}</div>"
+                + gekozen
+                + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
+                  f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
+                  f"streak nu {e['streak']}</div></div>")
+        if opgeslagen:
+            opslagmelding.text = "Voortgang opgeslagen"
+        knop.text = "Volgende"
+        _uitslag_staat(sessie)
+
+    async def kies(keuze):
+        if sessie.beoordeeld or sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            await verwerk(keuze == juist_antwoord(sessie.huidig), keuze)
+        finally:
+            sessie.bezig = False
+
+    async def hoofdknop():
+        if sessie.bezig:
+            return
+        sessie.bezig = True
+        try:
+            if sessie.huidig is None:
+                await run.io_bound(g.bewaar, True)
+                ui.navigate.to("/oefenen/contracties")
+                return
+            if sessie.beoordeeld:
+                if te_snel(sessie):
+                    return
+                sessie.i += 1
+                toon()
+                return
+            if typen:
+                gegeven = str(invoer.value or "").strip()
+                if not gegeven:
+                    await verwerk(False)
+                    return
+                await verwerk(motor.check_betekenis(gegeven, sessie.huidig["naar"])
+                              or _grieks_gelijk(gegeven, sessie.huidig["naar"]), gegeven)
+                return
+            await verwerk(False)
+        finally:
+            sessie.bezig = False
+
+    knop.on_click(hoofdknop)
+    invoer.on("keydown.enter", hoofdknop)
+    toon()
+
+
+def _streepjes_naar_html(tekst):
+    """**dik** en *schuin* omzetten naar html.
+
+    De uitleg bij een klankwet komt uit dezelfde functie die de Streamlit-app gebruikt, en
+    daar gaat hij door st.markdown. Hier niet, dus zonder dit staat er letterlijk
+    'op **-ε**' op het scherm."""
+    tekst = str(tekst or "")
+    tekst = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", tekst)
+    return re.sub(r"(?<!\*)\*([^*]+?)\*(?!\*)", r"<i>\1</i>", tekst)
+
+
+def _grieks_gelijk(gegeven, doel):
+    """Twee Griekse vormen vergelijken zonder op accenten te vallen.
+
+    Accenten typen op een gewoon toetsenbord is niet te doen, en het gaat hier om de
+    klankverandering en niet om de klemtoon. Zelfde soepelheid als niveau 3 in de
+    uitgebreide app."""
+    kaal = lambda s: motor.normaliseer_accent(str(s or "").strip().lower())
+    if kaal(gegeven) == kaal(doel):
+        return True
+    return difflib.SequenceMatcher(None, kaal(gegeven), kaal(doel)).ratio() > 0.85
 
 
 @ui.page("/lezen/hebreeuws")
