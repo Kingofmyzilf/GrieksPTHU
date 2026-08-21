@@ -7684,8 +7684,11 @@ def klankpagina():
 # gram_stats zijn gelijk ('contr::<soort>'), dus wat je hier doet zie je daar ook.
 CONTR_SOORTEN = ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)",
                  "Augment (verleden tijd)"]
-CONTR_NIVEAUS = ["1 · Herken de regel", "2 · Voorspel de uitkomst",
-                 "3 · Vorm zelf (typen)"]
+# Twee niveaus, allebei productie. 'Herken de regel' zat er ook in, maar dat doet het
+# Klankwetten-tabblad al — en daar gebeurt het op echte vormen uit het NT in plaats van op
+# voorbeelden uit een tabel. Zo is de verdeling scherp: klankwetten om te herkennen in de
+# tekst, contracties om zelf te vormen.
+CONTR_NIVEAUS = ["Voorspel de uitkomst", "Vorm zelf (typen)"]
 CONTR_STANDAARD = {"co_soort": CONTR_SOORTEN[0], "co_niveau": CONTR_NIVEAUS[0],
                    "co_aantal": 12}
 
@@ -7747,7 +7750,7 @@ def contractiepagina():
         return
     sessie = ContrSessie(g)
     stats = g.stats.setdefault("gram_stats", {})
-    typen = sessie.niveau.startswith("3")
+    typen = sessie.niveau.startswith("Vorm")
 
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
@@ -7758,8 +7761,9 @@ def contractiepagina():
                              label="Niveau").props("outlined dark").classes("w-full")
         k_aantal = ui.number("Vragen per ronde", value=int(sessie.prefs["co_aantal"]),
                              min=4, max=40, step=1).props("outlined dark").classes("w-full")
-        ui.label("Niveau 1 is de regel herkennen, 2 de uitkomst voorspellen, 3 zelf "
-                 "typen.").style(f"color:{ZACHT};font-size:13px")
+        ui.label("Hier vorm je zelf: eerst de uitkomst voorspellen, daarna hem typen. "
+                 "Een klankwet herkennen in een echte vorm uit het NT doe je bij "
+                 "Klankwetten.").style(f"color:{ZACHT};font-size:13px")
 
         async def bewaar_inst():
             for sleutel, veld in [("co_soort", k_soort), ("co_niveau", k_niveau),
@@ -7823,24 +7827,12 @@ def contractiepagina():
                     f"flex:1;height:4px;border-radius:2px;background:{kleur}")
 
     def juist_antwoord(opg):
-        """Wat er goed is, per niveau. Niveau 1 vraagt de regel, 2 en 3 de vorm."""
-        if sessie.niveau.startswith("1"):
-            if sessie.soort.startswith("Verba"):
-                return opg["uitkomst"]
-            return opg["klasse"] if sessie.soort.startswith("σ") else opg["regel"]
+        """Wat er goed is. Beide niveaus vragen de vorm; het verschil is meerkeuze of typen."""
         return opg["naar"]
 
     def keuzelijst(opg):
         goed = juist_antwoord(opg)
-        if sessie.niveau.startswith("1"):
-            if sessie.soort.startswith("σ"):
-                alle = [r["klasse"] for r in sessie.cdb.get("sigma", [])]
-            elif sessie.soort.startswith("Verba"):
-                alle = sorted({r["uitkomst"] for r in sessie.cdb.get("contracta", [])})
-            else:
-                alle = [r["regel"] for r in sessie.cdb.get("augment", [])]
-        else:
-            alle = list({o["naar"] for o in sessie.alles})
+        alle = list({o["naar"] for o in sessie.alles})
         afleiders = [x for x in alle if x != goed]
         random.shuffle(afleiders)
         keuzes = afleiders[:3] + [goed]
@@ -7868,8 +7860,7 @@ def contractiepagina():
                           f"{opg['van']}</span>"
                           f"<span style='color:{ZACHT};font-size:30px'> → ?</span>")
         herkomst.text = opg["hint"]
-        vraagsoort.text = ("Welke regel geldt hier?" if sessie.niveau.startswith("1")
-                           else "Welke vorm ontstaat er?" if sessie.niveau.startswith("2")
+        vraagsoort.text = ("Welke vorm ontstaat er?" if not typen
                            else "Typ de gevormde vorm.")
         teller.text = f"{sessie.i + 1}/{len(sessie.vragen)}"
         knop.text = "Nakijken" if typen else "Ik weet het niet"

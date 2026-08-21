@@ -10062,9 +10062,14 @@ def main():
         # ==========================================
         # Stond eerst als vierde stand in het Grammatica-tabblad. Daar hoorde het niet:
         # dat tabblad is om de grammatica op te zoeken en door te nemen, en dit is
-        # oefenwerk -- een regel herkennen en dan zelf toepassen. Naast de klankwetten
-        # dus, en met de voortgang erbij in hetzelfde tabblad, net zoals het
-        # Klankwetten-tabblad zijn eigen score laat zien.
+        # oefenwerk. Naast de klankwetten dus.
+        #
+        # Alleen productie. Het herkennen van de klankklasse zat hier ook in, maar dat
+        # doet het Klankwetten-tabblad al -- en daar gebeurt het op echte vormen uit het
+        # NT in plaats van op voorbeelden uit een tabel. Hier vorm je zelf: eerst
+        # voorspellen, dan typen.
+        #
+        # De voortgang staat bij 📊 Voortgang, onder de klankwetten.
         if _TOON[13] and menu[13] is not None:
          with menu[13]:
             st.subheader("🔀 Contractietrainer")
@@ -10073,11 +10078,14 @@ def main():
                 st.warning("Bestand 'contractie_data.json' ontbreekt.")
             else:
                 st.markdown("#### 🔀 Contractie- & samensmeltingstrainer")
-                st.caption("Oplopende moeilijkheid: eerst de regel herkennen, daarna zelf toepassen. Traint de σ-klankwetten, de verba contracta en het augment.")
+                st.caption("Hier vórm je zelf: eerst de uitkomst voorspellen, daarna hem "
+                           "typen. Wil je een klankwet herkennen in een echte vorm uit het "
+                           "NT, ga dan naar 🔊 Klankwetten. Traint de σ-samensmelting, de "
+                           "verba contracta en het augment.")
 
                 niveau = st.select_slider(
                     "Niveau",
-                    options=["1 · Herken de klankklasse", "2 · Voorspel de uitkomst", "3 · Vorm zelf (typen)"],
+                    options=["Voorspel de uitkomst", "Vorm zelf (typen)"],
                     key="contr_niveau"
                 )
                 soort = st.radio("Oefenstof", ["σ-samensmelting (fut./aor.)", "Verba contracta (klinkers)", "Augment (verleden tijd)"], horizontal=True, key="contr_soort")
@@ -10100,6 +10108,7 @@ def main():
                                         "hint": f"stam op -{regel['stam']}", "klasse": f"stam op -{regel['stam']}",
                                         "regel": f"{regel['combo']} → {regel['uitkomst']}",
                                         "uitkomst": regel["uitkomst"]})
+                    else:
                         for regel in cdb["augment"]:
                             for (van, naar) in regel["vb"]:
                                 opg.append({"van": van, "naar": naar, "hint": f"begint met {regel['begin']}",
@@ -10119,6 +10128,7 @@ def main():
                     fb = stt["feedback"]
                     if fb["type"] == "success":
                         st.success(fb["msg"])
+                    else:
                         st.error(fb["msg"])
                     stt["feedback"] = None
                 if stt["totaal"]:
@@ -10143,37 +10153,15 @@ def main():
                     if goed:
                         _gs["g"] = int(_gs.get("g", 0)) + 1
                         _gs["streak"] = int(_gs.get("streak", 0)) + 1
+                    else:
                         _gs["f"] = int(_gs.get("f", 0)) + 1
                         _gs["streak"] = 0
                     registreer_oefening()
                     trigger_save()
                     st.rerun()
 
-                # ---- NIVEAU 1: herken de klasse ----
-                if niveau.startswith("1"):
-                    st.markdown(f"### {opg['van']}  →  ?")
-                    if soort.startswith("σ"):
-                        st.write("Tot welke klankklasse behoort de stam?")
-                        opties = [r["klasse"] for r in cdb["sigma"]]
-                        goed_antwoord = opg["klasse"]
-                    elif soort.startswith("Verba"):
-                        st.write("Welke uitkomst heeft deze klinkercombinatie?")
-                        opties = sorted({r["uitkomst"] for r in cdb["contracta"]})
-                        goed_antwoord = opg["uitkomst"]
-                        st.write("Welke augment-regel geldt hier?")
-                        opties = [r["regel"] for r in cdb["augment"]]
-                        goed_antwoord = opg["regel"]
-                    keuze = st.radio("Kies", opties, index=None, key=f"n1_{skey}_{stt['idx']}")
-                    if st.button("✓ Nakijken", key=f"chk1_{skey}", type="primary"):
-                        if keuze is None:
-                            st.warning("Kies eerst een optie.")
-                            goed = (keuze == goed_antwoord)
-                            banner = (f"✅ Juist! {opg['van']} → {opg['naar']} ({opg['regel']})" if goed
-                                      else f"❌ Het was **{goed_antwoord}**. {opg['van']} → {opg['naar']} ({opg['regel']})")
-                            volgende_opgave(goed, banner)
-
                 # ---- NIVEAU 2: voorspel de uitkomstvorm (meerkeuze) ----
-                elif niveau.startswith("2"):
+                if niveau.startswith("Voorspel"):
                     st.markdown(f"### {opg['van']}  →  ?")
                     st.caption("Welke vorm ontstaat er na de samensmelting/contractie?")
                     # De opties EENMALIG per opgave vastleggen. Bij elke rerun opnieuw shuffelen
@@ -10192,12 +10180,14 @@ def main():
                     if st.button("✓ Nakijken", key=f"chk2_{skey}", type="primary"):
                         if keuze is None:
                             st.warning("Kies eerst een optie.")
+                        else:
                             goed = (keuze == opg["naar"])
                             banner = (f"✅ Juist! {opg['van']} → {opg['naar']} — {opg['regel']}" if goed
                                       else f"❌ Het was **{opg['naar']}**. {opg['van']} → {opg['naar']} — {opg['regel']}")
                             volgende_opgave(goed, banner)
 
                 # ---- NIVEAU 3: zelf typen ----
+                else:
                     st.markdown(f"### {opg['van']}  →  ?")
                     st.caption("Typ de gecontraheerde/samengesmolten vorm (Grieks). Kleine accentafwijkingen worden soepel nagekeken.")
                     with st.form(f"form_n3_{skey}_{stt['idx']}"):
@@ -10206,6 +10196,7 @@ def main():
                     if verzonden:
                         if not antwoord.strip():
                             st.warning("Typ eerst een vorm.")
+                        else:
                             exact = _norm(antwoord) == _norm(opg["naar"])
                             dichtbij = difflib.SequenceMatcher(None, _norm(antwoord), _norm(opg["naar"])).ratio() > 0.8
                             goed = exact or dichtbij
@@ -10213,6 +10204,7 @@ def main():
                                 banner = f"✅ Precies! {opg['van']} → {opg['naar']} ({opg['regel']})"
                             elif dichtbij:
                                 banner = f"✅ Goed (op accenten na). Correct: {opg['naar']} ({opg['regel']})"
+                            else:
                                 banner = f"❌ Het was **{opg['naar']}** ({opg['regel']})"
                             volgende_opgave(goed, banner)
 
@@ -10223,12 +10215,9 @@ def main():
                     elif soort.startswith("Verba"):
                         for regel in cdb["contracta"]:
                             st.markdown(f"stam -{regel['stam']}: **{regel['combo']} → {regel['uitkomst']}** _(bv. {regel['vb']})_")
+                    else:
                         for regel in cdb["augment"]:
                             st.markdown(f"**{regel['begin']}**: {regel['regel']}")
-
-
-                st.caption("Je voortgang per soort staat bij 📊 Voortgang, onder de "
-                           "klankwetten — daar zie je in één scherm waar je staat.")
 
 if __name__ == "__main__":
     main()

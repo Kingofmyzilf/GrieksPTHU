@@ -59,9 +59,13 @@ OPMAAK = """
               font-size:30px; line-height:2.3; padding:14px; }
   .hebnr    { color:#9aa4ae; font-size:13px; vertical-align:super;
               font-family:system-ui,sans-serif; }
-  /* Nog niet geoefend: een stippellijn eronder, net als bij het Grieks. */
-  .hebnog   { border-bottom:2px solid #ff6b81; }
   .hebwoord { border-bottom:1px dotted #555; }
+  /* Nog niet geoefend: een rode streep eronder, net als bij het Grieks.
+     Let op de dubbele klasse in de selector. Met alleen '.hebnog' werkte dit niet: elk
+     woord heeft óók .hebwoord, die staat hierboven met dezelfde specificiteit, en dan wint
+     de laatste regel — dus overschreef de grijze stippellijn de rode streep en was er
+     nooit iets onderstreept. Zo is het onafhankelijk van de volgorde. */
+  .hebwoord.hebnog { border-bottom:2px solid #ff6b81; }
   /* De tooltip staat links-naar-rechts, ook boven Hebreeuwse tekst. */
   .hebtekst .tooltiptext { direction:ltr; text-align:left;
                            font-family:system-ui,sans-serif; font-size:15px; }
