@@ -6509,7 +6509,8 @@ def heb_affix_vragen(g, hoeveel, soort):
 
     per_code = {}
     for vers in verzen:
-        for vorm, strong, parsing in vers["woorden"]:
+        for wv in hebreeuws.woorden_van(vers):
+            vorm, parsing = wv["vorm"], wv["parsing"]
             voor_codes, _kern, achter = hebreeuws._codes(parsing)
             voorvoegsel, kern, achtervoegsel = hebreeuws.splits_affixen(vorm, parsing)
             if soort != "Alleen achtervoegsels" and voor_codes and voorvoegsel:
@@ -6787,7 +6788,8 @@ def heb_tekst_analyse(g, boek, hoofdstuk):
     info = heb_woordinfo(g)
     hier = {}
     for v in verzen:
-        for _vorm, strong, _parsing in v["w"]:
+        for w in hebreeuws.woorden_van(v):
+            strong = w["strong"]
             if not strong:
                 continue
             vak = hier.setdefault(strong, {"aantal": 0, "woord": info.get(strong)})
@@ -7017,7 +7019,8 @@ def tenachpagina():
             # nog een tik doet ze weer dicht. Zo hoef je er niet twaalf los aan te tikken.
             vakjes = [f"<span class='versnr{' aan' if heel_aan else ''}' "
                       f"data-v='{v['v']}'>{nummer}</span>"]
-            for n, (vorm, strong, parsing) in enumerate(v["w"]):
+            for n, w in enumerate(hebreeuws.woorden_van(v)):
+                vorm, parsing = w["vorm"], w["parsing"]
                 sleutel = f"{v['v']}#{n}"
                 aan = sleutel in staat["open"]
                 binnen = (heb_gekleurd(vorm, parsing) if aan
@@ -7057,25 +7060,12 @@ def tenachpagina():
         for sleutel in sorted(staat["open"], key=_leesorde, reverse=True):
             ref, _, n = sleutel.rpartition("#")
             v = alles.get(ref)
-            if not v or int(n) >= len(v["w"]):
+            if not v:
                 continue
-            vorm, strong, parsing = v["w"][int(n)]
-            w = info.get(strong)
-            betekenis = heb_betekenis(w) if w else "staat niet in je woordenlijst"
-            affixen = heb_affix_uitleg(parsing)
-            ontleed = heb_ontleding(parsing)
-            kaartjes.append(
-                f"<div class='uitlegkaart'>"
-                f"<div style='display:flex;align-items:baseline;gap:6px'>"
-                f"{heb_gekleurd(vorm, parsing, maat=19)}"
-                f"<span style='color:{ZACHT};font-size:11px'>{ref}</span></div>"
-                f"<div style='color:{TEKST};font-size:13.5px;line-height:1.35'>"
-                f"{betekenis}</div>"
-                + (f"<div style='color:{MERK};font-size:11.5px'>"
-                   f"{' · '.join(affixen)}</div>" if affixen else "")
-                + (f"<div style='color:{ZACHT};font-size:11.5px'>{ontleed}</div>"
-                   if ontleed else "")
-                + "</div>")
+            woorden = hebreeuws.woorden_van(v)
+            if int(n) >= len(woorden):
+                continue
+            kaartjes.append(heb_leeskaart(woorden[int(n)], info, ref))
         uitleg.set_content(f"<div class='uitlegbalk'>{''.join(kaartjes)}</div>")
 
     def tik(sleutel):
@@ -7187,6 +7177,42 @@ def heb_affix_uitleg(parsing):
     return uit
 
 
+def heb_leeskaart(wv, info, ref=""):
+    """Eén kaartje voor een aangetikt woord: wat het betekent en hoe het in elkaar zit.
+
+    Zowel de Lezen-pagina met de duizend uitgezochte verzen als het doorbladeren van de
+    Tenach gebruiken dit, zodat een woord er overal hetzelfde uitziet.
+
+    De betekenis komt uit je cursuslijst als het woord erin staat. Zo niet, dan uit de
+    Engelse vertaling die bij dít woord in de tekst hoort — van de 300.670 woordvormen in
+    de Tenach staan er 410 in de lijst, dus zonder dat Engels is de rest een woord zonder
+    betekenis. Staat er wél Nederlands, dan komt het Engels eronder als houvast; dat is
+    hoe de Griekse leestekst het ook doet."""
+    vorm, parsing = wv["vorm"], wv["parsing"]
+    w = info.get(wv["strong"])
+    betekenis, engels = (heb_betekenis(w) if w else ""), wv["engels"]
+    if not betekenis:
+        betekenis, engels = engels or "staat niet in je woordenlijst", ""
+    affixen = heb_affix_uitleg(parsing)
+    ontleed = heb_ontleding(parsing)
+    return (
+        f"<div class='uitlegkaart'>"
+        f"<div style='display:flex;align-items:baseline;gap:6px'>"
+        f"{heb_gekleurd(vorm, parsing, maat=19)}"
+        + (f"<span style='color:{ZACHT};font-size:11px'>{ref}</span>" if ref else "")
+        + "</div>"
+        f"<div style='color:{TEKST};font-size:13.5px;line-height:1.35'>{betekenis}</div>"
+        + (f"<div style='color:{ZACHT};font-size:11px;font-style:italic'>"
+           f"{wv['translit']}</div>" if wv["translit"] else "")
+        + (f"<div style='color:{ZACHT};font-size:11.5px'>EN: {engels}</div>"
+           if engels else "")
+        + (f"<div style='color:{MERK};font-size:11.5px'>{' · '.join(affixen)}</div>"
+           if affixen else "")
+        + (f"<div style='color:{ZACHT};font-size:11.5px'>{ontleed}</div>"
+           if ontleed else "")
+        + "</div>")
+
+
 def heb_woordinfo(g):
     """Strong-nummer -> het woord uit de lijst. Om bij een vorm in de tekst de betekenis
     te kunnen opzoeken."""
@@ -7220,10 +7246,10 @@ def heb_kies_vers(g):
 
     geschikt = []
     for vers in verzen:
-        woorden = vers["woorden"]
+        woorden = hebreeuws.woorden_van(vers)
         if not woorden:
             continue
-        bekend = sum(1 for _v, s, _p in woorden if s in geoefend)
+        bekend = sum(1 for w in woorden if w["strong"] in geoefend)
         deel = bekend / len(woorden)
         if deel < LEES_DREMPEL:
             continue
@@ -7233,7 +7259,8 @@ def heb_kies_vers(g):
         # Beter iets te lezen geven dan een leeg scherm met 'oefen eerst maar wat'.
         geschikt = [(vers["vers"] in gelezen, 0, len(vers["woorden"]), vers)
                     for vers in verzen
-                    if all(s in info for _v, s, _p in vers["woorden"])]
+                    if all(w["strong"] in info
+                           for w in hebreeuws.woorden_van(vers))]
     if not geschikt:
         return None
     geschikt.sort(key=lambda k: k[:3])
@@ -7345,7 +7372,8 @@ def heblezenpagina():
     def teken():
         verwijzing.text = vers["vers"]
         vakjes = []
-        for n, (vorm, strong, _parsing) in enumerate(vers["woorden"]):
+        for n, wv in enumerate(hebreeuws.woorden_van(vers)):
+            vorm, strong, _parsing = wv["vorm"], wv["strong"], wv["parsing"]
             w = info.get(strong)
             gekend = w is not None and (int(w.get("streak", 0) or 0)
                                         or int(w.get("score_goed", 0) or 0))
@@ -7364,9 +7392,9 @@ def heblezenpagina():
                 f"<span class='leeswoord' data-n='{n}' "
                 f"style='color:{kleur};border-bottom:2px solid {rand}'>{binnen}</span>")
         tekst.set_content(" ".join(vakjes))
-        bekend = sum(1 for _v, s, _p in vers["woorden"]
-                     if (info.get(s) or {}).get("streak", 0)
-                     or (info.get(s) or {}).get("score_goed", 0))
+        bekend = sum(1 for w in hebreeuws.woorden_van(vers)
+                     if (info.get(w["strong"]) or {}).get("streak", 0)
+                     or (info.get(w["strong"]) or {}).get("score_goed", 0))
         teller.text = (f"{bekend} van de {len(vers['woorden'])} woorden heb je geoefend · "
                        f"tik een woord aan voor de betekenis")
 
@@ -7374,23 +7402,10 @@ def heblezenpagina():
         if not open_gezet:
             uitleg.set_content("")
             return
-        kaartjes = []
-        for n in sorted(open_gezet, key=lambda k: -beurt.get(k, 0)):
-            vorm, strong, parsing = vers["woorden"][n]
-            w = info.get(strong)
-            betekenis = heb_betekenis(w) if w else "staat niet in de woordenlijst"
-            ontleed = heb_ontleding(parsing)
-            affixen = heb_affix_uitleg(parsing)
-            kaartjes.append(
-                f"<div class='uitlegkaart'>"
-                f"{heb_gekleurd(vorm, parsing, maat=19)}"
-                f"<div style='color:{TEKST};font-size:13.5px;line-height:1.35'>"
-                f"{betekenis}</div>"
-                + (f"<div style='color:{MERK};font-size:11.5px'>"
-                   f"{' · '.join(affixen)}</div>" if affixen else "")
-                + (f"<div style='color:{ZACHT};font-size:11.5px'>{ontleed}</div>"
-                   if ontleed else "")
-                + "</div>")
+        woorden = hebreeuws.woorden_van(vers)
+        kaartjes = [heb_leeskaart(woorden[n], info)
+                    for n in sorted(open_gezet, key=lambda k: -beurt.get(k, 0))
+                    if n < len(woorden)]
         uitleg.set_content(f"<div class='uitlegbalk'>{''.join(kaartjes)}</div>")
 
     def tik(n):
