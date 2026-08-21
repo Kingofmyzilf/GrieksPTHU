@@ -31,10 +31,8 @@ import hebreeuws
 INKT, VLAK, RAND = "#0e1117", "#1e1e1e", "#2b3038"
 TEKST, ZACHT = "#fafafa", "#9aa4ae"
 MERK, GOED, FOUT = "#33ccff", "#3ddc97", "#ff6b81"
-# De uitgang van een Hebreeuws woord (mannelijk meervoud en zo). Amber en niet cyaan, want
-# het is iets anders dan een voorvoegsel: dat laatste is een woord op zichzelf, een uitgang
-# zegt iets over dít woord. Weg van groen en rood, die betekenen goed en fout.
-UITGANG = "#f6c23e"
+# De kleuren van de Hebreeuwse woorddelen staan in hebreeuws.KLEUREN, want de uitgebreide
+# app gebruikt dezelfde.
 GRIEKS_FONT = "'Gentium Book Plus','Palatino Linotype',Georgia,serif"
 # Hebreeuws heeft een eigen letter nodig: Gentium dekt het niet. Noto Serif Hebrew zet de
 # klinkertekens onder de letter waar ze horen; David is de terugval die op Windows al staat.
@@ -7188,63 +7186,42 @@ LEES_DREMPEL = 0.6
 # Voor- en achtervoegsels krijgen de merkkleur, de kern blijft wit. Dezelfde taal als bij
 # de rijtjes, waar de uitgang ook cyaan is: wat wisselt is gekleurd, wat vastligt is wit.
 # Zo zie je in וְהָאָרֶץ meteen dat er maar één woord in zit dat je hoeft te kennen.
-def heb_gekleurd(vorm, parsing, maat=None):
-    """De vorm in vier stukken, elk in zijn eigen kleur.
+def heb_gekleurd(vorm, parsing, maat=None, aan=None):
+    """De vorm in stukken, elk in zijn eigen kleur. Zie hebreeuws.SOORTEN en .KLEUREN.
 
-        cyaan   het voorvoegsel en het bezittelijk achtervoegsel — de losse woordjes die
-                aan het woord vastgeplakt zitten (en, de, in, jouw)
-        amber   de uitgang: mannelijk of vrouwelijk, enkelvoud of meervoud, of bij een
-                werkwoord wie het doet
-        wit     de stam, het woord dat je in je woordenlijst hebt geleerd
+    Vijf kleuren en niet één, omdat het vijf verschillende dingen zijn. Een voorvoegsel is
+    een woord op zichzelf ('en', 'de', 'in'), een persoonsvoorvoegsel zegt wie het doet, een
+    uitgang zegt of het enkelvoud of meervoud is, een persoonsuitgang zegt weer wie het
+    doet, en een bezittelijk achtervoegsel van wie het is. תִּשְׁמְרוּ is תִּ + שְׁמְר + וּ:
+    'jullie' plus de stam plus 'meervoud'.
 
-    Twee kleuren en niet één, omdat het twee verschillende dingen zijn. Een voorvoegsel is
-    een woord op zichzelf; een uitgang zegt iets over dit woord. הַשָּׁמַיִם is הַ + שָּׁמַ +
-    יִם: 'de' plus de stam plus 'meervoud'.
+    Met 'aan' kun je een verzameling soorten meegeven die gekleurd mogen worden; de rest
+    krijgt de kleur van de stam. Zonder 'aan' wordt alles gekleurd.
 
     Lukt het splitsen niet, dan komt dat stuk ongekleurd terug. Liever geen kleur dan de
     verkeerde letters aanwijzen; daar leer je iets verkeerds van."""
-    voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
-    _v, kern_code, _a = hebreeuws._codes(parsing)
-    stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
     stijl = f"font-size:{maat}px" if maat else ""
-    if not voor and not achter and not uitgang:
-        return f"<span class='hebreeuws' style='{stijl}'>{vorm}</span>"
     stukken = []
-    if voor:
-        stukken.append(f"<span style='color:{MERK}'>{voor}</span>")
-    stukken.append(f"<span style='color:{TEKST}'>{stam}</span>")
-    for stuk, kleur in ((uitgang, UITGANG), (achter, MERK)):
-        if not stuk:
-            continue
-        # Het versteken achteraan hoort bij geen van de stukken en krijgt dus ook geen
-        # kleur. splits_affixen() houdt het erbij omdat de stukken samen het hele woord
-        # moeten zijn; hier gaat het er weer even af.
-        einde, staart = hebreeuws.zonder_leesteken(stuk)
-        stukken.append(f"<span style='color:{kleur}'>{einde}</span>")
-        if staart:
-            stukken.append(f"<span style='color:{TEKST}'>{staart}</span>")
+    for tekst, soort in hebreeuws.ontleed_vorm(vorm, parsing):
+        kleur = hebreeuws.KLEUREN.get(soort, TEKST)
+        if aan is not None and soort not in aan:
+            kleur = TEKST
+        stukken.append(f"<span style='color:{kleur}'>{tekst}</span>")
     return f"<span class='hebreeuws' style='{stijl}'>" + "".join(stukken) + "</span>"
 
 
 def heb_affix_uitleg(parsing, vorm=""):
-    """Wat de voor- en achtervoegsels en de uitgang van deze vorm betekenen.
+    """Wat elk gekleurd stuk van deze vorm betekent: [(regel, kleur), …].
 
-    De uitgang komt er alleen bij als hij ook echt gekleurd is. Anders staat er 'mannelijk
-    meervoud' bij een woord waar niets is aangewezen, en dan zoek je naar iets wat er niet
-    staat. Daarvoor is de vorm nodig; zonder vorm blijft het bij de affixen."""
-    voor_codes, kern_code, achter = hebreeuws._codes(parsing)
-    uit = [(f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}", MERK)
-           for c in voor_codes]
-    if vorm:
-        _v, kern, _a = hebreeuws.splits_affixen(vorm, parsing)
-        _stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
-        if uitgang:
-            kaal = hebreeuws.zonder_leesteken(uitgang)[0]
-            code = hebreeuws.uitgang_code(kern_code)
-            uit.append((f"{kaal} = {hebreeuws.UITGANG_NL.get(code, code)}", UITGANG))
-    if achter:
-        uit.append((f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}", MERK))
-    return uit
+    Alleen wat er ook echt gekleurd staat. Anders komt er 'mannelijk meervoud' bij een woord
+    waar niets is aangewezen, en dan zoek je naar iets wat er niet staat. Daarvoor is de
+    vorm nodig; zonder vorm blijft het bij de voorvoegsels uit de code."""
+    if not vorm:
+        voor_codes, _kern, _achter = hebreeuws._codes(parsing)
+        return [(f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}",
+                 hebreeuws.KLEUREN["voor"]) for c in voor_codes]
+    return [(f"{tekst} = {uitleg}", hebreeuws.KLEUREN.get(soort, ZACHT))
+            for tekst, soort, uitleg in hebreeuws.uitleg_stukken(vorm, parsing)]
 
 
 def heb_leeskaart(wv, info, ref=""):

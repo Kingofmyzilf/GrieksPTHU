@@ -304,14 +304,19 @@ def uitgang_code(kern_code):
 
 
 def splits_uitgang(stam, kern_code, al_achtervoegsel=False):
-    """(stam, uitgang) — de uitgang van geslacht en getal van de stam afhalen.
+    """(stam, uitgang) — de uitgang van geslacht, getal of persoon van de stam afhalen.
 
-    Aanroepen op wat splits_affixen() als kern teruggeeft. Staat er al een bezittelijk
-    achtervoegsel, dan komt er niets: de meervoudsuitgang zit dan ín dat achtervoegsel
-    (אֲבֹתֶיךָ is 'jouw vaders', en de jod van het meervoud staat in ֶיךָ)."""
+    Aanroepen op wat splits_affixen() als kern teruggeeft.
+
+    Ook als er al een bezittelijk achtervoegsel staat. Dat leverde eerst niets op omdat de
+    meervoudsuitgang vaak ín dat achtervoegsel zit — אֲבֹתֶיךָ is 'jouw vaders' en de jod
+    van het meervoud staat in ֶיךָ. Maar niet altijd: בְּנוֹתָיו is 'zijn dochters' en daar
+    staat de vrouwelijke meervoudsuitgang וֹת er los voor. Die hoort dus gekleurd.
+
+    Er moet minstens één medeklinker overblijven. Twee was veiliger, maar dan bleef מַיִם
+    ('water', altijd meervoud) ongekleurd, en juist bij zo'n woord wil je zien dat die
+    יִם het meervoud is."""
     stam = str(stam or "")
-    if al_achtervoegsel:
-        return stam, ""
     code = uitgang_code(kern_code)
     if not code:
         return stam, ""
@@ -321,10 +326,168 @@ def splits_uitgang(stam, kern_code, al_achtervoegsel=False):
         if not plat.endswith(_canon(einde)):
             continue
         rest = romp[:len(romp) - len(einde)]
-        if sum(1 for t in rest if "א" <= t <= "ת") < 2:
+        if not any("א" <= t <= "ת" for t in rest):
             continue
         return rest, romp[len(rest):] + staart
     return stam, ""
+
+
+# --------------------------------------------------------- het persoonsvoorvoegsel
+# De imperfectum zet vooraan wie het doet, waar de perfectum dat achteraan doet: כָּתַב is
+# 'hij schreef' en יִכְתֹּב 'hij zal schrijven'. Die ene letter vooraan is dus geen los
+# woordje maar de persoon, en hij staat op dezelfde plaats als de voorzetsels — daarom
+# krijgt hij een eigen kleur en een eigen vinkje.
+#
+# Ook de wajjiqtol hoort erbij: וַיֹּאמֶר is וַ ('en') plus יֹּאמֶר, en die jod is de
+# persoon. Het voegwoord is er dan al af voordat we hier komen.
+PERSOON_VOOR_LETTER = {"1cs": "א", "1cp": "נ", "3ms": "י", "3mp": "י",
+                       "2ms": "ת", "2fs": "ת", "2mp": "ת", "2fp": "ת",
+                       "3fs": "ת", "3fp": "ת"}
+PERSOON_VOOR_NL = {"1cs": "ik", "1cp": "wij", "3ms": "hij", "3mp": "zij (m)",
+                   "2ms": "jij (m)", "2fs": "jij (v)", "2mp": "jullie (m)",
+                   "2fp": "jullie (v)", "3fs": "zij (v)", "3fp": "zij (v, mv)"}
+
+
+def persoon_voor_code(kern_code):
+    """De persoon van een imperfectum, of ''. Alleen bij de imperfectum en de wajjiqtol:
+    de perfectum en de gebiedende wijs hebben geen letter vooraan."""
+    code = str(kern_code or "")
+    if not code.startswith("V-") or "Imperf" not in code:
+        return ""
+    staart = code.split("-")[-1]
+    return staart if staart in PERSOON_VOOR_LETTER else ""
+
+
+def splits_persoon_voor(stam, kern_code):
+    """(persoonsvoorvoegsel, rest). Alleen als de letter er ook echt staat."""
+    stam = str(stam or "")
+    code = persoon_voor_code(kern_code)
+    if not code:
+        return "", stam
+    letters = [n for n, t in enumerate(stam) if "א" <= t <= "ת"]
+    if not letters or stam[letters[0]] != PERSOON_VOOR_LETTER[code]:
+        return "", stam
+    # Er moet een stam overblijven met minstens twee medeklinkers: een werkwoordstam heeft
+    # er drie, en zonder deze eis zou תֵּת ('geven') zijn eigen stam opeten.
+    if len(letters) < 3:
+        return "", stam
+    grens = letters[1]
+    return stam[:grens], stam[grens:]
+
+
+# De stukken waaruit een vorm bestaat, met wat ze vertellen. Beide apps kleuren hiermee, en
+# de namen hier zijn dus ook de namen van de vinkjes en van de legenda.
+SOORTEN = {
+    "voor": "los woordje vooraan (en, de, in, als, naar, uit)",
+    "persoon_voor": "wie het doet, vooraan (imperfectum)",
+    "stam": "de stam: het woord uit je woordenlijst",
+    "uitgang_getal": "geslacht en getal (m/v, enkelvoud/meervoud)",
+    "uitgang_persoon": "wie het doet, achteraan (perfectum)",
+    "bezit": "van wie: mijn, jouw, zijn, haar",
+    "leesteken": "sof pasuq, maqaf of paseq — hoort bij geen enkel stuk",
+}
+
+# De kleur per soort. Die staat hier en niet in de apps, omdat beide apps hem moeten delen:
+# een uitgang die in de snelle app amber is en in de uitgebreide roze maakt het kleuren
+# waardeloos. Vijf kleuren, want een woord kan alle vijf de stukken tegelijk hebben.
+#
+# Weg van rood en groen (die betekenen fout en goed) en onderling ver genoeg uit elkaar. De
+# twee die het meest op elkaar lijken, cyaan en turkoois, staan aan weerszijden van het
+# woord — een voorvoegsel vooraan en een bezittelijk achtervoegsel achteraan — dus die zijn
+# ook aan hun plaats te herkennen.
+KLEUREN = {
+    "voor": "#33ccff",             # cyaan   los woordje vooraan
+    "persoon_voor": "#b98cff",     # paars   wie het doet, vooraan
+    "uitgang_getal": "#f6c23e",    # amber   geslacht en getal
+    "uitgang_persoon": "#ff8fb3",  # roze    wie het doet, achteraan
+    "bezit": "#43d9c0",            # turkoois  van wie
+}
+
+
+def ontleed_vorm(vorm, parsing):
+    """De vorm in stukken: [(tekst, soort), …], samen precies het hele woord.
+
+    De soorten staan in SOORTEN, in de volgorde waarin ze in een woord voorkomen. De
+    uitgang is in twee soorten gesplitst omdat het twee verschillende dingen zijn: een
+    werkwoord zegt met zijn uitgang wie het doet, een naamwoord wat voor woord het is.
+
+    Wat niet met zekerheid aan te wijzen is komt in 'stam' terecht. Liever een stuk te
+    weinig kleuren dan de verkeerde letters aanwijzen."""
+    voor, kern, bezit = splits_affixen(vorm, parsing)
+    _v, kern_code, _a = _codes(parsing)
+    persoon_voor, kern = splits_persoon_voor(kern, kern_code)
+    stam, uitgang = splits_uitgang(kern, kern_code)
+    u_soort = f"uitgang_{uitgang_soort(kern_code) or 'getal'}"
+    # Zit het meervoud in het achtervoegsel, haal het er dan uit: ֵיהֶם is ֵי plus הֶם.
+    if bezit and not uitgang:
+        uitgang, bezit = splits_meervoud_uit_bezit(bezit, kern_code)
+
+    stukken = []
+    for tekst, soort in ((voor, "voor"), (persoon_voor, "persoon_voor"),
+                         (stam, "stam"), (uitgang, u_soort), (bezit, "bezit")):
+        if not tekst:
+            continue
+        romp, staart = zonder_leesteken(tekst)
+        if romp:
+            stukken.append((romp, soort))
+        if staart:
+            stukken.append((staart, "leesteken"))
+    return stukken
+
+
+def uitleg_stukken(vorm, parsing):
+    """Wat elk gekleurd stuk betekent: [(tekst, soort, uitleg), …].
+
+    Alleen wat er ook echt gekleurd staat. Anders komt er 'mannelijk meervoud' bij een woord
+    waar niets is aangewezen, en dan zoek je naar iets wat er niet staat."""
+    voor_codes, kern_code, bezit_code = _codes(parsing)
+    uit = []
+    for tekst, soort in ontleed_vorm(vorm, parsing):
+        if soort == "voor":
+            uit.append((tekst, soort, " + ".join(VOORVOEGSEL_NL[c] for c in voor_codes)))
+        elif soort == "persoon_voor":
+            code = persoon_voor_code(kern_code)
+            uit.append((tekst, soort, PERSOON_VOOR_NL.get(code, code)))
+        elif soort.startswith("uitgang"):
+            code = uitgang_code(kern_code)
+            uit.append((tekst, soort, UITGANG_NL.get(code, code)))
+        elif soort == "bezit":
+            uit.append((tekst, soort, ACHTERVOEGSEL_NL.get(bezit_code, bezit_code)))
+    return uit
+
+
+def splits_meervoud_uit_bezit(bezit, kern_code):
+    """(meervoudsuitgang, bezittelijk deel) — de jod van het meervoud uit een achtervoegsel.
+
+    De lange achtervoegselvormen bestaan uit twee dingen. In דִּבְרֵיהֶם ('hun woorden') is
+    ֵי het meervoud en הֶם 'hun'; in דְּבָרָיו ('zijn woorden') is ָי het meervoud en ו
+    'zijn'. Dat zijn twee verschillende dingen en dus twee kleuren.
+
+    Alleen als de ontleding ook echt meervoud zegt. אָבִיו is 'zijn vader', enkelvoud, met
+    een jod die er historisch bij hoort — die mag niet als meervoud gekleurd worden."""
+    bezit = str(bezit or "")
+    code = uitgang_code(kern_code)
+    if not code or code[:1].isdigit() or not any(t in code for t in ("p", "d")):
+        return "", bezit          # geen meervoud of tweevoud in de kern
+    # Het meervoud is een klinkerteken plus een jod, aan het begin van het achtervoegsel.
+    letters = [n for n, t in enumerate(bezit) if "א" <= t <= "ת"]
+    if len(letters) < 2 or bezit[letters[0]] != "י":
+        return "", bezit
+    grens = letters[1]
+    return bezit[:grens], bezit[grens:]
+
+
+def uitgang_soort(kern_code):
+    """Waar de uitgang over gaat: 'persoon' of 'getal'.
+
+    Een werkwoord zegt met zijn uitgang wie het doet, een naamwoord wat voor woord het is.
+    De code verraadt het: die van een persoon begint met een cijfer (3cp, 1cs), die van
+    geslacht en getal niet (mp, fsc). Een deelwoord hoort bij de tweede groep, en dat is
+    ook zo — כֹּתְבִים is 'schrijvende' in het mannelijk meervoud."""
+    code = uitgang_code(kern_code)
+    if not code:
+        return ""
+    return "persoon" if code[:1].isdigit() else "getal"
 
 
 # Sof pasuq (het dubbelpuntje aan het eind van een vers), de maqaf en de paseq (het streepje

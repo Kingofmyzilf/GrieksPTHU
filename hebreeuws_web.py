@@ -49,11 +49,8 @@ STAM_KLEUR = {
     "Qal": "#E8EAED", "Nifal": "#8FD3E8", "Piel": "#FFB067", "Pual": "#FF9BC4",
     "Hifil": "#C4A6FF", "Hofal": "#9B86D9", "Hitpael": "#5ED3C0",
 }
-AFFIX_KLEUR = "#33ccff"          # merkcyaan, net als in de snelle app
-# De uitgang krijgt een eigen kleur, want het is iets anders dan een voorvoegsel. Een
-# voorvoegsel is een woord op zichzelf ('en', 'de', 'in'); een uitgang zegt iets over dít
-# woord — mannelijk of vrouwelijk, enkelvoud of meervoud, of wie het doet.
-UITGANG_KLEUR = "#f6c23e"
+# De kleuren van de woorddelen staan in hebreeuws.KLEUREN, want de snelle app gebruikt
+# dezelfde: een uitgang die daar amber is en hier roze maakt het kleuren waardeloos.
 
 OPMAAK = """
 <style>
@@ -189,23 +186,16 @@ def korte_betekenis(w):
 
 
 def _affixen_kort(parsing, vorm=""):
-    """Wat de voor- en achtervoegsels en de uitgang betekenen, als één regel.
+    """Wat elk gekleurd woorddeel betekent, als één regel.
 
-    De uitgang komt er alleen bij als hij ook echt gekleurd is; anders staat er 'mannelijk
-    meervoud' bij een woord waar niets is aangewezen. Daarvoor is de vorm nodig."""
-    voor, kern_code, achter = hebreeuws._codes(parsing)
-    delen = [f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}"
-             for c in voor]
-    if vorm:
-        _v, kern, _a = hebreeuws.splits_affixen(vorm, parsing)
-        _stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
-        if uitgang:
-            kaal = hebreeuws.zonder_leesteken(uitgang)[0]
-            code = hebreeuws.uitgang_code(kern_code)
-            delen.append(f"{kaal} = {hebreeuws.UITGANG_NL.get(code, code)}")
-    if achter:
-        delen.append(f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}")
-    return " · ".join(delen)
+    Alleen wat er ook echt gekleurd staat; anders staat er 'mannelijk meervoud' bij een
+    woord waar niets is aangewezen. Daarvoor is de vorm nodig."""
+    if not vorm:
+        voor, _kern, _achter = hebreeuws._codes(parsing)
+        return " · ".join(f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = "
+                          f"{hebreeuws.VOORVOEGSEL_NL[c]}" for c in voor)
+    return " · ".join(f"{tekst} = {uitleg}"
+                      for tekst, _soort, uitleg in hebreeuws.uitleg_stukken(vorm, parsing))
 
 
 @st.cache_data(show_spinner=False)
@@ -299,26 +289,14 @@ def _woord_html(wv, lijst, stand, opties):
     if opties["nognietgehad"] and not gehad and w is not None:
         klassen += " hebnog"
 
-    # ---- het woord in stukken kleuren: affixen cyaan, de uitgang amber, de stam zoals hij
-    #      volgens de andere markeringen hoort te zijn
-    if opties["affixen"]:
-        voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
-        _v, kern_code, _a = hebreeuws._codes(parsing)
-        stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
-        if voor or achter or uitgang:
-            binnen = (f"<span style='color:{AFFIX_KLEUR}'>{voor}</span>" if voor else "")
-            binnen += f"<span style='{stijl}'>{stam}</span>"
-            for stuk, kleur in ((uitgang, UITGANG_KLEUR), (achter, AFFIX_KLEUR)):
-                if not stuk:
-                    continue
-                # Het versteken achteraan hoort bij geen van de stukken en krijgt dus ook
-                # geen kleur. splits_affixen() houdt het erbij omdat de stukken samen het
-                # hele woord moeten zijn; hier gaat het er weer even af.
-                einde, staart = hebreeuws.zonder_leesteken(stuk)
-                binnen += f"<span style='color:{kleur}'>{einde}</span>" if einde else ""
-                binnen += f"<span style='{stijl}'>{staart}</span>" if staart else ""
-        else:
-            binnen = f"<span style='{stijl}'>{vorm}</span>"
+    # ---- het woord in stukken kleuren. Wat niet aangevinkt staat krijgt de kleur van de
+    #      stam, dus die van het woord zelf volgens de andere markeringen.
+    aan = opties["delen"]
+    if aan:
+        binnen = "".join(
+            f"<span style='color:{hebreeuws.KLEUREN[soort]}'>{tekst}</span>"
+            if soort in aan else f"<span style='{stijl}'>{tekst}</span>"
+            for tekst, soort in hebreeuws.ontleed_vorm(vorm, parsing))
     else:
         binnen = f"<span style='{stijl}'>{vorm}</span>"
 
@@ -393,18 +371,26 @@ def tab():
     stand = _voortgang()
     op_naam = {b["nl"]: b for b in boeken}
 
-    # ---- weergave-opties, zoals de vier vinkjes bij de Griekse leestekst
-    v1, v2, v3, v4 = st.columns(4)
+    # ---- weergave-opties, zoals de vinkjes bij de Griekse leestekst
+    v1, v2, v3 = st.columns(3)
     with v1:
         kleur_soort = st.checkbox("🎨 Markeer woordsoorten", key="heb_kl_soort")
     with v2:
-        kleur_affix = st.checkbox("🔗 Markeer voor/achtervoegsels en uitgang", value=True,
-                                  key="heb_kl_affix")
-    with v3:
         kleur_stam = st.checkbox("⚛️ Markeer stamformaties", key="heb_kl_stam")
-    with v4:
+    with v3:
         markeer_nieuw = st.checkbox("❗ Nog niet geoefend", value=True, key="heb_kl_nieuw")
-    opties = {"woordsoort": kleur_soort, "affixen": kleur_affix,
+
+    # Welke woorddelen je gekleurd wil zien. Een keuzelijst en niet vijf vinkjes: het zijn
+    # er te veel voor een rij, en zo kun je ook één ding tegelijk aanzetten — alleen de
+    # persoonsvoorvoegsels bijvoorbeeld, als je daar even op wil letten.
+    delen = st.multiselect(
+        "🔗 Welke woorddelen kleuren?", list(hebreeuws.KLEUREN),
+        default=list(hebreeuws.KLEUREN),
+        format_func=lambda s: hebreeuws.SOORTEN[s].split(" (")[0].split(":")[0],
+        key="heb_kl_delen",
+        help="De stam blijft altijd in de kleur van het woord staan. Zet een deel uit als "
+             "je even alleen op iets anders wil letten.")
+    opties = {"woordsoort": kleur_soort, "delen": set(delen),
               "stammen": kleur_stam, "nognietgehad": markeer_nieuw}
 
     st.write("---")
@@ -467,13 +453,12 @@ def tab():
         st.markdown(legenda(WOORDSOORT_KLEUR, "Woordsoorten"), unsafe_allow_html=True)
     if kleur_stam:
         st.markdown(legenda(STAM_KLEUR, "Stamformaties"), unsafe_allow_html=True)
-    if kleur_affix:
-        st.markdown(f"<div style='font-size:14px;margin-bottom:4px;opacity:.9'>"
-                    f"<span style='color:{AFFIX_KLEUR}'>Voor- en achtervoegsels</span> "
-                    f"(en, de, in, jouw) · "
-                    f"<span style='color:{UITGANG_KLEUR}'>uitgang</span> "
-                    f"(m/v, ev/mv, wie het doet) · de stam in de kleur van het woord.</div>",
-                    unsafe_allow_html=True)
+    if opties["delen"]:
+        # De legenda uit dezelfde tabel als de kleuring, zodat ze niet uit elkaar kunnen
+        # lopen — en alleen de delen die je hebt aangevinkt.
+        st.markdown(legenda({hebreeuws.SOORTEN[s]: hebreeuws.KLEUREN[s]
+                             for s in hebreeuws.KLEUREN if s in opties["delen"]},
+                            "Woorddelen"), unsafe_allow_html=True)
 
     st.markdown(f"<div style='font-size:14px;color:#f6c23e;margin-bottom:4px'>"
                 f"📖 {verwijzing}</div>", unsafe_allow_html=True)

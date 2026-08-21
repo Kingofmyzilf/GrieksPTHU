@@ -123,27 +123,30 @@ def heel_de_tenach():
                     if len(voorbeelden) < 5:
                         voorbeelden.append(f"telt niet op: {vorm!r} -> "
                                            f"{voor!r}+{kern!r}+{achter!r}")
-                # --- de uitgang van geslacht, getal of persoon
+                # --- alle stukken samen: voorvoegsel, persoonsvoorvoegsel, stam, uitgang,
+                #     bezittelijk achtervoegsel. Die moeten samen het woord vormen.
                 _v, kern_code, _a = H._codes(parsing)
-                stam, uitgang = H.splits_uitgang(kern, kern_code, bool(achter))
-                if voor + stam + uitgang + achter != vorm:
+                stukken = H.ontleed_vorm(vorm, parsing)
+                if "".join(t for t, _s in stukken) != vorm:
                     kapot += 1
                     if len(voorbeelden) < 8:
-                        voorbeelden.append(
-                            f"met uitgang telt niet op: {vorm!r} -> "
-                            f"{voor!r}+{stam!r}+{uitgang!r}+{achter!r}")
+                        voorbeelden.append(f"stukken vormen niet het woord: {vorm!r} -> "
+                                           f"{stukken}")
+                stam = "".join(t for t, s in stukken if s == "stam")
+                uitgang = "".join(t for t, s in stukken if s.startswith("uitgang"))
                 if H.uitgang_code(kern_code) and not achter:
                     u_met_code += 1
                     if uitgang:
                         u_gesplitst += 1
                         u_per_code[H.uitgang_code(kern_code)] += 1
-                # Een Hebreeuwse stam heeft in de regel drie medeklinkers; blijft er na de
-                # uitgang maar één over, dan is er iets weggeknipt dat erbij hoorde.
-                if uitgang and sum(1 for t in stam if "א" <= t <= "ת") < 2:
+                # Er moet altijd een medeklinker als stam overblijven. Twee was veiliger,
+                # maar dan bleef מַיִם ('water', altijd meervoud) ongekleurd en juist daar
+                # wil je die יִם zien.
+                if uitgang and not any("א" <= t <= "ת" for t in stam):
                     u_kort += 1
                     if len(voorbeelden) < 12:
-                        voorbeelden.append(f"stam te kort na de uitgang: {vorm!r} -> "
-                                           f"{stam!r} + {uitgang!r}")
+                        voorbeelden.append(f"stam zonder medeklinker na de uitgang: "
+                                           f"{vorm!r} -> {stam!r} + {uitgang!r}")
                 _v, _k, code = H._codes(parsing)
                 if code:
                     met_code += 1
