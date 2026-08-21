@@ -1,0 +1,69 @@
+[
+{
+  "nr": 1,
+  "soort": "titel",
+  "kop": "Grammatica-overzicht NT Grieks",
+  "html": "<p>Slides ter ondersteuning van het onderwijs in het Grieks van het Nieuwe Testament in de premaster theologie van de PThU,</p><p>te gebruiken naast P.M. Hensels, <i>Nieuwtestamentisch Grieks. Een beknopte grammatica.</i> Bussum: Coutinho, 2008 (hierna: NG),</p><p>en het werkboek Grieks van onderstaande auteur.</p><p class='auteur'>S.J.M. Sierksma-Agteres<br>2025/2026</p>"
+},
+{
+  "nr": 2,
+  "soort": "inhoud",
+  "kop": "Inhoud",
+  "html": "<ul class='inhoud'><li>G1 Het Griekse Alfabet</li><li>G2 Spiriti, accenten en leestekens</li><li>G3 Voorzetsels en voorvoegsels</li><li>G4 Nomina: naamval, geslacht en getal</li><li>G5 Lidwoorden</li><li>G6 Substantiva 1e en 2e declinatie</li><li>G7 Partikels en voegwoorden</li><li>G8 Verba: modus, tempus, diathese, pers., getal</li><li>G9 Indicativus, imperativus, infinitivus praesens</li><li>G10 Imperfectum en futurum</li><li>G11 Augment</li><li>G12 Het werkwoord ‘zijn’</li><li>G13 Negaties</li><li>G14 Adiectiva 1e/2e declinatie</li><li>G15 Aoristus</li><li>G16 Pronomen personale</li><li>G17 Verba muta</li><li>G18 Perfectum en plusquamperfectum</li><li>G19 Pronomen demonstrativum</li><li>G20 Verba contracta</li><li>G21 Pronomen relativum</li><li>G22 Pronomen reflexivum en reciprocum</li><li>G23 Verba liquida</li><li>G24 Thematische aoristus en stamaoristus</li><li>G25 Pronomen possessivum</li><li>G26 Diathese: actief, medium of passief</li><li>G27 Medium praesens en imperfectum</li><li>G28 Stamtijden</li><li>G29 Substantiva 3e declinatie</li><li>G30 Vragend en onbepaald voornaamwoord</li><li>G31 Medium futurum en aoristus</li><li>G32 Telwoorden</li><li>G33 Accusativus cum Infinitivo</li><li>G34 Adiectiva 3e declinatie</li><li>G35 Passivum aoristus en futurum</li><li>G36 Medium perfectum en plusquamperfectum</li><li>G37 Correlativa</li><li>G44 Coniunctivus: vorming <span class='grieks'>λύω</span> en gebruik</li><li>G45 Coniunctivus: bijzondere vormingswijzen</li><li>G46 Bijwoorden</li><li>G47 <span class='grieks'>ἄν</span> + indicativus: irrealis</li><li>G48 Optativus</li><li>G49 Werkwoorden op -<span class='grieks'>μι</span>: medeklinkerstammen</li><li>G50 Werkwoorden op -<span class='grieks'>μι</span>: vocaalstammen</li><li>Overzichten</li></ul>"
+},
+{
+  "nr": 3,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<p>De meest gangbare <span class='oranje'>uitspraak</span> van klassiek (incl. Koinē Grieks die we in deze methode hanteren volgt de regels die <span class='blauw'>Erasmus</span> heeft opgesteld in 1528. Een voordeel van deze uitspraak is dat iedere letter en ieder teken anders en hoorbaar wordt uitgesproken.</p><p>Zo heeft het Grieks in de eerste eeuw echter niet geklonken. We kunnen dit inmiddels vrij goed reconstrueren. De tweeklanken <span class='grieks'>ει</span> en <span class='grieks'>αι</span> werden bijvoorbeeld hetzelfde uitgesproken als een iota, de omikron hetzelfde als de omega, de <i>iota subscriptum</i> werd niet uitgesproken en de ypsilon na een alpha of epsilon niet als ‘u’ maar als als een ‘v’ (bijvoorbeeld in <span class='grieks'>εὐαγγέλιον</span>)</p><p>Zie bijv. <a href='https://youtu.be/94B26pJM2fg' target='_blank'>https://youtu.be/94B26pJM2fg</a>.</p>"
+},
+{
+  "nr": 4,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<table class='par'><thead><tr><th>naam</th><th>hoofdletter</th><th>kleine letter</th><th>uitspraak</th></tr></thead><tbody><tr><td>alpha</td><td class='grieks'>Α</td><td class='grieks'>α</td><td><b>a</b>ppelt<b>aa</b>rt</td></tr><tr><td>bēta</td><td class='grieks'>Β</td><td class='grieks'>β</td><td><b>b</b>rood</td></tr><tr><td>gamma</td><td class='grieks'>Γ</td><td class='grieks'>γ</td><td><b>g</b>arçon</td></tr><tr><td>delta</td><td class='grieks'>Δ</td><td class='grieks'>δ</td><td><b>d</b>eeg</td></tr><tr><td>epsilon</td><td class='grieks'>Ε</td><td class='grieks'>ε</td><td><b>j</b>en<b>e</b>verbes</td></tr><tr><td>dzēta</td><td class='grieks'>Ζ</td><td class='grieks'>ζ</td><td>me<b>zz</b>e</td></tr><tr><td>ēta</td><td class='grieks'>Η</td><td class='grieks'>η</td><td>majon<b>ai</b>se</td></tr><tr><td>thēta</td><td class='grieks'>Θ</td><td class='grieks'>θ</td><td><b>th</b>yme</td></tr></tbody></table>"
+},
+{
+  "nr": 5,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<table class='par'><thead><tr><th>naam</th><th>hoofdletter</th><th>kleine letter</th><th>uitspraak</th></tr></thead><tbody><tr><td>iota</td><td class='grieks'>Ι</td><td class='grieks'>ι</td><td>v<b>i</b>skl<b>ie</b>kje</td></tr><tr><td>kappa</td><td class='grieks'>Κ</td><td class='grieks'>κ</td><td><b>k</b>aas</td></tr><tr><td>lambda</td><td class='grieks'>Λ</td><td class='grieks'>λ</td><td><b>l</b>ekker</td></tr><tr><td>mu</td><td class='grieks'>Μ</td><td class='grieks'>μ</td><td><b>m</b>aal</td></tr><tr><td>nu</td><td class='grieks'>Ν</td><td class='grieks'>ν</td><td><b>n</b>eus</td></tr><tr><td>xi</td><td class='grieks'>Ξ</td><td class='grieks'>ξ</td><td>pa<b>ks</b>oi</td></tr><tr><td>omikron</td><td class='grieks'>Ο</td><td class='grieks'>ο</td><td>witl<b>of</b></td></tr><tr><td>pi</td><td class='grieks'>Π</td><td class='grieks'>π</td><td><b>p</b>an</td></tr></tbody></table>"
+},
+{
+  "nr": 6,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<table class='par'><thead><tr><th>naam</th><th>hoofdletter</th><th>kleine letter</th><th>uitspraak</th></tr></thead><tbody><tr><td>rho</td><td class='grieks'>Ρ</td><td class='grieks'>ρ</td><td><b>r</b>eep</td></tr><tr><td>sigma</td><td class='grieks'>Σ</td><td class='grieks'>σ, ς</td><td><b>s</b>uiker</td></tr><tr><td>tau</td><td class='grieks'>Τ</td><td class='grieks'>τ</td><td><b>t</b>artaar</td></tr><tr><td>ypsilon</td><td class='grieks'>Υ</td><td class='grieks'>υ</td><td><b>ju</b>sv<b>o</b>rk</td></tr><tr><td>phi</td><td class='grieks'>Φ</td><td class='grieks'>φ</td><td><b>f</b>allafel</td></tr><tr><td>chi</td><td class='grieks'>Χ</td><td class='grieks'>χ</td><td><b>g</b>aar</td></tr><tr><td>psi</td><td class='grieks'>Ψ</td><td class='grieks'>ψ</td><td>r<b>ups</b></td></tr><tr><td>omega</td><td class='grieks'>Ω</td><td class='grieks'>ω</td><td>st<b>oof</b></td></tr></tbody></table>"
+},
+{
+  "nr": 7,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<p>Pas op voor <span class='oranje'>vormverwarring</span>! Deze vormen van Griekse letters lijken erg op Nederlandse letters:</p><table class='par kaal'><thead><tr><th></th><th colspan='2'><i>hoofdletters</i></th><th colspan='2'><i>kleine letters</i></th></tr></thead><tbody><tr><td>ēta</td><td class='grieks'>Η</td><td>≠ H</td><td class='grieks'>η</td><td>≠ n</td></tr><tr><td>mu</td><td></td><td></td><td class='grieks'>μ</td><td>≠ u</td></tr><tr><td>nu</td><td></td><td></td><td class='grieks'>ν</td><td>≠ v</td></tr><tr><td>rho</td><td class='grieks'>Ρ</td><td>≠ P</td><td class='grieks'>ρ</td><td>≠ p</td></tr><tr><td>chi</td><td class='grieks'>Χ</td><td>≠ X</td><td class='grieks'>χ</td><td>≠ x</td></tr><tr><td>omega</td><td></td><td></td><td class='grieks'>ω</td><td>≠ w</td></tr><tr><td>ypsilon</td><td class='grieks'>Υ</td><td>≠ Y</td><td></td><td></td></tr></tbody></table>"
+},
+{
+  "nr": 8,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<p>Enkele <span class='oranje'>bijzonderheden</span> in de uitspraak en weergave:</p><ol><li>De iota aan het begin van een woord spreek je uit als een ‘j’.</li><li>De ypsilon wordt in sommige (Hebreeuwse) eigennamen als ‘v’ uitgesproken.<div class='vb'>Bijv. <span class='grieks'>Δαυιδ, Λευι</span></div></li><li>De sigma kent twee varianten: de <span class='grieks'>σ</span> verandert in <span class='grieks'>ς</span> aan het einde van een woord.<div class='vb'>Bijv. <span class='grieks'>κόσμος</span>, ‘wereld’</div></li><li>De gamma (<span class='grieks'>γ</span>) voor een keelklank (<span class='grieks'>κ, γ, χ, ξ</span>) spreek je uit als ‘n’.<div class='vb'>Bijv. <span class='grieks'>ἄγγελος</span>, ‘engel’ en <span class='grieks'>λάρυγξ</span>, ‘keel’</div></li></ol>"
+},
+{
+  "nr": 9,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<p>Een <span class='oranje'>fonologische indeling</span> (op klank):</p><p>a) <span class='groen'>vocalen</span> (klinkers)<br>lang: <span class='blauw grieks'>η, ω</span>&emsp;&emsp;kort: <span class='blauw grieks'>ε, ο</span><br>lang of kort: <span class='blauw grieks'>α, ι, υ</span></p><p>In woordenboeken worden lange klinkers vaak met macron aangeduid: <span class='grieks'>ᾱ</span></p><p>b) <span class='groen'>mutae</span> (stomme klanken)</p><table class='par licht'><thead><tr><th></th><th>tenues<br>(stemlozen)</th><th>mediae<br>(stemhebbenden)</th><th>aspiratae<br>(geaspireerden)</th></tr></thead><tbody><tr><th>gutturalen (keelklanken)</th><td class='grieks'>κ</td><td class='grieks'>γ</td><td class='grieks'>χ</td></tr><tr><th>labialen (lipklanken)</th><td class='grieks'>π</td><td class='grieks'>β</td><td class='grieks'>φ</td></tr><tr><th>dentalen (tandklanken)</th><td class='grieks'>τ</td><td class='grieks'>δ</td><td class='grieks'>θ</td></tr></tbody></table>"
+},
+{
+  "nr": 10,
+  "kop": "G1 Het Griekse Alfabet",
+  "html": "<p>c) <span class='groen'>liquidae</span> (vloeiende klanken)<br><span class='blauw grieks'>μ, λ, ν, ρ</span>&ensp;(denk aan ‘molenaar’)</p><p>d) <span class='groen'>spirant</span> (s-klank): <span class='blauw grieks'>σ</span></p><p>e) <span class='groen'>dubbele medeklinkers</span>: <span class='blauw grieks'>ξ</span> (ks), <span class='blauw grieks'>ζ</span> (dz), <span class='blauw grieks'>ψ</span> (ps)</p><p>f) <span class='groen'>tweeklanken</span> (klinkercombinaties)</p><table class='par licht'><thead><tr><th></th><th>met iota</th><th>met ypsilon</th></tr></thead><tbody><tr><th>kort</th><td><span class='grieks'>αι, ει, οι, υι</span> (‘q<u>ui</u>z’)</td><td><span class='grieks'>αυ, ευ</span> (‘ui’), <span class='grieks'>ου</span> (‘oe’)</td></tr><tr><th>lang</th><td><span class='grieks'>ᾳ, ῃ, ῳ</span> *</td><td><span class='grieks'>ηυ</span> (‘ui’ of ‘ē-u’)</td></tr></tbody></table><p>*de iota volgt op een korte klinker (en hoofdletter), maar wordt onder een lange klinker geschreven, dit heet een <span class='blauw'>iota subscriptum</span>.</p>"
+},
+{
+  "nr": 11,
+  "kop": "G2 Spiriti, accenten en leestekens",
+  "html": "<p class='blauw kopje'>Spiriti</p><p>Iedere klinker of tweeklank aan het begin van een woord heeft gaat samen met een van deze tekens:</p><table class='par kaal'><tbody><tr><td class='grieks teken'>ʽ</td><td>een spiritus asper (ruwe ademtocht)<br>spreek uit: ‘h’</td></tr><tr><td class='grieks teken'>ʼ</td><td>een spiritus lenis (lichte ademtocht)<br>onuitgesproken</td></tr></tbody></table><table class='par kaal groen'><tbody><tr><td>bijvoorbeeld:</td><td class='grieks groot'>ὄρος</td><td>‘berg’</td></tr><tr><td>versus</td><td class='grieks groot'>ὅρος</td><td>‘grens’</td></tr></tbody></table>"
+},
+{
+  "nr": 12,
+  "kop": "G2 Spiriti, accenten en leestekens",
+  "html": "<p>Bijzonderheden:</p><ol><li>In het geval van een (enkelvoudige) hoofdletter aan het begin van een woord staat de spiritus niet boven maar vlak voor de eerste letter<div class='vb'><span class='grieks'>Ἀλλά</span>, ‘maar’</div></li><li>In het geval van een tweeklank aan het begin, staat de spiritus boven de tweede klinker<div class='vb'><span class='grieks'>εὐαγγέλιον</span>, ‘goede boodschap’</div></li><li>In het geval van een rho (<span class='grieks'>ρ</span>) aan het begin, staat hier altijd een spiritus asper boven<br>of bij een hoofdletter rho (<span class='grieks'>Ρ</span>) ervoor<div class='vb'><span class='grieks'>ῥομαῖος</span>, ‘Romeins’</div></li></ol>"
+},
+{
+  "nr": 13,
+  "kop": "G2 Spiriti, accenten en leestekens",
+  "html": "<p class='blauw kopje'>Accenten</p><p>van muzikaal accent (<i>acutus</i> = kwint/terts hoger) naar klemtoon</p><table class='par kaal'><tbody><tr><td class='grieks teken'>´</td><td><i>acutus</i><br>op één van laatste drie lettergrepen</td></tr><tr><td class='grieks teken'>~</td><td><i>circumflexus</i>&ensp;(of ˆ)<br>op (voor)laatste lettergreep, alleen op lange klinker</td></tr><tr><td class='grieks teken'>`</td><td><i>gravis</i><br>op laatste lettergreep, alleen als er een woord op volgt</td></tr></tbody></table><p>In combinatie met spiriti kan dit er zo uitzien:</p><p class='groen grieks groot'>ἄ-&ensp; ἅ-&ensp; ἆ-&ensp; ἇ-&ensp; Ἄ-&ensp; Ἅ-</p>"
+}
+]

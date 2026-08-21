@@ -40,3 +40,9 @@ sleutel_klaar/
 bijbel_nt.json
 bijbel_nt_deel1.json
 bijbel_nt_deel2.json
+
+# Werkbestanden bij het overtypen van de grammatica-slides. De plaatjes zijn een tussenstap
+# (te maken met gereedschap/slides_beelden.py) en de proefpagina is om na te kijken; wat
+# blijft is slides_werk/*.json en het samengevoegde grammatica_slides.json.
+slides_werk/beelden/
+slides_werk/proef.html
