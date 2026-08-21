@@ -235,6 +235,98 @@ def splits_affixen(vorm, parsing):
     return voorvoegsel, rest, achtervoegsel
 
 
+# --------------------------------------------------------------------------- de uitgang
+# Wat een woord over zichzelf zegt: mannelijk of vrouwelijk, enkelvoud of meervoud, en bij
+# een werkwoord wie het doet. Dat staat in de laatste een tot drie tekens, en dat is precies
+# wat je bij het lezen moet leren zien — הַשָּׁמַיִם is הַ + שָּׁמַ + יִם, en die יִם vertelt
+# je dat het meervoud is.
+#
+# De tabel komt uit de tekst zelf en niet uit een grammatica. Geteld over de hele Tenach
+# eindigt N-mpc 2287 keer op נֵי, 675 op רֵי, 440 op הֵי — allemaal op ֵי, dus dát is de
+# uitgang. Wat niet vaak genoeg voorkomt staat er niet in: liever geen kleur dan de
+# verkeerde letters aanwijzen.
+#
+# Twee dingen staan er met opzet níet in.
+#
+# De persoonsvoorvoegsels van de imperfectum (יִכְתֹּב, תִּכְתֹּב) zijn geen uitgang maar een
+# voorvoegsel, en ze staan op dezelfde plaats als de voorzetsels. Die uit elkaar houden
+# vraagt een eigen ronde.
+#
+# En een uitgang die het hele woord zou opeten. מַיִם is 'water' en staat altijd in het
+# meervoud; splits je יִם eraf dan houd je één letter over. De eis is daarom dat er
+# minstens twee medeklinkers overblijven — een Hebreeuwse stam heeft er in de regel drie.
+UITGANG_VORMEN = {
+    # naamwoorden en bijvoeglijke naamwoorden, los
+    "mp": ("ִים", "יִם"), "md": ("ַיִם", "יִם"), "cd": ("ַיִם", "יִם"),
+    "fs": ("ִית", "ָה", "ֶת", "ַת"), "fp": ("וֹת", "ִים"), "fd": ("ַיִם", "יִם"),
+    # verbonden (constructus): het meervoud wordt ֵי, het vrouwelijk enkelvoud ַת
+    "mpc": ("ֵי",), "cpc": ("ֵי",), "cdc": ("ֵי",), "mdc": ("ֵי",), "fdc": ("ֵי",),
+    "fpc": ("וֹת", "ֵי"), "fsc": ("ִית", "ַת", "ֶת"),
+    # werkwoorden: de persoonsuitgangen die duidelijk aan het eind staan
+    "3cp": ("וּ",), "3mp": ("וּ",), "2mp": ("תֶּם", "וּ"), "3fp": ("נָה",),
+    "2fp": ("נָה",), "3fs": ("ָה", "ַת"), "1cs": ("תִּי",), "2ms": ("תָּ",),
+    "2fs": ("תְּ", "ִי"), "1cp": ("נוּ",),
+}
+UITGANG_VORMEN = {code: tuple(sorted(set(v), key=len, reverse=True))
+                  for code, v in UITGANG_VORMEN.items()}
+
+# Wat de uitgang betekent, in gewone woorden.
+UITGANG_NL = {
+    "mp": "mannelijk meervoud", "md": "mannelijk tweevoud",
+    "cd": "tweevoud", "fd": "vrouwelijk tweevoud",
+    "fs": "vrouwelijk enkelvoud", "fp": "vrouwelijk meervoud",
+    "mpc": "mannelijk meervoud, verbonden", "cpc": "meervoud, verbonden",
+    "cdc": "tweevoud, verbonden", "mdc": "mannelijk tweevoud, verbonden",
+    "fdc": "vrouwelijk tweevoud, verbonden",
+    "fpc": "vrouwelijk meervoud, verbonden", "fsc": "vrouwelijk enkelvoud, verbonden",
+    "3cp": "3e persoon meervoud", "3mp": "3e persoon mannelijk meervoud",
+    "2mp": "2e persoon mannelijk meervoud", "3fp": "3e persoon vrouwelijk meervoud",
+    "2fp": "2e persoon vrouwelijk meervoud", "3fs": "3e persoon vrouwelijk enkelvoud",
+    "1cs": "1e persoon enkelvoud", "2ms": "2e persoon mannelijk enkelvoud",
+    "2fs": "2e persoon vrouwelijk enkelvoud", "1cp": "1e persoon meervoud",
+}
+
+# Welke woordsoorten een uitgang krijgen. Een voorzetsel of een voegwoord heeft er geen,
+# ook al eindigt het toevallig op dezelfde letters.
+_MET_UITGANG = ("N-", "Adj", "V-", "Number", "Pro-")
+
+
+def uitgang_code(kern_code):
+    """Het stukje van de ontleedcode dat over geslacht, getal of persoon gaat.
+
+    'N-mpc' -> 'mpc', 'V-Qal-Perf-3cp' -> '3cp', 'Prep' -> ''. Eigennamen krijgen niets:
+    Jeruzalem eindigt op iets dat op een meervoud lijkt, maar dat is de naam."""
+    code = str(kern_code or "")
+    if not code.startswith(_MET_UITGANG) or "proper" in code:
+        return ""
+    staart = code.split("-")[-1]
+    return staart if staart in UITGANG_VORMEN else ""
+
+
+def splits_uitgang(stam, kern_code, al_achtervoegsel=False):
+    """(stam, uitgang) — de uitgang van geslacht en getal van de stam afhalen.
+
+    Aanroepen op wat splits_affixen() als kern teruggeeft. Staat er al een bezittelijk
+    achtervoegsel, dan komt er niets: de meervoudsuitgang zit dan ín dat achtervoegsel
+    (אֲבֹתֶיךָ is 'jouw vaders', en de jod van het meervoud staat in ֶיךָ)."""
+    stam = str(stam or "")
+    if al_achtervoegsel:
+        return stam, ""
+    code = uitgang_code(kern_code)
+    if not code:
+        return stam, ""
+    romp, staart = zonder_leesteken(stam)
+    plat = _canon(romp)
+    for einde in UITGANG_VORMEN[code]:
+        if not plat.endswith(_canon(einde)):
+            continue
+        rest = romp[:len(romp) - len(einde)]
+        if sum(1 for t in rest if "א" <= t <= "ת") < 2:
+            continue
+        return rest, romp[len(rest):] + staart
+    return stam, ""
+
+
 # Sof pasuq (het dubbelpuntje aan het eind van een vers), de maqaf en de paseq (het streepje
 # dat woorden scheidt). De letters פ en ס die een alinea afsluiten staan altijd ná een sof
 # pasuq — los zijn het gewone letters, dus die mogen alleen in dat gezelschap weg.

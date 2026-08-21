@@ -31,6 +31,10 @@ import hebreeuws
 INKT, VLAK, RAND = "#0e1117", "#1e1e1e", "#2b3038"
 TEKST, ZACHT = "#fafafa", "#9aa4ae"
 MERK, GOED, FOUT = "#33ccff", "#3ddc97", "#ff6b81"
+# De uitgang van een Hebreeuws woord (mannelijk meervoud en zo). Amber en niet cyaan, want
+# het is iets anders dan een voorvoegsel: dat laatste is een woord op zichzelf, een uitgang
+# zegt iets over dít woord. Weg van groen en rood, die betekenen goed en fout.
+UITGANG = "#f6c23e"
 GRIEKS_FONT = "'Gentium Book Plus','Palatino Linotype',Georgia,serif"
 # Hebreeuws heeft een eigen letter nodig: Gentium dekt het niet. Noto Serif Hebrew zet de
 # klinkertekens onder de letter waar ze horen; David is de terugval die op Windows al staat.
@@ -7185,37 +7189,61 @@ LEES_DREMPEL = 0.6
 # de rijtjes, waar de uitgang ook cyaan is: wat wisselt is gekleurd, wat vastligt is wit.
 # Zo zie je in וְהָאָרֶץ meteen dat er maar één woord in zit dat je hoeft te kennen.
 def heb_gekleurd(vorm, parsing, maat=None):
-    """De vorm met het voorvoegsel en het achtervoegsel in kleur.
+    """De vorm in vier stukken, elk in zijn eigen kleur.
 
-    Lukt het splitsen niet — bij een achtervoegsel dat anders geschreven is dan de tabel
-    kent — dan komt de vorm ongekleurd terug. Liever geen kleur dan de verkeerde letters
-    aanwijzen; daar leer je iets verkeerds van."""
+        cyaan   het voorvoegsel en het bezittelijk achtervoegsel — de losse woordjes die
+                aan het woord vastgeplakt zitten (en, de, in, jouw)
+        amber   de uitgang: mannelijk of vrouwelijk, enkelvoud of meervoud, of bij een
+                werkwoord wie het doet
+        wit     de stam, het woord dat je in je woordenlijst hebt geleerd
+
+    Twee kleuren en niet één, omdat het twee verschillende dingen zijn. Een voorvoegsel is
+    een woord op zichzelf; een uitgang zegt iets over dit woord. הַשָּׁמַיִם is הַ + שָּׁמַ +
+    יִם: 'de' plus de stam plus 'meervoud'.
+
+    Lukt het splitsen niet, dan komt dat stuk ongekleurd terug. Liever geen kleur dan de
+    verkeerde letters aanwijzen; daar leer je iets verkeerds van."""
     voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
+    _v, kern_code, _a = hebreeuws._codes(parsing)
+    stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
     stijl = f"font-size:{maat}px" if maat else ""
-    if not voor and not achter:
+    if not voor and not achter and not uitgang:
         return f"<span class='hebreeuws' style='{stijl}'>{vorm}</span>"
     stukken = []
     if voor:
         stukken.append(f"<span style='color:{MERK}'>{voor}</span>")
-    stukken.append(f"<span style='color:{TEKST}'>{kern}</span>")
-    if achter:
-        # Het versteken achteraan hoort niet bij het achtervoegsel en krijgt dus ook niet
-        # die kleur. splits_affixen() houdt het erbij omdat de drie stukken samen het hele
-        # woord moeten zijn; hier gaat het er weer even af.
-        einde, staart = hebreeuws.zonder_leesteken(achter)
-        stukken.append(f"<span style='color:{MERK}'>{einde}</span>")
+    stukken.append(f"<span style='color:{TEKST}'>{stam}</span>")
+    for stuk, kleur in ((uitgang, UITGANG), (achter, MERK)):
+        if not stuk:
+            continue
+        # Het versteken achteraan hoort bij geen van de stukken en krijgt dus ook geen
+        # kleur. splits_affixen() houdt het erbij omdat de stukken samen het hele woord
+        # moeten zijn; hier gaat het er weer even af.
+        einde, staart = hebreeuws.zonder_leesteken(stuk)
+        stukken.append(f"<span style='color:{kleur}'>{einde}</span>")
         if staart:
             stukken.append(f"<span style='color:{TEKST}'>{staart}</span>")
     return f"<span class='hebreeuws' style='{stijl}'>" + "".join(stukken) + "</span>"
 
 
-def heb_affix_uitleg(parsing):
-    """Wat de voor- en achtervoegsels van deze vorm betekenen, als losse regels."""
-    voor_codes, _kern, achter = hebreeuws._codes(parsing)
-    uit = [f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}"
+def heb_affix_uitleg(parsing, vorm=""):
+    """Wat de voor- en achtervoegsels en de uitgang van deze vorm betekenen.
+
+    De uitgang komt er alleen bij als hij ook echt gekleurd is. Anders staat er 'mannelijk
+    meervoud' bij een woord waar niets is aangewezen, en dan zoek je naar iets wat er niet
+    staat. Daarvoor is de vorm nodig; zonder vorm blijft het bij de affixen."""
+    voor_codes, kern_code, achter = hebreeuws._codes(parsing)
+    uit = [(f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}", MERK)
            for c in voor_codes]
+    if vorm:
+        _v, kern, _a = hebreeuws.splits_affixen(vorm, parsing)
+        _stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
+        if uitgang:
+            kaal = hebreeuws.zonder_leesteken(uitgang)[0]
+            code = hebreeuws.uitgang_code(kern_code)
+            uit.append((f"{kaal} = {hebreeuws.UITGANG_NL.get(code, code)}", UITGANG))
     if achter:
-        uit.append(f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}")
+        uit.append((f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}", MERK))
     return uit
 
 
@@ -7239,7 +7267,7 @@ def heb_leeskaart(wv, info, ref=""):
     # en daaronder nog eens 'EN: God'.
     elif engels and engels.lower().strip(" .,;") in betekenis.lower():
         engels = ""
-    affixen = heb_affix_uitleg(parsing)
+    affixen = heb_affix_uitleg(parsing, vorm)
     ontleed = heb_ontleding(parsing)
     return (
         f"<div class='uitlegkaart'>"
@@ -7252,8 +7280,11 @@ def heb_leeskaart(wv, info, ref=""):
            f"{wv['translit']}</div>" if wv["translit"] else "")
         + (f"<div style='color:{ZACHT};font-size:11.5px'>EN: {engels}</div>"
            if engels else "")
-        + (f"<div style='color:{MERK};font-size:11.5px'>{' · '.join(affixen)}</div>"
-           if affixen else "")
+        # Elk stukje in de kleur waarin het ook in het woord staat: cyaan voor de
+        # voor- en achtervoegsels, amber voor de uitgang. Anders moet je gokken welke
+        # regel bij welke gekleurde letter hoort.
+        + "".join(f"<div style='color:{kleur};font-size:11.5px'>{regel}</div>"
+                  for regel, kleur in affixen)
         + (f"<div style='color:{ZACHT};font-size:11.5px'>{ontleed}</div>"
            if ontleed else "")
         + "</div>")

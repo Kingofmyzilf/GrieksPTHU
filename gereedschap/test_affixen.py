@@ -108,7 +108,9 @@ def heel_de_tenach():
     ontleding géén achtervoegsel noemt, en of er een woord overblijft."""
     print("\n=== alle woordvormen van de Tenach ===")
     n = kapot = zonder_code = korte_stam = met_code = gesplitst = 0
+    u_met_code = u_gesplitst = u_kort = 0
     per_code = collections.Counter()
+    u_per_code = collections.Counter()
     voorbeelden = []
     for boek in H.tenach_index():
         for vers in H.laad_tenach_boek(boek["bestand"]):
@@ -121,6 +123,27 @@ def heel_de_tenach():
                     if len(voorbeelden) < 5:
                         voorbeelden.append(f"telt niet op: {vorm!r} -> "
                                            f"{voor!r}+{kern!r}+{achter!r}")
+                # --- de uitgang van geslacht, getal of persoon
+                _v, kern_code, _a = H._codes(parsing)
+                stam, uitgang = H.splits_uitgang(kern, kern_code, bool(achter))
+                if voor + stam + uitgang + achter != vorm:
+                    kapot += 1
+                    if len(voorbeelden) < 8:
+                        voorbeelden.append(
+                            f"met uitgang telt niet op: {vorm!r} -> "
+                            f"{voor!r}+{stam!r}+{uitgang!r}+{achter!r}")
+                if H.uitgang_code(kern_code) and not achter:
+                    u_met_code += 1
+                    if uitgang:
+                        u_gesplitst += 1
+                        u_per_code[H.uitgang_code(kern_code)] += 1
+                # Een Hebreeuwse stam heeft in de regel drie medeklinkers; blijft er na de
+                # uitgang maar één over, dan is er iets weggeknipt dat erbij hoorde.
+                if uitgang and sum(1 for t in stam if "א" <= t <= "ת") < 2:
+                    u_kort += 1
+                    if len(voorbeelden) < 12:
+                        voorbeelden.append(f"stam te kort na de uitgang: {vorm!r} -> "
+                                           f"{stam!r} + {uitgang!r}")
                 _v, _k, code = H._codes(parsing)
                 if code:
                     met_code += 1
@@ -146,10 +169,22 @@ def heel_de_tenach():
     print("  per persoon:")
     for code, aantal in sorted(per_code.items()):
         print(f"    {code:5s} {aantal:7d}  {H.ACHTERVOEGSEL_NL[code]}")
+    print()
+    print(f"  uitgangen: {u_gesplitst} van de {u_met_code} met een uitgangscode gekleurd "
+          f"({100 * u_gesplitst / max(1, u_met_code):.1f}%)")
+    print(f"  stam te kort na de uitgang               {u_kort:6d}")
+    for code, aantal in sorted(u_per_code.items(), key=lambda k: -k[1])[:8]:
+        print(f"    {code:5s} {aantal:7d}  {H.UITGANG_NL.get(code, '')}")
     for regel in voorbeelden:
         print(f"    MIS {regel}")
-    if kapot or zonder_code or korte_stam:
-        sys.exit(f"{kapot + zonder_code + korte_stam} echte fouten over de hele Tenach")
+    if kapot or zonder_code or korte_stam or u_kort:
+        sys.exit(f"{kapot + zonder_code + korte_stam + u_kort} echte fouten "
+                 f"over de hele Tenach")
+    # Niet alles heeft een uitgang die te zien is: veel naamwoorden zijn mannelijk
+    # enkelvoud en dan is er niets, en een imperfectum draagt zijn persoon vooraan. Onder
+    # de helft is er echter iets stuk.
+    if u_met_code and u_gesplitst < u_met_code * 0.5:
+        sys.exit(f"maar {100 * u_gesplitst / u_met_code:.1f}% van de uitgangen gekleurd")
     # Onder deze grens is er iets stuk. De rest die niet lukt is vrijwel alleen de
     # richtings-he, die dit bestand dezelfde code 3fs geeft als het echte achtervoegsel.
     if met_code and gesplitst < met_code * 0.9:

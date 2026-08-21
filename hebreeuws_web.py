@@ -9,7 +9,7 @@ Gebouwd als tegenhanger van 📝 Leesteksten, met dezelfde onderdelen:
     Scavenger Hunt (zwakke woorden)      Zoek een vers met je zwakke woorden
     Autonome leestekst (100% bekend)     idem
     🎨 markeer naamvallen                 🎨 markeer woordsoorten
-    🔗 markeer voegwoorden                🔗 markeer voor- en achtervoegsels
+    🔗 markeer voegwoorden                🔗 markeer voor/achtervoegsels en uitgang
     ⚛️ markeer stamtijden                 ⚛️ markeer stamformaties
     zwevende tooltip per woord           idem
     vertaling_nl, met EN: als anker      idem, met de BSB uit de spreadsheet
@@ -50,6 +50,10 @@ STAM_KLEUR = {
     "Hifil": "#C4A6FF", "Hofal": "#9B86D9", "Hitpael": "#5ED3C0",
 }
 AFFIX_KLEUR = "#33ccff"          # merkcyaan, net als in de snelle app
+# De uitgang krijgt een eigen kleur, want het is iets anders dan een voorvoegsel. Een
+# voorvoegsel is een woord op zichzelf ('en', 'de', 'in'); een uitgang zegt iets over dít
+# woord — mannelijk of vrouwelijk, enkelvoud of meervoud, of wie het doet.
+UITGANG_KLEUR = "#f6c23e"
 
 OPMAAK = """
 <style>
@@ -184,11 +188,21 @@ def korte_betekenis(w):
     return tekst[:96]
 
 
-def _affixen_kort(parsing):
-    """Wat de voor- en achtervoegsels betekenen, als één regel."""
-    voor, _kern, achter = hebreeuws._codes(parsing)
+def _affixen_kort(parsing, vorm=""):
+    """Wat de voor- en achtervoegsels en de uitgang betekenen, als één regel.
+
+    De uitgang komt er alleen bij als hij ook echt gekleurd is; anders staat er 'mannelijk
+    meervoud' bij een woord waar niets is aangewezen. Daarvoor is de vorm nodig."""
+    voor, kern_code, achter = hebreeuws._codes(parsing)
     delen = [f"{hebreeuws.VOORVOEGSEL_LETTER[c]} = {hebreeuws.VOORVOEGSEL_NL[c]}"
              for c in voor]
+    if vorm:
+        _v, kern, _a = hebreeuws.splits_affixen(vorm, parsing)
+        _stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
+        if uitgang:
+            kaal = hebreeuws.zonder_leesteken(uitgang)[0]
+            code = hebreeuws.uitgang_code(kern_code)
+            delen.append(f"{kaal} = {hebreeuws.UITGANG_NL.get(code, code)}")
     if achter:
         delen.append(f"achtervoegsel = {hebreeuws.ACHTERVOEGSEL_NL[achter]}")
     return " · ".join(delen)
@@ -265,7 +279,7 @@ def _woord_html(wv, lijst, stand, opties):
     ont = ontleding(parsing)
     if ont:
         regels.append(ont)
-    aff = _affixen_kort(parsing)
+    aff = _affixen_kort(parsing, vorm)
     if aff:
         regels.append(aff)
     tooltip = "\n".join(regels).replace("'", "&#39;").replace('"', "&quot;")
@@ -285,19 +299,24 @@ def _woord_html(wv, lijst, stand, opties):
     if opties["nognietgehad"] and not gehad and w is not None:
         klassen += " hebnog"
 
-    # ---- de voor- en achtervoegsels apart kleuren, binnen het woord
+    # ---- het woord in stukken kleuren: affixen cyaan, de uitgang amber, de stam zoals hij
+    #      volgens de andere markeringen hoort te zijn
     if opties["affixen"]:
         voor, kern, achter = hebreeuws.splits_affixen(vorm, parsing)
-        if voor or achter:
-            # Het versteken achteraan hoort niet bij het achtervoegsel en krijgt dus ook
-            # niet die kleur. splits_affixen() houdt het erbij omdat de drie stukken samen
-            # het hele woord moeten zijn; hier gaat het er weer even af.
-            einde, staart = hebreeuws.zonder_leesteken(achter)
+        _v, kern_code, _a = hebreeuws._codes(parsing)
+        stam, uitgang = hebreeuws.splits_uitgang(kern, kern_code, bool(achter))
+        if voor or achter or uitgang:
             binnen = (f"<span style='color:{AFFIX_KLEUR}'>{voor}</span>" if voor else "")
-            binnen += f"<span style='{stijl}'>{kern}</span>"
-            binnen += (f"<span style='color:{AFFIX_KLEUR}'>{einde}</span>"
-                       if einde else "")
-            binnen += f"<span style='{stijl}'>{staart}</span>" if staart else ""
+            binnen += f"<span style='{stijl}'>{stam}</span>"
+            for stuk, kleur in ((uitgang, UITGANG_KLEUR), (achter, AFFIX_KLEUR)):
+                if not stuk:
+                    continue
+                # Het versteken achteraan hoort bij geen van de stukken en krijgt dus ook
+                # geen kleur. splits_affixen() houdt het erbij omdat de stukken samen het
+                # hele woord moeten zijn; hier gaat het er weer even af.
+                einde, staart = hebreeuws.zonder_leesteken(stuk)
+                binnen += f"<span style='color:{kleur}'>{einde}</span>" if einde else ""
+                binnen += f"<span style='{stijl}'>{staart}</span>" if staart else ""
         else:
             binnen = f"<span style='{stijl}'>{vorm}</span>"
     else:
@@ -379,7 +398,7 @@ def tab():
     with v1:
         kleur_soort = st.checkbox("🎨 Markeer woordsoorten", key="heb_kl_soort")
     with v2:
-        kleur_affix = st.checkbox("🔗 Markeer voor/achtervoegsels", value=True,
+        kleur_affix = st.checkbox("🔗 Markeer voor/achtervoegsels en uitgang", value=True,
                                   key="heb_kl_affix")
     with v3:
         kleur_stam = st.checkbox("⚛️ Markeer stamformaties", key="heb_kl_stam")
@@ -451,7 +470,9 @@ def tab():
     if kleur_affix:
         st.markdown(f"<div style='font-size:14px;margin-bottom:4px;opacity:.9'>"
                     f"<span style='color:{AFFIX_KLEUR}'>Voor- en achtervoegsels</span> "
-                    f"staan in cyaan, de stam in de kleur van het woord.</div>",
+                    f"(en, de, in, jouw) · "
+                    f"<span style='color:{UITGANG_KLEUR}'>uitgang</span> "
+                    f"(m/v, ev/mv, wie het doet) · de stam in de kleur van het woord.</div>",
                     unsafe_allow_html=True)
 
     st.markdown(f"<div style='font-size:14px;color:#f6c23e;margin-bottom:4px'>"
@@ -490,7 +511,7 @@ def tab():
                     "stam": kern if (voor or achter) else "",
                     "betekenis": korte_betekenis(w) if w else "— niet in de cursuslijst",
                     "engels": wv["engels"],
-                    "voor/achter": _affixen_kort(parsing),
+                    "voor/achter": _affixen_kort(parsing, vorm),
                     "woordsoort": woordsoort(parsing),
                     "ontleding": ontleding(parsing),
                     "streak": streak,
@@ -504,7 +525,7 @@ def tab():
                 "stam": st.column_config.TextColumn("Stam", width="small"),
                 "betekenis": st.column_config.TextColumn("Betekenis", width="medium"),
                 "engels": st.column_config.TextColumn("Engels (BSB)", width="medium"),
-                "voor/achter": st.column_config.TextColumn("Voor/achtervoegsel",
+                "voor/achter": st.column_config.TextColumn("Voor/achtervoegsel · uitgang",
                                                            width="medium"),
                 "woordsoort": st.column_config.TextColumn("Soort", width="small"),
                 "ontleding": st.column_config.TextColumn("Ontleding", width="medium"),
