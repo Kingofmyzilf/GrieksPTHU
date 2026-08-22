@@ -3,7 +3,8 @@
 #
 # Bewust NIET hierin:
 #   pandas   — de motor gebruikt het niet meer (scheelt ~70 MB geheugen op de server)
-#   pymupdf  — alleen nodig voor de grammatica-slides, en die zijn nog niet overgezet
+#   pymupdf  — was voor de grammatica-slides; die staan nu als tekst in
+#              grammatica_slides.json en de pdf is uit de repo
 #   truststore — alleen voor Windows-machines waar een virusscanner het certificaat
 #                vervangt; op een server heb je het niet nodig en is het niet te
 #                installeren op elke Python-versie. grieks_opslag slaat het over als
