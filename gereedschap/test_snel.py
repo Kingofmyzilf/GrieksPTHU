@@ -53,7 +53,7 @@ def main():
     app = open("grieks_app.py", encoding="utf-8").read()
 
     print("== de opslag ==")
-    kijk("OPSLAG_INTERVAL = 8" in app, "het interval staat op 8, geteld over alle oefeningen")
+    kijk("OPSLAG_INTERVAL = 5" in app, "het interval staat op 5, geteld over alle oefeningen")
     kijk(not re.search(r"OPSLAG_INTERVAL\s*=.*BIJBEL", app),
          "het interval hangt niet aan de aanwezigheid van de bijbeltekst")
     kijk("def bewaar_los" in app, "bewaar_los bestaat (opslaan zonder erop te wachten)")
@@ -86,14 +86,12 @@ def main():
          f"de antwoordpaden gebruiken bewaar_los ({app.count('bewaar_los(g,')} plekken)")
 
     print("== het interval doet wat het zegt ==")
-    g = gebruikers.Gebruiker("proef", "proef", interval=8)
-    kijk(g.interval == 8, f"een gebruiker krijgt interval 8 mee (kreeg {g.interval})")
+    g = gebruikers.Gebruiker("proef", "proef", interval=5)
+    kijk(g.interval == 5, f"een gebruiker krijgt interval 5 mee (kreeg {g.interval})")
     w = {"grieks": "λόγος", "streak": 0}
-    for n in range(1, 9):
+    for n in range(1, 6):
         g.noteer(dict(w), True)
-        if n < 8:
-            kijk(g.sinds_opslag == n, f"na {n} beurten staat de teller op {g.sinds_opslag}")
-    kijk(g.sinds_opslag == 8, f"na 8 beurten is de teller 8 (is {g.sinds_opslag})")
+        kijk(g.sinds_opslag == n, f"na {n} beurten staat de teller op {g.sinds_opslag}")
 
     print("== de voorgebakken NT-gegevens ==")
     kijk(os.path.exists(SNEL), f"{SNEL} bestaat")

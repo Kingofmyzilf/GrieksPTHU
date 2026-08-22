@@ -151,7 +151,9 @@ class Gebruiker:
           * `punten` — wat een goed antwoord aan streak oplevert. Typen telt zwaarder
             dan aanwijzen, want zelf produceren is moeilijker dan herkennen.
           * `straf` — wat een misser van de streak afhaalt. None laat de streak staan;
-            dat is de eerste misser, waarna je het nog een keer mag proberen.
+            dat is de eerste misser, waarna je het nog een keer mag proberen. Aftrek hoort
+            bij een misser: een goed antwoord kost nooit streak, ook niet als je onderweg
+            hulp hebt gehad. Dat levert dan alleen geen punten op (zie `scoor`).
           * `scoor` — False als deze beurt niet meetelt voor goed/fout, bijvoorbeeld
             omdat je het antwoord al had gezien. Voor je oefenritme telt hij wel mee.
 

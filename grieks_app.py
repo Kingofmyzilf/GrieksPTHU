@@ -304,10 +304,12 @@ def nt_deel(naam):
 # netwerkrondjes op een machine met 0,1 CPU. Gemeten: één opslag is 1,9 s. Zo'n afgeleide
 # schakelaar hoort hier dus niet; dit is een keuze op zichzelf.
 #
-# Acht is een bewuste ruil: je raakt bij een crash maximaal zeven beurten kwijt, en dat mag,
-# want opslaan gebeurt nu op de achtergrond (zie bewaar_los) en aan het einde van een ronde,
+# Vijf is een bewuste ruil: je raakt bij een crash maximaal vier beurten kwijt, en dat mag,
+# want opslaan gebeurt op de achtergrond (zie bewaar_los) en aan het einde van een ronde,
 # bij het aanvinken van verwarparen en bij het verlaten van de app wordt geforceerd bewaard.
-OPSLAG_INTERVAL = 8
+# Het stond even op 8; met de opslag van het antwoordpad af kost 5 niets meer in wachttijd,
+# en dan is minder risico gratis.
+OPSLAG_INTERVAL = 5
 
 
 def bewaar_los(g, melding=None):
@@ -1243,6 +1245,9 @@ class Sessie:
         self.toonvorm = None
         self.fouten = 0            # missers op de kaart die nu voorligt
         self.gestraft = set()      # woorden waarvan je het antwoord al zag
+        # Woorden waarbij je bij een NT-vorm het bronwoord hebt opgevraagd. Dat kost streak,
+        # ook als je het daarna goed hebt: met het lemma erbij is de vraag een andere vraag.
+        self.bron_gespiekt = set()
         self.combo = {}            # Mix: had je de meerkeuze in één keer goed?
         self.bezig = False         # tegen dubbelklikken tijdens het opslaan
         # Voor de eindsamenvatting: wat ging goed, wat fout, en welke woorden zou je
@@ -1847,6 +1852,18 @@ def oefenpagina():
             spreek_uit(tekst)
         elif soort == "Hint":
             tekst = _hint(k)
+        elif soort == "Bronwoord":
+            # Bij een NT-vorm staat het woord in een verbogen gedaante op de kaart. Zie je
+            # niet welk woord het is, dan kun je het lemma opvragen. Dat levert geen punten
+            # meer op, maar kost ook niets zolang je het goed hebt; heb je het daarna fout,
+            # dan is dat meteen een echte misser (zie beoordeel).
+            sessie.bron_gespiekt.add(k.get("grieks", ""))
+            sessie.gestraft.add(k.get("grieks", ""))
+            lemma_info = k.get("lexeem_info") or k.get("grieks_info") or ""
+            tekst = (f"{k.get('grieks', '')}"
+                     + (f" — {lemma_info}" if lemma_info else "")
+                     + "\nGeen streak-punten meer voor deze kaart; een misser kost er "
+                     + f"{STREAK_STRAF}.")
         else:
             tekst = _opbouw_tekst(k, g.woorden)
         ui.notify(tekst, position="top", color="dark", multi_line=True,
@@ -1928,22 +1945,34 @@ def oefenpagina():
         # Alleen een vlekkeloze beurt levert punten op. Zag je het antwoord al (via
         # 'ik weet het niet' of een eerdere misser), dan telt de kaart niet meer mee.
         schoon = sessie.fouten == 0 and grieks not in sessie.gestraft
+        # Bronwoord opgevraagd bij een NT-vorm. Dat levert geen punten op (het zit in
+        # `schoon` hierboven), maar kost ook niets zolang je het goed hebt — je hébt de
+        # vorm dan vertaald. Heb je het fout, dan is er geen herkansing meer: met het
+        # lemma erbij was de vraag al makkelijker.
+        gespiekt = grieks in sessie.bron_gespiekt
 
         if juist:
             sessie.goed += 1
             sessie.noteer_uitslag(k, True, antwoord, g.woorden)
-            if sessie.fouten == 0:
+            if sessie.fouten == 0 and not gespiekt:
                 g.verzwak_verwarring(grieks)
             punten = STREAK_PUNTEN.get(vorm, 1)
             if vorm == "3_typ" and sessie.combo.get(grieks):
                 punten *= 2              # meerkeuze én typen in één keer goed
             oud = int(k.get("streak", 0) or 0)
+            # Geen aftrek bij een goed antwoord — ook niet na spieken. Je hébt de vorm
+            # goed vertaald; dat het met het lemma erbij ging betekent alleen dat het geen
+            # punten oplevert. Aftrek hoort bij een misser, en die staat hieronder.
             opslaan(k, True, punten=punten, scoor=schoon)
             if vorm == "3_mc":
                 sessie.combo[grieks] = schoon
-            extra = "" if schoon else (
-                f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
-                f"Geen streak-punten: je had het antwoord al gezien.</div>")
+            extra = ""
+            if gespiekt:
+                extra = (f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
+                         f"Geen streak-punten: je hebt het bronwoord opgevraagd.</div>")
+            elif not schoon:
+                extra = (f"<div style='color:{ZACHT};font-size:12.5px;text-align:center'>"
+                         f"Geen streak-punten: je had het antwoord al gezien.</div>")
             fasemelding = vier_fase(oud, int(k.get("streak", 0) or 0), grieks)
             with open_uitslag():
                 ui.html(_feedbackblok(k, True, sessie, g.woorden))
@@ -1963,8 +1992,10 @@ def oefenpagina():
         if vorm == "3_mc":
             sessie.combo[grieks] = False
         # Een woord dat je al beheerste hoort er meteen uit te vallen; bij de rest krijg
-        # je één herkansing voordat het streak-punten kost.
-        echt_mis = int(k.get("streak", 0) or 0) >= STRAF_STREAK or sessie.fouten >= 2
+        # je één herkansing voordat het streak-punten kost. Had je het bronwoord al
+        # opgevraagd, dan is er geen herkansing meer te geven.
+        echt_mis = (int(k.get("streak", 0) or 0) >= STRAF_STREAK or sessie.fouten >= 2
+                    or gespiekt)
         opslaan(k, False, straf=STREAK_STRAF if echt_mis else None)
 
         if echt_mis:
@@ -2096,6 +2127,11 @@ def oefenpagina():
             knoppen.insert(0, "Uitspraak")
         if sessie.prefs.get("opbouw", False):
             knoppen.append("Opbouw")
+        # Alleen bij een NT-vorm: dan staat er iets op de kaart wat niet in je lijst staat,
+        # en is 'welk woord is dit eigenlijk' een redelijke vraag. Bij de woordenboekvorm
+        # zou deze knop het antwoord zelf zijn.
+        if sessie.toonvorm:
+            knoppen.append("Bronwoord")
         with hulp:
             for label in knoppen:
                 ui.button(label, on_click=lambda l=label, w=k: toon_hulp(l, w),
@@ -5072,7 +5108,8 @@ def hebafpagina():
 
 # ============================================================== ontleden
 ONT_STANDAARD = {"ont_niveau": "Grieks 1", "ont_drempel": 5, "ont_kleur": True,
-                 "ont_rijtje": True, "ont_vertaalhulp": True, "ont_links": True}
+                 "ont_rijtje": True, "ont_vertaalhulp": True, "ont_links": True,
+                 "ont_opbouw": True}
 ONT_NIVEAUS = ["Grieks 1", "Grieks 2", "Grieks 3"]
 
 
@@ -5088,6 +5125,69 @@ def ont_dims_van(info):
         if goed:                      # alleen vragen die te beantwoorden zijn
             uit.append((sleutel, label, opties, goed))
     return uit
+
+
+def ont_opbouw_html(w, woordenlijst):
+    """Hoe deze vorm in elkaar zit: augment, stam en uitgang met kleur, plus de
+    samensmeltingen die erin zitten. Leeg als er niets te ontleden valt.
+
+    ἥξει bijvoorbeeld wordt ἥξ + ει, met erbij dat κ + σ tot ξ versmelt — precies wat je
+    op de kaart mist als je alleen 'Futurum Indicativus Actief' ziet staan. De motor kan
+    dit al voor de klankwetten en de stamtijden; dit haalt het naar het ontleden toe.
+
+    Let op: dit hoort pas op het scherm als álle vragen over dit woord af zijn. Een
+    gekleurde uitgang verraadt de naamval, en dan geef je het antwoord op de volgende
+    vraag weg.
+    """
+    vorm = str(w.get("grieks", "") or "").strip(" ,.;·:!?")
+    info = str(w.get("parsing_info", "") or "")
+    strong = str(w.get("strong", "") or "").lstrip("G").strip()
+    if not vorm:
+        return ""
+    bron = next((x for x in woordenlijst
+                 if str(x.get("strong", "") or "").lstrip("G").strip() == strong), {})
+    lemma = str(bron.get("grieks", "") or "")
+    gr_info = str(bron.get("grieks_info", "") or "")
+
+    stukken = []
+    try:
+        segmenten = motor.ontleed_segmenten(
+            vorm, lemma, gr_info, info,
+            corpus_stam=motor.corpus_stam_van(strong, info)) or []
+    except Exception:                                            # noqa: BLE001
+        segmenten = []
+    if segmenten:
+        gekleurd = "".join(
+            f"<span style='color:{motor._SEGMENT_KLEUR.get(s, TEKST)};font-weight:700'>"
+            f"{t}</span>" for t, s in segmenten)
+        # De legenda noemt alleen wat er in déze vorm zit: bij een praesens staat er geen
+        # augment, en dan is 'augment' in de legenda alleen ruis.
+        aanwezig = [s for s in ("augment", "stam", "uitgang")
+                    if any(srt == s for _t, srt in segmenten)]
+        legenda = " · ".join(
+            f"<span style='color:{motor._SEGMENT_KLEUR.get(s, TEKST)}'>{s}</span>"
+            for s in aanwezig)
+        stukken.append(f"<div class='grieks' style='font-size:22px'>{gekleurd}</div>"
+                       f"<div style='color:{ZACHT};font-size:11.5px'>{legenda}</div>")
+    try:
+        smelt = motor.samensmeltingen_alle(
+            vorm, lemma, info, grieks_info=gr_info,
+            corpus_stam=motor.corpus_stam_van(strong, info))
+    except Exception:                                            # noqa: BLE001
+        smelt = []
+    for a in smelt[:2]:
+        stukken.append(
+            f"<div class='grieks' style='color:{MERK};font-size:17px;margin-top:6px'>"
+            f"{a.get('formule', '')}</div>"
+            + (f"<div style='color:{ZACHT};font-size:12px'>"
+               f"{_streepjes_naar_html(a.get('uitleg', ''))}</div>"
+               if a.get("uitleg") else ""))
+    if not stukken:
+        return ""
+    return (f"<div style='margin-top:12px;padding-top:10px;"
+            f"border-top:1px solid {RAND}'>"
+            f"<div style='color:{ZACHT};font-size:11.5px;margin-bottom:4px'>"
+            f"zo is de vorm opgebouwd</div>" + "".join(stukken) + "</div>")
 
 
 def ont_kies_vers(g, niveau, drempel):
@@ -5161,13 +5261,16 @@ def ontpagina():
         k_rijtje = ui.switch("Knop 'bekijk het rijtje' tonen", value=bool(p["ont_rijtje"]))
         k_vh = ui.switch("Knop 'vertaalhulp' tonen", value=bool(p["ont_vertaalhulp"]))
         k_links = ui.switch("Links naar BibleHub tonen", value=bool(p["ont_links"]))
+        k_opbouw = ui.switch("Vormopbouw tonen (stam, uitgang, samensmelting)",
+                             value=bool(p["ont_opbouw"]))
         ui.label("Een lagere drempel geeft meer verzen om uit te kiezen.").style(
             f"color:{ZACHT};font-size:13px")
 
         async def bewaar_inst():
             for sleutel, veld in [("ont_niveau", k_niv), ("ont_drempel", k_drem),
                                   ("ont_kleur", k_kleur), ("ont_rijtje", k_rijtje),
-                                  ("ont_vertaalhulp", k_vh), ("ont_links", k_links)]:
+                                  ("ont_vertaalhulp", k_vh), ("ont_links", k_links),
+                                  ("ont_opbouw", k_opbouw)]:
                 g.stats.setdefault("ui_prefs", {})[f"ng_{sleutel}"] = veld.value
             instellingen.close()
             await run.io_bound(g.bewaar, True)
@@ -5313,8 +5416,12 @@ def ontpagina():
                     h = motor._ontleed_vertaalhulp(info)
                 except Exception:                                # noqa: BLE001
                     h = None
+                # Deze uitleg komt uit dezelfde functie die de Streamlit-app gebruikt, en
+                # daar gaat hij door st.markdown. Zonder omzetting stonden de sterretjes
+                # letterlijk op het scherm: '**Indicativus** — ...'.
                 ui.html(f"<div style='color:{ZACHT};font-size:13px;line-height:1.6'>"
-                        f"{h if isinstance(h, str) else ' · '.join(h or [])}</div>"
+                        f"{_streepjes_naar_html(h if isinstance(h, str) else ' · '.join(h or []))}"
+                        f"</div>"
                         if h else
                         f"<div style='color:{ZACHT};font-size:13px'>Geen extra hulp "
                         f"voor deze vorm.</div>")
@@ -5362,15 +5469,21 @@ def ontpagina():
         regel_gloss = (f"<div style='color:{TEKST};font-size:13.5px;margin-top:4px'>"
                        f"{gloss}</div>") if alles_af else ""
         hulp = ""
+        opbouw = ""
         if alles_af:
             try:
                 h = motor._ontleed_vertaalhulp(info)
                 if h:
                     hulp = (f"<div style='color:{ZACHT};font-size:12.5px;margin-top:10px;"
                             f"line-height:1.5'>"
-                            f"{h if isinstance(h, str) else ' · '.join(h)}</div>")
+                            f"{_streepjes_naar_html(h if isinstance(h, str) else ' · '.join(h))}"
+                            f"</div>")
             except Exception:                                    # noqa: BLE001
                 pass
+            # Pas als alle vragen over dit woord af zijn: een gekleurde uitgang verraadt
+            # de naamval en zou het antwoord op de volgende vraag weggeven.
+            if p.get("ont_opbouw", True):
+                opbouw = ont_opbouw_html(t["woord"], g.woorden)
         terugkoppeling.clear()
         with terugkoppeling:
             ui.html(
@@ -5383,7 +5496,7 @@ def ontpagina():
                 f"{t['woord'].get('grieks', '')}</div>"
                 f"<div style='color:{ZACHT};font-size:13px'>{zichtbaar}</div>"
                 f"{regel_gloss}"
-                f"{hulp}</div>")
+                f"{hulp}{opbouw}</div>")
         knop.text = "Volgende"
 
     async def kies(keuze):
