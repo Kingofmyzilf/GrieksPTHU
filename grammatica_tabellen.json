@@ -491,6 +491,33 @@
    "-"
   ]
  ],
+ "G9-G15 Imperativus": [
+  [
+   "Persoon",
+   "Praesens (Maak los)",
+   "Aoristus (Maak los - punt)"
+  ],
+  [
+   "2 sg",
+   "λῦε",
+   "λῦσον"
+  ],
+  [
+   "3 sg",
+   "λυέτω",
+   "λυσάτω"
+  ],
+  [
+   "2 pl",
+   "λύετε",
+   "λύσατε"
+  ],
+  [
+   "3 pl",
+   "λυέτωσαν",
+   "λυσάτωσαν"
+  ]
+ ],
  "G12 Werkwoord Zijn": [
   [
    "Persoon",
@@ -989,54 +1016,7 @@
    "Accent op uitgang!"
   ]
  ],
- "G25 Interrogativum": [
-  [
-   "Naamval",
-   "Vragend (Wie/Wat?)",
-   "Onbepaald (Iemand/Iets)"
-  ],
-  [
-   "Nom sg M/F",
-   "τίς",
-   "τις"
-  ],
-  [
-   "Nom sg N",
-   "τί",
-   "τι"
-  ],
-  [
-   "Gen sg",
-   "τίνος",
-   "τινός"
-  ],
-  [
-   "Dat sg",
-   "τίνι",
-   "τινί"
-  ],
-  [
-   "Acc sg M/F",
-   "τίνα",
-   "τινά"
-  ],
-  [
-   "Nom pl M/F",
-   "τίνες",
-   "τινές"
-  ],
-  [
-   "Gen pl",
-   "τίνων",
-   "τινῶν"
-  ],
-  [
-   "Dat pl",
-   "τίσι(ν)",
-   "τισί(ν)"
-  ]
- ],
- "G26 Passivum": [
+ "G27 Passivum": [
   [
    "Persoon",
    "Praesens Passief (Ik word losgemaakt)",
@@ -1076,6 +1056,95 @@
    "Inf",
    "λύεσθαι",
    "-"
+  ]
+ ],
+ "G28 Stamtijden": [
+  [
+   "Betekenis",
+   "Praesens",
+   "Futurum",
+   "Aoristus",
+   "Perfectum",
+   "Aoristus Passief"
+  ],
+  [
+   "Zien",
+   "ὁράω",
+   "ὄψομαι",
+   "εἶδον",
+   "ἑώρακα",
+   "ὤφθην"
+  ],
+  [
+   "Zeggen",
+   "λέγω",
+   "ἐρῶ",
+   "εἶπον",
+   "εἴρηκα",
+   "ἐρρέθην"
+  ],
+  [
+   "Komen/Gaan",
+   "ἔρχομαι",
+   "ἐλεύσομαι",
+   "ἦλθον",
+   "ἐλήλυθα",
+   "-"
+  ],
+  [
+   "Nemen",
+   "λαμβάνω",
+   "λήψομαι",
+   "ἔλαβον",
+   "εἴληφα",
+   "ἐλήφθην"
+  ]
+ ],
+ "G29 3e Decl (Klinker)": [
+  [
+   "Naamval",
+   "Polis (Stad - V)",
+   "Basileus (Koning - M)"
+  ],
+  [
+   "Nom sg",
+   "πόλις",
+   "βασιλεύς"
+  ],
+  [
+   "Gen sg",
+   "πόλεως",
+   "βασιλέως"
+  ],
+  [
+   "Dat sg",
+   "πόλει",
+   "βασιλεῖ"
+  ],
+  [
+   "Acc sg",
+   "πόλιν",
+   "βασιλέα"
+  ],
+  [
+   "Nom pl",
+   "πόλεις",
+   "βασιλεῖς"
+  ],
+  [
+   "Gen pl",
+   "πόλεων",
+   "βασιλέων"
+  ],
+  [
+   "Dat pl",
+   "πόλεσι(ν)",
+   "βασιλεῦσι(ν)"
+  ],
+  [
+   "Acc pl",
+   "πόλεις",
+   "βασιλεῖς"
   ]
  ],
  "G29 3e Declinatie": [
@@ -1134,73 +1203,51 @@
    "ἐλπίδas"
   ]
  ],
- "G30 Trappen": [
-  [
-   "Trap",
-   "Regelmatig (Wijs)",
-   "Onregelmatig (Groot)"
-  ],
-  [
-   "Positivus",
-   "σοφός",
-   "μέγας"
-  ],
-  [
-   "Comparativus",
-   "σοφώτερος",
-   "μείζων"
-  ],
-  [
-   "Superlativus",
-   "σοφώτατος",
-   "μέγιστος"
-  ]
- ],
- "G33 3e Decl (Klinker)": [
+ "G30 Interrogativum": [
   [
    "Naamval",
-   "Polis (Stad - V)",
-   "Basileus (Koning - M)"
+   "Vragend (Wie/Wat?)",
+   "Onbepaald (Iemand/Iets)"
   ],
   [
-   "Nom sg",
-   "πόλις",
-   "βασιλεύς"
+   "Nom sg M/F",
+   "τίς",
+   "τις"
+  ],
+  [
+   "Nom sg N",
+   "τί",
+   "τι"
   ],
   [
    "Gen sg",
-   "πόλεως",
-   "βασιλέως"
+   "τίνος",
+   "τινός"
   ],
   [
    "Dat sg",
-   "πόλει",
-   "βασιλεῖ"
+   "τίνι",
+   "τινί"
   ],
   [
-   "Acc sg",
-   "πόλιν",
-   "βασιλέα"
+   "Acc sg M/F",
+   "τίνα",
+   "τινά"
   ],
   [
-   "Nom pl",
-   "πόλεις",
-   "βασιλεῖς"
+   "Nom pl M/F",
+   "τίνες",
+   "τινές"
   ],
   [
    "Gen pl",
-   "πόλεων",
-   "βασιλέων"
+   "τίνων",
+   "τινῶν"
   ],
   [
    "Dat pl",
-   "πόλεσι(ν)",
-   "βασιλεῦσι(ν)"
-  ],
-  [
-   "Acc pl",
-   "πόλεις",
-   "βασιλεῖς"
+   "τίσι(ν)",
+   "τισί(ν)"
   ]
  ],
  "G34 Adj 3e Decl": [
@@ -1396,6 +1443,70 @@
    "ὅσος (zoveel als)"
   ]
  ],
+ "G38 Part Aoristus": [
+  [
+   "Naamval",
+   "Mannelijk (Sigmatisch)",
+   "Mannelijk (Sterk)",
+   "Opmerking"
+  ],
+  [
+   "Nom sg",
+   "λύσας",
+   "λαβών",
+   "Sterk heeft uitgangen als Praesens"
+  ],
+  [
+   "Gen sg",
+   "λύσαντος",
+   "λαβόντος",
+   "maar accent op uitgang"
+  ],
+  [
+   "Dat sg",
+   "λύσαντι",
+   "λαβόντι",
+   "-"
+  ],
+  [
+   "Acc sg",
+   "λύσαντα",
+   "λαβόντα",
+   "-"
+  ]
+ ],
+ "G38 Part Passief": [
+  [
+   "Naamval",
+   "Aoristus Passief (M)",
+   "Aoristus Passief (F)",
+   "Aoristus Passief (N)"
+  ],
+  [
+   "Nom sg",
+   "λυθείς",
+   "λυθεῖσα",
+   "λυθέν"
+  ],
+  [
+   "Gen sg",
+   "λυθέντος",
+   "λυθείσης",
+   "λυθέντος"
+  ],
+  [
+   "Dat sg",
+   "λυθέντι",
+   "λυθείσῃ",
+   "λυθέντι"
+  ],
+  [
+   "Acc sg",
+   "λυθέντα",
+   "λυθεῖσαν",
+   "λυθέν"
+  ]
+ ],
  "G38 Part Praesens": [
   [
    "Naamval",
@@ -1452,71 +1563,103 @@
    "λύοντα"
   ]
  ],
- "G39 Part Aoristus": [
+ "G43 Trappen": [
   [
-   "Naamval",
-   "Mannelijk (Sigmatisch)",
-   "Mannelijk (Sterk)",
-   "Opmerking"
+   "Trap",
+   "Regelmatig (Wijs)",
+   "Onregelmatig (Groot)"
   ],
   [
-   "Nom sg",
-   "λύσας",
-   "λαβών",
-   "Sterk heeft uitgangen als Praesens"
+   "Positivus",
+   "σοφός",
+   "μέγας"
   ],
   [
-   "Gen sg",
-   "λύσαντος",
-   "λαβόντος",
-   "maar accent op uitgang"
+   "Comparativus",
+   "σοφώτερος",
+   "μείζων"
   ],
   [
-   "Dat sg",
-   "λύσαντι",
-   "λαβόντι",
-   "-"
-  ],
-  [
-   "Acc sg",
-   "λύσαντα",
-   "λαβόντα",
-   "-"
+   "Superlativus",
+   "σοφώτατος",
+   "μέγιστος"
   ]
  ],
- "G40 Part Passief": [
+ "G44 Coniunctivus": [
   [
-   "Naamval",
-   "Aoristus Passief (M)",
-   "Aoristus Passief (F)",
-   "Aoristus Passief (N)"
+   "Persoon",
+   "Coniunctivus Praesens (Lange vokaal)",
+   "Coniunctivus Aoristus (Sigma + Lang)"
   ],
   [
-   "Nom sg",
-   "λυθείς",
-   "λυθεῖσα",
-   "λυθέν"
+   "1 sg",
+   "λύω",
+   "λύσω"
   ],
   [
-   "Gen sg",
-   "λυθέντος",
-   "λυθείσης",
-   "λυθέντος"
+   "2 sg",
+   "λύῃς",
+   "λύσῃς"
   ],
   [
-   "Dat sg",
-   "λυθέντι",
-   "λυθείσῃ",
-   "λυθέντι"
+   "3 sg",
+   "λύῃ",
+   "λύσῃ"
   ],
   [
-   "Acc sg",
-   "λυθέντα",
-   "λυθεῖσαν",
-   "λυθέν"
+   "1 pl",
+   "λύωμεν",
+   "λύσωμεν"
+  ],
+  [
+   "2 pl",
+   "λύητε",
+   "λύσητε"
+  ],
+  [
+   "3 pl",
+   "λύωσι(ν)",
+   "λύσωσι(ν)"
   ]
  ],
- "G43 Mi-Werkwoorden": [
+ "G48 Optativus": [
+  [
+   "Persoon",
+   "Optativus Praesens (oi)",
+   "Optativus Aoristus (sai)"
+  ],
+  [
+   "1 sg",
+   "λύοιμι",
+   "λύσαιμι"
+  ],
+  [
+   "2 sg",
+   "λύοις",
+   "λύσαις"
+  ],
+  [
+   "3 sg",
+   "λύοι",
+   "λύσαι"
+  ],
+  [
+   "1 pl",
+   "λύοιμεν",
+   "λύσαιμεν"
+  ],
+  [
+   "2 pl",
+   "λύοιτε",
+   "λύσαιτε"
+  ],
+  [
+   "3 pl",
+   "λύοιεν",
+   "λύσαιεν"
+  ]
+ ],
+ "G49-G50 Mi-Werkwoorden": [
   [
    "Persoon",
    "Δίδωμι (Geven)",
@@ -1564,149 +1707,6 @@
    "διδόναι",
    "τιθέναι",
    "ἱστάναι"
-  ]
- ],
- "G44 Coniunctivus": [
-  [
-   "Persoon",
-   "Coniunctivus Praesens (Lange vokaal)",
-   "Coniunctivus Aoristus (Sigma + Lang)"
-  ],
-  [
-   "1 sg",
-   "λύω",
-   "λύσω"
-  ],
-  [
-   "2 sg",
-   "λύῃς",
-   "λύσῃς"
-  ],
-  [
-   "3 sg",
-   "λύῃ",
-   "λύσῃ"
-  ],
-  [
-   "1 pl",
-   "λύωμεν",
-   "λύσωμεν"
-  ],
-  [
-   "2 pl",
-   "λύητε",
-   "λύσητε"
-  ],
-  [
-   "3 pl",
-   "λύωσι(ν)",
-   "λύσωσι(ν)"
-  ]
- ],
- "G45 Optativus": [
-  [
-   "Persoon",
-   "Optativus Praesens (oi)",
-   "Optativus Aoristus (sai)"
-  ],
-  [
-   "1 sg",
-   "λύοιμι",
-   "λύσαιμι"
-  ],
-  [
-   "2 sg",
-   "λύοις",
-   "λύσαις"
-  ],
-  [
-   "3 sg",
-   "λύοι",
-   "λύσαι"
-  ],
-  [
-   "1 pl",
-   "λύοιμεν",
-   "λύσαιμεν"
-  ],
-  [
-   "2 pl",
-   "λύοιτε",
-   "λύσαιτε"
-  ],
-  [
-   "3 pl",
-   "λύοιεν",
-   "λύσαιεν"
-  ]
- ],
- "G46 Imperativus": [
-  [
-   "Persoon",
-   "Praesens (Maak los)",
-   "Aoristus (Maak los - punt)"
-  ],
-  [
-   "2 sg",
-   "λῦε",
-   "λῦσον"
-  ],
-  [
-   "3 sg",
-   "λυέτω",
-   "λυσάτω"
-  ],
-  [
-   "2 pl",
-   "λύετε",
-   "λύσατε"
-  ],
-  [
-   "3 pl",
-   "λυέτωσαν",
-   "λυσάτωσαν"
-  ]
- ],
- "G50 Stamtijden": [
-  [
-   "Betekenis",
-   "Praesens",
-   "Futurum",
-   "Aoristus",
-   "Perfectum",
-   "Aoristus Passief"
-  ],
-  [
-   "Zien",
-   "ὁράω",
-   "ὄψομαι",
-   "εἶδον",
-   "ἑώρακα",
-   "ὤφθην"
-  ],
-  [
-   "Zeggen",
-   "λέγω",
-   "ἐρῶ",
-   "εἶπον",
-   "εἴρηκα",
-   "ἐρρέθην"
-  ],
-  [
-   "Komen/Gaan",
-   "ἔρχομαι",
-   "ἐλεύσομαι",
-   "ἦλθον",
-   "ἐλήλυθα",
-   "-"
-  ],
-  [
-   "Nemen",
-   "λαμβάνω",
-   "λήψομαι",
-   "ἔλαβον",
-   "εἴληφα",
-   "ἐλήφθην"
   ]
  ]
 }

@@ -1931,7 +1931,7 @@ def _noun_declinatie(grieks_info):
         return None
     gen = delen[1]
     if gen.endswith('εως'):
-        return "G33 3e Decl (Klinker)"
+        return "G29 3e Decl (Klinker)"
     if gen.endswith('ος') and not gen.endswith('ους'):
         return "G29 3e Declinatie"
     return "G6 Naamwoorden"  # 1e/2e declinatie (gen -ου / -ης / -ας)
@@ -1945,20 +1945,23 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
         if lemma == "ειμι":
             tabs.append("G12 Werkwoord Zijn")
         if "Participium" in info:
-            if "Aoristus" in info: tabs.append("G39 Part Aoristus")
-            elif "Passief" in info: tabs.append("G40 Part Passief")
+            # Passief eerst. Met 'Aoristus' vooraan kreeg λυθείς (aor. participium passief)
+            # het actieve rijtje λύσας te zien: die if greep als eerste en de elif kwam
+            # nooit aan de beurt, terwijl 'G38 Part Passief' juist het passieve paradigma is.
+            if "Passief" in info: tabs.append("G38 Part Passief")
+            elif "Aoristus" in info: tabs.append("G38 Part Aoristus")
             else: tabs.append("G38 Part Praesens")
         if "Conjunctivus" in info: tabs.append("G44 Coniunctivus")
-        if "Optativus" in info: tabs.append("G45 Optativus")
-        if "Imperativus" in info: tabs.append("G46 Imperativus")
+        if "Optativus" in info: tabs.append("G48 Optativus")
+        if "Imperativus" in info: tabs.append("G9-G15 Imperativus")
         if "Aoristus" in info and "Passief" in info: tabs.append("G35 Aoristus Passief")
         if "Perfectum" in info and ("Medium" in info or "Passief" in info): tabs.append("G36 Perfectum Med")
         elif "Perfectum" in info: tabs.append("G18 Perfectum")
         if "Aoristus" in info: tabs += ["G15 Aoristus", "G24 Aoristus II"]
-        if "Passief" in info: tabs.append("G26 Passivum")
+        if "Passief" in info: tabs.append("G27 Passivum")
         if any(t in info for t in ["Praesens", "Imperfectum", "Futurum"]): tabs.append("G9-G10 Werkwoorden")
-        if lemma.endswith("μι") and lemma != "ειμι": tabs.append("G43 Mi-Werkwoorden")
-        tabs.append("G50 Stamtijden")
+        if lemma.endswith("μι") and lemma != "ειμι": tabs.append("G49-G50 Mi-Werkwoorden")
+        tabs.append("G28 Stamtijden")
     elif "Bijv." in info:
         # 1e/2e declinatie (μικρός, -ά, -όν) of 3e declinatie (πᾶς, ἀληθής)? Dat verraadt de
         # uitgang van het lemma: alleen -ος volgt het μικρός-rijtje.
@@ -1968,7 +1971,7 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
             tabs += ["G34 Adj 3e Decl", "G14 Adjectiva"]
         else:
             tabs += ["G14 Adjectiva", "G34 Adj 3e Decl"]
-        tabs.append("G30 Trappen")
+        tabs.append("G43 Trappen")
     elif "Voornaamwoord" in info:
         # Kies de tabel op het subtype uit parsing_info. Let op de volgorde: 'Personal / Relative'
         # bevat óók 'Personal', dus de specifieke subtypes moeten eerst gecontroleerd worden.
@@ -1977,7 +1980,7 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
         # woordsoort — eerder kreeg ἐγώ het demonstrativa-rijtje (οὗτος) te zien.
         if "Relative" in info: tabs.append("G21 Relativum")
         elif "Demonstrative" in info: tabs.append("G19 Demonstrativa")
-        elif "Interrogative" in info or "Indefinite" in info: tabs.append("G25 Interrogativum")
+        elif "Interrogative" in info or "Indefinite" in info: tabs.append("G30 Interrogativum")
         elif "Reflexive" in info: tabs.append("G22 Reflexiva")
         elif "Correlative" in info: tabs.append("G37 Correlativa")
         # Persoonlijke voornaamwoorden: rijtjes uit Actief Beheersen (1e/2e) resp. de αὐτός-tabel (3e).
@@ -1987,7 +1990,7 @@ def _ontleed_tip_tabellen(info, lemma="", grieks_info=""):
         _decl = _noun_declinatie(grieks_info)
         if _decl:
             tabs.append(_decl)
-        tabs += ["G6 Naamwoorden", "G29 3e Declinatie", "G33 3e Decl (Klinker)"]
+        tabs += ["G6 Naamwoorden", "G29 3e Declinatie", "G29 3e Decl (Klinker)"]
     # Overige woordsoorten (voorzetsel, voegwoord, bijwoord, partikel, lidwoord) verbuigen niet
     # of hebben geen rijtje in de slides → géén tabel (voorheen kreeg εἰς onterecht G6).
     _seen = set(); _uit = []

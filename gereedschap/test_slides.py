@@ -24,6 +24,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
@@ -142,6 +143,75 @@ class NepSt(NepBlok):
 
 gezien = []
 keuzes = {}
+
+GRIEKS = re.compile(r"[Ͱ-Ͽἀ-῿]{4,}")
+
+# Rijtjes waarvan de vormen niet in het gelabelde hoofdstuk staan zonder dat het label
+# fout is. Beide nagekeken:
+GEEN_VORMEN = {
+    "G14 Adjectiva": "de tabel neemt μικρός als voorbeeld, de slides καλός — zelfde "
+                     "declinatie, ander woord",
+    "G28 Stamtijden": "G28 legt uit wát een stamtijdenlijst is; de vormen zelf staan in "
+                      "het werkboek en op Memrise, zegt slide 209 zelf",
+}
+
+
+def _kaal(t):
+    t = unicodedata.normalize("NFD", str(t or "").lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
+
+
+def rijtjes_proef(slides, items):
+    """De G-nummers in grammatica_tabellen.json nakijken tegen de slides.
+
+    Die sleutels zijn niet alleen sleutels: de app zet ze als kop boven het rijtje bij
+    'bekijk het rijtje (spieken)'. Een verkeerd nummer stuurt je dus naar het verkeerde
+    hoofdstuk in het Grammatica-tabblad. Tien van de 32 stonden fout — G45 Optativus
+    bijvoorbeeld, terwijl G45 over de coniunctivus gaat en de optativus G48 is.
+
+    Dat was niet te controleren zolang de slides plaatjes waren. Nu ze tekst zijn, kan het
+    wél: de Griekse vormen uit een rijtje moeten voorkomen in de slides van het hoofdstuk
+    waar het label naar wijst.
+
+    Twee rijtjes kunnen dat niet halen zonder dat er iets mis is; die staan in GEEN_VORMEN
+    met de reden erbij. Ze worden wél afgedrukt, zodat de lijst niet stil kan groeien.
+    """
+    with open("grammatica_tabellen.json", encoding="utf-8") as f:
+        tab = json.load(f)
+    bij_g = {}
+    for g, info in items.items():
+        for n in range(info["pdf_start"], info["pdf_eind"] + 1):
+            bij_g[n] = int(g)
+    tekst = {int(s["nr"]): _kaal(s.get("tekst", "")) for s in slides.values()}
+
+    bestaat = []
+    misplaatst = []
+    for naam, rijen in tab.items():
+        nummers = [int(x) for x in re.findall(r"G(\d+)", naam)]
+        if not nummers:
+            bestaat.append(f"{naam} (geen G-nummer)")
+            continue
+        for n in nummers:
+            if str(n) not in items:
+                bestaat.append(f"{naam} verwijst naar G{n}, dat bestaat niet")
+        # De Griekse vormen uit het rijtje, zonder de kopregel.
+        vormen = {_kaal(m) for rij in rijen[1:] for cel in rij
+                  for m in GRIEKS.findall(str(cel))}
+        if len(vormen) < 4:
+            continue          # te weinig om iets te kunnen zeggen (alfabet, formuletabel)
+        # Hoeveel van die vormen staan in de slides van het gelabelde hoofdstuk?
+        eigen = " ".join(t for nr, t in tekst.items() if bij_g.get(nr) in nummers)
+        raak = sum(1 for v in vormen if v in eigen)
+        if raak == 0 and naam not in GEEN_VORMEN:
+            misplaatst.append(f"{naam}: geen van de {len(vormen)} vormen staat in "
+                              f"{'/'.join('G%d' % n for n in nummers)}")
+    kijk(not bestaat, f"elk label verwijst naar een bestaand hoofdstuk ({bestaat[:2]})")
+    kijk(not misplaatst,
+         f"de vormen van elk rijtje staan in het hoofdstuk waar het label naar wijst "
+         f"({misplaatst[:3]})")
+    kijk(len(tab) == 32, f"er zijn 32 rijtjes ({len(tab)})")
+    for naam, reden in GEEN_VORMEN.items():
+        print(f"       (uitzondering) {naam}: {reden}")
 
 
 def tabblad_proef(app, slides):
@@ -279,6 +349,9 @@ def main():
          "pymupdf staat niet meer in requirements.txt")
     kijk(not os.path.exists("grammatica_overzicht.pdf"),
          "de pdf van 22 MB staat niet meer in de map")
+
+    print("== de paradigma-rijtjes wijzen naar het juiste hoofdstuk ==")
+    rijtjes_proef(slides, items)
 
     print("== het tabblad zelf ==")
     tabblad_proef(app, slides)
