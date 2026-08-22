@@ -145,7 +145,7 @@ class Gebruiker:
         self.sinds_opslag += 1
 
     def noteer(self, woord, goed, punten=1, straf=None, scoor=True):
-        """Eén beurt op een woord verwerken. Geeft terug of er is opgeslagen.
+        """Eén beurt op een woord verwerken. Rekenwerk alleen; schrijft niet weg.
 
         De oefening bepaalt de weging, net als in de Streamlit-app:
           * `punten` — wat een goed antwoord aan streak oplevert. Typen telt zwaarder
@@ -154,6 +154,12 @@ class Gebruiker:
             dat is de eerste misser, waarna je het nog een keer mag proberen.
           * `scoor` — False als deze beurt niet meetelt voor goed/fout, bijvoorbeeld
             omdat je het antwoord al had gezien. Voor je oefenritme telt hij wel mee.
+
+        Hier stond aan het eind `if self.sinds_opslag >= self.interval: return self.bewaar()`.
+        Dat las prettig — één aanroep en het staat veilig — maar het maakte deze functie
+        soms 0,1 ms en soms 1,9 s, en de app wachtte erop vóórdat de uitslag getekend werd.
+        Wanneer er geschreven wordt is een keuze van de app (bewaar_los in grieks_app.py),
+        niet van het scoren. Dit rekent nu altijd even lang.
         """
         if goed:
             if scoor:
@@ -168,9 +174,6 @@ class Gebruiker:
         # Voor het dagdoel telt 'woorden' het aantal VERSCHILLENDE woorden van vandaag; dat
         # zet tel_dag() erbij, samen met de datumstempel op dit woord.
         self.tel_dag(woord)
-        if self.sinds_opslag >= self.interval:
-            return self.bewaar()
-        return False
 
     # ---------------------------------------------------------------- dagdoel
     def dagdoel(self):

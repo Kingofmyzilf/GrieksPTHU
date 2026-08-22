@@ -9,6 +9,8 @@ Starten:  py grieks_app.py
 """
 import csv
 import difflib
+import functools
+import gzip
 import io
 import json
 import math
@@ -20,7 +22,7 @@ from datetime import date, timedelta
 from urllib.parse import quote
 
 from fastapi.responses import JSONResponse
-from nicegui import app, run, ui
+from nicegui import app, background_tasks, run, ui
 
 import grieks_gebruiker as gebruikers
 import grieks_motor as motor
@@ -242,36 +244,109 @@ def nl_datum(d):
 
 _sessies = {}
 
-# De NT-tekst is 31 MB aan bestanden en kost 97 MB geheugen. Laat je die weg, dan
-# draait de app prima door — alleen vervalt alles wat de bijbeltekst nodig heeft:
-# Ontleden, de verbogen vormen uit het NT bij beheerste woorden, en het tekstfilter
-# bij Stamtijden. Zo kun je een lichte versie hosten en lokaal toch alles hebben.
 STREAMLIT_URL = os.environ.get(
     "GRIEKS_STREAMLIT", "https://woordengriekspthu.streamlit.app").strip().rstrip("/")
 
+# ============================================================== NT-gegevens
+# Deze app laadde de hele NT-tekst in: 2,9 MB op schijf, maar 88 MB in het geheugen en
+# gemeten 420 ms om in te lezen — op Render's gratis laag (0,1 CPU) dus ruwweg vier
+# seconden. En dat gebeurde synchroon terwijl je een kaart omdraaide, want bij een woord
+# met streak >= 30 haalt de app een echte NT-vorm op. Met 130 mastery-woorden in één lijst
+# stond de app dus regelmatig stil.
+#
+# Wat de app er echt uit haalt staat nu voorgebakken in snel_nt.json.gz (222 kB): een paar
+# vormen per woord, de klankwetvormen, 490 korte verzen en per hoofdstuk de Strong-nummers.
+# Opnieuw bakken (of een andere set verzen trekken) met gereedschap/bouw_snel.py.
+#
+# Het zware werk — de hele tekst doorzoeken, elk vers kunnen opzoeken, leesteksten — blijft
+# in de Streamlit-app. Deze app is voor woorden en rijtjes op je telefoon.
+SNEL_NT = "snel_nt.json.gz"
+
 
 def bijbel_aanwezig():
-    """Is de Griekse bijbeltekst er? Zonder die tekst vervallen Ontleden, de klankwetten en
-    het lezen van een Griekse tekst.
+    """Zijn de voorgebakken NT-gegevens er? Zonder die vervallen Ontleden, de klankwetten
+    en de NT-vormen bij beheerste woorden.
 
-    Let op de eerste regel. De tekst staat sinds de opsplitsing per boek ingepakt in nt/,
-    en deze functie keek alleen naar de drie oude bestandsnamen. Die staan in .gitignore,
-    dus op elke verse kloon — en dus ook op de gehoste app — was dit False en viel de halve
-    app stil zonder één foutmelding. Wie hier iets verandert: zet de nieuwe plek erbij,
-    haal de oude niet weg, want een oude werkkopie moet blijven werken."""
-    return (os.path.exists(os.path.join("nt", "index.json"))
-            or any(os.path.exists(naam) for naam in
-                   ("bijbel_nt.json", "bijbel_nt_deel1.json", "bijbel_nt_deel2.json")))
+    Let op: dit keek eerder naar de NT-tekst zelf. Die stond in .gitignore onder zijn oude
+    namen, dus op elke verse kloon — en dus ook op de gehoste app — was dit False en viel
+    de halve app stil zonder één foutmelding. Zet bij een verandering de nieuwe plek erbij
+    en haal de oude niet weg, want een oude werkkopie moet blijven werken."""
+    return os.path.exists(SNEL_NT)
 
 
 BIJBEL = bijbel_aanwezig()
 
-# Hoe vaak er naar de Sheet wordt geschreven. Lokaal na elke beurt: je raakt dan nooit
-# iets kwijt en het wachten valt weg in de tijd dat je de feedback leest. Op een gehoste
-# lichte versie kost elke opslag twee netwerkrondjes (lezen om samen te voegen, dan
-# schrijven) op een trage machine — daar is één keer per vijf beurten prettiger. Aan het
-# einde van een ronde wordt sowieso geforceerd bewaard.
-OPSLAG_INTERVAL = 1 if BIJBEL else 5
+
+@functools.lru_cache(maxsize=1)
+def nt_snel():
+    """De voorgebakken NT-gegevens. Leeg als het bestand er niet is."""
+    if not os.path.exists(SNEL_NT):
+        return {}
+    try:
+        with gzip.open(SNEL_NT, "rt", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def nt_deel(naam):
+    """Eén onderdeel: 'vormen', 'klank', 'klankformules', 'verzen', 'boeken' of
+    'hoofdstuk_strongs'."""
+    return nt_snel().get(naam) or {}
+
+# Hoe vaak er naar de Sheet wordt geschreven, geteld over álle oefeningen samen: vier
+# woorden en vier structuurwoorden is ook acht.
+#
+# Hier stond `1 if BIJBEL else 5`. De gedachte was: bijbeltekst aanwezig = mijn eigen
+# machine, dus na elke beurt bewaren; op de gehoste lichte versie geen bijbeltekst, dus
+# één op vijf. Toen de NT-tekst aan de deploytak werd toegevoegd werd BIJBEL óók op de
+# gehoste app True, en ging die van één-op-vijf naar één-op-één — vijf keer zoveel
+# netwerkrondjes op een machine met 0,1 CPU. Gemeten: één opslag is 1,9 s. Zo'n afgeleide
+# schakelaar hoort hier dus niet; dit is een keuze op zichzelf.
+#
+# Acht is een bewuste ruil: je raakt bij een crash maximaal zeven beurten kwijt, en dat mag,
+# want opslaan gebeurt nu op de achtergrond (zie bewaar_los) en aan het einde van een ronde,
+# bij het aanvinken van verwarparen en bij het verlaten van de app wordt geforceerd bewaard.
+OPSLAG_INTERVAL = 8
+
+
+def bewaar_los(g, melding=None):
+    """De voortgang wegschrijven zónder erop te wachten.
+
+    Hier stond overal `await run.io_bound(g.bewaar)`, en op het antwoordpad stond dat vóór
+    het tekenen van de uitslag. Eén opslag is twee netwerkrondjes naar Google — gemeten op
+    1,9 s — dus je keek na elk antwoord bijna twee seconden naar een onveranderd scherm,
+    klikte nog een keer, en dan schoot de app door twee kaarten heen.
+
+    In de browser gemeten, van klik tot beeld: 2155 ms werd 17-41 ms over elf beurten
+    (mediaan 34). Aan de serverkant is het beoordelen van een antwoord nu 15-17 ms.
+
+    De opslag gaat nu als losse taak verder terwijl de uitslag al op het scherm staat; de
+    melding komt vanzelf als hij klaar is. Twee tegelijk kan geen kwaad: Gebruiker.bewaar
+    pakt een slot en de tweede stapt er meteen weer uit, want de eerste schrijft toch de
+    nieuwste stand weg.
+    """
+    if g.sinds_opslag < g.interval:
+        return
+
+    async def klaar():
+        try:
+            gelukt = await run.io_bound(g.bewaar)
+        except Exception:                                        # noqa: BLE001
+            return                # blijft in het geheugen staan; volgende beurt weer
+        if melding is None:
+            return
+        try:
+            if g.laatste_fout:
+                melding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
+                melding.style(f"color:{FOUT}")
+            elif gelukt:
+                melding.text = "Voortgang opgeslagen"
+                melding.style(f"color:{ZACHT}")
+        except Exception:                                        # noqa: BLE001
+            pass          # de pagina kan inmiddels weg zijn; de opslag is dan al gelukt
+
+    background_tasks.create(klaar())
 
 
 def streamlit_adres(g=None):
@@ -812,29 +887,16 @@ MASTERY_STREAK = 30
 def bijbelvormen(w, hoeveel=6):
     """Verschillende verbogen vormen van dit woord zoals ze echt in het NT staan.
     Voor woorden die je al beheerst is de woordenboekvorm te makkelijk geworden;
-    zo'n echte vorm dwingt je de uitgang te herkennen."""
+    zo'n echte vorm dwingt je de uitgang te herkennen.
+
+    Dit spitte eerst de hele NT-tekst door, en die 88 MB werd juist híer voor het eerst
+    ingelezen — synchroon, midden in het omdraaien van een kaart. Nu staan de vormen
+    voorgebakken klaar (zie gereedschap/bouw_snel.py)."""
     strong = str(w.get("strong", "") or "").lstrip("G").strip()
-    if not strong or not BIJBEL:
+    if not strong:
         return []
-    try:
-        db = motor.laad_bijbel_db()
-        refs = (motor._bijbel_strong_index(db) or {}).get(strong) or []
-    except Exception:                                            # noqa: BLE001
-        return []
-    gezien, uit = set(), []
-    for ref in refs[:40]:
-        for x in db.get(ref, []):
-            if str(x.get("strong", "")).lstrip("G").strip() != strong:
-                continue
-            vorm = str(x.get("grieks", "") or "").strip(" ,.;·")
-            sleutel = motor.normaliseer_accent(vorm)
-            if not vorm or sleutel in gezien:
-                continue
-            gezien.add(sleutel)
-            uit.append({"vorm": vorm, "parsing": x.get("parsing_info", ""), "ref": ref})
-            if len(uit) >= hoeveel:
-                return uit
-    return uit
+    return [{"vorm": v["v"], "parsing": v.get("p", ""), "ref": v.get("r", "")}
+            for v in (nt_deel("vormen").get(strong) or [])[:hoeveel]]
 
 
 def _hint(w):
@@ -1823,14 +1885,10 @@ def oefenpagina():
         vraagvlak.set_visibility(False)
         return terugkoppeling
 
-    async def opslaan(k, juist, punten=1, straf=None, scoor=True):
-        opgeslagen = await run.io_bound(g.noteer, k, juist, punten, straf, scoor)
-        if g.laatste_fout:
-            opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
-            opslagmelding.style(f"color:{FOUT}")
-        elif opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
-            opslagmelding.style(f"color:{ZACHT}")
+    def opslaan(k, juist, punten=1, straf=None, scoor=True):
+        """Scoren gaat meteen (dat is rekenwerk van niks); schrijven gaat erachteraan."""
+        g.noteer(k, juist, punten, straf, scoor)
+        bewaar_los(g, opslagmelding)
 
     def ververs_kop(k):
         """Streak, goed/fout en het aantal kaarten lopen tijdens de beurt op; die cijfers
@@ -1880,7 +1938,7 @@ def oefenpagina():
             if vorm == "3_typ" and sessie.combo.get(grieks):
                 punten *= 2              # meerkeuze én typen in één keer goed
             oud = int(k.get("streak", 0) or 0)
-            await opslaan(k, True, punten=punten, scoor=schoon)
+            opslaan(k, True, punten=punten, scoor=schoon)
             if vorm == "3_mc":
                 sessie.combo[grieks] = schoon
             extra = "" if schoon else (
@@ -1907,7 +1965,7 @@ def oefenpagina():
         # Een woord dat je al beheerste hoort er meteen uit te vallen; bij de rest krijg
         # je één herkansing voordat het streak-punten kost.
         echt_mis = int(k.get("streak", 0) or 0) >= STRAF_STREAK or sessie.fouten >= 2
-        await opslaan(k, False, straf=STREAK_STRAF if echt_mis else None)
+        opslaan(k, False, straf=STREAK_STRAF if echt_mis else None)
 
         if echt_mis:
             sessie.eerst_overtikken()
@@ -2159,12 +2217,12 @@ def oefenpagina():
                 volgende()
                 return
             if vorm == "1":                                # flashcard: alleen bekeken
-                await opslaan(k, True, punten=0, scoor=False)
+                opslaan(k, True, punten=0, scoor=False)
                 volgende()
                 return
             if vorm == "overtik":
                 if motor.check_betekenis(invoer.value or "", k.get("nederlands", "")):
-                    await opslaan(k, True, punten=0, scoor=False)
+                    opslaan(k, True, punten=0, scoor=False)
                     volgende()
                     with naastregel:
                         ui.html(f"<div style='color:{MERK};font-size:12.5px;"
@@ -2519,14 +2577,8 @@ def stam_prefs(g):
 
 
 def stam_bijbelboeken():
-    """boek -> [hoofdstukken], uit de vers-referenties van het NT."""
-    if not BIJBEL:
-        return {}
-    try:
-        return {boek: sorted(hfd, key=lambda h: int(h) if str(h).isdigit() else 0)
-                for boek, hfd in motor.bijbel_boek_index(motor.laad_bijbel_db()).items()}
-    except Exception:                                            # noqa: BLE001
-        return {}
+    """boek -> [hoofdstukken]. Staat voorgebakken klaar; het is 1 kB."""
+    return nt_deel("boeken")
 
 
 def stam_strongs_in_tekst(boek, hoofdstuk):
@@ -2534,18 +2586,9 @@ def stam_strongs_in_tekst(boek, hoofdstuk):
     werkwoorden die je in deze tekst tegenkomt'."""
     if not boek or not hoofdstuk:
         return set()
-    try:
-        db = motor.laad_bijbel_db()
-    except Exception:                                            # noqa: BLE001
-        return set()
-    begin = f"{boek} {hoofdstuk}:"
-    uit = set()
-    for ref, zin in db.items():
-        if ref.startswith(begin):
-            for w in zin:
-                if w.get("strong"):
-                    uit.add(str(w["strong"]).lstrip("G").strip())
-    return uit
+    # Alleen de nummers, niet de tekst: dat is voorgebakken 325 kB voor alle 260
+    # hoofdstukken, tegenover de hele NT-tekst doorlopen voor één hoofdstuk.
+    return set(nt_deel("hoofdstuk_strongs").get(f"{boek} {hoofdstuk}") or [])
 
 
 def stam_poule(p):
@@ -2937,7 +2980,7 @@ def stampagina():
         g.tel_dag()
         if juist:
             g.dagdoel_plus("stam")
-        opgeslagen = await run.io_bound(g.bewaar) if g.sinds_opslag >= 5 else False
+        bewaar_los(g, opslagmelding)
         opbouw = ""
         try:
             regels = motor.deconstrueer_stamtijd_live(v["vorm"], v["tijd"], v["praesens"])
@@ -3013,8 +3056,6 @@ def stampagina():
             if not juist:
                 toch_goed_knop(terugkoppeling,
                                lambda _=None: toch_goed(v, e, dict(voor)))
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -3215,13 +3256,7 @@ def stamleerpagina():
                 e["f"] = int(e.get("f", 0)) + 1
             g.tel_dag()
             sessie.volgende(opnieuw=not wist)
-            opgeslagen = await run.io_bound(g.bewaar)
-            if g.laatste_fout:
-                opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
-                opslagmelding.style(f"color:{FOUT}")
-            elif opgeslagen:
-                opslagmelding.text = "Voortgang opgeslagen"
-                opslagmelding.style(f"color:{ZACHT}")
+            bewaar_los(g, opslagmelding)
             toon()
         finally:
             sessie.bezig = False
@@ -3504,7 +3539,12 @@ def afroosterpagina():
                 nieuw_goed += 1
                 g.dagdoel_plus("actief")
         klaar = all(staat.values())
-        opgeslagen = await run.io_bound(g.bewaar, klaar)
+        # Is het rijtje af, dan is de ronde voorbij en mag je even wachten; anders gaat de
+        # opslag op de achtergrond, want je gaat meteen door met de volgende cel.
+        if klaar:
+            await run.io_bound(g.bewaar, True)
+        else:
+            bewaar_los(g, opslagmelding)
         terugkoppeling.clear()
         with terugkoppeling:
             if klaar:
@@ -3519,7 +3559,7 @@ def afroosterpagina():
         if g.laatste_fout:
             opslagmelding.text = "⚠ Opslaan lukte niet — je voortgang staat nog in het geheugen."
             opslagmelding.style(f"color:{FOUT}")
-        elif opgeslagen:
+        elif klaar:
             opslagmelding.text = "Voortgang opgeslagen"
             opslagmelding.style(f"color:{ZACHT}")
         teken()
@@ -3642,7 +3682,7 @@ def afpagina():
         g.tel_dag()
         if juist:
             g.dagdoel_plus("actief")
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         toon_typveld(invoer, False)
@@ -3678,8 +3718,6 @@ def afpagina():
             if not juist and sessie.vraag_typen:
                 toch_goed_knop(terugkoppeling,
                                lambda _=None: toch_goed(c, e, dict(voor)))
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -4110,7 +4148,7 @@ def swpagina():
         g.tel_dag()
         if juist:
             g.dagdoel_plus("struct")
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (woord, soort, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         toon_typveld(invoer, False)
@@ -4136,8 +4174,6 @@ def swpagina():
                 f"<div style='color:{ZACHT};font-size:12.5px;margin-top:18px'>"
                 f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                 f"streak nu {e['streak']}</div></div>")
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -4626,7 +4662,7 @@ def hebpagina():
         w["laatst_geoefend"] = gebruikers.vandaag()
         if juist:
             g.dagdoel_plus("hebreeuws")
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (woord, onder, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         toon_typveld(invoer, False)
@@ -4662,8 +4698,6 @@ def hebpagina():
                 f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
                 f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                 f"streak nu {int(w.get('streak', 0))}</div></div>")
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -4971,7 +5005,7 @@ def hebafpagina():
         g.tel_dag()
         if juist:
             g.dagdoel_plus("hebreeuws")
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (rijtje, gevraagd, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         toon_typveld(invoer, False)
@@ -4995,8 +5029,6 @@ def hebafpagina():
                 f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
                 f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                 f"streak nu {e['streak']}</div></div>")
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -5060,8 +5092,12 @@ def ont_dims_van(info):
 
 def ont_kies_vers(g, niveau, drempel):
     """Een vers waarvan je de woorden kent: alle lexicale woorden minstens één keer
-    geoefend, en minstens één naam- of werkwoord dat je goed beheerst."""
-    bijbel = motor.laad_bijbel_db() or {}
+    geoefend, en minstens één naam- of werkwoord dat je goed beheerst.
+
+    De pot is 490 korte verzen die volledig binnen de basiswoordenlijst vallen — dat was
+    de eis die deze functie zelf ook stelt, dus die selectie is nu vooraf gemaakt in plaats
+    van bij elke ronde over 7938 verzen. Een andere set trekken: gereedschap/bouw_snel.py."""
+    bijbel = nt_deel("verzen")
     bekend = {w["grieks"]: int(w.get("streak", 0) or 0) for w in g.woorden}
     kandidaten = []
     for ref, woorden in bijbel.items():
@@ -5083,6 +5119,8 @@ def ont_kies_vers(g, niveau, drempel):
             break
     if not kandidaten:
         kandidaten = [r for r, w in bijbel.items() if 4 <= len(w) <= 10][:200]
+    if not kandidaten:
+        return "", []
     ref = random.choice(kandidaten)
     return ref, bijbel[ref]
 
@@ -5309,7 +5347,9 @@ def ontpagina():
         if juist and alles_af:
             # Het dagdoel telt woorden die je helemaal hebt ontleed, niet losse deelvragen.
             g.dagdoel_plus("verzen")
-        await run.io_bound(g.bewaar)
+        # Deze pagina heeft geen opslagmelding, dus zonder label — het wachten hoort er
+        # net zo weinig als bij de andere oefeningen.
+        bewaar_los(g)
         # Geen actief woord meer: zo laat het net beantwoorde woord zijn naamvalkleur
         # zien in plaats van de cyaan markering.
         teken_vers(-1)
@@ -6594,7 +6634,7 @@ def hebaffixpagina():
         g.tel_dag()
         if juist:
             g.dagdoel_plus("hebreeuws")
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         letter = (hebreeuws.VOORVOEGSEL_LETTER.get(code, "") if soort == "voor" else "")
@@ -6621,8 +6661,6 @@ def hebaffixpagina():
                 + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
                   f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                   f"streak nu {e['streak']}</div></div>")
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -7274,12 +7312,12 @@ def klank_voorraad(g, drempel):
     dan oefen je twee dingen tegelijk. Hetzelfde uitgangspunt als in de uitgebreide app."""
     if not BIJBEL:
         return []
-    bron = klank_bron(g)
-    streak = {s: int(w.get("streak", 0) or 0) for s, w in bron.items()}
-    try:
-        index = motor.klankwet_index(motor.laad_bijbel_db(), bron)
-    except Exception:                                            # noqa: BLE001
-        return []
+    streak = {s: int(w.get("streak", 0) or 0) for s, w in klank_bron(g).items()}
+    # Deze index kostte gemeten 499 ms om te bouwen — op Render ruwweg vijf seconden, elke
+    # keer dat je de klankwetten opende. Hij is voor iedereen gelijk (klankwet_index leest
+    # uit de woordenlijst alleen het lemma en de citatievorm), dus hij staat voorgebakken.
+    # Wat per gebruiker verschilt is de drempel hieronder, en dat is een vergelijking.
+    index = nt_deel("klank")
     uit = []
     for sleutel, rijen in index.items():
         for (vorm, lemma, info, ref, strong) in rijen:
@@ -7343,10 +7381,7 @@ def klankpagina():
         return
     sessie = KlankSessie(g)
     stats = g.stats.setdefault(KLANK_SLEUTEL, {})
-    try:
-        formules = motor.klankwet_formule_index(motor.laad_bijbel_db(), klank_bron(g))
-    except Exception:                                            # noqa: BLE001
-        formules = {}
+    formules = nt_deel("klankformules")
 
     with ui.dialog() as instellingen, ui.card().style(
             f"background:{VLAK};color:{TEKST};min-width:300px;max-width:92vw"):
@@ -7469,7 +7504,7 @@ def klankpagina():
         e["f"] = int(e.get("f", 0)) + int(not juist)
         e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
         g.tel_dag()
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         deze, rest = klank_analyse(g, vorm, lemma, info, strong, sleutel)
@@ -7504,8 +7539,6 @@ def klankpagina():
                 + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
                   f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                   f"streak nu {e['streak']}</div></div>")
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -7758,7 +7791,7 @@ def contractiepagina():
         e["f"] = int(e.get("f", 0)) + int(not juist)
         e["streak"] = int(e.get("streak", 0)) + 1 if juist else 0
         g.tel_dag()
-        opgeslagen = await run.io_bound(g.bewaar)
+        bewaar_los(g, opslagmelding)
         for vak in (woord, herkomst, vraagsoort, opties, statusbalk):
             vak.set_visibility(False)
         invoer.set_visibility(False)
@@ -7782,8 +7815,6 @@ def contractiepagina():
                 + f"<div style='color:{ZACHT};font-size:12.5px;margin-top:14px'>"
                   f"{sessie.goed} goed · {sessie.fout} fout in deze ronde · "
                   f"streak nu {e['streak']}</div></div>")
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
         knop.text = "Volgende"
         _uitslag_staat(sessie)
 
@@ -7960,9 +7991,7 @@ def heblezenpagina():
         e["g"] = int(e.get("g", 0)) + 1
         g.tel_dag()
         g.dagdoel_plus("hebreeuws")
-        opgeslagen = await run.io_bound(g.bewaar)
-        if opgeslagen:
-            opslagmelding.text = "Voortgang opgeslagen"
+        bewaar_los(g, opslagmelding)
         ui.navigate.to("/lezen/hebreeuws")
 
     ui.on("leeswoord", lambda e: tik(int(e.args)))

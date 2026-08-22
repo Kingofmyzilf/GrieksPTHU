@@ -51,17 +51,18 @@ HOUDEN = {
     # dan False) en merk je pas op de live app dat de helft ontbreekt.
     "hebreeuws.py", "hebreeuws_woorden.json", "hebreeuws_actief.json",
     "hebreeuws_lezen.json", "tenach",
-    # De NT-tekst gaat wél mee. Die bleef er eerst uit omdat hij 31,5 MB was, verdeeld over
-    # twee bestanden. Sinds hij per boek ingepakt in nt/ staat is het 2,9 MB, en dat is
-    # ruimschoots de moeite waard: hiermee werken Ontleden, de klankwetten en het lezen van
-    # een Griekse tekst in de app zelf in plaats van dat ze naar Streamlit wijzen.
+    # Wat de app uit het NT nodig heeft, voorgebakken: 222 kB in plaats van 2,9 MB, en in
+    # het geheugen 8 MB in plaats van 88. Hiermee werken Ontleden, de klankwetten en de
+    # NT-vormen bij beheerste woorden.
     #
-    # Let op: dit is niet alleen een kwestie van meesturen. bijbel_aanwezig() in
-    # grieks_app.py keek alleen naar de oude bestandsnamen, dus na de opsplitsing stond de
-    # halve app stil zonder dat er een foutmelding kwam.
-    "nt",
-    # Deze twee horen bij het 'rijtje spieken' bij Ontleden. Ze bleven weg zolang dat
-    # scherm er niet was; nu de NT-tekst meegaat, gaan ze weer mee.
+    # De hele NT-tekst (nt/) ging hier eerst in mee. Dat leek gratis — 2,9 MB op schijf —
+    # maar inlezen kostte 420 ms op een SSD, dus op de gratis laag met 0,1 CPU ruwweg vier
+    # seconden, en dat gebeurde synchroon terwijl je een kaart omdraaide. Bijkomend gevolg:
+    # bijbel_aanwezig() werd op de gehoste app True, en daaraan hing de opslagfrequentie —
+    # die ging van één-op-vijf naar één-op-één, oftewel 1,9 s wachten na elk antwoord.
+    # Zie gereedschap/bouw_snel.py.
+    "snel_nt.json.gz",
+    # Deze twee horen bij het 'rijtje spieken' bij Ontleden.
     "grammatica_tabellen.json", "grammatica_index.json",
     "contractie_data.json",   # de contractietrainer
     "static",                 # de iconen voor het webmanifest

@@ -331,14 +331,32 @@ def samenvoeg_stats(in_sheet, van_mij):
 
 
 # --------------------------------------------------------------------------- lezen/schrijven
+# De gevonden werkbladen, op naam. sheet.worksheet(naam) is namelijk geen lokale lookup
+# maar een aanroep naar Google: gemeten 200 ms, en per opslag gebeurde het twee keer (één
+# keer om de rij te lezen voor het samenvoegen, één keer om te schrijven). Zo'n handvat is
+# niet meer dan een verwijzing naar een blad-id, dus die kan blijven staan.
+_tabs = {}
+
+
 def _tab(naam, maak=False):
+    """Het werkblad met deze naam. None als het er niet is en maak=False."""
+    if naam in _tabs:
+        return _tabs[naam]
     sheet = verbind()
     try:
-        return sheet.worksheet(naam)
+        tab = sheet.worksheet(naam)
     except gspread.WorksheetNotFound:
         if not maak:
-            return None
-        return sheet.add_worksheet(title=naam, rows=4, cols=60)
+            return None                # niet onthouden: hij kan er straks wél zijn
+        tab = sheet.add_worksheet(title=naam, rows=4, cols=60)
+    _tabs[naam] = tab
+    return tab
+
+
+def _tab_vergeten(naam):
+    """Het onthouden handvat weggooien. Voor als een blad buiten de app om is weggegooid
+    en opnieuw gemaakt: dan wijst het oude handvat naar een id die niet meer bestaat."""
+    _tabs.pop(naam, None)
 
 
 def laad(gebruiker):
@@ -476,10 +494,11 @@ def bewaar(gebruiker, stats, pogingen=3, samenvoegen=True):
         stats = samenvoeg_stats(in_sheet, stats)
     rij = bouw_rij(gebruiker, stats)
     kolommen = list(rij)
-    tab = _tab(werkblad_naam(gebruiker), maak=True)
+    naam = werkblad_naam(gebruiker)
     laatste = None
     for poging in range(pogingen):
         try:
+            tab = _tab(naam, maak=True)
             tab.clear()
             tab.update([kolommen, [rij[k] for k in kolommen]], "A1")
             return True
@@ -487,6 +506,11 @@ def bewaar(gebruiker, stats, pogingen=3, samenvoegen=True):
             laatste = e
             if any(t in str(e) for t in ("429", "RESOURCE_EXHAUSTED", "Quota")):
                 time.sleep(2 ** poging)      # even wachten en opnieuw
+                continue
+            # Het onthouden handvat kan naar een blad wijzen dat niet meer bestaat (buiten
+            # de app om weggegooid). Eén keer opnieuw opzoeken, en dan pas opgeven.
+            if poging == 0:
+                _tab_vergeten(naam)
                 continue
             break
     raise OpslagFout(f"Opslaan mislukte: {laatste}")
